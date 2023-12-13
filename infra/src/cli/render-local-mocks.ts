@@ -43,11 +43,23 @@ export async function renderLocalServices(
 export async function runLocalServices(
   services: string[],
   dependencies: string[] = [],
-  options: { dryRun?: boolean } = { dryRun: false },
+  {
+    dryRun = false,
+    neverFail = !!dryRun,
+    print = false,
+    json = false,
+  }: {
+    dryRun?: boolean
+    neverFail?: boolean
+    print?: boolean
+    json?: boolean
+  } = {},
 ) {
   logger.debug('runLocalServices', { services, dependencies })
   const renderedLocalServices = await renderLocalServices(services, {
-    dryRun: options.dryRun,
+    dryRun,
+    print,
+    json,
   })
 
   const processes: Promise<ChildProcess>[] = []
@@ -59,17 +71,26 @@ export async function runLocalServices(
       logger.info(`Skipping ${name} as it is not specified as a dependency`)
       continue
     }
+    const builtCommand = [
+      dryRun ? 'false' : 'true',
+      ...(service.commands ?? []),
+    ].join(' && ')
+    const command = [builtCommand, neverFail ? 'true' : 'false'].join(' || ')
     logger.warn(`Running ${name} in the background`)
     logger.info('Running in the background', {
       service: name,
-      command: service.commands,
+      command,
+      builtCommand,
     })
-    const command = options.dryRun
-      ? 'echo'
-      : (service.commands ?? []).join(' && ')
     const proc = exec(command, (err, stdout, stderr) => {
       if (err) {
         logger.error(`Error running ${name}`, { err })
+      }
+      if (stdout) {
+        logger.info(`stdout: ${stdout}`)
+      }
+      if (stderr) {
+        logger.error(`stderr: ${stderr}`)
       }
       return
     })
@@ -78,4 +99,5 @@ export async function runLocalServices(
 
   // Wait for all processes to complete
   await Promise.all(processes)
+  logger.info('All processes completed')
 }

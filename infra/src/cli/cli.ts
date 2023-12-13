@@ -75,11 +75,19 @@ yargs(process.argv.slice(2))
       return yargs
         .option('service', { array: true, type: 'string', demandOption: true })
         .option('dependencies', { array: true, type: 'string', default: [] })
+        .option('json', { type: 'boolean', default: false })
         .option('dry', { type: 'boolean', default: false })
+        .option('never-fail', {
+          alias: 'nofail',
+          type: 'boolean',
+          default: false,
+        })
     },
     async (argv) =>
       await runLocalServices(argv.service, argv.dependencies, {
         dryRun: argv.dry,
+        json: argv.json,
+        neverFail: argv['never-fail'],
       }),
   )
   .demandCommand(1)
