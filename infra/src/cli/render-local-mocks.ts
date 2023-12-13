@@ -5,7 +5,7 @@ import { localrun } from '../dsl/exports/localrun'
 
 export async function renderLocalServices(
   services: string[],
-  { dryRun = false },
+  options: { dryRun?: boolean } = { dryRun: false },
 ) {
   const chartName = 'islandis'
   const env = 'dev'
