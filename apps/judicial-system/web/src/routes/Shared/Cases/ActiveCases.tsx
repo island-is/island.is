@@ -11,7 +11,7 @@ import {
   useAnimation,
 } from 'framer-motion'
 
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, LoadingDots, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   capitalize,
@@ -127,8 +127,17 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   }
 
   const handleRowClick = (id: string) => {
-    setIsOpeningCaseId(id)
-    // onRowClick(id)
+    if (isDeletingCase || isOpeningCaseId === id || !user?.role) {
+      return
+    }
+
+    setIsOpeningCaseId(undefined)
+
+    setTimeout(() => {
+      setIsOpeningCaseId(id)
+    }, 2000)
+
+    onRowClick(id)
   }
 
   return width < theme.breakpoints.md ? (
@@ -139,6 +148,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             onClick={() => handleRowClick(theCase.id)}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
+            isLoading={isOpeningCaseId === theCase.id}
           >
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
@@ -224,8 +234,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 data-testid="custody-cases-table-row"
                 role="button"
                 aria-label="Opna kröfu"
+                aria-disabled={isDeletingCase || isOpeningCaseId === c.id}
                 onClick={() => {
-                  user?.role && handleRowClick(c.id)
+                  handleRowClick(c.id)
                 }}
               >
                 <td className={styles.td}>
@@ -342,7 +353,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   )}
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
-                  <LayoutGroup>
+                  <AnimatePresence exitBeforeEnter>
                     {isOpeningCaseId !== c.id ? (
                       isProsecutionUser(user) &&
                       (c.state === CaseState.NEW ||
@@ -350,8 +361,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         c.state === CaseState.SUBMITTED ||
                         c.state === CaseState.RECEIVED) && (
                         <motion.button
-                          key="deleteCase"
-                          // exit={{ opacity: 0, x: 10 }}
+                          key={`${c.id}-delete`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
                           data-testid="deleteCase"
                           aria-label="Viltu afturkalla kröfu?"
                           className={styles.deleteButton}
@@ -374,14 +387,15 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                       )
                     ) : (
                       <motion.div
-                        key="asdasd"
-                        // initial={{ opacity: 0, x: 10 }}
-                        // animate={{ opacity: 1, x: 0 }}
+                        key={`${c.id}-loading`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                       >
-                        asd
+                        <LoadingDots single />
                       </motion.div>
                     )}
-                  </LayoutGroup>
+                  </AnimatePresence>
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
                   <Button
