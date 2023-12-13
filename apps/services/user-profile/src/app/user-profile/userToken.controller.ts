@@ -1,13 +1,6 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { Scopes, ScopesGuard, IdsAuthGuard } from '@island.is/auth-nest-tools'
-import {
-  Controller,
-  Get,
-  Inject,
-  Param,
-  UseGuards,
-  Logger,
-} from '@nestjs/common'
+import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common'
 import {
   ApiOkResponse,
   ApiOperation,
@@ -18,7 +11,7 @@ import {
 import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { UserProfileService } from './userProfile.service'
 import { UserProfile } from './userProfile.model'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('User Profile')
