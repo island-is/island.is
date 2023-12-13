@@ -78,7 +78,7 @@ export const getLocalrunValueFile = async (
         { PROD_MODE: 'true' },
         portConfig,
       ) as Record<string, string>,
-      command: [
+      commands: [
         `source ${join(rootDir, `.env.${serviceNXName}`)}`,
         `yarn start ${serviceNXName}`,
       ],
@@ -194,8 +194,8 @@ export const getLocalrunValueFile = async (
     dockerComposeServices,
   })
   for (const [name, service] of Object.entries(dockerComposeServices)) {
-    renderedServices[name] = { command: service.command, env: service.env }
-    logger.debug(`Docker command for ${name}:`, { command: service.command })
+    renderedServices[name] = { commands: service.commands, env: service.env }
+    logger.debug(`Docker command for ${name}:`, { command: service.commands })
   }
   return {
     services: renderedServices,

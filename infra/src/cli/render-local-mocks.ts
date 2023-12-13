@@ -28,7 +28,7 @@ export async function renderLocalServices(
   if (print) {
     const commandedServices = Object.entries(
       renderedLocalServices.services,
-    ).map(([k, v]) => [k, `(${(v.command ?? []).join(' && ')})`])
+    ).map(([k, v]) => [k, `(${(v.commands ?? []).join(' && ')})`])
     console.log(
       (json ? (s: any) => JSON.stringify(s, null, 2) : (s: any) => s)({
         mocks: renderedLocalServices.mocks,
@@ -62,11 +62,11 @@ export async function runLocalServices(
     logger.warn(`Running ${name} in the background`)
     logger.info('Running in the background', {
       service: name,
-      command: service,
+      command: service.commands,
     })
     const command = options.dryRun
       ? 'echo'
-      : (service.command ?? []).join(' && ')
+      : (service.commands ?? []).join(' && ')
     const proc = exec(command, (err, stdout, stderr) => {
       if (err) {
         logger.error(`Error running ${name}`, { err })

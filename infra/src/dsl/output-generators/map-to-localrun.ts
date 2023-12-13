@@ -49,13 +49,13 @@ const serializeService = async (
         serviceDef.resources.limits.memory,
       )}`,
     },
-    command: [],
+    commands: [],
   }
   let initContainers: { [name: string]: LocalrunService } = {}
 
   // command and args
   if (serviceDef.cmds) {
-    result.command = [serviceDef.cmds!].concat(serviceDef.args ?? [])
+    result.commands = [serviceDef.cmds!].concat(serviceDef.args ?? [])
   }
 
   // target port

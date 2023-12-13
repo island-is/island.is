@@ -130,7 +130,7 @@ export interface HelmService {
 
 export interface LocalrunService {
   env: ContainerEnvironmentVariables
-  command?: string[]
+  commands?: string[]
   port?: number
 }
 
