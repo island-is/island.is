@@ -37,7 +37,9 @@ export const Payment = ({
         <GridRow marginBottom={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
-              label={formatMessage(additionalSupportForTheElderyFormMessage.payment.bank)}
+              label={formatMessage(
+                additionalSupportForTheElderyFormMessage.payment.bank,
+              )}
               value={formatBankInfo(bank)}
             />
           </GridColumn>

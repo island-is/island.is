@@ -110,7 +110,7 @@ export function getApplicationExternalData(
     externalData,
     'socialInsuranceAdministrationCurrencies.data',
   ) as Array<string>
-  
+
   const isEligible = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',

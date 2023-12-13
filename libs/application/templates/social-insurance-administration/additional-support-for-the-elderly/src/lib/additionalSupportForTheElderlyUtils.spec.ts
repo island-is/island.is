@@ -8,9 +8,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import {
-  getAvailableYears,
-} from './additionalSupportForTheElderlyUtils'
+import { getAvailableYears } from './additionalSupportForTheElderlyUtils'
 
 function buildApplication(data?: {
   answers?: FormValue
