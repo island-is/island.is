@@ -41,6 +41,18 @@ const mapServiceToNXname = async (serviceName: string) => {
     )
   return nxName.length === 1 ? nxName[0] : serviceName
 }
+
+/**
+ * This function `getLocalrunValueFile` is an asynchronous function that takes in a `runtime` object
+ * and a `services` object. It returns a promise that resolves to a `LocalrunValueFile` object.
+ *
+ * The function processes the `services` and `runtime` objects to create configurations for Docker
+ * and mock services. These configurations are then written to specific files in the root directory.
+ *
+ * @param {Localhost} runtime - The runtime object.
+ * @param {Services<LocalrunService>} services - The services object.
+ * @returns {Promise<LocalrunValueFile>}
+ */
 export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
@@ -114,7 +126,8 @@ export const getLocalrunValueFile = async (
                     proxy: {
                       to: target.replace('localhost', 'host.docker.internal'),
                       mode: 'proxyAlways',
-                      // soffia proxy service hack. need to get this proxy to forward host header but not really how to do it yet.
+                      // soffia proxy service hack. need to get this proxy to forward host header
+                      // but not really how to do it yet.
                       ...(target === 'https://localhost:8443'
                         ? {
                             injectHeaders: {
@@ -150,17 +163,31 @@ export const getLocalrunValueFile = async (
     { encoding: 'utf-8' },
   )
 
-  const mocks = `docker run -it --rm -p 2525:2525 ${mocksConfigs.ports
-    .map((port) => `-p ${port}:${port}`)
-    .join(
-      ' ',
-    )} -v ${process.cwd()}/${defaultMountebankConfig}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
+  const mocksObj = {
+    containerer: 'docker',
+    containererFlags: '-it --rm',
+    ports: mocksConfigs.ports,
+    mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json`],
+    image: 'docker.io/bbyars/mountebank:2.8.1',
+    command: 'start --configfile=/app/default.json',
+  }
+
+  const mocks = [
+    mocksObj.containerer,
+    mocksObj.containererFlags,
+    mocksObj.ports.map((p) => `-p ${p}`).join(' '),
+    mocksObj.mounts.map((m) => `-v ${m}`).join(' '),
+    mocksObj.image,
+    mocksObj.command,
+  ]
+  const mocksStr = mocks.join(' ')
+  console.log(`Docker command for mocks:`, { mocks })
 
   return {
     services: Object.entries(dockerComposeServices).reduce(
       (acc, [name, service]) => ({ ...acc, [name]: service.command }),
       {},
     ),
-    mocks: mocks,
+    mocks: mocksStr,
   }
 }
