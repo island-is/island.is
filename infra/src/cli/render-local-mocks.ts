@@ -3,7 +3,7 @@ import { Charts, Deployments } from '../uber-charts/all-charts'
 import { Localhost } from '../dsl/localhost-runtime'
 import { localrun } from '../dsl/exports/localrun'
 import { logger } from '../common'
-import { ChildProcess, exec } from 'child_process'
+import { ChildProcess, exec, spawn } from 'child_process'
 import { LocalrunValueFile } from '../dsl/types/output-types'
 
 export async function renderLocalServices(
@@ -78,12 +78,25 @@ export async function runLocalServices(
     const noFailCommand = [builtCommand, neverFail ? 'true' : 'false'].join(
       ' || ',
     )
-    logger.warn(`Running ${name} in the background`)
-    logger.info('Running in the background', {
+    logger.info(`Running ${name} in the background`)
+    logger.debug('Running in the background', {
       service: name,
       command: noFailCommand,
       builtCommand,
     })
+
+    const procSpawn = spawn(noFailCommand, {
+      shell: true,
+      stdio: 'inherit',
+    })
+
+    procSpawn.stdout?.on('data', (data) => {
+      logger.info(`${name}: ${data}`)
+    })
+    procSpawn.stdout?.on('data', (data) => {
+      logger.error(`${name}: ${data}`)
+    })
+
     const proc = exec(noFailCommand, (err, stdout, stderr) => {
       if (err) {
         logger.error(`Error running ${name}`, { err })
