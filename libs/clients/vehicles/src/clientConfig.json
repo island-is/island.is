@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Samgöngustofa",
-    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-22 : 20231122.2",
+    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-23 : 20231123.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -1767,7 +1767,21 @@
           "make": { "type": "string", "nullable": true },
           "color": { "type": "string", "nullable": true },
           "role": { "type": "string", "nullable": true },
-          "stolen": { "type": "boolean" }
+          "stolen": { "type": "boolean" },
+          "vin": { "type": "string", "nullable": true },
+          "firstRegistrationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "newRegistrationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "importCode": { "type": "string", "nullable": true },
+          "fuelCode": { "type": "string", "nullable": true },
+          "vehicleRegistrationCode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
