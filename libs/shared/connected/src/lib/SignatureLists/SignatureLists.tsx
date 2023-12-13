@@ -29,8 +29,8 @@ export const SignatureLists: FC<
   return (
     <>
       {!loading && lists?.length > 0 && (
-        <>
-          <Box marginTop={10} marginBottom={3}>
+        <Box>
+          <Box marginBottom={3}>
             <Text variant="h4">{t('title', 'Virkir listar')}</Text>
           </Box>
           <Stack space={4}>
@@ -63,7 +63,7 @@ export const SignatureLists: FC<
                 )
               })}
           </Stack>
-        </>
+        </Box>
       )}
     </>
   )
