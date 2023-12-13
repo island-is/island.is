@@ -62,7 +62,7 @@ yargs(hideBin(process.argv))
       const secrets = services.flatMap((s) => {
         return Object.values(s.secrets)
       })
-      logger.info([...new Set(secrets)].join('\n'))
+      logger.debug([...new Set(secrets)].join('\n'))
     },
   )
   .command(
@@ -77,7 +77,7 @@ yargs(hideBin(process.argv))
 
       const { Parameter } = await ssm.getParameter(parameterInput).promise()
       if (Parameter) {
-        return logger.info(Parameter.Value)
+        return logger.debug(Parameter.Value)
       }
     },
   )
@@ -93,7 +93,7 @@ yargs(hideBin(process.argv))
           Type: 'SecureString',
         })
         .promise()
-      logger.info('Done!')
+      logger.debug('Done!')
     },
   )
 
@@ -110,7 +110,7 @@ yargs(hideBin(process.argv))
         })
         .promise()
       if (Parameters && Parameters.length > 0) {
-        logger.info(
+        logger.debug(
           `Parameters to destroy: ${Parameters.map(({ Name }) => Name)}`,
         )
         await Promise.all(

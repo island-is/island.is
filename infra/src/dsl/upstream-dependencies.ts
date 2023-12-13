@@ -39,7 +39,7 @@ const findUpstreamDependencies = (
   svc: ServiceBuilder<any> | string,
   { dryRun = false, level = 0 }: { dryRun?: boolean; level?: number } = {},
 ): string[] => {
-  logger.info('findUpstreamDependencies', { svc, options: { dryRun, level } })
+  logger.debug('findUpstreamDependencies', { svc, options: { dryRun, level } })
   if (level > MAX_LEVEL_DEPENDENCIES)
     throw new Error(
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
@@ -48,7 +48,7 @@ const findUpstreamDependencies = (
     runtime.deps[typeof svc === 'string' ? svc : svc.serviceDef.name] ??
       new Set<string>(),
   )
-  logger.info('Recursively finding upstream dependencies', { upstreams })
+  logger.debug('Recursively finding upstream dependencies', { upstreams })
   return upstreams
     .map((dependency) =>
       findUpstreamDependencies(runtime, dependency, {
@@ -66,11 +66,11 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
   serializer: OutputFormat<T>,
   options: { dryRun?: boolean } = { dryRun: false },
 ): Promise<ServiceBuilder<any>[]> => {
-  logger.info('withUpstreamDependencies', { services, options })
+  logger.debug('withUpstreamDependencies', { services, options })
   const dependencyTracer = new UpstreamDependencyTracer()
   const localHabitat = cloneDeep(habitat)
 
-  logger.info(`Generating output for ${localHabitat.length} services`)
+  logger.debug(`Generating output for ${localHabitat.length} services`)
   await generateOutput({
     runtime: dependencyTracer,
     services: localHabitat,
@@ -78,12 +78,12 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
     env: env,
   }) // doing this so we find out the dependencies
 
-  logger.info('Finding downstream dependencies')
+  logger.debug('Finding downstream dependencies')
   const downstreamServices = services
     .map((s) => findUpstreamDependencies(dependencyTracer, s, options))
     .flatMap((x) => x)
 
-  logger.info('Doing some hacks')
+  logger.debug('Doing some hacks')
   const hacks = services
     .map((s) => s.serviceDef.name)
     .concat(downstreamServices)
@@ -91,7 +91,7 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
     ? findUpstreamDependencies(dependencyTracer, 'api', options).concat(['api'])
     : []
 
-  logger.info('Rebuilding the output')
+  logger.debug('Rebuilding the output')
   return services
     .concat(
       downstreamServices

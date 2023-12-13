@@ -8,7 +8,7 @@ export async function renderLocalServices(
   services: string[],
   options: { dryRun?: boolean } = { dryRun: false },
 ) {
-  logger.info('renderLocalServices', { services, options })
+  logger.debug('renderLocalServices', { services, options })
   const chartName = 'islandis'
   const env = 'dev'
   const envConfig = Envs[Deployments[chartName][env]]
@@ -29,16 +29,16 @@ export async function runLocalServices(
   dependencies: string[] = [],
   options: { dryRun?: boolean } = { dryRun: false },
 ) {
-  logger.info('runLocalServices', { services, dependencies })
+  logger.debug('runLocalServices', { services, dependencies })
   const renderedLocalServices = await renderLocalServices(services, {
     dryRun: options.dryRun,
   })
   for (const service of Object.keys(renderedLocalServices.services)) {
     if (dependencies.length > 0 && !dependencies.includes(service)) {
-      logger.info(`Skipping ${service} as it is not specified as a dependency`)
+      logger.debug(`Skipping ${service} as it is not specified as a dependency`)
       continue
     }
-    logger.info(`Running ${service} in the background`)
+    logger.debug(`Running ${service} in the background`)
   }
   return
 }

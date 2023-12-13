@@ -11,7 +11,7 @@ export function hacks(
   fullSetOfServices: ServiceBuilder<any>[],
   habitat: ServiceBuilder<any>[],
 ) {
-  logger.info('hacks', { numberOfServices: fullSetOfServices.length })
+  logger.debug('hacks', { numberOfServices: fullSetOfServices.length })
   const api = fullSetOfServices.find((s) => s.serviceDef.name === 'api')
   const applicationSystemAPI = fullSetOfServices.find(
     (s) => s.serviceDef.name === 'application-system-api',

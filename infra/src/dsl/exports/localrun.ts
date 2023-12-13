@@ -14,7 +14,7 @@ export async function localrun(
   services: ServiceBuilder<any>[],
   options: { dryRun?: boolean } = { dryRun: false },
 ) {
-  logger.info('localrun', { services, options })
+  logger.debug('localrun', { services, options })
   const fullSetOfServices = await withUpstreamDependencies(
     envConfig,
     habitat,

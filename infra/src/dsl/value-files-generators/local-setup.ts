@@ -60,9 +60,9 @@ export const getLocalrunValueFile = async (
   services: Services<LocalrunService>,
   options: { dryRun?: boolean } = { dryRun: false },
 ): Promise<LocalrunValueFile> => {
-  logger.info('getLocalrunValueFile', { runtime, services })
+  logger.debug('getLocalrunValueFile', { runtime, services })
 
-  logger.info('Process services', { services })
+  logger.debug('Process services', { services })
   const dockerComposeServices = await Object.entries(services).reduce(
     async (acc, [name, service]) => {
       const portConfig = runtime.ports[name]
@@ -96,13 +96,13 @@ export const getLocalrunValueFile = async (
     ),
   )
 
-  logger.info('Dump all env values to files', {
+  logger.debug('Dump all env values to files', {
     dockerComposeServices,
   })
   await Promise.all(
     Object.entries(dockerComposeServices).map(async ([name, svc]) => {
       const serviceNXName = await mapServiceToNXname(name)
-      logger.info(`Writing env to file for ${name}`, { name, serviceNXName })
+      logger.debug(`Writing env to file for ${name}`, { name, serviceNXName })
       if (options.dryRun) return
       await writeFile(
         join(rootDir, `.env.${serviceNXName}`),
@@ -167,7 +167,7 @@ export const getLocalrunValueFile = async (
     { ports: [] as number[], configs: [] as any[] },
   )
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
-  logger.info('Writing default mountebank config to file', {
+  logger.debug('Writing default mountebank config to file', {
     defaultMountebankConfig,
     mocksConfigs,
   })
@@ -196,7 +196,7 @@ export const getLocalrunValueFile = async (
     mocksObj.command,
   ]
   const mocksStr = mocks.join(' ')
-  logger.info(`Docker command for mocks:`, { mocks })
+  logger.debug(`Docker command for mocks:`, { mocks })
 
   return {
     services: Object.entries(dockerComposeServices).reduce(

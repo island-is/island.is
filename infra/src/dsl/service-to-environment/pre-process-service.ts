@@ -31,7 +31,7 @@ export const prepareServiceForEnv = (
       serviceDef: ServiceDefinitionForEnv
     }
   | SerializeErrors => {
-  logger.info('prepareServiceForEnv', { serviceName: service.name })
+  logger.debug('prepareServiceForEnv', { serviceName: service.name })
   let allErrors: string[] = []
   const checkCollisions = (
     target: { [name: string]: any },

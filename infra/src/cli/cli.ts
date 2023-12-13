@@ -63,12 +63,12 @@ yargs(process.argv.slice(2))
     },
     async (argv) => {
       if (argv.json) {
-        logger.info(
+        logger.debug(
           JSON.stringify(await renderLocalServices(argv.service as string[])),
         )
         return
       }
-      logger.info(await renderLocalServices(argv.service as string[]))
+      logger.debug(await renderLocalServices(argv.service as string[]))
     },
   )
   .command(

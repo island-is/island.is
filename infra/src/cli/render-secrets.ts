@@ -67,6 +67,6 @@ export const renderSecrets = async (service: string) => {
     const escapedValue = values[ssmName]
       .replace(/\s+/g, ' ')
       .replace(/'/g, "'\\''")
-    logger.info(`export ${envName}='${escapedValue}'`)
+    logger.debug(`export ${envName}='${escapedValue}'`)
   })
 }

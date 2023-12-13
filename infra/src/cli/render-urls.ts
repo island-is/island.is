@@ -45,7 +45,7 @@ const renderUrlsForChart = async (
 }
 
 export const renderUrls = async (environment: OpsEnv) => {
-  logger.info(
+  logger.debug(
     await ChartNames.reduce(async (acc, chartName) => {
       return {
         ...(await acc),

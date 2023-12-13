@@ -15,7 +15,7 @@ export function prepareServicesForEnv<T extends ServiceOutputType>(options: {
   env: EnvironmentConfig
   outputFormat: OutputFormat<T>
 }) {
-  logger.info('prepareServicesForEnv', {
+  logger.debug('prepareServicesForEnv', {
     numberOfServices: Array.isArray(options.services)
       ? options.services.length
       : 1,
@@ -52,7 +52,7 @@ export const generateOutput = async <T extends ServiceOutputType>(options: {
   outputFormat: OutputFormat<T>
   env: EnvironmentConfig
 }) => {
-  logger.info('generateOutput', {
+  logger.debug('generateOutput', {
     numberOfServices: Array.isArray(options.services)
       ? options.services.length
       : 1,
@@ -68,7 +68,7 @@ export const generateOutput = async <T extends ServiceOutputType>(options: {
     outputFormat: outputFormat,
   })
 
-  logger.info('Serializing services', {
+  logger.debug('Serializing services', {
     numberOfServices: preparedServices.length,
     env: env,
   })

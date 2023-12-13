@@ -34,7 +34,7 @@ const serializeService = async (
   withSecrets: boolean,
   env1: EnvironmentConfig,
 ): Promise<SerializeSuccess<LocalrunService> | SerializeErrors> => {
-  logger.info('Serializing service', {
+  logger.debug('Serializing service', {
     service: service.name,
     env: env1,
   })

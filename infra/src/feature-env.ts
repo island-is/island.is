@@ -54,13 +54,13 @@ const writeToOutput = async (data: string, output?: string) => {
       const s3 = new AWS.S3(config)
       try {
         await s3.putObject(objectParams).promise()
-        logger.info(`Successfully uploaded data to ${output}`)
+        logger.debug(`Successfully uploaded data to ${output}`)
       } catch (err) {
-        logger.info('Error', err)
+        logger.debug('Error', err)
       }
     }
   } else {
-    logger.info(data)
+    logger.debug(data)
   }
 }
 
