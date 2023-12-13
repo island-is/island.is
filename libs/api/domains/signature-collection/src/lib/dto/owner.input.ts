@@ -13,9 +13,9 @@ export class SignatureCollectionOwnerInput {
 
   @Field({ nullable: true })
   @IsString()
-  phone?: string
+  phone!: string
 
   @Field({ nullable: true })
   @IsString()
-  email?: string
+  email!: string
 }

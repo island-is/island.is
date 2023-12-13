@@ -13,6 +13,7 @@ import { SignatureCollectionListInput } from './dto/singatureList.input'
 import { SignatureCollectionFindSignatureInput } from './dto/findSignature.input'
 import { SignatureCollectionClientService } from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -23,13 +24,7 @@ export class SignatureCollectionService {
   ) {}
 
   async canCreate(nationalId: string): Promise<SignatureCollectionSuccess> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: !!Lists.find((list) => list.owner.nationalId === nationalId),
-        })
-      }, 300)
-    })
+   return await this.signatureCollectionClientService.canCreate(nationalId)
   }
 
   async isOwner(nationalId: string): Promise<SignatureCollectionSuccess> {
@@ -107,16 +102,14 @@ export class SignatureCollectionService {
   }
 
   async create(
+    user:User,
     input: SignatureCollectionListInput,
-  ): Promise<SignatureCollectionSuccess> {
-    await this.signatureCollectionClientService.createLists(
-      input.owner.nationalId,
+  ): Promise<SignatureCollectionList[]> {
+    return await this.signatureCollectionClientService.createLists(
+      input,
+      user
     )
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true })
-      }, 300)
-    })
+   
   }
 
   async sign(

@@ -5,12 +5,20 @@ import {
   MedmaelasofnunApi,
   MedmaeliApi,
 } from '../../gen/fetch'
-import { AreaInput } from './signature-collection.types'
+import { GetListInput, CreateListInput } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
 import { List, mapList } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { BulkUpload } from './types/bulkUpload.dto'
+
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+// import {
+//   DelegationDTO,
+//   MeDelegationsApi,
+//   MeDelegationsControllerFindAllDirectionEnum,
+//   MeDelegationsControllerFindAllValidityEnum,
+// } from '@island.is/clients/auth/delegation-api'
 
 @Injectable()
 export class SignatureCollectionClientService {
@@ -18,14 +26,35 @@ export class SignatureCollectionClientService {
     private listsApi: MedmaelalistarApi,
     private collectionsApi: MedmaelasofnunApi,
     private signatureApi: MedmaeliApi,
+    // private delegationsApi: MeDelegationsApi
   ) {}
 
-  async currentCollectionId(): Promise<number> {
+  // private delegationsApiWithAuth(auth: Auth) {
+  //   return this.delegationsApi.withMiddleware(new AuthMiddleware(auth))
+  // }
+
+  // async getActorDelegations(
+  //   user: User,
+
+  // ): Promise<DelegationDTO[]> {
+  //   return await this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
+  //     // domain: input.domain ?? undefined,
+  //     direction:MeDelegationsControllerFindAllDirectionEnum.outgoing,
+  //     validity: MeDelegationsControllerFindAllValidityEnum.now,
+  //   })
+  // }
+
+  async currentCollectionInfo(): Promise<{
+    id: number
+    isPresidential: boolean
+  }> {
     // TODO: Will be updated to include optional election type caategory so that we can get just active or most recent collection of type
     const res = await this.collectionsApi.medmaelasofnunGet({
       includeInactive: false,
     })
+
     const now = new Date()
+    // TODO: return most active and is open or most recent with not open 
     const curr = res.find(({ sofnunStart, sofnunEnd, id }) => {
       if (!sofnunStart || !sofnunEnd || !id) {
         console.log('missing data')
@@ -36,17 +65,19 @@ export class SignatureCollectionClientService {
     if (!curr?.id) {
       throw new Error('No current collection')
     }
-    return curr.id
+    return {
+      id: curr.id,
+      isPresidential: curr.kosningTegund === 'Forsetakosning',
+    }
   }
 
   //   Current Collection
   async getCurrentCollection(): Promise<Collection> {
-    const id = await this.currentCollectionId()
+    const { id } = await this.currentCollectionInfo()
 
     const currentCollection = await this.collectionsApi.medmaelasofnunIDGet({
       iD: id,
     })
-
     return {
       id: currentCollection.id?.toString() ?? '',
       name: currentCollection.kosningNafn ?? '',
@@ -61,8 +92,8 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async getListsParams({ areaId, nationalId }: AreaInput) {
-    const id = await this.currentCollectionId()
+  async getListsParams({ areaId, nationalId }: GetListInput) {
+    const { id } = await this.currentCollectionInfo()
     if (nationalId) {
       const { isOwner, area } = await this.getSignee(nationalId)
       if (isOwner) {
@@ -78,7 +109,7 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async getLists(input: AreaInput): Promise<List[]> {
+  async getLists(input: GetListInput): Promise<List[]> {
     const params = await this.getListsParams(input)
     const lists = await this.listsApi.medmaelalistarGet(params)
     return lists.map((list) => mapList(list))
@@ -99,7 +130,7 @@ export class SignatureCollectionClientService {
   }
 
   async getAreas(collectionId: number) {
-    // const collectionId = await this.currentCollectionId()
+    // const collection{Id} = await this.currentCollectionInfo()
     const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
       iD: collectionId,
     })
@@ -109,19 +140,52 @@ export class SignatureCollectionClientService {
     }))
   }
 
-  async createLists(nationalId: string): Promise<List[]> {
-    // TODO: get areas if forseta otherwise input areas
-    // TODO: is missing phone and email fields
-    const id = await this.currentCollectionId()
-    const areas = await this.getAreas(id)
+  async createLists({
+    collectionId,
+    owner,
+    areas,
+  }: CreateListInput, user:User): Promise<List[]> {
+    const { id } = await this.currentCollectionInfo()
+    // TODO: check if collectionId is current collection and current collection is open
+    if(collectionId !== id.toString()) {
+      throw new Error('Collection is not open')
+    }
+    // TODO: check delegations
+    // const delegations  = await this.getActorDelegations(user)
+    // console.log(delegations)
+    // area input is optinal, if not provided list will be available in all areas
+    const collectionAreas = await this.getAreas(id)
+    const filteredAreas = areas
+      ? collectionAreas.filter((area) =>
+          areas.flatMap((a) => parseInt(a.areaId)).includes(area.id),
+        )
+      : collectionAreas
+
+      console.log({
+        medmaelalistiRequestDTO: {
+          sofnunID: id,
+  
+          kennitala: owner.nationalId,
+          simi: owner.phone,
+          netfang: owner.email,
+          medmaelalistar: filteredAreas.map((area) => ({
+            svaediID: area.id,
+            listiNafn: `${owner.name} ${area.name}`,
+          })),
+        },
+      })
+
+
     const lists = await this.listsApi.medmaelalistarAddListarPost({
       medmaelalistiRequestDTO: {
         sofnunID: id,
 
-        kennitala: nationalId,
-        medmaelalistar: areas.map((area) => ({
+        kennitala: owner.nationalId,
+        simi: owner.phone,
+        netfang: owner.email,
+        medmaelalistar: filteredAreas.map((area) => ({
           svaediID: area.id,
-          listiNafn: area.name + ' test',
+          listiNafn: `${owner.name} ${area.name}`,
         })),
       },
     })
@@ -135,6 +199,7 @@ export class SignatureCollectionClientService {
     })
     return mapSignature(signature)
   }
+
   async unsignList(signatureId: string): Promise<Signature> {
     // TODO: chagne to simple success if signature returned
     const signature = await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
@@ -145,7 +210,7 @@ export class SignatureCollectionClientService {
   //   Cancel - Delete all lists
 
   async getUser(nationalId: string): Promise<EinstaklingurKosningInfoDTO> {
-    const id = await this.currentCollectionId()
+    const { id } = await this.currentCollectionInfo()
     return await this.collectionsApi.medmaelasofnunIDEinsInfoKennitalaGet({
       kennitala: nationalId,
       iD: id,
@@ -168,7 +233,7 @@ export class SignatureCollectionClientService {
   }
 
   async getSignee(nationalId: string): Promise<Signee> {
-    const id = await this.currentCollectionId()
+    const { id } = await this.currentCollectionInfo()
     const user = await this.collectionsApi.medmaelasofnunIDEinsInfoKennitalaGet(
       {
         kennitala: nationalId,
@@ -227,7 +292,7 @@ export class SignatureCollectionClientService {
   ): Promise<Signature[]> {
     // TODO: scope admin
     // Takes a list of nationalIds and returns signatures found on any list in current collection
-    const id = await this.currentCollectionId()
+    const { id } = await this.currentCollectionInfo()
     const signaturesFound =
       await this.collectionsApi.medmaelasofnunIDComparePost({
         iD: id,
