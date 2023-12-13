@@ -38,7 +38,7 @@ import {
   EventType,
   isIndictmentCase,
   isRestrictionCase,
-  prosecutorShouldSelectDefenderForInvestigationCase,
+  prosecutorCanSelectDefenderForInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -1166,7 +1166,7 @@ export class CaseService {
       .transaction(async (transaction) => {
         const shouldCopyDefender =
           isRestrictionCase(theCase.type) ||
-          prosecutorShouldSelectDefenderForInvestigationCase(theCase.type)
+          prosecutorCanSelectDefenderForInvestigationCase(theCase.type)
 
         const caseId = await this.createCase(
           {
