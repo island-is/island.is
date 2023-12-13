@@ -159,39 +159,3 @@ export const courseTypeIcon = style({
     },
   },
 })
-
-export const courseTypeIconBlue = style({
-  height: '27px',
-  width: '27px',
-  borderRadius: 50,
-  padding: 5,
-  backgroundColor: `${theme.color.red100}`,
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-})
-
-export const courseTypeIconPurple = style({
-  height: '27px',
-  width: '27px',
-  borderRadius: 50,
-  padding: 5,
-  backgroundColor: `${theme.color.blue100}`,
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-})
-
-export const courseTypeIconRed = style({
-  height: '27px',
-  width: '27px',
-  borderRadius: 50,
-  padding: 5,
-  backgroundColor: `${theme.color.purple100}`,
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-})
