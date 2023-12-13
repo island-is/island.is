@@ -48,6 +48,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
               auth,
               vehicle,
             )
+
           return {
             ...vehicle,
             vehicleGrant: vehicleGrant?.priceAmount,
@@ -75,8 +76,6 @@ export class EnergyFundsService extends BaseTemplateApiService {
 
     return await Promise.all(
       onlyElectricVehicles?.map(async (vehicle) => {
-        let vehicleGrantPriceAmount: number | undefined
-        let vehicleGrantItemCode: string | undefined
         let hasReceivedSubsidy: boolean | undefined
 
         // Only validate if fewer than 5 items
@@ -100,8 +99,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
           fuelCode: vehicle.fuelCode,
           vehicleRegistrationCode: vehicle.vehicleRegistrationCode,
           importCode: vehicle.importCode,
-          vehicleGrant: vehicleGrantPriceAmount,
-          vehicleGrantItemCode: vehicleGrantItemCode,
+          vehicleGrant: vehicle.vehicleGrant,
+          vehicleGrantItemCode: vehicle.vehicleGrantItemCode,
           hasReceivedSubsidy: hasReceivedSubsidy,
         }
       }),
