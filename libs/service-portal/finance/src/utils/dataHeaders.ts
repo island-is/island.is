@@ -35,10 +35,28 @@ export const hreyfingarHeaders = [
   'Aðgerðarflokkur',
   'Tilvísun',
 ]
+
 export const generalHeaders = [
   'Dagsetning',
   'Tegund',
   'Framkvæmdaaðili',
   'Upphæð',
   'Skýring',
+]
+
+export const PeriodHeaders = [
+  'Gjaldflokkur',
+  'Gjaldgrunnur',
+  'Tímabil',
+  'Gjaldliður',
+  'Dagsetning',
+  'Hreyfingaflokkur',
+  'Upphæð',
+  'Gildisdagur',
+  'Framkvæmdaaðili',
+  'Þjónustuaðili',
+  'Hreyfingargerð',
+  'Aðgerðarflokkur',
+  'Tilvísun',
+  'Uppsöfnuð staða',
 ]

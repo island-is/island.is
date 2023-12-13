@@ -7,6 +7,7 @@ import {
   CaseState,
   SessionArrangements,
   CaseType,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
@@ -47,6 +48,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
       openedByDefender: '2020-09-16T19:50:08.033Z',
     }
 
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/test_id_stadfest`)

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { SoffiaService } from './v1/soffia.service'
 import { BrokerService } from './v3/broker.service'
-import { SharedPerson } from './shared/types'
+import { PersonV3, SharedPerson } from './shared/types'
 import { Birthplace, Citizenship, Spouse, Housing } from './shared/models'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -26,14 +26,24 @@ export class NationalRegistryService {
   }
 
   getChildCustody(nationalId: string, data?: SharedPerson) {
-    return data?.api === 'v3'
-      ? this.v3.getChildrenCustodyInformation(nationalId, data?.rawData)
-      : this.v1.getChildCustody(nationalId, data?.rawData)
+    if (data?.api === 'v3') {
+      return this.v3.getChildrenCustodyInformation(
+        nationalId,
+        data?.rawData,
+        data?.useFakeData,
+      )
+    }
+
+    return this.v1.getChildCustody(nationalId, data?.rawData)
   }
 
-  async getChildDetails(nationalId: string, api: 'v1' | 'v3') {
+  async getChildDetails(
+    nationalId: string,
+    api: 'v1' | 'v3',
+    useFakeData?: boolean,
+  ) {
     if (api === 'v3') {
-      return this.v3.getChildDetails(nationalId)
+      return this.v3.getChildDetails(nationalId, useFakeData)
     }
     return this.v1.getPerson(nationalId)
   }

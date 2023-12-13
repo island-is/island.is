@@ -68,7 +68,7 @@ export class VehicleService {
         if (vehicle.ownerNationalId === findVehicle.ownerNationalId) {
           return true
         } else {
-          await findVehicle.destroy({ logging: false })
+          await findVehicle.destroy()
         }
       }
       // Save vehicle to database
