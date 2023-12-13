@@ -10,7 +10,7 @@ import { PublishingPreferencesField } from './fields/draft/PublishingPrefrences'
 export const DraftSection: Section[] = [
   buildSection({
     id: 'NewCase',
-    title: m.basicInformationSectionTitle,
+    title: m.newCaseSectionTitle,
     children: [NewCaseField],
   }),
   buildSection({

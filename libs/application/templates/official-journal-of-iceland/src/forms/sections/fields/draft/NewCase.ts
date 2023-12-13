@@ -3,7 +3,7 @@
 import { buildCustomField } from '@island.is/application/core'
 import { CustomField } from '@island.is/application/types'
 export const NewCaseField: CustomField = buildCustomField({
-  id: 'basicInformation',
+  id: 'newCase',
   title: '',
-  component: 'BasicInformation',
+  component: 'NewCase',
 })

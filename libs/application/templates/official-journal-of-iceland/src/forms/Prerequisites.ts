@@ -9,8 +9,8 @@ export const Prerequsites: Form = buildForm({
   children: [
     PrerequisitesSection,
     buildSection({
-      id: 'BasicInformation',
-      title: m.basicInformationSectionTitle,
+      id: 'NewCase',
+      title: m.newCaseSectionTitle,
       children: [],
     }),
     buildSection({

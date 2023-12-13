@@ -15,8 +15,8 @@ export const Complete: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'BasicInformation',
-      title: m.basicInformationSectionTitle,
+      id: 'NewCase',
+      title: m.newCaseSectionTitle,
       children: [],
     }),
     buildSection({

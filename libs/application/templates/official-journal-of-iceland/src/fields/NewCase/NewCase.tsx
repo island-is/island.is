@@ -1,23 +1,22 @@
 import {
-  Text,
-  Button,
-  ModalBase,
   Box,
-  RadioButton,
+  Button,
   Input,
-  Select,
+  ModalBase,
+  RadioButton,
+  Text,
 } from '@island.is/island-ui/core'
 
-import React, { FC, useMemo, useState } from 'react'
-import { m } from '../../lib/messages'
-import { FormWrap } from '../../components/FormWrap/FormWrap'
-import { FieldBaseProps } from '@island.is/application/types'
-import * as styles from './BasicInformation.css'
-import { FormGroup } from '../../components/FromGroup/FormGroup'
-import { SelectController } from '@island.is/shared/form-fields'
-import { useFormatMessage } from '../../hooks'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { FieldBaseProps } from '@island.is/application/types'
+import { SelectController } from '@island.is/shared/form-fields'
+import React, { FC, useMemo, useState } from 'react'
+import { FormWrap } from '../../components/FormWrap/FormWrap'
+import { FormGroup } from '../../components/FromGroup/FormGroup'
+import { useFormatMessage } from '../../hooks'
+import { m } from '../../lib/messages'
+import * as styles from './NewCase.css'
 export type CaseTemplate = {
   applicationId?: string
   department?: string
@@ -45,7 +44,7 @@ type ExternalData = {
   }
 }
 
-export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+export const NewCase: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   setBeforeSubmitCallback,
   refetch,
@@ -69,8 +68,8 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [newCase, setNewCase] = useState<CaseTemplate>({
     applicationId: '',
     department: departments?.[0],
-    category: '',
-    subCategory: '',
+    category: categories?.[0],
+    subCategory: subCategories?.[0],
     title: '',
     template: '',
     documentContents: '',
@@ -126,7 +125,7 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         header={{
           children: (
             <Text variant="h2" as="h1">
-              {f(m.basicInformationFormTitle)}
+              {f(m.newCaseFormTitle)}
             </Text>
           ),
           button: (
@@ -142,12 +141,13 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           ),
         }}
       >
-        <Text marginBottom={4}>{f(m.basicInformationIntro)}</Text>
+        <Text marginBottom={4}>{f(m.newCaseIntro)}</Text>
         <FormGroup>
           <Box width="half">
             <SelectController
               size="sm"
               id="department"
+              name="department"
               disabled={departments?.length === 1}
               placeholder={f(m.chooseDepartment)}
               label={f(m.department)}
@@ -163,12 +163,12 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           </Box>
           <Box width="half">
             <SelectController
-              required
               size="sm"
               backgroundColor="blue"
-              id="publishingType"
+              id="category"
+              name="category"
               label={f(m.publishingType)}
-              defaultValue={newCase.category}
+              defaultValue={newCase.department}
               placeholder={f(m.choosePublishingType)}
               options={categories?.map((category) => ({
                 label: category,
@@ -336,4 +336,4 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 }
 
-export default BasicInformation
+export default NewCase

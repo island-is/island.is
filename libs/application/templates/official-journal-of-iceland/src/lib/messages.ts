@@ -5,6 +5,10 @@ export const m = defineMessages({
     id: 'ojoi.application:cancel',
     defaultMessage: 'Hætta við',
   },
+  date: {
+    id: 'ojoi.application:date',
+    defaultMessage: 'Dagsetning',
+  },
   confirm: {
     id: 'ojoi.application:confirm',
     defaultMessage: 'Staðfesta',
@@ -142,16 +146,16 @@ export const m = defineMessages({
     defaultMessage:
       'Ég skil ofangreindar upplýsingar og hef leyfi til þess að senda inn mál til birtingar',
   },
-  basicInformationSectionTitle: {
-    id: 'ojoi.application:basicInformationSectionTitle',
+  newCaseSectionTitle: {
+    id: 'ojoi.application:newCaseSectionTitle',
     defaultMessage: 'Grunnupplýsingar',
   },
-  basicInformationFormTitle: {
-    id: 'ojoi.application:basicInformationFormTitle',
+  newCaseFormTitle: {
+    id: 'ojoi.application:newCaseFormTitle',
     defaultMessage: 'Nýtt mál',
   },
-  basicInformationIntro: {
-    id: 'ojoi.application:basicInformationIntro',
+  newCaseIntro: {
+    id: 'ojoi.application:newCaseIntro',
     defaultMessage:
       'Veldu deild og tegund birtingar í fellilistanum hér að neðan og skráðu heiti auglýsingar í viðeigandi reit. Tegundarheitið birtist sjálfkrafa í hástöfum í fyrirsögn og titillinn í næstu línu. Efni auglýsinga er sett í ritilinn hér að neðan og skal vanda alla uppsetningu, setja inn töluliði, töflur o.þ.h. Til einföldunar við vinnslu meginmáls getur þú valið sniðmát og aðlagað það að þinni auglýsingu eða sótt eldri auglýsingu og breytt henni.',
   },
@@ -207,6 +211,10 @@ export const m = defineMessages({
     id: 'ojoi.application:publishingPreferencesFormIntro',
     defaultMessage:
       'Mál sem sent er til birtingar birtist 10 virkum dögum eftir skrásetningardag, hægt er að biðja um að mál birtist fyrr gegn greiðslu álags. Til að fá mál birt samdægurs þarf mál að hafa borist Stjórnartíðindum fyrir hádegi þann dag. Senda skal skilaboð með máli um birtingu samdægurs.',
+  },
+  publishingPreferencesDateLabel: {
+    id: 'ojoi.application:publishingPreferencesDateLabel',
+    defaultMessage: 'Hvenær viltu að auglýsing birtist?',
   },
   summarySectionTitle: {
     id: 'ojoi.application:summarySectionTitle',
