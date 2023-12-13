@@ -107,6 +107,9 @@
       "@island.is/api/domains/endorsement-system": [
         "libs/api/domains/endorsement-system/src/index.ts"
       ],
+      "@island.is/api/domains/energy-funds": [
+        "libs/api/domains/energy-funds/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -142,6 +145,9 @@
       ],
       "@island.is/api/domains/identity": [
         "libs/api/domains/identity/src/index.ts"
+      ],
+      "@island.is/api/domains/intellectual-properties": [
+        "libs/api/domains/intellectual-properties/src/index.ts"
       ],
       "@island.is/api/domains/islykill": [
         "libs/api/domains/islykill/src/index.ts"
@@ -318,6 +324,9 @@
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
+      "@island.is/application/templates/energy-funds": [
+        "libs/application/templates/energy-funds/src/index.ts"
+      ],
       "@island.is/application/templates/estate": [
         "libs/application/templates/estate/src/index.ts"
       ],
@@ -353,6 +362,9 @@
       ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
+      ],
+      "@island.is/application/templates/healthcare-license-certificate": [
+        "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
@@ -547,6 +559,9 @@
       "@island.is/clients/electronic-registration-statistics": [
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
+      "@island.is/clients/energy-funds": [
+        "libs/clients/energy-funds/src/index.ts"
+      ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
@@ -577,6 +592,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/inna": ["libs/clients/inna/src/index.ts"],
+      "@island.is/clients/intellectual-properties": [
+        "libs/clients/intellectual-properties/src/index.ts"
+      ],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"

@@ -6,3 +6,5 @@ export default CarRecyclingTemplate
 
 export * from './lib/carRecyclingUtils'
 export * from './lib/messages'
+
+export * from './shared'

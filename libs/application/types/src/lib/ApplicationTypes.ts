@@ -54,6 +54,8 @@ export enum ApplicationTypes {
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
+  ENERGY_FUNDS = 'EnergyFunds',
+  HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
 }
 
 export const ApplicationConfigurations = {
@@ -276,5 +278,13 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
     slug: 'felagslegur-vidbotarstudningur',
     translation: 'asfte.application',
+  },
+  [ApplicationTypes.ENERGY_FUNDS]: {
+    slug: 'rafbila-styrkur',
+    translation: 'ef.application',
+  },
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
+    slug: 'starfsleyfis-vottord',
+    translation: 'hlc.application',
   },
 }
