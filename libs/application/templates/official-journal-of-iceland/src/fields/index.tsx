@@ -1,2 +1,5 @@
 export { Prerequisites } from './Prerequisites/Prerequisites'
 export { BasicInformation } from './BasicInformation/BasicInformation'
+export { Complete } from './Complete/Complete'
+export { AdditionsAndDocuments } from './AdditionsAndDocuments/AdditionsAndDocuments'
+export { Summary } from './Summary/Summary'

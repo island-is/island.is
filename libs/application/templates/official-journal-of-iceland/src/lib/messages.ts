@@ -151,6 +151,11 @@ export const m = defineMessages({
     id: 'ojoi.application:additionsAndDocumentsSectionTitle',
     defaultMessage: 'Viðaukar og fylgirit',
   },
+  additionsAndDocumentsFormIntro: {
+    id: 'ojoi.application:additionsAndDocumentsFormIntro',
+    defaultMessage:
+      'Hér skal skrá fylgiskjöl og viðauka sem eiga að birtast með auglýsingu á vef Stjórnartíðinda. Önnur gögn sem tilheyra meginmáli auglýsingar (t.d. myndefni) ætti að skrá gegnum ritil fyrir meginmálið.',
+  },
   previewSectionTitle: {
     id: 'ojoi.application:previewSectionTitle',
     defaultMessage: 'Forskoðun',
@@ -170,5 +175,29 @@ export const m = defineMessages({
   completeFormTitle: {
     id: 'ojoi.application:summaryFormTitle',
     defaultMessage: 'Mál hefur verið sent inn til yfirferðar',
+  },
+  fileUploadHeader: {
+    id: 'ojoi.application:fileUploadHeader',
+    defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+  },
+  fileUploadDescription: {
+    id: 'ojoi.application:fileUploadDescription',
+    defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+  },
+  fileUploadButton: {
+    id: 'ojoi.application:fileUploadButton',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+  },
+  fileUploadFileNamesTitle: {
+    id: 'ojoi.application:fileUploadFileNamesTitle',
+    defaultMessage: 'Við birtingu verða skjölin nefnd:',
+  },
+  fileUploadFileNameDocuments: {
+    id: 'ojoi.application:fileUploadFileNameDocuments',
+    defaultMessage: 'Fylgiskjal (1, 2, 3, ...)',
+  },
+  fileUploadFileNameAttachments: {
+    id: 'ojoi.application:fileUploadFileNameAttachments',
+    defaultMessage: 'Viðauki (I, II, III, ...)',
   },
 })

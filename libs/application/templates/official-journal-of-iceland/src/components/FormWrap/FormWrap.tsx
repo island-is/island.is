@@ -1,8 +1,7 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import * as styles from './FormWrap.css'
 import { FormFooter, Props as FormFooterProps } from '../FormFooter/FormFooter'
 import { FormHeader, Props as HeaderProps } from '../FormHeader/FormHeader'
-import { formatText } from '@island.is/application/core'
 type Props = {
   children?: React.ReactNode
   footer?: FormFooterProps

@@ -7,22 +7,22 @@ import { m } from './messages'
 
 import {
   Application,
-  ApplicationRole,
   ApplicationConfigurations,
   ApplicationContext,
+  ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { hasApprovedExternalData } from '../utils/hasApprovedExternalData'
-import { TemplateApiActions } from '../shared'
 import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
+import { TemplateApiActions } from '../shared'
+import { hasApprovedExternalData } from '../utils/hasApprovedExternalData'
 
 export enum ApplicationStates {
+  PREREQUISITS = 'prerequisites',
   DRAFT = 'draft',
-  DATA_GATHERING = 'data_gathering',
   COMPLETE = 'complete',
 }
 
@@ -31,7 +31,7 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 
-type OfficalJournalOfIcelandEvents =
+type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
@@ -40,8 +40,8 @@ type OfficalJournalOfIcelandEvents =
 
 const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<OfficalJournalOfIcelandEvents>,
-  OfficalJournalOfIcelandEvents
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND,
   name: m.applicationName,
@@ -52,13 +52,13 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
   dataSchema: OfficalJournalOfIcelandSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
-    initial: ApplicationStates.DRAFT,
+    initial: ApplicationStates.PREREQUISITS,
     states: {
-      [ApplicationStates.DRAFT]: {
+      [ApplicationStates.PREREQUISITS]: {
         meta: {
           name: 'Umsókn um stjórnartíðindi',
           status: 'draft',
-          progress: 0.33,
+          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -68,7 +68,7 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
               delete: true,
               formLoader: () =>
                 import('../forms/Prerequisites').then((val) =>
-                  Promise.resolve(val.PrerequsitesForm),
+                  Promise.resolve(val.Prerequsites),
                 ),
               actions: [
                 {
@@ -83,20 +83,20 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
-              target: ApplicationStates.DATA_GATHERING,
+              target: ApplicationStates.DRAFT,
               cond: hasApprovedExternalData,
             },
             {
-              target: ApplicationStates.DRAFT,
+              target: ApplicationStates.PREREQUISITS,
             },
           ],
         },
       },
-      [ApplicationStates.DATA_GATHERING]: {
+      [ApplicationStates.DRAFT]: {
         meta: {
           name: '',
           status: 'draft',
-          progress: 0.66,
+          progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.getCaseData,
@@ -111,8 +111,8 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               formLoader: () =>
-                import('../forms/BasicInformation').then((val) =>
-                  Promise.resolve(val.BasicInformation),
+                import('../forms/Draft').then((val) =>
+                  Promise.resolve(val.Draft),
                 ),
               actions: [
                 {
@@ -138,10 +138,11 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              delete: true,
               read: 'all',
               formLoader: () =>
                 import('../forms/Complete').then((val) =>
-                  Promise.resolve(val.CompleteForm),
+                  Promise.resolve(val.Complete),
                 ),
             },
           ],

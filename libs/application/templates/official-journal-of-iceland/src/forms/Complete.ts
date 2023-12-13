@@ -1,34 +1,18 @@
-import {
-  buildCustomField,
-  buildDescriptionField,
-  buildForm,
-  buildMultiField,
-  buildSection,
-  buildSubmitField,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-export const PrerequsitesForm: Form = buildForm({
+import { CompleteSection } from './sections'
+export const Complete: Form = buildForm({
   id: 'OfficalJournalOfIcelandPreRequsitesForm',
-  title: 'Skilyrði', // page title
+  title: 'Skilyrði',
   mode: FormModes.DRAFT,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'ExternalData',
       title: m.prerequisitesSectionTitle,
-      children: [
-        buildMultiField({
-          id: 'prerequisites',
-          title: '',
-          children: [
-            buildCustomField({
-              id: 'prerequisites',
-              title: '',
-              component: 'Prerequisites',
-            }),
-          ],
-        }),
-      ],
+      children: [],
     }),
     buildSection({
       id: 'BasicInformation',
@@ -41,6 +25,11 @@ export const PrerequsitesForm: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'Preview',
+      title: m.previewSectionTitle,
+      children: [],
+    }),
+    buildSection({
       id: 'OriginalData',
       title: m.originalDataSectionTitle,
       children: [],
@@ -50,10 +39,6 @@ export const PrerequsitesForm: Form = buildForm({
       title: m.publicationPreferencesSectionTitle,
       children: [],
     }),
-    buildSection({
-      id: 'Summary',
-      title: m.summarySectionTitle,
-      children: [],
-    }),
+    CompleteSection,
   ],
 })
