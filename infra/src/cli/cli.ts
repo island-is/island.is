@@ -75,11 +75,14 @@ yargs(process.argv.slice(2))
     'Render environment and run the local environment.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
       return yargs
-        .option('service', { demandOption: true, array: true })
-        .option('dependencies', { array: true, default: [] })
+        .option('service', { array: true, type: 'string', demandOption: true })
+        .option('dependencies', { array: true, type: 'string', default: [] })
+        .option('dry', { type: 'boolean', default: false })
     },
     async (argv) => {
-      await runLocalServices(
+      await runLocalServices(argv.service, argv.dependencies, {
+        dryRun: argv.dry,
+      })
     },
   )
   .demandCommand(1)

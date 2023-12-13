@@ -11,6 +11,7 @@ export async function localrun(
   habitat: ServiceBuilder<any>[],
   runtime: Localhost,
   services: ServiceBuilder<any>[],
+  { dryRun = false },
 ) {
   const fullSetOfServices = await withUpstreamDependencies(
     envConfig,
