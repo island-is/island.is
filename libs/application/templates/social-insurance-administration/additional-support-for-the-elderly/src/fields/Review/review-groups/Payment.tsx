@@ -43,7 +43,9 @@ export const Payment = ({
         <GridRow marginBottom={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
-              label={formatMessage(additionalSupportForTheElderyFormMessage.payment.bank)}
+              label={formatMessage(
+                additionalSupportForTheElderyFormMessage.payment.bank,
+              )}
               value={formatBankInfo(bank)}
             />
           </GridColumn>
@@ -109,8 +111,8 @@ export const Payment = ({
               />
             </GridColumn>
           </GridRow>
-         </>  
-      )}  
+        </>
+      )}
 
       <GridRow>
         <GridColumn
@@ -131,17 +133,21 @@ export const Payment = ({
             paddingBottom={3}
           >
             <DataValue
-              label={formatMessage(additionalSupportForTheElderyFormMessage.review.ratio)}
+              label={formatMessage(
+                additionalSupportForTheElderyFormMessage.review.ratio,
+              )}
               value={`${personalAllowanceUsage}%`}
             />
           </GridColumn>
         )}
       </GridRow>
-      
+
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <DataValue
-            label={formatMessage(additionalSupportForTheElderyFormMessage.review.taxLevel)}
+            label={formatMessage(
+              additionalSupportForTheElderyFormMessage.review.taxLevel,
+            )}
             value={formatMessage(getTaxLevelOption(taxLevel))}
           />
         </GridColumn>

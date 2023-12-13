@@ -84,7 +84,8 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildMultiField({
           id: 'isNotEligible',
-          title: additionalSupportForTheElderyFormMessage.pre.isNotEligibleLabel,
+          title:
+            additionalSupportForTheElderyFormMessage.pre.isNotEligibleLabel,
           condition: (FormValue, externalData) => {
             const { isEligible } = getApplicationExternalData(externalData)
             // Show if applicant is not eligible
@@ -95,7 +96,8 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'isNotEligible',
               title: '',
               description:
-              additionalSupportForTheElderyFormMessage.pre.isNotEligibleDescription,
+                additionalSupportForTheElderyFormMessage.pre
+                  .isNotEligibleDescription,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({

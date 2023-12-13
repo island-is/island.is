@@ -1,10 +1,10 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { 
-  Application, 
+import {
+  Application,
   Option,
-  NO, 
-  YES, 
-  YesOrNo 
+  NO,
+  YES,
+  YesOrNo,
 } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
@@ -140,7 +140,7 @@ export function getApplicationExternalData(
     externalData,
     'socialInsuranceAdministrationCurrencies.data',
   ) as Array<string>
-  
+
   const isEligible = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',

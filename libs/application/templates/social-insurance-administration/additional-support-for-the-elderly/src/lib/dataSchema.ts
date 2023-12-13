@@ -4,7 +4,11 @@ import { errorMessages } from './messages'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import {
+  formatBankInfo,
+  validIBAN,
+  validSWIFT,
+} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import { TaxLevelOptions } from './constants'
 import { NO, YES } from '@island.is/application/types'
 
@@ -32,71 +36,71 @@ export const dataSchema = z.object({
     }),
   }),
   paymentInfo: z
-  .object({
-    bankAccountType: z.enum([
-      BankAccountType.ICELANDIC,
-      BankAccountType.FOREIGN,
-    ]),
-    bank: z.string(),
-    bankAddress: z.string(),
-    bankName: z.string(),
-    currency: z.string(),
-    iban: z.string(),
-    swift: z.string(),
-    personalAllowance: z.enum([YES, NO]),
-    personalAllowanceUsage: z.string().optional(),
-    taxLevel: z.enum([
-      TaxLevelOptions.INCOME,
-      TaxLevelOptions.FIRST_LEVEL,
-      TaxLevelOptions.SECOND_LEVEL,
-    ]),
-  })
-  .partial()
-  .refine(
-    ({ bank, bankAccountType }) => {
-      if (bankAccountType === BankAccountType.ICELANDIC) {
-        const bankAccount = formatBankInfo(bank ?? '')
-        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
-      }
-      return true
-    },
-    { params: errorMessages.bank, path: ['bank'] },
-  )
-  .refine(
-    ({ iban, bankAccountType }) => {
-      if (bankAccountType === BankAccountType.FOREIGN) {
-        const formattedIBAN = iban?.replace(/[\s]+/g, '')
-        return formattedIBAN ? validIBAN(formattedIBAN) : false
-      }
-      return true
-    },
-    { params: errorMessages.iban, path: ['iban'] },
-  )
-  .refine(
-    ({ swift, bankAccountType }) => {
-      if (bankAccountType === BankAccountType.FOREIGN) {
-        const formattedSWIFT = swift?.replace(/[\s]+/g, '')
-        return formattedSWIFT ? validSWIFT(formattedSWIFT) : false
-      }
-      return true
-    },
-    { params: errorMessages.swift, path: ['swift'] },
-  )
-  .refine(
-    ({ bankName, bankAccountType }) =>
-      bankAccountType === BankAccountType.FOREIGN ? !!bankName : true,
-    { path: ['bankName'] },
-  )
-  .refine(
-    ({ bankAddress, bankAccountType }) =>
-      bankAccountType === BankAccountType.FOREIGN ? !!bankAddress : true,
-    { path: ['bankAddress'] },
-  )
-  .refine(
-    ({ currency, bankAccountType }) =>
-      bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
-    { path: ['currency'] },
-  ),
+    .object({
+      bankAccountType: z.enum([
+        BankAccountType.ICELANDIC,
+        BankAccountType.FOREIGN,
+      ]),
+      bank: z.string(),
+      bankAddress: z.string(),
+      bankName: z.string(),
+      currency: z.string(),
+      iban: z.string(),
+      swift: z.string(),
+      personalAllowance: z.enum([YES, NO]),
+      personalAllowanceUsage: z.string().optional(),
+      taxLevel: z.enum([
+        TaxLevelOptions.INCOME,
+        TaxLevelOptions.FIRST_LEVEL,
+        TaxLevelOptions.SECOND_LEVEL,
+      ]),
+    })
+    .partial()
+    .refine(
+      ({ bank, bankAccountType }) => {
+        if (bankAccountType === BankAccountType.ICELANDIC) {
+          const bankAccount = formatBankInfo(bank ?? '')
+          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+        }
+        return true
+      },
+      { params: errorMessages.bank, path: ['bank'] },
+    )
+    .refine(
+      ({ iban, bankAccountType }) => {
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          const formattedIBAN = iban?.replace(/[\s]+/g, '')
+          return formattedIBAN ? validIBAN(formattedIBAN) : false
+        }
+        return true
+      },
+      { params: errorMessages.iban, path: ['iban'] },
+    )
+    .refine(
+      ({ swift, bankAccountType }) => {
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          const formattedSWIFT = swift?.replace(/[\s]+/g, '')
+          return formattedSWIFT ? validSWIFT(formattedSWIFT) : false
+        }
+        return true
+      },
+      { params: errorMessages.swift, path: ['swift'] },
+    )
+    .refine(
+      ({ bankName, bankAccountType }) =>
+        bankAccountType === BankAccountType.FOREIGN ? !!bankName : true,
+      { path: ['bankName'] },
+    )
+    .refine(
+      ({ bankAddress, bankAccountType }) =>
+        bankAccountType === BankAccountType.FOREIGN ? !!bankAddress : true,
+      { path: ['bankAddress'] },
+    )
+    .refine(
+      ({ currency, bankAccountType }) =>
+        bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
+      { path: ['currency'] },
+    ),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)
