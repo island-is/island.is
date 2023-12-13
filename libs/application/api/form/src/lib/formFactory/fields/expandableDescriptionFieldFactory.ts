@@ -10,13 +10,9 @@ export class ExpandableDescriptionFieldFactory implements IFieldFactory {
   constructor(private context: ContextService) {}
 
   createField(field: ExpandableDescriptionField): FieldDto {
-    const { formatMessage, application } = this.context.getContext()
-
-    const s = formatText(field.title, application, formatMessage)
-
     const result: FieldDto = {
       id: field.id,
-      title: s,
+      title: this.context.formatText(field.title),
       type: field.type,
       component: field.component,
       specifics: {

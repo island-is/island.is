@@ -8,10 +8,9 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 import { buildCertificateTemplate } from '../templates'
 
 const pdfApi = defineTemplateApi({
-  action: 'getCriminalRecordPDF',
-  order: 0,
-  externalDataId: 'criminalRecord',
-  namespace: 'CriminalRecordShared',
+  action: 'getCriminalRecord',
+
+  order: 1,
 })
 
 export const criminalRecord = buildCertificateTemplate({
@@ -22,6 +21,7 @@ export const criminalRecord = buildCertificateTemplate({
     subTitle: 'Skjal sem inniheldur sakavottorðið þitt.',
   },
   getPdfApi: pdfApi,
+  pdfKey: 'getCriminalRecord.data.contentBase64',
   templateId: ApplicationTypes.CRIMINAL_RECORD,
   title: 'Sakavottorð',
   organizationId: InstitutionNationalIds.SYSLUMENN,

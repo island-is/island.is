@@ -10,10 +10,13 @@ import { AlertMessageFieldFactory } from '../fields/alertMessageFieldFactory'
 import { LinkFieldFactory } from '../fields/linkFieldFactory'
 import { MessageWithLinkButtonFieldFactory } from '../fields/messageWithLinkButtonFieldFactory'
 import { ExpandableDescriptionFieldFactory } from '../fields/expandableDescriptionFieldFactory'
+import { ContextService } from '@island.is/application/api/core'
+import { PdfViewerFieldFactory } from '../fields/pdfViewerFieldFactory'
 
 @Injectable()
 export class MultiFieldFactory implements IFormItemFactory {
   constructor(
+    private contextService: ContextService,
     private descriptionFieldFactory: DescriptionFieldFactory,
     private textFieldFactory: TextFieldFactory,
     private submitFieldFactory: SubmitFieldFactory,
@@ -22,11 +25,14 @@ export class MultiFieldFactory implements IFormItemFactory {
     private linkFieldFactory: LinkFieldFactory,
     private messageWithLinkButtonFieldFactory: MessageWithLinkButtonFieldFactory,
     private expandableDescriptionFieldFactory: ExpandableDescriptionFieldFactory,
+    private pdfViewerFieldFactory: PdfViewerFieldFactory,
   ) {}
   create(item: MultiField): FormItemDto {
+    const title = this.contextService.formatText(item.title)
+
     const multiFieldDto: FormItemDto = {
       id: item.id ?? '',
-      title: item.title?.toString() ?? '',
+      title: title,
       isPartOfRepeater: false,
       children: [],
       fields: [],
@@ -82,6 +88,11 @@ export class MultiFieldFactory implements IFormItemFactory {
         multiFieldDto.fields.push(
           this.expandableDescriptionFieldFactory.createField(child),
         )
+      }
+
+      if (child.type === FieldTypes.PDF_VIEWER) {
+        multiFieldDto.fields = multiFieldDto.fields || []
+        multiFieldDto.fields.push(this.pdfViewerFieldFactory.createField(child))
       }
     })
 

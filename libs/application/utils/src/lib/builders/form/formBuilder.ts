@@ -29,14 +29,20 @@ export class FormBuilder {
   private section: SectionBuilder
   sectionsDefinitions: Section[] = []
 
-  constructor(id: string, title: string) {
+  constructor(
+    id: string,
+    title: string,
+    formMode = FormModes.DRAFT,
+    renderLastScreenBackButton = true,
+    renderLastScreenButton = true,
+  ) {
     this.section = new SectionBuilder(this)
     this.formDefinition = buildForm({
       id,
       title,
-      mode: FormModes.DRAFT,
-      renderLastScreenBackButton: true,
-      renderLastScreenButton: true,
+      mode: formMode,
+      renderLastScreenBackButton,
+      renderLastScreenButton,
       children: [],
     })
   }
@@ -312,6 +318,17 @@ export function fields() {
   return new FieldBuilder()
 }
 
-export function startForm(title: string) {
-  return new FormBuilder('id', title)
+export function startForm(data: {
+  title: string
+  formMode?: FormModes
+  renderLastScreenBackButton?: boolean
+  renderLastScreenButton?: boolean
+}) {
+  return new FormBuilder(
+    'id',
+    data.title,
+    data.formMode,
+    data.renderLastScreenBackButton,
+    data.renderLastScreenButton,
+  )
 }

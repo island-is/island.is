@@ -10,22 +10,15 @@ export class TextFieldFactory implements IFieldFactory {
   constructor(private readonly contextService: ContextService) {}
 
   createField(field: TextField): FieldDto {
-    const context = this.contextService.getContext()
-
-    const externalData = context.application?.externalData
-    if (!externalData) throw new Error('External data not found')
-    const fullName = getValueViaPath(
-      externalData,
-      'nationalRegistry.data.fullName',
-    ) as string
-
     const result: FieldDto = {
       id: field.id,
-      description: field.description?.toString() ?? '',
-      title: field.title?.toString() ?? '',
+      description: field.description
+        ? this.contextService.formatText(field.description)
+        : undefined,
+      title: this.contextService.formatText(field.title),
       type: field.type,
       component: field.component,
-      defaultValue: fullName,
+      //defaultValue: fullName,
     }
     return result
   }

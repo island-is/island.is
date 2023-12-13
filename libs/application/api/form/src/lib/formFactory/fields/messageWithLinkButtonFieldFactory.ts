@@ -7,6 +7,7 @@ import { ContextService } from '@island.is/application/api/core'
 @Injectable()
 export class MessageWithLinkButtonFieldFactory implements IFieldFactory {
   constructor(private contextService: ContextService) {}
+
   createField(field: MessageWithLinkButtonField): FieldDto {
     const result: FieldDto = {
       id: field.id,
@@ -17,8 +18,12 @@ export class MessageWithLinkButtonFieldFactory implements IFieldFactory {
       type: field.type,
       component: field.component,
       specifics: {
-        buttonTitle: field.buttonTitle?.toString() ?? '',
-        message: field.message?.toString() ?? '',
+        buttonTitle: field.buttonTitle
+          ? this.contextService.formatText(field.buttonTitle)
+          : undefined,
+        message: field.message
+          ? this.contextService.formatText(field.message)
+          : undefined,
       },
     }
     return result

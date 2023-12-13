@@ -16,7 +16,7 @@ export function conclusionForm(title: string, section: Section): Form {
   const formDefinition: Form = {
     id: 'PrerequisiteForm',
     title,
-    mode: FormModes.NOT_STARTED,
+    mode: FormModes.COMPLETED,
     renderLastScreenBackButton: true,
     renderLastScreenButton: true,
     children: [],

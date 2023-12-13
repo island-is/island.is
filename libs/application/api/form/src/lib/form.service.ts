@@ -51,7 +51,6 @@ export class FormService {
     formDto.title = form.title as unknown as string
     formDto.type = form.type
     formDto.children = []
-
     form.children.forEach((child) => {
       formDto.children.push(this.sectionFactory.create(child))
     })

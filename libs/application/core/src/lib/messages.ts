@@ -916,4 +916,10 @@ export const corePendingActionMessages = defineMessages({
     defaultMessage: 'Beðið er eftir þínu samþykki á þessa umsókn',
     description: 'Pending action you need to review description',
   },
+  certificateRecieved: {
+    id: 'application.system:core.pendingAction.certificateRecieved',
+    defaultMessage:
+      'Umsókn þín hefur verið móttekin og er vottorðið aðgengilegt í stafrænu pósthólfi á Ísland.is.',
+    description: 'Title of pending action',
+  },
 })

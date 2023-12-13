@@ -13,6 +13,7 @@ import { AlertMessageFieldFactory } from './formFactory/fields/alertMessageField
 import { LinkFieldFactory } from './formFactory/fields/linkFieldFactory'
 import { MessageWithLinkButtonFieldFactory } from './formFactory/fields/messageWithLinkButtonFieldFactory'
 import { ExpandableDescriptionFieldFactory } from './formFactory/fields/expandableDescriptionFieldFactory'
+import { PdfViewerFieldFactory } from './formFactory/fields/pdfViewerFieldFactory'
 
 @Module({
   imports: [ApplicationApiCoreModule],
@@ -30,6 +31,7 @@ import { ExpandableDescriptionFieldFactory } from './formFactory/fields/expandab
     LinkFieldFactory,
     MessageWithLinkButtonFieldFactory,
     ExpandableDescriptionFieldFactory,
+    PdfViewerFieldFactory,
   ],
   exports: [FormService],
 })

@@ -35,7 +35,7 @@ export class ContextService {
     return this.context as Context // Type assertion, as we checked for existence above
   }
 
-  formatText(formText: FormText) {
+  formatText(formText: FormText): string {
     const { application, formatMessage } = this.getContext()
     return formatText(formText, application, formatMessage)
   }

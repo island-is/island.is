@@ -26,7 +26,7 @@ export class SectionFactory implements IFormItemFactory {
 
     const sectionDto: FormItemDto = {
       id: item.id ?? '',
-      title: item.title?.toString() ?? '',
+      title: this.contextService.formatText(item.title),
       type: FormItemTypes.SECTION,
       children: [],
       //condition
@@ -36,7 +36,6 @@ export class SectionFactory implements IFormItemFactory {
     if (!item.children) {
       return sectionDto
     }
-
     item.children.forEach((child: SectionChildren) => {
       switch (child.type) {
         case FormItemTypes.SUB_SECTION:

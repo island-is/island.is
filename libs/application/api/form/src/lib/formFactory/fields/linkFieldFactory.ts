@@ -17,7 +17,7 @@ export class LinkFieldFactory implements IFieldFactory {
         s3key: field.s3key
           ? this.contextService.formatText(field.s3key)
           : undefined,
-        link: field.link?.toString(),
+        link: field.link,
         iconType: field.iconProps?.type?.toString(),
         icon: field.iconProps?.icon?.toString(),
       },
