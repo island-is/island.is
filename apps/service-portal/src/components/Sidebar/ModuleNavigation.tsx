@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import {
   formatPlausiblePathToParams,
   ServicePortalNavigationItem,
-  ServicePortalPath,
+  ServicePortalPaths,
 } from '@island.is/service-portal/core'
 import { Box } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
@@ -33,7 +33,7 @@ const ModuleNavigation: FC<React.PropsWithChildren<Props>> = ({
 
   const isModuleActive =
     (nav.path &&
-      nav.path !== ServicePortalPath.MinarSidurRoot &&
+      nav.path !== ServicePortalPaths.Root &&
       pathname.includes(nav.path)) ||
     nav.children?.find((x) => x.path && pathname.includes(x.path)) !==
       undefined ||

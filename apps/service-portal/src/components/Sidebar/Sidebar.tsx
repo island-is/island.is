@@ -1,6 +1,6 @@
 import { Box, Stack, Logo } from '@island.is/island-ui/core'
 import {
-  ServicePortalPath,
+  ServicePortalPaths,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
@@ -28,7 +28,7 @@ export const Sidebar = ({ position }: Props) => {
     <aside className={styles.sidebar} style={{ top: position }}>
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <Box paddingTop={6} paddingBottom={3} paddingLeft={4}>
-        <Link to={ServicePortalPath.MinarSidurRoot}>
+        <Link to={ServicePortalPaths.Root}>
           <Logo width={136} height={22} id="sidebar" />
         </Link>
       </Box>

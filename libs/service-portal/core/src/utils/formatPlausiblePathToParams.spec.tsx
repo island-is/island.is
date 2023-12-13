@@ -1,14 +1,15 @@
 import '@testing-library/jest-dom'
-import { ServicePortalPath } from '../lib/navigation/paths'
+import { ServicePortalPaths } from '../lib/navigation/paths'
 
 import { formatPlausiblePathToParams } from './formatPlausiblePathToParams'
+const AssetDetailPath = '/fasteignir/:id'
 
 describe('formatPlausiblePathToParams', () => {
   it('should return path object when path exists in ServicePortalPath enum', async () => {
     // arrange
-    const anyPath = ServicePortalPath.FinanceRoot
+    const anyPath = '/fjarmal'
     const pageOrigin = window.location.origin
-    const rootPath = ServicePortalPath.MinarSidurPath
+    const rootPath = ServicePortalPaths.Base
     // assert
     expect(formatPlausiblePathToParams(anyPath)).toStrictEqual({
       url: `${pageOrigin}${rootPath}${anyPath}`,
@@ -18,17 +19,14 @@ describe('formatPlausiblePathToParams', () => {
 
   it('should match non identifiable service-portal path when given identifiable path', async () => {
     // arrange
-    const anyPath = ServicePortalPath.AssetsRealEstateDetail.replace(
-      ':id',
-      '123',
-    )
+    const anyPath = AssetDetailPath.replace(':id', '123')
     const pageOrigin = window.location.origin
-    const rootPath = ServicePortalPath.MinarSidurPath
+    const rootPath = ServicePortalPaths.Base
 
     // assert
     expect(formatPlausiblePathToParams(anyPath)).toStrictEqual({
-      url: `${pageOrigin}${rootPath}${ServicePortalPath.AssetsRealEstateDetail}`,
-      location: ServicePortalPath.AssetsRealEstateDetail,
+      url: `${pageOrigin}${rootPath}${AssetDetailPath}`,
+      location: AssetDetailPath,
     })
   })
 
@@ -36,7 +34,7 @@ describe('formatPlausiblePathToParams', () => {
     // arrange
     const anyPath = '/non-existant-path'
     const pageOrigin = window.location.origin
-    const rootPath = ServicePortalPath.MinarSidurPath
+    const rootPath = ServicePortalPaths.Base
     // assert
     expect(formatPlausiblePathToParams(anyPath)).toStrictEqual({
       url: `${pageOrigin}${rootPath}`,

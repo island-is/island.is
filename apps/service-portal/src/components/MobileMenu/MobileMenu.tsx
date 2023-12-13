@@ -1,7 +1,7 @@
 import React, { ReactElement, useRef } from 'react'
 import { Box, Stack } from '@island.is/island-ui/core'
 import {
-  ServicePortalPath,
+  ServicePortalPaths,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
@@ -53,7 +53,7 @@ const MobileMenu = ({
           <Stack space={2}>
             {rootItem?.children?.map(
               (navRoot, index) =>
-                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                navRoot.path !== ServicePortalPaths.Root &&
                 !navRoot.navHide && (
                   <ModuleNavigation
                     key={index}
