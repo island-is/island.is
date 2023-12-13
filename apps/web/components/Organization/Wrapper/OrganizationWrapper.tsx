@@ -967,6 +967,31 @@ export const OrganizationWrapper: React.FC<
           <Box className="rs_read" paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}
           </Box>
+          {isMobile && (
+            <>
+              {(organizationPage.sidebarCards ?? []).map((card) => {
+                if (card.__typename === 'SidebarCard') {
+                  return (
+                    <Box marginY={3}>
+                      <ProfileCard
+                        key={card.id}
+                        title={card.title}
+                        description={card.contentString}
+                        link={card.link ?? undefined}
+                        size="small"
+                      />
+                    </Box>
+                  )
+                }
+
+                if (card.__typename === 'ConnectedComponent') {
+                  return renderConnectedComponent(card)
+                }
+
+                return null
+              })}
+            </>
+          )}
         </SidebarLayout>
       )}
 
