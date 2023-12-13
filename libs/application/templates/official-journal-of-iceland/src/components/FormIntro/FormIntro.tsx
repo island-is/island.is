@@ -3,9 +3,10 @@ import { Box, Text } from '@island.is/island-ui/core'
 type Props = {
   title?: string
   description?: string
+  children?: React.ReactNode
 }
 
-export const FormIntro = ({ title, description }: Props) => {
+export const FormIntro = ({ title, description, children }: Props) => {
   if (!title && !description) return null
 
   return (
@@ -16,6 +17,7 @@ export const FormIntro = ({ title, description }: Props) => {
         </Text>
       )}
       {description && <Text>{description}</Text>}
+      {children}
     </Box>
   )
 }

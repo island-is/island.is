@@ -36,7 +36,7 @@ export const Complete: Form = buildForm({
     }),
     buildSection({
       id: 'PublicationPreferences',
-      title: m.publicationPreferencesSectionTitle,
+      title: m.publishingPreferencesSectionTitle,
       children: [],
     }),
     CompleteSection,

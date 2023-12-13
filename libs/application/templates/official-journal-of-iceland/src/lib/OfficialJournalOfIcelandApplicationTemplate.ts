@@ -140,6 +140,7 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
               id: Roles.APPLICANT,
               delete: true,
               read: 'all',
+              write: 'all',
               formLoader: () =>
                 import('../forms/Complete').then((val) =>
                   Promise.resolve(val.Complete),

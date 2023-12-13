@@ -30,7 +30,7 @@ export const Prerequsites: Form = buildForm({
     }),
     buildSection({
       id: 'PublicationPreferences',
-      title: m.publicationPreferencesSectionTitle,
+      title: m.publishingPreferencesSectionTitle,
       children: [],
     }),
     buildSection({

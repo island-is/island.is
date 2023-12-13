@@ -1,18 +1,20 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
-import { FC, useState } from 'react'
-import { m } from '../../lib/messages'
-import { useFormatMessage } from '../../hooks'
-import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FileUploadController } from '@island.is/application/ui-components'
+import { Box, RadioButton } from '@island.is/island-ui/core'
+import { FC, useState } from 'react'
+import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
+import { useFormatMessage } from '../../hooks'
+import { m } from '../../lib/messages'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../shared'
 
 export const AdditionsAndDocuments: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
   const [isDocuments, setIsDocuments] = useState<boolean>(true)
-  const { f, locale } = useFormatMessage(application)
+  const { f } = useFormatMessage(application)
+
+  // TODO: handle file upload
 
   return (
     <Box>

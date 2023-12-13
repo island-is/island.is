@@ -13,6 +13,14 @@ export const m = defineMessages({
     id: 'ojoi.application:searchPlaceholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
+  fetchPdf: {
+    id: 'ojoi.application:fetchPdf',
+    defaultMessage: 'Sækja pdf',
+  },
+  copyPreviewLink: {
+    id: 'ojoi.application:copyPreviewLink',
+    defaultMessage: 'Afrita hlekk á forskoðunarskjal',
+  },
   chooseDepartment: {
     id: 'ojoi.application:chooseDepartment',
     defaultMessage: 'Veldu deild',
@@ -160,13 +168,45 @@ export const m = defineMessages({
     id: 'ojoi.application:previewSectionTitle',
     defaultMessage: 'Forskoðun',
   },
+  previewFormTitle: {
+    id: 'ojoi.application:previewFormTitle',
+    defaultMessage: 'Forskoðun á birtingu',
+  },
+  previewFormIntro: {
+    id: 'ojoi.application:previewFormIntro',
+    defaultMessage:
+      'Auglýsandi ber ábyrgð á efni auglýsingar sem send er til birtingar í Stjórnartíðindum og hefur sú birting réttaráhrif. Í þessu skrefi er mikilvægt að forskoða vefbirtinguna og yfirfara og tryggja að innihald og uppsetning séu rétt. Ef þörf er á lagfæringum er hægt að fara aftur í skráningu máls og lagfæra. Leiðbeiningar um uppsetningu mála má finna hér - Linkur á leiðbeiningar.',
+  },
+  previewFormAdditionalIntroNote: {
+    id: 'ojoi.application:previewFormAdditionalIntroNote',
+    defaultMessage:
+      'ATH! Á þessu stigi liggja ekki fyrir upplýsingar um númer máls og útgáfudag í Stjórnartíðindum. Þær upplýsingar bætast sjálfkrafa við þegar auglýsingin birtist á stjornartidindi.is.',
+  },
   originalDataSectionTitle: {
     id: 'ojoi.application:originalDataSectionTitle',
     defaultMessage: 'Frumgögn',
   },
-  publicationPreferencesSectionTitle: {
-    id: 'ojoi.application:publicationPreferencesSectionTitle',
+  originalDataFormTitle: {
+    id: 'ojoi.application:originalDataFormTitle',
+    defaultMessage: 'Frumgögn',
+  },
+  originalDataFormIntro: {
+    id: 'ojoi.application:originalDataFormIntro',
+    defaultMessage:
+      'Hér skal setja inn skjal sem er skannað afrit af frumtexta auglýsingarinnar þar sem koma fram undirritanir þeirra sem við á. Undirritun máls er staðfesting á innihaldi og réttmæti auglýsingar sem send hefur verið til birtingar í Stjórnartíðindum og er lagalega bindandi. Þetta skjal verður ekki birt á vef Stjórnartíðinda en er vistað í innri kerfum. ',
+  },
+  publishingPreferencesSectionTitle: {
+    id: 'ojoi.application:publishingPreferencesSectionTitle',
     defaultMessage: 'Óskir um birtingu',
+  },
+  publishingPreferencesFormTitle: {
+    id: 'ojoi.application:publishingPreferencesFormTitle',
+    defaultMessage: 'Óskir um birtingu',
+  },
+  publishingPreferencesFormIntro: {
+    id: 'ojoi.application:publishingPreferencesFormIntro',
+    defaultMessage:
+      'Mál sem sent er til birtingar birtist 10 virkum dögum eftir skrásetningardag, hægt er að biðja um að mál birtist fyrr gegn greiðslu álags. Til að fá mál birt samdægurs þarf mál að hafa borist Stjórnartíðindum fyrir hádegi þann dag. Senda skal skilaboð með máli um birtingu samdægurs.',
   },
   summarySectionTitle: {
     id: 'ojoi.application:summarySectionTitle',
@@ -199,5 +239,17 @@ export const m = defineMessages({
   fileUploadFileNameAttachments: {
     id: 'ojoi.application:fileUploadFileNameAttachments',
     defaultMessage: 'Viðauki (I, II, III, ...)',
+  },
+  originalDataFileUploadHeader: {
+    id: 'ojoi.application:originalDataFileUploadHeader',
+    defaultMessage: 'Dragðu undirritað PDF skjal hingað',
+  },
+  originalDataFileUploadDescription: {
+    id: 'ojoi.application:originalDataFileUploadDescription',
+    defaultMessage: 'Leyfileg skráarsnið: PDF',
+  },
+  originalDataFileUploadButton: {
+    id: 'ojoi.application:originalDataFileUploadButton',
+    defaultMessage: 'Hlaða upp undirrituðu eintaki',
   },
 })
