@@ -15,7 +15,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
-import { prosecutorShouldSelectDefenderForInvestigationCase } from '@island.is/judicial-system/types'
+import { prosecutorCanSelectDefenderForInvestigationCase } from '@island.is/judicial-system/types'
 import {
   core,
   defendant as m,
@@ -405,7 +405,7 @@ const Defendant = () => {
             </Box>
           </Box>
           <AnimatePresence>
-            {prosecutorShouldSelectDefenderForInvestigationCase(
+            {prosecutorCanSelectDefenderForInvestigationCase(
               workingCase.type,
             ) && (
               <motion.section

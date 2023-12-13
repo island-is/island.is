@@ -11,6 +11,7 @@ interface IOrganizationTheme {
   imagePadding?: string
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
+  imageObjectPosition?: 'left' | 'center' | 'right'
 }
 
 @ObjectType()
@@ -41,6 +42,9 @@ export class OrganizationTheme {
 
   @Field(() => String, { nullable: true })
   imageObjectFit?: string
+
+  @Field(() => String, { nullable: true })
+  imageObjectPosition?: string
 }
 
 export const mapOrganizationTheme = (
@@ -62,5 +66,6 @@ export const mapOrganizationTheme = (
     imagePadding: theme.imagePadding || '0px',
     imageIsFullHeight: theme.imageIsFullHeight ?? true,
     imageObjectFit: theme.imageObjectFit ?? 'cover',
+    imageObjectPosition: theme.imageObjectPosition ?? 'center',
   }
 }

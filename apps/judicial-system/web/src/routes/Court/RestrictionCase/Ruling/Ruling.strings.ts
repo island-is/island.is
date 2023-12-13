@@ -106,32 +106,12 @@ export const rcRuling = {
           'Notaður sem skýritexti fyrir "greinargerð um málsatvik" innsláttarsvæðið á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
-    custodyRestrictions: defineMessages({
-      title: {
-        id: 'judicial.system.core:restriction_cases.ruling.custody_restrictions.title',
-        defaultMessage: 'Einangrun',
-        description:
-          'Notaður sem titill fyrir "Takmarkanir á gæslu" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      isolation: {
-        id: 'judicial.system.core:restriction_cases.ruling.custody_restrictions.isolation',
-        defaultMessage: 'Varnaraðili skal sæta einangrun',
-        description:
-          'Notaður sem texti sem segir til um einangrun á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
     decision: defineMessages({
       title: {
         id: 'judicial.system.core:restriction_cases.ruling.decision.title',
         defaultMessage: 'Lyktir máls',
         description:
           'Notaður sem titill fyrir "Úrskurður" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      validToDate: {
-        id: 'judicial.system.core:restriction_cases.ruling.decision.valid_to_date',
-        defaultMessage: '{caseType} til',
-        description:
-          'Notaður sem titill fyrir "Úrskurður gildir til" innsláttarsvæðið á úrskurðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
       },
     }),
     introduction: defineMessages({

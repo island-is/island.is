@@ -6,30 +6,36 @@ export const getFakeData = (
 ): EstateInfo => {
   const data: EstateInfo = {
     addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
+    availableSettlements: {
+      divisionOfEstateByHeirs: 'Í lagi',
+      estateWithoutAssets: 'Í lagi',
+      officialDivision: 'Í lagi',
+      permitForUndividedEstate: 'Í lagi',
+    },
     cash: [],
     marriageSettlement: false,
     assets: [
       {
         assetNumber: 'F2318696',
         description: 'Íbúð í Reykjavík',
-        share: 1,
+        share: 100,
       },
       {
         assetNumber: 'F2262202',
         description: 'Raðhús á Akureyri',
-        share: 1,
+        share: 100,
       },
     ],
     vehicles: [
       {
         assetNumber: 'VA334',
         description: 'Nissan Terrano II',
-        share: 1,
+        share: 100,
       },
       {
         assetNumber: 'YZ927',
         description: 'Subaru Forester',
-        share: 1,
+        share: 100,
       },
     ],
     knowledgeOfOtherWills: 'Yes',
@@ -39,12 +45,12 @@ export const getFakeData = (
       {
         assetNumber: '009-2018-0505',
         description: 'Framhlaðningur (púður)',
-        share: 1,
+        share: 100,
       },
       {
         assetNumber: '007-2018-1380',
         description: 'Mauser P38',
-        share: 1,
+        share: 100,
       },
     ],
     estateMembers: [
@@ -91,7 +97,21 @@ export const getFakeData = (
   }
 
   if (application.applicant.endsWith('7789')) {
-    data.estateMembers.push(fakeChild)
+    // Uncomment the following line to test for <18 rejections
+    // data.estateMembers.push(fakeChild)
+
+    // I'm just a programmer. I had little direction about what these validation messages might be.
+    // This is just fake data.
+    data.availableSettlements = {
+      divisionOfEstateByHeirs:
+        'Því miður hvílir bölvun á dánarbúinu og þarf fyrst að hafa samband við miðil.',
+      estateWithoutAssets:
+        'Ríkið hefur áskilið sér þann rétt að hægja á vinnslu þessa dánarbús vegna gruns um skattsviks.',
+      permitForUndividedEstate:
+        'Því miður getur þú ekki sótt eftirfarandi vegna þess að málsaðila undir 18 ára aldri.',
+      officialDivision:
+        'Því miður er maki hins látna með punkta á ökuskírteini og stendur í heiftarlegum vanskilum.',
+    }
   } else {
     data.estateMembers.push({
       ...fakeChild,
