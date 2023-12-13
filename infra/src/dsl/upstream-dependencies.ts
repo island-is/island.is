@@ -37,14 +37,9 @@ export const renderers = {
 const findUpstreamDependencies = (
   runtime: UpstreamDependencyTracer,
   svc: ServiceBuilder<any> | string,
-  level: number = 0,
-  options: { dryRun?: boolean } = { dryRun: false },
+  { dryRun = false, level = 0 }: { dryRun?: boolean; level?: number } = {},
 ): string[] => {
-  if (typeof level !== 'number') {
-    options = level
-    level = 0
-  }
-  logger.info('findUpstreamDependencies', { svc, level, options })
+  logger.info('findUpstreamDependencies', { svc, options: { dryRun, level } })
   if (level > MAX_LEVEL_DEPENDENCIES)
     throw new Error(
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
@@ -56,7 +51,9 @@ const findUpstreamDependencies = (
   logger.info('Recursively finding upstream dependencies', { upstreams })
   return upstreams
     .map((dependency) =>
-      findUpstreamDependencies(runtime, dependency, level + 1),
+      findUpstreamDependencies(runtime, dependency, {
+        level: level + 1,
+      }),
     )
     .flatMap((x) => x)
     .concat(upstreams)
