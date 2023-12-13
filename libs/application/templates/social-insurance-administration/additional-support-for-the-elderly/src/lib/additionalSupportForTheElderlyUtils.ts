@@ -7,7 +7,10 @@ import {
   FileType,
   Attachments,
   AdditionalInformation,
+  BankInfo,
+  PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
@@ -39,6 +42,28 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'tempAnswers',
   ) as Application['answers']
 
+  const bankAccountType = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountType',
+  ) as BankAccountType
+
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
+  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
+
+  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
+
+  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
+
+  const bankAddress = getValueViaPath(
+    answers,
+    'paymentInfo.bankAddress',
+  ) as string
+
+  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
+
+  const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
+
   return {
     applicantPhonenumber,
     selectedYear,
@@ -47,6 +72,14 @@ export function getApplicationAnswers(answers: Application['answers']) {
     additionalAttachments,
     additionalAttachmentsRequired,
     tempAnswers,
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+    paymentInfo,
   }
 }
 
@@ -67,6 +100,16 @@ export function getApplicationExternalData(
     externalData,
     'socialInsuranceAdministrationApplicant.data.emailAddress',
   ) as string
+
+  const bankInfo = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.bankAccount',
+  ) as BankInfo
+
+  const currencies = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationCurrencies.data',
+  ) as Array<string>
   
   const isEligible = getValueViaPath(
     externalData,
@@ -77,6 +120,8 @@ export function getApplicationExternalData(
     applicantName,
     applicantNationalId,
     email,
+    bankInfo,
+    currencies,
     isEligible,
   }
 }

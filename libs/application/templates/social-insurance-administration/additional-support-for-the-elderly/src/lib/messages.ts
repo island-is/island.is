@@ -162,6 +162,72 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
   }),
 
+  payment: defineMessages({
+    title: {
+      id: 'asfte.application:payment.title',
+      defaultMessage: 'Greiðsluupplýsingar',
+      description: 'Payment information',
+    },
+    alertMessage: {
+      id: 'asfte.application:payment.alert.message',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning.',
+      description:
+        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
+    },
+    alertMessageForeign: {
+      id: 'asfte.application:payment.alert.message.foreign#markdown',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
+      description: 'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details, all your payments from the Social Insurance Administration will be paid into that account.It is important to ensure that that the bank details are correct. We advise that applicants contact their commercial bank to make sure all bank details are correct, as well as confirming details regarding IBAN and SWIFT numbers. Please note that payments made into foreign accounts can take 3-4 days. The bank that handles the transaction will charge a service fee.',
+    },
+    bank: {
+      id: 'asfte.application:payment.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+    icelandicBankAccount: {
+      id: 'asfte.application:payment.icelandic.bank.account',
+      defaultMessage: 'Íslenskur reikningur',
+      description: 'Icelandic account',
+    },
+    foreignBankAccount: {
+      id: 'asfte.application:payment.foreign.bank.account',
+      defaultMessage: 'Erlendur reikningur',
+      description: 'Foreign account',
+    },
+    iban: {
+      id: 'asfte.application:payment.iban',
+      defaultMessage: 'IBAN',
+      description: 'IBAN',
+    },
+    swift: {
+      id: 'asfte.application:payment.swift',
+      defaultMessage: 'SWIFT',
+      description: 'SWIFT',
+    },
+    bankName: {
+      id: 'asfte.application:payment.bank.name',
+      defaultMessage: 'Heiti banka',
+      description: 'Bank name',
+    },
+    bankAddress: {
+      id: 'asfte.application:payment.bank.address',
+      defaultMessage: 'Heimili banka',
+      description: 'Bank address',
+    },
+    currency: {
+      id: 'asfte.application:payment.currency',
+      defaultMessage: 'Mynt',
+      description: 'Currency',
+    },
+    selectCurrency: {
+      id: 'asfte.application:payment.select.currency',
+      defaultMessage: 'Veldu mynt',
+      description: 'Select currency',
+    },
+  }),
+
   confirm: defineMessages({
     section: {
       id: 'asfte.application:confirmation.section',
@@ -430,6 +496,21 @@ export const errorMessages = defineMessages({
       'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um félagslegan viðbótarstuðning við aldraða.',
     description:
       'You do not have a registered email address with the Social Insurance Administration. Please register an email address [here](https://minarsidur.tr.is/min-sida) and subsequently return to this application to apply for additional support for the elderly.',
+  },
+  bank: {
+    id: 'asfte.application:error.bank',
+    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
+  },
+  iban: {
+    id: 'asfte.application:error.iban',
+    defaultMessage: 'Ógilt IBAN',
+    description: 'Invalid IBAN',
+  },
+  swift: {
+    id: 'asfte.application:error.swift',
+    defaultMessage: 'Ógilt SWIFT',
+    description: 'Invalid SWIFT',
   },
 })
 
