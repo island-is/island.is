@@ -3,7 +3,7 @@ import { Charts, Deployments } from '../uber-charts/all-charts'
 import { Localhost } from '../dsl/localhost-runtime'
 import { localrun } from '../dsl/exports/localrun'
 
-export const renderLocalServices = async (services: string[]) => {
+export async function renderLocalServices(services: string[]) {
   const chartName = 'islandis'
   const env = 'dev'
   const envConfig = Envs[Deployments[chartName][env]]
@@ -17,3 +17,8 @@ export const renderLocalServices = async (services: string[]) => {
     habitat.filter((s) => services.includes(s.name())),
   )
 }
+
+export async function runLocalServices(
+  services: string[],
+  dependencies: string[] = [],
+) {}

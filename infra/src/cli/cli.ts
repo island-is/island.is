@@ -5,7 +5,7 @@ import { renderSecretsCommand } from './render-secrets'
 import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
-import { renderLocalServices } from './render-local-mocks'
+import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
 yargs(process.argv.slice(2))
   .command(
@@ -68,6 +68,18 @@ yargs(process.argv.slice(2))
         return
       }
       console.log(await renderLocalServices(argv.service as string[]))
+    },
+  )
+  .command(
+    'run-local-env',
+    'Render environment and run the local environment.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
+    (yargs) => {
+      return yargs
+        .option('service', { demandOption: true, array: true })
+        .option('dependencies', { array: true, default: [] })
+    },
+    async (argv) => {
+      await runLocalServices(
     },
   )
   .demandCommand(1)
