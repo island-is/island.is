@@ -18,7 +18,7 @@ export const CalculateTotalAssets: FC<
 
   const [total] = useState(
     (getValueViaPath<number>(answers, 'assets.otherAssets.total') || 0) +
-      (parseInt(money)) +
+      parseInt(money) +
       (getValueViaPath<number>(answers, 'assets.stocks.total') || 0) +
       (getValueViaPath<number>(answers, 'assets.claims.total') || 0) +
       (getValueViaPath<number>(answers, 'assets.bankAccounts.total') || 0) +
