@@ -223,14 +223,14 @@ export class DiscountService {
       user.fund.credit = user.fund.total - user.fund.used
     }
 
-    const getDiscount = async () => {
+    const getDiscount = async (unconFlights: Flight[] | ExplicitFlight[]) => {
       const discount = await this.createDiscountCode(
         {
           ...user,
           postalcode: postalCode,
         },
         nationalId,
-        unConnectedFlights,
+        unconFlights,
         numberOfDaysUntilExpiration,
         true,
       )
@@ -260,7 +260,7 @@ export class DiscountService {
 
     const discounts = []
     for (let i = 0; i < flightLegs; i++) {
-      discounts.push(await getDiscount())
+      discounts.push(await getDiscount(unConnectedFlights.slice(i, i + 1)))
     }
 
     return discounts
@@ -481,6 +481,18 @@ export class DiscountService {
       ],
     }
 
+    const backFlight: ExplicitFlight = {
+      connectable: true,
+      id: 'explicit',
+      flightLegs: [
+        {
+          origin: AKUREYRI_FLIGHT_CODES[0],
+          destination: REYKJAVIK_FLIGHT_CODES[0],
+          date,
+        },
+      ],
+    }
+
     const discount = await this.createExplicitDiscountCode(
       auth,
       body.nationalId,
@@ -488,7 +500,11 @@ export class DiscountService {
       auth.nationalId,
       body.comment,
       body.numberOfDaysUntilExpiration,
-      body.needsConnectionFlight ? [flight] : [],
+      body.needsConnectionFlight
+        ? body.flightLegs === 2
+          ? [flight, backFlight]
+          : [flight]
+        : [],
       isExplicit,
       body.flightLegs,
     )
