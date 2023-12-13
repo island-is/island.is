@@ -27,6 +27,7 @@ import {
   CaseType,
   completedCaseStates,
   isIndictmentCase,
+  isProsecutionUser,
   isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -426,35 +427,26 @@ export class InternalCaseService {
   }
 
   async create(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    let prosecutorId: string | undefined
-    let courtId: string | undefined
+    const creator = await this.userService
+      .findByNationalId(caseToCreate.prosecutorNationalId)
+      .catch(() => undefined)
 
-    if (caseToCreate.prosecutorNationalId) {
-      const prosecutor = await this.userService
-        .findByNationalId(caseToCreate.prosecutorNationalId)
-        .catch(() => undefined) // Tolerate failure
-
-      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `User ${
-            prosecutor?.id ?? 'unknown'
-          } is not registered as a prosecutor`,
-        )
-      } else {
-        prosecutorId = prosecutor.id
-        courtId = prosecutor.institution?.defaultCourtId
-      }
+    if (!creator) {
+      throw new BadRequestException('Creating user not found')
     }
 
-    // If case is marked with heightened security, there needs to be a valid prosecutor
-    // assigned to it so that it doesn't get lost in the system
+    if (!isProsecutionUser(creator)) {
+      throw new BadRequestException(
+        'Creating user is not registered as a prosecution user',
+      )
+    }
+
     if (
-      caseToCreate.isHeightenedSecurityLevel &&
-      (!caseToCreate.prosecutorNationalId || !prosecutorId)
+      creator.role === UserRole.PROSECUTOR_REPRESENTATIVE &&
+      !isIndictmentCase(caseToCreate.type)
     ) {
       throw new BadRequestException(
-        'A valid prosecutor is required for heightened security cases',
+        'Creating user is registered as a representative and can only create indictments',
       )
     }
 
@@ -467,9 +459,10 @@ export class InternalCaseService {
               ? CaseState.DRAFT
               : undefined,
             origin: CaseOrigin.LOKE,
-            creatingProsecutorId: prosecutorId,
-            prosecutorId,
-            courtId,
+            creatingProsecutorId: creator.id,
+            prosecutorId:
+              creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
+            courtId: creator.institution?.defaultCourtId,
           },
           { transaction },
         )
