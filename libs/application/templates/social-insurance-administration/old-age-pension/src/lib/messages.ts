@@ -3,35 +3,10 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const oldAgePensionFormMessage: MessageDir = {
   shared: defineMessages({
-    institution: {
-      id: 'oap.application:institution.name',
-      defaultMessage: 'Tryggingastofnun',
-      description: 'Tryggingastofnun',
-    },
     applicationTitle: {
       id: 'oap.application:applicationTitle',
       defaultMessage: 'Umsókn um ellilífeyri',
       description: 'Application for old age pension',
-    },
-    formTitle: {
-      id: 'oap.application:form.title',
-      defaultMessage: 'Umsókn',
-      description: 'Application',
-    },
-    yes: {
-      id: 'oap.application:yes',
-      defaultMessage: 'Já',
-      description: 'Yes',
-    },
-    no: {
-      id: 'oap.application:no',
-      defaultMessage: 'Nei',
-      description: 'No',
-    },
-    alertTitle: {
-      id: 'oap.application:alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
     },
   }),
 

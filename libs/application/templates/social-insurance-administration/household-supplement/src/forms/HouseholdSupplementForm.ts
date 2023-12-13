@@ -21,9 +21,9 @@ import {
   YES,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { HouseholdSupplementHousing } from '../lib/constants'
 import {
-  getYesNOOptions,
   isExistsCohabitantOlderThan25,
   getApplicationAnswers,
   getApplicationExternalData,
@@ -43,12 +43,13 @@ import {
   getBankIsk,
   typeOfBankInfo,
   getCurrencies,
+  getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
-  title: householdSupplementFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
@@ -111,7 +112,7 @@ export const HouseholdSupplementForm: Form = buildForm({
               children: [
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
-                  title: householdSupplementFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -353,7 +354,7 @@ export const HouseholdSupplementForm: Form = buildForm({
               title:
                 householdSupplementFormMessage.info
                   .householdSupplementChildrenBetween18And25,
-              options: getYesNOOptions(),
+              options: getYesNoOptions(),
               width: 'half',
               required: true,
             }),

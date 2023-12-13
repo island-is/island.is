@@ -27,6 +27,7 @@ import {
 
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
@@ -51,7 +52,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OLD_AGE_PENSION,
   name: oldAgePensionFormMessage.shared.applicationTitle,
-  institution: oldAgePensionFormMessage.shared.institution,
+  institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.oldAgePensionApplication,
   translationNamespaces: [
     ApplicationConfigurations.OldAgePension.translation,

@@ -28,13 +28,14 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
-import { 
-  BankAccountType, 
-  FILE_SIZE_LIMIT, 
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import {
+  BankAccountType,
+  FILE_SIZE_LIMIT,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { 
-  getApplicationExternalData, 
-  getAvailableYears 
+import {
+  getApplicationExternalData,
+  getAvailableYears,
 } from '../lib/additionalSupportForTheElderlyUtils'
 import { MONTHS } from '../lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
@@ -44,7 +45,7 @@ import isEmpty from 'lodash/isEmpty'
 
 export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyDraft',
-  title: additionalSupportForTheElderyFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
@@ -112,7 +113,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               children: [
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
-                  title: additionalSupportForTheElderyFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -120,13 +121,14 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,
                     )
-    
+
                     const type =
                       bankAccountType ??
                       typeOfBankInfo(bankInfo, bankAccountType)
-    
+
                     return type === BankAccountType.ICELANDIC
-                      ? additionalSupportForTheElderyFormMessage.payment.alertMessage
+                      ? additionalSupportForTheElderyFormMessage.payment
+                          .alertMessage
                       : additionalSupportForTheElderyFormMessage.payment
                           .alertMessageForeign
                   },
@@ -143,7 +145,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,
                     )
-    
+
                     return typeOfBankInfo(bankInfo, bankAccountType)
                   },
                   options: [
@@ -178,7 +180,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
-    
+
                     const radio =
                       bankAccountType ??
                       typeOfBankInfo(bankInfo, bankAccountType)
@@ -199,7 +201,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
-    
+
                     const radio =
                       bankAccountType ??
                       typeOfBankInfo(bankInfo, bankAccountType)
@@ -221,7 +223,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
-    
+
                     const radio =
                       bankAccountType ??
                       typeOfBankInfo(bankInfo, bankAccountType)
@@ -230,10 +232,12 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'paymentInfo.currency',
-                  title: additionalSupportForTheElderyFormMessage.payment.currency,
+                  title:
+                    additionalSupportForTheElderyFormMessage.payment.currency,
                   width: 'half',
                   placeholder:
-                    additionalSupportForTheElderyFormMessage.payment.selectCurrency,
+                    additionalSupportForTheElderyFormMessage.payment
+                      .selectCurrency,
                   options: ({ externalData }: Application) => {
                     const { currencies } =
                       getApplicationExternalData(externalData)
@@ -249,7 +253,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
-    
+
                     const radio =
                       bankAccountType ??
                       typeOfBankInfo(bankInfo, bankAccountType)
@@ -258,7 +262,8 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankName',
-                  title: additionalSupportForTheElderyFormMessage.payment.bankName,
+                  title:
+                    additionalSupportForTheElderyFormMessage.payment.bankName,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -270,7 +275,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
-    
+
                     const radio =
                       bankAccountType ??
                       typeOfBankInfo(bankInfo, bankAccountType)
@@ -279,7 +284,9 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankAddress',
-                  title: additionalSupportForTheElderyFormMessage.payment.bankAddress,
+                  title:
+                    additionalSupportForTheElderyFormMessage.payment
+                      .bankAddress,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -291,7 +298,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
-    
+
                     const radio =
                       bankAccountType ??
                       typeOfBankInfo(bankInfo, bankAccountType)

@@ -3,35 +3,10 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const additionalSupportForTheElderyFormMessage: MessageDir = {
   shared: defineMessages({
-    institution: {
-      id: 'asfte.application:institution.name',
-      defaultMessage: 'Tryggingastofnun',
-      description: 'Tryggingastofnun',
-    },
     applicationTitle: {
       id: 'asfte.application:applicationTitle',
       defaultMessage: 'Umsókn um félagslegan viðbótarstuðning',
       description: 'Application for additional support for the eldery',
-    },
-    formTitle: {
-      id: 'asfte.application:form.title',
-      defaultMessage: 'Umsókn',
-      description: 'Application',
-    },
-    yes: {
-      id: 'asfte.application:yes',
-      defaultMessage: 'Já',
-      description: 'Yes',
-    },
-    no: {
-      id: 'asfte.application:no',
-      defaultMessage: 'Nei',
-      description: 'No',
-    },
-    alertTitle: {
-      id: 'asfte.application:alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
     },
   }),
 
@@ -88,7 +63,8 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
     isNotEligibleLabel: {
       id: 'asfte.application:is.not.eligible.label',
-      defaultMessage: 'Því miður átt þú ekki rétt á félagslegum viðbótarstuðningi',
+      defaultMessage:
+        'Því miður átt þú ekki rétt á félagslegum viðbótarstuðningi',
       description:
         'Unfortunately, you are not entitled to additional support for the elderly',
     },
@@ -179,7 +155,8 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       id: 'asfte.application:payment.alert.message.foreign#markdown',
       defaultMessage:
         'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
-      description: 'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details, all your payments from the Social Insurance Administration will be paid into that account.It is important to ensure that that the bank details are correct. We advise that applicants contact their commercial bank to make sure all bank details are correct, as well as confirming details regarding IBAN and SWIFT numbers. Please note that payments made into foreign accounts can take 3-4 days. The bank that handles the transaction will charge a service fee.',
+      description:
+        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details, all your payments from the Social Insurance Administration will be paid into that account.It is important to ensure that that the bank details are correct. We advise that applicants contact their commercial bank to make sure all bank details are correct, as well as confirming details regarding IBAN and SWIFT numbers. Please note that payments made into foreign accounts can take 3-4 days. The bank that handles the transaction will charge a service fee.',
     },
     bank: {
       id: 'asfte.application:payment.bank',

@@ -16,8 +16,6 @@ import {
   Application,
   NationalRegistryResidenceHistory,
   YesOrNo,
-  YES,
-  NO,
 } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -523,21 +521,6 @@ export function getCombinedResidenceHistory(
   })
 
   return [...combinedResidenceHistory].reverse()
-}
-
-export function getYesNOOptions() {
-  const options: Option[] = [
-    {
-      value: YES,
-      label: oldAgePensionFormMessage.shared.yes,
-    },
-    {
-      value: NO,
-      label: oldAgePensionFormMessage.shared.no,
-    },
-  ]
-
-  return options
 }
 
 export function getTaxOptions() {

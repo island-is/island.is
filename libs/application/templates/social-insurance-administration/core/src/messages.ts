@@ -1,4 +1,35 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, MessageDescriptor } from 'react-intl'
+type MessageDir = Record<string, Record<string, MessageDescriptor>>
+
+export const socialInsuranceAdministrationMessage: MessageDir = {
+  shared: defineMessages({
+    institution: {
+      id: 'sia.application:institution.name',
+      defaultMessage: 'Tryggingastofnun',
+      description: 'Social Insurance Administration',
+    },
+    formTitle: {
+      id: 'sia.application:form.title',
+      defaultMessage: 'Umsókn',
+      description: 'Application',
+    },
+    yes: {
+      id: 'sia.application:yes',
+      defaultMessage: 'Já',
+      description: 'Yes',
+    },
+    no: {
+      id: 'sia.application:no',
+      defaultMessage: 'Nei',
+      description: 'No',
+    },
+    alertTitle: {
+      id: 'sia.application:alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
+  }),
+}
 
 export const errorMessages = defineMessages({
   phoneNumber: {

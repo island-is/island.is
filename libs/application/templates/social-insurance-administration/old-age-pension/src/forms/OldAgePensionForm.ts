@@ -28,6 +28,7 @@ import {
 import * as kennitala from 'kennitala'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import {
   ApplicationType,
   Employment,
@@ -41,7 +42,6 @@ import {
   getAvailableMonths,
   getAvailableYears,
   getTaxOptions,
-  getYesNOOptions,
   isEarlyRetirement,
 } from '../lib/oldAgePensionUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
@@ -51,6 +51,7 @@ import {
   getBankIsk,
   getCurrencies,
   typeOfBankInfo,
+  getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
@@ -62,7 +63,7 @@ import {
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
-  title: oldAgePensionFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
@@ -261,7 +262,7 @@ export const OldAgePensionForm: Form = buildForm({
               children: [
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
-                  title: oldAgePensionFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -446,7 +447,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildRadioField({
                   id: 'paymentInfo.personalAllowance',
                   title: oldAgePensionFormMessage.payment.personalAllowance,
-                  options: getYesNOOptions(),
+                  options: getYesNoOptions(),
                   width: 'half',
                   largeButtons: true,
                   required: true,
@@ -470,7 +471,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'payment.spouseAllowance.alert',
-                  title: oldAgePensionFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.payment.alertSpouseAllowance,
                   doesNotRequireAnswer: true,
@@ -512,13 +513,13 @@ export const OldAgePensionForm: Form = buildForm({
                 buildRadioField({
                   id: 'onePaymentPerYear.question',
                   title: '',
-                  options: getYesNOOptions(),
+                  options: getYesNoOptions(),
                   defaultValue: NO,
                   width: 'half',
                 }),
                 buildAlertMessageField({
                   id: 'onePaymentPerYear.alert',
-                  title: oldAgePensionFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.onePaymentPerYear
                       .onePaymentPerYearAlertDescription,
@@ -561,7 +562,7 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'residenceHistory.question',
                   title:
                     oldAgePensionFormMessage.residence.residenceHistoryQuestion,
-                  options: getYesNOOptions(),
+                  options: getYesNoOptions(),
                   width: 'half',
                   largeButtons: true,
                   condition: (_, externalData) => {
@@ -776,7 +777,7 @@ export const OldAgePensionForm: Form = buildForm({
             }),
             buildAlertMessageField({
               id: 'period.alert',
-              title: oldAgePensionFormMessage.shared.alertTitle,
+              title: socialInsuranceAdministrationMessage.shared.alertTitle,
               message: oldAgePensionFormMessage.period.periodAlertMessage,
               doesNotRequireAnswer: true,
               alertType: 'warning',

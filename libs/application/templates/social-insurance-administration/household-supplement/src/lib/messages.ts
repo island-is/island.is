@@ -3,40 +3,15 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const householdSupplementFormMessage: MessageDir = {
   shared: defineMessages({
-    institution: {
-      id: 'hs.application:institution.name',
-      defaultMessage: 'Tryggingastofnun',
-      description: 'Social Insurance Administration',
-    },
     applicationTitle: {
       id: 'hs.application:application.title',
       defaultMessage: 'Umsókn um heimilisuppbót',
       description: 'Application for household supplement',
     },
-    formTitle: {
-      id: 'hs.application:form.title',
-      defaultMessage: 'Umsókn',
-      description: 'Application',
-    },
-    yes: {
-      id: 'hs.application:yes',
-      defaultMessage: 'Já',
-      description: 'Yes',
-    },
-    no: {
-      id: 'hs.application:no',
-      defaultMessage: 'Nei',
-      description: 'No',
-    },
     householdSupplement: {
       id: 'hs.application:household.supplement',
       defaultMessage: 'Heimilisuppbót',
       description: 'Household supplement',
-    },
-    alertTitle: {
-      id: 'hs.application:alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
     },
   }),
 

@@ -21,11 +21,12 @@ import {
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { ApplicationType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getYesNOOptions,
 } from '../lib/oldAgePensionUtils'
+import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import {
   NationalRegistryResidenceHistoryApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
@@ -35,7 +36,7 @@ import {
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'OldAgePensionPrerequisites',
-  title: oldAgePensionFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: false,
@@ -146,12 +147,12 @@ export const PrerequisitesForm: Form = buildForm({
                 buildRadioField({
                   id: 'questions.pensionFund',
                   title: '',
-                  options: getYesNOOptions(),
+                  options: getYesNoOptions(),
                   width: 'half',
                 }),
                 buildAlertMessageField({
                   id: 'question.pensionFundAlert',
-                  title: oldAgePensionFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.pre.pensionFundAlertDescription,
                   doesNotRequireAnswer: true,

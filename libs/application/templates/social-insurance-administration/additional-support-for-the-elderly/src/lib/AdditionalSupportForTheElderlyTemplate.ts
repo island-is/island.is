@@ -37,6 +37,7 @@ import {
   additionalSupportForTheElderyFormMessage,
   statesMessages,
 } from './messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { dataSchema } from './dataSchema'
 import { getApplicationAnswers } from './additionalSupportForTheElderlyUtils'
 
@@ -47,9 +48,10 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY,
   name: additionalSupportForTheElderyFormMessage.shared.applicationTitle,
-  institution: additionalSupportForTheElderyFormMessage.shared.institution,
+  institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: [
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,
+    'sia.application',
   ],
   dataSchema,
   allowMultipleApplicationsInDraft: false,
