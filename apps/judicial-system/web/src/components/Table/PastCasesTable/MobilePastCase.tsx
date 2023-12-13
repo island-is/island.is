@@ -19,6 +19,7 @@ interface Props {
   onClick: () => void
   isCourtRole: boolean
   children: React.ReactNode
+  isLoading?: boolean
 }
 
 const MobilePastCase: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const MobilePastCase: React.FC<Props> = ({
   onClick,
   isCourtRole,
   children,
+  isLoading = false,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -42,6 +44,7 @@ const MobilePastCase: React.FC<Props> = ({
           courtDate={theCase.courtDate}
         />,
       ]}
+      isLoading={isLoading}
     >
       <Text title={theCase.policeCaseNumbers.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}

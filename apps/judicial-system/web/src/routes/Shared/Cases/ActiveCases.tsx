@@ -137,7 +137,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
       setIsOpeningCaseId(id)
     }, 2000)
 
-    onRowClick(id)
+    // onRowClick(id)
   }
 
   return width < theme.breakpoints.md ? (

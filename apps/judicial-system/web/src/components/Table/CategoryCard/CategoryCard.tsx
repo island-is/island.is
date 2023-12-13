@@ -1,6 +1,7 @@
 import React from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
+import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
 
 import * as styles from './CategoryCard.css'
 
@@ -9,6 +10,7 @@ interface CategoryCardProps {
   tags?: React.ReactNode
   onClick: () => void
   children: React.ReactNode
+  isLoading?: boolean
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({
@@ -16,6 +18,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   onClick,
   tags,
   children,
+  isLoading = false,
 }) => {
   return (
     <FocusableBox
@@ -32,6 +35,18 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         {children}
         <Box marginTop={3}>{tags}</Box>
       </Box>
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.loadingContainer}
+          >
+            <LoadingDots single />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </FocusableBox>
   )
 }

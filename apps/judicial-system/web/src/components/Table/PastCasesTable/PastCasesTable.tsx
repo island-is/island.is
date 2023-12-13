@@ -88,8 +88,9 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <Box marginTop={2} key={theCase.id}>
           <MobilePastCase
             theCase={theCase}
-            onClick={() => onRowClick(theCase.id)}
+            onClick={() => handleRowClick(theCase.id)}
             isCourtRole={false}
+            isLoading={isOpeningCaseId === theCase.id}
           >
             <DurationDate
               key={`${theCase.id}-duration-date`}

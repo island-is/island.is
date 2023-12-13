@@ -4,6 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const card = style({
   display: 'flex',
+  justifyContent: 'space-between',
   position: 'relative',
   flexDirection: 'row',
   padding: `${theme.spacing[2]}px`,
@@ -19,4 +20,8 @@ export const card = style({
   ':hover': {
     borderColor: theme.color.blue400,
   },
+})
+
+export const loadingContainer = style({
+  padding: `0 ${theme.spacing[1]}`,
 })

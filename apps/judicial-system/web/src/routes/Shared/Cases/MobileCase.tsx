@@ -23,13 +23,9 @@ interface CategoryCardProps {
   isLoading?: boolean
 }
 
-const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
-  heading,
-  onClick,
-  tags,
-  children,
-  isLoading = false,
-}) => {
+export const CategoryCard: React.FC<
+  React.PropsWithChildren<CategoryCardProps>
+> = ({ heading, onClick, tags, children, isLoading = false }) => {
   return (
     <FocusableBox
       className={styles.card}
