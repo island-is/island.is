@@ -97,7 +97,7 @@ export class NotificationsController {
     @Query('locale') locale: string,
   ): Promise<HnippTemplate[]> {
     this.logger.info(
-      `Fetching templates from Contentful GQL for locale: ${locale}`,
+      `Fetching hnipp template for locale: ${locale}`,
     )
     return await this.notificationsService.getTemplates(locale)
   }
