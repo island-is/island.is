@@ -968,11 +968,11 @@ export const OrganizationWrapper: React.FC<
             {mainContent ?? children}
           </Box>
           {isMobile && (
-            <>
-              {(organizationPage.sidebarCards ?? []).map((card) => {
-                if (card.__typename === 'SidebarCard') {
-                  return (
-                    <Box marginY={3}>
+            <Box marginY={4}>
+              <Stack space={3}>
+                {(organizationPage.sidebarCards ?? []).map((card) => {
+                  if (card.__typename === 'SidebarCard') {
+                    return (
                       <ProfileCard
                         key={card.id}
                         title={card.title}
@@ -980,17 +980,17 @@ export const OrganizationWrapper: React.FC<
                         link={card.link ?? undefined}
                         size="small"
                       />
-                    </Box>
-                  )
-                }
+                    )
+                  }
 
-                if (card.__typename === 'ConnectedComponent') {
-                  return renderConnectedComponent(card)
-                }
+                  if (card.__typename === 'ConnectedComponent') {
+                    return renderConnectedComponent(card)
+                  }
 
-                return null
-              })}
-            </>
+                  return null
+                })}
+              </Stack>
+            </Box>
           )}
         </SidebarLayout>
       )}
