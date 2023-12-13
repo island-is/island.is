@@ -103,13 +103,8 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const {
-    transitionCase,
-    isTransitioningCase,
-    isSendingNotification,
-    getCaseToOpen,
-    isOpeningCase,
-  } = useCase()
+  const { transitionCase, isTransitioningCase, isSendingNotification } =
+    useCase()
 
   const { data, error, loading, refetch } = useQuery<{
     cases?: CaseListEntry[]
@@ -171,10 +166,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }
 
-  const handleRowClick = (id: string) => {
-    getCaseToOpen(id)
-  }
-
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
@@ -216,7 +207,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
             ) : activeCases.length > 0 ? (
               <ActiveCases
                 cases={activeCases}
-                onRowClick={handleRowClick}
                 isDeletingCase={isTransitioningCase || isSendingNotification}
                 onDeleteCase={deleteCase}
               />
@@ -237,7 +227,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
           cases={pastCases}
-          onRowClick={handleRowClick}
           loading={loading || isFiltering}
           testid="pastCasesTable"
         />

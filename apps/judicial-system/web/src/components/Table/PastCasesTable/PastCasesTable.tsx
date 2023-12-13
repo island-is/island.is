@@ -1,14 +1,9 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
-import {
-  Box,
-  getTextStyles,
-  LoadingDots,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
@@ -36,24 +31,22 @@ import {
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
 
 import MobilePastCase from './MobilePastCase'
 import * as styles from '../Table.css'
 
 interface Props {
   cases: CaseListEntry[]
-  onRowClick: (id: string) => void
   loading?: boolean
   testid?: string
 }
 
 const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, onRowClick, loading = false, testid } = props
+  const { cases, loading = false, testid } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-
-  // The id of the case that's about to be opened
-  const [isOpeningCaseId, setIsOpeningCaseId] = useState<string>()
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator } = useCaseList()
 
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
@@ -66,20 +59,6 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
     [cases],
   )
 
-  const handleRowClick = (id: string) => {
-    if (isOpeningCaseId === id || !user?.role) {
-      return
-    }
-
-    setIsOpeningCaseId(undefined)
-
-    setTimeout(() => {
-      setIsOpeningCaseId(id)
-    }, 2000)
-
-    // onRowClick(id)
-  }
-
   const { width } = useViewport()
 
   return width < theme.breakpoints.md ? (
@@ -88,7 +67,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <Box marginTop={2} key={theCase.id}>
           <MobilePastCase
             theCase={theCase}
-            onClick={() => handleRowClick(theCase.id)}
+            onClick={() => handleOpenCase(theCase.id)}
             isCourtRole={false}
             isLoading={isOpeningCaseId === theCase.id}
           >
@@ -141,7 +120,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
         return (
           <tr
             className={styles.row}
-            onClick={() => handleRowClick(column.id)}
+            onClick={() => handleOpenCase(column.id)}
             key={column.id}
           >
             <td>
@@ -192,15 +171,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
             </td>
             <td className={styles.loadingContainer}>
               <AnimatePresence>
-                {isOpeningCaseId === column.id && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <LoadingDots single />
-                  </motion.div>
-                )}
+                {isOpeningCaseId === column.id && <LoadingIndicator />}
               </AnimatePresence>
             </td>
           </tr>

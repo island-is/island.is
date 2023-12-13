@@ -11,7 +11,7 @@ import {
   useAnimation,
 } from 'framer-motion'
 
-import { Box, Button, Icon, LoadingDots, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   capitalize,
@@ -38,6 +38,7 @@ import {
   TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
+import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
@@ -46,13 +47,12 @@ import * as styles from './Cases.css'
 
 interface Props {
   cases: CaseListEntry[]
-  onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
 const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
+  const { cases, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
 
@@ -66,6 +66,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { width } = useViewport()
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator } = useCaseList()
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -74,9 +75,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
-
-  // The id of the case that's about to be opened
-  const [isOpeningCaseId, setIsOpeningCaseId] = useState<string>()
 
   useMemo(() => {
     if (cases && sortConfig) {
@@ -126,26 +124,12 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
-  const handleRowClick = (id: string) => {
-    if (isDeletingCase || isOpeningCaseId === id || !user?.role) {
-      return
-    }
-
-    setIsOpeningCaseId(undefined)
-
-    setTimeout(() => {
-      setIsOpeningCaseId(id)
-    }, 2000)
-
-    // onRowClick(id)
-  }
-
   return width < theme.breakpoints.md ? (
     <>
       {cases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            onClick={() => handleRowClick(theCase.id)}
+            onClick={() => handleOpenCase(theCase.id)}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id}
@@ -236,7 +220,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 aria-label="Opna kröfu"
                 aria-disabled={isDeletingCase || isOpeningCaseId === c.id}
                 onClick={() => {
-                  handleRowClick(c.id)
+                  handleOpenCase(c.id)
                 }}
               >
                 <td className={styles.td}>
@@ -367,7 +351,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                           exit={{ opacity: 0 }}
                           data-testid="deleteCase"
                           aria-label="Viltu afturkalla kröfu?"
-                          className={styles.deleteButton}
+                          className={cn(
+                            styles.deleteButton,
+                            styles.deleteButtonWrapper,
+                          )}
                           onClick={async (evt) => {
                             evt.stopPropagation()
 
@@ -386,14 +373,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         </motion.button>
                       )
                     ) : (
-                      <motion.div
-                        key={`${c.id}-loading`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        <LoadingDots single />
-                      </motion.div>
+                      <div className={styles.deleteButtonWrapper}>
+                        <LoadingIndicator />
+                      </div>
                     )}
                   </AnimatePresence>
                 </td>

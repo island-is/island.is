@@ -12,6 +12,7 @@ import {
 import { tables } from '@island.is/judicial-system-web/messages'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
 
 import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
@@ -26,6 +27,7 @@ interface CategoryCardProps {
 export const CategoryCard: React.FC<
   React.PropsWithChildren<CategoryCardProps>
 > = ({ heading, onClick, tags, children, isLoading = false }) => {
+  const { LoadingIndicator } = useCaseList()
   return (
     <FocusableBox
       className={styles.card}
@@ -41,18 +43,7 @@ export const CategoryCard: React.FC<
         {children}
         <Box marginTop={3}>{tags}</Box>
       </Box>
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={styles.loadingContainer}
-          >
-            <LoadingDots single />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <AnimatePresence>{isLoading && <LoadingIndicator />}</AnimatePresence>
     </FocusableBox>
   )
 }

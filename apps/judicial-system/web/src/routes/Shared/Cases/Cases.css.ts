@@ -89,14 +89,17 @@ export const td = style({
   },
 })
 
-export const deleteButton = style({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+export const deleteButtonWrapper = style({
   marginRight: 24,
   padding: 10,
   minWidth: 36,
   minHeight: 36,
+})
+
+export const deleteButton = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   borderRadius: theme.border.radius.circle,
   outline: 'none',
   transition: 'all .4s ease-out',
