@@ -86,6 +86,7 @@ export const NewsArticle: React.FC<
           <EmbeddedVideo
             url={newsItem?.signLanguageVideo?.url ?? ''}
             locale={activeLocale}
+            thumbnailImageUrl={newsItem?.signLanguageVideo?.thumbnailImageUrl}
           />
         </Box>
       )}

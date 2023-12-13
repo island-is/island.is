@@ -30,9 +30,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   useEffect(() => {
     const activeItem = items.filter((itm) => itm.active)?.[0] ?? undefined
     setActiveItem(activeItem)
-    setActiveItemChildren(
-      activeItem?.children?.filter((itm) => itm.active && !itm.navHide),
-    )
+    setActiveItemChildren(activeItem?.children?.filter((itm) => !itm.navHide))
   }, [items])
 
   const tabChangeHandler = (id?: string) => {
@@ -79,41 +77,25 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
           />
         </Box>
       )}
-      {activeItem && activeItemChildren?.length ? (
+      {activeItem && activeItemChildren && activeItemChildren?.length > 1 ? (
         <Box
           display="flex"
           flexDirection="row"
           marginTop={5}
           marginBottom={[2, 1, 0]}
         >
-          <SubTabItem
-            colorScheme={
-              activeItemChildren.filter((item) => item.active).length === 0
-                ? 'default'
-                : 'light'
-            }
-            title={formatMessage(activeItem.name)}
-            onClick={
-              activeItem.path
-                ? () => tabChangeHandler(activeItem.path)
-                : undefined
-            }
-            marginLeft={0}
-          />
           {activeItemChildren?.map((itemChild, ii) => (
             <SubTabItem
               key={`subnav-${ii}`}
+              href={itemChild.path ?? '/'}
               onClick={
                 itemChild.path
                   ? () => tabChangeHandler(itemChild.path)
                   : undefined
               }
               title={formatMessage(itemChild.name)}
-              colorScheme={
-                itemChild.active && activeItem.path !== itemChild.path
-                  ? 'default'
-                  : 'light'
-              }
+              colorScheme={pathname === itemChild.path ? 'default' : 'light'}
+              marginLeft={ii === 0 ? 0 : 2}
             />
           ))}
         </Box>
