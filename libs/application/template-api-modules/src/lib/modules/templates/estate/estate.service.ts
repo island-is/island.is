@@ -107,7 +107,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
     if (youngheirs.length > 0) {
       if (youngheirs.some((heir) => !heir.advocate)) {
         if (
-          applicationAnswers.selectedEstate === EstateTypes.officialDivision
+          applicationAnswers.selectedEstate ===
+          EstateTypes.divisionOfEstateByHeirs
         ) {
           return true
         }
