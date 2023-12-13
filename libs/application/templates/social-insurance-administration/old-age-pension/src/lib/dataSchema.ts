@@ -143,6 +143,24 @@ export const dataSchema = z.object({
       ({ currency, bankAccountType }) =>
         bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
       { path: ['currency'] },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES
+          ? !(
+              Number(personalAllowanceUsage) < 1 ||
+              Number(personalAllowanceUsage) > 100
+            )
+          : true,
+      {
+        path: ['personalAllowanceUsage'],
+        params: validatorErrorMessages.personalAllowance,
+      },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES ? !!personalAllowanceUsage : true,
+      { path: ['personalAllowanceUsage'] },
     ),
 })
 export type SchemaFormValues = z.infer<typeof dataSchema>
