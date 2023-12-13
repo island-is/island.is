@@ -16,33 +16,6 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 
   pre: defineMessages({
-    prerequisitesSection: {
-      id: 'hs.application:prerequisites.section',
-      defaultMessage: 'Forsendur',
-      description: 'Prerequisites',
-    },
-    externalDataSection: {
-      id: 'hs.application:external.data.section',
-      defaultMessage: 'Gagnaöflun',
-      description: 'Data collection',
-    },
-    externalDataDescription: {
-      id: 'hs.application:externalData.description',
-      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
-      description: 'The following information will be retrieved electronically',
-    },
-    checkboxProvider: {
-      id: 'hs.application:checkbox.provider',
-      defaultMessage:
-        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
-      description:
-        'I understand that the above information will be collected during the application process',
-    },
-    skraInformationTitle: {
-      id: 'hs.application:skra.info.title',
-      defaultMessage: 'Upplýsingar frá Þjóðskrá',
-      description: 'Information from Registers Iceland',
-    },
     skraInformationSubTitle: {
       id: 'hs.application:skra.info.subtitle',
       defaultMessage: 'Upplýsingar um þig og lögheimilistengsl.',
@@ -59,11 +32,6 @@ export const householdSupplementFormMessage: MessageDir = {
         'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun. \n\nTryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðslu mála. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. \n\nFrekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar [hér](https://www.tr.is/tryggingastofnun/personuvernd).',
       description:
         'Information about email address, phone number and bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd).',
-    },
-    startApplication: {
-      id: 'hs.application:start.application',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Start application',
     },
     isNotEligibleLabel: {
       id: 'hs.application:is.not.eligible.label',

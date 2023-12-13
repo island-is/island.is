@@ -29,6 +29,36 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description: 'Attention',
     },
   }),
+
+  pre: defineMessages({
+    externalDataSection: {
+      id: 'sia.application:externalData.section',
+      defaultMessage: 'Gagnaöflun --',
+      description: 'Data collection',
+    },
+    externalDataDescription: {
+      id: 'sia.application:externalData.description',
+      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt --',
+      description: 'The following information will be retrieved electronically',
+    },
+    checkboxProvider: {
+      id: 'sia.application:prerequisites.checkbox.provider',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu --',
+      description:
+        'I understand that the above information will be collected during the application process',
+    },
+    skraInformationTitle: {
+      id: 'sia.application:prerequisites.national.registry.title',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá --',
+      description: 'Information from Registers Iceland',
+    },
+    startApplication: {
+      id: 'sia.application:prerequisites.start.application',
+      defaultMessage: 'Hefja umsókn --',
+      description: 'Start application',
+    },
+  }),
 }
 
 export const errorMessages = defineMessages({

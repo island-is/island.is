@@ -33,22 +33,24 @@ export const PrerequisitesForm: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: householdSupplementFormMessage.pre.externalDataSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: householdSupplementFormMessage.pre.externalDataSection,
-          subTitle: householdSupplementFormMessage.pre.externalDataDescription,
-          checkboxLabel: householdSupplementFormMessage.pre.checkboxProvider,
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre.externalDataDescription,
+          checkboxLabel:
+            socialInsuranceAdministrationMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: householdSupplementFormMessage.pre.startApplication,
+            title: socialInsuranceAdministrationMessage.pre.startApplication,
             refetchApplicationAfterSubmit: true,
             actions: [
               {
                 event: 'SUBMIT',
-                name: householdSupplementFormMessage.pre.startApplication,
+                name: socialInsuranceAdministrationMessage.pre.startApplication,
                 type: 'primary',
               },
             ],
@@ -56,7 +58,8 @@ export const PrerequisitesForm: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: householdSupplementFormMessage.pre.skraInformationTitle,
+              title:
+                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
               subTitle:
                 householdSupplementFormMessage.pre.skraInformationSubTitle,
             }),

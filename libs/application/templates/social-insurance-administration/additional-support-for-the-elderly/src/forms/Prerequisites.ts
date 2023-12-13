@@ -32,28 +32,24 @@ export const PrerequisitesForm: Form = buildForm({
   children: [
     buildSection({
       id: 'prerequisites',
-      title: additionalSupportForTheElderyFormMessage.pre.externalDataSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title:
-            additionalSupportForTheElderyFormMessage.pre.externalDataSection,
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
           subTitle:
-            additionalSupportForTheElderyFormMessage.pre
-              .externalDataDescription,
+            socialInsuranceAdministrationMessage.pre.externalDataDescription,
           checkboxLabel:
-            additionalSupportForTheElderyFormMessage.pre.checkboxProvider,
+            socialInsuranceAdministrationMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title:
-              additionalSupportForTheElderyFormMessage.pre.startApplication,
+            title: socialInsuranceAdministrationMessage.pre.startApplication,
             refetchApplicationAfterSubmit: true,
             actions: [
               {
                 event: DefaultEvents.SUBMIT,
-                name: additionalSupportForTheElderyFormMessage.pre
-                  .startApplication,
+                name: socialInsuranceAdministrationMessage.pre.startApplication,
                 type: 'primary',
               },
             ],
@@ -62,8 +58,7 @@ export const PrerequisitesForm: Form = buildForm({
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
               title:
-                additionalSupportForTheElderyFormMessage.pre
-                  .skraInformationTitle,
+                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
               subTitle:
                 additionalSupportForTheElderyFormMessage.pre
                   .skraInformationSubTitle,

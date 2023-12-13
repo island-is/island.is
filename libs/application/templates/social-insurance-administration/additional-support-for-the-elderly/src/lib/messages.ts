@@ -11,33 +11,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   }),
 
   pre: defineMessages({
-    prerequisitesSection: {
-      id: 'asfte.application:prerequisites.section',
-      defaultMessage: 'Forsendur',
-      description: 'Prerequisites',
-    },
-    externalDataSection: {
-      id: 'asfte.application:externalData.section',
-      defaultMessage: 'Gagnaöflun',
-      description: 'Data collection',
-    },
-    externalDataDescription: {
-      id: 'asfte.application:externalData.description',
-      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
-      description: 'The following information will be retrieved electronically',
-    },
-    checkboxProvider: {
-      id: 'asfte.application:prerequisites.checkbox.provider',
-      defaultMessage:
-        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
-      description:
-        'I understand that the above information will be collected during the application process',
-    },
-    skraInformationTitle: {
-      id: 'asfte.application:prerequisites.national.registry.title',
-      defaultMessage: 'Upplýsingar frá Þjóðskrá',
-      description: 'Information from Registers Iceland',
-    },
     skraInformationSubTitle: {
       id: 'asfte.application:prerequisites.national.registry.subtitle',
       defaultMessage: 'Upplýsingar um þig og maka. Upplýsingar um búsetu.',
@@ -55,11 +28,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
         'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. \n\nTryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. \n\nFrekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar [hér](https://www.tr.is/tryggingastofnun/personuvernd). \n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
       description:
         'Information about email address, phone number and bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. That information can relate to both your income and other circumstances. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd). \n\nIf your income or other circumstances change, you must notify the Social Insurance Administration as this may affect your payments.',
-    },
-    startApplication: {
-      id: 'asfte.application:prerequisites.start.application',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Start application',
     },
     isNotEligibleLabel: {
       id: 'asfte.application:is.not.eligible.label',

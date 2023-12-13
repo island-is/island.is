@@ -16,27 +16,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
-    externalDataSubSection: {
-      id: 'oap.application:externalData.sub.section',
-      defaultMessage: 'Gagnaöflun',
-      description: 'External Data',
-    },
-    externalDataDescription: {
-      id: 'oap.application:externalData.description',
-      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
-      description: 'english translation',
-    },
-    checkboxProvider: {
-      id: 'oap.application:prerequisites.checkbox.provider',
-      defaultMessage:
-        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
-      description: 'Checbox to confirm data provider',
-    },
-    skraInformationTitle: {
-      id: 'oap.application:prerequisites.national.registry.title',
-      defaultMessage: 'Upplýsingar frá Þjóðskrá',
-      description: 'Information from Registers Iceland',
-    },
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage: 'Upplýsingar um þig og maka. Upplýsingar um búsetu.',
@@ -53,11 +32,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage:
         'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. Tryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
       description: 'english translation',
-    },
-    startApplication: {
-      id: 'oap.application:prerequisites.start.application',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Start application',
     },
     questionTitle: {
       id: 'oap.application:prerequisites.question.title',

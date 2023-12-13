@@ -51,7 +51,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   children: [
     buildSection({
       id: 'prerequisites',
-      title: additionalSupportForTheElderyFormMessage.pre.externalDataSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [],
     }),
     buildSection({

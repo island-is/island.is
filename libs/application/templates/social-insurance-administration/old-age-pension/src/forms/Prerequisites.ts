@@ -86,17 +86,23 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'externalData',
-          title: oldAgePensionFormMessage.pre.externalDataSubSection,
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
           children: [
             buildExternalDataProvider({
               id: 'approveExternalData',
-              title: oldAgePensionFormMessage.pre.externalDataSubSection,
-              subTitle: oldAgePensionFormMessage.pre.externalDataDescription,
-              checkboxLabel: oldAgePensionFormMessage.pre.checkboxProvider,
+              title:
+                socialInsuranceAdministrationMessage.pre.externalDataSection,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .externalDataDescription,
+              checkboxLabel:
+                socialInsuranceAdministrationMessage.pre.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
                   provider: NationalRegistryUserApi,
-                  title: oldAgePensionFormMessage.pre.skraInformationTitle,
+                  title:
+                    socialInsuranceAdministrationMessage.pre
+                      .skraInformationTitle,
                   subTitle:
                     oldAgePensionFormMessage.pre.skraInformationSubTitle,
                 }),
@@ -171,7 +177,8 @@ export const PrerequisitesForm: Form = buildForm({
                   actions: [
                     {
                       event: DefaultEvents.SUBMIT,
-                      name: oldAgePensionFormMessage.pre.startApplication,
+                      name: socialInsuranceAdministrationMessage.pre
+                        .startApplication,
                       type: 'primary',
                       condition: (answers) => {
                         const { pensionFundQuestion } =
