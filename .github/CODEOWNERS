@@ -311,6 +311,11 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/templates/healthcare-license-certificate/                                              @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/         @island-is/origo
 
+/libs/application/templates/energy-funds/                                                                @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                           @island-is/origo
+/libs/api/domains/energy-funds/                                                                          @island-is/origo
+/libs/clients/energy-funds/                                                                              @island-is/origo
+
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa
 
