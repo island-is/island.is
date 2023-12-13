@@ -6,7 +6,6 @@ import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
-import { logger } from '../common'
 
 yargs(process.argv.slice(2))
   .command(
@@ -60,15 +59,21 @@ yargs(process.argv.slice(2))
       return yargs
         .option('service', { demandOption: true, array: true })
         .option('json', { type: 'boolean', default: false })
+        .option('dry', { type: 'boolean', default: false })
     },
     async (argv) => {
-      if (argv.json) {
-        logger.debug(
-          JSON.stringify(await renderLocalServices(argv.service as string[])),
-        )
-        return
-      }
-      logger.debug(await renderLocalServices(argv.service as string[]))
+      const args = [argv.service, argv.dry]
+      const renderedLocalServices = await renderLocalServices(
+        argv.service as string[],
+        {
+          dryRun: argv.dry,
+        },
+      )
+      console.log(
+        argv.json
+          ? JSON.stringify(renderedLocalServices)
+          : renderedLocalServices,
+      )
     },
   )
   .command(
