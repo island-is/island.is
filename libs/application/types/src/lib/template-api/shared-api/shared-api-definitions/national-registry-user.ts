@@ -16,7 +16,8 @@ export interface ChildrenCustodyInformationParameters {
 }
 
 export interface BirthplaceParameters {
-  validateNotEmpty: boolean
+  validateLocationNotEmpty: boolean
+  validateLocationNotEmptyIfCountryIceland: boolean
 }
 
 export const NationalRegistryUserApi =

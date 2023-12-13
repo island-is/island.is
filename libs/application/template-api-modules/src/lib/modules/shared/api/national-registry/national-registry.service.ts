@@ -438,8 +438,26 @@ export class NationalRegistryService extends BaseTemplateApiService {
       auth.nationalId,
     )
 
-    if (params?.validateNotEmpty) {
+    // Throw error if location is empty
+    if (params?.validateLocationNotEmpty) {
       if (!birthplace?.locality) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryBirthplaceMissing,
+            summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
+          },
+          404,
+        )
+      }
+    }
+
+    // Throw error if birthCountry is Iceland and location is empty
+    // Note: location is always empty if birthCountry is not Iceland
+    if (params?.validateLocationNotEmptyIfCountryIceland) {
+      const birthCountryIceland =
+        birthplace?.municipalityNumber?.substring(0, 2) !== '99'
+
+      if (birthCountryIceland && !birthplace?.locality) {
         throw new TemplateApiError(
           {
             title: coreErrorMessages.nationalRegistryBirthplaceMissing,
