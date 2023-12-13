@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import { TagCaseState } from '@island.is/judicial-system-web/src/components'
-import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
+import { CategoryCard } from '@island.is/judicial-system-web/src/routes/Shared/Cases/MobileCase'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 
