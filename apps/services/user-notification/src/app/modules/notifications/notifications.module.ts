@@ -19,9 +19,14 @@ import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import * as userProfile from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
+import { MeNotificationsController } from './me-notifications.controller'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { Notification } from './notification.model'
+import { UserNotificationsInfraController } from './infra.controller'
 
 @Module({
   imports: [
+    SequelizeModule.forFeature([Notification]),
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
       max: 100, // 100 items max
@@ -39,7 +44,11 @@ import { NotificationsService } from './notifications.service'
       },
     }),
   ],
-  controllers: [NotificationsController],
+  controllers: [
+    NotificationsController,
+    MeNotificationsController,
+    UserNotificationsInfraController,
+  ],
   providers: [
     NotificationsService,
     NotificationDispatchService,
@@ -48,11 +57,13 @@ import { NotificationsService } from './notifications.service'
     {
       provide: FIREBASE_PROVIDER,
       useFactory: () =>
-        firebaseAdmin.initializeApp({
-          credential: firebaseAdmin.credential.cert(
-            JSON.parse(environment.firebaseCredentials),
-          ),
-        }),
+        process.env.INIT_SCHEMA === 'true'
+          ? {}
+          : firebaseAdmin.initializeApp({
+              credential: firebaseAdmin.credential.cert(
+                JSON.parse(environment.firebaseCredentials),
+              ),
+            }),
     },
     {
       provide: userProfile.UserProfileApi,

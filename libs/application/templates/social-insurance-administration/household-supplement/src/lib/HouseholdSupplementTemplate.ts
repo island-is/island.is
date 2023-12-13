@@ -64,6 +64,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   featureFlag: Features.householdSupplementApplication,
   translationNamespaces: [
     ApplicationConfigurations.HouseholdSupplement.translation,
+    'sia.application',
   ],
   dataSchema,
   allowMultipleApplicationsInDraft: false,

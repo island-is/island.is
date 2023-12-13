@@ -17,6 +17,8 @@ import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
 import { EstateTypes } from '../../lib/constants'
 import { customCurrencyFormat } from '../../lib/utils'
+import { getSumFromAnswers } from '../../utils/getSumFromAnswers'
+import { getMarketValueShare } from '../../utils/getMarketValueShare'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overviewAssetsAndDebts = [
@@ -49,11 +51,7 @@ export const overviewAssetsAndDebts = [
               (asset.marketValue ? formatCurrency(asset.marketValue) : '0 kr.'),
             m.propertyShare.defaultMessage +
               ': ' +
-              (asset.share
-                ? asset.share > 1
-                  ? asset.share + '%'
-                  : asset.share * 100 + '%'
-                : ''),
+              (asset.share ? asset.share + '%' : '0%'),
           ],
         })),
     },
@@ -61,13 +59,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
-      getSumFromAnswers<EstateAsset>(
-        answers,
-        'estate.assets',
-        'marketValue',
-        (asset) => !!asset?.enabled,
-      ),
+    description: ({ answers }: Application) => getMarketValueShare(answers),
     condition: (answers) =>
       !!getSumFromAnswers<EstateAsset>(
         answers,
@@ -343,6 +335,11 @@ export const overviewAssetsAndDebts = [
       id: 'stocksCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
     },
     {
       cards: ({ answers }: Application) =>
@@ -453,8 +450,9 @@ export const overviewAssetsAndDebts = [
     id: 'moneyAndDepositNotFilledOut',
     title: '',
     component: 'NotFilledOut',
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'moneyAndDeposit.value') === '',
+    condition: (answers) => {
+      return getValueViaPath<string>(answers, 'moneyAndDeposit.value') === ''
+    },
   }),
   buildDividerField({}),
   buildDescriptionField({
@@ -498,29 +496,3 @@ export const overviewAssetsAndDebts = [
   }),
   buildDividerField({}),
 ]
-
-const getSumFromAnswers = <T = unknown>(
-  answers: Application['answers'],
-  path: string,
-  field: string,
-  fn?: (item: T) => boolean,
-): string | null => {
-  let arr: T[] = getValueViaPath(answers, path) ?? []
-
-  if (Array.isArray(arr)) {
-    if (fn) {
-      arr = arr.filter(fn)
-    }
-
-    const value = arr.reduce((acc, cur) => {
-      const val = (getValueViaPath(cur as RecordObject, field) as number) ?? 0
-      return acc + Number(val)
-    }, 0)
-
-    if (value && value > 0) {
-      return formatCurrency(String(value))
-    }
-  }
-
-  return null
-}

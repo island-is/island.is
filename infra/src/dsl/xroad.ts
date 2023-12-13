@@ -427,6 +427,16 @@ export const PaymentSchedule = new XroadConf({
   },
 })
 
+export const IntellectualProperties = new XroadConf({
+  env: {
+    XROAD_INTELLECTUAL_PROPERTIES_PATH: {
+      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
+      staging: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+      prod: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+    },
+  },
+})
+
 export const CriminalRecord = new XroadConf({
   env: {
     XROAD_CRIMINAL_RECORD_PATH: {
@@ -531,6 +541,16 @@ export const ChargeFjsV2 = new XroadConf({
       dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
       staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
+    },
+  },
+})
+
+export const EnergyFunds = new XroadConf({
+  env: {
+    XROAD_ENERGY_FUNDS_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/ElectricCarSubSidyService_v1',
     },
   },
 })
@@ -669,7 +689,8 @@ export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {
       dev: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
-      staging: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
+      staging:
+        'IS-TEST/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
       prod: 'IS/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
     },
   },
