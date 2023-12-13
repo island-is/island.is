@@ -63,60 +63,51 @@ export const getLocalrunValueFile = async (
   logger.debug('getLocalrunValueFile', { runtime, services })
 
   logger.debug('Process services', { services })
-  const dockerComposeServices = await Object.entries(services).reduce(
-    async (acc, [name, service]) => {
-      const portConfig = runtime.ports[name]
-        ? { PORT: runtime.ports[name].toString() }
-        : {}
-      const serviceNXName = await mapServiceToNXname(name)
-      return {
-        ...(await acc),
-        [name]: {
-          env: Object.assign(
-            {},
-            Object.entries(service.env)
-              .filter(
-                ([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name),
-              )
-              .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
-            { PROD_MODE: 'true' },
-            portConfig,
-          ) as Record<string, string>,
-          command: `(source ${join(
-            rootDir,
-            '.env.' + serviceNXName,
-          )} && yarn start ${serviceNXName})`,
-        },
-      }
-    },
-    Promise.resolve(
-      {} as {
-        [name: string]: { env: Record<string, string>; command: string }
-      },
-    ),
-  )
+  const dockerComposeServices = {} as Services<LocalrunService>
+  for (const [name, service] of Object.entries(services)) {
+    const portConfig = runtime.ports[name]
+      ? { PORT: runtime.ports[name].toString() }
+      : {}
+    const serviceNXName = await mapServiceToNXname(name)
+    dockerComposeServices[name] = {
+      env: Object.assign(
+        {},
+        Object.entries(service.env)
+          .filter(([name]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name))
+          .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
+        { PROD_MODE: 'true' },
+        portConfig,
+      ) as Record<string, string>,
+      command: [
+        `source ${join(rootDir, `.env.${serviceNXName}`)}`,
+        `yarn start ${serviceNXName}`,
+      ],
+    }
+  }
 
   logger.debug('Dump all env values to files', {
     dockerComposeServices,
   })
   await Promise.all(
-    Object.entries(dockerComposeServices).map(async ([name, svc]) => {
-      const serviceNXName = await mapServiceToNXname(name)
-      logger.debug(`Writing env to file for ${name}`, { name, serviceNXName })
-      if (options.dryRun) return
-      await writeFile(
-        join(rootDir, `.env.${serviceNXName}`),
-        Object.entries(svc.env)
-          .map(
-            ([name, value]) =>
-              `export ${name}='${value
-                .replace(/'/g, "'\\''")
-                .replace(/[\n\r]/g, '')}'`,
-          )
-          .join('\n'),
-        { encoding: 'utf-8' },
-      )
-    }),
+    Object.entries(dockerComposeServices).map(
+      async ([name, svc]: [string, LocalrunService]) => {
+        const serviceNXName = await mapServiceToNXname(name)
+        logger.debug(`Writing env to file for ${name}`, { name, serviceNXName })
+        if (options.dryRun) return
+        await writeFile(
+          join(rootDir, `.env.${serviceNXName}`),
+          Object.entries(svc.env)
+            .map(
+              ([name, value]) =>
+                `export ${name}='${value
+                  .replace(/'/g, "'\\''")
+                  .replace(/[\n\r]/g, '')}'`,
+            )
+            .join('\n'),
+          { encoding: 'utf-8' },
+        )
+      },
+    ),
   )
   const mocksConfigs = Object.entries(runtime.mocks).reduce(
     (acc, [name, target]) => {
@@ -198,11 +189,16 @@ export const getLocalrunValueFile = async (
   const mocksStr = mocks.join(' ')
   logger.debug(`Docker command for mocks:`, { mocks })
 
+  const renderedServices: Services<LocalrunService> = {}
+  logger.debug('Debugging dockerComposeServices', {
+    dockerComposeServices,
+  })
+  for (const [name, service] of Object.entries(dockerComposeServices)) {
+    renderedServices[name] = { command: service.command, env: service.env }
+    logger.debug(`Docker command for ${name}:`, { command: service.command })
+  }
   return {
-    services: Object.entries(dockerComposeServices).reduce(
-      (acc, [name, service]) => ({ ...acc, [name]: service.command }),
-      {},
-    ),
+    services: renderedServices,
     mocks: mocksStr,
   }
 }

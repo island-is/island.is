@@ -61,20 +61,12 @@ yargs(process.argv.slice(2))
         .option('json', { type: 'boolean', default: false })
         .option('dry', { type: 'boolean', default: false })
     },
-    async (argv) => {
-      const args = [argv.service, argv.dry]
-      const renderedLocalServices = await renderLocalServices(
-        argv.service as string[],
-        {
-          dryRun: argv.dry,
-        },
-      )
-      console.log(
-        argv.json
-          ? JSON.stringify(renderedLocalServices)
-          : renderedLocalServices,
-      )
-    },
+    async (argv) =>
+      await renderLocalServices(argv.service as string[], {
+        dryRun: argv.dry,
+        json: argv.json,
+        print: true,
+      }),
   )
   .command(
     'run-local-env',
@@ -85,11 +77,10 @@ yargs(process.argv.slice(2))
         .option('dependencies', { array: true, type: 'string', default: [] })
         .option('dry', { type: 'boolean', default: false })
     },
-    async (argv) => {
+    async (argv) =>
       await runLocalServices(argv.service, argv.dependencies, {
         dryRun: argv.dry,
-      })
-    },
+      }),
   )
   .demandCommand(1)
   .parse()
