@@ -66,7 +66,8 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { width } = useViewport()
-  const { isOpeningCaseId, handleOpenCase, LoadingIndicator } = useCaseList()
+  const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
+    useCaseList()
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -338,7 +339,11 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
                   <AnimatePresence exitBeforeEnter>
-                    {isOpeningCaseId !== c.id ? (
+                    {isOpeningCaseId === c.id && showLoading ? (
+                      <div className={styles.deleteButtonWrapper}>
+                        <LoadingIndicator />
+                      </div>
+                    ) : (
                       isProsecutionUser(user) &&
                       (c.state === CaseState.NEW ||
                         c.state === CaseState.DRAFT ||
@@ -372,10 +377,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                           <Icon icon="close" color="blue400" />
                         </motion.button>
                       )
-                    ) : (
-                      <div className={styles.deleteButtonWrapper}>
-                        <LoadingIndicator />
-                      </div>
                     )}
                   </AnimatePresence>
                 </td>
