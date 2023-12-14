@@ -30,6 +30,8 @@ import { Vacancy } from './models/vacancy.model'
 import { ResponseError } from '@elastic/elasticsearch/lib/errors'
 import { GetEventsInput } from './dto/getEvents.input'
 import { Event as EventModel } from './models/event.model'
+import { GetManualsInput } from './dto/getManuals.input'
+import { Manual } from './models/manual.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -52,6 +54,46 @@ export class CmsElasticsearchService {
     return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
       JSON.parse(response._source.response ?? '[]'),
     )
+  }
+
+  async getManuals(index: string, input: GetManualsInput): Promise<Manual[]> {
+    const query = {
+      types: ['webManual'],
+      tags: [] as elasticTagField[],
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
+      size: input.size,
+    }
+
+    if (input.sort === SortField.POPULAR) {
+      query.sort = [
+        { popularityScore: { order: SortDirection.DESC } },
+        ...query.sort,
+      ]
+    }
+
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+    if (input.group) {
+      query.tags.push({ type: 'group', key: input.group })
+    }
+    if (input.subgroup) {
+      query.tags.push({ type: 'subgroup', key: input.subgroup })
+    }
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
+    }
+
+    const manualsResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    return manualsResponse.hits.hits
+      .filter((r) => Boolean(r?._source?.response))
+      .map<Manual>((response) =>
+        JSON.parse(response._source.response as string),
+      )
   }
 
   async getArticles(

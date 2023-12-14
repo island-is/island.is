@@ -4,6 +4,9 @@ import { IManual } from '../generated/contentfulTypes'
 import { Organization, mapOrganization } from './organization.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
 import { ManualChapter, mapManualChapter } from './manualChapter.model'
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
+import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
+import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
 
 @ObjectType()
 export class Manual {
@@ -27,6 +30,15 @@ export class Manual {
 
   @CacheField(() => [ManualChapter])
   chapters!: ManualChapter[]
+
+  @CacheField(() => ArticleCategory, { nullable: true })
+  category?: ArticleCategory | null
+
+  @CacheField(() => ArticleGroup, { nullable: true })
+  group?: ArticleGroup | null
+
+  @CacheField(() => ArticleSubgroup, { nullable: true })
+  subgroup?: ArticleSubgroup | null
 }
 
 export const mapManual = (manual: IManual): Manual => {
@@ -47,5 +59,8 @@ export const mapManual = (manual: IManual): Manual => {
           .filter((chapter) => chapter?.fields?.title && chapter?.fields?.slug)
           .map((chapter) => mapManualChapter({ chapter, manual }))
       : [],
+    category: fields.category ? mapArticleCategory(fields.category) : null,
+    group: fields.group ? mapArticleGroup(fields.group) : null,
+    subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
   }
 }

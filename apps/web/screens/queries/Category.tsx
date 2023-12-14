@@ -15,6 +15,7 @@ export const GET_CATEGORIES_QUERY = gql`
 export const GET_ARTICLES_QUERY = gql`
   query getArticles($input: GetArticlesInput!) {
     getArticles(input: $input) {
+      id
       intro
       importance
       category {

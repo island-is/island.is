@@ -1,64 +1,72 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
-import Head from 'next/head'
+import React, { useEffect, useRef, useState } from 'react'
 import intersection from 'lodash/intersection'
+import Head from 'next/head'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+
 import {
-  Text,
-  Stack,
-  Box,
-  Link,
-  Breadcrumbs,
   AccordionCard,
-  TopicCard,
-  FocusableBox,
-  Navigation,
-  LinkContext,
+  Box,
+  Breadcrumbs,
   Button,
+  FocusableBox,
+  Link,
+  LinkContext,
+  Navigation,
+  Stack,
+  Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import { Card, Sticky } from '@island.is/web/components'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { Screen } from '@island.is/web/types'
 import {
-  GET_NAMESPACE_QUERY,
-  GET_ARTICLES_QUERY,
-  GET_CATEGORIES_QUERY,
-  GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
-} from '@island.is/web/screens/queries'
-import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
+  Article,
+  ArticleGroup,
+  ContentLanguage,
+  GetAnchorPagesInCategoryQuery,
+  GetArticleCategoriesQuery,
+  GetArticlesQuery,
+  GetManualsInCategoryQuery,
+  GetManualsInCategoryQueryVariables,
+  GetManualsQuery,
+  GetManualsQueryVariables,
+  GetNamespaceQuery,
+  Image,
+  QueryGetAnchorPagesInCategoryArgs,
+  QueryGetArticleCategoriesArgs,
+  QueryGetArticlesArgs,
+  QueryGetNamespaceArgs,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import {
-  GetAnchorPagesInCategoryQuery,
-  GetNamespaceQuery,
-  GetArticlesQuery,
-  QueryGetArticlesArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetArticleCategoriesQuery,
-  QueryGetArticleCategoriesArgs,
-  QueryGetAnchorPagesInCategoryArgs,
-  Image,
-  ArticleGroup,
-  Article,
-} from '@island.is/web/graphql/schema'
-import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
+import {
+  GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
+  GET_ARTICLES_QUERY,
+  GET_CATEGORIES_QUERY,
+  GET_NAMESPACE_QUERY,
+} from '@island.is/web/screens/queries'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { hasProcessEntries } from '@island.is/web/utils/article'
+
+import { GET_MANUALS_QUERY } from '../../queries/Manual'
 import {
   getActiveCategory,
   getHashArr,
   getHashString,
   updateHashArray,
 } from './utils'
-import { hasProcessEntries } from '@island.is/web/utils/article'
 
-type Articles = GetArticlesQuery['getArticles']
+type Cards = GetArticlesQuery['getArticles'] | GetManualsQuery['getManuals']
+
 type LifeEvents = GetAnchorPagesInCategoryQuery['getAnchorPagesInCategory']
 
 interface CategoryProps {
-  articles: Articles
+  articles: Cards
   categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: GetNamespaceQuery['getNamespace']
   lifeEvents: LifeEvents
@@ -573,6 +581,9 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
       data: { getAnchorPagesInCategory: lifeEvents },
     },
     {
+      data: { getManuals: manuals },
+    },
+    {
       data: { getArticleCategories },
     },
     namespace,
@@ -596,6 +607,16 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug,
           lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<GetManualsQuery, GetManualsQueryVariables>({
+      query: GET_MANUALS_QUERY,
+      variables: {
+        input: {
+          category: slug,
+          lang: locale as ContentLanguage,
+          size: 1000,
         },
       },
     }),
@@ -631,13 +652,23 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
     (category) => category.slug === slug,
   )
 
-  // if requested category si not in returned list of categories we assume it does not exist
+  // if requested category is not in returned in the list of categories we assume it does not exist
   if (!categoryExists) {
     throw new CustomNextError(404, 'Category not found')
   }
 
+  const cards: Cards = []
+
+  for (const article of articles) {
+    cards.push(article)
+  }
+
+  for (const manual of manuals) {
+    cards.push()
+  }
+
   return {
-    articles,
+    articles: (articles ?? []).concat(manuals),
     lifeEvents,
     categories: getArticleCategories,
     namespace,
