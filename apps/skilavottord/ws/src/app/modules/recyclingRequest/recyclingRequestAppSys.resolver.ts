@@ -48,7 +48,9 @@ export class RecyclingRequestAppSysResolver {
           { permno: input.permno, user },
         )
 
-        return null
+        throw new NotFoundException(
+          `User doesn't have right to deregistered the vehicle`,
+        )
       }
     }
 
