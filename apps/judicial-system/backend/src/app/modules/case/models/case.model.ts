@@ -1168,4 +1168,15 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   appealIsolationToDate?: Date
+
+  /**********
+   * Indicates whether the prosecutor requested that the appeals court's ruling should not
+   * be published immediately.
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  requestCourtOfAppealRulingToBeHidden?: boolean
 }

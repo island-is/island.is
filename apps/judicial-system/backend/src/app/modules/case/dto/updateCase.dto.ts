@@ -419,4 +419,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly appealIsolationToDate?: Date
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly requestCourtOfAppealRulingToBeHidden?: string
 }
