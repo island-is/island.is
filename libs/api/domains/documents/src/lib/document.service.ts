@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { Document, DocumentListResponse } from './models/document.model'
 import {
   CategoryDTO,
@@ -6,7 +6,6 @@ import {
   SenderDTO,
   TypeDTO,
 } from '@island.is/clients/documents'
-import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
 import { DocumentClient } from '@island.is/clients/documents'
@@ -19,50 +18,46 @@ import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { PostMailActionInput } from './dto/postMailActionInput'
 import { ActionMailBody } from './models/actionMail.model'
 import { PostBulkMailActionInput } from './dto/postBulkMailActionInput'
+import {
+  CustomersListDocumentsSortByEnum,
+  DocumentsV2ClientService,
+} from '@island.is/clients/documents-v2'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { isDefined } from '@island.is/shared/utils'
 
 const LOG_CATEGORY = 'documents-api'
 @Injectable()
 export class DocumentService {
   constructor(
-    private documentClient: DocumentClient,
+    private documentClient: DocumentsV2ClientService,
     private documentBuilder: DocumentBuilder,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findByDocumentId(
     nationalId: string,
     documentId: string,
   ): Promise<DocumentDetails> {
-    try {
-      const documentDTO =
-        (await this.documentClient.customersDocument({
-          kennitala: nationalId,
-          messageId: documentId,
-          authenticationType: 'HIGH',
-        })) || {}
+    const documentDTO =
+      (await this.documentClient.getCustomersDocument({
+        kennitala: nationalId,
+        messageId: documentId,
+        authenticationType: 'HIGH',
+      })) || {}
 
-      return DocumentDetails.fromDocumentDTO(documentDTO)
-    } catch (exception) {
-      logger.error(exception)
-      throw new InternalServerErrorException('Error fetching document')
-    }
+    return DocumentDetails.fromDocumentDTO(documentDTO)
   }
 
   async listDocuments(nationalId: string): Promise<Document[]> {
-    try {
-      const body = await this.documentClient.getDocumentList(nationalId)
+    const body = await this.documentClient.getDocumentList({
+      kennitala: nationalId,
+    })
 
-      return (body?.messages || []).reduce(
-        (result: Document[], documentMessage: DocumentInfoDTO) => {
-          if (documentMessage)
-            result.push(this.documentBuilder.buildDocument(documentMessage))
-          return result
-        },
-        [],
-      )
-    } catch (exception) {
-      logger.error(exception)
-      return []
-    }
+    return (
+      body.messages
+        ?.map((m) => this.documentBuilder.buildDocument(m))
+        .filter(isDefined) ?? []
+    )
   }
   async listDocumentsV2(
     nationalId: string,
@@ -70,100 +65,79 @@ export class DocumentService {
   ): Promise<DocumentListResponse> {
     const healthId = '3' // The
     let newInput: GetDocumentListInput = input
-    try {
-      if (
-        (input.categoryId === '' ||
-          input.categoryId?.indexOf(healthId) !== -1) &&
-        input.isLegalGuardian
-      ) {
-        const allCategories = await this.getCategories(nationalId)
-        if (allCategories.find((x) => x.id === healthId)) {
-          newInput = {
-            ...input,
-            categoryId: allCategories
-              .filter((item) => item.id !== healthId)
-              .map((item) => item.id)
-              .toString(),
-          }
+    if (
+      (input.categoryId === '' || input.categoryId?.indexOf(healthId) !== -1) &&
+      input.isLegalGuardian
+    ) {
+      const allCategories =
+        (await this.getCategories({ kennitala: nationalId })) ?? []
+      if (allCategories.find((x) => x.id === healthId)) {
+        newInput = {
+          ...input,
+          categoryId: allCategories
+            .filter((item) => item.id !== healthId)
+            .map((item) => item.id)
+            .toString(),
         }
       }
+    }
 
-      const body = await this.documentClient.getDocumentList(
-        nationalId,
-        newInput,
-      )
+    const { dateFrom, dateTo, ...requestInput } = newInput
 
-      return {
-        data: (body?.messages || []).reduce(
-          (result: Document[], documentMessage: DocumentInfoDTO) => {
-            if (documentMessage)
-              result.push(this.documentBuilder.buildDocument(documentMessage))
-            return result
-          },
-          [],
-        ),
-        totalCount: body?.totalCount,
-      }
-    } catch (exception) {
-      logger.error(exception)
-      return { data: [], totalCount: 0 }
+    const body = await this.documentClient.getDocumentList({
+      kennitala: nationalId,
+      dateFrom: dateFrom ? new Date(dateFrom) : undefined,
+      dateTo: dateTo ? new Date(dateTo) : undefined,
+      ...requestInput,
+    })
+
+    return {
+      data:
+        body?.messages
+          ?.map((m) => this.documentBuilder.buildDocument(m))
+          .filter(isDefined) ?? [],
+
+      totalCount: body?.totalCount,
     }
   }
 
-  async getCategories(nationalId: string): Promise<DocumentCategory[]> {
-    try {
-      const body = await this.documentClient.customersCategories(nationalId)
-      return (body?.categories || []).reduce(function (
-        result: DocumentCategory[],
-        category: CategoryDTO,
-      ) {
-        if (category) result.push(DocumentCategory.fromCategoryDTO(category))
-        return result
-      },
-      [])
-    } catch (exception) {
-      logger.error(exception)
-      return []
-    }
+  async getCategories(nationalId: string): Promise<DocumentCategory[] | null> {
+    const body = await this.documentClient.getCustomersCategories({
+      kennitala: nationalId,
+    })
+    return (
+      body?.categories
+        ?.map((c) => DocumentCategory.fromCategoryDTO(c))
+        .filter(isDefined) ?? []
+    )
   }
 
-  async getTypes(nationalId: string): Promise<DocumentType[]> {
-    try {
-      const body = await this.documentClient.customersTypes(nationalId)
-      return (body?.types || []).reduce(function (
-        result: DocumentType[],
-        type: TypeDTO,
-      ) {
-        if (type) result.push(DocumentType.fromTypeDTO(type))
-        return result
-      },
-      [])
-    } catch (exception) {
-      logger.error(exception)
-      return []
-    }
+  async getTypes(nationalId: string): Promise<DocumentType[] | null> {
+    const body = await this.documentClient.getCustomersTypes({
+      kennitala: nationalId,
+    })
+    return (
+      body?.types?.map((t) => DocumentType.fromTypeDTO(t)).filter(isDefined) ??
+      []
+    )
   }
 
   async getSenders(nationalId: string): Promise<DocumentSender[]> {
-    try {
-      const body = await this.documentClient.customersSenders(nationalId)
-      return (body?.senders || []).reduce(function (
-        result: DocumentSender[],
-        sender: SenderDTO,
-      ) {
-        if (sender) result.push(DocumentSender.fromSenderDTO(sender))
-        return result
-      },
-      [])
-    } catch (exception) {
-      logger.error(exception)
-      return []
-    }
+    const body = await this.documentClient.getCustomersSenders({
+      kennitala: nationalId,
+    })
+    return (
+      body?.senders
+        ?.map((sender) => DocumentSender.fromSenderDTO(sender))
+        .filter(isDefined) ?? []
+    )
   }
 
   async getPaperMailInfo(nationalId: string): Promise<PaperMailBody> {
     try {
-      const res = await this.documentClient.requestPaperMail(nationalId)
+      const res = await this.documentClient.requestPaperMail({
+        kennitala: nationalId,
+      })
       return {
         nationalId: res?.kennitala,
         wantsPaper: res?.wantsPaper,
@@ -180,6 +154,7 @@ export class DocumentService {
   async postPaperMailInfo(
     nationalId: string,
     body: PostRequestPaperInput,
+    version: 'v1' | 'v2' = 'v1',
   ): Promise<PaperMailBody> {
     try {
       const postBody = {
@@ -203,7 +178,10 @@ export class DocumentService {
     }
   }
 
-  async postMailAction(body: PostMailActionInput): Promise<ActionMailBody> {
+  async postMailAction(
+    body: PostMailActionInput,
+    version: 'v1' | 'v2' = 'v1',
+  ): Promise<ActionMailBody> {
     try {
       const { action, ...postBody } = body
       await this.documentClient.postMailAction(postBody, action)
@@ -225,7 +203,10 @@ export class DocumentService {
     }
   }
 
-  async bulkMailAction(body: PostBulkMailActionInput): Promise<ActionMailBody> {
+  async bulkMailAction(
+    body: PostBulkMailActionInput,
+    version: 'v1' | 'v2' = 'v1',
+  ): Promise<ActionMailBody> {
     const messageIds = body.messageIds ?? []
     const stringIds = messageIds.toString()
     try {

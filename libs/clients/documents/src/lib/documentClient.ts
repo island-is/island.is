@@ -18,15 +18,8 @@ import { PaperMailResponse } from './models/PaperMailRes'
 import { RequestPaperDTO } from './models/RequestPaperDTO'
 import { MessageActionDTO } from './models/MessageActionDTO'
 import { BulkMailActionDTO } from './models/BulkMailActionDTO'
-
-export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
-
-export interface DocumentClientConfig {
-  basePath: string
-  clientId: string
-  clientSecret: string
-  tokenUrl: string
-}
+import { ConfigType } from '@nestjs/config'
+import { DocumentsClientConfig } from './documentsClient.config'
 
 @Injectable()
 export class DocumentClient {
@@ -35,8 +28,8 @@ export class DocumentClient {
 
   constructor(
     private httpService: HttpService,
-    @Inject(DOCUMENT_CLIENT_CONFIG)
-    private clientConfig: DocumentClientConfig,
+    @Inject(DocumentsClientConfig.KEY)
+    private clientConfig: ConfigType<typeof DocumentsClientConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}

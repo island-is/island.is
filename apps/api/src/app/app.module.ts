@@ -18,7 +18,6 @@ import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
-import { DocumentModule } from '@island.is/api/domains/documents'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
@@ -65,6 +64,9 @@ import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
 import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
+import { DocumentsModule } from '@island.is/api/domains/documents'
+import { DocumentsClientConfig } from '@island.is/clients/documents'
+import { DocumentsV2ClientConfig } from '@island.is/clients/documents-v2'
 import {
   WatsonAssistantChatConfig,
   WatsonAssistantChatModule,
@@ -199,14 +201,6 @@ const environment = getConfig
     LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
-    DocumentModule.register({
-      documentClientConfig: {
-        basePath: environment.documentService.basePath!,
-        clientId: environment.documentService.clientId,
-        clientSecret: environment.documentService.clientSecret,
-        tokenUrl: environment.documentService.tokenUrl,
-      },
-    }),
     DocumentProviderModule.register({
       test: {
         basePath: environment.documentProviderService.test.basePath!,
@@ -250,6 +244,7 @@ const environment = getConfig
     ApiCatalogueModule,
     IdentityModule,
     NationalRegistryModule,
+    DocumentsModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
@@ -315,6 +310,8 @@ const environment = getConfig
         AdrAndMachineLicenseClientConfig,
         NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
+        DocumentsClientConfig,
+        DocumentsV2ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         AdrDigitalLicenseClientConfig,

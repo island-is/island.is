@@ -1,7 +1,8 @@
 import axios from 'axios'
 import qs from 'qs'
 import { logger } from '@island.is/logging'
-import { DocumentClientConfig } from './documentClient'
+import { ConfigType } from '@nestjs/config'
+import { DocumentsClientConfig } from './documentsClient.config'
 
 export interface OauthConnectionResponse {
   token: string
@@ -10,7 +11,7 @@ export interface OauthConnectionResponse {
 
 export class DocumentOauthConnection {
   static async fetchToken(
-    config: DocumentClientConfig,
+    config: ConfigType<typeof DocumentsClientConfig>,
   ): Promise<OauthConnectionResponse> {
     if (!config.clientId || !config.clientSecret || !config.tokenUrl) {
       logger.info(

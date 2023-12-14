@@ -1,33 +1,14 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { HttpModule } from '@nestjs/axios'
-import {
-  DocumentClient,
-  DocumentClientConfig,
-  DOCUMENT_CLIENT_CONFIG,
-} from './documentClient'
+import { DocumentClient } from './documentClient'
 
 @Module({
-  controllers: [],
-  providers: [],
-  exports: [],
+  imports: [
+    HttpModule.register({
+      timeout: 60000,
+    }),
+  ],
+  providers: [DocumentClient],
+  exports: [DocumentClient],
 })
-export class DocumentsClientModule {
-  static register(config: DocumentClientConfig): DynamicModule {
-    return {
-      module: DocumentsClientModule,
-      imports: [
-        HttpModule.register({
-          timeout: 60000,
-        }),
-      ],
-      providers: [
-        DocumentClient,
-        {
-          provide: DOCUMENT_CLIENT_CONFIG,
-          useValue: config,
-        },
-      ],
-      exports: [DocumentClient],
-    }
-  }
-}
+export class DocumentsClientModule {}

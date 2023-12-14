@@ -1,5 +1,5 @@
+import { CategoryDTO } from '@island.is/clients/documents-v2'
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { CategoryDTO } from '@island.is/clients/documents'
 
 @ObjectType()
 export class DocumentCategory {
@@ -9,7 +9,10 @@ export class DocumentCategory {
   @Field(() => String)
   name?: string
 
-  static fromCategoryDTO(dto: CategoryDTO) {
+  static fromCategoryDTO(dto: CategoryDTO): DocumentCategory | null {
+    if (!dto.id) {
+      return null
+    }
     const category = new DocumentCategory()
     category.id = dto.id
     category.name = dto.name

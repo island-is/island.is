@@ -1,3 +1,7 @@
+import {
+  CustomersListDocumentsOrderEnum,
+  CustomersListDocumentsSortByEnum,
+} from '@island.is/clients/documents-v2'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
@@ -21,10 +25,10 @@ export class GetDocumentListInput {
   typeId?: string
 
   @Field({ nullable: true })
-  sortBy?: 'Date' | 'Category' | 'Type' | 'Subject' | 'Sender'
+  sortBy?: CustomersListDocumentsSortByEnum
 
   @Field({ nullable: true })
-  order?: 'Ascending' | 'Descending'
+  order?: CustomersListDocumentsOrderEnum
 
   @Field({ nullable: true })
   opened?: boolean

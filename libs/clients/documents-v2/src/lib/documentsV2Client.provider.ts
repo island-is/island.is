@@ -5,7 +5,7 @@ import { Configuration, CustomersApi } from '../../gen/fetch'
 import { DocumentsV2ClientConfig } from './documentsV2Client.config'
 import { Provider } from '@nestjs/common'
 
-export const CustomersApiProvider: Provider<CustomersApi> = {
+export const DocumentsClientProvider: Provider<CustomersApi> = {
   provide: CustomersApi,
   scope: LazyDuringDevScope,
   useFactory: (config: ConfigType<typeof DocumentsV2ClientConfig>) =>

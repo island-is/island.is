@@ -1,4 +1,4 @@
-import { DocumentInfoDTO } from '@island.is/clients/documents'
+import { DocumentInfoDTO } from '@island.is/clients/documents-v2'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
@@ -41,9 +41,21 @@ export class Document {
   @Field(() => String, { nullable: true })
   categoryId?: string
 
-  static fromDocumentInfo(docInfo: DocumentInfoDTO): Document {
+  static fromDocumentInfo(docInfo: DocumentInfoDTO): Document | null {
+    const date = docInfo.publicationDate || docInfo.documentDate
+
+    if (
+      !date ||
+      !docInfo.id ||
+      !docInfo.opened ||
+      !docInfo.subject ||
+      !docInfo.senderKennitala
+    ) {
+      return null
+    }
+
     const doc = new Document()
-    doc.date = new Date(docInfo.publicationDate || docInfo.documentDate)
+    doc.date = date
     doc.id = docInfo.id
     doc.opened = docInfo.opened
     doc.senderName = docInfo.senderName

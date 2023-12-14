@@ -1,4 +1,3 @@
-import { Ibodyjectable } from '@bodyestjs/common'
 import {
   CustomersApi,
   CustomersArchiveRequest,

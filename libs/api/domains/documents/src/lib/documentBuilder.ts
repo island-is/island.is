@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { DocumentInfoDTO } from '@island.is/clients/documents'
+import { DocumentInfoDTO } from '@island.is/clients/documents-v2'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -25,8 +25,13 @@ export class DocumentBuilder {
     },
   ]
 
-  public buildDocument(documentDto: DocumentInfoDTO): Document {
+  public buildDocument(documentDto: DocumentInfoDTO): Document | null {
     const builtDocument = Document.fromDocumentInfo(documentDto)
+
+    if (!builtDocument) {
+      return null
+    }
+
     const { url, fileType } = this.getTypeFilter(documentDto)
     const hasOpened = fileType === FileType.URL ? true : builtDocument.opened // URL documents should not display as unopened as we do not have the ability to mark them as read.
     return {
