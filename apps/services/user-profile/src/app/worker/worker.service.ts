@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { UserProfileAdvania } from './userProfileAdvania.model'
 import { ProcessedStatus } from './types'
-import { shouldReplaceExistingUserProfile } from './worker.utils'
+import { hasMatchingContactInfo } from './worker.utils'
 import { environment } from '../../environments'
 
 /**
@@ -36,28 +36,40 @@ export class UserProfileWorkerService {
     advaniaProfile: UserProfileAdvania,
     existingUserProfile?: UserProfile,
   ) {
-    try {
-      if (
-        shouldReplaceExistingUserProfile(advaniaProfile, existingUserProfile)
-      ) {
-        await this.userProfileModel.upsert({
-          nationalId: advaniaProfile.ssn,
-          email: advaniaProfile.email,
-          mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
-          lastNudge: null,
-          documentNotifications: advaniaProfile.canNudge === true,
-        })
-      } else if (existingUserProfile?.modified < advaniaProfile.exported) {
-        await this.userProfileModel.upsert({
-          nationalId: advaniaProfile.ssn,
-          lastNudge: advaniaProfile.nudgeLastAsked,
-        })
-      }
-      return ProcessedStatus.DONE
-    } catch (e) {
-      logger.error(`processProfiles.error: ${e?.message}`)
-      return ProcessedStatus.ERROR
+    if (!existingUserProfile) {
+      return this.userProfileModel.create({
+        nationalId: advaniaProfile.ssn,
+        email: advaniaProfile.email,
+        mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
+        lastNudge: null,
+        documentNotifications: advaniaProfile.canNudge === true,
+      })
     }
+
+    if (hasMatchingContactInfo(advaniaProfile, existingUserProfile)) {
+      return this.userProfileModel.upsert({
+        nationalId: advaniaProfile.ssn,
+        lastNudge: advaniaProfile.nudgeLastAsked,
+      })
+    }
+
+    if (existingUserProfile.modified <= advaniaProfile.exported) {
+      return this.userProfileModel.upsert({
+        nationalId: advaniaProfile.ssn,
+        email: advaniaProfile.email,
+        mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
+        documentNotifications: advaniaProfile.canNudge === true,
+        lastNudge: null,
+      })
+    }
+
+    const { nationalId, emailVerified, mobilePhoneNumberVerified, modified } =
+      existingUserProfile
+
+    return this.userProfileModel.upsert({
+      nationalId,
+      lastNudge: emailVerified || mobilePhoneNumberVerified ? modified : null,
+    })
   }
 
   private async migrateUserProfiles() {
@@ -110,14 +122,11 @@ export class UserProfileWorkerService {
           (p) => p.nationalId === advaniaProfile.ssn,
         )
 
-        const status = await this.processProfiles(
-          advaniaProfile,
-          existingUserProfile,
-        )
-
-        if (status === ProcessedStatus.DONE) {
+        try {
+          await this.processProfiles(advaniaProfile, existingUserProfile)
           nationalIdsProcessed.push(advaniaProfile.ssn)
-        } else if (status === ProcessedStatus.ERROR) {
+        } catch (e) {
+          logger.error(`processProfiles.error: ${e?.message}`)
           nationalIdsWithError.push(advaniaProfile.ssn)
         }
       }

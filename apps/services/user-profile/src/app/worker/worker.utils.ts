@@ -17,22 +17,3 @@ export const hasMatchingContactInfo = (
 
   return matchingPhoneNumbers && matchingEmails
 }
-
-export const shouldReplaceExistingUserProfile = (
-  migratedProfile: UserProfileAdvania,
-  existingProfile?: UserProfile,
-) => {
-  if (!existingProfile) {
-    return true
-  }
-
-  if (hasMatchingContactInfo(migratedProfile, existingProfile)) {
-    return false
-  }
-
-  if (existingProfile.modified < migratedProfile.exported) {
-    return true
-  }
-
-  return false
-}
