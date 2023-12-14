@@ -1837,6 +1837,7 @@ service-portal-api:
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
+    USER_PROFILE_WORKER_PAGE_SIZE: '3000'
   files:
     - 'islyklar.p12'
   grantNamespaces:
