@@ -484,48 +484,4 @@ describe('answerValidators', () => {
       values: undefined,
     })
   })
-
-  it('should return an error if personalAllowance is yes but personalAllowanceUsage is missing', () => {
-    const newAnswers = {
-      personalAllowance: 'yes',
-    }
-
-    expect(
-      answerValidators['paymentInfo'](newAnswers, application),
-    ).toStrictEqual({
-      message: validatorErrorMessages.requireAnswer,
-      path: 'paymentInfo.personalAllowanceUsage',
-      values: undefined,
-    })
-  })
-
-  it('should return an error if personalAllowance is yes but personalAllowanceUsage is less than 1', () => {
-    const newAnswers = {
-      personalAllowance: 'yes',
-      personalAllowanceUsage: '0',
-    }
-
-    expect(
-      answerValidators['paymentInfo'](newAnswers, application),
-    ).toStrictEqual({
-      message: validatorErrorMessages.personalAllowance,
-      path: 'paymentInfo.personalAllowanceUsage',
-      values: undefined,
-    })
-  })
-
-  it('should return an error if personalAllowance is yes but personalAllowanceUsage is more than 100', () => {
-    const newAnswers = {
-      personalAllowance: 'yes',
-      personalAllowanceUsage: '220',
-    }
-
-    expect(
-      answerValidators['paymentInfo'](newAnswers, application),
-    ).toStrictEqual({
-      message: validatorErrorMessages.personalAllowance,
-      path: 'paymentInfo.personalAllowanceUsage',
-      values: undefined,
-    })
-  })
 })

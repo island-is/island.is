@@ -18,7 +18,6 @@ export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOAD = 'fileUpload',
   VALIDATE_LATEST_EMPLOYER = 'employers',
-  PAYMENTINFO = 'paymentInfo',
 }
 
 export enum ApplicationType {

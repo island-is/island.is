@@ -504,6 +504,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'You must upload an attachment to continue.',
   },
+  personalAllowance: {
+    id: 'sia.application:personal.allowance',
+    defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
+    description: 'Personal tax-free allowance must be between 1 and 100',
+  },
 })
 
 export const statesMessages = defineMessages({
