@@ -79,8 +79,10 @@ export const getLocalrunValueFile = async (
         portConfig,
       ) as Record<string, string>,
       commands: [
-        `source ${join(rootDir, `.env.${serviceNXName}`)}`,
-        `yarn start ${serviceNXName}`,
+        `cd "${rootDir}"`,
+        `. ./.env.${serviceNXName}`, // `source` is bashism
+        `echo "Starting ${name} in $PWD"`,
+        `yarn nx serve ${serviceNXName}`,
       ],
     }
   }

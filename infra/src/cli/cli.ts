@@ -78,7 +78,7 @@ yargs(process.argv.slice(2))
         .option('service', { array: true, type: 'string', demandOption: true })
         .option('dependencies', { array: true, type: 'string', default: [] })
         .option('json', { type: 'boolean', default: false })
-        .option('dry', { type: 'boolean', default: true })
+        .option('dry', { type: 'boolean', default: false })
         .option('no-update-secrets', { type: 'boolean', default: true })
         .option('print', { type: 'boolean', default: false })
         .option('never-fail', {

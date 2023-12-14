@@ -64,6 +64,10 @@ export async function runLocalServices(
   } = {},
 ) {
   logger.debug('runLocalServices', { services, dependencies })
+
+  // Add the service itself to the list of dependencies
+  dependencies.push(...services)
+
   const renderedLocalServices = await renderLocalServices(services, {
     print,
     json,
@@ -87,24 +91,27 @@ export async function runLocalServices(
       logger.info(`Skipping ${name} (not a dependency)`)
       continue
     }
-    const builtCommand = [
+    const chainedCommand = [
       dryRun ? 'false' : 'true',
       ...(service.commands ?? []),
     ].join(' && ')
-    const noFailCommand = [builtCommand, neverFail ? 'true' : 'false'].join(
-      ' || ',
-    )
+    const unfailingCommand = [
+      chainedCommand,
+      neverFail ? 'true' : 'false',
+    ].join(' || ')
+    const command = unfailingCommand
     logger.info(`Running ${name} in the background`)
     logger.debug('Running in the background', {
       service: name,
-      command: noFailCommand,
-      builtCommand,
+      unfailingCommand,
+      chainedCommand,
+      command,
     })
     if (print) {
-      logger.info('Commands being run:', { [name]: builtCommand })
+      logger.info('Commands being run:', { [name]: command })
     }
 
-    const procSpawn = spawn(noFailCommand, {
+    const procSpawn = spawn(command, {
       shell: true,
       stdio: 'inherit',
     })
@@ -113,22 +120,10 @@ export async function runLocalServices(
       logger.info(`${name}: ${data}`)
     })
     procSpawn.stdout?.on('data', (data) => {
-      logger.error(`${name}: ${data}`)
+      logger.error(`${name}: ${data}`, { cwd: process.cwd() })
     })
 
-    const proc = exec(noFailCommand, (err, stdout, stderr) => {
-      if (err) {
-        logger.error(`Error running ${name}`, { err })
-      }
-      if (stdout) {
-        logger.info(`stdout: ${stdout}`)
-      }
-      if (stderr) {
-        logger.error(`stderr: ${stderr}`)
-      }
-      return
-    })
-    processes.push(new Promise((resolve) => proc.on('exit', resolve)))
+    processes.push(new Promise((resolve) => procSpawn.on('exit', resolve)))
   }
 
   // Wait for all processes to complete
