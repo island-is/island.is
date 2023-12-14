@@ -80,6 +80,7 @@ yargs(process.argv.slice(2))
         .option('json', { type: 'boolean', default: false })
         .option('dry', { type: 'boolean', default: true })
         .option('no-update-secrets', { type: 'boolean', default: true })
+        .option('print', { type: 'boolean', default: false })
         .option('never-fail', {
           alias: 'nofail',
           type: 'boolean',
@@ -92,6 +93,7 @@ yargs(process.argv.slice(2))
         json: argv.json,
         neverFail: argv['never-fail'],
         noUpdateSecrets: argv['no-update-secrets'],
+        print: argv.print,
       }),
   )
   .demandCommand(1)

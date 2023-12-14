@@ -32,24 +32,24 @@ class UpstreamDependencyTracer implements ReferenceResolver {
   }
 }
 
-const broken: (name: string) => OutputFormat<ServiceOutputType> = (name) => ({
-  featureDeployment(..._args: any): void {
-    throw new Error(`Broken featureDeployment (name=${name})`)
-  },
-  serializeService(..._args: any) {
-    throw new Error(`Broken serializeService (name=${name})`)
-  },
-  serviceMockDef(..._args: any) {
-    throw new Error(`Broken serviceMockDef (name=${name})`)
-  },
-})
+// Useful for debugging renderers
+function broken(name: string) {
+  return {
+    featureDeployment(..._args: any): void {
+      throw new Error(`Broken featureDeployment (name=${name})`)
+    },
+    serializeService(..._args: any) {
+      throw new Error(`Broken serializeService (name=${name})`)
+    },
+    serviceMockDef(..._args: any) {
+      throw new Error(`Broken serviceMockDef (name=${name})`)
+    },
+  }
+}
 export const renderers: { [name: string]: OutputFormat<ServiceOutputType> } = {
   broken: broken('broken'),
-  // helm: broken('helm'),
-  localrun: broken('localrun'),
-  // localrunNoSecrets: broken('localrunNoSecrets'),
   helm: HelmOutput,
-  // localrun: LocalrunOutput({ secrets: SecretOptions.withSecrets }),
+  localrun: LocalrunOutput({ secrets: SecretOptions.withSecrets }),
   localrunNoSecrets: LocalrunOutput({ secrets: SecretOptions.noSecrets }),
 } as const
 

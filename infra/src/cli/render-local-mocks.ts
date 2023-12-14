@@ -71,13 +71,20 @@ export async function runLocalServices(
     noUpdateSecrets,
   })
 
+  // Verify tat all dependencies exist in the rendered dependency list
+  for (const dependency of dependencies) {
+    if (!renderedLocalServices.services[dependency]) {
+      throw new Error(`Dependency ${dependency} not found`)
+    }
+  }
+
   const processes: Promise<ChildProcess>[] = []
 
   for (const [name, service] of Object.entries(
     renderedLocalServices.services,
   )) {
     if (dependencies.length > 0 && !dependencies.includes(name)) {
-      logger.info(`Skipping ${name} as it is not specified as a dependency`)
+      logger.info(`Skipping ${name} (not a dependency)`)
       continue
     }
     const builtCommand = [
@@ -93,6 +100,9 @@ export async function runLocalServices(
       command: noFailCommand,
       builtCommand,
     })
+    if (print) {
+      logger.info('Commands being run:', { [name]: builtCommand })
+    }
 
     const procSpawn = spawn(noFailCommand, {
       shell: true,
