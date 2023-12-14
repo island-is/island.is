@@ -2,6 +2,7 @@ import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
+  YES,
 } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { FC } from 'react'
@@ -42,6 +43,7 @@ export const ParentsReview: FC<Props> = ({
         })}
         <GridRow>
           {answers?.parentInformation?.parents &&
+            answers?.parentInformation?.hasValidParents === YES &&
             answers?.parentInformation?.parents?.map((parent) => {
               if (parent.wasRemoved === 'false') {
                 return (

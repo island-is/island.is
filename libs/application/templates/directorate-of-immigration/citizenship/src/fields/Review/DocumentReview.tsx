@@ -3,7 +3,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { review } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
@@ -35,7 +35,7 @@ export const DocumentReview: FC<Props> = ({
     <SummaryBlock editAction={() => goToScreen?.(route)}>
       <Box paddingBottom={4}>
         <GridRow>
-          <GridColumn span="1/2">
+          <GridColumn span="1/2" paddingBottom={1}>
             {DescriptionFormField({
               application: application,
               showFieldName: false,
@@ -51,6 +51,43 @@ export const DocumentReview: FC<Props> = ({
                 children: undefined,
               },
             })}
+            {answers?.passport?.attachment?.map((file) => {
+              return <Text>{file.name}</Text>
+            })}
+            {answers?.supportingDocuments.birthCertificate &&
+              answers?.supportingDocuments?.birthCertificate.map((file) => {
+                return <Text>{file.name}</Text>
+              })}
+            {answers?.supportingDocuments.subsistenceCertificate &&
+              answers?.supportingDocuments?.subsistenceCertificate.map(
+                (file) => {
+                  return <Text>{file.name}</Text>
+                },
+              )}
+            {answers?.supportingDocuments.subsistenceCertificateForTown &&
+              answers?.supportingDocuments?.subsistenceCertificateForTown.map(
+                (file) => {
+                  return <Text>{file.name}</Text>
+                },
+              )}
+            {answers?.supportingDocuments.certificateOfLegalResidenceHistory &&
+              answers?.supportingDocuments?.certificateOfLegalResidenceHistory.map(
+                (file) => {
+                  return <Text>{file.name}</Text>
+                },
+              )}
+            {answers?.supportingDocuments.icelandicTestCertificate &&
+              answers?.supportingDocuments?.icelandicTestCertificate.map(
+                (file) => {
+                  return <Text>{file.name}</Text>
+                },
+              )}
+            {answers?.supportingDocuments.criminalRecord &&
+              answers?.supportingDocuments?.criminalRecord.map((file) => {
+                return file.attachment?.map((file) => {
+                  return <Text>{file.name}</Text>
+                })
+              })}
           </GridColumn>
           {selectedChildren &&
             selectedChildren.map((child) => {
@@ -71,6 +108,45 @@ export const DocumentReview: FC<Props> = ({
                       children: undefined,
                     },
                   })}
+                  {answers.childrenPassport?.map((passportFiles) => {
+                    return passportFiles.attachment?.map((file) => {
+                      return <Text>{file.name}</Text>
+                    })
+                  })}
+                  {answers.childrenSupportingDocuments
+                    ?.filter(
+                      (document) => document.nationalId === child.nationalId,
+                    )
+                    .map((documentItems) => {
+                      const FileList: Array<JSX.Element> = []
+                      const birthCertificates: Array<JSX.Element> =
+                        documentItems.birthCertificate?.map((file) => {
+                          return <Text>{file.name}</Text>
+                        }) || []
+                      FileList.push(...birthCertificates)
+
+                      const writtenConsentsFromChild: Array<JSX.Element> =
+                        documentItems.writtenConsentFromChild?.map((file) => {
+                          return <Text>{file.name}</Text>
+                        }) || []
+                      FileList.push(...writtenConsentsFromChild)
+
+                      const writtenConsentsFromOtherParent: Array<JSX.Element> =
+                        documentItems.writtenConsentFromOtherParent?.map(
+                          (file) => {
+                            return <Text>{file.name}</Text>
+                          },
+                        ) || []
+                      FileList.push(...writtenConsentsFromOtherParent)
+
+                      const custodyDocuments: Array<JSX.Element> =
+                        documentItems.custodyDocuments?.map((file) => {
+                          return <Text>{file.name}</Text>
+                        }) || []
+                      FileList.push(...custodyDocuments)
+
+                      return FileList
+                    })}
                 </GridColumn>
               )
             })}
