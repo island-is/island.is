@@ -105,11 +105,11 @@ export const HouseholdSupplementForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'payment',
-          title: householdSupplementFormMessage.payment.title,
+          title: socialInsuranceAdministrationMessage.payment.title,
           children: [
             buildMultiField({
               id: 'paymentInfo',
-              title: householdSupplementFormMessage.payment.title,
+              title: socialInsuranceAdministrationMessage.payment.title,
               description: '',
               children: [
                 buildAlertMessageField({
@@ -128,8 +128,9 @@ export const HouseholdSupplementForm: Form = buildForm({
                       typeOfBankInfo(bankInfo, bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
-                      ? householdSupplementFormMessage.payment.alertMessage
-                      : householdSupplementFormMessage.payment
+                      ? socialInsuranceAdministrationMessage.payment
+                          .alertMessage
+                      : socialInsuranceAdministrationMessage.payment
                           .alertMessageForeign
                   },
                   doesNotRequireAnswer: true,
@@ -151,13 +152,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                   options: [
                     {
                       label:
-                        householdSupplementFormMessage.payment
+                        socialInsuranceAdministrationMessage.payment
                           .icelandicBankAccount,
                       value: BankAccountType.ICELANDIC,
                     },
                     {
                       label:
-                        householdSupplementFormMessage.payment
+                        socialInsuranceAdministrationMessage.payment
                           .foreignBankAccount,
                       value: BankAccountType.FOREIGN,
                     },
@@ -167,7 +168,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bank',
-                  title: householdSupplementFormMessage.payment.bank,
+                  title: socialInsuranceAdministrationMessage.payment.bank,
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
@@ -189,7 +190,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.iban',
-                  title: householdSupplementFormMessage.payment.iban,
+                  title: socialInsuranceAdministrationMessage.payment.iban,
                   placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -210,7 +211,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.swift',
-                  title: householdSupplementFormMessage.payment.swift,
+                  title: socialInsuranceAdministrationMessage.payment.swift,
                   placeholder: 'AAAA BB CC XXX',
                   width: 'half',
                   defaultValue: (application: Application) => {
@@ -232,10 +233,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'paymentInfo.currency',
-                  title: householdSupplementFormMessage.payment.currency,
+                  title: socialInsuranceAdministrationMessage.payment.currency,
                   width: 'half',
                   placeholder:
-                    householdSupplementFormMessage.payment.selectCurrency,
+                    socialInsuranceAdministrationMessage.payment.selectCurrency,
                   options: ({ externalData }: Application) => {
                     const { currencies } =
                       getApplicationExternalData(externalData)
@@ -260,7 +261,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankName',
-                  title: householdSupplementFormMessage.payment.bankName,
+                  title: socialInsuranceAdministrationMessage.payment.bankName,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -281,7 +282,8 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankAddress',
-                  title: householdSupplementFormMessage.payment.bankAddress,
+                  title:
+                    socialInsuranceAdministrationMessage.payment.bankAddress,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(

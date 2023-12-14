@@ -168,29 +168,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   payment: defineMessages({
-    title: {
-      id: 'oap.application:payment.title',
-      defaultMessage: 'Greiðsluupplýsingar',
-      description: 'Payment information',
-    },
-    alertMessage: {
-      id: 'oap.application:payment.alert.message',
-      defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning.',
-      description:
-        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
-    },
-    alertMessageForeign: {
-      id: 'oap.application:payment.alert.message.foreign#markdown',
-      defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
-      description: 'english description',
-    },
-    bank: {
-      id: 'oap.application:payment.bank',
-      defaultMessage: 'Banki',
-      description: 'Bank',
-    },
     personalAllowance: {
       id: 'oap.application:payment.personal.allowance',
       defaultMessage: 'Vilt þú nýta persónuafsláttinn þinn?',
@@ -232,46 +209,6 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
       description:
         'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
-    },
-    icelandicBankAccount: {
-      id: 'oap.application:payment.icelandic.bank.account',
-      defaultMessage: 'Íslenskur reikningur',
-      description: 'Icelandic account',
-    },
-    foreignBankAccount: {
-      id: 'oap.application:payment.foreign.bank.account',
-      defaultMessage: 'Erlendur reikningur',
-      description: 'Foreign account',
-    },
-    iban: {
-      id: 'oap.application:payment.iban',
-      defaultMessage: 'IBAN',
-      description: 'IBAN',
-    },
-    swift: {
-      id: 'oap.application:payment.swift',
-      defaultMessage: 'SWIFT',
-      description: 'SWIFT',
-    },
-    bankName: {
-      id: 'oap.application:payment.bank.name',
-      defaultMessage: 'Heiti banka',
-      description: 'Bank name',
-    },
-    bankAddress: {
-      id: 'oap.application:payment.bank.address',
-      defaultMessage: 'Heimili banka',
-      description: 'Bank address',
-    },
-    currency: {
-      id: 'oap.application:payment.currency',
-      defaultMessage: 'Mynt',
-      description: 'Currency',
-    },
-    selectCurrency: {
-      id: 'oap.application:payment.select.currency',
-      defaultMessage: 'Veldu mynt',
-      description: 'Select currency',
     },
   }),
 
@@ -396,11 +333,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:cancel.button',
       defaultMessage: 'Hætta við',
       description: 'Cancel',
-    },
-    bank: {
-      id: 'oap.application:conformation.bank',
-      defaultMessage: 'Banki',
-      description: 'Bank',
     },
     personalAllowance: {
       id: 'oap.application:conformation.personal.allowance',

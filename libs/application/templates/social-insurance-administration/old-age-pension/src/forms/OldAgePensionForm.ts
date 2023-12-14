@@ -255,11 +255,11 @@ export const OldAgePensionForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'payment',
-          title: oldAgePensionFormMessage.payment.title,
+          title: socialInsuranceAdministrationMessage.payment.title,
           children: [
             buildMultiField({
               id: 'paymentInfo',
-              title: oldAgePensionFormMessage.payment.title,
+              title: socialInsuranceAdministrationMessage.payment.title,
               description: '',
               children: [
                 buildAlertMessageField({
@@ -278,8 +278,10 @@ export const OldAgePensionForm: Form = buildForm({
                       typeOfBankInfo(bankInfo, bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
-                      ? oldAgePensionFormMessage.payment.alertMessage
-                      : oldAgePensionFormMessage.payment.alertMessageForeign
+                      ? socialInsuranceAdministrationMessage.payment
+                          .alertMessage
+                      : socialInsuranceAdministrationMessage.payment
+                          .alertMessageForeign
                   },
                   doesNotRequireAnswer: true,
                   alertType: 'info',
@@ -300,12 +302,14 @@ export const OldAgePensionForm: Form = buildForm({
                   options: [
                     {
                       label:
-                        oldAgePensionFormMessage.payment.icelandicBankAccount,
+                        socialInsuranceAdministrationMessage.payment
+                          .icelandicBankAccount,
                       value: BankAccountType.ICELANDIC,
                     },
                     {
                       label:
-                        oldAgePensionFormMessage.payment.foreignBankAccount,
+                        socialInsuranceAdministrationMessage.payment
+                          .foreignBankAccount,
                       value: BankAccountType.FOREIGN,
                     },
                   ],
@@ -314,7 +318,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bank',
-                  title: oldAgePensionFormMessage.payment.bank,
+                  title: socialInsuranceAdministrationMessage.payment.bank,
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
@@ -336,7 +340,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.iban',
-                  title: oldAgePensionFormMessage.payment.iban,
+                  title: socialInsuranceAdministrationMessage.payment.iban,
                   placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -357,7 +361,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.swift',
-                  title: oldAgePensionFormMessage.payment.swift,
+                  title: socialInsuranceAdministrationMessage.payment.swift,
                   placeholder: 'AAAA BB CC XXX',
                   width: 'half',
                   defaultValue: (application: Application) => {
@@ -379,9 +383,10 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'paymentInfo.currency',
-                  title: oldAgePensionFormMessage.payment.currency,
+                  title: socialInsuranceAdministrationMessage.payment.currency,
                   width: 'half',
-                  placeholder: oldAgePensionFormMessage.payment.selectCurrency,
+                  placeholder:
+                    socialInsuranceAdministrationMessage.payment.selectCurrency,
                   options: ({ externalData }: Application) => {
                     const { currencies } =
                       getApplicationExternalData(externalData)
@@ -406,7 +411,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankName',
-                  title: oldAgePensionFormMessage.payment.bankName,
+                  title: socialInsuranceAdministrationMessage.payment.bankName,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -427,7 +432,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankAddress',
-                  title: oldAgePensionFormMessage.payment.bankAddress,
+                  title:
+                    socialInsuranceAdministrationMessage.payment.bankAddress,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(

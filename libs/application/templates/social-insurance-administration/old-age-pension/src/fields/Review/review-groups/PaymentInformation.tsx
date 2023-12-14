@@ -12,6 +12,7 @@ import { getTaxLevelOption } from './utils'
 import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { YES } from '@island.is/application/types'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 
 export const PaymentInformation = ({
   application,
@@ -44,7 +45,9 @@ export const PaymentInformation = ({
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <DataValue
-                label={formatMessage(oldAgePensionFormMessage.payment.iban)}
+                label={formatMessage(
+                  socialInsuranceAdministrationMessage.payment.iban,
+                )}
                 value={iban}
               />
             </GridColumn>
@@ -55,7 +58,9 @@ export const PaymentInformation = ({
               paddingBottom={3}
             >
               <DataValue
-                label={formatMessage(oldAgePensionFormMessage.payment.swift)}
+                label={formatMessage(
+                  socialInsuranceAdministrationMessage.payment.swift,
+                )}
                 value={swift}
               />
             </GridColumn>
@@ -64,7 +69,9 @@ export const PaymentInformation = ({
               paddingBottom={3}
             >
               <DataValue
-                label={formatMessage(oldAgePensionFormMessage.payment.currency)}
+                label={formatMessage(
+                  socialInsuranceAdministrationMessage.payment.currency,
+                )}
                 value={currency}
               />
             </GridColumn>
@@ -76,7 +83,9 @@ export const PaymentInformation = ({
               paddingBottom={3}
             >
               <DataValue
-                label={formatMessage(oldAgePensionFormMessage.payment.bankName)}
+                label={formatMessage(
+                  socialInsuranceAdministrationMessage.payment.bankName,
+                )}
                 value={bankName}
               />
             </GridColumn>
@@ -86,7 +95,7 @@ export const PaymentInformation = ({
             >
               <DataValue
                 label={formatMessage(
-                  oldAgePensionFormMessage.payment.bankAddress,
+                  socialInsuranceAdministrationMessage.payment.bankAddress,
                 )}
                 value={bankAddress}
               />
@@ -97,7 +106,9 @@ export const PaymentInformation = ({
         <GridRow marginBottom={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
-              label={formatMessage(oldAgePensionFormMessage.review.bank)}
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.payment.bank,
+              )}
               value={formatBankInfo(bank)}
             />
           </GridColumn>
