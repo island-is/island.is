@@ -343,9 +343,9 @@ export class CaseController {
       case CaseTransition.COMPLETE_APPEAL:
         if (
           isRestrictionCase(theCase.type) &&
+          theCase.state === CaseState.ACCEPTED &&
           (theCase.decision === CaseDecision.ACCEPTING ||
             theCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-          theCase.state === CaseState.ACCEPTED &&
           theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED
         ) {
           // The court of appeals has modified the ruling of a restriction case

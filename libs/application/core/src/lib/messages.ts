@@ -598,6 +598,11 @@ export const coreErrorMessages = defineMessages({
     description:
       'You do not have any electric vehicles where you are the main owner',
   },
+  noBankAccountError: {
+    id: 'application.system:core.fetch.data.noBankAccountError',
+    defaultMessage: 'Þú ert ekki með skráðan bankareikning',
+    description: 'No bank account error',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({
