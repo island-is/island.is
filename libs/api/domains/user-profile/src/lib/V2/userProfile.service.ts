@@ -16,7 +16,7 @@ import { ConfirmSmsVerificationInput } from '../dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from '../dto/confirmEmailVerificationInput'
 
 /** Category to attach each log message to */
-const LOG_CATEGORY = 'userprofile-service'
+const LOG_CATEGORY = 'userprofile-service-v2'
 
 // eslint-disable-next-line
 const handleError = (error: any, details?: string) => {

@@ -23,8 +23,6 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from '../islykill.service'
 import { DataStatus } from '../types/dataStatus.enum'
 
-export const MAX_OUT_OF_DATE_MONTHS = 6
-
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'userprofile-service'
 
@@ -41,7 +39,6 @@ const handleError = (error: any, details?: string) => {
 export class UserProfileServiceV1 {
   constructor(
     private userProfileApi: UserProfileApi,
-    private v2MeApi: V2MeApi,
     private readonly islyklarService: IslykillService,
   ) {}
 

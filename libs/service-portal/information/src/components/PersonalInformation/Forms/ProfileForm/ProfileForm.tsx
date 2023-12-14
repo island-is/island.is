@@ -295,8 +295,8 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                      * This checkbox block is being displayed as the opposite of canNudge.
                      * Details inside <Nudge />
                      */
-                    typeof userProfile?.canNudge === 'boolean'
-                      ? !userProfile.canNudge
+                    typeof userProfile?.emailNotifications === 'boolean'
+                      ? !userProfile.emailNotifications
                       : true
                   }
                 />

@@ -7,7 +7,6 @@ export const USER_PROFILE = gql`
       mobilePhoneNumber
       locale
       email
-      canNudge
       bankInfo
       emailStatus
       mobileStatus

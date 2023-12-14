@@ -52,7 +52,7 @@ export class UserProfileService {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private async services(user: User) {
+  private async getService(user: User) {
     const isV2 = await this.featureFlagService.getValue(
       Features.isIASSpaPagesEnabled,
       false,
@@ -77,7 +77,7 @@ export class UserProfileService {
   }
 
   async getUserProfile(user: User) {
-    const service = await this.services(user)
+    const service = await this.getService(user)
 
     return service.getUserProfile(user)
   }
@@ -86,7 +86,7 @@ export class UserProfileService {
     input: CreateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
-    const service = await this.services(user)
+    const service = await this.getService(user)
 
     return service.createUserProfile(input, user)
   }
@@ -95,7 +95,7 @@ export class UserProfileService {
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
-    const service = await this.services(user)
+    const service = await this.getService(user)
 
     return service.updateUserProfile(input, user)
   }
@@ -153,7 +153,7 @@ export class UserProfileService {
     input: CreateSmsVerificationInput,
     user: User,
   ): Promise<void> {
-    const service = await this.services(user)
+    const service = await this.getService(user)
 
     return service.createSmsVerification(input, user)
   }
@@ -162,13 +162,13 @@ export class UserProfileService {
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    const service = await this.services(user)
+    const service = await this.getService(user)
 
     return service.createEmailVerification(input, user)
   }
 
   async resendEmailVerification(user: User): Promise<void> {
-    const service = await this.services(user)
+    const service = await this.getService(user)
 
     return service.resendEmailVerification(user)
   }
@@ -177,7 +177,7 @@ export class UserProfileService {
     input: ConfirmSmsVerificationInput,
     user: User,
   ): Promise<ConfirmationDtoResponse> {
-    const service = await this.services(user)
+    const service = await this.getService(user)
 
     return service.confirmSms(input, user)
   }
@@ -186,7 +186,7 @@ export class UserProfileService {
     input: ConfirmEmailVerificationInput,
     user: User,
   ): Promise<ConfirmationDtoResponse> {
-    const service = await this.services(user)
+    const service = await this.getService(user)
 
     return service.confirmEmail(input, user)
   }
