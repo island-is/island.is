@@ -43,25 +43,34 @@ export function prepareServicesForEnv<T extends ServiceOutputType>(options: {
 }
 
 /**
- * This is an important function. It converts a list of ServiceBuilders to a hash of output-format-specific definitions. It is practically the rendering pipeline for the DSL definitions
- * @param options
+ * Asynchronously generates output from a list of ServiceBuilders.
+ *
+ * This function is a key part of the rendering pipeline for DSL definitions. It takes a list of ServiceBuilders and converts them into a hash of output-format-specific definitions.
+ *
+ * @param {ReferenceResolver} params.runtime - The runtime reference resolver.
+ * @param {ServiceBuilder<any>[] | ServiceBuilder<any>} params.services - The list of ServiceBuilders to be converted.
+ * @param {OutputFormat<T>} params.outputFormat - The output format for the conversion (e.g. `HelmOutput` or `LocalrunOutput`).
+ * @param {EnvironmentConfig} params.env - The environment configuration.
+ *
+ * @returns {Promise<Services<T>>} A promise that resolves to a hash of output-format-specific definitions.
+ *
+ * @template T - The type of the service output.
  */
-export async function generateOutput<T extends ServiceOutputType>(options: {
+export async function generateOutput<T extends ServiceOutputType>({
+  runtime,
+  services,
+  outputFormat,
+  env,
+}: {
   runtime: ReferenceResolver
   services: ServiceBuilder<any>[] | ServiceBuilder<any>
   outputFormat: OutputFormat<T>
   env: EnvironmentConfig
-}) {
+}): Promise<Services<T>> {
   logger.debug('generateOutput', {
-    numberOfServices: Array.isArray(options.services)
-      ? options.services.length
-      : 1,
-    env: options.env,
+    numberOfServices: Array.isArray(services) ? services.length : 1,
+    env: env,
   })
-  const runtime = options.runtime
-  const services = options.services
-  const outputFormat = options.outputFormat
-  const env = options.env
   const preparedServices = prepareServicesForEnv({
     services: services,
     env: env,

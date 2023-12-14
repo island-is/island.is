@@ -22,7 +22,7 @@ import { FeatureNames } from '../features'
 import { ContainerSecrets, SerializeErrors } from '../types/output-types'
 import { logger } from '../../common'
 
-export const prepareServiceForEnv = (
+export function prepareServiceForEnv(
   service: ServiceDefinition,
   env: EnvironmentConfig,
 ):
@@ -30,7 +30,7 @@ export const prepareServiceForEnv = (
       type: 'success'
       serviceDef: ServiceDefinitionForEnv
     }
-  | SerializeErrors => {
+  | SerializeErrors {
   logger.debug('prepareServiceForEnv', { serviceName: service.name })
   let allErrors: string[] = []
   const checkCollisions = (
