@@ -1,13 +1,14 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { ApplicationType, TaxLevelOptions, Employment } from './constants'
-import { errorMessages, validatorErrorMessages } from './messages'
+import { validatorErrorMessages } from './messages'
 import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import { NO, YES } from '@island.is/application/types'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
