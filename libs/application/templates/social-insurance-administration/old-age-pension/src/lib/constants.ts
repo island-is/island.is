@@ -8,24 +8,6 @@ export const fishermenMinAge = 60
 export const fishermenMaxAge = 66
 export const employeeRatio = 50
 
-export const MONTHS = [
-  { value: 'January', label: oldAgePensionFormMessage.period.january },
-  { value: 'February', label: oldAgePensionFormMessage.period.february },
-  { value: 'March', label: oldAgePensionFormMessage.period.march },
-  { value: 'April', label: oldAgePensionFormMessage.period.april },
-  { value: 'May', label: oldAgePensionFormMessage.period.may },
-  { value: 'June', label: oldAgePensionFormMessage.period.june },
-  { value: 'July', label: oldAgePensionFormMessage.period.july },
-  { value: 'August', label: oldAgePensionFormMessage.period.august },
-  {
-    value: 'September',
-    label: oldAgePensionFormMessage.period.september,
-  },
-  { value: 'October', label: oldAgePensionFormMessage.period.october },
-  { value: 'November', label: oldAgePensionFormMessage.period.november },
-  { value: 'December', label: oldAgePensionFormMessage.period.desember },
-]
-
 export enum RatioType {
   YEARLY = 'yearly',
   MONTHLY = 'monthly',

@@ -7,7 +7,6 @@ import {
   ApplicationType,
   Employment,
   TaxLevelOptions,
-  MONTHS,
   AttachmentLabel,
   AttachmentTypes,
 } from './constants'
@@ -30,7 +29,10 @@ import {
   SelfEmployed,
   FileUpload,
 } from '../types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  MONTHS,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
   Attachments,
   BankInfo,

@@ -59,6 +59,127 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description: 'Start application',
     },
   }),
+
+  info: defineMessages({
+    section: {
+      id: 'sia.application:info.section',
+      defaultMessage: 'Almennar upplýsingar',
+      description: 'General information',
+    },
+    subSectionTitle: {
+      id: 'sia.application:info.sub.section.title',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email and phone number',
+    },
+    subSectionDescription: {
+      id: 'sia.application:info.sub.section.description',
+      defaultMessage:
+        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
+      description:
+        'Email address and phone number is retrieved from the Social Insurance Administration. If the phone number is incorrect or missing you can register the correct one below.',
+    },
+    applicantEmail: {
+      id: 'sia.application:info.applicant.email',
+      defaultMessage: 'Netfang',
+      description: 'Email address',
+    },
+    applicantPhonenumber: {
+      id: 'sia.application:info.applicant.phonenumber',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
+    },
+  }),
+
+  period: defineMessages({
+    title: {
+      id: 'sia.application:period.title',
+      defaultMessage: 'Tímabil',
+      description: 'Period',
+    },
+    year: {
+      id: 'sia.application:period.year',
+      defaultMessage: 'Ár',
+      description: 'Year',
+    },
+    yearDefaultText: {
+      id: 'sia.application:period.year.default.text',
+      defaultMessage: 'Veldu ár',
+      description: 'Select year',
+    },
+    month: {
+      id: 'sia.application:period.month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
+    },
+    monthDefaultText: {
+      id: 'sia.application:period.month.default.text',
+      defaultMessage: 'Veldu mánuð',
+      description: 'Select month',
+    },
+  }),
+
+  months: defineMessages({
+    january: {
+      id: 'sia.application:period.january',
+      defaultMessage: 'Janúar',
+      description: 'January',
+    },
+    february: {
+      id: 'sia.application:period.february',
+      defaultMessage: 'Febrúar',
+      description: 'February',
+    },
+    march: {
+      id: 'sia.application:period.march',
+      defaultMessage: 'Mars',
+      description: 'March',
+    },
+    april: {
+      id: 'sia.application:period.april',
+      defaultMessage: 'Apríl',
+      description: 'April',
+    },
+    may: {
+      id: 'sia.application:period.may',
+      defaultMessage: 'Maí',
+      description: 'May',
+    },
+    june: {
+      id: 'sia.application:period.june',
+      defaultMessage: 'Júní',
+      description: 'June',
+    },
+    july: {
+      id: 'sia.application:period.july',
+      defaultMessage: 'Júlí',
+      description: 'July',
+    },
+    august: {
+      id: 'sia.application:period.august',
+      defaultMessage: 'Ágúst',
+      description: 'August',
+    },
+    september: {
+      id: 'sia.application:period.september',
+      defaultMessage: 'September',
+      description: 'September',
+    },
+    october: {
+      id: 'sia.application:period.october',
+      defaultMessage: 'Október',
+      description: 'October',
+    },
+    november: {
+      id: 'sia.application:period.november',
+      defaultMessage: 'Nóvember',
+      description: 'November',
+    },
+    desember: {
+      id: 'sia.application:period.desember',
+      defaultMessage: 'Desember',
+      description: 'December',
+    },
+  }),
 }
 
 export const errorMessages = defineMessages({

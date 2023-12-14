@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { ReviewGroupProps } from './props'
-import { MONTHS } from '../../../lib/constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
   getApplicationAnswers,
   isMoreThan2Year,

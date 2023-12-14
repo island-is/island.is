@@ -2,7 +2,6 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   HouseholdSupplementHousing,
   AttachmentLabel,
-  MONTHS,
   AttachmentTypes,
 } from './constants'
 import { Application, YesOrNo, YES } from '@island.is/application/types'
@@ -16,7 +15,10 @@ import {
   FileType,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  MONTHS,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantPhonenumber = getValueViaPath(

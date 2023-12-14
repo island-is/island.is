@@ -107,12 +107,12 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'infoSection',
-      title: additionalSupportForTheElderyFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [],
     }),
     buildSection({
       id: 'periodSection',
-      title: additionalSupportForTheElderyFormMessage.info.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [],
     }),
     buildSection({

@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/types'
 import { SelectFormField } from '@island.is/application/ui-fields'
 
-import { oldAgePensionFormMessage } from '../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import {
   getApplicationAnswers,
   getAvailableMonths,
@@ -65,9 +65,9 @@ export const Period: FC<FieldBaseProps> = ({ application, errors }) => {
             field={{
               type: FieldTypes.SELECT,
               component: FieldComponents.SELECT,
-              title: oldAgePensionFormMessage.period.periodInputYear,
+              title: socialInsuranceAdministrationMessage.period.year,
               placeholder:
-                oldAgePensionFormMessage.period.periodInputYearDefaultText,
+                socialInsuranceAdministrationMessage.period.yearDefaultText,
               id: 'period.year',
               children: undefined,
               options: optionsYears,
@@ -83,9 +83,9 @@ export const Period: FC<FieldBaseProps> = ({ application, errors }) => {
             field={{
               type: FieldTypes.SELECT,
               component: FieldComponents.SELECT,
-              title: oldAgePensionFormMessage.period.periodInputMonth,
+              title: socialInsuranceAdministrationMessage.period.month,
               placeholder:
-                oldAgePensionFormMessage.period.periodInputMonthDefaultText,
+                socialInsuranceAdministrationMessage.period.monthDefaultText,
               id: 'period.month',
               children: undefined,
               options: selectedYear ? optionsMonths : [],

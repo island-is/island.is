@@ -32,12 +32,12 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import {
   BankAccountType,
   FILE_SIZE_LIMIT,
+  MONTHS,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
   getApplicationExternalData,
   getAvailableYears,
 } from '../lib/additionalSupportForTheElderlyUtils'
-import { MONTHS } from '../lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { getApplicationAnswers } from '../lib/additionalSupportForTheElderlyUtils'
@@ -56,25 +56,22 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'infoSection',
-      title: additionalSupportForTheElderyFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
-          title: additionalSupportForTheElderyFormMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title:
-                additionalSupportForTheElderyFormMessage.info.subSectionTitle,
+              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
               description:
-                additionalSupportForTheElderyFormMessage.info
-                  .subSectionDescription,
+                socialInsuranceAdministrationMessage.info.subSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.email',
                   title:
-                    additionalSupportForTheElderyFormMessage.info
-                      .applicantEmail,
+                    socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   disabled: true,
@@ -88,7 +85,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                    additionalSupportForTheElderyFormMessage.info
+                    socialInsuranceAdministrationMessage.info
                       .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
@@ -313,32 +310,30 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: additionalSupportForTheElderyFormMessage.info.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [
         buildMultiField({
           id: 'periodField',
-          title: additionalSupportForTheElderyFormMessage.info.periodTitle,
+          title: socialInsuranceAdministrationMessage.period.title,
           description:
             additionalSupportForTheElderyFormMessage.info.periodDescription,
           children: [
             buildSelectField({
               id: 'period.year',
-              title: additionalSupportForTheElderyFormMessage.info.periodYear,
+              title: socialInsuranceAdministrationMessage.period.year,
               width: 'half',
               placeholder:
-                additionalSupportForTheElderyFormMessage.info
-                  .periodYearDefaultText,
+                socialInsuranceAdministrationMessage.period.yearDefaultText,
               options: (application: Application) => {
                 return getAvailableYears(application)
               },
             }),
             buildSelectField({
               id: 'period.month',
-              title: additionalSupportForTheElderyFormMessage.info.periodMonth,
+              title: socialInsuranceAdministrationMessage.period.month,
               width: 'half',
               placeholder:
-                additionalSupportForTheElderyFormMessage.info
-                  .periodMonthDefaultText,
+                socialInsuranceAdministrationMessage.period.monthDefaultText,
               options: MONTHS,
             }),
           ],

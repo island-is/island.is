@@ -60,21 +60,22 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'infoSection',
-      title: householdSupplementFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
-          title: householdSupplementFormMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: householdSupplementFormMessage.info.subSectionTitle,
+              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
               description:
-                householdSupplementFormMessage.info.subSectionDescription,
+                socialInsuranceAdministrationMessage.info.subSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.email',
-                  title: householdSupplementFormMessage.info.applicantEmail,
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   disabled: true,
@@ -88,7 +89,8 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                    householdSupplementFormMessage.info.applicantPhonenumber,
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const data = application.externalData
@@ -364,29 +366,29 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: householdSupplementFormMessage.info.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [
         buildMultiField({
           id: 'periodField',
-          title: householdSupplementFormMessage.info.periodTitle,
+          title: socialInsuranceAdministrationMessage.period.title,
           description: householdSupplementFormMessage.info.periodDescription,
           children: [
             buildSelectField({
               id: 'period.year',
-              title: householdSupplementFormMessage.info.periodYear,
+              title: socialInsuranceAdministrationMessage.period.year,
               width: 'half',
               placeholder:
-                householdSupplementFormMessage.info.periodYearDefaultText,
+                socialInsuranceAdministrationMessage.period.yearDefaultText,
               options: (application: Application) => {
                 return getAvailableYears(application)
               },
             }),
             buildSelectField({
               id: 'period.month',
-              title: householdSupplementFormMessage.info.periodMonth,
+              title: socialInsuranceAdministrationMessage.period.month,
               width: 'half',
               placeholder:
-                householdSupplementFormMessage.info.periodMonthDefaultText,
+                socialInsuranceAdministrationMessage.period.monthDefaultText,
               options: (application: Application) => {
                 const { selectedYear: year } = getApplicationAnswers(
                   application.answers,

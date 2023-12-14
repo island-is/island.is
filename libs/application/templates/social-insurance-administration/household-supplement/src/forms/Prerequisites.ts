@@ -113,7 +113,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'infoSection',
-      title: householdSupplementFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [],
     }),
     buildSection({
@@ -123,7 +123,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: householdSupplementFormMessage.info.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [],
     }),
     buildSection({

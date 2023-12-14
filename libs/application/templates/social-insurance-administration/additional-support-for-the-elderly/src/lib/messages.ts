@@ -46,63 +46,11 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   }),
 
   info: defineMessages({
-    periodTitle: {
-      id: 'asfte.application:info.period.title',
-      defaultMessage: 'Tímabil',
-      description: 'Period',
-    },
     periodDescription: {
       id: 'asfte.application:info.period.description',
       defaultMessage:
         'Veldu tímabil sem þú vilt byrja að fá greiddan félagslegan viðbótastuðning. Hægt er að sækja um fyrir þrjá mánuði aftur í tímann.',
       description: `english translation`,
-    },
-    periodYear: {
-      id: 'asfte.application:info.period.year',
-      defaultMessage: 'Ár',
-      description: 'Year',
-    },
-    periodYearDefaultText: {
-      id: 'asfte.application:info.period.year.default.text',
-      defaultMessage: 'Veldu ár',
-      description: 'Select year',
-    },
-    periodMonth: {
-      id: 'asfte.application:info.period.month',
-      defaultMessage: 'Mánuður',
-      description: 'Month',
-    },
-    periodMonthDefaultText: {
-      id: 'asfte.application:info.period.month.default.text',
-      defaultMessage: 'Veldu mánuð',
-      description: 'Select month',
-    },
-    section: {
-      id: 'asfte.application:info.section',
-      defaultMessage: 'Almennar upplýsingar',
-      description: 'General information',
-    },
-    subSectionTitle: {
-      id: 'asfte.application:info.sub.section.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone number',
-    },
-    subSectionDescription: {
-      id: 'asfte.application:info.sub.section.description',
-      defaultMessage:
-        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
-      description:
-        'Email address and phone number is retrieved from the Social Insurance Administration. If the phone number is incorrect or missing you can register the correct one below.',
-    },
-    applicantEmail: {
-      id: 'asfte.application:info.applicant.email',
-      defaultMessage: 'Netfang',
-      description: 'Email address',
-    },
-    applicantPhonenumber: {
-      id: 'asfte.application:info.applicant.phonenumber',
-      defaultMessage: 'Símanúmer',
-      description: 'Phone number',
     },
   }),
 
@@ -347,69 +295,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
         'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til félagslegs viðbótarstuðnings við aldraða.',
       description:
         'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the retirement pension.',
-    },
-  }),
-
-  months: defineMessages({
-    january: {
-      id: 'asfte.application:month.january',
-      defaultMessage: 'Janúar',
-      description: 'January',
-    },
-    february: {
-      id: 'asfte.application:month.february',
-      defaultMessage: 'Febrúar',
-      description: 'February',
-    },
-    march: {
-      id: 'asfte.application:month.march',
-      defaultMessage: 'Mars',
-      description: 'March',
-    },
-    april: {
-      id: 'asfte.application:month.april',
-      defaultMessage: 'Apríl',
-      description: 'April',
-    },
-    may: {
-      id: 'asfte.application:month.may',
-      defaultMessage: 'Maí',
-      description: 'May',
-    },
-    june: {
-      id: 'asfte.application:month.june',
-      defaultMessage: 'Júní',
-      description: 'June',
-    },
-    july: {
-      id: 'asfte.application:month.july',
-      defaultMessage: 'Júlí',
-      description: 'July',
-    },
-    august: {
-      id: 'asfte.application:month.august',
-      defaultMessage: 'Ágúst',
-      description: 'August',
-    },
-    september: {
-      id: 'asfte.application:month.september',
-      defaultMessage: 'September',
-      description: 'September',
-    },
-    october: {
-      id: 'asfte.application:month.october',
-      defaultMessage: 'Október',
-      description: 'October',
-    },
-    november: {
-      id: 'asfte.application:month.november',
-      defaultMessage: 'Nóvember',
-      description: 'November',
-    },
-    desember: {
-      id: 'asfte.application:month.desember',
-      defaultMessage: 'Desember',
-      description: 'December',
     },
   }),
 }

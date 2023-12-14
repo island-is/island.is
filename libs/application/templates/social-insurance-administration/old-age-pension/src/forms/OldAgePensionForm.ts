@@ -74,7 +74,7 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'applicant',
-      title: oldAgePensionFormMessage.applicant.applicantSection,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
@@ -152,7 +152,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.email',
-                  title: oldAgePensionFormMessage.applicant.applicantInfoEmail,
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   backgroundColor: 'white',
@@ -167,7 +168,8 @@ export const OldAgePensionForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                    oldAgePensionFormMessage.applicant.applicantInfoPhonenumber,
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const data = application.externalData
@@ -737,36 +739,36 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: oldAgePensionFormMessage.period.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [
         // Period is from 65 year old birthday or last
         // 2 years if applicant is 67+ to 6 month ahead
         buildMultiField({
           id: 'periodField',
-          title: oldAgePensionFormMessage.period.periodTitle,
+          title: socialInsuranceAdministrationMessage.period.title,
           description: oldAgePensionFormMessage.period.periodDescription,
           children: [
             // buildCustomField({
             //   id: 'period',
             //   component: 'Period',
-            //   title: oldAgePensionFormMessage.period.periodTitle,
+            //   title: socialInsuranceAdministrationMessage.period.title,
             // }),
             buildSelectField({
               id: 'period.year',
-              title: oldAgePensionFormMessage.period.periodTitle,
+              title: socialInsuranceAdministrationMessage.period.title,
               width: 'half',
               placeholder:
-                oldAgePensionFormMessage.period.periodInputYearDefaultText,
+                socialInsuranceAdministrationMessage.period.yearDefaultText,
               options: (application: Application) => {
                 return getAvailableYears(application)
               },
             }),
             buildSelectField({
               id: 'period.month',
-              title: oldAgePensionFormMessage.period.periodInputMonth,
+              title: socialInsuranceAdministrationMessage.period.month,
               width: 'half',
               placeholder:
-                oldAgePensionFormMessage.period.periodInputMonthDefaultText,
+                socialInsuranceAdministrationMessage.period.monthDefaultText,
               options: (application: Application) => {
                 const { selectedYear: year } = getApplicationAnswers(
                   application.answers,

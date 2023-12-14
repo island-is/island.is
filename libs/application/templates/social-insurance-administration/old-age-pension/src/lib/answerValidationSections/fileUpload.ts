@@ -13,8 +13,8 @@ import {
   ApplicationType,
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
-  MONTHS,
 } from '../constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { buildError } from './utils'
 
 export const fileUpload = (newAnswer: unknown, application: Application) => {

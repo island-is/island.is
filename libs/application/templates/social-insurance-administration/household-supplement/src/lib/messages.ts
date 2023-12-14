@@ -49,32 +49,6 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 
   info: defineMessages({
-    section: {
-      id: 'hs.application:info.section',
-      defaultMessage: 'Almennar upplýsingar',
-      description: 'General information',
-    },
-    subSectionTitle: {
-      id: 'hs.application:info.sub.section.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone number',
-    },
-    subSectionDescription: {
-      id: 'hs.application:info.sub.section.description',
-      defaultMessage:
-        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
-      description: 'translation',
-    },
-    applicantEmail: {
-      id: 'hs.application:info.applicant.email',
-      defaultMessage: 'Netfang',
-      description: 'Email address',
-    },
-    applicantPhonenumber: {
-      id: 'hs.application:info.applicant.phonenumber',
-      defaultMessage: 'Símanúmer',
-      description: 'Phone number',
-    },
     householdSupplementDescription: {
       id: 'hs.application:info.household.supplement.description#markdown',
       defaultMessage:
@@ -113,36 +87,11 @@ export const householdSupplementFormMessage: MessageDir = {
         'Samkvæmt uppflettingu í Þjóðskrá býr einstaklingur eldri en 25 ára á sama lögheimili og þú. Ef þú telur þetta vera vitlaust skaltu hafa samband við Þjóðskrá til að laga þetta. Þegar þú ert búinn að gera viðeigandi breytingar hjá Þjóðskrá getur þú haldið áfram með umsóknina og skila inn skjali því til staðfestingar hér aftar í ferlinu.',
       description: 'english translation',
     },
-    periodTitle: {
-      id: 'hs.application:info.period.title',
-      defaultMessage: 'Tímabil',
-      description: `Period`,
-    },
     periodDescription: {
       id: 'hs.application:info.period.description',
       defaultMessage:
         'Veldu tímabil sem þú vilt byrja að fá greidda heimilisuppbót. Hægt er að sækja fyrir árið í ár og 2 ár aftur í tímann.',
       description: `english translation`,
-    },
-    periodYear: {
-      id: 'hs.application:info.period.year',
-      defaultMessage: 'Ár',
-      description: 'Year',
-    },
-    periodYearDefaultText: {
-      id: 'hs.application:info.period.year.default.text',
-      defaultMessage: 'Veldu ár',
-      description: 'Select year',
-    },
-    periodMonth: {
-      id: 'hs.application:info.period.month',
-      defaultMessage: 'Mánuður',
-      description: 'Month',
-    },
-    periodMonthDefaultText: {
-      id: 'hs.application:info.period.month.default.text',
-      defaultMessage: 'Veldu mánuð',
-      description: 'Select month',
     },
   }),
 
@@ -434,69 +383,6 @@ export const householdSupplementFormMessage: MessageDir = {
       id: 'hs.application:conclusionScreen.buttonsViewApplication',
       defaultMessage: 'Skoða umsókn',
       description: 'View application',
-    },
-  }),
-
-  months: defineMessages({
-    january: {
-      id: 'hs.application:month.january',
-      defaultMessage: 'Janúar',
-      description: 'January',
-    },
-    february: {
-      id: 'hs.application:month.february',
-      defaultMessage: 'Febrúar',
-      description: 'February',
-    },
-    march: {
-      id: 'hs.application:month.march',
-      defaultMessage: 'Mars',
-      description: 'March',
-    },
-    april: {
-      id: 'hs.application:month.april',
-      defaultMessage: 'Apríl',
-      description: 'April',
-    },
-    may: {
-      id: 'hs.application:month.may',
-      defaultMessage: 'Maí',
-      description: 'May',
-    },
-    june: {
-      id: 'hs.application:month.june',
-      defaultMessage: 'Júní',
-      description: 'June',
-    },
-    july: {
-      id: 'hs.application:month.july',
-      defaultMessage: 'Júlí',
-      description: 'July',
-    },
-    august: {
-      id: 'hs.application:month.august',
-      defaultMessage: 'Ágúst',
-      description: 'August',
-    },
-    september: {
-      id: 'hs.application:month.september',
-      defaultMessage: 'September',
-      description: 'September',
-    },
-    october: {
-      id: 'hs.application:month.october',
-      defaultMessage: 'Október',
-      description: 'October',
-    },
-    november: {
-      id: 'hs.application:month.november',
-      defaultMessage: 'Nóvember',
-      description: 'November',
-    },
-    desember: {
-      id: 'hs.application:month.desember',
-      defaultMessage: 'Desember',
-      description: 'December',
     },
   }),
 }
