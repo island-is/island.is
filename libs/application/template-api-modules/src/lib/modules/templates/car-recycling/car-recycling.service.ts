@@ -67,7 +67,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
   ) {
     return await this.carRecyclingService.recycleVehicle(
       auth,
-      fullName,
+      fullName.trim(),
       vehicle.permno || '',
       recyclingRequestType,
     )
