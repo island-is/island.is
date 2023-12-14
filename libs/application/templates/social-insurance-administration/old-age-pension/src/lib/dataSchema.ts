@@ -9,6 +9,7 @@ import {
 import { NO, YES } from '@island.is/application/types'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { validatorErrorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
