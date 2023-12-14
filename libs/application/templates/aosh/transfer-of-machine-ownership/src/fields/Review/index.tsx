@@ -10,6 +10,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion } from '../../lib/messages'
+import { buyerOperatorSubSection } from '../../forms/TransferOfMachineOwnershipForm/buyerOperatorSection'
 
 export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
@@ -67,15 +68,18 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           </>
         )
       case 'addPeople':
-        return (
-          <ReviewOperatorRepeater
-            setStep={setStep}
-            reviewerNationalId={reviewerNationalId}
-            setBuyerOperator={setBuyerOperator}
-            buyerOperator={buyerOperator}
-            {...props}
-          />
-        )
+        return <>{buyerOperatorSubSection}</>
+      // <>
+      // {buyerOperatorSubSection}
+      // </>
+      // <ReviewOperatorRepeater
+      //   setStep={setStep}
+      //   reviewerNationalId={reviewerNationalId}
+      //   setBuyerOperator={setBuyerOperator}
+      //   buyerOperator={buyerOperator}
+      //   {...props}
+      // />
+      //)
       case 'location':
         return (
           <Location
