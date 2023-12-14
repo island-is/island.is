@@ -3,7 +3,6 @@ import { SignatureCollectionArea } from './area.model'
 import { SignatureCollectionSignature } from './signature.model'
 import { SignatureCollectionList } from './signatureList.model'
 
-
 @ObjectType()
 export class SignatureCollectionSigneeBase {
   @Field()
@@ -29,5 +28,4 @@ export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
 
   @Field(() => [SignatureCollectionList], { nullable: true })
   ownedLists?: SignatureCollectionList[]
-
 }

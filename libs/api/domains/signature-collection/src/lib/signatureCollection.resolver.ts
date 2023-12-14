@@ -19,7 +19,6 @@ import {
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
-import { SignatureCollectionFindSignatureInput } from './dto/findSignature.input'
 import { SignatureCollectionAreaInput } from './dto/area.input'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { Audit } from '@island.is/nest/audit'
@@ -71,7 +70,6 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.allOpenLists()
   }
 
-  //   TODO: Can take in owner parameter?
   @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionListsForUser(
@@ -96,7 +94,6 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.list(input.id)
   }
 
-  //   TODO: If none found what should we return
   @Query(() => SignatureCollectionList, { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
@@ -111,14 +108,6 @@ export class SignatureCollectionResolver {
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSignature[]> {
     return this.signatureCollectionService.signatures(input.id)
-  }
-
-  @Query(() => SignatureCollectionSignature, { nullable: true })
-  @Audit()
-  async signatureCollectionFindSignature(
-    @Args('input') input: SignatureCollectionFindSignatureInput,
-  ): Promise<SignatureCollectionSignature | null> {
-    return this.signatureCollectionService.findSignature(input)
   }
 
   @Query(() => SignatureCollectionSignee)
@@ -147,12 +136,12 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.sign(input.id, user.nationalId)
   }
 
-  @Mutation(() => SignatureCollectionSignature)
+  @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionUnsign(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
-  ): Promise<SignatureCollectionSignature> {
+  ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.unsign(input.id)
   }
 
@@ -160,8 +149,9 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionCancel(
     @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.cancel(user.nationalId)
+    return this.signatureCollectionService.cancel(user.nationalId, input)
   }
 
   @Mutation(() => SignatureCollectionSuccess)

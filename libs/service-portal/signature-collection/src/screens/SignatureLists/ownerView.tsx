@@ -1,10 +1,17 @@
-import { ActionCard, Box, Button, GridColumn, Stack, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  GridColumn,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { IntroHeader, LinkResolver } from '@island.is/service-portal/core'
+import { IntroHeader } from '@island.is/service-portal/core'
 import CancelCollection from './cancelCollection'
-import { useGetOwnerLists } from '../hooks'
+import { useGetListsForUser } from '../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../Skeletons'
 import { useNavigate } from 'react-router-dom'
@@ -13,16 +20,16 @@ const OwnerView = () => {
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
-  const { ownerLists, loadingLists } = useGetOwnerLists()
+  const { listsForUser, loadingUserLists } = useGetListsForUser()
   return (
     <div>
-      {!loadingLists ? (
+      {!loadingUserLists ? (
         <Box>
-              <IntroHeader
+          <IntroHeader
             title={formatMessage(m.pageTitle)}
             intro={formatMessage(m.pageDescription)}
           >
-            {ownerLists.length === 0 && (
+            {listsForUser.length === 0 && (
               <GridColumn span={['8/8', '3/8']}>
                 <Box
                   display={'flex'}
@@ -50,7 +57,7 @@ const OwnerView = () => {
               {formatMessage(m.myListsHeader)}
             </Text>
             <Stack space={5}>
-              {ownerLists.map((list) => {
+              {listsForUser.map((list) => {
                 return (
                   <ActionCard
                     backgroundColor="white"
@@ -80,7 +87,7 @@ const OwnerView = () => {
               })}
             </Stack>
           </Box>
-          {ownerLists.length > 0 && <CancelCollection />}
+          {listsForUser.length > 0 && <CancelCollection />}
         </Box>
       ) : (
         <Skeleton />

@@ -89,37 +89,6 @@ export const GetIsOwner = gql`
     }
   }
 `
-export const GetListsBySigneeArea = gql`
-  query listsByArea($input: SignatureCollectionAreaInput!) {
-    signatureCollectionListsByArea(input: $input) {
-      id
-      title
-      area {
-        id
-        name
-        min
-        max
-      }
-      endTime
-      startTime
-      owner {
-        nationalId
-        name
-        phone
-        email
-      }
-      collectors {
-        nationalId
-        name
-        phone
-        email
-      }
-      active
-      collectionId
-      link
-    }
-  }
-`
 
 export const GetListsForUser = gql`
   query listsForUser {
@@ -153,4 +122,3 @@ export const GetListsForUser = gql`
     }
   }
 `
-

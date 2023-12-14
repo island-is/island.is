@@ -1,39 +1,37 @@
-import { Inject, Injectable } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
-import { CurrentCollection, Lists, Signatures, signee } from './mocks'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
-import { SignatureCollectionListNationalIdsInput, SignatureCollectionNationalIdsInput } from './dto/signatureListNationalIds.input'
+import {
+  SignatureCollectionListNationalIdsInput,
+  SignatureCollectionNationalIdsInput,
+} from './dto/signatureListNationalIds.input'
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
-import { SignatureCollectionFindSignatureInput } from './dto/findSignature.input'
 import { SignatureCollectionClientService } from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { User } from '@island.is/auth-nest-tools'
+import { SignatureCollectionIdInput } from './dto/id.input'
 
 @Injectable()
 export class SignatureCollectionService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
 
   async canCreate(nationalId: string): Promise<SignatureCollectionSuccess> {
-   return await this.signatureCollectionClientService.canCreate(nationalId)
+    return await this.signatureCollectionClientService.canCreate(nationalId)
   }
 
   async isOwner(nationalId: string): Promise<SignatureCollectionSuccess> {
-    return  await this.signatureCollectionClientService.isOwner(nationalId)
+    return await this.signatureCollectionClientService.isOwner(nationalId)
   }
 
   async canSign(nationalId: string): Promise<SignatureCollectionSuccess> {
-    // TODO: return list person is signed on
-    // TODO: take in list user is trying to sign
+    // TODO: return list person is signed on, look into when connecting application
+    // TODO: take in list user is trying to sign, look into when connecting application
     return this.signatureCollectionClientService.canSign(nationalId)
   }
 
@@ -71,26 +69,12 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.getSignatures(listId)
   }
 
-  async findSignature({
-    listId,
-    query,
-  }: SignatureCollectionFindSignatureInput): Promise<SignatureCollectionSignature | null> {
-    return new Promise((resolve) => {
-      const singature =
-        Signatures(listId).find(
-          (sign) =>
-            sign.signee.nationalId === query || sign.signee.name === query,
-        ) ?? null
-      setTimeout(() => {
-        resolve(singature)
-      }, 300)
-    })
-  }
-
   async compareLists({
     nationalIds,
     listId,
-  }: SignatureCollectionListNationalIdsInput): Promise<SignatureCollectionSignature[]> {
+  }: SignatureCollectionListNationalIdsInput): Promise<
+    SignatureCollectionSignature[]
+  > {
     return await this.signatureCollectionClientService.compareBulkSignaturesOnList(
       listId,
       nationalIds,
@@ -102,14 +86,10 @@ export class SignatureCollectionService {
   }
 
   async create(
-    user:User,
+    user: User,
     input: SignatureCollectionListInput,
   ): Promise<SignatureCollectionList[]> {
-    return await this.signatureCollectionClientService.createLists(
-      input,
-      user
-    )
-   
+    return await this.signatureCollectionClientService.createLists(input, user)
   }
 
   async sign(
@@ -122,17 +102,18 @@ export class SignatureCollectionService {
     )
   }
 
-  async unsign(signatureId: string): Promise<SignatureCollectionSignature> {
+  async unsign(signatureId: string): Promise<SignatureCollectionSuccess> {
     return await this.signatureCollectionClientService.unsignList(signatureId)
   }
 
-  async cancel(nationalId: string): Promise<SignatureCollectionSuccess> {
-    console.log('cancel ', nationalId)
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true })
-      }, 300)
-    })
+  async cancel(
+    nationalId: string,
+    { id }: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.removeLists(
+      id,
+      nationalId,
+    )
   }
 
   async delegateList(
@@ -179,7 +160,9 @@ export class SignatureCollectionService {
 
   async bulkCompareSignaturesAllLists({
     nationalIds,
-  }: SignatureCollectionNationalIdsInput): Promise<SignatureCollectionSignature[]> {
+  }: SignatureCollectionNationalIdsInput): Promise<
+    SignatureCollectionSignature[]
+  > {
     return await this.signatureCollectionClientService.compareBulkSignaturesOnAllLists(
       nationalIds,
     )

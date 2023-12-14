@@ -1,7 +1,6 @@
 import { Area } from './area.dto'
 import { UserBase } from './user.dto'
 import { MedmaelalistiDTO } from '../../../gen/fetch'
-import { link } from '../../../../../../apps/financial-aid/web-veita/src/sharedStyles/Table.css';
 
 export interface List {
   id: string
@@ -14,7 +13,8 @@ export interface List {
   collectionId?: string
   collectors?: UserBase[]
   numberOfSignatures: number
-  link?: string}
+  link?: string
+}
 
 export function mapList(list: MedmaelalistiDTO): List {
   // TODO: Aggregate owners

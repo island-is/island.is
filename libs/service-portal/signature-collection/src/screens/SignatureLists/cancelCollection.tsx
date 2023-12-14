@@ -1,13 +1,26 @@
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
+import { useCancelCollection } from '../hooks'
 
 const CancelCollection = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const { cancelCollection } = useCancelCollection()
+
+  const onUnSignList = async () => {
+    setModalIsOpen(false)
+    await cancelCollection().then(({ data }) => {
+      if (data?.success) {
+        // TODO: refetch isOwner and user lists
+      } else {
+        toast.error(formatMessage(m.cancelCollectionModalToastError))
+      }
+    })
+  }
 
   return (
     <Box marginTop={10} display={'flex'} justifyContent={'center'}>
@@ -30,7 +43,7 @@ const CancelCollection = () => {
           {formatMessage(m.cancelCollectionModalMessage)}
         </Text>
         <Box marginTop={10} display="flex" justifyContent="center">
-          <Button onClick={() => setModalIsOpen(false)}>
+          <Button onClick={() => onUnSignList()}>
             {formatMessage(m.cancelCollectionModalConfirmButton)}
           </Button>
         </Box>

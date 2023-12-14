@@ -11,7 +11,6 @@ export interface OwnerInput {
 }
 export interface AreaInput {
   areaId: string
-
 }
 
 export interface CreateListInput {

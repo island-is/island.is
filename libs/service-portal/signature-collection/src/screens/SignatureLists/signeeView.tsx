@@ -3,11 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import {
-  useGetListsBySigneeArea,
-  // useGetListsForUser,
-  useGetSignedList,
-} from '../hooks'
+import { useGetListsForUser, useGetSignedList } from '../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../Skeletons'
 
@@ -18,17 +14,13 @@ const SigneeView = () => {
 
   const { signedList, loadingSignedList, refetchSignedList } =
     useGetSignedList()
-  // TODO: When gervimenn get area use this instead of SigneeArea
-  // const { listsForUser, loadingUserLists, refetchListsForUser } =
-  //   useGetListsForUser()
-  const { listsBySigneeArea, loadingAreaLists, refetchListsBySigneeArea } =
-    useGetListsBySigneeArea('1000002')
+  const { listsForUser, loadingUserLists, refetchListsForUser } =
+    useGetListsForUser()
 
   const onUnSignList = () => {
     setModalIsOpen(false)
     refetchSignedList()
-    // refetchListsForUser()
-    refetchListsBySigneeArea()
+    refetchListsForUser()
   }
 
   const SignedList = () => {
@@ -67,12 +59,11 @@ const SigneeView = () => {
       </Modal>
     )
   }
-
   return (
     <div>
-      {!loadingSignedList && !loadingAreaLists ? (
+      {!loadingSignedList && !loadingUserLists ? (
         <Box>
-          {signedList && (
+          {!!signedList && (
             <Box marginTop={10}>
               <Text variant="h4" marginBottom={3}>
                 {formatMessage(m.mySigneeListsHeader)}
@@ -85,30 +76,30 @@ const SigneeView = () => {
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.mySigneeListsByAreaHeader)}
             </Text>
+
             <Stack space={5}>
-              {listsBySigneeArea.length > 0 &&
-                listsBySigneeArea?.map((list) => {
-                  return (
-                    <ActionCard
-                      key={list.id}
-                      backgroundColor="white"
-                      heading={list.owner.name + ' - ' + list.area.name}
-                      eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
-                      text={formatMessage(m.collectionTitle)}
-                      cta={{
-                        label: formatMessage(m.signList),
-                        variant: 'text',
-                        icon: 'arrowForward',
-                        disabled: Object.keys(signedList).length !== 0,
-                        onClick: () => {
-                          window.open(
-                            `${document.location.origin}/umsoknir/maela-med-lista/`,
-                          )
-                        },
-                      }}
-                    />
-                  )
-                })}
+              {listsForUser?.map((list) => {
+                return (
+                  <ActionCard
+                    key={list.id}
+                    backgroundColor="white"
+                    heading={list.owner.name + ' - ' + list.area.name}
+                    eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
+                    text={formatMessage(m.collectionTitle)}
+                    cta={{
+                      label: formatMessage(m.signList),
+                      variant: 'text',
+                      icon: 'arrowForward',
+                      disabled: signedList !== null,
+                      onClick: () => {
+                        window.open(
+                          `${document.location.origin}/umsoknir/maela-med-lista/`,
+                        )
+                      },
+                    }}
+                  />
+                )
+              })}
             </Stack>
           </Box>
         </Box>
