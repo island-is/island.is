@@ -10,6 +10,7 @@ export async function getSsmParams(
   ssmNames: string[],
 ): Promise<{ [name: string]: string }> {
   logger.debug('getSsmParams', { numSsmNames: ssmNames.length })
+  throw new Error('DEBUG')
   const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {
     const ch = Math.floor(i / 10)
     all[ch] = ([] as string[]).concat(all[ch] || [], one)

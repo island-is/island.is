@@ -46,12 +46,12 @@ export function prepareServicesForEnv<T extends ServiceOutputType>(options: {
  * This is an important function. It converts a list of ServiceBuilders to a hash of output-format-specific definitions. It is practically the rendering pipeline for the DSL definitions
  * @param options
  */
-export const generateOutput = async <T extends ServiceOutputType>(options: {
+export async function generateOutput<T extends ServiceOutputType>(options: {
   runtime: ReferenceResolver
   services: ServiceBuilder<any>[] | ServiceBuilder<any>
   outputFormat: OutputFormat<T>
   env: EnvironmentConfig
-}) => {
+}) {
   logger.debug('generateOutput', {
     numberOfServices: Array.isArray(options.services)
       ? options.services.length
@@ -93,12 +93,12 @@ export const generateOutput = async <T extends ServiceOutputType>(options: {
  * This is the same as `renderer` function but for a single service. Used in tests for the most part.
  * @param options
  */
-export const generateOutputOne = async <T extends ServiceOutputType>(options: {
+export async function generateOutputOne<T extends ServiceOutputType>(options: {
   outputFormat: OutputFormat<T>
   service: ServiceBuilder<any>
   runtime: ReferenceResolver
   env: EnvironmentConfig
-}): Promise<SerializeSuccess<T> | SerializeErrors> => {
+}): Promise<SerializeSuccess<T> | SerializeErrors> {
   const outputFormat = options.outputFormat
   const service = options.service
   const runtime = options.runtime

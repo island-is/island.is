@@ -200,8 +200,8 @@ export enum SecretOptions {
   noSecrets,
 }
 
-export const LocalrunOutput = (options: { secrets: SecretOptions }) =>
-  ({
+export function LocalrunOutput(options: { secrets: SecretOptions }) {
+  return {
     featureDeployment(
       service: ServiceDefinition,
       env: EnvironmentConfig,
@@ -223,4 +223,5 @@ export const LocalrunOutput = (options: { secrets: SecretOptions }) =>
     serviceMockDef(options): LocalrunService {
       throw new Error('Not used')
     },
-  } as OutputFormat<LocalrunService>)
+  } as OutputFormat<LocalrunService>
+}

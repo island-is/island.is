@@ -8,7 +8,7 @@ import { LocalrunValueFile } from '../dsl/types/output-types'
 
 export async function renderLocalServices(
   services: string[],
-  { dryRun = false, print = false, json = false } = {},
+  { dryRun = false, print = false, json = false, noUpdateSecrets = false } = {},
 ): Promise<LocalrunValueFile> {
   logger.debug('renderLocalServices', { services, dryRun, print, json })
   const chartName = 'islandis'
@@ -22,7 +22,7 @@ export async function renderLocalServices(
     habitat,
     uberChart,
     habitat.filter((s) => services.includes(s.name())),
-    { dryRun },
+    { dryRun, noUpdateSecrets },
   )
 
   if (print) {
@@ -48,11 +48,13 @@ export async function runLocalServices(
     neverFail = !!dryRun,
     print = false,
     json = false,
+    noUpdateSecrets = false,
   }: {
     dryRun?: boolean
     neverFail?: boolean
     print?: boolean
     json?: boolean
+    noUpdateSecrets?: boolean
   } = {},
 ) {
   logger.debug('runLocalServices', { services, dependencies })
@@ -60,6 +62,7 @@ export async function runLocalServices(
     dryRun,
     print,
     json,
+    noUpdateSecrets,
   })
 
   const processes: Promise<ChildProcess>[] = []
