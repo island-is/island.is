@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image } from 'react-native'
-import ChevronForward from '../../assets/alert/chevron-forward.png'
+import ChevronForward from '../../assets/icons/chevron-forward.png'
 import { blue400 } from '../../utils'
 
 export function ChevronRight() {

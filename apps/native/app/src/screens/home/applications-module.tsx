@@ -1,11 +1,14 @@
 import {
   Badge,
+  ChevronRight,
   EmptyCard,
   Heading,
   LinkText,
   StatusCard,
   StatusCardSkeleton,
+  Typography,
   ViewPager,
+  blue400,
 } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -77,7 +80,22 @@ export const ApplicationsModule = React.memo(
     return (
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
-          <Heading>
+          <Heading
+            button={
+              <TouchableOpacity
+                onPress={() => navigateTo('/applications')}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography weight="400" color={blue400}>
+                  {intl.formatMessage({ id: 'button.seeAll' })}
+                </Typography>
+                <ChevronRight />
+              </TouchableOpacity>
+            }
+          >
             {intl.formatMessage({ id: 'home.applicationsStatus' })}
           </Heading>
         </TouchableOpacity>

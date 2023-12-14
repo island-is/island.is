@@ -1,8 +1,15 @@
-import { ChevronRight, Heading, NotificationCard } from '@ui'
+import {
+  ChevronRight,
+  Heading,
+  NotificationCard,
+  Typography,
+  blue400,
+} from '@ui'
 import React from 'react'
-import { SafeAreaView } from 'react-native'
 import { useIntl } from 'react-intl'
-import { navigateTo } from 'src/lib/deep-linking'
+import { Image, SafeAreaView, TouchableOpacity, View } from 'react-native'
+import vehicleIcon from '../../assets/icons/vehicle.png'
+import { navigateTo } from '../../lib/deep-linking'
 
 export const VehiclesModule = React.memo(() => {
   const intl = useIntl()
@@ -11,8 +18,16 @@ export const VehiclesModule = React.memo(() => {
     <SafeAreaView style={{ marginHorizontal: 16, marginTop: 16 }}>
       <Heading
         button={
-          <TouchableOpacity onPress={() => navigateTo('/vehicles')}>
-            {intl.formatMessage({ id: 'button.seeAll' })}
+          <TouchableOpacity
+            onPress={() => navigateTo('/vehicles')}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <Typography weight="400" color={blue400}>
+              {intl.formatMessage({ id: 'button.seeAll' })}
+            </Typography>
             <ChevronRight />
           </TouchableOpacity>
         }
@@ -22,6 +37,25 @@ export const VehiclesModule = React.memo(() => {
       <NotificationCard
         id="VehicleNotification"
         onPress={() => navigateTo('/vehicles')}
+        icon={
+          <View
+            style={{
+              borderRadius: 32,
+              backgroundColor: 'white',
+              padding: 3,
+              marginRight: 8,
+            }}
+          >
+            <Image
+              source={vehicleIcon as any}
+              style={{
+                width: 16,
+                height: 16,
+              }}
+              resizeMode="contain"
+            />
+          </View>
+        }
         title={intl.formatMessage({ id: 'vehicleDetail.odometer' })}
         message={intl.formatMessage({ id: 'home.vehicleModule.summary' })}
         actions={[

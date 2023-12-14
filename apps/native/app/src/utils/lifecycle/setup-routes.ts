@@ -57,6 +57,7 @@ export function setupRoutes() {
   })
 
   addRoute('/vehicles', async (passProps) => {
+    selectTab(4)
     await Navigation.dismissAllModals()
     await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {

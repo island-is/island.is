@@ -16,6 +16,7 @@ import {
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   Application,
   useListApplicationsQuery,
@@ -30,7 +31,6 @@ import { ApplicationsModule } from './applications-module'
 import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
 import { VehiclesModule } from './vehicles-module'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 interface ListItem {
   id: string
@@ -161,14 +161,17 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     isMileageEnabled
       ? {
           id: 'vehicles',
-          component: <VehiclesModule componentId={componentId} />,
+          component: <VehiclesModule />,
         }
       : null,
     {
       id: 'notifications',
       component: <NotificationsModule componentId={componentId} />,
     },
-  ].filter(Boolean)
+  ].filter(Boolean) as Array<{
+    id: string
+    component: React.JSX.Element
+  }>
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { isValidElement } from 'react'
 import { FormattedDate } from 'react-intl'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -117,9 +117,9 @@ const Dot = styled.View`
 
 interface CardProps {
   id: string
-  icon: ImageSourcePropType
+  icon?: ImageSourcePropType | React.ReactNode
   category?: string
-  date: Date
+  date?: Date
   title: string
   message: string
   unread?: boolean
@@ -147,9 +147,11 @@ export function NotificationCard({
       <Container>
         <Row>
           <Title>
-            {icon && (
+            {icon && isValidElement(icon) ? (
+              icon
+            ) : (
               <Image
-                source={icon}
+                source={icon as ImageSourcePropType}
                 style={{ width: 16, height: 16, marginRight: 8 }}
               />
             )}
@@ -157,12 +159,14 @@ export function NotificationCard({
               {title}
             </TitleText>
           </Title>
-          <Date>
-            <DateText unread={unread}>
-              <FormattedDate value={date} />
-            </DateText>
-            {unread && <Dot />}
-          </Date>
+          {date && (
+            <Date>
+              <DateText unread={unread}>
+                <FormattedDate value={date} />
+              </DateText>
+              {unread && <Dot />}
+            </Date>
+          )}
         </Row>
         <Content>
           <Message>{message}</Message>
