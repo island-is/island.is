@@ -15,11 +15,7 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   return (
     <Box paddingTop={2}>
-      {machineList.length > 5 ? (
-        <MachineSelectField currentMachineList={machineList} {...props} />
-      ) : (
-        <MachineRadioField currentMachineList={machineList} {...props} />
-      )}
+      <MachineSelectField currentMachineList={machineList} {...props} />
     </Box>
   )
 }

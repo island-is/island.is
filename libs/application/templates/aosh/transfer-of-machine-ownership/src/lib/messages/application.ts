@@ -40,4 +40,10 @@ export const application = defineMessages({
     defaultMessage: 'Samþykkt af öllum aðilum',
     description: 'History log approved by reviewer',
   },
+  actionCardPrerequisites: {
+    id: 'hlc.application:actionCardPrerequisites',
+    defaultMessage: 'Gagnaöflun',
+    description:
+      'Description of application state/status when the application is in prerequisites',
+  },
 })

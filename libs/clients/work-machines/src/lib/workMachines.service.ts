@@ -20,11 +20,13 @@ import {
   apiChangeMachineOwnerToApiRequest,
   confirmChangeToApiRequest,
 } from './workMachines.utils'
+import { CustomMachineApi } from './providers'
 
 @Injectable()
 export class WorkMachinesClientService {
   constructor(
     private readonly machinesApi: MachinesApi,
+    private readonly machineApi: CustomMachineApi,
     private readonly docApi: MachinesDocumentApi,
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
     private readonly machineCategoryApi: MachineCategoryApi,
@@ -32,6 +34,9 @@ export class WorkMachinesClientService {
 
   private machinesApiWithAuth = (user: User) =>
     this.machinesApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private machineApiWithAuth = (user: User) =>
+    this.machineApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   private machineOwnerChangeApiWithAuth(auth: Auth) {
     return this.machineOwnerChangeApi.withMiddleware(new AuthMiddleware(auth))
@@ -59,7 +64,6 @@ export class WorkMachinesClientService {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
       onlyShowOwnedMachines: true,
     })
-
     return (
       result?.value?.map((machine) => {
         return {
@@ -73,7 +77,7 @@ export class WorkMachinesClientService {
     )
   }
   public async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
-    const result = await this.machinesApiWithAuth(auth).getMachine({ id })
+    const result = await this.machineApiWithAuth(auth).getMachine({ id })
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,

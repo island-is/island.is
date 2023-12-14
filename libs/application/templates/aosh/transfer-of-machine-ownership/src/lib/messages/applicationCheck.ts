@@ -15,5 +15,10 @@ export const applicationCheck = {
       defaultMessage: 'Það kom upp villa',
       description: 'Application check validation alert title',
     },
+    noMachine: {
+      id: 'aosh.tmo.application:applicationCheck.validation.noMachine',
+      defaultMessage: 'Engin vél hefur verið valin',
+      description: 'No machine selected',
+    },
   }),
 }

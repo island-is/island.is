@@ -94,7 +94,6 @@ export const MachineAnswersSchema = z.object({
   pickMachine: z.object({
     index: z.string().optional(),
     id: z.string().min(1),
-    isValid: z.boolean(),
   }),
   location: z.object({
     address: z.string(),

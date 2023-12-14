@@ -42,11 +42,18 @@ const ConfigFactory = (
   },
 })
 
+export class CustomMachineApi extends MachinesApi {}
+
 export const apiProviders = [
   {
     api: MachinesApi,
     provide: MachinesApi,
     acceptHeader: 'application/vnd.ver.machines.hateoas.v1+json',
+  },
+  {
+    api: CustomMachineApi,
+    provide: CustomMachineApi,
+    acceptHeader: 'application/vnd.ver.machine.hateoas.v1+json',
   },
   {
     api: MachineOwnerChangeApi,

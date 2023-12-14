@@ -1,13 +1,12 @@
-import { buildForm } from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
-import { prerequisitesSection } from './prerequisitesSection'
 import { Logo } from '../../assets/Logo'
 import {
   buildFormConclusionSection,
   buildFormPaymentChargeOverviewSection,
 } from '@island.is/application/ui-forms'
-import { conclusion, payment } from '../../lib/messages'
+import { conclusion, externalData, payment } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
 
 export const TransferOfMachineOwnershipForm: Form = buildForm({
@@ -15,8 +14,14 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
-    prerequisitesSection,
+    buildSection({
+      id: 'externalData',
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
     informationSection,
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,

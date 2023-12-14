@@ -83,7 +83,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  featureFlag: Features.transferOfMachineOwnership,
+  //featureFlag: Features.transferOfMachineOwnership,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfMachineOwnership.translation,
   ],
@@ -98,8 +98,55 @@ const template: ApplicationTemplate<
   ],
   requiredScopes: [ApiScope.vinnueftirlitid],
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'Gagnaöflun',
+          status: 'draft',
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardPrerequisites,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                VinnueftirlitidPaymentCatalogApi,
+                MachinesApi,
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: 'Tilkynning um eigendaskipti að tæki',
@@ -126,21 +173,8 @@ const template: ApplicationTemplate<
                   (module) =>
                     Promise.resolve(module.TransferOfMachineOwnershipForm),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
               write: 'all',
               delete: true,
-              api: [
-                IdentityApi,
-                UserProfileApi,
-                VinnueftirlitidPaymentCatalogApi,
-                MachinesApi,
-              ],
             },
           ],
         },
