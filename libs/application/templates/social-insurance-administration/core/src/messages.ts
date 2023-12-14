@@ -120,62 +120,62 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
 
   months: defineMessages({
     january: {
-      id: 'sia.application:period.january',
+      id: 'sia.application:months.january',
       defaultMessage: 'Janúar',
       description: 'January',
     },
     february: {
-      id: 'sia.application:period.february',
+      id: 'sia.application:months.february',
       defaultMessage: 'Febrúar',
       description: 'February',
     },
     march: {
-      id: 'sia.application:period.march',
+      id: 'sia.application:months.march',
       defaultMessage: 'Mars',
       description: 'March',
     },
     april: {
-      id: 'sia.application:period.april',
+      id: 'sia.application:months.april',
       defaultMessage: 'Apríl',
       description: 'April',
     },
     may: {
-      id: 'sia.application:period.may',
+      id: 'sia.application:months.may',
       defaultMessage: 'Maí',
       description: 'May',
     },
     june: {
-      id: 'sia.application:period.june',
+      id: 'sia.application:months.june',
       defaultMessage: 'Júní',
       description: 'June',
     },
     july: {
-      id: 'sia.application:period.july',
+      id: 'sia.application:months.july',
       defaultMessage: 'Júlí',
       description: 'July',
     },
     august: {
-      id: 'sia.application:period.august',
+      id: 'sia.application:months.august',
       defaultMessage: 'Ágúst',
       description: 'August',
     },
     september: {
-      id: 'sia.application:period.september',
+      id: 'sia.application:months.september',
       defaultMessage: 'September',
       description: 'September',
     },
     october: {
-      id: 'sia.application:period.october',
+      id: 'sia.application:months.october',
       defaultMessage: 'Október',
       description: 'October',
     },
     november: {
-      id: 'sia.application:period.november',
+      id: 'sia.application:months.november',
       defaultMessage: 'Nóvember',
       description: 'November',
     },
     desember: {
-      id: 'sia.application:period.desember',
+      id: 'sia.application:months.desember',
       defaultMessage: 'Desember',
       description: 'December',
     },
