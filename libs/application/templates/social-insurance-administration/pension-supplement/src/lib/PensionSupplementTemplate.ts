@@ -13,6 +13,7 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -167,6 +168,14 @@ const PensionSupplementTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -196,6 +205,14 @@ const PensionSupplementTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
             },
           ],
         },
@@ -238,6 +255,14 @@ const PensionSupplementTemplate: ApplicationTemplate<
                   Promise.resolve(val.AdditionalDocumentsRequired),
                 ),
               read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
               write: 'all',
             },
           ],
@@ -395,6 +420,11 @@ const PensionSupplementTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     if (id === application.applicant) {
       return Roles.APPLICANT
+    }
+
+    const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
+    if (id === TR_ID) {
+      return Roles.ORGANIZATION_REVIEWER
     }
     return undefined
   },
