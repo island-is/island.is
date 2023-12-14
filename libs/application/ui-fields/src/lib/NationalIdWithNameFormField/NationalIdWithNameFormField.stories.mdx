@@ -1,0 +1,71 @@
+import {
+  Meta,
+  Story,
+  Canvas,
+  ArgsTable,
+  Description,
+  Source,
+} from '@storybook/addon-docs'
+import { dedent } from 'ts-dedent'
+
+import { NationalIdWithNameFormField } from './NationalIdWithNameFormField'
+
+export const createMockApplication = (data = {}) => ({
+  id: '123',
+  assignees: [],
+  state: data.state || 'draft',
+  applicant: '111111-3000',
+  typeId: data.typeId || 'ExampleForm',
+  modified: new Date(),
+  created: new Date(),
+  attachments: {},
+  answers: data.answers || {},
+  externalData: {},
+})
+
+<Meta
+  title="Application System/NationalIdWithNameFormField"
+  component={NationalIdWithNameFormField}
+/>
+
+# NationalIdWithNameFormField
+
+### Usage in a template
+
+You can create a NationalIdWithNameFormField using the following function `buildNationalIdWithNameField`.
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildNationalIdWithNameField({
+      id: 'field.id',
+      customId: 'seller',
+      customNationalIdLabel: m.sellerNationalId,
+      customNameLabel: m.sellerName,
+      onNationalIdChange: setNationalId,
+      onNameChange: setName,
+      nationalIdDefaultValue: name,
+      nameDefaultValue: nationalId,
+      errorMessage: errorMessage,
+      disabled: isDisabled,
+      minAgePerson: minAge,
+    })`)}
+/>
+
+The previous configuration object will result in the following component:
+
+<Canvas>
+  <Story name="Default">
+    <NationalIdWithNameFormField
+      application={createMockApplication()}
+      field={{
+        id: 'field.id',
+        customId: 'seller',
+        customNationalIdLabel: 'Kennitala seljanda',
+        customNameLabel: 'Nafn seljanda',
+        disabled: false,
+        minAgePerson: 18,
+      }}
+    />
+  </Story>
+</Canvas>
