@@ -42,57 +42,57 @@ const iconInsets = {
   bottom: Platform.OS === 'ios' && Platform.isPad ? 8 : -4,
 }
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl, initialized) => ({
-    topBar: {
-      title: {
-        text: initialized ? intl.formatMessage({ id: 'home.screenTitle' }) : '',
+const { useNavigationOptions, getNavigationOptions } =
+  createNavigationOptionHooks(
+    (theme, intl, initialized) => ({
+      topBar: {
+        title: {
+          text: initialized
+            ? intl.formatMessage({ id: 'home.screenTitle' })
+            : '',
+        },
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
-      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
-    },
-    bottomTab: {
-      ...({
-        accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
-      } as any),
-      // selectedIconColor: null as any,
-      // iconColor: null as any,
-      textColor: initialized
-        ? Platform.OS === 'android'
-          ? theme.shade.foreground
-          : { light: 'black', dark: 'white' }
-        : theme.shade.background,
-      icon: initialized
-        ? require('../../assets/icons/tabbar-home.png')
-        : undefined,
-      selectedIcon: initialized
-        ? require('../../assets/icons/tabbar-home-selected.png')
-        : undefined,
-    },
-  }),
-  {
-    topBar: {
-      rightButtons: [],
-      largeTitle: {
-        visible: true,
+      bottomTab: {
+        ...({
+          accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
+        } as any),
+        // selectedIconColor: null as any,
+        // iconColor: null as any,
+        textColor: initialized
+          ? Platform.OS === 'android'
+            ? theme.shade.foreground
+            : { light: 'black', dark: 'white' }
+          : theme.shade.background,
+        icon: initialized
+          ? require('../../assets/icons/tabbar-home.png')
+          : undefined,
+        selectedIcon: initialized
+          ? require('../../assets/icons/tabbar-home-selected.png')
+          : undefined,
       },
-      scrollEdgeAppearance: {
-        active: true,
-        noBorder: true,
+    }),
+    {
+      topBar: {
+        rightButtons: [],
+        largeTitle: {
+          visible: true,
+        },
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
+      },
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_HOME,
+        iconInsets,
+        disableIconTint: false,
+        disableSelectedIconTint: true,
+        iconColor: null as any,
+        selectedIconColor: null as any,
       },
     },
-    bottomTab: {
-      testID: testIDs.TABBAR_TAB_HOME,
-      iconInsets,
-      disableIconTint: false,
-      disableSelectedIconTint: true,
-      iconColor: null as any,
-      selectedIconColor: null as any,
-    },
-  },
-)
+  )
 
 export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
