@@ -76,6 +76,11 @@ const serializeService = async (
 
   // secrets
   if (Object.keys(serviceDef.secrets).length > 0 && withSecrets) {
+    logger.debug('Retrieving secrets', {
+      service: service.name,
+      env: env1,
+    })
+    throw new Error('Debug retrieving')
     const secrets = await retrieveSecrets(serviceDef.secrets)
     mergeObjects(result.env, secrets)
   }

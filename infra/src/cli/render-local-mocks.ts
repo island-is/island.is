@@ -8,9 +8,15 @@ import { LocalrunValueFile } from '../dsl/types/output-types'
 
 export async function renderLocalServices(
   services: string[],
-  { dryRun = false, print = false, json = false, noUpdateSecrets = false } = {},
+  { print = false, json = false, dryRun = false, noUpdateSecrets = false } = {},
 ): Promise<LocalrunValueFile> {
-  logger.debug('renderLocalServices', { services, dryRun, print, json })
+  logger.debug('renderLocalServices', {
+    services,
+    print,
+    json,
+    dryRun,
+    noUpdateSecrets,
+  })
   const chartName = 'islandis'
   const env = 'dev'
   const envConfig = Envs[Deployments[chartName][env]]
@@ -59,9 +65,9 @@ export async function runLocalServices(
 ) {
   logger.debug('runLocalServices', { services, dependencies })
   const renderedLocalServices = await renderLocalServices(services, {
-    dryRun,
     print,
     json,
+    dryRun,
     noUpdateSecrets,
   })
 

@@ -1,4 +1,8 @@
-import { ServiceDefinition, ServiceDefinitionCore } from './types/input-types'
+import {
+  ServiceDefinition,
+  ServiceDefinitionCore,
+  ServiceDefinitionForEnv,
+} from './types/input-types'
 import { HelmOutput } from './output-generators/map-to-helm-values'
 import { ReferenceResolver, EnvironmentConfig } from './types/charts'
 import {
@@ -28,11 +32,26 @@ class UpstreamDependencyTracer implements ReferenceResolver {
   }
 }
 
-export const renderers = {
+const broken: (name: string) => OutputFormat<ServiceOutputType> = (name) => ({
+  featureDeployment(..._args: any): void {
+    throw new Error(`Broken featureDeployment (name=${name})`)
+  },
+  serializeService(..._args: any) {
+    throw new Error(`Broken serializeService (name=${name})`)
+  },
+  serviceMockDef(..._args: any) {
+    throw new Error(`Broken serviceMockDef (name=${name})`)
+  },
+})
+export const renderers: { [name: string]: OutputFormat<ServiceOutputType> } = {
+  broken: broken('broken'),
+  // helm: broken('helm'),
+  localrun: broken('localrun'),
+  // localrunNoSecrets: broken('localrunNoSecrets'),
   helm: HelmOutput,
-  localrun: LocalrunOutput({ secrets: SecretOptions.withSecrets }),
+  // localrun: LocalrunOutput({ secrets: SecretOptions.withSecrets }),
   localrunNoSecrets: LocalrunOutput({ secrets: SecretOptions.noSecrets }),
-}
+} as const
 
 const findUpstreamDependencies = (
   runtime: UpstreamDependencyTracer,

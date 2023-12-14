@@ -59,13 +59,15 @@ yargs(process.argv.slice(2))
       return yargs
         .option('service', { demandOption: true, array: true })
         .option('json', { type: 'boolean', default: false })
-        .option('dry', { type: 'boolean', default: false })
+        .option('dry', { type: 'boolean', default: true })
+        .option('no-update-secrets', { type: 'boolean', default: true })
     },
     async (argv) =>
       await renderLocalServices(argv.service as string[], {
         dryRun: argv.dry,
         json: argv.json,
         print: true,
+        noUpdateSecrets: argv['no-update-secrets'],
       }),
   )
   .command(
@@ -76,8 +78,8 @@ yargs(process.argv.slice(2))
         .option('service', { array: true, type: 'string', demandOption: true })
         .option('dependencies', { array: true, type: 'string', default: [] })
         .option('json', { type: 'boolean', default: false })
-        .option('dry', { type: 'boolean', default: false })
-        .option('no-update-secrets', { type: 'boolean', default: false })
+        .option('dry', { type: 'boolean', default: true })
+        .option('no-update-secrets', { type: 'boolean', default: true })
         .option('never-fail', {
           alias: 'nofail',
           type: 'boolean',
