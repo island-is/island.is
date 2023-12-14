@@ -23,9 +23,9 @@ export async function runCommand({
   const logMessage = (message: string) => `${projectLabel} - ${message}`
   if (dryRun) {
     logger.info(logMessage(`[DRY RUN] ${command.join(' ')}`))
-    return
+    return spawn('true')
   }
-  const proc = spawn(command, [], {
+  const proc = spawn(command.join(' '), [], {
     cwd,
     shell: true,
     stdio: 'pipe',

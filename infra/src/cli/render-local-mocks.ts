@@ -116,12 +116,12 @@ export async function runLocalServices(
       continue
     }
     const chainedCommand = [
-      dryRun ? 'false' : 'true',
+      // dryRun ? 'false' : 'true',
       ...(service.commands ?? []),
     ].join(' && ')
     const unfailingCommand = [
       chainedCommand,
-      neverFail ? 'true' : 'false',
+      ...(neverFail ? ['true'] : []),
     ].join(' || ')
     const command = unfailingCommand
     logger.warn(`Starting ${name} in the background`)
@@ -135,7 +135,7 @@ export async function runLocalServices(
       logger.info('Commands being run:', { [name]: command })
     }
 
-    const proc = await runCommand({ command, project: name })
+    const proc = await runCommand({ command, project: name, dryRun })
 
     processes.push(new Promise((resolve) => proc.on('exit', resolve)))
   }

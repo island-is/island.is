@@ -79,7 +79,6 @@ export const getLocalrunValueFile = async (
         portConfig,
       ) as Record<string, string>,
       commands: [
-        `(sleep 2 && cat /etc/os-release && sleep 2 && echo "Project ${name} completed" && exit 1)`,
         `cd "${rootDir}"`,
         `. ./.env.${serviceNXName}`, // `source` is bashism
         `echo "Starting ${name} in $PWD"`,
