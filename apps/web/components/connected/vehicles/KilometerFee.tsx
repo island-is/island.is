@@ -216,7 +216,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
                 )}
               </Text>
               <Text variant="h4" color="blue400" fontWeight="semiBold">
-                {result === 0 ? '' : formatCurrency(result)}{' '}
+                {formatCurrency(result)}{' '}
                 {n(
                   'resultPostfix',
                   activeLocale === 'is' ? 'krónur á mánuði' : 'isk per month',
