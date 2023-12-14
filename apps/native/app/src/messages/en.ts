@@ -153,6 +153,10 @@ export const en: TranslatedMessages = {
     'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
+  'home.vehicleModule.summary':
+    'Enter mileage of electric and plug-in hybrid vehicles',
+  'home.vehicleModule.button': 'My vehicles',
+  'button.seeAll': 'See all',
 
   // inbox
   'inbox.screenTitle': 'Inbox',

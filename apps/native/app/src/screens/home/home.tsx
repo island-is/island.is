@@ -29,6 +29,8 @@ import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
+import { VehiclesModule } from './vehicles-module'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 interface ListItem {
   id: string
@@ -105,6 +107,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useListApplicationsQuery()
 
+  // Get feature flag for mileage
+  const isMileageEnabled = useFeatureFlag(
+    'isServicePortalVehicleMileagePageEnabled',
+    false,
+  )
   const [loading, setLoading] = useState(false)
 
   const renderItem = useCallback(
@@ -151,11 +158,17 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         />
       ),
     },
+    isMileageEnabled
+      ? {
+          id: 'vehicles',
+          component: <VehiclesModule componentId={componentId} />,
+        }
+      : null,
     {
       id: 'notifications',
       component: <NotificationsModule componentId={componentId} />,
     },
-  ]
+  ].filter(Boolean)
 
   return (
     <>
