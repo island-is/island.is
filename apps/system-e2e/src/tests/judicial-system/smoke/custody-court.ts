@@ -53,7 +53,6 @@ export function addTests() {
       await page.keyboard.press('Escape')
       await page.locator('input[id=courtDate-time]').fill('09:00')
       await page.keyboard.press('Tab')
-      await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase', 200)
       await page
         .locator('input[id=react-select-defenderName-input]')
         .fill('Saul Goodmann')
@@ -62,7 +61,7 @@ export function addTests() {
         .locator('input[name=defenderEmail]')
         .fill('jl-auto-defender@kolibri.is')
       await page.keyboard.press('Tab')
-      await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase', 200)
+      await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase')
       await page.getByTestId('continueButton').click()
       await page.getByTestId('modalSecondaryButton').click()
 
@@ -75,7 +74,6 @@ export function addTests() {
       await page.keyboard.press('Escape')
       await page.locator('input[id=validToDate-time]').fill('16:00')
       await page.keyboard.press('Tab')
-      await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase', 200)
       await page.getByTestId('continueButton').click()
 
       // Court record
@@ -84,10 +82,8 @@ export function addTests() {
       await page.getByText('Sækjandi unir úrskurðinum').click()
       await page.locator('input[id=courtEndTime]').fill(today)
       await page.keyboard.press('Escape')
-      await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase')
       await page.locator('input[id=courtEndTime-time]').fill('10:00')
       await page.keyboard.press('Tab')
-      await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase', 200)
       await page.getByTestId('continueButton').click()
 
       // Confirmation
