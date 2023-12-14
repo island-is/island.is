@@ -1,3 +1,49 @@
+import { spawn } from 'child_process'
+import { rootDir } from './dsl/consts'
+
+export async function runCommand({
+  command,
+  cwd = rootDir,
+  project = '',
+  projectNameSize = 25,
+}: {
+  command: string
+  cwd?: string
+  project?: string
+  projectNameSize?: number
+}) {
+  const proc = spawn(command, [], {
+    cwd,
+    shell: true,
+    stdio: 'pipe',
+  })
+  const projectLabel = `${project
+    .padEnd(projectNameSize, ' ')
+    .slice(0, projectNameSize)} `
+  const logMessage = (message: string) => `${projectLabel} - ${message}`
+  proc.stdout?.on('data', (data) => {
+    data
+      .toString()
+      .split('\n')
+      .forEach((line: string) => {
+        if (line.trim().length > 0) {
+          logger.info(logMessage(line))
+        }
+      })
+  })
+  proc.stderr?.on('data', (data) => {
+    data
+      .toString()
+      .split('\n')
+      .forEach((line: string) => {
+        if (line.trim().length > 0) {
+          logger.error(logMessage(line))
+        }
+      })
+  })
+  return proc
+}
+
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error'
 
 const logLevelEnv = (process.env.LOG_LEVEL ?? 'info').toLowerCase()
