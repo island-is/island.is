@@ -99,9 +99,7 @@ const SigneeView = () => {
                         label: formatMessage(m.signList),
                         variant: 'text',
                         icon: 'arrowForward',
-                        disabled: signedList
-                          ? Object.keys(signedList).length !== 0
-                          : false,
+                        disabled: Object.keys(signedList).length !== 0,
                         onClick: () => {
                           window.open(
                             `${document.location.origin}/umsoknir/maela-med-lista/`,

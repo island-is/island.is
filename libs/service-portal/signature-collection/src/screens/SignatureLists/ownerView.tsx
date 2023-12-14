@@ -80,7 +80,7 @@ const OwnerView = () => {
               })}
             </Stack>
           </Box>
-          <CancelCollection />
+          {ownerLists.length > 0 && <CancelCollection />}
         </Box>
       ) : (
         <Skeleton />

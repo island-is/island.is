@@ -69,6 +69,35 @@ export class EstateTemplateService extends BaseTemplateApiService {
       )
     }
 
+    const { availableSettlements } = applicationData
+    const selectedEstate = applicationAnswers.selectedEstate
+    const selectedEstateKey = Object.keys(EstateTypes).find(
+      (key) => EstateTypes[key as keyof typeof EstateTypes] === selectedEstate,
+    ) as keyof typeof availableSettlements
+
+    if (
+      availableSettlements &&
+      availableSettlements[selectedEstateKey] !== 'Í lagi'
+    ) {
+      const message = availableSettlements[selectedEstateKey]
+      this.logger.warn(`[estate]: Validation failed with message: ${message}`)
+
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProviderEstateValidationFailed,
+          summary: {
+            ...coreErrorMessages.errorDataProviderEstateValidationFailedSummary,
+            defaultMessage:
+              coreErrorMessages.errorDataProviderEstateValidationFailedSummary.defaultMessage.replace(
+                '{message}',
+                message,
+              ),
+          },
+        },
+        500,
+      )
+    }
+
     const youngheirs = applicationData.estateMembers.filter(
       (heir) => kennitala.info(heir.nationalId).age < 18,
     )
@@ -78,7 +107,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
     if (youngheirs.length > 0) {
       if (youngheirs.some((heir) => !heir.advocate)) {
         if (
-          applicationAnswers.selectedEstate === EstateTypes.officialDivision
+          applicationAnswers.selectedEstate ===
+          EstateTypes.divisionOfEstateByHeirs
         ) {
           return true
         }
@@ -107,7 +137,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
       estateResponse = getFakeData(application)
     } else {
       estateResponse = (
-        await this.syslumennService.getEstateInfo(application.applicant)
+        await this.syslumennService.getEstateInfoWithAvailableSettlements(
+          application.applicant,
+        )
       )[0]
     }
 
