@@ -24,7 +24,7 @@ import {
   GenericLicenseMapper,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
-import { AVAILABLE_LICENSES } from './licenseService.module'
+import { AVAILABLE_LICENSES } from '../../../licenses-service-v2/src/lib/licenseService.module'
 import {
   LicenseClient,
   LicenseClientService,
