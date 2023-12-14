@@ -405,7 +405,7 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'fileUpload',
-      title: householdSupplementFormMessage.fileUpload.title,
+      title: socialInsuranceAdministrationMessage.fileUpload.title,
       condition: (answers) => {
         const { householdSupplementHousing, householdSupplementChildren } =
           getApplicationAnswers(answers)
@@ -436,15 +436,18 @@ export const HouseholdSupplementForm: Form = buildForm({
                 householdSupplementFormMessage.fileUpload.leaseAgreement,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                householdSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                householdSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                householdSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                householdSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -470,15 +473,18 @@ export const HouseholdSupplementForm: Form = buildForm({
                 householdSupplementFormMessage.fileUpload.schoolConfirmation,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                householdSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                householdSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                householdSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                householdSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -491,12 +497,14 @@ export const HouseholdSupplementForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
-          title: householdSupplementFormMessage.fileUpload.additionalFileTitle,
+          title:
+            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFiles.additionalDocuments',
               title:
-                householdSupplementFormMessage.fileUpload.additionalFileTitle,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileTitle,
               description:
                 householdSupplementFormMessage.fileUpload
                   .additionalFileDescription,
@@ -505,15 +513,18 @@ export const HouseholdSupplementForm: Form = buildForm({
                   .additionalFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                householdSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                householdSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                householdSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                householdSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],

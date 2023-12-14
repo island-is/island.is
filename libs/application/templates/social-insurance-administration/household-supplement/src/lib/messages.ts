@@ -96,36 +96,6 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    title: {
-      id: 'hs.application:fileUpload.title',
-      defaultMessage: 'Fylgiskjöl',
-      description: 'Attachments',
-    },
-    attachmentButton: {
-      id: 'hs.application:fileUpload.attachment.button',
-      defaultMessage: 'Veldu skjal',
-      description: 'Upload file',
-    },
-    attachmentHeader: {
-      id: 'hs.application:fileUpload.attachment.header',
-      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
-      description: 'Drag files here to upload',
-    },
-    attachmentDescription: {
-      id: 'hs.application:fileUpload.attachment.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'Accepted documents with the following extensions: .pdf',
-    },
-    attachmentMaxSizeError: {
-      id: 'hs.application:fileUpload.attachment.maxSizeError',
-      defaultMessage: 'Hámark 5 MB á skrá',
-      description: 'Max 5 MB per file',
-    },
-    additionalFileTitle: {
-      id: 'hs.application:fileUpload.additionalFile.title',
-      defaultMessage: 'Fylgiskjöl viðbótagögn',
-      description: 'Additional attachments',
-    },
     additionalFileDescription: {
       id: 'hs.application:fileUpload.additionalFile.description',
       defaultMessage:
@@ -156,30 +126,6 @@ export const householdSupplementFormMessage: MessageDir = {
         'Hér þarft þú að skila vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         "Here you must upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
-    },
-    additionalDocumentRequired: {
-      id: 'hs.application:fileUpload.additional.document.required',
-      defaultMessage:
-        'Viðbótargagna krafist, vinsamlegast hlaðið viðbótargögnum upp á næstu síðu',
-      description:
-        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
-    },
-    additionalDocumentsEditSubmit: {
-      id: 'hs.application:fileUpload.additional.documents.edit.submit',
-      defaultMessage: 'Senda inn',
-      description: 'Submit',
-    },
-    additionalDocumentRequiredTitle: {
-      id: 'hs.application:fileUpload.additionalDocumentRequired.title',
-      defaultMessage: 'Viðbótargagna krafist',
-      description: 'Additional documents required',
-    },
-    additionalDocumentRequiredDescription: {
-      id: 'hs.application:fileUpload.additionalDocumentRequired.description#markdown',
-      defaultMessage:
-        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í [stafræna pósthólfinu þínu](https://island.is/minarsidur/postholf). Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Please submit additional documents for the Social Insurance Administration. If you are not sure which additional documents you should submit, you can see it in [your inbox on My Pages](https://island.is/minarsidur/postholf). Note that the document must be in .pdf format.',
     },
   }),
 

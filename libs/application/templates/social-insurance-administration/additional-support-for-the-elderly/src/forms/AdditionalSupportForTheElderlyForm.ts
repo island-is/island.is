@@ -343,13 +343,12 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
           title:
-            additionalSupportForTheElderyFormMessage.fileUpload
-              .additionalFileTitle,
+            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFiles.additionalDocuments',
               title:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
                 additionalSupportForTheElderyFormMessage.fileUpload
@@ -359,17 +358,17 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                   .additionalFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentHeader,
               uploadDescription:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentDescription,
               uploadButtonLabel:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentButton,
               uploadMultiple: true,
             }),

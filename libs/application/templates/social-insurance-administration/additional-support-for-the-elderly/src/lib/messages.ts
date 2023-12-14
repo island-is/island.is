@@ -55,58 +55,11 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    title: {
-      id: 'asfte.application:fileUpload.title',
-      defaultMessage: 'Fylgiskjöl',
-      description: 'Attachments',
-    },
-    attachmentButton: {
-      id: 'asfte.application:fileUpload.attachment.button',
-      defaultMessage: 'Veldu skjal',
-      description: 'Upload file',
-    },
-    attachmentHeader: {
-      id: 'asfte.application:fileUpload.attachment.header',
-      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
-      description: 'Drag files here to upload',
-    },
-    attachmentDescription: {
-      id: 'asfte.application:fileUpload.attachment.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'Documents with the following extensions are accepted: .pdf',
-    },
-    attachmentMaxSizeError: {
-      id: 'asfte.application:fileUpload.attachment.maxSizeError',
-      defaultMessage: 'Hámark 5 MB á skrá',
-      description: 'Max 5 MB per file',
-    },
-    additionalFileTitle: {
-      id: 'asfte.application:fileUpload.additionalFile.title',
-      defaultMessage: 'Fylgiskjöl viðbótagögn',
-      description: 'Additional attachments',
-    },
     additionalFileDescription: {
       id: 'asfte.application:fileUpload.additionalFile.description',
       defaultMessage:
         'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis dvalarleyfi frá útlendingastofnun (skila þarf inn báðum hliðum dvalarleyfis). Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english description',
-    },
-    additionalDocumentsEditSubmit: {
-      id: 'asfte.application:fileUpload.additionalDocumentsEditSubmit',
-      defaultMessage: 'Senda inn',
-      description: 'Submit',
-    },
-    additionalDocumentRequiredTitle: {
-      id: 'asfte.application:fileUpload.additionalDocumentRequired.title',
-      defaultMessage: 'Viðbótargagna krafist',
-      description: 'Additional documents required',
-    },
-    additionalDocumentRequiredDescription: {
-      id: 'asfte.application:fileUpload.additionalDocumentRequired.description#markdown',
-      defaultMessage:
-        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í [stafræna pósthólfinu þínu](https://island.is/minarsidur/postholf). Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Please submit additional documents for the Social Insurance Administration. If you are not sure which additional documents you should submit, you can see it in [your inbox on My Pages](https://island.is/minarsidur/postholf). Note that the document must be in .pdf format.',
     },
   }),
 

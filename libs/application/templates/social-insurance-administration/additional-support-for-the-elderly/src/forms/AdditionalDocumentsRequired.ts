@@ -7,10 +7,8 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import {
-  inReviewFormMessages,
-  additionalSupportForTheElderyFormMessage,
-} from '../lib/messages'
+import { inReviewFormMessages } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
@@ -24,16 +22,16 @@ export const AdditionalDocumentsRequired: Form = buildForm({
     buildSection({
       id: 'reviewUpload',
       title:
-        additionalSupportForTheElderyFormMessage.fileUpload
+        socialInsuranceAdministrationMessage.fileUpload
           .additionalDocumentRequiredTitle,
       children: [
         buildMultiField({
           id: 'additionalDocumentsRequiredScreen',
           title:
-            additionalSupportForTheElderyFormMessage.fileUpload
+            socialInsuranceAdministrationMessage.fileUpload
               .additionalDocumentRequiredTitle,
           description:
-            additionalSupportForTheElderyFormMessage.fileUpload
+            socialInsuranceAdministrationMessage.fileUpload
               .additionalDocumentRequiredDescription,
           children: [
             buildFileUploadField({
@@ -41,17 +39,17 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               title: '',
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentHeader,
               uploadDescription:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentDescription,
               uploadButtonLabel:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentButton,
               uploadMultiple: true,
             }),
@@ -59,13 +57,13 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalDocumentsEditSubmit,
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: additionalSupportForTheElderyFormMessage.fileUpload
+                  name: socialInsuranceAdministrationMessage.fileUpload
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
                 },

@@ -372,31 +372,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    title: {
-      id: 'oap.application:fileUpload.title',
-      defaultMessage: 'Fylgiskjöl',
-      description: 'Attachments',
-    },
-    attachmentButton: {
-      id: 'oap.application:fileUpload.attachment.button',
-      defaultMessage: 'Veldu skjal',
-      description: 'Upload file',
-    },
-    attachmentHeader: {
-      id: 'oap.application:fileUpload.attachment.header',
-      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
-      description: 'Drag files here to upload',
-    },
-    attachmentDescription: {
-      id: 'oap.application:fileUpload.attachment.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'Accepted documents with the following extensions: .pdf',
-    },
-    attachmentMaxSizeError: {
-      id: 'oap.application:fileUpload.attachment.maxSizeError',
-      defaultMessage: 'Hámark 5 MB á skrá',
-      description: 'Max 5 MB per file',
-    },
     earlyRetirementTitle: {
       id: 'oap.application:fileUpload.earlyRetirement.title',
       defaultMessage: 'Fylgiskjöl vegna snemmtöku',
@@ -433,11 +408,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Here you can submit data confirming how many days you have been legally registered at sea. Examples of such data are; An overview of the seafarers status registration from the Transport Agency, sea voyage books published by the Icelandic Maritime Administration, tax returns or sailing certificates from the County Commissioner. Note that the document must be in .pdf format.',
     },
-    additionalFileTitle: {
-      id: 'oap.application:fileUpload.additionalFile.title',
-      defaultMessage: 'Viðbótagögn',
-      description: 'Additional attachments',
-    },
     additionalFileDescription: {
       id: 'oap.application:fileUpload.additionalFile.description',
       defaultMessage:
@@ -461,41 +431,6 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Hér getur þú skilað staðfestingu á lækkun á reiknuðu endurgjaldi (fæst hjá RSK). Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         'Here you can submit confirmation of a reduction in the calculated remuneration (available from RSK). Note that the document must be in .pdf format.',
-    },
-    additionalDocumentRequired: {
-      id: 'oap.application:fileUpload.additionalDocumentRequired',
-      defaultMessage:
-        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögn á næstu síðu',
-      description:
-        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
-    },
-    additionalDocumentsEditSubmit: {
-      id: 'oap.application:fileUpload.additionalDocumentsEditSubmit',
-      defaultMessage: 'Senda inn',
-      description: 'Submit',
-    },
-    additionalDocumentRequiredTitle: {
-      id: 'oap.application:fileUpload.additionalDocumentRequired.title',
-      defaultMessage: 'Viðbótargögn krafist',
-      description: 'Additional attachments required',
-    },
-    additionalDocumentRequiredDescription: {
-      id: 'oap.application:fileUpload.additionalDocumentRequired.description#markdown',
-      defaultMessage:
-        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í pósthólfinu þínu. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description: 'english translation',
-    },
-    foreignBankAccountFileTitle: {
-      id: 'oap.application:fileUpload.foreignBankAccountFile.title',
-      defaultMessage: 'Staðfesting vegna erlends bankareiknings',
-      description: 'Confirmation for a foreign bank account',
-    },
-    foreignBankAccountFileDescription: {
-      id: 'oap.application:fileUpload.foreignBankAccountFile.description',
-      defaultMessage:
-        'Hér getur þú skilað skilað inn staðfestingu á erlendum bankareikningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit confirmation of a foreign bank account. Note that the document must be in .pdf format.',
     },
   }),
 

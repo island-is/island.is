@@ -644,14 +644,18 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.selfEmployedDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                oldAgePensionFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
               condition: (answers) => {
                 const { employmentStatus } = getApplicationAnswers(answers)
@@ -808,7 +812,7 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'fileUpload',
-      title: oldAgePensionFormMessage.fileUpload.title,
+      title: socialInsuranceAdministrationMessage.fileUpload.title,
       children: [
         buildSubSection({
           condition: (answers, externalData) => {
@@ -827,14 +831,18 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                oldAgePensionFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
               condition: (answers, externalData) => {
                 return isEarlyRetirement(answers, externalData)
@@ -855,14 +863,18 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.pensionFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                oldAgePensionFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -884,14 +896,18 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                oldAgePensionFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
               condition: (answers) => {
                 const { applicationType } = getApplicationAnswers(answers)
@@ -909,25 +925,32 @@ export const OldAgePensionForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
-          title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+          title:
+            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFiles.additionalDocuments',
-              title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+              title:
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.additionalFileDescription,
               introduction:
                 oldAgePensionFormMessage.fileUpload.additionalFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                oldAgePensionFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],

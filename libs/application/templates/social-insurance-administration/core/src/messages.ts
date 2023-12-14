@@ -248,6 +248,56 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
   }),
 
+  fileUpload: defineMessages({
+    title: {
+      id: 'sia.application:fileUpload.title',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
+    },
+    attachmentButton: {
+      id: 'sia.application:fileUpload.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Upload file',
+    },
+    attachmentHeader: {
+      id: 'sia.application:fileUpload.attachment.header',
+      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
+    attachmentDescription: {
+      id: 'sia.application:fileUpload.attachment.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description: 'The following document types are accepted: .pdf',
+    },
+    attachmentMaxSizeError: {
+      id: 'sia.application:fileUpload.attachment.maxSizeError',
+      defaultMessage: 'Hámark 5 MB á skrá',
+      description: 'Max 5 MB per file',
+    },
+    additionalFileTitle: {
+      id: 'sia.application:fileUpload.additionalFile.title',
+      defaultMessage: 'Fylgiskjöl viðbótargögn',
+      description: 'Additional attachments',
+    },
+    additionalDocumentsEditSubmit: {
+      id: 'sia.application:fileUpload.additionalDocumentsEditSubmit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
+    },
+    additionalDocumentRequiredTitle: {
+      id: 'sia.application:fileUpload.additionalDocumentRequired.title',
+      defaultMessage: 'Viðbótargagna krafist',
+      description: 'Additional documents required',
+    },
+    additionalDocumentRequiredDescription: {
+      id: 'sia.application:fileUpload.additionalDocumentRequired.description#markdown',
+      defaultMessage:
+        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í [stafræna pósthólfinu þínu](https://island.is/minarsidur/postholf). Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Please submit additional documents for the Social Insurance Administration. If you are not sure which additional documents you should submit, you can see it in [your inbox on My Pages](https://island.is/minarsidur/postholf). Note that the document must be in .pdf format.',
+    },
+  }),
+
   additionalInfo: defineMessages({
     section: {
       id: 'sia.application:additionalInfo.section',

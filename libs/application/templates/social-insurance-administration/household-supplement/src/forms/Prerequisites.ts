@@ -128,7 +128,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'fileUpload',
-      title: householdSupplementFormMessage.fileUpload.title,
+      title: socialInsuranceAdministrationMessage.fileUpload.title,
       children: [],
     }),
     buildSection({
