@@ -6,6 +6,7 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
+  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
@@ -427,33 +428,21 @@ export const assets = buildSection({
               title: m.moneyTitle,
               description: m.moneyDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
-            buildDescriptionField({
-              id: 'assets.money.total',
-              title: '',
+            buildTextField({
+              id: 'assets.money.info',
+              title: m.moneyText,
+              placeholder: m.moneyPlaceholder,
+              variant: 'textarea',
+              rows: 7,
             }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'assets.money.data',
-                component: 'ReportFieldsRepeater',
-                doesNotRequireAnswer: true,
-              },
-              {
-                fields: [
-                  {
-                    title: m.moneyTitle.defaultMessage,
-                    id: 'moneyValue',
-                    required: true,
-                    currency: true,
-                    width: 'full',
-                  },
-                ],
-                repeaterButtonText: m.addMoney.defaultMessage,
-                repeaterHeaderText: m.moneyTitle.defaultMessage,
-                sumField: 'moneyValue',
-              },
-            ),
+            buildTextField({
+              id: 'assets.money.value',
+              title: m.moneyValue,
+              width: 'half',
+              variant: 'currency',
+            }),
           ],
         }),
       ],
@@ -649,7 +638,7 @@ export const assets = buildSection({
               label: m.totalValue,
               display: 'flex',
               value: ({ answers }) => {
-                const total = getValueViaPath(answers, 'assets.money.total')
+                const total = getValueViaPath(answers, 'assets.money.value')
                 return formatCurrency(String(total))
               },
             }),
