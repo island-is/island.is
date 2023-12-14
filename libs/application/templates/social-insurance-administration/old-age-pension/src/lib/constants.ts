@@ -21,12 +21,6 @@ export enum AnswerValidationConstants {
   PAYMENTINFO = 'paymentInfo',
 }
 
-export enum TaxLevelOptions {
-  INCOME = '2',
-  FIRST_LEVEL = '1',
-  SECOND_LEVEL = '3',
-}
-
 export enum ApplicationType {
   OLD_AGE_PENSION = 'oldAgePension',
   HALF_OLD_AGE_PENSION = 'halfOldAgePension',

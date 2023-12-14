@@ -162,51 +162,6 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
   }),
 
-  payment: defineMessages({
-    personalAllowance: {
-      id: 'oap.application:payment.personal.allowance',
-      defaultMessage: 'Vilt þú nýta persónuafsláttinn þinn?',
-      description: 'Do you want to use your personal allowance?',
-    },
-    personalAllowancePercentage: {
-      id: 'oap.application:payment.personal.allowance.percentage',
-      defaultMessage: 'Skráðu tölu á bilinu 1-100',
-      description: 'Enter a number between 1-100',
-    },
-    taxLevel: {
-      id: 'oap.application:payment.tax.level',
-      defaultMessage: 'Skattþrep',
-      description: 'Tax level',
-    },
-    alertSpouseAllowance: {
-      id: 'oap.application:payment.alert.spouse.allowance',
-      defaultMessage:
-        'Ef þú vilt nýta persónuafslátt maka þíns þá verður makinn þinn að fara inná mínar síður hjá Tryggingastofnun og veita leyfi.',
-      description: 'english translation',
-    },
-    taxIncomeLevel: {
-      id: 'oap.application:payment.tax.first.level',
-      defaultMessage:
-        'Ég vil að staðgreiðslan sé reiknuð út frá tekjuáætlun minni',
-      description:
-        'I want the withholding tax to be calculated based on my income estimate',
-    },
-    taxFirstLevel: {
-      id: 'oap.application:payment.tax.second.level',
-      defaultMessage:
-        'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
-      description:
-        'I want tax level 1 to be taken into account in the withholding calculations (31.45% of income: 0 - 409,986 ISK)',
-    },
-    taxSecondLevel: {
-      id: 'oap.application:payment.tax.third.level',
-      defaultMessage:
-        'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
-      description:
-        'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
-    },
-  }),
-
   onePaymentPerYear: defineMessages({
     onePaymentPerYearTitle: {
       id: 'oap.application:one.payment.per.year.title',
@@ -272,21 +227,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:review.fishermen',
       defaultMessage: 'Ellilífeyri sjómanna',
       description: `Fishermen`,
-    },
-    personalAllowance: {
-      id: 'oap.application:conformation.personal.allowance',
-      defaultMessage: 'Persónuafláttur',
-      description: 'Personal allowance',
-    },
-    spouseAllowance: {
-      id: 'oap.application:conformation.spouse.allowance',
-      defaultMessage: 'Persónuafsláttur maka',
-      description: 'Spouse personal allowance',
-    },
-    ratio: {
-      id: 'oap.application:conformation.ratio',
-      defaultMessage: 'Hlutall',
-      description: 'Ratio',
     },
     pensionAttachment: {
       id: 'oap.application:review.pension.attachment',

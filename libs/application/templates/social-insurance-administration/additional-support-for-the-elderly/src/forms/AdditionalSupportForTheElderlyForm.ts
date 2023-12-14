@@ -27,6 +27,7 @@ import {
   typeOfBankInfo,
   getCurrencies,
   getYesNoOptions,
+  getTaxOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
@@ -35,13 +36,12 @@ import {
   BankAccountType,
   FILE_SIZE_LIMIT,
   MONTHS,
+  TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
   getApplicationExternalData,
   getAvailableYears,
-  getTaxOptions,
 } from '../lib/additionalSupportForTheElderlyUtils'
-import { TaxLevelOptions } from '../lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { getApplicationAnswers } from '../lib/additionalSupportForTheElderlyUtils'
@@ -305,7 +305,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 buildRadioField({
                   id: 'paymentInfo.personalAllowance',
                   title:
-                    additionalSupportForTheElderyFormMessage.payment
+                    socialInsuranceAdministrationMessage.payment
                       .personalAllowance,
                   options: getYesNoOptions(),
                   width: 'half',
@@ -316,7 +316,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 buildTextField({
                   id: 'paymentInfo.personalAllowanceUsage',
                   title:
-                    additionalSupportForTheElderyFormMessage.payment
+                    socialInsuranceAdministrationMessage.payment
                       .personalAllowancePercentage,
                   suffix: '%',
                   condition: (answers) => {
@@ -331,10 +331,9 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'payment.spouseAllowance.alert',
-                  title:
-                    additionalSupportForTheElderyFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message:
-                    additionalSupportForTheElderyFormMessage.payment
+                    socialInsuranceAdministrationMessage.payment
                       .alertSpouseAllowance,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
@@ -347,8 +346,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.taxLevel',
-                  title:
-                    additionalSupportForTheElderyFormMessage.payment.taxLevel,
+                  title: socialInsuranceAdministrationMessage.payment.taxLevel,
                   options: getTaxOptions(),
                   width: 'full',
                   largeButtons: true,

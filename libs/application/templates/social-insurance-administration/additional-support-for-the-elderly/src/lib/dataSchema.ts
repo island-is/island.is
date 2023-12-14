@@ -3,13 +3,15 @@ import { z } from 'zod'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
-import { TaxLevelOptions } from './constants'
 import { NO, YES } from '@island.is/application/types'
 
 const isValidPhoneNumber = (phoneNumber: string) => {

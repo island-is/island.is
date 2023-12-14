@@ -246,6 +246,49 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Veldu mynt',
       description: 'Select currency',
     },
+    personalAllowance: {
+      id: 'sia.application:payment.personal.allowance',
+      defaultMessage: 'Vilt þú nýta persónuafsláttinn þinn?',
+      description: 'Would you like to use your personal tax-free allowance?',
+    },
+    personalAllowancePercentage: {
+      id: 'sia.application:payment.personal.allowance.percentage',
+      defaultMessage: 'Skráðu tölu á bilinu 1-100',
+      description: 'Enter a number between 1 and 100',
+    },
+    alertSpouseAllowance: {
+      id: 'sia.application:payment.alert.spouse.allowance',
+      defaultMessage:
+        'Ef þú vilt nýta persónuafslátt maka þíns þá verður makinn þinn að fara inná mínar síður hjá Tryggingastofnun og veita leyfi.',
+      description:
+        "If you wish to use your spouse's personal discount, your spouse must log into My Pages at the Social Insurance Administration and grant their permission.",
+    },
+    taxLevel: {
+      id: 'sia.application:payment.tax.level',
+      defaultMessage: 'Skattþrep',
+      description: 'Tax bracket',
+    },
+    taxIncomeLevel: {
+      id: 'sia.application:payment.tax.first.level',
+      defaultMessage:
+        'Ég vil að staðgreiðslan sé reiknuð út frá tekjuáætlun minni',
+      description:
+        'I wish for the withholding tax to be calculated based on my income estimate',
+    },
+    taxFirstLevel: {
+      id: 'sia.application:payment.tax.second.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
+      description:
+        'I wish for tax bracket 1 to be considered in my withholding calculations (31.45% of income: 0 - 409,986 ISK)',
+    },
+    taxSecondLevel: {
+      id: 'sia.application:payment.tax.third.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
+      description:
+        'I wish for tax bracket 2 to be considered in my withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
+    },
   }),
 
   fileUpload: defineMessages({
@@ -363,6 +406,16 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:confirm.cancel.button',
       defaultMessage: 'Hætta við',
       description: 'Cancel',
+    },
+    personalAllowance: {
+      id: 'sia.application:confirm.personal.allowance',
+      defaultMessage: 'Persónuafsláttur',
+      description: 'Personal tax-free allowance',
+    },
+    ratio: {
+      id: 'sia.application:confirm.ratio',
+      defaultMessage: 'Hlutall',
+      description: 'Ratio',
     },
   }),
 

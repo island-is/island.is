@@ -95,3 +95,9 @@ export const MONTHS = [
     label: socialInsuranceAdministrationMessage.months.desember,
   },
 ]
+
+export enum TaxLevelOptions {
+  INCOME = '2',
+  FIRST_LEVEL = '1',
+  SECOND_LEVEL = '3',
+}

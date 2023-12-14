@@ -6,13 +6,12 @@ import {
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { oldAgePensionFormMessage } from '../../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { ReviewGroupProps } from './props'
-import { getTaxLevelOption } from './utils'
+import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { YES } from '@island.is/application/types'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 
 export const PaymentInformation = ({
   application,
@@ -122,7 +121,7 @@ export const PaymentInformation = ({
         >
           <RadioValue
             label={formatMessage(
-              oldAgePensionFormMessage.review.personalAllowance,
+              socialInsuranceAdministrationMessage.confirm.personalAllowance,
             )}
             value={personalAllowance}
           />
@@ -134,7 +133,9 @@ export const PaymentInformation = ({
             paddingBottom={3}
           >
             <DataValue
-              label={formatMessage(oldAgePensionFormMessage.review.ratio)}
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.confirm.ratio,
+              )}
               value={`${personalAllowanceUsage}%`}
             />
           </GridColumn>
@@ -144,7 +145,9 @@ export const PaymentInformation = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <DataValue
-            label={formatMessage(oldAgePensionFormMessage.payment.taxLevel)}
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.payment.taxLevel,
+            )}
             value={formatMessage(getTaxLevelOption(taxLevel))}
           />
         </GridColumn>

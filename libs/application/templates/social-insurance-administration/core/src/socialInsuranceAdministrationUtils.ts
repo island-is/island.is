@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty'
 import { BankInfo, PaymentInfo } from './types'
-import { BankAccountType } from './constants'
+import { BankAccountType, TaxLevelOptions } from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
 import { Option, YES, NO } from '@island.is/application/types'
 
@@ -125,4 +125,34 @@ export function getYesNoOptions() {
   ]
 
   return options
+}
+
+export function getTaxOptions() {
+  const options: Option[] = [
+    {
+      value: TaxLevelOptions.INCOME,
+      label: socialInsuranceAdministrationMessage.payment.taxIncomeLevel,
+    },
+    {
+      value: TaxLevelOptions.FIRST_LEVEL,
+      label: socialInsuranceAdministrationMessage.payment.taxFirstLevel,
+    },
+    {
+      value: TaxLevelOptions.SECOND_LEVEL,
+      label: socialInsuranceAdministrationMessage.payment.taxSecondLevel,
+    },
+  ]
+
+  return options
+}
+
+export const getTaxLevelOption = (option: TaxLevelOptions) => {
+  switch (option) {
+    case TaxLevelOptions.FIRST_LEVEL:
+      return socialInsuranceAdministrationMessage.payment.taxFirstLevel
+    case TaxLevelOptions.SECOND_LEVEL:
+      return socialInsuranceAdministrationMessage.payment.taxSecondLevel
+    default:
+      return socialInsuranceAdministrationMessage.payment.taxIncomeLevel
+  }
 }
