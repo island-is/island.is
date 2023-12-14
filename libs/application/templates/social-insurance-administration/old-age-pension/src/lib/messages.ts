@@ -519,20 +519,10 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Starfshlutfall',
       description: 'Ratio',
     },
-    addEmployerError: {
-      id: 'oap.application:employer.add.error',
-      defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
-      description: 'It is required to add at least one employer',
-    },
     addEmployer: {
       id: 'oap.application:employer.add',
       defaultMessage: 'Bæta við vinnuveitanda',
       description: 'Add an employer',
-    },
-    approvedHeader: {
-      id: 'oap.application:employer.approved.header',
-      defaultMessage: 'Samþykkt',
-      description: 'Approved',
     },
     month: {
       id: 'oap.application:employer.month',
