@@ -563,11 +563,6 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage: 'Ógildur mánuður.',
     description: 'Invalid month.',
   },
-  requireAttachment: {
-    id: 'oap.application:fileUpload.required.attachment',
-    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
-    description: 'Error message when the attachment file is not provided.',
-  },
   employerEmailMissing: {
     id: 'oap.application:employer.email.missing',
     defaultMessage: 'Netfang atvinnurekanda vantar',

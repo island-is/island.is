@@ -1,7 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { HouseholdSupplementHousing } from './constants'
-import { validatorErrorMessages } from './messages'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
 import {
@@ -103,7 +102,7 @@ export const dataSchema = z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)
       .refine((a) => a.length !== 0, {
-        params: validatorErrorMessages.requireAttachment,
+        params: errorMessages.requireAttachment,
       }),
   }),
   householdSupplement: z.object({

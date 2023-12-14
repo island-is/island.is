@@ -79,51 +79,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   }),
 }
 
-export const errorMessages = defineMessages({
-  period: {
-    id: 'asfte.application:error.period',
-    defaultMessage: 'Ógildur mánuður.',
-    description: 'Invalid month.',
-  },
-  phoneNumber: {
-    id: 'asfte.application:error.phonenumber',
-    defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
-  },
-  requireAttachment: {
-    id: 'asfte.application:fileUpload.required.attachment',
-    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
-    description: 'You must upload an attachment to continue.',
-  },
-  noEmailFound: {
-    id: 'asfte.application:error.no.email.found.title',
-    defaultMessage: 'Ekkert netfang skráð',
-    description: 'No email address registered',
-  },
-  noEmailFoundDescription: {
-    id: 'asfte.application:error.no.email.found.description#markdown',
-    defaultMessage:
-      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um félagslegan viðbótarstuðning við aldraða.',
-    description:
-      'You do not have a registered email address with the Social Insurance Administration. Please register an email address [here](https://minarsidur.tr.is/min-sida) and subsequently return to this application to apply for additional support for the elderly.',
-  },
-  bank: {
-    id: 'asfte.application:error.bank',
-    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
-    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
-  },
-  iban: {
-    id: 'asfte.application:error.iban',
-    defaultMessage: 'Ógilt IBAN',
-    description: 'Invalid IBAN',
-  },
-  swift: {
-    id: 'asfte.application:error.swift',
-    defaultMessage: 'Ógilt SWIFT',
-    description: 'Invalid SWIFT',
-  },
-})
-
 export const inReviewFormMessages = defineMessages({
   formTitle: {
     id: 'asfte.application:inReview.form.title',

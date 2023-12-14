@@ -1,6 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { errorMessages } from './messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'

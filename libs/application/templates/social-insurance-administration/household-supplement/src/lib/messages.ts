@@ -173,14 +173,6 @@ export const inReviewFormMessages = defineMessages({
   },
 })
 
-export const validatorErrorMessages = defineMessages({
-  requireAttachment: {
-    id: 'hs.application:fileUpload.required.attachment',
-    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
-    description: 'Error message when the attachment file is not provided.',
-  },
-})
-
 export const statesMessages = defineMessages({
   draftDescription: {
     id: 'hs.application:draft.description',

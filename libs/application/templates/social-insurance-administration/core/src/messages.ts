@@ -446,4 +446,9 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ógilt SWIFT',
     description: 'Invalid SWIFT',
   },
+  requireAttachment: {
+    id: 'sia.application:required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'You must upload an attachment to continue.',
+  },
 })
