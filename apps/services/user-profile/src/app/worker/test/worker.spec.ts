@@ -1,6 +1,7 @@
 import pick from 'lodash/pick'
 import addDays from 'date-fns/addDays'
 import faker from 'faker'
+import { getModelToken } from '@nestjs/sequelize'
 
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 
@@ -13,7 +14,6 @@ import { UserProfileAdvania } from '../userProfileAdvania.model'
 import { UserProfile } from '../../user-profile/userProfile.model'
 
 import { ProcessedStatus } from '../types'
-import { getModelToken } from '@nestjs/sequelize'
 
 describe('UserProfileWorker', () => {
   jest.setTimeout(60000)
