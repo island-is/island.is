@@ -1,4 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { socialInsuranceAdministrationMessage } from './messages'
 
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
@@ -46,3 +47,51 @@ export type Events =
 
 export const FILE_SIZE_LIMIT = 5000000 // 5MB
 export const IS = 'IS'
+
+export const MONTHS = [
+  {
+    value: 'January',
+    label: socialInsuranceAdministrationMessage.months.january,
+  },
+  {
+    value: 'February',
+    label: socialInsuranceAdministrationMessage.months.february,
+  },
+  {
+    value: 'March',
+    label: socialInsuranceAdministrationMessage.months.march,
+  },
+  {
+    value: 'April',
+    label: socialInsuranceAdministrationMessage.months.april,
+  },
+  { value: 'May', label: socialInsuranceAdministrationMessage.months.may },
+  {
+    value: 'June',
+    label: socialInsuranceAdministrationMessage.months.june,
+  },
+  {
+    value: 'July',
+    label: socialInsuranceAdministrationMessage.months.july,
+  },
+  {
+    value: 'August',
+    label: socialInsuranceAdministrationMessage.months.august,
+  },
+  {
+    value: 'September',
+    label: socialInsuranceAdministrationMessage.months.september,
+  },
+  {
+    value: 'October',
+    label: socialInsuranceAdministrationMessage.months.october,
+  },
+  {
+    value: 'November',
+    label: socialInsuranceAdministrationMessage.months.november,
+  },
+  {
+    value: 'December',
+    label: socialInsuranceAdministrationMessage.months.desember,
+  },
+]

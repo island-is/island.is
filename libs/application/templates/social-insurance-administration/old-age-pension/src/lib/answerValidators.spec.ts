@@ -8,7 +8,7 @@ import addMonths from 'date-fns/addMonths'
 
 import { answerValidators } from './answerValidators'
 import { validatorErrorMessages } from './messages'
-import { MONTHS } from './constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 const createBaseApplication = (): Application => ({
   answers: {

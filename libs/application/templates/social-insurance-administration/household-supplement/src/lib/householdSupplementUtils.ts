@@ -2,17 +2,9 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   HouseholdSupplementHousing,
   AttachmentLabel,
-  MONTHS,
   AttachmentTypes,
 } from './constants'
-import {
-  Option,
-  Application,
-  YesOrNo,
-  YES,
-  NO,
-} from '@island.is/application/types'
-import { householdSupplementFormMessage } from './messages'
+import { Application, YesOrNo, YES } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
@@ -23,7 +15,10 @@ import {
   FileType,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  MONTHS,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantPhonenumber = getValueViaPath(
@@ -165,20 +160,6 @@ export function getApplicationExternalData(
     currencies,
     isEligible,
   }
-}
-
-export function getYesNOOptions() {
-  const options: Option[] = [
-    {
-      value: YES,
-      label: householdSupplementFormMessage.shared.yes,
-    },
-    {
-      value: NO,
-      label: householdSupplementFormMessage.shared.no,
-    },
-  ]
-  return options
 }
 
 export function isExistsCohabitantOlderThan25(

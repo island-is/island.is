@@ -12,7 +12,7 @@ import {
   getAvailableYears,
   getAvailableMonths,
 } from './householdSupplementUtils'
-import { MONTHS } from './constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { isExistsCohabitantOlderThan25 } from './householdSupplementUtils'
 
 function buildApplication(data?: {

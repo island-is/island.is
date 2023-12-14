@@ -1,5 +1,6 @@
 import { oldAgePensionFormMessage } from './messages'
 import { MessageDescriptor } from 'react-intl'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 
 export const oldAgePensionAge = 67
 export const earlyRetirementMinAge = 65
@@ -7,24 +8,6 @@ export const earlyRetirementMaxAge = 66
 export const fishermenMinAge = 60
 export const fishermenMaxAge = 66
 export const employeeRatio = 50
-
-export const MONTHS = [
-  { value: 'January', label: oldAgePensionFormMessage.period.january },
-  { value: 'February', label: oldAgePensionFormMessage.period.february },
-  { value: 'March', label: oldAgePensionFormMessage.period.march },
-  { value: 'April', label: oldAgePensionFormMessage.period.april },
-  { value: 'May', label: oldAgePensionFormMessage.period.may },
-  { value: 'June', label: oldAgePensionFormMessage.period.june },
-  { value: 'July', label: oldAgePensionFormMessage.period.july },
-  { value: 'August', label: oldAgePensionFormMessage.period.august },
-  {
-    value: 'September',
-    label: oldAgePensionFormMessage.period.september,
-  },
-  { value: 'October', label: oldAgePensionFormMessage.period.october },
-  { value: 'November', label: oldAgePensionFormMessage.period.november },
-  { value: 'December', label: oldAgePensionFormMessage.period.desember },
-]
 
 export enum RatioType {
   YEARLY = 'yearly',
@@ -67,7 +50,7 @@ export const AttachmentLabel: {
   selfEmployedAttachment:
     oldAgePensionFormMessage.review.selfEmployedAttachment,
   additionalDocuments:
-    oldAgePensionFormMessage.review.additionalDocumentsAttachment,
+    socialInsuranceAdministrationMessage.confirm.additionalDocumentsAttachment,
 }
 
 const married = 'Gift/ur'

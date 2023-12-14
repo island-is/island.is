@@ -1,7 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { ApplicationType, TaxLevelOptions, Employment } from './constants'
-import { validatorErrorMessages } from './messages'
 import {
   formatBankInfo,
   validIBAN,
@@ -58,7 +57,7 @@ export const dataSchema = z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)
       .refine((a) => a.length !== 0, {
-        params: validatorErrorMessages.requireAttachment,
+        params: errorMessages.requireAttachment,
       }),
   }),
   employment: z
@@ -74,7 +73,7 @@ export const dataSchema = z.object({
           ? selfEmployedAttachment.length !== 0
           : true,
       {
-        params: validatorErrorMessages.requireAttachment,
+        params: errorMessages.requireAttachment,
         path: ['selfEmployedAttachment'],
       },
     ),

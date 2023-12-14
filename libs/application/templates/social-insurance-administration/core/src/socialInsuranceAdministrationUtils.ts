@@ -1,6 +1,8 @@
 import isEmpty from 'lodash/isEmpty'
 import { BankInfo, PaymentInfo } from './types'
 import { BankAccountType } from './constants'
+import { socialInsuranceAdministrationMessage } from './messages'
+import { Option, YES, NO } from '@island.is/application/types'
 
 export const formatBankInfo = (bankInfo: string) => {
   const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
@@ -108,4 +110,19 @@ export const typeOfBankInfo = (
       ? BankAccountType.ICELANDIC
       : BankAccountType.FOREIGN
     : BankAccountType.ICELANDIC
+}
+
+export function getYesNoOptions() {
+  const options: Option[] = [
+    {
+      value: YES,
+      label: socialInsuranceAdministrationMessage.shared.yes,
+    },
+    {
+      value: NO,
+      label: socialInsuranceAdministrationMessage.shared.no,
+    },
+  ]
+
+  return options
 }

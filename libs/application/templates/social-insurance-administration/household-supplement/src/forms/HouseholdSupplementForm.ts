@@ -21,9 +21,9 @@ import {
   YES,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { HouseholdSupplementHousing } from '../lib/constants'
 import {
-  getYesNOOptions,
   isExistsCohabitantOlderThan25,
   getApplicationAnswers,
   getApplicationExternalData,
@@ -43,37 +43,39 @@ import {
   getBankIsk,
   typeOfBankInfo,
   getCurrencies,
+  getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
-  title: householdSupplementFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',
-      title: householdSupplementFormMessage.pre.externalDataSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [],
     }),
     buildSection({
       id: 'infoSection',
-      title: householdSupplementFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
-          title: householdSupplementFormMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: householdSupplementFormMessage.info.subSectionTitle,
+              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
               description:
-                householdSupplementFormMessage.info.subSectionDescription,
+                socialInsuranceAdministrationMessage.info.subSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.email',
-                  title: householdSupplementFormMessage.info.applicantEmail,
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   disabled: true,
@@ -87,7 +89,8 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                    householdSupplementFormMessage.info.applicantPhonenumber,
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const data = application.externalData
@@ -102,16 +105,16 @@ export const HouseholdSupplementForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'payment',
-          title: householdSupplementFormMessage.payment.title,
+          title: socialInsuranceAdministrationMessage.payment.title,
           children: [
             buildMultiField({
               id: 'paymentInfo',
-              title: householdSupplementFormMessage.payment.title,
+              title: socialInsuranceAdministrationMessage.payment.title,
               description: '',
               children: [
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
-                  title: householdSupplementFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -125,8 +128,9 @@ export const HouseholdSupplementForm: Form = buildForm({
                       typeOfBankInfo(bankInfo, bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
-                      ? householdSupplementFormMessage.payment.alertMessage
-                      : householdSupplementFormMessage.payment
+                      ? socialInsuranceAdministrationMessage.payment
+                          .alertMessage
+                      : socialInsuranceAdministrationMessage.payment
                           .alertMessageForeign
                   },
                   doesNotRequireAnswer: true,
@@ -148,13 +152,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                   options: [
                     {
                       label:
-                        householdSupplementFormMessage.payment
+                        socialInsuranceAdministrationMessage.payment
                           .icelandicBankAccount,
                       value: BankAccountType.ICELANDIC,
                     },
                     {
                       label:
-                        householdSupplementFormMessage.payment
+                        socialInsuranceAdministrationMessage.payment
                           .foreignBankAccount,
                       value: BankAccountType.FOREIGN,
                     },
@@ -164,7 +168,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bank',
-                  title: householdSupplementFormMessage.payment.bank,
+                  title: socialInsuranceAdministrationMessage.payment.bank,
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
@@ -186,7 +190,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.iban',
-                  title: householdSupplementFormMessage.payment.iban,
+                  title: socialInsuranceAdministrationMessage.payment.iban,
                   placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -207,7 +211,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.swift',
-                  title: householdSupplementFormMessage.payment.swift,
+                  title: socialInsuranceAdministrationMessage.payment.swift,
                   placeholder: 'AAAA BB CC XXX',
                   width: 'half',
                   defaultValue: (application: Application) => {
@@ -229,10 +233,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'paymentInfo.currency',
-                  title: householdSupplementFormMessage.payment.currency,
+                  title: socialInsuranceAdministrationMessage.payment.currency,
                   width: 'half',
                   placeholder:
-                    householdSupplementFormMessage.payment.selectCurrency,
+                    socialInsuranceAdministrationMessage.payment.selectCurrency,
                   options: ({ externalData }: Application) => {
                     const { currencies } =
                       getApplicationExternalData(externalData)
@@ -257,7 +261,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankName',
-                  title: householdSupplementFormMessage.payment.bankName,
+                  title: socialInsuranceAdministrationMessage.payment.bankName,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -278,7 +282,8 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankAddress',
-                  title: householdSupplementFormMessage.payment.bankAddress,
+                  title:
+                    socialInsuranceAdministrationMessage.payment.bankAddress,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -353,7 +358,7 @@ export const HouseholdSupplementForm: Form = buildForm({
               title:
                 householdSupplementFormMessage.info
                   .householdSupplementChildrenBetween18And25,
-              options: getYesNOOptions(),
+              options: getYesNoOptions(),
               width: 'half',
               required: true,
             }),
@@ -363,29 +368,29 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: householdSupplementFormMessage.info.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [
         buildMultiField({
           id: 'periodField',
-          title: householdSupplementFormMessage.info.periodTitle,
+          title: socialInsuranceAdministrationMessage.period.title,
           description: householdSupplementFormMessage.info.periodDescription,
           children: [
             buildSelectField({
               id: 'period.year',
-              title: householdSupplementFormMessage.info.periodYear,
+              title: socialInsuranceAdministrationMessage.period.year,
               width: 'half',
               placeholder:
-                householdSupplementFormMessage.info.periodYearDefaultText,
+                socialInsuranceAdministrationMessage.period.yearDefaultText,
               options: (application: Application) => {
                 return getAvailableYears(application)
               },
             }),
             buildSelectField({
               id: 'period.month',
-              title: householdSupplementFormMessage.info.periodMonth,
+              title: socialInsuranceAdministrationMessage.period.month,
               width: 'half',
               placeholder:
-                householdSupplementFormMessage.info.periodMonthDefaultText,
+                socialInsuranceAdministrationMessage.period.monthDefaultText,
               options: (application: Application) => {
                 const { selectedYear: year } = getApplicationAnswers(
                   application.answers,
@@ -400,7 +405,7 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'fileUpload',
-      title: householdSupplementFormMessage.fileUpload.title,
+      title: socialInsuranceAdministrationMessage.fileUpload.title,
       condition: (answers) => {
         const { householdSupplementHousing, householdSupplementChildren } =
           getApplicationAnswers(answers)
@@ -431,15 +436,18 @@ export const HouseholdSupplementForm: Form = buildForm({
                 householdSupplementFormMessage.fileUpload.leaseAgreement,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                householdSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                householdSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                householdSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                householdSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -465,15 +473,18 @@ export const HouseholdSupplementForm: Form = buildForm({
                 householdSupplementFormMessage.fileUpload.schoolConfirmation,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                householdSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                householdSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                householdSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                householdSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -482,16 +493,18 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'additionalInfo',
-      title: householdSupplementFormMessage.additionalInfo.section,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
-          title: householdSupplementFormMessage.fileUpload.additionalFileTitle,
+          title:
+            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFiles.additionalDocuments',
               title:
-                householdSupplementFormMessage.fileUpload.additionalFileTitle,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileTitle,
               description:
                 householdSupplementFormMessage.fileUpload
                   .additionalFileDescription,
@@ -500,30 +513,40 @@ export const HouseholdSupplementForm: Form = buildForm({
                   .additionalFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                householdSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                householdSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                householdSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                householdSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
         }),
         buildSubSection({
           id: 'commentSection',
-          title: householdSupplementFormMessage.comment.commentSection,
+          title:
+            socialInsuranceAdministrationMessage.additionalInfo.commentSection,
           children: [
             buildTextField({
               id: 'comment',
-              title: householdSupplementFormMessage.comment.commentSection,
+              title:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentSection,
               variant: 'textarea',
               rows: 10,
-              description: householdSupplementFormMessage.comment.description,
-              placeholder: householdSupplementFormMessage.comment.placeholder,
+              description:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentDescription,
+              placeholder:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentPlaceholder,
             }),
           ],
         }),
@@ -531,7 +554,7 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: householdSupplementFormMessage.confirm.overviewTitle,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [
         buildMultiField({
           id: 'confirm',
@@ -551,11 +574,12 @@ export const HouseholdSupplementForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: householdSupplementFormMessage.confirm.title,
+              title: socialInsuranceAdministrationMessage.confirm.submitButton,
               actions: [
                 {
                   event: DefaultEvents.ABORT,
-                  name: householdSupplementFormMessage.confirm.cancelButton,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .cancelButton,
                   type: 'reject',
                   condition: (answers) => {
                     const { tempAnswers } = getApplicationAnswers(answers)
@@ -564,7 +588,8 @@ export const HouseholdSupplementForm: Form = buildForm({
                 },
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: householdSupplementFormMessage.confirm.title,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .submitButton,
                   type: 'primary',
                 },
               ],
@@ -574,8 +599,10 @@ export const HouseholdSupplementForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      multiFieldTitle: householdSupplementFormMessage.conclusionScreen.title,
-      alertTitle: householdSupplementFormMessage.conclusionScreen.alertTitle,
+      multiFieldTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle,
+      alertTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
       alertMessage:
         householdSupplementFormMessage.conclusionScreen.alertMessage,
       expandableDescription:

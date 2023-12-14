@@ -7,7 +7,6 @@ import {
   ApplicationType,
   Employment,
   TaxLevelOptions,
-  MONTHS,
   AttachmentLabel,
   AttachmentTypes,
 } from './constants'
@@ -16,8 +15,6 @@ import {
   Application,
   NationalRegistryResidenceHistory,
   YesOrNo,
-  YES,
-  NO,
 } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -32,7 +29,10 @@ import {
   SelfEmployed,
   FileUpload,
 } from '../types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  MONTHS,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
   Attachments,
   BankInfo,
@@ -523,21 +523,6 @@ export function getCombinedResidenceHistory(
   })
 
   return [...combinedResidenceHistory].reverse()
-}
-
-export function getYesNOOptions() {
-  const options: Option[] = [
-    {
-      value: YES,
-      label: oldAgePensionFormMessage.shared.yes,
-    },
-    {
-      value: NO,
-      label: oldAgePensionFormMessage.shared.no,
-    },
-  ]
-
-  return options
 }
 
 export function getTaxOptions() {
