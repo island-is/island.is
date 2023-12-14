@@ -66,6 +66,7 @@ import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/Heilbrigdisstofnun
 import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
+import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
 import { HmsHeader } from './Themes/HmsTheme'
 import { HveFooter, HveHeader } from './Themes/HveTheme'
 import {
@@ -152,6 +153,7 @@ const lightThemes = [
   'samgongustofa',
   'rettindagaesla-fatlads-folks',
   'vinnueftirlitid',
+  'hljodbokasafn-islands',
 ]
 
 export const getThemeConfig = (
@@ -276,6 +278,8 @@ export const OrganizationHeader: React.FC<
       return <RikissaksoknariHeader organizationPage={organizationPage} />
     case 'vinnueftirlitid':
       return <VinnueftilitidHeader organizationPage={organizationPage} />
+    case 'hljodbokasafn-islands':
+      return <HljodbokasafnIslandsHeader organizationPage={organizationPage} />
     default:
       return (
         <DefaultHeader
@@ -299,6 +303,13 @@ export const OrganizationHeader: React.FC<
             organizationPage.themeProperties.imageObjectFit === 'cover'
               ? 'cover'
               : 'contain'
+          }
+          imageObjectPosition={
+            organizationPage.themeProperties.imageObjectPosition === 'left'
+              ? 'left'
+              : organizationPage.themeProperties.imageObjectPosition === 'right'
+              ? 'right'
+              : 'center'
           }
         />
       )

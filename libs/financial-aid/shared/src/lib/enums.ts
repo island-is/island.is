@@ -118,3 +118,8 @@ export enum AidName {
   LIVESWITHPARENTS = 'livesWithParents',
   UNKNOWN = 'unknown',
 }
+
+export enum FilterType {
+  APPLICATIONSTATE = 'applicationState',
+  STAFF = 'staff',
+}

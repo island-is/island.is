@@ -12,6 +12,7 @@ import { deceasedInfoFields } from '../Sections/deceasedInfoFields'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { JA, NEI, YES } from '../../lib/constants'
+import format from 'date-fns/format'
 
 export const commonOverviewFields = [
   ...deceasedInfoFields,
@@ -44,9 +45,11 @@ export const commonOverviewFields = [
         ).map((member) => ({
           title: member.name,
           description: [
-            member.nationalId !== ''
+            typeof member.nationalId !== 'undefined' && member.nationalId !== ''
               ? formatNationalId(member.nationalId)
-              : member.dateOfBirth,
+              : member.dateOfBirth
+              ? format(new Date(member.dateOfBirth), 'dd.MM.yyyy')
+              : '',
             member.relation,
             member.relationWithApplicant,
             formatPhoneNumber(member.phone || ''),
@@ -59,6 +62,8 @@ export const commonOverviewFields = [
                     m.inheritanceAdvocateLabel.defaultMessage +
                       ': ' +
                       member.advocate?.name,
+                    formatPhoneNumber(member.advocate.phone || ''),
+                    member.advocate.email,
                   ],
                 ]
               : '',

@@ -74,13 +74,13 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
       max: 10,
     })
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/liveness')
     .grantNamespaces('islandis', 'nginx-ingress-internal')
 }
 
 export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
-  return service(typeof serviceWorkerName)
-    .serviceAccount(typeof serviceWorkerName)
+  return service(serviceWorkerName)
+    .serviceAccount(serviceWorkerName)
     .namespace(namespace)
     .image(imageName)
     .command('node')

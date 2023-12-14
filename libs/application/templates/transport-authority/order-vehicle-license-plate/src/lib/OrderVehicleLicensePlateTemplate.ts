@@ -13,7 +13,6 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -28,7 +27,6 @@ import {
   PlateTypesApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes, getExtraData } from '../utils'
@@ -63,7 +61,6 @@ const template: ApplicationTemplate<
     },
     {
       type: AuthDelegationType.Custom,
-      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
@@ -86,7 +83,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -134,7 +130,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {

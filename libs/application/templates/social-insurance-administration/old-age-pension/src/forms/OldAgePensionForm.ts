@@ -59,8 +59,6 @@ import {
   FILE_SIZE_LIMIT,
   IS,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { AmbientableNode } from 'ts-morph'
-import { useState } from 'react'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -286,14 +284,6 @@ export const OldAgePensionForm: Form = buildForm({
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
                   title: '',
-                  condition: (formValue: FormValue, externalData) => {
-                    // Temporary until a new foreign bank account can be registered
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-                    const type = typeOfBankInfo(bankInfo, bankAccountType)
-                    return type === BankAccountType.FOREIGN
-                  },
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -367,11 +357,6 @@ export const OldAgePensionForm: Form = buildForm({
                   title: oldAgePensionFormMessage.payment.swift,
                   placeholder: 'AAAA BB CC XXX',
                   width: 'half',
-                  onChange: (e) => {
-                    console.log('e ', e)
-                    const formattedSWIFT = friendlyFormatSWIFT(e.target.value)
-                    console.log('formatted ', formattedSWIFT)
-                  },
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,

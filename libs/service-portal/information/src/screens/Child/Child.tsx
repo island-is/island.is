@@ -9,7 +9,6 @@ import {
   ErrorScreen,
   IntroHeader,
   THJODSKRA_SLUG,
-  FootNote,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {

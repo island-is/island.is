@@ -6,6 +6,8 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { UserProfileParameters } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -27,10 +29,21 @@ export class UserProfileService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<UserProfileParameters>) {
     // Temporary solution while we still run the old user profile service.
+
     return this.islyklarApi
       .islyklarGet({ ssn: auth.nationalId })
 
       .then((results) => {
+        if (params?.validateBankInformation && !results?.bankInfo) {
+          // If individual does not have a valid bank account, then we fail this check
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.noBankAccountError,
+              summary: coreErrorMessages.noBankAccountError,
+            },
+            400,
+          )
+        }
         return {
           mobilePhoneNumber: results?.mobile,
           email: results?.email,

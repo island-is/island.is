@@ -91,11 +91,18 @@ import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-l
 import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
+import { HealthcareLicenseCertificateModule } from './healthcare-license-certificate/healthcare-license-certificate.module'
+import { HealthcareLicenseCertificateService } from './healthcare-license-certificate/healthcare-license-certificate.service'
+
+import { EnergyFundsModule } from './energy-funds/energy-funds.module'
+import { EnergyFundsService } from './energy-funds/energy-funds.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
+import { CarRecyclingModule } from './car-recycling/car-recycling.module'
+import { CarRecyclingService } from './car-recycling/car-recycling.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -147,7 +154,10 @@ export const modules = [
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
   SocialInsuranceAdministrationModule,
+  CarRecyclingModule,
   CitizenshipModule,
+  EnergyFundsModule,
+  HealthcareLicenseCertificateModule,
 ]
 
 export const services = [
@@ -200,5 +210,8 @@ export const services = [
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
   SocialInsuranceAdministrationService,
+  CarRecyclingService,
   CitizenshipService,
+  EnergyFundsService,
+  HealthcareLicenseCertificateService,
 ]
