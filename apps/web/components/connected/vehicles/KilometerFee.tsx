@@ -16,52 +16,75 @@ import { useI18n } from '@island.is/web/i18n'
 
 const MAX_KILOMETER_INPUT_LENGTH = 10
 
-export const formatCurrency = (answer: number | null | undefined) => {
+const formatCurrency = (answer: number | null | undefined) => {
   if (typeof answer !== 'number') return answer
-  return String(answer).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  return String(Math.round(answer)).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+}
+
+const calculate = (inputState: InputState, slice: ConnectedComponent) => {
+  let unit = 0
+
+  if (inputState.energySource === 'hydrogen') {
+    unit = slice?.configJson?.hydrogenCost ?? 6
+  } else if (inputState.energySource === 'hybrid') {
+    unit = slice?.configJson?.hybridCost ?? 2
+  } else if (inputState.energySource === 'electric') {
+    unit = slice?.configJson?.energyCost ?? 6
+  }
+
+  let newResult = unit * Number(inputState.kilometers || 0)
+
+  if (inputState.timeline === 'perDay') {
+    newResult *= slice?.configJson?.daysPerMonth ?? 30
+  } else if (inputState.timeline === 'perYear') {
+    newResult /= slice?.configJson?.monthsPerYear ?? 12
+  }
+
+  return newResult
 }
 
 interface InputState {
   energySource?: 'electric' | 'hydrogen' | 'hybrid'
   timeline?: 'perDay' | 'perMonth' | 'perYear'
-  kilometers: number
+  kilometers: string
 }
 
 interface KilometerFeeProps {
   slice: ConnectedComponent
 }
 
+const initialInputState: InputState = {
+  kilometers: '',
+  energySource: 'electric',
+  timeline: 'perMonth',
+}
+
 const KilometerFee = ({ slice }: KilometerFeeProps) => {
   const n = useNamespace(slice?.json ?? {})
   const { activeLocale } = useI18n()
   const [result, setResult] = useState(0)
-
-  const [inputState, setInputState] = useState<InputState>({
-    kilometers: 0,
-    energySource: 'electric',
-    timeline: 'perMonth',
-  })
+  const [inputState, setInputState] = useState(initialInputState)
 
   const timelineOptions = useMemo(() => {
     return [
       {
         label: n(
           'perYear',
-          activeLocale === 'is' ? 'Á ári' : 'Per year',
+          activeLocale === 'is' ? 'á ári' : 'per year',
         ) as string,
         value: 'perYear',
       },
       {
         label: n(
           'perMonth',
-          activeLocale === 'is' ? 'Á mánuði' : 'Per month',
+          activeLocale === 'is' ? 'á mánuði' : 'per month',
         ) as string,
         value: 'perMonth',
       },
       {
         label: n(
           'perDay',
-          activeLocale === 'is' ? 'Á dag' : 'Per day',
+          activeLocale === 'is' ? 'á dag' : 'per day',
         ) as string,
         value: 'perDay',
       },
@@ -76,44 +99,23 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
 
-  const updateResult = () => {
-    let unit = 0
-
-    if (inputState.energySource === 'hydrogen') {
-      unit = slice?.configJson?.hydrogenCost ?? 6
-    } else if (inputState.energySource === 'hybrid') {
-      unit = slice?.configJson?.hybridCost ?? 2
-    } else if (inputState.energySource === 'electric') {
-      unit = slice?.configJson?.energyCost ?? 6
-    }
-
-    let newResult = unit * inputState.kilometers
-
-    if (inputState.timeline === 'perDay') {
-      newResult *= slice?.configJson?.daysPerMonth ?? 30
-    } else if (inputState.timeline === 'perYear') {
-      newResult /= slice?.configJson?.monthsPerYear ?? 12
-    }
-
-    setResult(newResult)
-  }
-
-  const canSubmit = useMemo(
-    () =>
-      Object.keys(inputState).every((key) =>
-        Boolean(inputState[key as keyof InputState]),
-      ),
-    [inputState],
-  )
-
   const maxKilometerInputLength =
     slice?.configJson?.maxKilometerInputLength ?? MAX_KILOMETER_INPUT_LENGTH
+
+  const updateResult = () => {
+    setResult(calculate(inputState, slice))
+  }
+
+  const canCalculate =
+    Object.keys(inputState).every((key) =>
+      Boolean(inputState[key as keyof InputState]),
+    ) && result !== calculate(inputState, slice)
 
   return (
     <Box background="blue100" paddingY={[3, 3, 5]} paddingX={[3, 3, 3, 3, 12]}>
       <Stack space={5}>
-        <Stack space={0}>
-          <Text variant="medium" fontWeight="light" paddingBottom={2}>
+        <Stack space={2}>
+          <Text variant="medium" fontWeight="light">
             {n(
               'energySource',
               activeLocale === 'is'
@@ -159,7 +161,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
           </Inline>
         </Stack>
 
-        <Stack space={1}>
+        <Stack space={2}>
           <Text variant="medium" fontWeight="light">
             {n(
               'kilometerInputPlaceholder',
@@ -175,10 +177,21 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
               name="kilometers"
               type="number"
               size="xs"
-              value={inputState.kilometers || undefined}
+              value={inputState.kilometers}
+              placeholder={n('kilometerInputPlaceholder', '')}
               onChange={(ev) => {
-                if (ev.target.value.length > maxKilometerInputLength) return
-                updateInputState('kilometers', Number(ev.target.value))
+                if (
+                  ev.target.value.length > maxKilometerInputLength ||
+                  isNaN(Number(ev.target.value))
+                ) {
+                  return
+                }
+                updateInputState('kilometers', ev.target.value)
+              }}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter') {
+                  updateResult()
+                }
               }}
             />
 
@@ -201,7 +214,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
         </Stack>
 
         <Inline space={3} justifyContent="spaceBetween">
-          <Button onClick={updateResult} disabled={!canSubmit}>
+          <Button onClick={updateResult} disabled={!canCalculate}>
             {n('calculate', activeLocale === 'is' ? 'Reikna' : 'Calculate')}
           </Button>
 
