@@ -133,7 +133,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             onClick={() => handleOpenCase(theCase.id)}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
-            isLoading={isOpeningCaseId === theCase.id}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">

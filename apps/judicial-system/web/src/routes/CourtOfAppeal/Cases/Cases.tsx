@@ -15,7 +15,6 @@ import {
   CaseAppealState,
   CaseListEntry,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import { courtOfAppealCases as strings } from './Cases.strings'
@@ -23,7 +22,6 @@ import { logoContainer } from '../../Shared/Cases/Cases.css'
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
-  const { getCaseToOpen } = useCase()
 
   const input = { appealState: ['RECEIVED', 'COMPLETED'] }
 
@@ -47,9 +45,6 @@ const CourtOfAppealCases = () => {
       <Box marginBottom={7}>
         <AppealCasesTable
           loading={loading}
-          onRowClick={(id) => {
-            getCaseToOpen(id)
-          }}
           cases={
             appealedCasesData?.filter(
               (a) => a.appealState !== CaseAppealState.COMPLETED,
@@ -60,9 +55,6 @@ const CourtOfAppealCases = () => {
       <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
       <AppealCasesTable
         loading={loading}
-        onRowClick={(id) => {
-          getCaseToOpen(id)
-        }}
         cases={
           appealedCasesData?.filter(
             (a) => a.appealState === CaseAppealState.COMPLETED,

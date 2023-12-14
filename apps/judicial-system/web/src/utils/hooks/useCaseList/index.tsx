@@ -155,7 +155,7 @@ const useCaseList = () => {
         return
       }
 
-      // getCaseToOpen(id)
+      getCaseToOpen(id)
     },
     [
       clickedCase,
