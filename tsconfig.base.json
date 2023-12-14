@@ -108,6 +108,9 @@
       "@island.is/api/domains/endorsement-system": [
         "libs/api/domains/endorsement-system/src/index.ts"
       ],
+      "@island.is/api/domains/energy-funds": [
+        "libs/api/domains/energy-funds/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -143,6 +146,9 @@
       ],
       "@island.is/api/domains/identity": [
         "libs/api/domains/identity/src/index.ts"
+      ],
+      "@island.is/api/domains/intellectual-properties": [
+        "libs/api/domains/intellectual-properties/src/index.ts"
       ],
       "@island.is/api/domains/islykill": [
         "libs/api/domains/islykill/src/index.ts"
@@ -321,6 +327,9 @@
       ],
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
+      ],
+      "@island.is/application/templates/energy-funds": [
+        "libs/application/templates/energy-funds/src/index.ts"
       ],
       "@island.is/application/templates/estate": [
         "libs/application/templates/estate/src/index.ts"
@@ -553,6 +562,9 @@
       ],
       "@island.is/clients/electronic-registration-statistics": [
         "libs/clients/electronic-registration-statistics/src/index.ts"
+      ],
+      "@island.is/clients/energy-funds": [
+        "libs/clients/energy-funds/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],

@@ -48,30 +48,27 @@ export const overviewConfirmAction = [
     title: '',
     backgroundColor: 'blue',
     defaultValue: [],
-    condition: (answers) =>
-      getValueViaPath(answers, 'selectedEstate') ===
-      EstateTypes.estateWithoutAssets,
-
-    options: (application) => {
+    condition: (answers) => {
       const hasAssets =
-        getValueViaPath(
-          application.answers,
-          'estateWithoutAssets.estateAssetsExist',
-        ) === YES
+        getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist') ===
+        YES
       const hasDebt =
-        getValueViaPath(
-          application.answers,
-          'estateWithoutAssets.estateDebtsExist',
-        ) === YES
+        getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
 
-      if (hasAssets && hasDebt) {
-        return [
-          {
-            value: YES,
-            label: m.acceptNoAssets,
-          },
-        ]
-      } else return []
+      const estateWithoutAssetsSelected =
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+
+      return estateWithoutAssetsSelected && hasDebt && hasAssets
+    },
+
+    options: () => {
+      return [
+        {
+          value: YES,
+          label: m.acceptNoAssets,
+        },
+      ]
     },
   }),
   buildCheckboxField({

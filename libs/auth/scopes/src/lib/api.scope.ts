@@ -25,4 +25,5 @@ export enum ApiScope {
   vinnueftirlitid = '@island.is/applications/ver',
   samgongustofaVehicles = '@island.is/applications/samgongustofa-vehicles',
   carRecycling = '@island.is/applications/urvinnslusjodur',
+  energyFunds = '@island.is/applications/orkusjodur',
 }

@@ -1,10 +1,12 @@
 import { Box, Button, ResponsiveSpace } from '@island.is/island-ui/core'
+import LinkResolver from '../LinkResolver/LinkResolver'
 
 interface Props {
   onClick?: () => void
   colorScheme: 'default' | 'light'
   title: string
   marginLeft?: ResponsiveSpace
+  href: string
 }
 
 export const SubTabItem: React.FC<Props> = ({
@@ -12,18 +14,22 @@ export const SubTabItem: React.FC<Props> = ({
   colorScheme,
   title,
   marginLeft = 2,
+  href,
 }) => {
   return (
     <Box marginLeft={marginLeft}>
-      <Button
-        type="button"
-        aria-label={title}
-        size="small"
-        colorScheme={colorScheme}
-        onClick={onClick}
-      >
-        {title}
-      </Button>
+      <LinkResolver href={href}>
+        <Button
+          as="span"
+          type="button"
+          aria-label={title}
+          size="small"
+          colorScheme={colorScheme}
+          onClick={onClick}
+        >
+          {title}
+        </Button>
+      </LinkResolver>
     </Box>
   )
 }
