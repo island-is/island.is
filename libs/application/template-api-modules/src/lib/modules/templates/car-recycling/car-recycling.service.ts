@@ -61,11 +61,13 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
   async recycleVehicles(
     auth: User,
+    fullName: string,
     vehicle: VehicleDto,
     recyclingRequestType: RecyclingRequestTypes,
   ) {
     return await this.carRecyclingService.recycleVehicle(
       auth,
+      fullName,
       vehicle.permno || '',
       recyclingRequestType,
     )
@@ -76,11 +78,20 @@ export class CarRecyclingService extends BaseTemplateApiService {
       application.answers,
     )
 
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+
     let isError = false
     try {
       // Canceled recycling
       const canceledResponses = canceledVehicles.map(async (vehicle) => {
-        this.recycleVehicles(auth, vehicle, RecyclingRequestTypes.cancelled)
+        this.recycleVehicles(
+          auth,
+          applicantName,
+          vehicle,
+          RecyclingRequestTypes.cancelled,
+        )
       })
 
       // Recycle
@@ -98,6 +109,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
             // Recycle vehicle
             const response = await this.recycleVehicles(
               auth,
+              applicantName,
               vehicle,
               RecyclingRequestTypes.pendingRecycle,
             )

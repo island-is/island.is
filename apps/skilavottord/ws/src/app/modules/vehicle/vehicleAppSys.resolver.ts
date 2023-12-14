@@ -1,20 +1,15 @@
-import {
-  Inject,
-  NotFoundException,
-  UseGuards,
-  forwardRef,
-} from '@nestjs/common'
+import { Inject, UseGuards, forwardRef } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import parse from 'date-fns/parse'
 
 import { CurrentUser, User } from '../auth'
 
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { logger } from '@island.is/logging'
 import { SamgongustofaService } from '../samgongustofa'
 import { CreateVehicleInput } from './dto/createVehicle.input'
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
-import { logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleModel)
@@ -41,6 +36,7 @@ export class VehicleAppSysResolver {
       )
       return null
     }
+
     const newVehicle = new VehicleModel()
     newVehicle.vinNumber = vehicle.vinNumber
     newVehicle.newregDate = parse(
@@ -53,6 +49,7 @@ export class VehicleAppSysResolver {
     newVehicle.ownerNationalId = user.nationalId
     newVehicle.vehicleId = vehicle.permno
     newVehicle.mileage = input.mileage
+
     return await this.vehicleService.create(newVehicle)
   }
 }
