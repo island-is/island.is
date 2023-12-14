@@ -53,7 +53,9 @@ export function useLooseSearch<T>(
       return
     }
 
-    const tokens = pseudolocalizeString(searchValue).toLowerCase().split(/[\s-]+/)
+    const tokens = pseudolocalizeString(searchValue)
+      .toLowerCase()
+      .split(/[\s-]+/)
 
     setFilteredList(
       fullList.filter((item) => {
