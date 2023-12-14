@@ -12,7 +12,7 @@ module.exports = {
   },
 
   down: () => {
-    // We could create a new `mobile_phone_number_backup` to store the
+    // We could create a column `mobile_phone_number_backup` to store the
     // old value and use this down migration to restore the value in
     // `mobile_phone_number_backup` and then delete it.
     return Promise.resolve()
