@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import parse from 'html-react-parser'
+import ReactHtmlParser from 'react-html-parser'
+
 import getConfig from 'next/config'
 
 import {
@@ -242,8 +243,8 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
           )}
           <Text marginTop={3} marginBottom={3} variant="default">
             {locale === 'en'
-              ? parse(data.descriptionEn ? data.descriptionEn : '')
-              : parse(data.descriptionIs ? data.descriptionIs : '')}
+              ? ReactHtmlParser(data.descriptionEn ? data.descriptionEn : '')
+              : ReactHtmlParser(data.descriptionIs ? data.descriptionIs : '')}
           </Text>
           {data.externalUrlIs && (
             <LinkV2
@@ -378,12 +379,12 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             >
               <Text as="p">
                 {locale === 'en'
-                  ? parse(
+                  ? ReactHtmlParser(
                       data.admissionRequirementsEn
                         ? data.admissionRequirementsEn
                         : '',
                     )
-                  : parse(
+                  : ReactHtmlParser(
                       data.admissionRequirementsIs
                         ? data.admissionRequirementsIs
                         : '',
@@ -401,10 +402,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             >
               <Text as="p">
                 {locale === 'en'
-                  ? parse(
+                  ? ReactHtmlParser(
                       data.studyRequirementsEn ? data.studyRequirementsEn : '',
                     )
-                  : parse(
+                  : ReactHtmlParser(
                       data.studyRequirementsIs ? data.studyRequirementsIs : '',
                     )}
               </Text>
