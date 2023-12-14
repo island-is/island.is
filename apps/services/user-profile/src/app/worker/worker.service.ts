@@ -1,3 +1,5 @@
+import formatDistance from 'date-fns/formatDistance'
+
 import { Injectable } from '@nestjs/common'
 
 import { logger } from '@island.is/logging'
@@ -8,6 +10,9 @@ import { ProcessedStatus } from './types'
 import { shouldReplaceExistingUserProfile } from './worker.utils'
 import { environment } from '../../environments'
 
+/**
+ * The purpose of this worker is to import user profiles from Advania
+ */
 @Injectable()
 export class UserProfileWorkerService {
   constructor(
@@ -18,11 +23,13 @@ export class UserProfileWorkerService {
   ) {}
 
   public async run() {
+    const timer = logger.startTimer()
     logger.info('Worker starting...')
 
     await this.migrateUserProfiles()
 
     logger.info('Worker finished.')
+    timer.done()
   }
 
   private async processProfiles(
@@ -64,36 +71,34 @@ export class UserProfileWorkerService {
 
     logger.info(`${numberOfProfilesToProcess} profiles to process`)
 
-    const numberOfPagesToProcess = Math.max(
+    const numberOfPagesToProcess = Math.ceil(
       numberOfProfilesToProcess / environment.worker.processPageSize,
-      1,
+    )
+    logger.info(
+      `splitting work into ${numberOfPagesToProcess} pages with page_size=${environment.worker.processPageSize}`,
     )
 
-    const nationalIdsProcessed: string[] = []
-    const nationalIdsWithError: string[] = []
+    const startTime = Date.now()
 
     for (
       let pageIndex = 0;
       pageIndex < numberOfPagesToProcess;
       pageIndex += 1
     ) {
-      logger.info(
-        `processing page ${
-          pageIndex + 1
-        } / ${numberOfPagesToProcess} (page_size=${
-          environment.worker.processPageSize
-        })`,
-      )
+      const nationalIdsProcessed: string[] = []
+      const nationalIdsWithError: string[] = []
 
-      const offset = environment.worker.processPageSize * pageIndex
+      logger.info(
+        `processing page ${pageIndex + 1} / ${numberOfPagesToProcess} ...`,
+      )
 
       const advaniaProfiles = await this.userProfileAdvaniaModel.findAll({
         where: {
           status: ProcessedStatus.PENDING,
         },
-        offset,
         limit: environment.worker.processPageSize,
       })
+
       const userProfiles = await this.userProfileModel.findAll({
         where: {
           nationalId: advaniaProfiles.map((p) => p.ssn),
@@ -116,72 +121,73 @@ export class UserProfileWorkerService {
           nationalIdsWithError.push(advaniaProfile.ssn)
         }
       }
-    }
 
-    logger.info('processing complete, updating profile status')
-
-    // Wait until after processing to update status to not confuse
-    // the profile query offset
-    if (nationalIdsProcessed.length > 0) {
-      const numberOfPagesToProcess = Math.max(
-        nationalIdsProcessed.length / environment.worker.processPageSize,
-        1,
+      logger.info(
+        `processing for page ${
+          pageIndex + 1
+        } / ${numberOfPagesToProcess} done, updating status ...`,
       )
 
-      for (
-        let pageIndex = 0;
-        pageIndex < numberOfPagesToProcess;
-        pageIndex += 1
-      ) {
-        const offset = environment.worker.processPageSize * pageIndex
+      if (nationalIdsProcessed.length > 0) {
+        logger.info(
+          `updating status to ${ProcessedStatus.DONE} for ${nationalIdsProcessed.length} profiles`,
+        )
         await this.userProfileAdvaniaModel.update(
           {
             status: ProcessedStatus.DONE,
           },
           {
             where: {
-              ssn: nationalIdsProcessed.slice(
-                offset,
-                environment.worker.processPageSize,
-              ),
+              ssn: nationalIdsProcessed,
             },
           },
         )
       }
 
-      logger.info(
-        `successfully processed ${nationalIdsProcessed.length} profiles`,
-      )
-    }
-
-    if (nationalIdsWithError.length > 0) {
-      const numberOfPagesToProcess = Math.max(
-        nationalIdsWithError.length / environment.worker.processPageSize,
-        1,
-      )
-
-      for (
-        let pageIndex = 0;
-        pageIndex < numberOfPagesToProcess;
-        pageIndex += 1
-      ) {
-        const offset = environment.worker.processPageSize * pageIndex
+      if (nationalIdsWithError.length > 0) {
+        logger.info(
+          `updating status to ${ProcessedStatus.ERROR} for ${nationalIdsWithError.length} profiles`,
+        )
         await this.userProfileAdvaniaModel.update(
           {
             status: ProcessedStatus.ERROR,
           },
           {
             where: {
-              ssn: nationalIdsWithError.slice(
-                offset,
-                environment.worker.processPageSize,
-              ),
+              ssn: nationalIdsWithError,
             },
           },
         )
       }
 
-      logger.info(`${nationalIdsWithError.length} profiles had an error`)
+      if (numberOfPagesToProcess > 1) {
+        this.logTimeRemaining(startTime, pageIndex, numberOfProfilesToProcess)
+      }
     }
+  }
+
+  private logTimeRemaining(
+    startTime: number,
+    currentPageIndex: number,
+    numberOfProfilesToProcess: number,
+  ) {
+    const timeElapsed = Date.now() - startTime
+    const profilesProcessed =
+      (currentPageIndex + 1) * environment.worker.processPageSize
+    const msPerProfile = timeElapsed / profilesProcessed
+    const timeRemaining =
+      (numberOfProfilesToProcess - profilesProcessed) * msPerProfile
+    const estimatedDateWhenFinished = new Date(Date.now() + timeRemaining)
+
+    logger.info(
+      `the migration should finish ${formatDistance(
+        estimatedDateWhenFinished,
+        new Date(),
+        {
+          addSuffix: true,
+          includeSeconds: true,
+        },
+      )} (based on average processing time)`,
+    )
   }
 }
