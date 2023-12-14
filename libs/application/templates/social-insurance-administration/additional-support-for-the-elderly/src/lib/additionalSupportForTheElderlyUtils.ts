@@ -1,8 +1,14 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  Option,
+  NO,
+  YES,
+  YesOrNo,
+} from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
-import { AttachmentLabel } from './constants'
+import { AttachmentLabel, TaxLevelOptions } from './constants'
 import {
   FileType,
   Attachments,
@@ -11,6 +17,7 @@ import {
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { additionalSupportForTheElderyFormMessage } from './messages'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
@@ -64,6 +71,21 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
+  const personalAllowance = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowance',
+  ) as YesOrNo
+
+  const personalAllowanceUsage = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowanceUsage',
+  ) as string
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
+
   return {
     applicantPhonenumber,
     selectedYear,
@@ -80,6 +102,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankAddress,
     currency,
     paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
   }
 }
 
@@ -95,6 +120,11 @@ export function getApplicationExternalData(
     externalData,
     'nationalRegistry.data.nationalId',
   ) as string
+
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
 
   const email = getValueViaPath(
     externalData,
@@ -119,6 +149,7 @@ export function getApplicationExternalData(
   return {
     applicantName,
     applicantNationalId,
+    hasSpouse,
     email,
     bankInfo,
     currencies,
@@ -165,6 +196,25 @@ export function getAttachments(application: Application) {
   }
 
   return attachments
+}
+
+export function getTaxOptions() {
+  const options: Option[] = [
+    {
+      value: TaxLevelOptions.INCOME,
+      label: additionalSupportForTheElderyFormMessage.payment.taxIncomeLevel,
+    },
+    {
+      value: TaxLevelOptions.FIRST_LEVEL,
+      label: additionalSupportForTheElderyFormMessage.payment.taxFirstLevel,
+    },
+    {
+      value: TaxLevelOptions.SECOND_LEVEL,
+      label: additionalSupportForTheElderyFormMessage.payment.taxSecondLevel,
+    },
+  ]
+
+  return options
 }
 
 // returns available years. Available period is

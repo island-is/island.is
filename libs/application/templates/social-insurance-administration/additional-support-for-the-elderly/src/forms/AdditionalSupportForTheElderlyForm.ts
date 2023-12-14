@@ -18,6 +18,7 @@ import {
   Form,
   FormModes,
   FormValue,
+  YES,
 } from '@island.is/application/types'
 import {
   friendlyFormatIBAN,
@@ -25,6 +26,7 @@ import {
   getBankIsk,
   typeOfBankInfo,
   getCurrencies,
+  getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
@@ -37,7 +39,9 @@ import {
 import {
   getApplicationExternalData,
   getAvailableYears,
+  getTaxOptions,
 } from '../lib/additionalSupportForTheElderlyUtils'
+import { TaxLevelOptions } from '../lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { getApplicationAnswers } from '../lib/additionalSupportForTheElderlyUtils'
@@ -297,6 +301,59 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                       typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.personalAllowance',
+                  title:
+                    additionalSupportForTheElderyFormMessage.payment
+                      .personalAllowance,
+                  options: getYesNoOptions(),
+                  width: 'half',
+                  largeButtons: true,
+                  required: true,
+                  space: 'containerGutter',
+                }),
+                buildTextField({
+                  id: 'paymentInfo.personalAllowanceUsage',
+                  title:
+                    additionalSupportForTheElderyFormMessage.payment
+                      .personalAllowancePercentage,
+                  suffix: '%',
+                  condition: (answers) => {
+                    const { personalAllowance } = getApplicationAnswers(answers)
+                    return personalAllowance === YES
+                  },
+                  placeholder: '1%',
+                  defaultValue: '100',
+                  variant: 'number',
+                  width: 'half',
+                  maxLength: 4,
+                }),
+                buildAlertMessageField({
+                  id: 'payment.spouseAllowance.alert',
+                  title:
+                    additionalSupportForTheElderyFormMessage.shared.alertTitle,
+                  message:
+                    additionalSupportForTheElderyFormMessage.payment
+                      .alertSpouseAllowance,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  condition: (_, externalData) => {
+                    const { hasSpouse } =
+                      getApplicationExternalData(externalData)
+                    if (hasSpouse) return true
+                    return false
+                  },
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.taxLevel',
+                  title:
+                    additionalSupportForTheElderyFormMessage.payment.taxLevel,
+                  options: getTaxOptions(),
+                  width: 'full',
+                  largeButtons: true,
+                  space: 'containerGutter',
+                  defaultValue: TaxLevelOptions.INCOME,
                 }),
               ],
             }),
