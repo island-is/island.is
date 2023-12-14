@@ -995,18 +995,26 @@ export const OldAgePensionForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      multiFieldTitle: oldAgePensionFormMessage.conclusionScreen.title,
-      alertTitle: oldAgePensionFormMessage.conclusionScreen.title,
-      alertMessage: oldAgePensionFormMessage.conclusionScreen.alertTitle,
+      multiFieldTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle,
+      alertTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle,
+      alertMessage:
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .incomePlanAlertMessage,
       alertType: 'warning',
       expandableDescription:
         oldAgePensionFormMessage.conclusionScreen.bulletList,
       expandableIntro: oldAgePensionFormMessage.conclusionScreen.nextStepsText,
       bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
       bottomButtonLabel:
-        oldAgePensionFormMessage.conclusionScreen.incomePlanCardLabel,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .incomePlanCardLabel,
       bottomButtonMessage:
-        oldAgePensionFormMessage.conclusionScreen.incomePlanCardText,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .incomePlanCardText,
     }),
   ],
 })

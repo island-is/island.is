@@ -34,7 +34,7 @@ export const Payment = ({
       editAction={() => goToScreen?.('paymentInfo')}
     >
       {bankAccountType === BankAccountType.ICELANDIC ? (
-        <GridRow marginBottom={3}>
+        <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
@@ -84,7 +84,7 @@ export const Payment = ({
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
+              paddingBottom={[3, 3, 3, 0]}
             >
               <DataValue
                 label={formatMessage(
@@ -93,10 +93,7 @@ export const Payment = ({
                 value={bankName}
               />
             </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.bankAddress,

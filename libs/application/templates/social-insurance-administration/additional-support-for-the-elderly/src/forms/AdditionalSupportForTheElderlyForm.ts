@@ -444,11 +444,14 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildFormConclusionSection({
       multiFieldTitle:
-        additionalSupportForTheElderyFormMessage.conclusionScreen.title,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle,
       alertTitle:
-        additionalSupportForTheElderyFormMessage.conclusionScreen.title,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle,
       alertMessage:
-        additionalSupportForTheElderyFormMessage.conclusionScreen.alertTitle,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .incomePlanAlertMessage,
       alertType: 'warning',
       expandableDescription:
         additionalSupportForTheElderyFormMessage.conclusionScreen.bulletList,
@@ -456,10 +459,10 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         additionalSupportForTheElderyFormMessage.conclusionScreen.nextStepsText,
       bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
       bottomButtonLabel:
-        additionalSupportForTheElderyFormMessage.conclusionScreen
+        socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanCardLabel,
       bottomButtonMessage:
-        additionalSupportForTheElderyFormMessage.conclusionScreen
+        socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanCardText,
     }),
   ],

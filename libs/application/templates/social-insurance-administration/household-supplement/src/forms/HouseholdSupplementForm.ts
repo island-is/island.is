@@ -581,8 +581,10 @@ export const HouseholdSupplementForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      multiFieldTitle: householdSupplementFormMessage.conclusionScreen.title,
-      alertTitle: householdSupplementFormMessage.conclusionScreen.alertTitle,
+      multiFieldTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle,
+      alertTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
       alertMessage:
         householdSupplementFormMessage.conclusionScreen.alertMessage,
       expandableDescription:

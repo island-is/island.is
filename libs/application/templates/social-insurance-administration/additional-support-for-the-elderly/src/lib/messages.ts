@@ -134,34 +134,10 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   }),
 
   conclusionScreen: defineMessages({
-    title: {
-      id: 'asfte.application:conclusionScreen.title',
-      defaultMessage: 'Umsókn móttekin og bíður tekjuáætlunar',
-      description: 'Application received and awaiting income estimate',
-    },
-    alertTitle: {
-      id: 'asfte.application:conclusionScreen.alertTitle',
-      defaultMessage:
-        'Athugið að ef þú hefur ekki skilað inn tekjuáætlun er mikilvægt að gera það svo hægt sé að afgreiða umsóknina. Þú getur skilað inn tekjuáætlun með því að ýta á takkann hér fyrir neðan.',
-      description:
-        'Attention, if you have not submitted an income estimate, you must do so for your application to be processed. You can submit an income estimate by pression the button below.',
-    },
     bulletList: {
       id: `asfte.application:conclusionScreen.bulletList#markdown`,
       defaultMessage: `* Þú verður að skila inn tekjuáætlun, ef það hefur ekki verið gert nú þegar.\n* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til félagslegs viðbótarstuðnings við aldraða. Vinnslutími umsókna um félagslegan viðbótarstuðning er allt að fjórar vikur.\n* **Þú gætir átt rétt á:**\n\t* Heimilisuppbót`,
       description: `* You must submit an income estimate, if it has not been submitted already.\n* The Social Insurance Administration will review your application and confirm that all information provided is accurate.\n* If required, they will call for additional information/documents.\n* Once all necessary documents have been received, the Social Insurance Administration will review the application and determine whether an additional support for the elderly will be granted. The processing time for additional support for the elderly applications is up to four weeks.\n* **You may be entitled to:**\n\t* Household supplement`,
-    },
-    incomePlanCardLabel: {
-      id: 'asfte.application:conclusionScreen.incomePlanCardLabel',
-      defaultMessage: 'Skila inn tekjuáætlun',
-      description: 'Submit income estimate',
-    },
-    incomePlanCardText: {
-      id: 'asfte.application:conclusionScreen.incomePlanCardText',
-      defaultMessage:
-        'Mikilvægt er að skila inn tekjuáætlun sem fyrst svo hægt sé að afgreiða umsóknina og búa til greiðsluáætlun.',
-      description:
-        'It is important to submit an income estimate as soon as possible so that the application can be processed and a payment plan can be created.',
     },
     nextStepsText: {
       id: 'asfte.application:conclusionScreen.nextStepsText',

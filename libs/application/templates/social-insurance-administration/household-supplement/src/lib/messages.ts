@@ -223,16 +223,6 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 
   conclusionScreen: defineMessages({
-    title: {
-      id: 'hs.application:conclusionScreen.title',
-      defaultMessage: 'Umsókn móttekin',
-      description: 'Application received',
-    },
-    alertTitle: {
-      id: 'hs.application:conclusionScreen.alertTitle',
-      defaultMessage: 'Umsókn þín hefur verið móttekin',
-      description: 'Your application has been received',
-    },
     alertMessage: {
       id: 'hs.application:conclusionScreen.alertMessage',
       defaultMessage:
@@ -245,22 +235,12 @@ export const householdSupplementFormMessage: MessageDir = {
       defaultMessage: `* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til heimilisuppbótar.`,
       description: 'BulletList',
     },
-    nextStepsLabel: {
-      id: 'hs.application:conclusionScreen.nextStepsLabel',
-      defaultMessage: 'Hvað gerist næst?',
-      description: 'What happens next?',
-    },
     nextStepsText: {
       id: 'hs.application:conclusionScreen.nextStepsText',
       defaultMessage:
         'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til ellilífeyris.',
       description:
         'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the retirement pension.',
-    },
-    buttonsViewApplication: {
-      id: 'hs.application:conclusionScreen.buttonsViewApplication',
-      defaultMessage: 'Skoða umsókn',
-      description: 'View application',
     },
   }),
 }

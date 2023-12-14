@@ -357,44 +357,10 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   conclusionScreen: defineMessages({
-    title: {
-      id: 'oap.application:conclusionScreen.title',
-      defaultMessage: 'Umsókn móttekin og bíður tekjuáætlunar',
-      description: 'Congratulations, below are the next steps',
-    },
-    alertTitle: {
-      id: 'oap.application:conclusionScreen.alertTitle',
-      defaultMessage:
-        'Umsókn vegna ellilífeyris hefur verið send til Tryggingastofnunar en bíður eftir tekjuáætlun til að hægt sé að afgreiða ellilífeyris umsóknina. Þú getur skilað inn tekjuáætlun með því að ýta á takkann hér fyrir neðan.',
-      description:
-        'The application for old-age pension has been sent to Tryggingastofnunar, but it is waiting for an income estimate so that the old-age pension application can be processed. You can submit an income plan by pressing the button below.',
-    },
     bulletList: {
       id: `oap.application:conclusionScreen.bulletList#markdown`,
       defaultMessage: `* Þú verður að skila inn tekjuáætlun, ef ekki búið nú þegar.\n* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til elllífeyris. Vinnslutími umsókna um ellilífeyri er fjórar til sex vikur.\n* **Þú gætir átt rétt á:**\n\t* Heimilisuppbót\n\t* Barnalífeyri\n\t* Uppbót á lífeyri\n\t* Ellilífeyri vegna EES.`,
       description: 'BulletList',
-    },
-    incomePlanCardLabel: {
-      id: 'oap.application:conclusionScreen.incomePlanCardLabel',
-      defaultMessage: 'Skila inn tekjuáætlun',
-      description: 'Submit an income plan',
-    },
-    incomePlanCardHeading: {
-      id: 'oap.application:conclusionScreen.incomePlanCardHeading',
-      defaultMessage: 'Tekjuáætlun',
-      description: 'Income plan',
-    },
-    incomePlanCardText: {
-      id: 'oap.application:conclusionScreen.incomePlanCardText',
-      defaultMessage:
-        'Mikilvægt er að skila inn tekjuáætlun sem fyrst svo hægt sé að afgreiða Ellilífeyris umsóknina og búa til greiðsluáætlun.',
-      description:
-        'It is important to submit an income estimate as soon as possible so that the Old Age Pension application can be processed and a payment plan can be created.',
-    },
-    nextStepsLabel: {
-      id: 'oap.application:conclusionScreen.nextStepsLabel',
-      defaultMessage: 'Hvað gerist næst?',
-      description: 'What happens next?',
     },
     nextStepsText: {
       id: 'oap.application:conclusionScreen.nextStepsText',
@@ -402,21 +368,6 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til ellilífeyris.',
       description:
         'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the retirement pension.',
-    },
-    entitledToLabel: {
-      id: 'oap.application:conclusionScreen.entitledToLabel',
-      defaultMessage: 'Þú gætir átt rétt á',
-      description: 'english translation',
-    },
-    entitledToBulletList: {
-      id: `oap.application:conclusionScreen.entitledToBulletList#markdown`,
-      defaultMessage: `* Heimilisuppbót\n* Barnalífeyri\n* Uppbót á lífeyri\n* Ellilífeyri vegna EES`,
-      description: 'BulletList',
-    },
-    buttonsViewApplication: {
-      id: 'oap.application:conclusionScreen.buttonsViewApplication',
-      defaultMessage: 'Skoða umsókn',
-      description: 'View application',
     },
   }),
 

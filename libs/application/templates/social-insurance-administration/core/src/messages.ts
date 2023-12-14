@@ -249,11 +249,6 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
   }),
 
   confirm: defineMessages({
-    section: {
-      id: 'sia.application:confirm.section',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirmation',
-    },
     overviewTitle: {
       id: 'sia.application:confirm.overview.title',
       defaultMessage: 'Yfirlit',
@@ -295,6 +290,48 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:confirm.cancel.button',
       defaultMessage: 'Hætta við',
       description: 'Cancel',
+    },
+  }),
+
+  conclusionScreen: defineMessages({
+    section: {
+      id: 'sia.application:conclusionScreen.section',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation',
+    },
+    receivedAwaitingIncomePlanTitle: {
+      id: 'sia.application:conclusionScreen.received.awaiting.income.plan.title',
+      defaultMessage: 'Umsókn móttekin og bíður tekjuáætlunar',
+      description: 'Application received and awaiting income estimate',
+    },
+    receivedTitle: {
+      id: 'sia.application:conclusionScreen.received.title',
+      defaultMessage: 'Umsókn móttekin',
+      description: 'Application received',
+    },
+    incomePlanAlertMessage: {
+      id: 'sia.application:conclusionScreen.income.plan.alert.message',
+      defaultMessage:
+        'Athugið að ef þú hefur ekki skilað inn tekjuáætlun er mikilvægt að gera það svo hægt sé að afgreiða umsóknina. Þú getur skilað inn tekjuáætlun með því að ýta á takkann hér fyrir neðan.',
+      description:
+        'Attention, if you have not submitted an income estimate, you must do so for your application to be processed. You can submit an income estimate by pression the button below.',
+    },
+    alertTitle: {
+      id: 'sia.application:conclusionScreen.alert.title',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Your application has been received',
+    },
+    incomePlanCardLabel: {
+      id: 'sia.application:conclusionScreen.income.plan.card.label',
+      defaultMessage: 'Skila inn tekjuáætlun',
+      description: 'Submit income estimate',
+    },
+    incomePlanCardText: {
+      id: 'sia.application:conclusionScreen.income.plan.card.text',
+      defaultMessage:
+        'Mikilvægt er að skila inn tekjuáætlun sem fyrst svo hægt sé að afgreiða umsóknina og búa til greiðsluáætlun.',
+      description:
+        'It is important to submit an income estimate as soon as possible so that the application can be processed and a payment plan can be created.',
     },
   }),
 }
