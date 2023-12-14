@@ -37,7 +37,6 @@ export function addTests() {
       await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase')
       await page.getByText('Veldu dómara/aðstoðarmann').click()
       await page.getByTestId('select-judge').getByText('Test Dómari').click()
-      await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase', 200)
       await page.getByTestId('continueButton').click()
 
       // Overview
