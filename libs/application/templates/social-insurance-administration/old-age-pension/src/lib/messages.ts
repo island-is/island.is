@@ -499,29 +499,6 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
   }),
 
-  comment: defineMessages({
-    additionalInfoTitle: {
-      id: 'oap.application:comment.additional.info.title',
-      defaultMessage: 'Viðbótarupplýsingar',
-      description: 'Additional Information',
-    },
-    commentSection: {
-      id: 'oap.application:comment.section',
-      defaultMessage: 'Athugasemd',
-      description: 'Comment',
-    },
-    description: {
-      id: 'oap.application:comment.description',
-      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
-      description: 'If you have any comments, leave them here.',
-    },
-    placeholder: {
-      id: 'oap.application:comment.placeholder',
-      defaultMessage: 'Skrifaðu hér athugasemd',
-      description: 'Your comment',
-    },
-  }),
-
   employer: defineMessages({
     employerTitle: {
       id: 'oap.application:employer.employerTitle',

@@ -487,7 +487,7 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'additionalInfo',
-      title: householdSupplementFormMessage.additionalInfo.section,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
@@ -520,15 +520,22 @@ export const HouseholdSupplementForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'commentSection',
-          title: householdSupplementFormMessage.comment.commentSection,
+          title:
+            socialInsuranceAdministrationMessage.additionalInfo.commentSection,
           children: [
             buildTextField({
               id: 'comment',
-              title: householdSupplementFormMessage.comment.commentSection,
+              title:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentSection,
               variant: 'textarea',
               rows: 10,
-              description: householdSupplementFormMessage.comment.description,
-              placeholder: householdSupplementFormMessage.comment.placeholder,
+              description:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentDescription,
+              placeholder:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentPlaceholder,
             }),
           ],
         }),

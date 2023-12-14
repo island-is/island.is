@@ -248,6 +248,29 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
   }),
 
+  additionalInfo: defineMessages({
+    section: {
+      id: 'sia.application:additionalInfo.section',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional Information',
+    },
+    commentSection: {
+      id: 'sia.application:additionalInfo.comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    commentDescription: {
+      id: 'sia.application:additionalInfo.comment.description',
+      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
+      description: 'Please leave any additional comments below.',
+    },
+    commentPlaceholder: {
+      id: 'sia.application:additionalInfo.comment.placeholder',
+      defaultMessage: 'Skrifaðu athugasemd hér',
+      description: 'Your comment',
+    },
+  }),
+
   confirm: defineMessages({
     overviewTitle: {
       id: 'sia.application:confirm.overview.title',

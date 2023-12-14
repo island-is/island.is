@@ -110,29 +110,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
   }),
 
-  comment: defineMessages({
-    additionalInfoTitle: {
-      id: 'asfte.application:comment.additional.info.title',
-      defaultMessage: 'Viðbótarupplýsingar',
-      description: 'Additional Information',
-    },
-    commentSection: {
-      id: 'asfte.application:comment.section',
-      defaultMessage: 'Athugasemd',
-      description: 'Comment',
-    },
-    description: {
-      id: 'asfte.application:comment.description',
-      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
-      description: 'If you have any comments, leave them here.',
-    },
-    placeholder: {
-      id: 'asfte.application:comment.placeholder',
-      defaultMessage: 'Skrifaðu athugasemd hér',
-      description: 'Your comment',
-    },
-  }),
-
   conclusionScreen: defineMessages({
     bulletList: {
       id: `asfte.application:conclusionScreen.bulletList#markdown`,

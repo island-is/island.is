@@ -905,7 +905,7 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'additionalInformation',
-      title: oldAgePensionFormMessage.comment.additionalInfoTitle,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
@@ -934,15 +934,22 @@ export const OldAgePensionForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'commentSection',
-          title: oldAgePensionFormMessage.comment.commentSection,
+          title:
+            socialInsuranceAdministrationMessage.additionalInfo.commentSection,
           children: [
             buildTextField({
               id: 'comment',
-              title: oldAgePensionFormMessage.comment.commentSection,
+              title:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentSection,
               variant: 'textarea',
               rows: 10,
-              description: oldAgePensionFormMessage.comment.description,
-              placeholder: oldAgePensionFormMessage.comment.placeholder,
+              description:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentDescription,
+              placeholder:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentPlaceholder,
             }),
           ],
         }),

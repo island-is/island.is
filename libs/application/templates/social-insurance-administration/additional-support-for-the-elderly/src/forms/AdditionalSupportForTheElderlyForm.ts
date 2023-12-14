@@ -338,8 +338,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'additionalInformation',
-      title:
-        additionalSupportForTheElderyFormMessage.comment.additionalInfoTitle,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
@@ -379,18 +378,21 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         buildSubSection({
           id: 'commentSection',
           title:
-            additionalSupportForTheElderyFormMessage.comment.commentSection,
+            socialInsuranceAdministrationMessage.additionalInfo.commentSection,
           children: [
             buildTextField({
               id: 'comment',
               title:
-                additionalSupportForTheElderyFormMessage.comment.commentSection,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentSection,
               variant: 'textarea',
               rows: 10,
               description:
-                additionalSupportForTheElderyFormMessage.comment.description,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentDescription,
               placeholder:
-                additionalSupportForTheElderyFormMessage.comment.placeholder,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentPlaceholder,
             }),
           ],
         }),

@@ -183,32 +183,6 @@ export const householdSupplementFormMessage: MessageDir = {
     },
   }),
 
-  additionalInfo: defineMessages({
-    section: {
-      id: 'hs.application:additional.info.section',
-      defaultMessage: 'Viðbótarupplýsingar',
-      description: 'Additional information',
-    },
-  }),
-
-  comment: defineMessages({
-    commentSection: {
-      id: 'hs.application:comment.section',
-      defaultMessage: 'Athugasemd',
-      description: 'Comment',
-    },
-    description: {
-      id: 'hs.application:comment.description',
-      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
-      description: 'If you have any comments, leave them here.',
-    },
-    placeholder: {
-      id: 'hs.application:comment.placeholder',
-      defaultMessage: 'Skrifaðu hér athugasemd',
-      description: 'Your comment',
-    },
-  }),
-
   confirm: defineMessages({
     leaseAgreementAttachment: {
       id: 'hs.application:confirm.lease.agreement.attachment',

@@ -117,8 +117,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'additionalInformation',
-      title:
-        additionalSupportForTheElderyFormMessage.comment.additionalInfoTitle,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [],
     }),
     buildSection({
