@@ -43,7 +43,6 @@ export const ParentsReview: FC<Props> = ({
         })}
         <GridRow>
           {answers?.parentInformation?.parents &&
-            answers?.parentInformation?.hasValidParents === YES &&
             answers?.parentInformation?.parents?.map((parent) => {
               if (parent.wasRemoved === 'false') {
                 return (

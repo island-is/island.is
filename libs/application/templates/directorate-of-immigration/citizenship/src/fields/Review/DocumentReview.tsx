@@ -92,7 +92,7 @@ export const DocumentReview: FC<Props> = ({
           {selectedChildren &&
             selectedChildren.map((child) => {
               return (
-                <GridColumn span="1/2">
+                <GridColumn span="1/2" paddingBottom={1}>
                   {DescriptionFormField({
                     application: application,
                     showFieldName: false,
