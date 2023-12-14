@@ -180,6 +180,73 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description: 'December',
     },
   }),
+
+  payment: defineMessages({
+    title: {
+      id: 'sia.application:payment.title',
+      defaultMessage: 'Greiðsluupplýsingar',
+      description: 'Payment information',
+    },
+    alertMessage: {
+      id: 'sia.application:payment.alert.message',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning.',
+      description:
+        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the Social Insurance Administration will be paid into that account.',
+    },
+    alertMessageForeign: {
+      id: 'sia.application:payment.alert.message.foreign#markdown',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
+      description:
+        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details, all your payments from the Social Insurance Administration will be paid into that account. \n\nIt is important to ensure that that the bank details are correct. We advise that applicants contact their commercial bank to make sure all bank details are correct, as well as confirming details regarding IBAN and SWIFT numbers. \n\nPlease note that payments made into foreign accounts can take 3-4 days. The bank that handles the transaction will charge a service fee.',
+    },
+    bank: {
+      id: 'sia.application:payment.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+    icelandicBankAccount: {
+      id: 'sia.application:payment.icelandic.bank.account',
+      defaultMessage: 'Íslenskur reikningur',
+      description: 'Icelandic account',
+    },
+    foreignBankAccount: {
+      id: 'sia.application:payment.foreign.bank.account',
+      defaultMessage: 'Erlendur reikningur',
+      description: 'Foreign account',
+    },
+    iban: {
+      id: 'sia.application:payment.iban',
+      defaultMessage: 'IBAN',
+      description: 'IBAN',
+    },
+    swift: {
+      id: 'sia.application:payment.swift',
+      defaultMessage: 'SWIFT',
+      description: 'SWIFT',
+    },
+    bankName: {
+      id: 'sia.application:payment.bank.name',
+      defaultMessage: 'Heiti banka',
+      description: 'Bank name',
+    },
+    bankAddress: {
+      id: 'sia.application:payment.bank.address',
+      defaultMessage: 'Heimili banka',
+      description: 'Bank address',
+    },
+    currency: {
+      id: 'sia.application:payment.currency',
+      defaultMessage: 'Mynt',
+      description: 'Currency',
+    },
+    selectCurrency: {
+      id: 'sia.application:payment.select.currency',
+      defaultMessage: 'Veldu mynt',
+      description: 'Select currency',
+    },
+  }),
 }
 
 export const errorMessages = defineMessages({
