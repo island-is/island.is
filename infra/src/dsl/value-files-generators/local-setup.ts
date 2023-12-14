@@ -79,6 +79,7 @@ export const getLocalrunValueFile = async (
         portConfig,
       ) as Record<string, string>,
       commands: [
+        `(sleep 2 && cat /etc/os-release && sleep 2 && echo "Project ${name} completed" && exit 1)`,
         `cd "${rootDir}"`,
         `. ./.env.${serviceNXName}`, // `source` is bashism
         `echo "Starting ${name} in $PWD"`,
@@ -173,15 +174,17 @@ export const getLocalrunValueFile = async (
 
   const mocksObj = {
     containerer: 'docker',
+    containererCommand: 'run',
     containererFlags: '-it --rm',
     ports: mocksConfigs.ports,
-    mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json`],
+    mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json:z`],
     image: 'docker.io/bbyars/mountebank:2.8.1',
     command: 'start --configfile=/app/default.json',
   }
 
   const mocks = [
     mocksObj.containerer,
+    mocksObj.containererCommand,
     mocksObj.containererFlags,
     mocksObj.ports.map((p) => `-p ${p}`).join(' '),
     mocksObj.mounts.map((m) => `-v ${m}`).join(' '),

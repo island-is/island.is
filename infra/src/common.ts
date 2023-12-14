@@ -6,21 +6,30 @@ export async function runCommand({
   cwd = rootDir,
   project = '',
   projectNameSize = 25,
+  dryRun = false,
 }: {
-  command: string
+  command: string | string[]
   cwd?: string
   project?: string
   projectNameSize?: number
+  dryRun?: boolean
 }) {
+  if (!Array.isArray(command)) {
+    command = [command]
+  }
+  const projectLabel = `${project
+    .padEnd(projectNameSize, ' ')
+    .slice(0, projectNameSize)} `
+  const logMessage = (message: string) => `${projectLabel} - ${message}`
+  if (dryRun) {
+    logger.info(logMessage(`[DRY RUN] ${command.join(' ')}`))
+    return
+  }
   const proc = spawn(command, [], {
     cwd,
     shell: true,
     stdio: 'pipe',
   })
-  const projectLabel = `${project
-    .padEnd(projectNameSize, ' ')
-    .slice(0, projectNameSize)} `
-  const logMessage = (message: string) => `${projectLabel} - ${message}`
   proc.stdout?.on('data', (data) => {
     data
       .toString()

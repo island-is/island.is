@@ -81,6 +81,7 @@ yargs(process.argv.slice(2))
         .option('dry', { type: 'boolean', default: false })
         .option('no-update-secrets', { type: 'boolean', default: true })
         .option('print', { type: 'boolean', default: false })
+        .option('proxies', { type: 'boolean', default: false })
         .option('never-fail', {
           alias: 'nofail',
           type: 'boolean',
@@ -94,6 +95,7 @@ yargs(process.argv.slice(2))
         neverFail: argv['never-fail'],
         noUpdateSecrets: argv['no-update-secrets'],
         print: argv.print,
+        startProxies: argv.proxies,
       }),
   )
   .demandCommand(1)

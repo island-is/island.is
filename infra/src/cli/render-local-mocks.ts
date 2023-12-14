@@ -2,8 +2,8 @@ import { Envs } from '../environments'
 import { Charts, Deployments } from '../uber-charts/all-charts'
 import { Localhost } from '../dsl/localhost-runtime'
 import { localrun } from '../dsl/exports/localrun'
-import { logger } from '../common'
-import { ChildProcess, exec, spawn } from 'child_process'
+import { logger, runCommand } from '../common'
+import { ChildProcess } from 'child_process'
 import { LocalrunValueFile } from '../dsl/types/output-types'
 
 export async function renderLocalServices(
@@ -55,12 +55,14 @@ export async function runLocalServices(
     print = false,
     json = false,
     noUpdateSecrets = false,
+    startProxies = false,
   }: {
     dryRun?: boolean
     neverFail?: boolean
     print?: boolean
     json?: boolean
     noUpdateSecrets?: boolean
+    startProxies?: boolean
   } = {},
 ) {
   logger.debug('runLocalServices', { services, dependencies })
@@ -84,6 +86,28 @@ export async function runLocalServices(
 
   const processes: Promise<ChildProcess>[] = []
 
+  // Start mocks & proxies
+  if (startProxies) {
+    logger.warn('Starting proxies in the background')
+    processes.push(
+      runCommand({
+        command: 'yarn proxies',
+        project: 'proxies',
+        dryRun,
+      }),
+    )
+  }
+  if (renderedLocalServices.mocks) {
+    logger.warn('Starting mocks in the background')
+    processes.push(
+      runCommand({
+        command: renderedLocalServices.mocks,
+        project: 'mocks',
+        dryRun,
+      }),
+    )
+  }
+
   for (const [name, service] of Object.entries(
     renderedLocalServices.services,
   )) {
@@ -100,7 +124,7 @@ export async function runLocalServices(
       neverFail ? 'true' : 'false',
     ].join(' || ')
     const command = unfailingCommand
-    logger.info(`Running ${name} in the background`)
+    logger.warn(`Starting ${name} in the background`)
     logger.debug('Running in the background', {
       service: name,
       unfailingCommand,
@@ -111,19 +135,9 @@ export async function runLocalServices(
       logger.info('Commands being run:', { [name]: command })
     }
 
-    const procSpawn = spawn(command, {
-      shell: true,
-      stdio: 'inherit',
-    })
+    const proc = await runCommand({ command, project: name })
 
-    procSpawn.stdout?.on('data', (data) => {
-      logger.info(`${name}: ${data}`)
-    })
-    procSpawn.stdout?.on('data', (data) => {
-      logger.error(`${name}: ${data}`, { cwd: process.cwd() })
-    })
-
-    processes.push(new Promise((resolve) => procSpawn.on('exit', resolve)))
+    processes.push(new Promise((resolve) => proc.on('exit', resolve)))
   }
 
   // Wait for all processes to complete
