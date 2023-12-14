@@ -6,10 +6,14 @@ import { CmsContentfulService } from '../cms.contentful.service'
 
 export type ShortTitle = string | null
 
-export type OrganizationTitleDataLoader = DataLoader<string, ShortTitle, string>
+export type OrganizationTitleByKeyDataLoader = DataLoader<
+  string,
+  ShortTitle,
+  string
+>
 
 @Injectable()
-export class OrganizationTitleLoader
+export class OrganizationTitleByKeyLoader
   implements NestDataLoader<string, ShortTitle>
 {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
@@ -25,7 +29,7 @@ export class OrganizationTitleLoader
     return organizationTitles
   }
 
-  generateDataLoader(): OrganizationTitleDataLoader {
+  generateDataLoader(): OrganizationTitleByKeyDataLoader {
     return new DataLoader((keys) => this.loadOrganizationTitle(keys))
   }
 }

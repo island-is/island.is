@@ -3,13 +3,13 @@ import { UniversityGatewayApi } from '../universityGateway.service'
 import { UniversityGatewayUniversity } from './models'
 import { Loader } from '@island.is/nest/dataloader'
 import {
-  OrganizationLogoLoaderByKey,
-  OrganizationTitleLoader,
+  OrganizationLogoByKeyLoader,
+  OrganizationTitleByKeyLoader,
 } from '@island.is/cms'
 import type {
   LogoUrl,
   OrganizationLogoByKeyDataLoader,
-  OrganizationTitleDataLoader,
+  OrganizationTitleByKeyDataLoader,
   ShortTitle,
 } from '@island.is/cms'
 
@@ -24,7 +24,7 @@ export class UniversityResolver {
 
   @ResolveField('contentfulLogoUrl', () => String, { nullable: true })
   async resolveContentfulLogoUrl(
-    @Loader(OrganizationLogoLoaderByKey)
+    @Loader(OrganizationLogoByKeyLoader)
     organizationLogoLoader: OrganizationLogoByKeyDataLoader,
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<LogoUrl> {
@@ -33,8 +33,8 @@ export class UniversityResolver {
 
   @ResolveField('contentfulTitle', () => String, { nullable: true })
   async resolveContentfulTitle(
-    @Loader(OrganizationTitleLoader)
-    organizationTitleLoader: OrganizationTitleDataLoader,
+    @Loader(OrganizationTitleByKeyLoader)
+    organizationTitleLoader: OrganizationTitleByKeyDataLoader,
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<ShortTitle> {
     return organizationTitleLoader.load(university.contentfulKey)

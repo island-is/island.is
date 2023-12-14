@@ -13,7 +13,7 @@ export type OrganizationLogoByKeyDataLoader = DataLoader<
 >
 
 @Injectable()
-export class OrganizationLogoLoaderByKey
+export class OrganizationLogoByKeyLoader
   implements NestDataLoader<string, LogoUrl>
 {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
