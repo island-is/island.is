@@ -38,3 +38,20 @@ export async function mockApi(page: Page, url: string, response: any) {
     })
   })
 }
+
+export async function verifyRequestCompletion(
+  page: Page,
+  url: string,
+  op: string,
+  status?: number,
+) {
+  const response = await page.waitForResponse((resp) =>
+    resp.url().includes(url) &&
+    resp.request().postDataJSON().operationName === op &&
+    status
+      ? resp.status() === status
+      : true,
+  )
+
+  return response
+}
