@@ -29,6 +29,8 @@ import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
+import { VehiclesModule } from './vehicles-module'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 interface ListItem {
   id: string
@@ -40,57 +42,57 @@ const iconInsets = {
   bottom: Platform.OS === 'ios' && Platform.isPad ? 8 : -4,
 }
 
-const { useNavigationOptions, getNavigationOptions } =
-  createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
-      topBar: {
-        title: {
-          text: initialized
-            ? intl.formatMessage({ id: 'home.screenTitle' })
-            : '',
-        },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = createNavigationOptionHooks(
+  (theme, intl, initialized) => ({
+    topBar: {
+      title: {
+        text: initialized ? intl.formatMessage({ id: 'home.screenTitle' }) : '',
       },
-      bottomTab: {
-        ...({
-          accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
-        } as any),
-        // selectedIconColor: null as any,
-        // iconColor: null as any,
-        textColor: initialized
-          ? Platform.OS === 'android'
-            ? theme.shade.foreground
-            : { light: 'black', dark: 'white' }
-          : theme.shade.background,
-        icon: initialized
-          ? require('../../assets/icons/tabbar-home.png')
-          : undefined,
-        selectedIcon: initialized
-          ? require('../../assets/icons/tabbar-home-selected.png')
-          : undefined,
+      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+    },
+    bottomTab: {
+      ...({
+        accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
+      } as any),
+      // selectedIconColor: null as any,
+      // iconColor: null as any,
+      textColor: initialized
+        ? Platform.OS === 'android'
+          ? theme.shade.foreground
+          : { light: 'black', dark: 'white' }
+        : theme.shade.background,
+      icon: initialized
+        ? require('../../assets/icons/tabbar-home.png')
+        : undefined,
+      selectedIcon: initialized
+        ? require('../../assets/icons/tabbar-home-selected.png')
+        : undefined,
+    },
+  }),
+  {
+    topBar: {
+      rightButtons: [],
+      largeTitle: {
+        visible: true,
       },
-    }),
-    {
-      topBar: {
-        rightButtons: [],
-        largeTitle: {
-          visible: true,
-        },
-        scrollEdgeAppearance: {
-          active: true,
-          noBorder: true,
-        },
-      },
-      bottomTab: {
-        testID: testIDs.TABBAR_TAB_HOME,
-        iconInsets,
-        disableIconTint: false,
-        disableSelectedIconTint: true,
-        iconColor: null as any,
-        selectedIconColor: null as any,
+      scrollEdgeAppearance: {
+        active: true,
+        noBorder: true,
       },
     },
-  )
+    bottomTab: {
+      testID: testIDs.TABBAR_TAB_HOME,
+      iconInsets,
+      disableIconTint: false,
+      disableSelectedIconTint: true,
+      iconColor: null as any,
+      selectedIconColor: null as any,
+    },
+  },
+)
 
 export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
@@ -105,6 +107,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useListApplicationsQuery()
 
+  // Get feature flag for mileage
+  const isMileageEnabled = useFeatureFlag(
+    'isServicePortalVehicleMileagePageEnabled',
+    false,
+  )
   const [loading, setLoading] = useState(false)
 
   const renderItem = useCallback(
@@ -151,11 +158,17 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         />
       ),
     },
+    isMileageEnabled
+      ? {
+          id: 'vehicles',
+          component: <VehiclesModule componentId={componentId} />,
+        }
+      : null,
     {
       id: 'notifications',
       component: <NotificationsModule componentId={componentId} />,
     },
-  ]
+  ].filter(Boolean)
 
   return (
     <>

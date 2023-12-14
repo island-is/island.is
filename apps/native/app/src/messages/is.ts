@@ -151,6 +151,9 @@ export const is = {
     'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á',
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
+  'home.vehicleModule.summary': 'Skrá kílómetrastöðu  rafmagns- og tengiltvinnbíla',
+  'home.vehicleModule.button': 'Mín ökutæki',
+  'button.seeAll': 'Sjá allt',
 
   // inbox
   'inbox.screenTitle': 'Pósthólf',
