@@ -43,6 +43,7 @@ const ActionExtendDeadline = ({ endTime }: { endTime: string }) => {
             label={formatMessage(m.listEndTime)}
             selected={new Date(endTime)}
             placeholderText=""
+            showTimeInput
           />
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button onClick={() => setModalChangeDateIsOpen(false)}>

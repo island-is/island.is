@@ -17,13 +17,12 @@ import {
   Employment,
   getApplicationAnswers as getOAPApplicationAnswers,
   isEarlyRetirement,
-  errorMessages as OAPErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
-  errorMessages as HSErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -98,7 +97,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Undefined,
+          AttachmentTypeEnum.Other,
           additionalAttachmentsRequired,
         )),
       )
@@ -299,7 +298,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
   }
 
-  async getApplicant({ application, auth }: TemplateApiModuleActionProps) {
+  async getApplicant({ auth }: TemplateApiModuleActionProps) {
     const res = await this.siaClientService.getApplicant(auth)
 
     // mock data since gervimenn don't have bank account registered at TR,
@@ -323,14 +322,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (!res.emailAddress) {
       throw new TemplateApiError(
         {
-          title:
-            application.typeId === ApplicationTypes.OLD_AGE_PENSION
-              ? OAPErrorMessages.noEmailFound
-              : HSErrorMessages.noEmailFound,
-          summary:
-            application.typeId === ApplicationTypes.OLD_AGE_PENSION
-              ? OAPErrorMessages.noEmailFoundDescription
-              : HSErrorMessages.noEmailFoundDescription,
+          title: errorMessages.noEmailFound,
+          summary: errorMessages.noEmailFoundDescription,
         },
         500,
       )
