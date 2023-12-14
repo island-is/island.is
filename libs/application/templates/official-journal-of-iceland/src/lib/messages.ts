@@ -1,6 +1,18 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  saveChanges: {
+    id: 'ojoi.application:saveChanges',
+    defaultMessage: 'Vista breytingar',
+  },
+  phone: {
+    id: 'ojoi.application:phone',
+    defaultMessage: 'Símanúmer',
+  },
+  email: {
+    id: 'ojoi.application:email',
+    defaultMessage: 'Netfang',
+  },
   cancel: {
     id: 'ojoi.application:cancel',
     defaultMessage: 'Hætta við',
@@ -60,6 +72,14 @@ export const m = defineMessages({
   publishingSubType: {
     id: 'ojoi.application:publishingSubType',
     defaultMessage: 'Undirtegund',
+  },
+  requestFastTrack: {
+    id: 'ojoi.application:requestFastTrack',
+    defaultMessage: 'Ég óska eftir harðbirtingu.',
+  },
+  requestFastTrackLink: {
+    id: 'ojoi.application:requestFastTrackLink',
+    defaultMessage: 'Sjá verðskrá',
   },
   caseTitle: {
     id: 'ojoi.application:caseTitle',
@@ -259,5 +279,31 @@ export const m = defineMessages({
   originalDataFileUploadButton: {
     id: 'ojoi.application:originalDataFileUploadButton',
     defaultMessage: 'Hlaða upp undirrituðu eintaki',
+  },
+  communicationChannelsTitle: {
+    id: 'ojoi.application:communicationChannelsTitle',
+    defaultMessage: 'Samskiptaleiðir',
+  },
+  communicationChannelsIntro: {
+    id: 'ojoi.application:communicationChannelsIntro',
+    defaultMessage:
+      'Hér birtast þeir málaflokkar sem auglýsigin verður sett undir við birtingu á stjornartidindi.is - Sendandi getur sjálfur valið málaflokka fyrir sínar auglýsingar sem hafa áhrif á málaflokkun á yfirlitssíðunni Mínar birtingar.',
+  },
+  addCommunicationChannel: {
+    id: 'ojoi.application:addCommunicationChannel',
+    defaultMessage: 'Bæta við samskiptaleið',
+  },
+  messagesTitle: {
+    id: 'ojoi.application:messagesTitle',
+    defaultMessage: 'Skilaboð',
+  },
+  messagesIntro: {
+    id: 'ojoi.application:messagesIntro',
+    defaultMessage: 'Lorem ipsum eitthvað hér?',
+  },
+  messagesPlaceholder: {
+    id: 'ojoi.application:messagesPlaceholder',
+    defaultMessage:
+      'Hér er hægt að skrifa skilaboð til Stjórnartíðinda varðandi auglýsinguna.',
   },
 })
