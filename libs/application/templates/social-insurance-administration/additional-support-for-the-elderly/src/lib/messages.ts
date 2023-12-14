@@ -88,51 +88,6 @@ export const inReviewFormMessages = defineMessages({
 })
 
 export const statesMessages = defineMessages({
-  draftDescription: {
-    id: 'asfte.application:draft.description',
-    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
-    description: 'You have create a draft application.',
-  },
-  applicationSent: {
-    id: 'asfte.application:applicationSent',
-    defaultMessage: 'Umsókn send',
-    description: 'Application submitted',
-  },
-  tryggingastofnunSubmittedTitle: {
-    id: 'asfte.application:tryggingastofnunSubmittedTitle',
-    defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
-    description:
-      'Application has been sent to the Social Insurance Administration',
-  },
-  tryggingastofnunSubmittedContent: {
-    id: 'asfte.application:tryggingastofnunSubmittedContent',
-    defaultMessage:
-      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
-    description:
-      'Your application is awaiting review. It is possible to edit the application until it is under review.',
-  },
-  tryggingastofnunInReviewTitle: {
-    id: 'asfte.application:tryggingastofnunInReviewTitle',
-    defaultMessage: 'Verið er að fara yfir umsóknina',
-    description: 'The application is being reviewed',
-  },
-  tryggingastofnunInReviewContent: {
-    id: 'asfte.application:tryggingastofnunInReviewContent',
-    defaultMessage:
-      'Tryggingastofnun fer nú yfir umsóknina og því getur þetta tekið nokkra daga',
-    description:
-      'The Social Insurance Administration is currently reviewing the application, this may take a few days',
-  },
-  applicationEdited: {
-    id: 'asfte.application:applicationEdited',
-    defaultMessage: 'Umsókn breytt',
-    description: 'Application edited',
-  },
-  applicationRejected: {
-    id: 'asfte.application:applicationRejected',
-    defaultMessage: 'Umsókn hafnað',
-    description: 'Application rejected',
-  },
   applicationRejectedDescription: {
     id: 'asfte.application:applicationRejectedDescription',
     defaultMessage:
@@ -140,37 +95,11 @@ export const statesMessages = defineMessages({
     description:
       'The application for additional support for the elderly has been rejected',
   },
-  applicationApproved: {
-    id: 'asfte.application:applicationApproved',
-    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
-    description: 'Tryggingastofnun has accepted the application',
-  },
   applicationApprovedDescription: {
     id: 'asfte.application:applicationApprovedDescription',
     defaultMessage:
       'Umsókn vegna félagsleg viðbótarstuðnings við aldraða hefur verið samþykkt',
     description:
       'The application for additional support for the elderly has been approved',
-  },
-  additionalDocumentRequired: {
-    id: 'asfte.application:additionalDocumentRequired',
-    defaultMessage: 'Viðbótargögn vantar',
-    description: 'Additional documents required',
-  },
-  additionalDocumentsAdded: {
-    id: 'asfte.application:additionalDocumentsAdded',
-    defaultMessage: 'Viðbótargögnum bætt við',
-    description: 'Additional documents added',
-  },
-  additionalDocumentRequiredDescription: {
-    id: 'asfte.application:additionalDocumentRequired.description',
-    defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
-    description:
-      'Social Insurance Administration needs additional documentation regarding your application.',
-  },
-  pendingTag: {
-    id: 'asfte.application:pending.tag',
-    defaultMessage: 'Í bið',
-    description: 'Pending',
   },
 })

@@ -635,97 +635,14 @@ export const inReviewFormMessages = defineMessages({
 })
 
 export const statesMessages = defineMessages({
-  draftDescription: {
-    id: 'oap.application:draft.description',
-    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
-    description: 'Description of the state - draft',
-  },
-  tryggingastofnunSubmittedTitle: {
-    id: 'oap.application:tryggingastofnunSubmittedTitle',
-    defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
-    description: 'The application has been sent to Tryggingastofnunnar',
-  },
-  tryggingastofnunSubmittedContent: {
-    id: 'oap.application:tryggingastofnunSubmittedContent',
-    defaultMessage:
-      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
-    description: 'Application waiting for review',
-  },
-  tryggingastofnunInReviewTitle: {
-    id: 'oap.application:tryggingastofnunInReviewTitle',
-    defaultMessage: 'Verið er að fara yfir umsóknina',
-    description: 'The application is being reviewed',
-  },
-  tryggingastofnunInReviewContent: {
-    id: 'oap.application:tryggingastofnunInReviewContent',
-    defaultMessage:
-      'Tryggingastofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
-    description:
-      'Tryggingastofnun is currently reviewing the application, so this may take a few days',
-  },
-  applicationEdited: {
-    id: 'oap.application:applicationEdited',
-    defaultMessage: 'Umsókn breytt',
-    description: 'Application edited',
-  },
-  applicationRejected: {
-    id: 'oap.application:applicationRejected',
-    defaultMessage: 'Umsókn hafnað',
-    description: 'Application rejected',
-  },
   applicationRejectedDescription: {
     id: 'oap.application:applicationRejectedDescription',
     defaultMessage: 'Umsókn vegna ellilífeyris hefur verið hafnað',
     description: 'The application for old-age pension has been rejected',
   },
-  applicationApproved: {
-    id: 'oap.application:applicationApproved',
-    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
-    description: 'Tryggingastofnun has accepted the application',
-  },
   applicationApprovedDescription: {
     id: 'oap.application:applicationApprovedDescription',
     defaultMessage: 'Umsókn vegna ellilífeyris hefur verið samþykkt',
     description: 'The application for old-age pension has been approved',
-  },
-  additionalDocumentRequired: {
-    id: 'oap.application:additionalDocumentRequired',
-    defaultMessage: 'Viðbótargögn vantar',
-    description: 'Additional documents required',
-  },
-  additionalDocumentsAdded: {
-    id: 'oap.application:additionalDocumentsAdded',
-    defaultMessage: 'Viðbótargögnum bætt við',
-    description: 'Additional documents added',
-  },
-  additionalDocumentRequiredDescription: {
-    id: 'oap.application:additionalDocumentRequired.description',
-    defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
-    description: 'Description of the state - additionalDocumentRequired',
-  },
-  pendingTag: {
-    id: 'oap.application:pending.tag',
-    defaultMessage: 'Í bið',
-    description: 'Pending',
-  },
-  applicationPending: {
-    id: 'oap.application:applicationPending',
-    defaultMessage: 'Umsókn í bið hjá Tryggingastofnun',
-    description: 'Application pending at Tryggingastofnun',
-  },
-  applicationPendingDescription: {
-    id: 'oap.application:applicationPendingDescription',
-    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið sett í bið.',
-    description: 'The application for old-age pension has been put on hold.',
-  },
-  applicationDismissed: {
-    id: 'oap.application:applicationDismissed',
-    defaultMessage: 'Umsókn hefur verið vísað frá',
-    description: 'Application has been dismissed',
-  },
-  applicationDismissedDescription: {
-    id: 'oap.application:applicationDismissedDescription',
-    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið vísað frá.',
-    description: 'The application for old-age pension has been dismissed.',
   },
 })

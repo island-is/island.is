@@ -452,3 +452,77 @@ export const errorMessages = defineMessages({
     description: 'You must upload an attachment to continue.',
   },
 })
+
+export const statesMessages = defineMessages({
+  draftDescription: {
+    id: 'sia.application:draft.description',
+    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
+    description: 'You have created a draft application.',
+  },
+  applicationSent: {
+    id: 'sia.application:applicationSent',
+    defaultMessage: 'Umsókn send',
+    description: 'Application submitted',
+  },
+  tryggingastofnunSubmittedTitle: {
+    id: 'sia.application:tryggingastofnunSubmittedTitle',
+    defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
+    description:
+      'Application has been sent to the Social Insurance Administration',
+  },
+  tryggingastofnunSubmittedContent: {
+    id: 'sia.application:tryggingastofnunSubmittedContent',
+    defaultMessage:
+      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
+    description:
+      'Your application is awaiting review. It is possible to edit the application until it is under review.',
+  },
+  tryggingastofnunInReviewTitle: {
+    id: 'sia.application:tryggingastofnunInReviewTitle',
+    defaultMessage: 'Verið er að fara yfir umsóknina',
+    description: 'The application is being reviewed',
+  },
+  tryggingastofnunInReviewContent: {
+    id: 'sia.application:tryggingastofnunInReviewContent',
+    defaultMessage:
+      'Tryggingastofnun fer nú yfir umsóknina og því getur þetta tekið nokkra daga',
+    description:
+      'The Social Insurance Administration is currently reviewing the application, this may take a few days',
+  },
+  applicationEdited: {
+    id: 'sia.application:applicationEdited',
+    defaultMessage: 'Umsókn breytt',
+    description: 'Application edited',
+  },
+  applicationRejected: {
+    id: 'sia.application:applicationRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  applicationApproved: {
+    id: 'sia.application:applicationApproved',
+    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
+    description: 'Tryggingastofnun has accepted the application',
+  },
+  additionalDocumentRequired: {
+    id: 'sia.application:additionalDocumentRequired',
+    defaultMessage: 'Viðbótargögn vantar',
+    description: 'Additional documents required',
+  },
+  additionalDocumentsAdded: {
+    id: 'sia.application:additionalDocumentsAdded',
+    defaultMessage: 'Viðbótargögnum bætt við',
+    description: 'Additional documents added',
+  },
+  additionalDocumentRequiredDescription: {
+    id: 'sia.application:additionalDocumentRequired.description',
+    defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
+    description:
+      'Social Insurance Administration needs additional documentation regarding your application.',
+  },
+  pendingTag: {
+    id: 'sia.application:pending.tag',
+    defaultMessage: 'Í bið',
+    description: 'Pending',
+  },
+})

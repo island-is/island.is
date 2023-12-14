@@ -37,7 +37,10 @@ import {
   additionalSupportForTheElderyFormMessage,
   statesMessages,
 } from './messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import {
+  socialInsuranceAdministrationMessage,
+  statesMessages as coreSIAStatesMessages,
+} from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { dataSchema } from './dataSchema'
 import { getApplicationAnswers } from './additionalSupportForTheElderlyUtils'
 
@@ -98,10 +101,10 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            description: statesMessages.draftDescription,
+            description: coreSIAStatesMessages.draftDescription,
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
-              logMessage: statesMessages.applicationSent,
+              logMessage: coreSIAStatesMessages.applicationSent,
             },
           },
           onExit: defineTemplateApi({
@@ -144,17 +147,17 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
-              label: statesMessages.pendingTag,
+              label: coreSIAStatesMessages.pendingTag,
             },
             pendingAction: {
-              title: statesMessages.tryggingastofnunSubmittedTitle,
-              content: statesMessages.tryggingastofnunSubmittedContent,
+              title: coreSIAStatesMessages.tryggingastofnunSubmittedTitle,
+              content: coreSIAStatesMessages.tryggingastofnunSubmittedContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.applicationEdited,
+                logMessage: coreSIAStatesMessages.applicationEdited,
               },
             ],
           },
@@ -201,14 +204,14 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
-              title: statesMessages.tryggingastofnunInReviewTitle,
-              content: statesMessages.tryggingastofnunInReviewContent,
+              title: coreSIAStatesMessages.tryggingastofnunInReviewTitle,
+              content: coreSIAStatesMessages.tryggingastofnunInReviewContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: statesMessages.additionalDocumentsAdded,
+                logMessage: coreSIAStatesMessages.additionalDocumentsAdded,
               },
             ],
           },
@@ -252,8 +255,9 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               variant: 'red',
             },
             pendingAction: {
-              title: statesMessages.additionalDocumentRequired,
-              content: statesMessages.additionalDocumentRequiredDescription,
+              title: coreSIAStatesMessages.additionalDocumentRequired,
+              content:
+                coreSIAStatesMessages.additionalDocumentRequiredDescription,
               displayStatus: 'warning',
             },
           },
@@ -294,7 +298,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationApproved,
+              title: coreSIAStatesMessages.applicationApproved,
               content: statesMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
@@ -318,7 +322,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationRejected,
+              title: coreSIAStatesMessages.applicationRejected,
               content: statesMessages.applicationRejectedDescription,
               displayStatus: 'error',
             },
@@ -326,7 +330,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               {
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
                 onEvent: States.REJECTED,
-                logMessage: statesMessages.applicationRejected,
+                logMessage: coreSIAStatesMessages.applicationRejected,
               },
             ],
           },
