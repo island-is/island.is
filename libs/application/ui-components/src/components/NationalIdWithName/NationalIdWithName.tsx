@@ -6,7 +6,7 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { FieldBaseProps, StaticText } from '@island.is/application/types'
+import { Application, StaticText } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
@@ -16,6 +16,8 @@ import debounce from 'lodash/debounce'
 import { IDENTITY_QUERY } from './graphql/queries'
 
 interface NationalIdWithNameProps {
+  id: string
+  application: Application
   customId?: string
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
@@ -29,9 +31,9 @@ interface NationalIdWithNameProps {
 }
 
 export const NationalIdWithName: FC<
-  React.PropsWithChildren<NationalIdWithNameProps & FieldBaseProps>
+  React.PropsWithChildren<NationalIdWithNameProps>
 > = ({
-  field,
+  id,
   application,
   customId = '',
   customNationalIdLabel = '',
@@ -44,10 +46,9 @@ export const NationalIdWithName: FC<
   disabled,
   minAgePerson,
 }) => {
-  const { id } = field
-  const answersFieldId = customId.length > 0 ? customId : id
-  const nameField = `${answersFieldId}.name`
-  const nationaIdField = `${answersFieldId}.nationalId`
+  const fieldId = customId.length > 0 ? customId : id
+  const nameField = `${fieldId}.name`
+  const nationaIdField = `${fieldId}.nationalId`
 
   const { formatMessage } = useLocale()
   const {
