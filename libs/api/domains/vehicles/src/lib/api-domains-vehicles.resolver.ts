@@ -76,12 +76,7 @@ export class VehiclesResolver {
     return { ...res }
   }
 
-  @Scopes(
-    ApiScope.vehicles,
-    ApiScope.internal,
-    ApiScope.internalProcuring,
-    ApiScope.samgongustofaVehicles,
-  )
+  @Scopes(ApiScope.vehicles, ApiScope.samgongustofaVehicles)
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(

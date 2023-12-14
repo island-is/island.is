@@ -1,7 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  OldAgePension,
   SendApplicationApi,
   Response,
   GetIsApplicantEligibleApi,
@@ -9,6 +8,9 @@ import {
   GetApplicantInfoApi,
   Applicant,
   GetCurrenciesApi,
+  SendAdditionalDocumentsApi,
+  Attachment,
+  ApplicationDTO,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -18,6 +20,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly getIsApplicantEligibleApi: GetIsApplicantEligibleApi,
     private readonly getApplicantInfoApi: GetApplicantInfoApi,
     private readonly getCurrenciesApi: GetCurrenciesApi,
+    private readonly sendAdditionalDocumentsApi: SendAdditionalDocumentsApi,
   ) {}
 
   private sendAPIWithAuth = (user: User) =>
@@ -30,15 +33,30 @@ export class SocialInsuranceAdministrationClientService {
     this.getApplicantInfoApi.withMiddleware(new AuthMiddleware(user as Auth))
   private currenciesAPIWithAuth = (user: User) =>
     this.getCurrenciesApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private sendDocumentsAPIWithAuth = (user: User) =>
+    this.sendAdditionalDocumentsApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   sendApplication(
     user: User,
-    oldAgePension: OldAgePension,
+    applicationDTO: ApplicationDTO,
     applicationType: string,
   ): Promise<Response> {
-    return this.sendAPIWithAuth(user).oldAgePensionSendApplication({
-      oldAgePension,
+    return this.sendAPIWithAuth(user).sendApplication({
+      applicationDTO,
       applicationType,
+    })
+  }
+
+  sendAdditionalDocuments(
+    user: User,
+    applicationId: string,
+    attachment: Array<Attachment>,
+  ): Promise<void> {
+    return this.sendDocumentsAPIWithAuth(user).sendDocuments({
+      applicationId,
+      attachment,
     })
   }
 

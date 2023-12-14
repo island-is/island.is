@@ -53,7 +53,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
   name: oldAgePensionFormMessage.shared.applicationTitle,
   institution: oldAgePensionFormMessage.shared.institution,
   featureFlag: Features.oldAgePensionApplication,
-  translationNamespaces: [ApplicationConfigurations.OldAgePension.translation],
+  translationNamespaces: [
+    ApplicationConfigurations.OldAgePension.translation,
+    'sia.application',
+  ],
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
@@ -259,6 +262,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
           },
+          onExit: defineTemplateApi({
+            action: Actions.SEND_DOCUMENTS,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           lifecycle: pruneAfterDays(90),
           roles: [
             {

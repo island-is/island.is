@@ -1,4 +1,9 @@
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseDecision,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_COURT_RECORD_ROUTE,
@@ -16,6 +21,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   describe('Restriction cases', () => {
     describe('Cases with accepting decision', () => {
       beforeEach(() => {
+        cy.login(UserRole.DISTRICT_COURT_JUDGE)
         cy.stubAPIResponses()
         intercept({ ...caseDataAddition, decision: CaseDecision.ACCEPTING })
         cy.visit(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
@@ -46,6 +52,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
         })
 
       beforeEach(() => {
+        cy.login(UserRole.DISTRICT_COURT_JUDGE)
         cy.stubAPIResponses()
       })
 
@@ -161,6 +168,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
     describe('Travel ban cases', () => {
       describe('Cases with accepting decision', () => {
         beforeEach(() => {
+          cy.login(UserRole.DISTRICT_COURT_JUDGE)
           cy.stubAPIResponses()
           intercept({
             ...caseDataAddition,

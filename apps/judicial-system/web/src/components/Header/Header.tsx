@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import getConfig from 'next/config'
 import Link from 'next/link'
@@ -28,7 +28,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import { useGetLawyer } from '../../utils/hooks'
+import { useGeoLocation, useGetLawyer } from '../../utils/hooks'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
@@ -73,6 +73,15 @@ const Container: React.FC<React.PropsWithChildren<unknown>> = ({
 const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
+  const [isRobot, setIsRobot] = useState<boolean>()
+
+  const { practice, email, phoneNr } =
+    useGetLawyer(user?.nationalId, isDefenceUser(user)) ?? {}
+  const { countryCode } = useGeoLocation()
+
+  useEffect(() => {
+    setIsRobot(countryCode !== 'IS')
+  }, [countryCode])
 
   const logoHref =
     !user || !isAuthenticated
@@ -88,9 +97,6 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleLogout = () => {
     api.logout()
   }
-
-  const { practice, email, phoneNr } =
-    useGetLawyer(user?.nationalId, isDefenceUser(user)) ?? {}
 
   return (
     <Container>
@@ -122,88 +128,86 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Inline>
       </Link>
       <Inline alignY="center" space={2}>
+        {(isRobot === false || (user && isAuthenticated)) && (
+          <Hidden below="md">
+            <Button
+              variant="ghost"
+              size="small"
+              onClick={() => window.open(constants.FEEDBACK_FORM_URL, '_blank')}
+            >
+              {formatMessage(header.feedbackButtonLabel)}
+            </Button>
+          </Hidden>
+        )}
         {user && (
-          <>
-            <Hidden below="md">
-              <Button
-                variant="ghost"
-                size="small"
-                onClick={() =>
-                  window.open(constants.FEEDBACK_FORM_URL, '_blank')
-                }
-              >
-                {formatMessage(header.feedbackButtonLabel)}
-              </Button>
-            </Hidden>
-            <UserMenu
-              language="is"
-              authenticated={isAuthenticated}
-              username={user.name}
-              dropdownItems={
-                <>
-                  <div className={styles.dropdownItem}>
-                    <Box marginRight={2}>
-                      <Icon icon="person" type="outline" color="blue400" />
+          <UserMenu
+            language="is"
+            authenticated={isAuthenticated}
+            username={user.name}
+            dropdownItems={
+              <>
+                <div className={styles.dropdownItem}>
+                  <Box marginRight={2}>
+                    <Icon icon="person" type="outline" color="blue400" />
+                  </Box>
+                  <Box>
+                    <Box marginBottom={2}>
+                      <Text>
+                        {capitalize(
+                          isDefenceUser(user)
+                            ? formatMessage(header.defender)
+                            : user.title,
+                        )}
+                      </Text>
+                    </Box>
+                    <Box marginBottom={2}>
+                      <Text>
+                        {capitalize(
+                          isDefenceUser(user)
+                            ? practice
+                            : user.institution?.name,
+                        )}
+                      </Text>
+                    </Box>
+                    <Box marginBottom={2}>
+                      <Text>
+                        {formatPhoneNumber(
+                          isDefenceUser(user) ? phoneNr : user.mobileNumber,
+                        )}
+                      </Text>
                     </Box>
                     <Box>
-                      <Box marginBottom={2}>
-                        <Text>
-                          {capitalize(
-                            isDefenceUser(user)
-                              ? formatMessage(header.defender)
-                              : user.title,
-                          )}
-                        </Text>
-                      </Box>
-                      <Box marginBottom={2}>
-                        <Text>
-                          {capitalize(
-                            isDefenceUser(user)
-                              ? practice
-                              : user.institution?.name,
-                          )}
-                        </Text>
-                      </Box>
-                      <Box marginBottom={2}>
-                        <Text>
-                          {formatPhoneNumber(
-                            isDefenceUser(user) ? phoneNr : user.mobileNumber,
-                          )}
-                        </Text>
-                      </Box>
-                      <Box>
-                        <Text>{isDefenceUser(user) ? email : user.email}</Text>
-                      </Box>
+                      <Text>{isDefenceUser(user) ? email : user.email}</Text>
                     </Box>
-                  </div>
-                  <div className={styles.dropdownItem}>
-                    <Box marginRight={2}>
-                      <Icon
-                        icon="informationCircle"
-                        type="outline"
-                        color="blue400"
+                  </Box>
+                </div>
+                <div className={styles.dropdownItem}>
+                  <Box marginRight={2}>
+                    <Icon
+                      icon="informationCircle"
+                      type="outline"
+                      color="blue400"
+                    />
+                  </Box>
+                  <Box>
+                    {isDefenceUser(user) ? (
+                      <Text>
+                        {formatMessage(header.tipDisclaimerDefenders)}
+                      </Text>
+                    ) : (
+                      <MarkdownWrapper
+                        markdown={formatMessage(header.tipDisclaimer, {
+                          linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
+                          linkEnd: '</a>',
+                        })}
                       />
-                    </Box>
-                    <Box>
-                      {isDefenceUser(user) ? (
-                        <Text>
-                          {formatMessage(header.tipDisclaimerDefenders)}
-                        </Text>
-                      ) : (
-                        <MarkdownWrapper
-                          markdown={formatMessage(header.tipDisclaimer, {
-                            linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
-                            linkEnd: '</a>',
-                          })}
-                        />
-                      )}
-                    </Box>
-                  </div>
-                </>
-              }
-              onLogout={handleLogout}
-            />
-          </>
+                    )}
+                  </Box>
+                </div>
+              </>
+            }
+            onLogout={handleLogout}
+          />
         )}
       </Inline>
     </Container>

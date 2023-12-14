@@ -39,16 +39,7 @@ export const PaymentInformation = ({
       isEditable={editable}
       editAction={() => goToScreen?.('paymentInfo')}
     >
-      {bankAccountType === BankAccountType.ICELANDIC ? (
-        <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(oldAgePensionFormMessage.review.bank)}
-              value={formatBankInfo(bank)}
-            />
-          </GridColumn>
-        </GridRow>
-      ) : (
+      {bankAccountType === BankAccountType.FOREIGN ? (
         <>
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
@@ -102,6 +93,15 @@ export const PaymentInformation = ({
             </GridColumn>
           </GridRow>
         </>
+      ) : (
+        <GridRow marginBottom={3}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(oldAgePensionFormMessage.review.bank)}
+              value={formatBankInfo(bank)}
+            />
+          </GridColumn>
+        </GridRow>
       )}
 
       <GridRow>

@@ -3,10 +3,19 @@ import cn from 'classnames'
 
 import * as styles from './Swiper.css'
 
-const FALLBACK_WIDTH = 316
+const FALLBACK_WIDTH = 10
 
-export const Swiper: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
-  const [width, setWidth] = useState<number>(FALLBACK_WIDTH)
+interface Props {
+  itemWidth?: number
+  className?: string
+}
+
+export const Swiper: FC<React.PropsWithChildren<Props>> = ({
+  children,
+  itemWidth,
+  className,
+}) => {
+  const [width, setWidth] = useState<number>(itemWidth ?? FALLBACK_WIDTH)
   const ref = useRef<HTMLDivElement>(null)
 
   const onResize = useCallback(() => {
@@ -31,9 +40,12 @@ export const Swiper: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
           {arr.map((child, i) => (
             <div
               key={i}
-              className={styles.slide}
+              className={cn(styles.slide, {
+                [`${className}`]: !!className,
+                [styles.noMargin]: i === 0,
+              })}
               style={{
-                width,
+                width: itemWidth,
                 aspectRatio: '1/1',
               }}
             >

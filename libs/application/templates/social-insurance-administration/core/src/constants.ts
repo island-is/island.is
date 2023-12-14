@@ -2,6 +2,7 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
+  SEND_DOCUMENTS = 'sendDocuments',
 }
 
 export enum BankAccountType {
