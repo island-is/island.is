@@ -54,65 +54,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
   }),
 
-  confirm: defineMessages({
-    section: {
-      id: 'asfte.application:confirmation.section',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirmation',
-    },
-    title: {
-      id: 'asfte.application:confirmation.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Review and submit',
-    },
-    description: {
-      id: 'asfte.application:confirm.description',
-      defaultMessage:
-        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-      description: 'Please review the application before submitting.',
-    },
-    buttonEdit: {
-      id: 'asfte.application:button.edit',
-      defaultMessage: 'Breyta umsókn',
-      description: 'Edit application',
-    },
-    additionalDocumentsAttachment: {
-      id: 'asfte.application:additional.documents.attachment',
-      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
-      description: 'Additional documents to Tryggingastofnunar',
-    },
-    overviewTitle: {
-      id: 'asfte.application:confirm.overview.title',
-      defaultMessage: 'Yfirlit',
-      description: 'Overview',
-    },
-    name: {
-      id: 'asfte.application:confirm.name',
-      defaultMessage: 'Nafn',
-      description: 'Name',
-    },
-    nationalId: {
-      id: 'asfte.application:confirm.nationalId',
-      defaultMessage: 'Kennitala',
-      description: 'National registry ID',
-    },
-    email: {
-      id: 'asfte.application:confirm.email',
-      defaultMessage: 'Netfang',
-      description: 'Email',
-    },
-    phonenumber: {
-      id: 'asfte.application:confirm.phonenumber',
-      defaultMessage: 'Símanúmer',
-      description: 'phonenumber',
-    },
-    cancelButton: {
-      id: 'asfte.application:cancel.button',
-      defaultMessage: 'Hætta við',
-      description: 'Cancel',
-    },
-  }),
-
   fileUpload: defineMessages({
     title: {
       id: 'asfte.application:fileUpload.title',

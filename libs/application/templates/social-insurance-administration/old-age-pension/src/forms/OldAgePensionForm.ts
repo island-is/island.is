@@ -102,7 +102,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.ID',
-                  title: oldAgePensionFormMessage.applicant.applicantInfoId,
+                  title:
+                    socialInsuranceAdministrationMessage.confirm.nationalId,
                   format: '######-####',
                   width: 'half',
                   backgroundColor: 'white',
@@ -232,7 +233,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.spouseID',
-                  title: oldAgePensionFormMessage.applicant.applicantInfoId,
+                  title:
+                    socialInsuranceAdministrationMessage.confirm.nationalId,
                   format: '######-####',
                   width: 'half',
                   backgroundColor: 'white',
@@ -948,7 +950,7 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: oldAgePensionFormMessage.review.overviewTitle,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [
         buildMultiField({
           id: 'confirm',
@@ -968,11 +970,12 @@ export const OldAgePensionForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: oldAgePensionFormMessage.review.confirmTitle,
+              title: socialInsuranceAdministrationMessage.confirm.submitButton,
               actions: [
                 {
                   event: DefaultEvents.ABORT,
-                  name: oldAgePensionFormMessage.review.cancelButton,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .cancelButton,
                   type: 'reject',
                   condition: (answers) => {
                     const { tempAnswers } = getApplicationAnswers(answers)
@@ -981,7 +984,8 @@ export const OldAgePensionForm: Form = buildForm({
                 },
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: oldAgePensionFormMessage.review.confirmTitle,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .submitButton,
                   type: 'primary',
                 },
               ],

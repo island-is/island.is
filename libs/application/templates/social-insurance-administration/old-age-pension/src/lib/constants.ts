@@ -1,5 +1,6 @@
 import { oldAgePensionFormMessage } from './messages'
 import { MessageDescriptor } from 'react-intl'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 
 export const oldAgePensionAge = 67
 export const earlyRetirementMinAge = 65
@@ -50,7 +51,7 @@ export const AttachmentLabel: {
   selfEmployedAttachment:
     oldAgePensionFormMessage.review.selfEmployedAttachment,
   additionalDocuments:
-    oldAgePensionFormMessage.review.additionalDocumentsAttachment,
+    socialInsuranceAdministrationMessage.confirm.additionalDocumentsAttachment,
 }
 
 const married = 'Gift/ur'

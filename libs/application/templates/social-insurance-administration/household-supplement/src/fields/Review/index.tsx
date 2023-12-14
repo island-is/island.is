@@ -11,7 +11,7 @@ import { Payment } from './review-groups/Payment'
 import { HouseholdSupplement } from './review-groups/HouseholdSupplement'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
-import { householdSupplementFormMessage } from '../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Period } from './review-groups/Period'
@@ -85,14 +85,15 @@ export const Review: FC<ReviewScreenProps> = ({
             <Box marginBottom={2}>
               <Text variant="h2">
                 {formatMessage(
-                  householdSupplementFormMessage.confirm.overviewTitle,
+                  socialInsuranceAdministrationMessage.confirm.overviewTitle,
                 )}
               </Text>
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
                 {formatMessage(
-                  householdSupplementFormMessage.confirm.description,
+                  socialInsuranceAdministrationMessage.confirm
+                    .overviewDescription,
                 )}
               </Text>
             </Box>
@@ -120,7 +121,7 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Text variant="h2">
               {formatMessage(
-                householdSupplementFormMessage.confirm.overviewTitle,
+                socialInsuranceAdministrationMessage.confirm.overviewTitle,
               )}
             </Text>
           </Box>
@@ -139,7 +140,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 onClick={() => handleSubmit('EDIT')}
               >
                 {formatMessage(
-                  householdSupplementFormMessage.confirm.buttonsEdit,
+                  socialInsuranceAdministrationMessage.confirm.editButton,
                 )}
               </Button>
             )}

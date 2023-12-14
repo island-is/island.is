@@ -398,7 +398,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: additionalSupportForTheElderyFormMessage.confirm.overviewTitle,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [
         buildMultiField({
           id: 'confirm',
@@ -418,11 +418,11 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: additionalSupportForTheElderyFormMessage.confirm.title,
+              title: socialInsuranceAdministrationMessage.confirm.submitButton,
               actions: [
                 {
                   event: DefaultEvents.ABORT,
-                  name: additionalSupportForTheElderyFormMessage.confirm
+                  name: socialInsuranceAdministrationMessage.confirm
                     .cancelButton,
                   type: 'reject',
                   condition: (answers) => {
@@ -432,7 +432,8 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 },
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: additionalSupportForTheElderyFormMessage.confirm.title,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .submitButton,
                   type: 'primary',
                 },
               ],

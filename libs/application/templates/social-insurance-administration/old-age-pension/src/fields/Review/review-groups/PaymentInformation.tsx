@@ -144,7 +144,7 @@ export const PaymentInformation = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.taxLevel)}
+            label={formatMessage(oldAgePensionFormMessage.payment.taxLevel)}
             value={formatMessage(getTaxLevelOption(taxLevel))}
           />
         </GridColumn>

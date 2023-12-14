@@ -247,6 +247,56 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description: 'Select currency',
     },
   }),
+
+  confirm: defineMessages({
+    section: {
+      id: 'sia.application:confirm.section',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation',
+    },
+    overviewTitle: {
+      id: 'sia.application:confirm.overview.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
+    },
+    overviewDescription: {
+      id: 'sia.application:confirm.overview.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Please review the application before submitting.',
+    },
+    additionalDocumentsAttachment: {
+      id: 'sia.application:confirm.additional.documents.attachment',
+      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
+      description:
+        'Additional documents for the Social Insurance Administration',
+    },
+    name: {
+      id: 'sia.application:confirm.name',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'sia.application:confirm.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'Icelandic ID number',
+    },
+    submitButton: {
+      id: 'sia.application:confirm.submit.button',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application',
+    },
+    editButton: {
+      id: 'sia.application:confirm.edit.button',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
+    },
+    cancelButton: {
+      id: 'sia.application:confirm.cancel.button',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
+  }),
 }
 
 export const errorMessages = defineMessages({

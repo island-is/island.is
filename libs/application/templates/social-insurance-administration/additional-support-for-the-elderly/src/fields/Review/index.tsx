@@ -8,7 +8,7 @@ import has from 'lodash/has'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { States } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { additionalSupportForTheElderyFormMessage } from '../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { getApplicationAnswers } from '../../lib/additionalSupportForTheElderlyUtils'
 import { Comment } from './review-groups/Comment'
 import { Period } from './review-groups/Period'
@@ -88,15 +88,15 @@ export const Review: FC<ReviewScreenProps> = ({
             <Box marginBottom={2}>
               <Text variant="h2">
                 {formatMessage(
-                  additionalSupportForTheElderyFormMessage.confirm
-                    .overviewTitle,
+                  socialInsuranceAdministrationMessage.confirm.overviewTitle,
                 )}
               </Text>
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
                 {formatMessage(
-                  additionalSupportForTheElderyFormMessage.confirm.description,
+                  socialInsuranceAdministrationMessage.confirm
+                    .overviewDescription,
                 )}
               </Text>
             </Box>
@@ -123,7 +123,7 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Text variant="h2">
               {formatMessage(
-                additionalSupportForTheElderyFormMessage.confirm.overviewTitle,
+                socialInsuranceAdministrationMessage.confirm.overviewTitle,
               )}
             </Text>
           </Box>
@@ -142,7 +142,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 onClick={() => handleSubmit('EDIT')}
               >
                 {formatMessage(
-                  additionalSupportForTheElderyFormMessage.confirm.buttonEdit,
+                  socialInsuranceAdministrationMessage.confirm.editButton,
                 )}
               </Button>
             )}

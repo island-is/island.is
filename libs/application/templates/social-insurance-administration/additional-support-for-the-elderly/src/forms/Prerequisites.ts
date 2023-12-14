@@ -123,12 +123,12 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: additionalSupportForTheElderyFormMessage.confirm.overviewTitle,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [],
     }),
     buildSection({
       id: 'conclusion',
-      title: additionalSupportForTheElderyFormMessage.confirm.section,
+      title: socialInsuranceAdministrationMessage.confirm.section,
       children: [],
     }),
   ],

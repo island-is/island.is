@@ -210,27 +210,6 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 
   confirm: defineMessages({
-    section: {
-      id: 'hs.application:confirm.section',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirm',
-    },
-    title: {
-      id: 'hs.application:confirm.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Submit application',
-    },
-    description: {
-      id: 'hs.application:confirm.description',
-      defaultMessage:
-        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-      description: 'Please review the application before submitting.',
-    },
-    cancelButton: {
-      id: 'hs.application:cancel.button',
-      defaultMessage: 'Hætta við',
-      description: 'Cancel',
-    },
     leaseAgreementAttachment: {
       id: 'hs.application:confirm.lease.agreement.attachment',
       defaultMessage: 'Undirritaður leigusamningur',
@@ -240,41 +219,6 @@ export const householdSupplementFormMessage: MessageDir = {
       id: 'hs.application:confirm.school.confirmation.attachment',
       defaultMessage: 'Vottorð um skólavist ungmennis',
       description: 'Certificate of school attendance of a young person',
-    },
-    additionalDocumentsAttachment: {
-      id: 'hs.application:confirm.additional.documents.attachment',
-      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
-      description: 'Additional documents to Tryggingastofnunar',
-    },
-    overviewTitle: {
-      id: 'hs.application:confirm.overview.title',
-      defaultMessage: 'Yfirlit',
-      description: 'Overview',
-    },
-    buttonsEdit: {
-      id: 'hs.application:confirm.buttons.edit',
-      defaultMessage: 'Breyta umsókn',
-      description: 'Edit application',
-    },
-    name: {
-      id: 'hs.application:confirm.name',
-      defaultMessage: 'Nafn',
-      description: 'Name',
-    },
-    nationalId: {
-      id: 'hs.application:confirm.nationalId',
-      defaultMessage: 'Kennitala',
-      description: 'National registry ID',
-    },
-    email: {
-      id: 'hs.application:confirm.email',
-      defaultMessage: 'Netfang',
-      description: 'Email',
-    },
-    phonenumber: {
-      id: 'hs.application:confirm.phonenumber',
-      defaultMessage: 'Símanúmer',
-      description: 'phonenumber',
     },
   }),
 

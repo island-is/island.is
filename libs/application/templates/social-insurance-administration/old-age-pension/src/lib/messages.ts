@@ -130,11 +130,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Fullt nafn',
       description: 'Full name',
     },
-    applicantInfoId: {
-      id: 'oap.application:applicant.info.id',
-      defaultMessage: 'Kennitala',
-      description: 'National registry ID',
-    },
     applicantInfoAddress: {
       id: 'oap.application:applicant.info.address',
       defaultMessage: 'Póstfang',
@@ -268,71 +263,15 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   review: defineMessages({
-    name: {
-      id: 'oap.application:review.name',
-      defaultMessage: 'Nafn',
-      description: 'Name',
-    },
-    nationalId: {
-      id: 'oap.application:review.nationalId',
-      defaultMessage: 'Kennitala',
-      description: 'National registry ID',
-    },
     address: {
       id: 'oap.application:review.address',
       defaultMessage: 'Heimili',
       description: 'Address',
     },
-    municipality: {
-      id: 'oap.application:review.municipality',
-      defaultMessage: 'Sveitarfélag',
-      description: 'Municipality',
-    },
-    email: {
-      id: 'oap.application:review.email',
-      defaultMessage: 'Netfang',
-      description: 'Email',
-    },
-    phonenumber: {
-      id: 'oap.application:review.phonenumber',
-      defaultMessage: 'Símanúmer',
-      description: 'phonenumber',
-    },
-    spouseName: {
-      id: 'oap.application:review.spouse.name',
-      defaultMessage: 'Nafn maka',
-      description: `Spouse's name`,
-    },
-    period: {
-      id: 'oap.application:review.period',
-      defaultMessage: 'Tímabil',
-      description: `Period`,
-    },
     fishermen: {
       id: 'oap.application:review.fishermen',
       defaultMessage: 'Ellilífeyri sjómanna',
       description: `Fishermen`,
-    },
-    confirmSectionTitle: {
-      id: 'oap.application:confirmation.section.title',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirm',
-    },
-    confirmTitle: {
-      id: 'oap.application:confirmation.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Submit application',
-    },
-    confirmationDescription: {
-      id: 'oap.application:confirmation.description',
-      defaultMessage:
-        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-      description: 'Please review the application before submitting.',
-    },
-    cancelButton: {
-      id: 'oap.application:cancel.button',
-      defaultMessage: 'Hætta við',
-      description: 'Cancel',
     },
     personalAllowance: {
       id: 'oap.application:conformation.personal.allowance',
@@ -344,25 +283,10 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Persónuafsláttur maka',
       description: 'Spouse personal allowance',
     },
-    taxLevel: {
-      id: 'oap.application:conformation.tax.level',
-      defaultMessage: 'Skattþrep',
-      description: 'Tax level',
-    },
     ratio: {
       id: 'oap.application:conformation.ratio',
       defaultMessage: 'Hlutall',
       description: 'Ratio',
-    },
-    overviewTitle: {
-      id: 'oap.application:overview.title',
-      defaultMessage: 'Yfirlit',
-      description: 'Overview',
-    },
-    buttonsEdit: {
-      id: 'oap.application:buttonsEdit',
-      defaultMessage: 'Breyta umsókn',
-      description: 'Edit application',
     },
     pensionAttachment: {
       id: 'oap.application:review.pension.attachment',
@@ -390,11 +314,6 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Staðfesting á lækkun á reiknuðu endurgjaldi (fæst hjá RSK)',
       description:
         'Confirmation of a reduction in the calculated remuneration (available from RSK)',
-    },
-    additionalDocumentsAttachment: {
-      id: 'oap.application:review.additional.documents.attachment',
-      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
-      description: 'Additional documents to Tryggingastofnunar',
     },
   }),
 
