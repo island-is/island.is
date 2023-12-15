@@ -13,3 +13,25 @@ export const paymentOverviewHeaders = [
   'Heildarupphæð',
   'Hlutur trygginga',
 ]
+
+export const aidHeaders = [
+  'Heiti',
+  'Hámarksgr. af stk.',
+  'Hlutfall Sjúkratrygginga',
+  'Heimild nú til úttektar',
+  'Næst heimild til úttektar',
+  'Afgr. staður',
+  'Heimild gildir til',
+  'Heimild á 12 mán. tímabili',
+  'Nánari skýring',
+]
+
+export const nutritionHeaders = [
+  'Heiti',
+  'Hámarksupphæð á mánuði',
+  'Hlutfall Sjúkratrygginga % eða fyrst greitt af umsækjanda á mánuði',
+  'Heimild nú til úttektar',
+  'Næst heimild til úttektar',
+  'Heimild gildir til',
+  'Nánari skýring',
+]
