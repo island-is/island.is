@@ -26,20 +26,22 @@ import {
   getBankIsk,
   typeOfBankInfo,
   getCurrencies,
+  getYesNoOptions,
+  getTaxOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import {
   BankAccountType,
   FILE_SIZE_LIMIT,
+  MONTHS,
+  TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
   getApplicationExternalData,
   getAvailableYears,
-  getTaxOptions,
-  getYesNOOptions,
 } from '../lib/additionalSupportForTheElderlyUtils'
-import { MONTHS, TaxLevelOptions } from '../lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { getApplicationAnswers } from '../lib/additionalSupportForTheElderlyUtils'
@@ -47,36 +49,33 @@ import isEmpty from 'lodash/isEmpty'
 
 export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyDraft',
-  title: additionalSupportForTheElderyFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'prerequisites',
-      title: additionalSupportForTheElderyFormMessage.pre.externalDataSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [],
     }),
     buildSection({
       id: 'infoSection',
-      title: additionalSupportForTheElderyFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
-          title: additionalSupportForTheElderyFormMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title:
-                additionalSupportForTheElderyFormMessage.info.subSectionTitle,
+              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
               description:
-                additionalSupportForTheElderyFormMessage.info
-                  .subSectionDescription,
+                socialInsuranceAdministrationMessage.info.subSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.email',
                   title:
-                    additionalSupportForTheElderyFormMessage.info
-                      .applicantEmail,
+                    socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   disabled: true,
@@ -90,7 +89,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                    additionalSupportForTheElderyFormMessage.info
+                    socialInsuranceAdministrationMessage.info
                       .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
@@ -106,17 +105,16 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'payment',
-          title: additionalSupportForTheElderyFormMessage.payment.title,
+          title: socialInsuranceAdministrationMessage.payment.title,
           children: [
             buildMultiField({
               id: 'paymentInfo',
-              title: additionalSupportForTheElderyFormMessage.payment.title,
+              title: socialInsuranceAdministrationMessage.payment.title,
               description: '',
               children: [
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
-                  title:
-                    additionalSupportForTheElderyFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -130,9 +128,9 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                       typeOfBankInfo(bankInfo, bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
-                      ? additionalSupportForTheElderyFormMessage.payment
+                      ? socialInsuranceAdministrationMessage.payment
                           .alertMessage
-                      : additionalSupportForTheElderyFormMessage.payment
+                      : socialInsuranceAdministrationMessage.payment
                           .alertMessageForeign
                   },
                   doesNotRequireAnswer: true,
@@ -154,13 +152,13 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                   options: [
                     {
                       label:
-                        additionalSupportForTheElderyFormMessage.payment
+                        socialInsuranceAdministrationMessage.payment
                           .icelandicBankAccount,
                       value: BankAccountType.ICELANDIC,
                     },
                     {
                       label:
-                        additionalSupportForTheElderyFormMessage.payment
+                        socialInsuranceAdministrationMessage.payment
                           .foreignBankAccount,
                       value: BankAccountType.FOREIGN,
                     },
@@ -170,7 +168,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bank',
-                  title: additionalSupportForTheElderyFormMessage.payment.bank,
+                  title: socialInsuranceAdministrationMessage.payment.bank,
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
@@ -192,7 +190,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.iban',
-                  title: additionalSupportForTheElderyFormMessage.payment.iban,
+                  title: socialInsuranceAdministrationMessage.payment.iban,
                   placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -213,7 +211,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.swift',
-                  title: additionalSupportForTheElderyFormMessage.payment.swift,
+                  title: socialInsuranceAdministrationMessage.payment.swift,
                   placeholder: 'AAAA BB CC XXX',
                   width: 'half',
                   defaultValue: (application: Application) => {
@@ -235,12 +233,10 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'paymentInfo.currency',
-                  title:
-                    additionalSupportForTheElderyFormMessage.payment.currency,
+                  title: socialInsuranceAdministrationMessage.payment.currency,
                   width: 'half',
                   placeholder:
-                    additionalSupportForTheElderyFormMessage.payment
-                      .selectCurrency,
+                    socialInsuranceAdministrationMessage.payment.selectCurrency,
                   options: ({ externalData }: Application) => {
                     const { currencies } =
                       getApplicationExternalData(externalData)
@@ -265,8 +261,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankName',
-                  title:
-                    additionalSupportForTheElderyFormMessage.payment.bankName,
+                  title: socialInsuranceAdministrationMessage.payment.bankName,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -288,8 +283,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 buildTextField({
                   id: 'paymentInfo.bankAddress',
                   title:
-                    additionalSupportForTheElderyFormMessage.payment
-                      .bankAddress,
+                    socialInsuranceAdministrationMessage.payment.bankAddress,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -311,9 +305,9 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 buildRadioField({
                   id: 'paymentInfo.personalAllowance',
                   title:
-                    additionalSupportForTheElderyFormMessage.payment
+                    socialInsuranceAdministrationMessage.payment
                       .personalAllowance,
-                  options: getYesNOOptions(),
+                  options: getYesNoOptions(),
                   width: 'half',
                   largeButtons: true,
                   required: true,
@@ -322,7 +316,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 buildTextField({
                   id: 'paymentInfo.personalAllowanceUsage',
                   title:
-                    additionalSupportForTheElderyFormMessage.payment
+                    socialInsuranceAdministrationMessage.payment
                       .personalAllowancePercentage,
                   suffix: '%',
                   condition: (answers) => {
@@ -337,10 +331,9 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'payment.spouseAllowance.alert',
-                  title:
-                    additionalSupportForTheElderyFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message:
-                    additionalSupportForTheElderyFormMessage.payment
+                    socialInsuranceAdministrationMessage.payment
                       .alertSpouseAllowance,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
@@ -353,8 +346,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.taxLevel',
-                  title:
-                    additionalSupportForTheElderyFormMessage.payment.taxLevel,
+                  title: socialInsuranceAdministrationMessage.payment.taxLevel,
                   options: getTaxOptions(),
                   width: 'full',
                   largeButtons: true,
@@ -369,32 +361,30 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: additionalSupportForTheElderyFormMessage.info.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [
         buildMultiField({
           id: 'periodField',
-          title: additionalSupportForTheElderyFormMessage.info.periodTitle,
+          title: socialInsuranceAdministrationMessage.period.title,
           description:
             additionalSupportForTheElderyFormMessage.info.periodDescription,
           children: [
             buildSelectField({
               id: 'period.year',
-              title: additionalSupportForTheElderyFormMessage.info.periodYear,
+              title: socialInsuranceAdministrationMessage.period.year,
               width: 'half',
               placeholder:
-                additionalSupportForTheElderyFormMessage.info
-                  .periodYearDefaultText,
+                socialInsuranceAdministrationMessage.period.yearDefaultText,
               options: (application: Application) => {
                 return getAvailableYears(application)
               },
             }),
             buildSelectField({
               id: 'period.month',
-              title: additionalSupportForTheElderyFormMessage.info.periodMonth,
+              title: socialInsuranceAdministrationMessage.period.month,
               width: 'half',
               placeholder:
-                additionalSupportForTheElderyFormMessage.info
-                  .periodMonthDefaultText,
+                socialInsuranceAdministrationMessage.period.monthDefaultText,
               options: MONTHS,
             }),
           ],
@@ -403,19 +393,17 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'additionalInformation',
-      title:
-        additionalSupportForTheElderyFormMessage.comment.additionalInfoTitle,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
           title:
-            additionalSupportForTheElderyFormMessage.fileUpload
-              .additionalFileTitle,
+            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFiles.additionalDocuments',
               title:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
                 additionalSupportForTheElderyFormMessage.fileUpload
@@ -425,17 +413,17 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                   .additionalFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentHeader,
               uploadDescription:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentDescription,
               uploadButtonLabel:
-                additionalSupportForTheElderyFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .attachmentButton,
               uploadMultiple: true,
             }),
@@ -444,18 +432,21 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         buildSubSection({
           id: 'commentSection',
           title:
-            additionalSupportForTheElderyFormMessage.comment.commentSection,
+            socialInsuranceAdministrationMessage.additionalInfo.commentSection,
           children: [
             buildTextField({
               id: 'comment',
               title:
-                additionalSupportForTheElderyFormMessage.comment.commentSection,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentSection,
               variant: 'textarea',
               rows: 10,
               description:
-                additionalSupportForTheElderyFormMessage.comment.description,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentDescription,
               placeholder:
-                additionalSupportForTheElderyFormMessage.comment.placeholder,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentPlaceholder,
             }),
           ],
         }),
@@ -463,7 +454,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: additionalSupportForTheElderyFormMessage.confirm.overviewTitle,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [
         buildMultiField({
           id: 'confirm',
@@ -483,11 +474,11 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: additionalSupportForTheElderyFormMessage.confirm.title,
+              title: socialInsuranceAdministrationMessage.confirm.submitButton,
               actions: [
                 {
                   event: DefaultEvents.ABORT,
-                  name: additionalSupportForTheElderyFormMessage.confirm
+                  name: socialInsuranceAdministrationMessage.confirm
                     .cancelButton,
                   type: 'reject',
                   condition: (answers) => {
@@ -497,7 +488,8 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 },
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: additionalSupportForTheElderyFormMessage.confirm.title,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .submitButton,
                   type: 'primary',
                 },
               ],
@@ -508,11 +500,14 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildFormConclusionSection({
       multiFieldTitle:
-        additionalSupportForTheElderyFormMessage.conclusionScreen.title,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle,
       alertTitle:
-        additionalSupportForTheElderyFormMessage.conclusionScreen.title,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle,
       alertMessage:
-        additionalSupportForTheElderyFormMessage.conclusionScreen.alertTitle,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .incomePlanAlertMessage,
       alertType: 'warning',
       expandableDescription:
         additionalSupportForTheElderyFormMessage.conclusionScreen.bulletList,
@@ -520,10 +515,10 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         additionalSupportForTheElderyFormMessage.conclusionScreen.nextStepsText,
       bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
       bottomButtonLabel:
-        additionalSupportForTheElderyFormMessage.conclusionScreen
+        socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanCardLabel,
       bottomButtonMessage:
-        additionalSupportForTheElderyFormMessage.conclusionScreen
+        socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanCardText,
     }),
   ],

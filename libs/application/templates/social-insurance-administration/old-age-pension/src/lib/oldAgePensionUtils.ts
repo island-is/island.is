@@ -6,20 +6,14 @@ import {
   earlyRetirementMaxAge,
   ApplicationType,
   Employment,
-  TaxLevelOptions,
-  MONTHS,
   AttachmentLabel,
   AttachmentTypes,
 } from './constants'
 import {
-  Option,
   Application,
   NationalRegistryResidenceHistory,
   YesOrNo,
-  YES,
-  NO,
 } from '@island.is/application/types'
-import { oldAgePensionFormMessage } from './messages'
 
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
@@ -32,7 +26,11 @@ import {
   SelfEmployed,
   FileUpload,
 } from '../types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  MONTHS,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
   Attachments,
   BankInfo,
@@ -523,40 +521,6 @@ export function getCombinedResidenceHistory(
   })
 
   return [...combinedResidenceHistory].reverse()
-}
-
-export function getYesNOOptions() {
-  const options: Option[] = [
-    {
-      value: YES,
-      label: oldAgePensionFormMessage.shared.yes,
-    },
-    {
-      value: NO,
-      label: oldAgePensionFormMessage.shared.no,
-    },
-  ]
-
-  return options
-}
-
-export function getTaxOptions() {
-  const options: Option[] = [
-    {
-      value: TaxLevelOptions.INCOME,
-      label: oldAgePensionFormMessage.payment.taxIncomeLevel,
-    },
-    {
-      value: TaxLevelOptions.FIRST_LEVEL,
-      label: oldAgePensionFormMessage.payment.taxFirstLevel,
-    },
-    {
-      value: TaxLevelOptions.SECOND_LEVEL,
-      label: oldAgePensionFormMessage.payment.taxSecondLevel,
-    },
-  ]
-
-  return options
 }
 
 export function isMoreThan2Year(answers: Application['answers']) {

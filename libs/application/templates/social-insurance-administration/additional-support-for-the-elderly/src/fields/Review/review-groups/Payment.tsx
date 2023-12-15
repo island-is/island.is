@@ -6,12 +6,12 @@ import {
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { additionalSupportForTheElderyFormMessage } from '../../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/additionalSupportForTheElderlyUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { YES } from '@island.is/application/types'
-import { getTaxLevelOption } from './utils'
+import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 
 export const Payment = ({
   application,
@@ -44,7 +44,7 @@ export const Payment = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
-                additionalSupportForTheElderyFormMessage.payment.bank,
+                socialInsuranceAdministrationMessage.payment.bank,
               )}
               value={formatBankInfo(bank)}
             />
@@ -56,7 +56,7 @@ export const Payment = ({
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <DataValue
                 label={formatMessage(
-                  additionalSupportForTheElderyFormMessage.payment.iban,
+                  socialInsuranceAdministrationMessage.payment.iban,
                 )}
                 value={iban}
               />
@@ -69,7 +69,7 @@ export const Payment = ({
             >
               <DataValue
                 label={formatMessage(
-                  additionalSupportForTheElderyFormMessage.payment.swift,
+                  socialInsuranceAdministrationMessage.payment.swift,
                 )}
                 value={swift}
               />
@@ -80,7 +80,7 @@ export const Payment = ({
             >
               <DataValue
                 label={formatMessage(
-                  additionalSupportForTheElderyFormMessage.payment.currency,
+                  socialInsuranceAdministrationMessage.payment.currency,
                 )}
                 value={currency}
               />
@@ -94,7 +94,7 @@ export const Payment = ({
             >
               <DataValue
                 label={formatMessage(
-                  additionalSupportForTheElderyFormMessage.payment.bankName,
+                  socialInsuranceAdministrationMessage.payment.bankName,
                 )}
                 value={bankName}
               />
@@ -105,7 +105,7 @@ export const Payment = ({
             >
               <DataValue
                 label={formatMessage(
-                  additionalSupportForTheElderyFormMessage.payment.bankAddress,
+                  socialInsuranceAdministrationMessage.payment.bankAddress,
                 )}
                 value={bankAddress}
               />
@@ -121,7 +121,7 @@ export const Payment = ({
         >
           <RadioValue
             label={formatMessage(
-              additionalSupportForTheElderyFormMessage.review.personalAllowance,
+              socialInsuranceAdministrationMessage.confirm.personalAllowance,
             )}
             value={personalAllowance}
           />
@@ -134,7 +134,7 @@ export const Payment = ({
           >
             <DataValue
               label={formatMessage(
-                additionalSupportForTheElderyFormMessage.review.ratio,
+                socialInsuranceAdministrationMessage.confirm.ratio,
               )}
               value={`${personalAllowanceUsage}%`}
             />
@@ -146,7 +146,7 @@ export const Payment = ({
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <DataValue
             label={formatMessage(
-              additionalSupportForTheElderyFormMessage.review.taxLevel,
+              socialInsuranceAdministrationMessage.payment.taxLevel,
             )}
             value={formatMessage(getTaxLevelOption(taxLevel))}
           />

@@ -28,6 +28,10 @@ import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { householdSupplementFormMessage, statesMessages } from './messages'
 import {
+  socialInsuranceAdministrationMessage,
+  statesMessages as coreSIAStatesMessages,
+} from '@island.is/application/templates/social-insurance-administration-core/messages'
+import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
@@ -60,7 +64,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
-  institution: householdSupplementFormMessage.shared.institution,
+  institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.householdSupplementApplication,
   translationNamespaces: [
     ApplicationConfigurations.HouseholdSupplement.translation,
@@ -121,10 +125,10 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            description: statesMessages.draftDescription,
+            description: coreSIAStatesMessages.draftDescription,
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
-              logMessage: statesMessages.applicationSent,
+              logMessage: coreSIAStatesMessages.applicationSent,
             },
           },
           onExit: defineTemplateApi({
@@ -165,17 +169,17 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
-              label: statesMessages.pendingTag,
+              label: coreSIAStatesMessages.pendingTag,
             },
             pendingAction: {
-              title: statesMessages.tryggingastofnunSubmittedTitle,
-              content: statesMessages.tryggingastofnunSubmittedContent,
+              title: coreSIAStatesMessages.tryggingastofnunSubmittedTitle,
+              content: coreSIAStatesMessages.tryggingastofnunSubmittedContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.applicationEdited,
+                logMessage: coreSIAStatesMessages.applicationEdited,
               },
             ],
           },
@@ -220,14 +224,14 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
-              title: statesMessages.tryggingastofnunInReviewTitle,
-              content: statesMessages.tryggingastofnunInReviewContent,
+              title: coreSIAStatesMessages.tryggingastofnunInReviewTitle,
+              content: coreSIAStatesMessages.tryggingastofnunInReviewContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.additionalDocumentsAdded,
+                logMessage: coreSIAStatesMessages.additionalDocumentsAdded,
               },
             ],
           },
@@ -270,8 +274,9 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               variant: 'red',
             },
             pendingAction: {
-              title: statesMessages.additionalDocumentRequired,
-              content: statesMessages.additionalDocumentRequiredDescription,
+              title: coreSIAStatesMessages.additionalDocumentRequired,
+              content:
+                coreSIAStatesMessages.additionalDocumentRequiredDescription,
               displayStatus: 'warning',
             },
           },
@@ -312,7 +317,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationApproved,
+              title: coreSIAStatesMessages.applicationApproved,
               content: statesMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
@@ -339,7 +344,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               {
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
                 onEvent: States.REJECTED,
-                logMessage: statesMessages.applicationRejected,
+                logMessage: coreSIAStatesMessages.applicationRejected,
               },
             ],
           },

@@ -1,4 +1,5 @@
 import { householdSupplementFormMessage } from './messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { MessageDescriptor } from 'react-intl'
 
 export enum HouseholdSupplementHousing {
@@ -18,25 +19,8 @@ export const AttachmentLabel: {
   schoolConfirmation:
     householdSupplementFormMessage.confirm.schoolConfirmationAttachment,
   additionalDocuments:
-    householdSupplementFormMessage.confirm.additionalDocumentsAttachment,
+    socialInsuranceAdministrationMessage.confirm.additionalDocumentsAttachment,
 }
-export const MONTHS = [
-  { value: 'January', label: householdSupplementFormMessage.months.january },
-  { value: 'February', label: householdSupplementFormMessage.months.february },
-  { value: 'March', label: householdSupplementFormMessage.months.march },
-  { value: 'April', label: householdSupplementFormMessage.months.april },
-  { value: 'May', label: householdSupplementFormMessage.months.may },
-  { value: 'June', label: householdSupplementFormMessage.months.june },
-  { value: 'July', label: householdSupplementFormMessage.months.july },
-  { value: 'August', label: householdSupplementFormMessage.months.august },
-  {
-    value: 'September',
-    label: householdSupplementFormMessage.months.september,
-  },
-  { value: 'October', label: householdSupplementFormMessage.months.october },
-  { value: 'November', label: householdSupplementFormMessage.months.november },
-  { value: 'December', label: householdSupplementFormMessage.months.desember },
-]
 
 export enum AttachmentTypes {
   LEASE_AGREEMENT = 'leaseAgreement',

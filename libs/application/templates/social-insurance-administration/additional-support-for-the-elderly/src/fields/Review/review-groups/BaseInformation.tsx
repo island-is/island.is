@@ -6,7 +6,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../lib/additionalSupportForTheElderlyUtils'
-import { additionalSupportForTheElderyFormMessage } from '../../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { ReviewGroupProps } from './props'
 import { formatNumber } from 'libphonenumber-js'
 
@@ -34,7 +34,7 @@ export const BaseInformation = ({
           >
             <DataValue
               label={formatMessage(
-                additionalSupportForTheElderyFormMessage.confirm.name,
+                socialInsuranceAdministrationMessage.confirm.name,
               )}
               value={applicantName}
             />
@@ -45,7 +45,7 @@ export const BaseInformation = ({
           >
             <DataValue
               label={formatMessage(
-                additionalSupportForTheElderyFormMessage.confirm.nationalId,
+                socialInsuranceAdministrationMessage.confirm.nationalId,
               )}
               value={formatKennitala(applicantNationalId)}
             />
@@ -60,7 +60,7 @@ export const BaseInformation = ({
         >
           <DataValue
             label={formatMessage(
-              additionalSupportForTheElderyFormMessage.confirm.email,
+              socialInsuranceAdministrationMessage.info.applicantEmail,
             )}
             value={email}
           />
@@ -69,7 +69,7 @@ export const BaseInformation = ({
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(
-              additionalSupportForTheElderyFormMessage.confirm.phonenumber,
+              socialInsuranceAdministrationMessage.info.applicantPhonenumber,
             )}
             value={formatNumber(applicantPhonenumber, 'International')}
           />

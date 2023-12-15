@@ -27,6 +27,10 @@ import {
 
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
+import {
+  socialInsuranceAdministrationMessage,
+  statesMessages as coreSIAStatesMessages,
+} from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
@@ -51,7 +55,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OLD_AGE_PENSION,
   name: oldAgePensionFormMessage.shared.applicationTitle,
-  institution: oldAgePensionFormMessage.shared.institution,
+  institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.oldAgePensionApplication,
   translationNamespaces: [
     ApplicationConfigurations.OldAgePension.translation,
@@ -105,7 +109,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            description: statesMessages.draftDescription,
+            description: coreSIAStatesMessages.draftDescription,
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
               logMessage: coreHistoryMessages.applicationSent,
@@ -150,17 +154,17 @@ const OldAgePensionTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
-              label: statesMessages.pendingTag,
+              label: coreSIAStatesMessages.pendingTag,
             },
             pendingAction: {
-              title: statesMessages.tryggingastofnunSubmittedTitle,
-              content: statesMessages.tryggingastofnunSubmittedContent,
+              title: coreSIAStatesMessages.tryggingastofnunSubmittedTitle,
+              content: coreSIAStatesMessages.tryggingastofnunSubmittedContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.applicationEdited,
+                logMessage: coreSIAStatesMessages.applicationEdited,
               },
             ],
           },
@@ -207,14 +211,14 @@ const OldAgePensionTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
-              title: statesMessages.tryggingastofnunInReviewTitle,
-              content: statesMessages.tryggingastofnunInReviewContent,
+              title: coreSIAStatesMessages.tryggingastofnunInReviewTitle,
+              content: coreSIAStatesMessages.tryggingastofnunInReviewContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: statesMessages.additionalDocumentsAdded,
+                logMessage: coreSIAStatesMessages.additionalDocumentsAdded,
               },
             ],
           },
@@ -257,8 +261,9 @@ const OldAgePensionTemplate: ApplicationTemplate<
               variant: 'red',
             },
             pendingAction: {
-              title: statesMessages.additionalDocumentRequired,
-              content: statesMessages.additionalDocumentRequiredDescription,
+              title: coreSIAStatesMessages.additionalDocumentRequired,
+              content:
+                coreSIAStatesMessages.additionalDocumentRequiredDescription,
               displayStatus: 'warning',
             },
           },
@@ -299,7 +304,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           status: 'approved',
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationApproved,
+              title: coreSIAStatesMessages.applicationApproved,
               content: statesMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
@@ -323,7 +328,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           status: 'rejected',
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationRejected,
+              title: coreSIAStatesMessages.applicationRejected,
               content: statesMessages.applicationRejectedDescription,
               displayStatus: 'error',
             },
@@ -331,7 +336,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               {
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
                 onEvent: States.REJECTED,
-                logMessage: statesMessages.applicationRejected,
+                logMessage: coreSIAStatesMessages.applicationRejected,
               },
             ],
           },
