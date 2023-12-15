@@ -2,15 +2,23 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  InputFileUpload,
+  Text,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseFileCategory,
   CaseTransition,
   isDefenceUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -30,7 +38,7 @@ import {
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
 
 const AppealToCourtOfAppeals = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -46,7 +54,7 @@ const AppealToCourtOfAppeals = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
-  const { transitionCase } = useCase()
+  const { transitionCase, setAndSendCaseToServer } = useCase()
 
   const appealBriefType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
@@ -88,62 +96,87 @@ const AppealToCourtOfAppeals = () => {
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           </Box>
         )}
-
-        <>
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(strings.appealBriefTitle)}
-              required
-            />
-            <InputFileUpload
-              fileList={uploadFiles.filter(
-                (file) => file.category === appealBriefType,
-              )}
-              accept={'application/pdf'}
-              header={formatMessage(core.uploadBoxTitle)}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
-              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-              onChange={(files) =>
-                handleUpload(
-                  addUploadFiles(files, appealBriefType),
-                  updateUploadFile,
-                )
-              }
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-            />
-          </Box>
+        <Box component="section" marginBottom={5}>
+          <SectionHeading
+            title={formatMessage(strings.appealBriefTitle)}
+            required
+          />
+          <InputFileUpload
+            fileList={uploadFiles.filter(
+              (file) => file.category === appealBriefType,
+            )}
+            accept={'application/pdf'}
+            header={formatMessage(core.uploadBoxTitle)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
+            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            onChange={(files) =>
+              handleUpload(
+                addUploadFiles(files, appealBriefType),
+                updateUploadFile,
+              )
+            }
+            onRemove={(file) => handleRemove(file, removeUploadFile)}
+            onRetry={(file) => handleRetry(file, updateUploadFile)}
+          />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <SectionHeading
+            title={formatMessage(strings.appealCaseFilesTitle)}
+            marginBottom={1}
+          />
+          <Text marginBottom={3}>
+            {formatMessage(strings.appealCaseFilesSubtitle)}
+          </Text>
+          <InputFileUpload
+            fileList={uploadFiles.filter(
+              (file) => file.category === appealCaseFilesType,
+            )}
+            accept={'application/pdf'}
+            header={formatMessage(core.uploadBoxTitle)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
+            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            onChange={(files) =>
+              handleUpload(
+                addUploadFiles(files, appealCaseFilesType),
+                updateUploadFile,
+              )
+            }
+            onRemove={(file) => handleRemove(file, removeUploadFile)}
+            onRetry={(file) => handleRetry(file, updateUploadFile)}
+          />
+        </Box>
+        {isProsecutionUser(user) && (
           <Box component="section" marginBottom={10}>
-            <SectionHeading
-              title={formatMessage(strings.appealCaseFilesTitle)}
-              marginBottom={1}
-            />
-            <Text marginBottom={3}>
-              {formatMessage(strings.appealCaseFilesSubtitle)}
-            </Text>
-            <InputFileUpload
-              fileList={uploadFiles.filter(
-                (file) => file.category === appealCaseFilesType,
-              )}
-              accept={'application/pdf'}
-              header={formatMessage(core.uploadBoxTitle)}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
-              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-              onChange={(files) =>
-                handleUpload(
-                  addUploadFiles(files, appealCaseFilesType),
-                  updateUploadFile,
-                )
-              }
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-            />
+            <BlueBox>
+              <Checkbox
+                label={formatMessage(
+                  strings.requestAppealRulingNotToBePublished,
+                )}
+                name="requestAppealRulingNotToBePublished"
+                checked={workingCase.requestAppealRulingNotToBePublished}
+                onChange={(event) => {
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        requestAppealRulingNotToBePublished:
+                          event.target.checked,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                large
+                filled
+              />
+            </BlueBox>
           </Box>
-        </>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

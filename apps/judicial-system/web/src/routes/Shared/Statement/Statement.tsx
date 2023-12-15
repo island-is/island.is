@@ -181,16 +181,16 @@ const Statement = () => {
               <Box component="section" marginBottom={10}>
                 <BlueBox>
                   <Checkbox
-                    label={formatMessage(strings.requestRulingPublishedDelayed)}
-                    name="requestRulingPublishedDelayed"
-                    checked={
-                      workingCase.requestCourtOfAppealRulingToBeNotPublished
-                    }
+                    label={formatMessage(
+                      strings.requestAppealRulingNotToBePublished,
+                    )}
+                    name="requestAppealRulingNotToBePublished"
+                    checked={workingCase.requestAppealRulingNotToBePublished}
                     onChange={(event) => {
                       setAndSendCaseToServer(
                         [
                           {
-                            requestCourtOfAppealRulingToBeNotPublished:
+                            requestAppealRulingNotToBePublished:
                               event.target.checked,
                             force: true,
                           },

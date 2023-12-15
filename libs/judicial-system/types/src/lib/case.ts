@@ -291,7 +291,7 @@ export interface Case {
   appealValidToDate?: string
   isAppealCustodyIsolation?: boolean
   appealIsolationToDate?: string
-  requestCourtOfAppealRulingToBeNotPublished?: boolean
+  requestAppealRulingNotToBePublished?: boolean
 }
 
 export interface CaseListEntry
@@ -415,7 +415,7 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
-    | 'requestCourtOfAppealRulingToBeNotPublished'
+    | 'requestAppealRulingNotToBePublished'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]

@@ -52,8 +52,8 @@ export const statement = defineMessages({
     description:
       'Texti í Greinargerð hefur verið send Landsrétti héraðsdómstól modal',
   },
-  requestRulingPublishedDelayed: {
-    id: 'judicial.system.core:request_ruling_published_delayed',
+  requestAppealRulingNotToBePublished: {
+    id: 'judicial.system.core:request_appeal_ruling_not_to_be_published',
     defaultMessage:
       'Þess er óskað að birtingu úrskurðar á vef Landsréttar verði frestað',
     description:

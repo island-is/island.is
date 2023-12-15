@@ -338,5 +338,5 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly requestCourtOfAppealRulingToBeNotPublished?: boolean
+  readonly requestAppealRulingNotToBePublished?: boolean
 }

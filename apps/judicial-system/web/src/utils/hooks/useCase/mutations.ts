@@ -281,7 +281,7 @@ export const UpdateCaseMutation = gql`
       appealValidToDate
       isAppealCustodyIsolation
       appealIsolationToDate
-      requestCourtOfAppealRulingToBeNotPublished
+      requestAppealRulingNotToBePublished
     }
   }
 `

@@ -224,7 +224,7 @@ const CaseQuery = gql`
       appealValidToDate
       isAppealCustodyIsolation
       appealIsolationToDate
-      requestCourtOfAppealRulingToBeNotPublished
+      requestAppealRulingNotToBePublished
       eventLogs {
         id
         created

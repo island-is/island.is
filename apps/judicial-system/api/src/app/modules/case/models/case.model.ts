@@ -380,5 +380,5 @@ export class Case implements TCase {
   readonly appealIsolationToDate?: string
 
   @Field(() => Boolean, { nullable: true })
-  readonly requestCourtOfAppealRulingToBeNotPublished?: boolean
+  readonly requestAppealRulingNotToBePublished?: boolean
 }
