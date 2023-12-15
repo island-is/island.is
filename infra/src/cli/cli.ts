@@ -7,7 +7,7 @@ import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
-yargs(process.argv.slice(2))
+const cli = yargs(process.argv.slice(2))
   .command(
     'render-env',
     'Render a chart for environment',
@@ -79,7 +79,11 @@ yargs(process.argv.slice(2))
         .option('dependencies', { array: true, type: 'string', default: [] })
         .option('json', { type: 'boolean', default: false })
         .option('dry', { type: 'boolean', default: false })
-        .option('no-update-secrets', { type: 'boolean', default: true })
+        .option('no-update-secrets', {
+          type: 'boolean',
+          default: true,
+          alias: ['nosecrets', 'no-secrets'],
+        })
         .option('print', { type: 'boolean', default: false })
         .option('proxies', { type: 'boolean', default: false })
         .option('never-fail', {

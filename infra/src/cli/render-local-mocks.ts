@@ -91,7 +91,7 @@ export async function runLocalServices(
     logger.warn('Starting proxies in the background')
     processes.push(
       runCommand({
-        command: 'yarn proxies',
+        command: '$PWD/scripts/run-proxies.sh',
         project: 'proxies',
         dryRun,
       }),
