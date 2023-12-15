@@ -1,9 +1,9 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 
-import { Box, LoadingDots, toast } from '@island.is/island-ui/core'
+import { LoadingDots, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseState,
@@ -27,8 +27,11 @@ import { isTrafficViolationCase } from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
+  const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
   // The id of the case that's about to be opened
-  const [isOpeningCaseId, setIsOpeningCaseId] = useState<string>()
+  const [clickedCase, setClickedCase] = useState<
+    [id: string | null, showLoading: boolean]
+  >([null, false])
 
   const { user, limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -127,7 +130,15 @@ const useCaseList = () => {
 
   const handleOpenCase = useCallback(
     (id: string) => {
-      setIsOpeningCaseId(id)
+      Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
+
+      setClickedCase([id, false])
+
+      timeouts.push(
+        setTimeout(() => {
+          setClickedCase([id, true])
+        }, 2000),
+      )
 
       const getCaseToOpen = (id: string) => {
         limitedAccess
@@ -138,41 +149,50 @@ const useCaseList = () => {
       if (
         isTransitioningCase ||
         isSendingNotification ||
-        isOpeningCaseId === id ||
+        clickedCase[0] === id ||
         !user?.role
       ) {
         return
       }
-      console.log('a')
 
-      // getCaseToOpen(id)
+      getCaseToOpen(id)
     },
     [
+      clickedCase,
       getCase,
       getLimitedAccessCase,
-      isOpeningCaseId,
       isSendingNotification,
       isTransitioningCase,
       limitedAccess,
+      timeouts,
       user?.role,
     ],
   )
 
   const LoadingIndicator = () => {
-    console.log('asdasd')
     return (
       <motion.div
-        key={`${isOpeningCaseId}-loading`}
+        key={`${clickedCase[0]}-loading`}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { delay: 2 } }}
+        animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
         <LoadingDots single />
       </motion.div>
     )
   }
 
-  return { isOpeningCaseId, handleOpenCase, LoadingIndicator }
+  return {
+    isOpeningCaseId: clickedCase[0],
+    showLoading: clickedCase[1],
+    handleOpenCase,
+    LoadingIndicator,
+  }
 }
 
 export default useCaseList

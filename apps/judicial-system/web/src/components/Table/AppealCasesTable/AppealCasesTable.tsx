@@ -35,15 +35,15 @@ import * as styles from '../Table.css'
 
 interface Props {
   cases: CaseListEntry[]
-  onRowClick: (id: string) => void
   loading: boolean
   showingCompletedCases?: boolean
 }
 
 const AppealCasesTable: React.FC<Props> = (props) => {
-  const { cases, onRowClick, loading, showingCompletedCases } = props
+  const { cases, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
-  const { isOpeningCaseId, LoadingIndicator } = useCaseList()
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
+    useCaseList()
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortAppealCases('appealedDate', 'descending', cases)
   const activeCasesData = useMemo(
@@ -62,8 +62,8 @@ const AppealCasesTable: React.FC<Props> = (props) => {
         <Box marginTop={2} key={theCase.id}>
           <MobileAppealCase
             theCase={theCase}
-            onClick={() => onRowClick(theCase.id)}
-            isLoading={isOpeningCaseId === theCase.id}
+            onClick={() => handleOpenCase(theCase.id)}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {showingCompletedCases && (
               <Text fontWeight={'medium'} variant="small">
@@ -115,7 +115,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
         return (
           <tr
             className={styles.row}
-            onClick={() => onRowClick(column.id)}
+            onClick={() => handleOpenCase(column.id)}
             key={column.id}
           >
             <td>
@@ -135,7 +135,6 @@ const AppealCasesTable: React.FC<Props> = (props) => {
                 parentCaseId={column.parentCaseId ?? ''}
               />
             </td>
-
             <td>
               <TagAppealState
                 appealState={column.appealState}
@@ -165,7 +164,9 @@ const AppealCasesTable: React.FC<Props> = (props) => {
             </td>
             <td className={styles.loadingContainer}>
               <AnimatePresence>
-                {isOpeningCaseId === column.id && <LoadingIndicator />}
+                {isOpeningCaseId === column.id && showLoading && (
+                  <LoadingIndicator />
+                )}
               </AnimatePresence>
             </td>
           </tr>

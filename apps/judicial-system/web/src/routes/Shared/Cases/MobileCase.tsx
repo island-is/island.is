@@ -2,9 +2,9 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
-import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
+import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
   formatDOB,
@@ -28,12 +28,14 @@ export const CategoryCard: React.FC<
   React.PropsWithChildren<CategoryCardProps>
 > = ({ heading, onClick, tags, children, isLoading = false }) => {
   const { LoadingIndicator } = useCaseList()
+
   return (
     <FocusableBox
       className={styles.card}
       height="full"
       width="full"
       component="button"
+      aria-disabled={isLoading}
       onClick={onClick}
     >
       <Box>

@@ -46,7 +46,8 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, loading = false, testid } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { isOpeningCaseId, handleOpenCase, LoadingIndicator } = useCaseList()
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
+    useCaseList()
 
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
@@ -69,7 +70,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
             theCase={theCase}
             onClick={() => handleOpenCase(theCase.id)}
             isCourtRole={false}
-            isLoading={isOpeningCaseId === theCase.id}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             <DurationDate
               key={`${theCase.id}-duration-date`}
@@ -171,7 +172,9 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
             </td>
             <td className={styles.loadingContainer}>
               <AnimatePresence>
-                {isOpeningCaseId === column.id && <LoadingIndicator />}
+                {isOpeningCaseId === column.id && showLoading && (
+                  <LoadingIndicator />
+                )}
               </AnimatePresence>
             </td>
           </tr>
