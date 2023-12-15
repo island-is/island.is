@@ -194,7 +194,7 @@ export class ApplicationValidationService {
         throw new ValidationFailed(errorMap)
       }
     } catch (error) {
-      this.logger.error('Failed to validate answers', error)
+      this.logger.info('Failed to validate answers', error)
       throw error
     }
 
