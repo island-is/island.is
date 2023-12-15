@@ -120,53 +120,51 @@ export const NationalIdWithName: FC<
   }, [nationalIdInput, getIdentity])
 
   return (
-    <Box>
-      <GridRow>
-        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <InputController
-            id={nationaIdField}
-            label={
-              customNationalIdLabel
-                ? formatMessage(customNationalIdLabel)
-                : formatMessage(coreErrorMessages.nationalRegistryNationalId)
-            }
-            defaultValue={defaultNationalId}
-            format="######-####"
-            required={required}
-            backgroundColor="blue"
-            onChange={debounce((v) => {
-              setNationalIdInput(v.target.value.replace(/\W/g, ''))
-              onNationalIdChange &&
-                onNationalIdChange(v.target.value.replace(/\W/g, ''))
-            })}
-            loading={queryLoading}
-            error={nationalIdFieldErrors}
-            disabled={disabled}
-          />
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <InputController
-            id={nameField}
-            defaultValue={defaultName}
-            label={
-              customNameLabel
-                ? formatMessage(customNameLabel)
-                : formatMessage(coreErrorMessages.nationalRegistryName)
-            }
-            required={required}
-            error={
-              queryError || data?.identity === null
-                ? formatMessage(
-                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                  )
-                : nameFieldErrors && !data
-                ? nameFieldErrors
-                : undefined
-            }
-            disabled
-          />
-        </GridColumn>
-      </GridRow>
-    </Box>
+    <GridRow>
+      <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+        <InputController
+          id={nationaIdField}
+          label={
+            customNationalIdLabel
+              ? formatMessage(customNationalIdLabel)
+              : formatMessage(coreErrorMessages.nationalRegistryNationalId)
+          }
+          defaultValue={defaultNationalId}
+          format="######-####"
+          required={required}
+          backgroundColor="blue"
+          onChange={debounce((v) => {
+            setNationalIdInput(v.target.value.replace(/\W/g, ''))
+            onNationalIdChange &&
+              onNationalIdChange(v.target.value.replace(/\W/g, ''))
+          })}
+          loading={queryLoading}
+          error={nationalIdFieldErrors}
+          disabled={disabled}
+        />
+      </GridColumn>
+      <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+        <InputController
+          id={nameField}
+          defaultValue={defaultName}
+          label={
+            customNameLabel
+              ? formatMessage(customNameLabel)
+              : formatMessage(coreErrorMessages.nationalRegistryName)
+          }
+          required={required}
+          error={
+            queryError || data?.identity === null
+              ? formatMessage(
+                  coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                )
+              : nameFieldErrors && !data
+              ? nameFieldErrors
+              : undefined
+          }
+          disabled
+        />
+      </GridColumn>
+    </GridRow>
   )
 }
