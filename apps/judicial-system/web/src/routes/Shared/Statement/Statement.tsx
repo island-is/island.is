@@ -2,13 +2,7 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  Box,
-  Button,
-  Checkbox,
-  InputFileUpload,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -18,7 +12,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -28,6 +21,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   CaseAppealDecision,
@@ -42,9 +36,9 @@ import {
 import { statement as strings } from './Statement.strings'
 
 const Statement = () => {
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { isUpdatingCase, updateCase, setAndSendCaseToServer } = useCase()
+  const { isUpdatingCase, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
@@ -178,32 +172,7 @@ const Statement = () => {
               />
             </Box>
             {isProsecutionUser(user) && (
-              <Box component="section" marginBottom={10}>
-                <BlueBox>
-                  <Checkbox
-                    label={formatMessage(
-                      strings.requestAppealRulingNotToBePublished,
-                    )}
-                    name="requestAppealRulingNotToBePublished"
-                    checked={workingCase.requestAppealRulingNotToBePublished}
-                    onChange={(event) => {
-                      setAndSendCaseToServer(
-                        [
-                          {
-                            requestAppealRulingNotToBePublished:
-                              event.target.checked,
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }}
-                    large
-                    filled
-                  />
-                </BlueBox>
-              </Box>
+              <RequestAppealRulingNotToBePublishedCheckbox />
             )}
           </>
         )}

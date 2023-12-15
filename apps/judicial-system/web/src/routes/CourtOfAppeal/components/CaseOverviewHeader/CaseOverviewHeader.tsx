@@ -23,7 +23,12 @@ import {
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
-const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
+interface Props {
+  alerts?: { message: string }[]
+}
+
+const CaseOverviewHeader: React.FC<Props> = (props) => {
+  const { alerts } = props
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -95,7 +100,15 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
             ))}
           </Box>
         )}
-
+      {alerts?.map((alert) => (
+        <Box key={alert.message} marginBottom={5}>
+          <AlertMessage
+            message={alert.message}
+            type="warning"
+            testid="requestAppealRulingNotToBePublished"
+          />
+        </Box>
+      ))}
       <CaseTitleInfoAndTags />
       <Box marginBottom={5}>
         {isRestrictionCase(workingCase.type) &&

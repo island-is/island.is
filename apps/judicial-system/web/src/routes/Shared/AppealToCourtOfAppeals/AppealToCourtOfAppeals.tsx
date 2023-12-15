@@ -28,6 +28,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   useCase,
@@ -150,32 +151,7 @@ const AppealToCourtOfAppeals = () => {
           />
         </Box>
         {isProsecutionUser(user) && (
-          <Box component="section" marginBottom={10}>
-            <BlueBox>
-              <Checkbox
-                label={formatMessage(
-                  strings.requestAppealRulingNotToBePublished,
-                )}
-                name="requestAppealRulingNotToBePublished"
-                checked={workingCase.requestAppealRulingNotToBePublished}
-                onChange={(event) => {
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        requestAppealRulingNotToBePublished:
-                          event.target.checked,
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }}
-                large
-                filled
-              />
-            </BlueBox>
-          </Box>
+          <RequestAppealRulingNotToBePublishedCheckbox />
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>
