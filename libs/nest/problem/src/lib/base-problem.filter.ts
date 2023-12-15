@@ -1,4 +1,9 @@
-import { ArgumentsHost, ExceptionFilter, Inject } from '@nestjs/common'
+import {
+  ArgumentsHost,
+  ExceptionFilter,
+  HttpException,
+  Inject,
+} from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { Response } from 'express'
 
@@ -9,6 +14,9 @@ import { Problem, ProblemType } from '@island.is/shared/problem'
 import { ProblemError } from './ProblemError'
 import { PROBLEM_OPTIONS } from './problem.options'
 import type { ProblemOptions } from './problem.options'
+
+// Add a URL to this array to bypass the error filter and the ProblemJSON transformation
+const bypassErrorFilterUrls = ['/health/check']
 
 export abstract class BaseProblemFilter implements ExceptionFilter {
   private readonly logger: Logger
@@ -24,6 +32,8 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
   catch(error: Error, host: ArgumentsHost) {
     const problem = (error as ProblemError).problem || this.getProblem(error)
 
+    console.log('catch error', { error, host })
+
     if (problem.status && problem.status >= 500) {
       this.logger.error(error)
     } else if (this.options.logAllErrors) {
@@ -33,7 +43,7 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     if ((host.getType() as string) === 'graphql') {
       this.catchGraphQLError(error, problem)
     } else {
-      this.catchRestError(host, problem)
+      this.catchRestError(host, problem, error)
     }
   }
 
@@ -46,9 +56,16 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     }
   }
 
-  catchRestError(host: ArgumentsHost, problem: Problem) {
+  catchRestError(host: ArgumentsHost, problem: Problem, error: Error) {
     const ctx = host.switchToHttp()
+    const request = ctx.getRequest<Request>()
     const response = ctx.getResponse<Response>()
+
+    console.log('handling exception from request url', { url: request.url })
+
+    if (request.url.includes('/health/check')) {
+      response.send((error as HttpException).getResponse())
+    }
 
     response.status(problem.status || 500)
     response.statusMessage = problem.title

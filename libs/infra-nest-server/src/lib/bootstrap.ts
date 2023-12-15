@@ -29,6 +29,7 @@ export const createApp = async ({
   stripNonClassValidatorInputs = true,
   appModule,
   enableVersioning,
+  healthCheck,
   ...options
 }: RunServerOptions) => {
   monkeyPatchServerLogging()
@@ -36,6 +37,7 @@ export const createApp = async ({
   const app = await NestFactory.create<NestExpressApplication>(
     InfraModule.forRoot({
       appModule,
+      healthCheck,
     }),
     {
       logger: LoggingModule.createLogger(),
