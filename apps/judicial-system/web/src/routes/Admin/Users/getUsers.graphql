@@ -1,5 +1,5 @@
-query ProsecutorSelectionUsers {
-  users(input: { role: PROSECUTOR }) {
+query Users {
+  users {
     id
     created
     modified
@@ -7,13 +7,18 @@ query ProsecutorSelectionUsers {
     nationalId
     mobileNumber
     role
-    email
     title
+    email
     institution {
       id
+      created
+      modified
       type
       name
+      active
     }
     active
+    latestLogin
+    loginCount
   }
 }
