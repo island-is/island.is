@@ -1,8 +1,7 @@
 import {
   FieldBaseProps,
   FieldComponents,
-  FieldTypes,
-  YES,
+  FieldTypes
 } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { FC } from 'react'
