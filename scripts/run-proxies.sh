@@ -24,6 +24,30 @@ containerer() {
 ARGS=()
 PROXIES=()
 
+show_help() {
+  cat <<EOF
+Usage:
+  ./scripts/run-proxies.sh [OPTIONS] PROXY1 PROXY2 ...
+
+Options:
+  -f, --remove-containers, --force
+    Remove containers on start and on fail
+  -s, --remove-containers-on-start
+    Remove containers on start
+  -x, --remove-containers-on-fail
+    Remove containers on fail
+  -i, --interval
+    Restart interval time in seconds
+
+Proxies:
+  es
+  soffia
+  xroad
+  redis
+  db
+EOF
+}
+
 parse_cli() {
   while [ $# -gt 0 ]; do
     local arg="$1"
@@ -58,6 +82,10 @@ parse_cli() {
     -i | --interval)
       RESTART_INTERVAL_TIME="${opt}"
       shift
+      ;;
+    -h | --help)
+      show_help
+      exit
       ;;
     --)
       shift
