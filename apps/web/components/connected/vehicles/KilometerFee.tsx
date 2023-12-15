@@ -150,7 +150,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
             <RadioButton
               label={n(
                 'hybrid',
-                activeLocale === 'is' ? 'Tengiltvinnbíll' : 'Hybrid',
+                activeLocale === 'is' ? 'Tengiltvinn' : 'Hybrid',
               )}
               name="hybrid"
               onChange={() => {
@@ -164,7 +164,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
         <Stack space={2}>
           <Text variant="medium" fontWeight="light">
             {n(
-              'kilometerInputPlaceholder',
+              'kilometerInputLabel',
               activeLocale === 'is'
                 ? 'Áætlaður akstur í kílómetrum'
                 : 'Estimated driving in kilometers',
@@ -178,7 +178,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
               type="number"
               size="xs"
               value={inputState.kilometers}
-              placeholder={n('kilometerInputPlaceholder', '')}
+              placeholder={n('kilometerInputPlaceholder', 'km')}
               onChange={(ev) => {
                 if (
                   ev.target.value.length > maxKilometerInputLength ||
