@@ -19,10 +19,9 @@ export async function localrun(
     envConfig,
     habitat,
     services,
-    renderers.localrunNoSecrets,
-    // dryRun || noUpdateSecrets
-    //   ? renderers.localrunNoSecrets
-    //   : renderers.localrun,
+    dryRun || noUpdateSecrets
+      ? renderers.localrunNoSecrets
+      : renderers.localrun,
     { dryRun, noUpdateSecrets },
   )
   hacks(fullSetOfServices, habitat)
@@ -32,10 +31,10 @@ export async function localrun(
     await generateOutput({
       runtime: runtime,
       services: fullSetOfServices,
-      outputFormat: renderers.localrunNoSecrets,
-      // dryRun || noUpdateSecrets
-      //   ? renderers.localrunNoSecrets
-      //   : renderers.localrun,
+      outputFormat:
+        dryRun || noUpdateSecrets
+          ? renderers.localrunNoSecrets
+          : renderers.localrun,
       env: envConfig,
     }),
   )
