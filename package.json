@@ -454,7 +454,6 @@
     "@graphql-tools/git-loader": "6.2.6",
     "immer": "9.0.6",
     "marked": "2.0.0",
-    "serialize-javascript": "4.0.0",
     "elliptic": "6.5.4",
     "netmask": "2.0.1",
     "ssri": "8.0.1",
