@@ -35,3 +35,11 @@ export const nutritionHeaders = [
   'Heimild gildir til',
   'Nánari skýring',
 ]
+
+export const dentistHeaders = [
+  'Númer',
+  'Dagsetning',
+  'Endurgreitt',
+  'Verð tannlæknis',
+  'Greiðsluþátttaka',
+]

@@ -5,6 +5,7 @@ import {
 } from '@island.is/service-portal/core'
 import {
   aidHeaders,
+  dentistHeaders,
   nutritionHeaders,
   paymentOverviewHeaders,
   paymentParticipationHeaders,
@@ -12,6 +13,7 @@ import {
 import {
   RightsPortalAidOrNutrition,
   RightsPortalCopaymentBill,
+  RightsPortalDentistBill,
   RightsPortalPaymentOverviewBill,
 } from '@island.is/api/schema'
 import { totalNumber } from '../format'
@@ -113,4 +115,29 @@ export const exportNutritionFile = async (
   ])
 
   await downloadFile(name, nutritionHeaders, dataArray, type)
+}
+
+export const exportDentistFile = async (
+  data: Array<RightsPortalDentistBill>,
+  type: FileTypes,
+  footer?: { charge: number; covered: number },
+) => {
+  const name = `Tannlaeknar_sundurlidun`
+  const dataArray = data.map((item) => [
+    item.number ?? '',
+    formatDate(item.date) ?? item.date ?? '',
+    formatDate(item.refundDate) ?? item.refundDate ?? '',
+    amountFormat(item.amount) ?? item.amount ?? '',
+    amountFormat(item.coveredAmount) ?? item.coveredAmount ?? '',
+  ])
+
+  const total = [
+    'Samtals',
+    '',
+    '',
+    footer?.charge ? amountFormat(footer.charge) : '',
+    footer?.covered ? amountFormat(footer.covered) : '',
+  ]
+
+  await downloadFile(name, dentistHeaders, [...dataArray, total], type)
 }
