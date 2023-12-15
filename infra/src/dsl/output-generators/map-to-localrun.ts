@@ -80,7 +80,6 @@ const serializeService = async (
       service: service.name,
       env: env1,
     })
-    throw new Error('Debug retrieving')
     const secrets = await retrieveSecrets(serviceDef.secrets)
     mergeObjects(result.env, secrets)
   }
