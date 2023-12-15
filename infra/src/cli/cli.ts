@@ -60,7 +60,7 @@ const cli = yargs(process.argv.slice(2))
         .option('service', { demandOption: true, array: true })
         .option('json', { type: 'boolean', default: false })
         .option('dry', { type: 'boolean', default: true })
-        .option('no-update-secrets', { type: 'boolean', default: true })
+        .option('no-update-secrets', { type: 'boolean', default: false })
     },
     async (argv) =>
       await renderLocalServices(argv.service as string[], {
@@ -81,7 +81,7 @@ const cli = yargs(process.argv.slice(2))
         .option('dry', { type: 'boolean', default: false })
         .option('no-update-secrets', {
           type: 'boolean',
-          default: true,
+          default: false,
           alias: ['nosecrets', 'no-secrets'],
         })
         .option('print', { type: 'boolean', default: false })
