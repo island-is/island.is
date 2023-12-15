@@ -52,7 +52,7 @@ describe('Local setup', () => {
         '..',
         '..',
         '..',
-      )}/mountebank-imposter-config.json:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
+      )}/mountebank-imposter-config.json:/app/default.json:z docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
     )
   })
 })
