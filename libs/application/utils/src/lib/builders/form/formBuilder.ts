@@ -23,6 +23,7 @@ import {
   StaticCheck,
   PdfViewerField,
 } from '@island.is/application/types'
+import { StaticText } from 'static-text'
 
 export class FormBuilder {
   private formDefinition: Form
@@ -31,7 +32,7 @@ export class FormBuilder {
 
   constructor(
     id: string,
-    title: string,
+    title: StaticText,
     formMode = FormModes.DRAFT,
     renderLastScreenBackButton = true,
     renderLastScreenButton = true,
@@ -319,7 +320,7 @@ export function fields() {
 }
 
 export function startForm(data: {
-  title: string
+  title: StaticText
   formMode?: FormModes
   renderLastScreenBackButton?: boolean
   renderLastScreenButton?: boolean

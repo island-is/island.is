@@ -229,7 +229,7 @@ export const ApplicationConfigurations: Record<
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
     slug: 'skuldleysisvottord',
     translation: 'ndc.application',
-    formType: ApplicationFormTypes.STATIC,
+    formType: ApplicationFormTypes.DYNAMIC,
   },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',

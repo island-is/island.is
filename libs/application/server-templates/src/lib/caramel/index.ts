@@ -1,6 +1,7 @@
 import {
   ApplicationTypes,
   InstitutionNationalIds,
+  InstitutionTypes,
   ValidateCriminalRecordApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -27,5 +28,6 @@ export const caramelPermission = buildCertificateTemplate({
   templateId: ApplicationTypes.CARAMEL,
   title: 'Karamellukast',
   organizationId: InstitutionNationalIds.SYSLUMENN,
+  institutionId: InstitutionTypes.SYSLUMENN,
   chargeItemCodes: [ChargeItemCode.CRIMINAL_RECORD],
 })

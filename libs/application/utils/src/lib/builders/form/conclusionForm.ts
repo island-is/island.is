@@ -1,10 +1,4 @@
-import {
-  buildDataProviderItem,
-  buildExternalDataProvider,
-  buildForm,
-  buildSection,
-  buildSubmitField,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import {
   Form,
   FormItemTypes,

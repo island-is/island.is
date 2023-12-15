@@ -44,11 +44,11 @@ export class FormService {
 
     formDto.icon = form.icon
     formDto.id = form.id
-    formDto.logo = form.logo as unknown as string
+    formDto.logo = form.logo as unknown as string //TODO , Cant return a react component
     formDto.mode = form.mode
     formDto.renderLastScreenBackButton = form.renderLastScreenBackButton
     formDto.renderLastScreenButton = form.renderLastScreenButton
-    formDto.title = form.title as unknown as string
+    formDto.title = this.contextService.formatText(form.title)
     formDto.type = form.type
     formDto.children = []
     form.children.forEach((child) => {

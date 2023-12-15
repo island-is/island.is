@@ -31,7 +31,17 @@ export function buildTemplate<
   bluePrint: ApplicationBlueprint,
 ): ApplicationTemplate<TContext, TStateSchema, TEvents> {
   // 1. Extract data from blueprint
-  const { initalState, name, states, ApplicatonType } = bluePrint
+  const {
+    initalState,
+    name,
+    states,
+    applicationType,
+    institution,
+    translationNamespaces,
+    allowedDelegations,
+    requiredScopes,
+    featureFlag,
+  } = bluePrint
 
   // 2. Build states configuration
   const stateNodes: StatesConfig<TContext, TStateSchema, TEvents> =
@@ -45,13 +55,14 @@ export function buildTemplate<
   })
   // 3. Create template configuration
   return {
-    type: ApplicatonType, // Assuming the blueprint name is the application type
-    name: name,
-    institution: 'Stafrænt ísland',
+    type: applicationType, // Assuming the blueprint name is the application type
+    name,
+    institution,
+    allowedDelegations,
+    requiredScopes,
+    featureFlag,
     dataSchema: Schema,
-    translationNamespaces: [
-      '', //TODO get the namespace from the blueprint
-    ],
+    translationNamespaces,
     stateMachineConfig: {
       initial: initalState,
       states: stateNodes,

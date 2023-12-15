@@ -3,7 +3,6 @@ import { FieldDto } from '../../dto/form.dto'
 import { IFieldFactory } from './IFormFieldFactory'
 import { Injectable } from '@nestjs/common'
 import { ContextService } from '@island.is/application/api/core'
-import { formatText } from '@island.is/application/core'
 
 @Injectable()
 export class ExpandableDescriptionFieldFactory implements IFieldFactory {

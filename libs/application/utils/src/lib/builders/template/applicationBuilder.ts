@@ -1,4 +1,5 @@
 import {
+  AllowedDelegation,
   ApplicationContext,
   ApplicationStateMachineStatus,
   ApplicationStateSchema,
@@ -7,6 +8,7 @@ import {
   DefaultEvents,
   Form,
   HistoryEventMessage,
+  InstitutionTypes,
   PendingAction,
   StateLifeCycle,
   TemplateApi,
@@ -19,6 +21,8 @@ import {
 } from './templateTypes'
 import { EventObject } from 'xstate'
 import { buildTemplate } from './templateBuilder'
+import { Features } from '@island.is/feature-flags'
+import { StaticText } from 'static-text'
 
 export class ApplicationBuilder<
   TContext extends ApplicationContext,
@@ -27,13 +31,28 @@ export class ApplicationBuilder<
 > {
   templateDefinition: ApplicationBlueprint
 
-  constructor(
-    name: string,
-    applicatonType: ApplicationTypes,
-    initialState?: string,
-  ) {
+  constructor(data: {
+    name: StaticText
+    applicatonType: ApplicationTypes
+    institution: InstitutionTypes
+    featureFlag?: Features
+    translationNamespaces?: string[]
+    allowedDelegations?: AllowedDelegation[]
+    initialState?: string
+  }) {
+    const {
+      name,
+      applicatonType,
+      institution,
+      featureFlag,
+      initialState,
+      allowedDelegations,
+    } = data
     this.templateDefinition = {
-      ApplicatonType: applicatonType,
+      applicationType: applicatonType,
+      institution,
+      allowedDelegations,
+      featureFlag,
       initalState: initialState ?? 'prerequisites',
       name: name,
       states: [],
@@ -177,12 +196,16 @@ export function applicationBuilder<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
   TEvents extends EventObject,
->(
-  name: string,
-  applicatonType: ApplicationTypes,
-  initialState?: string,
-): ApplicationBuilder<TContext, TStateSchema, TEvents> {
-  return new ApplicationBuilder(name, applicatonType, initialState)
+>(data: {
+  name: StaticText
+  applicatonType: ApplicationTypes
+  institution: InstitutionTypes
+  featureFlag?: Features
+  translationNamespaces?: string[]
+  allowedDelegations?: AllowedDelegation[]
+  initialState?: string
+}): ApplicationBuilder<TContext, TStateSchema, TEvents> {
+  return new ApplicationBuilder(data)
 }
 
 export const state = (

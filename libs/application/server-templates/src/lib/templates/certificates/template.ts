@@ -10,6 +10,7 @@ import {
   Form,
   FormModes,
   VerifyPaymentApi,
+  InstitutionTypes,
 } from '@island.is/application/types'
 import {
   applicationBuilder,
@@ -24,6 +25,7 @@ import {
   corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
+import { StaticText } from 'static-text'
 
 export function buildCertificateTemplate(data: {
   name: string
@@ -32,6 +34,8 @@ export function buildCertificateTemplate(data: {
   pdfKey: string
   templateId: ApplicationTypes
   title: string
+
+  institutionId: InstitutionTypes
   organizationId: InstitutionNationalIds
   chargeItemCodes: string[]
   draftForm?: Form
@@ -45,6 +49,7 @@ export function buildCertificateTemplate(data: {
     organizationId,
     chargeItemCodes,
     draftForm,
+    institutionId,
     pdfKey,
   } = data
 
@@ -129,7 +134,11 @@ export function buildCertificateTemplate(data: {
     .endSection()
     .endForm()
 
-  const application = applicationBuilder(name, templateId)
+  const application = applicationBuilder({
+    name,
+    applicatonType: templateId,
+    institution: institutionId,
+  })
     .addState(
       prerequisitesState({
         name,
@@ -153,9 +162,99 @@ export function buildCertificateTemplate(data: {
         .setForm(conslusionForm)
         .addOnEntry(getPdfApi)
         .addOnEntry(VerifyPaymentApi.configure({ order: 0 })),
-    ) //TODO ADD verify payment
+    )
 
   if (draftForm) application.addState(draft)
+
+  return application.build()
+}
+
+export function buildCertificateTemplateNoPayment(data: {
+  name: StaticText
+  additionalProvider: DataProviderBuilderItem
+  getPdfApi: TemplateApi<unknown>
+  pdfKey: string
+  templateId: ApplicationTypes
+  title: StaticText
+  institutionId: InstitutionTypes
+  organizationId: InstitutionNationalIds
+}) {
+  const {
+    name,
+    additionalProvider,
+    getPdfApi,
+    templateId,
+    title,
+    pdfKey,
+    institutionId,
+  } = data
+
+  const providers = [additionalProvider] as {
+    provider: TemplateApi
+    title: string
+    subTitle?: string
+  }[]
+
+  const completed = state('completed', 'completed')
+
+  const conslusionForm = startForm({
+    title,
+    formMode: FormModes.COMPLETED,
+    renderLastScreenBackButton: false,
+    renderLastScreenButton: false,
+  })
+    .startSection({ title: 'Umsókn tókst' })
+    .page({
+      title: 'Hér er bara einn hlutur maður',
+      children: fields()
+        .pdfPreviewField({
+          id: 'uiForms.conclusionPdfPreview',
+          title: 'conclusion.information.pdfTitle',
+          pdfKey,
+          openMySitesLabel: 'Opna í Mínum síðum',
+          downloadPdfButtonLabel: 'Sækja PDF',
+          successTitle: 'Tókst',
+          successDescription: 'Umsókn þín hefur verið móttekin.',
+          verificationDescription:
+            'Vinsamlegast staðfestu upplýsingar hér að neðan.',
+          verificationLinkTitle: 'Leiðbeiningar um staðfestingu',
+          verificationLinkUrl: 'https://verification-url-example.com',
+          viewPdfButtonLabel: 'Skoða PDF',
+          openInboxButtonLabel: 'Opna tölvupóstinn',
+          confirmationMessage: 'Upplýsingum þínum hefur verið staðfest.',
+        })
+        .build(),
+    })
+    .endSection()
+    .endForm()
+
+  const application = applicationBuilder({
+    name,
+    applicatonType: templateId,
+    institution: institutionId,
+  })
+    .addState(
+      prerequisitesState({
+        name: name,
+        providers,
+        templateApis: providers.map((provider) => provider.provider),
+        targetState: completed.name,
+      }).addHistoryLog({
+        logMessage: coreHistoryMessages.applicationSent,
+        onEvent: DefaultEvents.SUBMIT,
+      }),
+    )
+    .addState(
+      completed
+        .addPendingAction({
+          title: corePendingActionMessages.applicationReceivedTitle,
+          content: corePendingActionMessages.certificateRecieved,
+          displayStatus: 'success',
+        })
+        .lifecycle(pruneAfterDays(90))
+        .setForm(conslusionForm)
+        .addOnEntry(getPdfApi),
+    )
 
   return application.build()
 }

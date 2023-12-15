@@ -4,16 +4,18 @@ import {
   buildForm,
   buildSection,
   buildSubmitField,
+  coreMessages,
 } from '@island.is/application/core'
 import {
   DataProviderBuilderItem,
   Form,
   FormItemTypes,
   FormModes,
+  StaticText,
 } from '@island.is/application/types'
 
 export function prerequisitesForm(
-  title: string,
+  title: StaticText,
   providers: DataProviderBuilderItem[],
 ): Form {
   const formDefinition: Form = {
@@ -28,7 +30,7 @@ export function prerequisitesForm(
 
   const section = buildSection({
     id: 'externalData',
-    title: 'externalData',
+    title,
     children: [],
   })
 
@@ -38,18 +40,18 @@ export function prerequisitesForm(
 
   section.children = [
     buildExternalDataProvider({
-      title: 'externalData.title',
+      title,
       id: 'approveExternalData',
-      checkboxLabel: 'externalData.checkboxLabel',
+      checkboxLabel: coreMessages.externalDataAgreement,
       submitField: buildSubmitField({
         id: 'submit',
         placement: 'footer',
-        title: 'externalData.submitButtonTitle',
+        title: coreMessages.externalDataTitle,
         refetchApplicationAfterSubmit: true,
         actions: [
           {
             event: 'SUBMIT',
-            name: 'externalData.submitButtonTitle',
+            name: coreMessages.buttonSubmit,
             type: 'primary',
           },
         ],

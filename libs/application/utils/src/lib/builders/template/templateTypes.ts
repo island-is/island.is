@@ -1,13 +1,17 @@
 import {
+  AllowedDelegation,
   ApplicationStateMachineStatus,
   ApplicationTypes,
   DefaultEvents,
   Form,
   HistoryEventMessage,
+  InstitutionTypes,
   PendingAction,
   StateLifeCycle,
+  StaticText,
   TemplateApi,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 
 import {
   AnyEventObject,
@@ -19,10 +23,15 @@ import {
 } from 'xstate'
 
 export interface ApplicationBlueprint {
-  ApplicatonType: ApplicationTypes
+  applicationType: ApplicationTypes
+  institution: InstitutionTypes
   initalState: string
-  name: string
+  name: StaticText
   states: StateBlueprint[]
+  translationNamespaces?: string[]
+  allowedDelegations?: AllowedDelegation[]
+  featureFlag?: Features
+  requiredScopes?: string[]
 }
 
 export interface Transition {
