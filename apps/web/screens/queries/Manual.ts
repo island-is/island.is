@@ -87,26 +87,3 @@ export const GET_SINGLE_MANUAL_QUERY = gql`
   }
   ${slices}
 `
-
-export const GET_MANUALS_QUERY = gql`
-  query GetManuals($input: GetManualsInput!) {
-    getManuals(input: $input) {
-      id
-      title
-      slug
-      category {
-        title
-      }
-      group {
-        slug
-        title
-        description
-        importance
-      }
-      subgroup {
-        title
-        importance
-      }
-    }
-  }
-`

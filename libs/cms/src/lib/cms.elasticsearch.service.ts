@@ -30,8 +30,9 @@ import { Vacancy } from './models/vacancy.model'
 import { ResponseError } from '@elastic/elasticsearch/lib/errors'
 import { GetEventsInput } from './dto/getEvents.input'
 import { Event as EventModel } from './models/event.model'
-import { GetManualsInput } from './dto/getManuals.input'
 import { Manual } from './models/manual.model'
+import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
+import { CategoryPage } from './models/categoryPage.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -56,9 +57,12 @@ export class CmsElasticsearchService {
     )
   }
 
-  async getManuals(index: string, input: GetManualsInput): Promise<Manual[]> {
+  async getCategoryPages(
+    index: string,
+    input: GetCategoryPagesInput,
+  ): Promise<typeof CategoryPage[]> {
     const query = {
-      types: ['webManual'],
+      types: ['webArticle', 'webManual'],
       tags: [] as elasticTagField[],
       sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
       size: input.size,
@@ -84,15 +88,15 @@ export class CmsElasticsearchService {
       query.tags.push({ type: 'organization', key: input.organization })
     }
 
-    const manualsResponse = await this.elasticService.getDocumentsByMetaData(
+    const pagesResponse = await this.elasticService.getDocumentsByMetaData(
       index,
       query,
     )
 
-    return manualsResponse.hits.hits
-      .filter((r) => Boolean(r?._source?.response))
-      .map<Manual>((response) =>
-        JSON.parse(response._source.response as string),
+    return pagesResponse.hits.hits
+      .filter((page) => Boolean(page?._source?.response))
+      .map<Article | Manual>((page) =>
+        JSON.parse(page._source.response as string),
       )
   }
 

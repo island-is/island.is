@@ -5,7 +5,7 @@ import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsString, IsOptional, IsInt, Min, Max } from 'class-validator'
 
 @InputType()
-export class GetManualsInput {
+export class GetCategoryPagesInput {
   @Field(() => String)
   @IsString()
   lang: ElasticsearchIndexLocale = 'is'

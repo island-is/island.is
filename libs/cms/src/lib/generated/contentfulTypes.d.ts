@@ -2138,6 +2138,9 @@ export interface IManualFields {
 
   /** Subgroup */
   subgroup?: IArticleSubgroup | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface IManual extends Entry<IManualFields> {
@@ -2891,6 +2894,7 @@ export interface IOrganizationSubpageFields {
         | ITwoColumnText
         | IAnchorPageList
         | ISectionWithVideo
+        | ISectionHeading
       )[]
     | undefined
 
@@ -3543,6 +3547,7 @@ export interface ISliceConnectedComponentFields {
     | 'Meistaraleyfi/MasterLicences'
     | 'Vinnueftirlitid/Namskeid'
     | 'Meðmælalistar/SignatureLists'
+    | 'KilometerFee'
     | undefined
 
   /** Localized JSON */

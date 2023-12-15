@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from 'api-cms-domain'
 import { IManual } from '../generated/contentfulTypes'
 import { Organization, mapOrganization } from './organization.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
@@ -39,11 +40,15 @@ export class Manual {
 
   @CacheField(() => ArticleSubgroup, { nullable: true })
   subgroup?: ArticleSubgroup | null
+
+  @Field({ nullable: true })
+  importance?: number
 }
 
-export const mapManual = (manual: IManual): Manual => {
+export const mapManual = (manual: IManual): SystemMetadata<Manual> => {
   const { sys, fields } = manual
   return {
+    typename: 'Manual',
     id: sys.id,
     title: fields.title ?? '',
     slug: fields.slug ?? '',
@@ -62,5 +67,6 @@ export const mapManual = (manual: IManual): Manual => {
     category: fields.category ? mapArticleCategory(fields.category) : null,
     group: fields.group ? mapArticleGroup(fields.group) : null,
     subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
+    importance: fields.importance ?? 0,
   }
 }

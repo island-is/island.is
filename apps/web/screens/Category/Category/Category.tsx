@@ -25,16 +25,12 @@ import {
   ContentLanguage,
   GetAnchorPagesInCategoryQuery,
   GetArticleCategoriesQuery,
-  GetArticlesQuery,
-  GetManualsInCategoryQuery,
-  GetManualsInCategoryQueryVariables,
-  GetManualsQuery,
-  GetManualsQueryVariables,
+  GetCategoryPagesQuery,
+  GetCategoryPagesQueryVariables,
   GetNamespaceQuery,
   Image,
   QueryGetAnchorPagesInCategoryArgs,
   QueryGetArticleCategoriesArgs,
-  QueryGetArticlesArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -45,15 +41,14 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import {
   GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
-  GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
+  GET_CATEGORY_PAGES_QUERY,
   GET_NAMESPACE_QUERY,
 } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { hasProcessEntries } from '@island.is/web/utils/article'
 
-import { GET_MANUALS_QUERY } from '../../queries/Manual'
 import {
   getActiveCategory,
   getHashArr,
@@ -61,12 +56,11 @@ import {
   updateHashArray,
 } from './utils'
 
-type Cards = GetArticlesQuery['getArticles'] | GetManualsQuery['getManuals']
-
+type CategoryPages = NonNullable<GetCategoryPagesQuery['getCategoryPages']>
 type LifeEvents = GetAnchorPagesInCategoryQuery['getAnchorPagesInCategory']
 
 interface CategoryProps {
-  articles: Cards
+  articles: CategoryPages
   categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: GetNamespaceQuery['getNamespace']
   lifeEvents: LifeEvents
@@ -101,6 +95,7 @@ const Category: Screen<CategoryProps> = ({
       }
       // Check if article belongs to multiple groups in this category
       else if (
+        article?.__typename === 'Article' &&
         article?.otherCategories &&
         article.otherCategories
           .map((category) => category.title)
@@ -139,7 +134,7 @@ const Category: Screen<CategoryProps> = ({
     {
       groups: {},
       cards: [],
-      otherArticles: [] as Articles,
+      otherArticles: [] as CategoryPages,
     },
   )
 
@@ -186,7 +181,10 @@ const Category: Screen<CategoryProps> = ({
       }
     })
 
-  const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
+  const groupArticlesBySubgroup = (
+    articles: CategoryPages,
+    groupSlug?: string,
+  ) => {
     const bySubgroup = articles.reduce((result, item) => {
       const key = item?.subgroup?.title ?? 'unknown'
 
@@ -200,13 +198,16 @@ const Category: Screen<CategoryProps> = ({
 
     // add "other" articles as well
     const articlesBySubgroup = otherArticles.reduce((result, item) => {
-      const titles = item.otherSubgroups?.map((x) => x.title)
+      const titles = (
+        item.__typename === 'Article' ? item.otherSubgroups : []
+      )?.map((x) => x.title)
       const subgroupsFound = intersection(Object.keys(result), titles)
       const key = 'unknown'
 
       // if there is no sub group found then at least show it in the group
       if (
         !subgroupsFound.length &&
+        item.__typename === 'Article' &&
         item.otherGroups?.find((x) => x.slug === groupSlug)
       ) {
         return {
@@ -236,7 +237,7 @@ const Category: Screen<CategoryProps> = ({
     window.location.href = `#${getHashString(updatedArr)}`
   }
 
-  const sortArticles = (articles: Articles) => {
+  const sortArticles = (articles: CategoryPages) => {
     // Sort articles by importance (which defaults to 0).
     // If both articles being compared have the same importance we sort by comparing their titles.
     const sortedArticles = articles.sort((a, b) => {
@@ -259,7 +260,7 @@ const Category: Screen<CategoryProps> = ({
     return { sortedArticles, isSortedAlphabetically }
   }
 
-  const sortSubgroups = (articlesBySubgroup: Record<string, Articles>) =>
+  const sortSubgroups = (articlesBySubgroup: Record<string, CategoryPages>) =>
     Object.keys(articlesBySubgroup).sort((a, b) => {
       // 'unknown' is a valid subgroup key but we'll sort it to the bottom
       if (a === 'unknown') {
@@ -373,11 +374,12 @@ const Category: Screen<CategoryProps> = ({
                               ).href
                             }
                             {...(hasProcessEntries(article as Article) ||
-                            article.processEntryButtonText
+                            (article.__typename === 'Article' &&
+                              article.processEntryButtonText)
                               ? {
                                   tag: n(
-                                    article.processEntryButtonText ||
-                                      'application',
+                                    (article as Article)
+                                      .processEntryButtonText || 'application',
                                     'Umsókn',
                                   ),
                                 }
@@ -575,21 +577,18 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: { getArticles: articles },
+      data: { getCategoryPages: categoryPages },
     },
     {
       data: { getAnchorPagesInCategory: lifeEvents },
-    },
-    {
-      data: { getManuals: manuals },
     },
     {
       data: { getArticleCategories },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetArticlesQuery, QueryGetArticlesArgs>({
-      query: GET_ARTICLES_QUERY,
+    apolloClient.query<GetCategoryPagesQuery, GetCategoryPagesQueryVariables>({
+      query: GET_CATEGORY_PAGES_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -607,16 +606,6 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug,
           lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<GetManualsQuery, GetManualsQueryVariables>({
-      query: GET_MANUALS_QUERY,
-      variables: {
-        input: {
-          category: slug,
-          lang: locale as ContentLanguage,
-          size: 1000,
         },
       },
     }),
@@ -657,18 +646,8 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Category not found')
   }
 
-  const cards: Cards = []
-
-  for (const article of articles) {
-    cards.push(article)
-  }
-
-  for (const manual of manuals) {
-    cards.push()
-  }
-
   return {
-    articles: (articles ?? []).concat(manuals),
+    articles: categoryPages ?? [],
     lifeEvents,
     categories: getArticleCategories,
     namespace,
