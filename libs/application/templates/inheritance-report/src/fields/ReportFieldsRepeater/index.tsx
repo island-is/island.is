@@ -26,7 +26,6 @@ type RepeaterProps = {
     props: {
       fields: Array<object>
       repeaterButtonText: string
-      repeaterHeaderText: string
       sumField: string
       fromExternalData?: string
     }
