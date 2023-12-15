@@ -9,7 +9,6 @@ import router from 'next/router'
 import { toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseState,
   CaseTransition,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -20,6 +19,7 @@ import {
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseState,
   InstitutionType,
   useCaseLazyQuery,
   useLimitedAccessCaseLazyQuery,

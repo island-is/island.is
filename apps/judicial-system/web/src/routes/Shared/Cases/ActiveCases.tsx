@@ -19,7 +19,6 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -31,7 +30,10 @@ import {
 import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
 import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
   sortableTableColumn,
