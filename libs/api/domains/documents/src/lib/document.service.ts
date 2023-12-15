@@ -1,14 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { Document, DocumentListResponse } from './models/document.model'
-import {
-  CategoryDTO,
-  DocumentInfoDTO,
-  SenderDTO,
-  TypeDTO,
-} from '@island.is/clients/documents'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
-import { DocumentClient } from '@island.is/clients/documents'
 import { DocumentBuilder } from './documentBuilder'
 import { GetDocumentListInput } from './dto/getDocumentListInput'
 import { DocumentType } from './models/documentType.model'
@@ -18,10 +11,7 @@ import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { PostMailActionInput } from './dto/postMailActionInput'
 import { ActionMailBody } from './models/actionMail.model'
 import { PostBulkMailActionInput } from './dto/postBulkMailActionInput'
-import {
-  CustomersListDocumentsSortByEnum,
-  DocumentsV2ClientService,
-} from '@island.is/clients/documents-v2'
+import { DocumentsV2ClientService } from '@island.is/clients/documents-v2'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -69,8 +59,7 @@ export class DocumentService {
       (input.categoryId === '' || input.categoryId?.indexOf(healthId) !== -1) &&
       input.isLegalGuardian
     ) {
-      const allCategories =
-        (await this.getCategories({ kennitala: nationalId })) ?? []
+      const allCategories = (await this.getCategories(nationalId)) ?? []
       if (allCategories.find((x) => x.id === healthId)) {
         newInput = {
           ...input,

@@ -47,7 +47,7 @@ export class DocumentBuilder {
   ): Pick<DocumentTypeFilter, 'url' | 'fileType'> {
     const found = this.customDocuments.find(
       (x) =>
-        document.subject.includes(x.subjectContains) &&
+        document.subject?.includes(x.subjectContains) &&
         x.senderNatReg === document.senderKennitala,
     )
     if (found) return found
