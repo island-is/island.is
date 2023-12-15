@@ -40,7 +40,11 @@ const OrganizationSubpageSlugField = () => {
       .onValueChanged((newTitle) => {
         if (hasEntryBeenPublished) return
         if (newTitle) {
-          setValue(slugify(String(newTitle)))
+          setValue(
+            slugify(String(newTitle), {
+              customReplacements: [['ö', 'o']],
+            }),
+          )
         }
       })
   }, [hasEntryBeenPublished, sdk.entry.fields.title, sdk.field.locale])
