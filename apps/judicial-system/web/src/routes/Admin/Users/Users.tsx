@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -20,40 +19,33 @@ import { errors, titles } from '@island.is/judicial-system-web/messages'
 import { Loading } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  Institution,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  InstitutionsQuery,
-  UsersQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useUsersQuery } from './getUsers.generated'
 import * as styles from './Users.css'
-
-interface UserData {
-  users: User[]
-}
-interface InstitutionData {
-  institutions: Institution[]
-}
 
 export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()
-  const { data, error, loading } = useQuery<UserData>(UsersQuery, {
+  const {
+    allInstitutions,
+    loading: institutionsLoading,
+    loaded: institutionsLoaded,
+  } = useInstitution()
+  const {
+    data: userData,
+    error: userError,
+    loading: usersLoading,
+  } = useUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const { data: rawInstitutions, loading: loadingInstitutions } =
-    useQuery<InstitutionData>(InstitutionsQuery, {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
-
-  const users = data?.users.filter((u) => {
+  const users = userData?.users?.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
       : true
@@ -109,12 +101,14 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <Select
             name="institutions"
             options={
-              rawInstitutions?.institutions.map((i) => {
-                return { label: i.name, value: i.id }
-              }) || []
+              institutionsLoaded
+                ? allInstitutions.map((i) => {
+                    return { label: i.name, value: i.id }
+                  })
+                : []
             }
             placeholder="Veldu stofnun"
-            isDisabled={loadingInstitutions}
+            isDisabled={institutionsLoading}
             onChange={(selectedOption) =>
               setSelectedInstitution(selectedOption?.value)
             }
@@ -209,12 +203,12 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           />
         </Box>
       )}
-      {loading && (
+      {(institutionsLoading || usersLoading) && (
         <Box width="full">
           <Loading />
         </Box>
       )}
-      {error && (
+      {userError && (
         <div data-testid="users-error">
           <AlertMessage
             title={formatMessage(errors.failedToFetchDataFromDbTitle)}

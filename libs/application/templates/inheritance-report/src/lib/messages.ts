@@ -523,7 +523,7 @@ export const m = defineMessages({
   },
   moneyText: {
     id: 'ir.application:moneyText',
-    defaultMessage: 'Upplýsingar um peninga',
+    defaultMessage: 'peningar og bankahólf',
     description: '',
   },
   moneyPlaceholder: {
