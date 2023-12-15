@@ -8547,23 +8547,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fidm/asn1@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@fidm/asn1@npm:1.0.4"
-  checksum: cc228cb7d396b2c038311da799bc32c52157772628ca1a25de25d5897420738d96dd72a5effa2241f438a99fc5cc998e1a9240b4ee746b45d474ef879352309a
-  languageName: node
-  linkType: hard
-
-"@fidm/x509@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@fidm/x509@npm:1.2.1"
-  dependencies:
-    "@fidm/asn1": ^1.0.4
-    tweetnacl: ^1.0.1
-  checksum: e38d75111928974e886c5bf438c31165d3e177f96b5f84aa02d5d38cc6e4ab6bced6b590cb438f0ab8f7a2e14d68dea24fc57115b064dda4b0a96da659a86758
-  languageName: node
-  linkType: hard
-
 "@figspec/components@npm:^1.0.0":
   version: 1.0.1
   resolution: "@figspec/components@npm:1.0.1"
@@ -10106,18 +10089,6 @@ __metadata:
     wrap-ansi: ^8.1.0
     wrap-ansi-cjs: "npm:wrap-ansi@^7.0.0"
   checksum: 4a473b9b32a7d4d3cfb7a614226e555091ff0c5a29a1734c28c72a182c2f6699b26fc6b5c2131dfd841e86b185aea714c72201d7c98c2fba5f17709333a67aeb
-  languageName: node
-  linkType: hard
-
-"@island.is/login@npm:1.2.1":
-  version: 1.2.1
-  resolution: "@island.is/login@npm:1.2.1"
-  dependencies:
-    "@fidm/x509": ^1.2.1
-    xml-crypto: ^2.0.0
-    xml2js: ^0.4.23
-    xmldom: ^0.3.0
-  checksum: 26b134b17e8b4bff60426309a1c2efa2b231c4f647c0dd73aba2961fc5bfa56f0d2257dcbc4ecf37975b774767f30c8c8dc15269246fc2237ed8040321ad4cfe
   languageName: node
   linkType: hard
 
@@ -19212,6 +19183,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmldom/xmldom@npm:^0.8.8":
+  version: 0.8.10
+  resolution: "@xmldom/xmldom@npm:0.8.10"
+  checksum: 4c136aec31fb3b49aaa53b6fcbfe524d02a1dc0d8e17ee35bd3bf35e9ce1344560481cd1efd086ad1a4821541482528672306d5e37cdbd187f33d7fadd3e2cf0
+  languageName: node
+  linkType: hard
+
 "@xmldom/xmldom@npm:~0.7.0":
   version: 0.7.10
   resolution: "@xmldom/xmldom@npm:0.7.10"
@@ -26392,7 +26370,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dezalgo@npm:1.0.3, dezalgo@npm:^1.0.0":
+"dezalgo@npm:^1.0.0":
   version: 1.0.3
   resolution: "dezalgo@npm:1.0.3"
   dependencies:
@@ -30220,18 +30198,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"formidable@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "formidable@npm:2.0.1"
-  dependencies:
-    dezalgo: 1.0.3
-    hexoid: 1.0.0
-    once: 1.4.0
-    qs: 6.9.3
-  checksum: b35445444e7b6f6f3cacbadd5e6fadd6b5b2e83162e7c41fa22586df584cc515bbd1ee0dc2b701ce031fcb000d71769bc77bd0958db8a89a0ceb8b2227bdc695
-  languageName: node
-  linkType: hard
-
 "formidable@npm:^2.1.2":
   version: 2.1.2
   resolution: "formidable@npm:2.1.2"
@@ -30241,6 +30207,17 @@ __metadata:
     once: ^1.4.0
     qs: ^6.11.0
   checksum: 81c8e5d89f5eb873e992893468f0de22c01678ca3d315db62be0560f9de1c77d4faefc9b1f4575098eb2263b3c81ba1024833a9fc3206297ddbac88a4f69b7a8
+  languageName: node
+  linkType: hard
+
+"formidable@npm:^3.2.4":
+  version: 3.5.1
+  resolution: "formidable@npm:3.5.1"
+  dependencies:
+    dezalgo: ^1.0.4
+    hexoid: ^1.0.0
+    once: ^1.4.0
+  checksum: 46b21496f9f985161cf7636163147b6728f9997c7e1d59433680d92619758bf6862330e6d105b5816bafcd1ab32f27ef183455991f93ef836ea731c68db62af9
   languageName: node
   linkType: hard
 
@@ -31684,7 +31661,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hexoid@npm:1.0.0, hexoid@npm:^1.0.0":
+"hexoid@npm:^1.0.0":
   version: 1.0.0
   resolution: "hexoid@npm:1.0.0"
   checksum: 27a148ca76a2358287f40445870116baaff4a0ed0acc99900bf167f0f708ffd82e044ff55e9949c71963852b580fc024146d3ac6d5d76b508b78d927fa48ae2d
@@ -33949,7 +33926,6 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": 3.3.3
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
-    "@island.is/login": 1.2.1
     "@island.is/regulations-tools": 0.7.12
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
@@ -34251,7 +34227,7 @@ __metadata:
     slate-hyperscript: 0.67.0
     slate-react: 0.70.0
     smoothscroll-polyfill: 0.4.4
-    soap: 0.45.0
+    soap: 1.0.0
     sort-paths: 1.1.1
     sqlite3: 5.1.6
     sqs-consumer: 5.4.0
@@ -41566,7 +41542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"once@npm:1.4.0, once@npm:^1.3.0, once@npm:^1.3.1, once@npm:^1.4.0":
+"once@npm:^1.3.0, once@npm:^1.3.1, once@npm:^1.4.0":
   version: 1.4.0
   resolution: "once@npm:1.4.0"
   dependencies:
@@ -44634,13 +44610,6 @@ __metadata:
   dependencies:
     side-channel: ^1.0.4
   checksum: 6e1f29dd5385f7488ec74ac7b6c92f4d09a90408882d0c208414a34dd33badc1a621019d4c799a3df15ab9b1d0292f97c1dd71dc7c045e69f81a8064e5af7297
-  languageName: node
-  linkType: hard
-
-"qs@npm:6.9.3":
-  version: 6.9.3
-  resolution: "qs@npm:6.9.3"
-  checksum: 89cd1b5e521c19a7e0a7a056ddc261c5c30889664608cf9ce6085f9f25606fc48568cf6a6249e641b4b5c04dac7889e3b82133142523abf397228eb4f488fc38
   languageName: node
   linkType: hard
 
@@ -48693,23 +48662,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"soap@npm:0.45.0":
-  version: 0.45.0
-  resolution: "soap@npm:0.45.0"
+"soap@npm:1.0.0":
+  version: 1.0.0
+  resolution: "soap@npm:1.0.0"
   dependencies:
     axios-ntlm: ^1.2.0
     debug: ^4.3.2
-    formidable: ^2.0.1
+    formidable: ^3.2.4
     get-stream: ^6.0.1
     lodash: ^4.17.21
     sax: ">=0.6"
     strip-bom: ^3.0.0
     uuid: ^8.3.2
     whatwg-mimetype: 3.0.0
-    xml-crypto: ^2.1.3
+    xml-crypto: ^3.0.0
   peerDependencies:
-    axios: ">=0.21.1"
-  checksum: 29ebe9c774e5cbc4b6d4d717510e3d8b969fb9730bf11d2c5ab240855a3617a0fe7b715cd0a093dc52c5e1a767bd851714bc2f7d02dff57c71994cdb4d179fa9
+    axios: ^0.27.2
+  checksum: 08dd3dfe4561d51e4cb6f2760622a2b796c487279d43d22f4565adc7b7d9ac5ac5a5d1710c5849916707904b0ff4fe4fcee8a9b2208a49db6248f1aefc26eeea
   languageName: node
   linkType: hard
 
@@ -51553,13 +51522,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tweetnacl@npm:^1.0.1":
-  version: 1.0.3
-  resolution: "tweetnacl@npm:1.0.3"
-  checksum: e4a57cac188f0c53f24c7a33279e223618a2bfb5fea426231991652a13247bea06b081fd745d71291fcae0f4428d29beba1b984b1f1ce6f66b06a6d1ab90645c
-  languageName: node
-  linkType: hard
-
 "type-check@npm:^0.4.0, type-check@npm:~0.4.0":
   version: 0.4.0
   resolution: "type-check@npm:0.4.0"
@@ -53935,13 +53897,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml-crypto@npm:2.0.0":
-  version: 2.0.0
-  resolution: "xml-crypto@npm:2.0.0"
+"xml-crypto@npm:^3.0.0":
+  version: 3.2.0
+  resolution: "xml-crypto@npm:3.2.0"
   dependencies:
-    xmldom: 0.1.27
-    xpath: 0.0.27
-  checksum: 6f2ced30ce6d26f64a50af0407a18dc7e3ac5a1e1ada6e17df10f742d85bd8212800845c21ba808f10851ca0349dadfff7188564f2028f2e1b1031326a42beeb
+    "@xmldom/xmldom": ^0.8.8
+    xpath: 0.0.32
+  checksum: 6c4974a7518307ea006dcfc1405f61c6738b45574b4d9d1e62f53b602bfcf894d34017f99d618f26f67c40a5e6d78e6228116ded2768b2ca5b2df5c8bf7774b7
   languageName: node
   linkType: hard
 
@@ -54021,17 +53983,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmldom@github:xmldom/xmldom#0.7.0":
-  version: 0.7.0
-  resolution: "xmldom@https://github.com/xmldom/xmldom.git#commit=c568938641cc1f121cef5b4df80fcfda1e489b6e"
-  checksum: 86beb4f90675610ad4c2de68a46c7747b90b2a077fa73069973bd681b07fe4384361cfe1785d090e42f499095a7cfaadc3988a1aca2a3ef55c3d9d9a98d9e1d0
-  languageName: node
-  linkType: hard
-
-"xpath@npm:0.0.27":
-  version: 0.0.27
-  resolution: "xpath@npm:0.0.27"
-  checksum: 51f45d211a9a552a8f6a12a474061e89bafb07e0aecd4bad18a557411feb975919c158e1a66e4ea0542198c6ed442481d9f709c625cca57b97aaedeaeded902e
+"xpath@npm:0.0.32":
+  version: 0.0.32
+  resolution: "xpath@npm:0.0.32"
+  checksum: 887e9747b960ea45fb47a9464744424512de0a49205e82c2ad6be662d7a2f1a75145662a143304340864c6da68fd8d767cce4065cc198ee07a3d4897e0a3d4bb
   languageName: node
   linkType: hard
 
