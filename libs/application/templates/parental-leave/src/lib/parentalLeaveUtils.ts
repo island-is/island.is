@@ -1575,7 +1575,7 @@ export const synchronizeVMSTPeriods = (
       if (period.paid) {
         newPeriods.push(obj)
       } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDate() <= 20) {
+        if (today.getDay() >= 20) {
           newPeriods.push(obj)
         }
       } else if (new Date(period.from).getTime() <= today.getTime()) {
