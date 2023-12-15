@@ -611,6 +611,8 @@ export function buildNationalIdWithNameField(
   data: Omit<NationalIdWithNameField, 'type' | 'component' | 'children'>,
 ): NationalIdWithNameField {
   const {
+    disabled,
+    required,
     customId,
     customNationalIdLabel,
     customNameLabel,
@@ -619,11 +621,12 @@ export function buildNationalIdWithNameField(
     nationalIdDefaultValue,
     nameDefaultValue,
     errorMessage,
-    disabled,
     minAgePerson,
   } = data
   return {
     ...extractCommonFields(data),
+    disabled,
+    required,
     customId,
     customNationalIdLabel,
     customNameLabel,
@@ -632,7 +635,6 @@ export function buildNationalIdWithNameField(
     nationalIdDefaultValue,
     nameDefaultValue,
     errorMessage,
-    disabled,
     minAgePerson,
     children: undefined,
     type: FieldTypes.NATIONAL_ID_WITH_NAME,

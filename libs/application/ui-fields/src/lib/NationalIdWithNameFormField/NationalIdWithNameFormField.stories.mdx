@@ -39,6 +39,8 @@ You can create a NationalIdWithNameFormField using the following function `build
   code={dedent(`
     buildNationalIdWithNameField({
       id: 'field.id',
+      disabled: isDisabled,
+      required: isRequired,
       customId: 'seller',
       customNationalIdLabel: m.sellerNationalId,
       customNameLabel: m.sellerName,
@@ -47,7 +49,6 @@ You can create a NationalIdWithNameFormField using the following function `build
       nationalIdDefaultValue: name,
       nameDefaultValue: nationalId,
       errorMessage: errorMessage,
-      disabled: isDisabled,
       minAgePerson: minAge,
     })`)}
 />
@@ -60,10 +61,11 @@ The previous configuration object will result in the following component:
       application={createMockApplication()}
       field={{
         id: 'field.id',
+        disabled: false,
+        required: false,
         customId: 'seller',
         customNationalIdLabel: 'Kennitala seljanda',
         customNameLabel: 'Nafn seljanda',
-        disabled: false,
         minAgePerson: 18,
       }}
     />

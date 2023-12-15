@@ -18,6 +18,8 @@ import { IDENTITY_QUERY } from './graphql/queries'
 interface NationalIdWithNameProps {
   id: string
   application: Application
+  disabled?: boolean
+  required?: boolean
   customId?: string
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
@@ -26,7 +28,6 @@ interface NationalIdWithNameProps {
   nationalIdDefaultValue?: string
   nameDefaultValue?: string
   errorMessage?: string
-  disabled?: boolean
   minAgePerson?: number
 }
 
@@ -35,6 +36,8 @@ export const NationalIdWithName: FC<
 > = ({
   id,
   application,
+  disabled,
+  required,
   customId = '',
   customNationalIdLabel = '',
   customNameLabel = '',
@@ -43,7 +46,6 @@ export const NationalIdWithName: FC<
   nationalIdDefaultValue,
   nameDefaultValue,
   errorMessage,
-  disabled,
   minAgePerson,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
@@ -123,13 +125,14 @@ export const NationalIdWithName: FC<
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={nationaIdField}
-            label={formatMessage(
-              customNationalIdLabel ??
-                coreErrorMessages.nationalRegistryNationalId,
-            )}
+            label={
+              customNationalIdLabel
+                ? formatMessage(customNationalIdLabel)
+                : formatMessage(coreErrorMessages.nationalRegistryNationalId)
+            }
             defaultValue={defaultNationalId}
             format="######-####"
-            required
+            required={required}
             backgroundColor="blue"
             onChange={debounce((v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
@@ -145,10 +148,12 @@ export const NationalIdWithName: FC<
           <InputController
             id={nameField}
             defaultValue={defaultName}
-            label={formatMessage(
-              customNameLabel ?? coreErrorMessages.nationalRegistryName,
-            )}
-            required
+            label={
+              customNameLabel
+                ? formatMessage(customNameLabel)
+                : formatMessage(coreErrorMessages.nationalRegistryName)
+            }
+            required={required}
             error={
               queryError || data?.identity === null
                 ? formatMessage(
