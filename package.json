@@ -456,7 +456,6 @@
     "marked": "2.0.0",
     "serialize-javascript": "4.0.0",
     "prismjs": "1.24.0",
-    "urijs": "1.19.7",
     "elliptic": "6.5.4",
     "netmask": "2.0.1",
     "ssri": "8.0.1",
