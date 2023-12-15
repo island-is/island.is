@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { FJARSYSLAN_SLUG, m } from '@island.is/service-portal/core'
+import { FJARSYSLAN_SLUG, HMS_SLUG, m } from '@island.is/service-portal/core'
 import { FinancePaths } from './paths'
 
 export const financeNavigation: PortalNavigationItem = {
@@ -13,6 +13,16 @@ export const financeNavigation: PortalNavigationItem = {
     {
       name: m.financeTransactions,
       path: FinancePaths.FinanceTransactions,
+      children: [
+        {
+          name: m.financeTransactionsCategories,
+          path: FinancePaths.FinanceTransactions,
+        },
+        {
+          name: m.financeTransactionPeriods,
+          path: FinancePaths.FinanceTransactionPeriods,
+        },
+      ],
     },
     {
       name: m.financeBills,
@@ -29,6 +39,12 @@ export const financeNavigation: PortalNavigationItem = {
     {
       name: m.financeLocalTax,
       path: FinancePaths.FinanceLocalTax,
+    },
+    {
+      name: m.financeLoans,
+      path: FinancePaths.FinanceLoans,
+      serviceProvider: HMS_SLUG,
+      description: m.realEstateTooltip,
     },
   ],
   icon: {

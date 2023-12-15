@@ -1348,10 +1348,11 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       const start = parseISO(period.startDate)
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
+      const periodLength = calculatePeriodLength(start, end)
 
       const calculatedLength = period.daysToUse
         ? Number(period.daysToUse)
-        : calculatePeriodLength(start, end, percentage)
+        : Math.round(periodLength * percentage)
 
       return total + calculatedLength
     }, 0),
@@ -1574,7 +1575,7 @@ export const synchronizeVMSTPeriods = (
       if (period.paid) {
         newPeriods.push(obj)
       } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDay() >= 20) {
+        if (today.getDate() <= 20) {
           newPeriods.push(obj)
         }
       } else if (new Date(period.from).getTime() <= today.getTime()) {

@@ -24,7 +24,9 @@ export const MaritalStatusReview: FC<Props> = ({
   route,
 }: Props) => {
   const answers = application.answers as Citizenship
+
   const { formatMessage } = useLocale()
+
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
       <Box paddingBottom={4}>
@@ -44,7 +46,7 @@ export const MaritalStatusReview: FC<Props> = ({
               },
             })}
             <Text>{answers?.maritalStatus?.status}</Text>
-            <Text>{answers?.maritalStatus?.dateOfMaritalStatus}</Text>
+            <Text>{answers?.maritalStatus?.dateOfMaritalStatusStr}</Text>
           </GridColumn>
           <GridColumn span="1/2">
             {DescriptionFormField({

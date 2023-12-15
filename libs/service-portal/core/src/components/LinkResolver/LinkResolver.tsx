@@ -27,13 +27,14 @@ export const LinkResolver = ({
         className={cn(styles.link, {
           [`${className}`]: className,
         })}
-        onClick={() =>
+        onClick={
           skipOutboundTrack
             ? undefined
-            : servicePortalOutboundLink({
-                url: formatPlausiblePathToParams(pathname).url,
-                outboundUrl: href,
-              })
+            : () =>
+                servicePortalOutboundLink({
+                  url: formatPlausiblePathToParams(pathname).url,
+                  outboundUrl: href,
+                })
         }
       >
         {children}

@@ -1,1 +1,1 @@
-export * from './residenceChange'
+export { generateResidenceChangePdf } from './residenceChange'

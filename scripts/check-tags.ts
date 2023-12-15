@@ -2,7 +2,7 @@
  * To run: yarn ts scripts/check-tags.ts
  */
 import { readFile } from 'fs/promises'
-import glob from 'glob'
+import { globSync } from 'glob'
 import chalk from 'chalk'
 
 interface Project {
@@ -35,7 +35,9 @@ const checkTags = async (filePath: string) => {
 }
 
 const checkProjects = async () => {
-  const projects = glob.sync('{apps,libs}/**/project.json')
+  const projects = globSync('{apps,libs}/**/project.json', {
+    ignore: '**/node_modules/**',
+  })
   let hasError = false
   for (const project of projects) {
     hasError = hasError || (await checkTags(project))

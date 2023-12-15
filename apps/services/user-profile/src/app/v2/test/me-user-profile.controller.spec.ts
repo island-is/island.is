@@ -22,6 +22,7 @@ import { NUDGE_INTERVAL } from '../user-profile.service'
 import { formatPhoneNumber } from '../../utils/format-phone-number'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -255,6 +256,10 @@ describe('MeUserProfileController', () => {
 
       expect(userProfile.email).toBe(newEmail)
       expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
+      expect(userProfile.emailVerified).toBe(true)
+      expect(userProfile.mobilePhoneNumberVerified).toBe(true)
+      expect(userProfile.emailStatus).toBe(DataStatus.VERIFIED)
+      expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
     })
 
     it('PATCH /v2/me should return 200 with changed mobile data in response', async () => {
@@ -279,8 +284,10 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
+      expect(userProfile.mobilePhoneNumberVerified).toBe(true)
+      expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
 
-      // Check if confirmSms is called once so we know it was not skipped with audkenniSimNumber
+      // Check if confirmSms is called once, so we know it was not skipped with audkenniSimNumber
       expect(confirmSmsSpy).toBeCalledTimes(1)
     })
 
@@ -309,6 +316,7 @@ describe('MeUserProfileController', () => {
         formatPhoneNumber(audkenniSimNumber),
       )
       expect(userProfile.mobilePhoneNumberVerified).toBe(true)
+      expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
 
       expect(confirmSmsSpy).toBeCalledTimes(0)
     })
@@ -335,6 +343,8 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.email).toBe(newEmail)
+      expect(userProfile.emailVerified).toBe(true)
+      expect(userProfile.emailStatus).toBe(DataStatus.VERIFIED)
     })
 
     it('PATCH /v2/me should return 400 when email verification code is not sent', async () => {
@@ -515,6 +525,10 @@ describe('MeUserProfileController', () => {
 
       expect(userProfile.email).toBe(null)
       expect(userProfile.mobilePhoneNumber).toBe(null)
+      expect(userProfile.emailVerified).toBe(false)
+      expect(userProfile.mobilePhoneNumberVerified).toBe(false)
+      expect(userProfile.emailStatus).toBe(DataStatus.EMPTY)
+      expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
 
       // Assert that islyklar api is called
       expect(islyklarApi.islyklarPut).toBeCalledWith({
