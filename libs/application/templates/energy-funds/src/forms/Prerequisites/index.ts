@@ -65,7 +65,7 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               provider: UserProfileApi,
               title: externalData.userProfile.title,
-              subTitle: '',
+              subTitle: externalData.userProfile.subTitle,
             }),
           ],
         }),
