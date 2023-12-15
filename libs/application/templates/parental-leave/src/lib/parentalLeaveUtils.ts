@@ -958,6 +958,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as EmployerRow[]
 
+  const language = getValueViaPath(answers, 'applicant.language') as string
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -1023,6 +1025,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     addPeriods,
     tempPeriods,
     tempEmployers,
+    language,
   }
 }
 
@@ -1571,7 +1574,7 @@ export const synchronizeVMSTPeriods = (
       if (period.paid) {
         newPeriods.push(obj)
       } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDay() >= 20) {
+        if (today.getDate() <= 20) {
           newPeriods.push(obj)
         }
       } else if (new Date(period.from).getTime() <= today.getTime()) {

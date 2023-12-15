@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import glob from 'glob'
+import { globSync } from 'glob'
 import spawn from 'cross-spawn'
 import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
@@ -113,8 +113,7 @@ export const updateNamespace = async (
     })
 }
 
-glob
-  .sync('libs/localization/messages.json')
+globSync('libs/localization/messages.json')
   .map((filename) => readFileSync(filename, { encoding: 'utf-8' }))
   .map((file) => JSON.parse(file))
   .forEach((f) => {

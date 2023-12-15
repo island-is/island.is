@@ -46,7 +46,7 @@ export class Defendant extends Model {
   caseId!: string
 
   @BelongsTo(() => Case, 'case_id')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
   @Column({

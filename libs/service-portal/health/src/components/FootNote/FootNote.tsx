@@ -1,13 +1,12 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
 import { getFootNoteByType } from './helper'
 
 interface Props {
   type: string
 }
 
-export const FootNote: FC<React.PropsWithChildren<Props>> = ({ type }) => {
+export const FootNote = ({ type }: Props) => {
   const { formatMessage } = useLocale()
 
   return (

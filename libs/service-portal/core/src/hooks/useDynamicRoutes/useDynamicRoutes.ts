@@ -50,6 +50,7 @@ export const useDynamicRoutes = () => {
 
     if (tabData?.RecordsTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceTransactions)
+      dynamicPathArray.push(ServicePortalPath.FinanceTransactionPeriods)
     }
     if (tabData?.employeeClaimsTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceEmployeeClaims)
@@ -72,6 +73,7 @@ export const useDynamicRoutes = () => {
 
     // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, licenseBook])
 
   return { activeDynamicRoutes, loading: loading && licenseBookLoading }

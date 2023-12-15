@@ -1,0 +1,13 @@
+query GetPaymentScheduleById($input: GetFinancePaymentScheduleInput!) {
+  getPaymentScheduleById(input: $input) {
+    myDetailedSchedules {
+      myDetailedSchedule {
+        paidDate
+        paidAmount
+        paymentNumber
+        unpaidAmount
+        payExplanation
+      }
+    }
+  }
+}

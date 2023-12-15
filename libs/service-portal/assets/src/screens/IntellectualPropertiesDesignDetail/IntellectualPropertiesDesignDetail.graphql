@@ -1,0 +1,38 @@
+query getIntellectualPropertiesDesign($input: IntellectualPropertiesInput!) {
+  intellectualPropertiesDesign(input: $input) {
+    specification {
+      description
+      specificationText
+    }
+    applicationNumber
+    status
+    canRenew
+    lifecycle {
+      publishDate
+      applicationDate
+      registrationDate
+      internationalRegistrationDate
+      expiryDate
+    }
+    classification
+    status
+    owners {
+      name
+      address
+    }
+    designers {
+      name
+    }
+    agent {
+      name
+      address
+    }
+  }
+  intellectualPropertiesDesignImageList(input: $input) {
+    images {
+      designNumber
+      imageNumber
+      image
+    }
+  }
+}

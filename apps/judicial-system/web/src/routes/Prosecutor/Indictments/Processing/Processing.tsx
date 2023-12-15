@@ -33,7 +33,7 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
   const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
-  const { courts } = useInstitution()
+  const { districtCourts } = useInstitution()
   const router = useRouter()
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
@@ -95,7 +95,7 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
         <Box component="section" marginBottom={5}>
           <SelectCourt
             workingCase={workingCase}
-            courts={courts}
+            courts={districtCourts}
             onChange={handleCourtChange}
           />
         </Box>

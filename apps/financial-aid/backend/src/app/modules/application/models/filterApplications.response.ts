@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { ApplicationModel } from './application.model'
+import { StaffModel } from '../../staff'
 
 export class FilterApplicationsResponse {
   @ApiProperty()
@@ -7,4 +8,7 @@ export class FilterApplicationsResponse {
 
   @ApiProperty()
   totalCount: number
+
+  @ApiProperty()
+  staffList: StaffModel[]
 }

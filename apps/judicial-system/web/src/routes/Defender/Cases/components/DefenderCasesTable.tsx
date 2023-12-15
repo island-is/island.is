@@ -12,7 +12,7 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
@@ -27,6 +27,7 @@ import {
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 

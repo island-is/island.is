@@ -11,6 +11,7 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseCustodyRestrictions,
   CaseType,
   Gender,
@@ -131,5 +132,15 @@ export const hasSentNotification = (
 
   return notificationsOfType[0].recipients.some(
     (recipient) => recipient.success,
+  )
+}
+
+export const isReopenedCOACase = (
+  appealState?: CaseAppealState,
+  notifications?: Notification[],
+): boolean => {
+  return (
+    appealState !== CaseAppealState.COMPLETED &&
+    hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
   )
 }

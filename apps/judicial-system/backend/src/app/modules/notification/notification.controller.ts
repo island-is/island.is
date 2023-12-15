@@ -21,11 +21,14 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import {
-  assistantRule,
-  judgeRule,
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
-  registrarRule,
 } from '../../guards'
 import {
   Case,
@@ -36,10 +39,13 @@ import {
 } from '../case'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import {
-  assistantNotificationRule,
-  judgeNotificationRule,
+  courtOfAppealsAssistantNotificationRule,
+  courtOfAppealsJudgeNotificationRule,
+  courtOfAppealsRegistrarNotificationRule,
+  districtCourtAssistantNotificationRule,
+  districtCourtJudgeNotificationRule,
+  districtCourtRegistrarNotificationRule,
   prosecutorNotificationRule,
-  registrarNotificationRule,
 } from './guards/rolesRules'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
@@ -57,9 +63,12 @@ export class NotificationController {
   @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorNotificationRule,
-    judgeNotificationRule,
-    registrarNotificationRule,
-    assistantNotificationRule,
+    districtCourtJudgeNotificationRule,
+    districtCourtRegistrarNotificationRule,
+    districtCourtAssistantNotificationRule,
+    courtOfAppealsJudgeNotificationRule,
+    courtOfAppealsRegistrarNotificationRule,
+    courtOfAppealsAssistantNotificationRule,
   )
   @Post('notification')
   @ApiCreatedResponse({
@@ -87,9 +96,12 @@ export class NotificationController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get('notifications')
   @ApiOkResponse({

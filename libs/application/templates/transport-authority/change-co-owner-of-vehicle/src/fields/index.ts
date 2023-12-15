@@ -1,4 +1,3 @@
-export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
 export { VehiclesField } from './VehiclesField'
 export { CoOwner } from './CoOwner'
 export { CoOwnerRepeater } from './CoOwnerRepeater'

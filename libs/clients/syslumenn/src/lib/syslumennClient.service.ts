@@ -487,6 +487,19 @@ export class SyslumennService {
     return res.yfirlit?.map(mapEstateInfo) ?? []
   }
 
+  async getEstateInfoWithAvailableSettlements(
+    nationalId: string,
+  ): Promise<EstateInfo[]> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarRadstofunDanarbusPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+    return res.yfirlit?.map(mapEstateInfo) ?? []
+  }
+
   async getMasterLicences() {
     const { id, api } = await this.createApi()
     const res = await api.meistaraleyfiGet({

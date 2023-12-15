@@ -12,7 +12,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  isAppealsCourtUser,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonSystemUser,
@@ -77,7 +77,7 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  if (user.role === UserRole.ASSISTANT) {
+  if (user.role === UserRole.DISTRICT_COURT_ASSISTANT) {
     options.push(
       { type: indictmentCases },
       {
@@ -236,7 +236,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     return getDistrictCourtUserCasesQueryFilter(user)
   }
 
-  if (isAppealsCourtUser(user)) {
+  if (isCourtOfAppealsUser(user)) {
     return getAppealsCourtUserCasesQueryFilter()
   }
 
