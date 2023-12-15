@@ -1,14 +1,12 @@
-query ProsecutorSelectionUsers {
-  users(input: { role: PROSECUTOR }) {
+mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
     id
-    created
-    modified
     name
     nationalId
     mobileNumber
     role
-    email
     title
+    email
     institution {
       id
       type
