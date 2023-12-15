@@ -2,15 +2,23 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  InputFileUpload,
+  Text,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   isDefenceUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -34,9 +42,9 @@ import {
 import { statement as strings } from './Statement.strings'
 
 const Statement = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { isUpdatingCase, updateCase } = useCase()
+  const { isUpdatingCase, updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
@@ -111,7 +119,6 @@ const Statement = () => {
             </Text>
           )}
         </Box>
-
         {user && (
           <>
             <Box component="section" marginBottom={5}>
@@ -139,7 +146,10 @@ const Statement = () => {
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
               />
             </Box>
-            <Box component="section" marginBottom={10}>
+            <Box
+              component="section"
+              marginBottom={isProsecutionUser(user) ? 6 : 10}
+            >
               <SectionHeading
                 title={formatMessage(strings.uploadStatementCaseFilesTitle)}
                 marginBottom={1}
@@ -167,6 +177,34 @@ const Statement = () => {
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
               />
             </Box>
+            {isProsecutionUser(user) && (
+              <Box component="section" marginBottom={10}>
+                <BlueBox>
+                  <Checkbox
+                    label={formatMessage(strings.requestRulingPublishedDelayed)}
+                    name="requestRulingPublishedDelayed"
+                    checked={
+                      workingCase.requestCourtOfAppealRulingToBeNotPublished
+                    }
+                    onChange={(event) => {
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            requestCourtOfAppealRulingToBeNotPublished:
+                              event.target.checked,
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }}
+                    large
+                    filled
+                  />
+                </BlueBox>
+              </Box>
+            )}
           </>
         )}
       </FormContentContainer>

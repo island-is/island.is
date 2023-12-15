@@ -335,4 +335,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly appealIsolationToDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly requestCourtOfAppealRulingToBeNotPublished?: boolean
 }

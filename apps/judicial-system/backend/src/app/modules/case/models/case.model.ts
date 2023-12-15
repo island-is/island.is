@@ -1178,5 +1178,5 @@ export class Case extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional()
-  requestCourtOfAppealRulingToBeHidden?: boolean
+  requestCourtOfAppealRulingToBeNotPublished?: boolean
 }
