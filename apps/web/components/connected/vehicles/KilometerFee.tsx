@@ -197,7 +197,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
             />
 
             <Select
-              size="sm"
+              size="xs"
               options={timelineOptions}
               value={timelineOptions.find(
                 (o) => o.value === inputState.timeline,
