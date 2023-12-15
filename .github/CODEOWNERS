@@ -57,8 +57,8 @@
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                                      @island-is/juni
 /libs/api/domains/communications/                                                                        @island-is/juni @island-is/stefna
 /apps/services/user-notification/                                                                        @island-is/juni
-/apps/air-discount-scheme/                                                                               @island-is/juni @island-is/aranja @island-is/hugsmidjan
-/libs/air-discount-scheme/                                                                               @island-is/juni @island-is/hugsmidjan
+/apps/air-discount-scheme/                                                                               @island-is/hugsmidjan
+/libs/air-discount-scheme/                                                                               @island-is/hugsmidjan
 /libs/application/templates/p-sign/                                                                      @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission                       @island-is/juni
 /libs/application/templates/marriage-conditions/                                                         @island-is/juni
@@ -310,6 +310,11 @@ libs/clients/rsk/relationships/                                                 
 
 /libs/application/templates/healthcare-license-certificate/                                              @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/         @island-is/origo
+
+/libs/application/templates/energy-funds/                                                                @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                           @island-is/origo
+/libs/api/domains/energy-funds/                                                                          @island-is/origo
+/libs/clients/energy-funds/                                                                              @island-is/origo
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa

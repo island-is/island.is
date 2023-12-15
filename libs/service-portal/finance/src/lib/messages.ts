@@ -20,7 +20,7 @@ export const m = defineMessages({
   },
 
   transactionsYear: {
-    id: 'sp.finance:finance-transactions-label',
+    id: 'sp.finance:finance-transactions-year',
     defaultMessage: 'Ár',
   },
 
@@ -158,7 +158,7 @@ export const m = defineMessages({
     defaultMessage: 'Fjöldi gjalddaga eftir',
   },
   loanOwner: {
-    id: 'sp.finance-loans:number-of-payment-dates-remaining',
+    id: 'sp.finance-loans:loan-owner',
     defaultMessage: 'Lántakandi',
   },
 
@@ -238,5 +238,9 @@ export const m = defineMessages({
   propertyId: {
     id: 'sp.finance-loans:property-id',
     defaultMessage: 'Fastanúmer',
+  },
+  noResultMessage: {
+    id: 'sp.finance-loans:no-result-message',
+    defaultMessage: 'Engar lánafærslur fundust innan þessa skilyrða',
   },
 })
