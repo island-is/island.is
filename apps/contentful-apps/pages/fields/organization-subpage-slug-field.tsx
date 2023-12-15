@@ -39,7 +39,12 @@ const OrganizationSubpageSlugField = () => {
     return sdk.entry.fields.title
       .getForLocale(sdk.field.locale)
       .onValueChanged((newTitle) => {
-        if (hasEntryBeenPublished || initialTitleChange.current) {
+        if (hasEntryBeenPublished) {
+          return
+        }
+
+        // Callback gets called on initial render, so we  want to ignore that
+        if (initialTitleChange.current) {
           initialTitleChange.current = false
           return
         }
