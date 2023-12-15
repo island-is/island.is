@@ -59,7 +59,6 @@ export const GET_ARTICLES_QUERY = gql`
 `
 
 export const GET_CATEGORY_PAGES_QUERY = gql`
-  ${processEntryFields}
   query getCategoryPages($input: GetCategoryPagesInput!) {
     getCategoryPages(input: $input) {
       ... on Article {
@@ -122,4 +121,5 @@ export const GET_CATEGORY_PAGES_QUERY = gql`
       }
     }
   }
+  ${processEntryFields}
 `
