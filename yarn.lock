@@ -34175,7 +34175,6 @@ __metadata:
     pdf-lib: 1.17.1
     pdfkit: 0.11.0
     pg: 8.1.0
-    pg-hstore: 2.3.3
     powerbi-client: 2.21.1
     powerbi-client-react: 1.3.5
     prettier: 2.6.2
@@ -42683,15 +42682,6 @@ __metadata:
   version: 2.5.0
   resolution: "pg-connection-string@npm:2.5.0"
   checksum: a6f3a068f7c9416a5b33a326811caf0dfaaee045c225b7c628b4c9b4e9a2b25bdd12a21e4c48940e1000ea223a4e608ca122d2ff3dd08c8b1db0fc9f5705133a
-  languageName: node
-  linkType: hard
-
-"pg-hstore@npm:2.3.3":
-  version: 2.3.3
-  resolution: "pg-hstore@npm:2.3.3"
-  dependencies:
-    underscore: ^1.7.0
-  checksum: 985642cabf32c049220c5603e36246e5c6c32d2eca5ab9876d78c76008288ea5013260b71b8bef5785bf2adaa771e92240575cc1042464b0c7f8aca6923c335f
   languageName: node
   linkType: hard
 
