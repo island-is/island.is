@@ -14,25 +14,27 @@ export const informationNavigation: PortalNavigationItem = {
     {
       name: m.myInfo,
       path: InformationPaths.MyInfoRootOverview,
+      children: [
+        {
+          name: m.detailInfo,
+          navHide: true,
+          path: InformationPaths.UserInfo,
+        },
+        {
+          name: m.familySpouse,
+          navHide: true,
+          path: InformationPaths.Spouse,
+        },
+        {
+          name: m.familyChild,
+          navHide: true,
+          path: InformationPaths.Child,
+        },
+      ],
     },
     {
       name: m.mySettings,
       path: InformationPaths.Settings,
-    },
-    {
-      name: m.detailInfo,
-      navHide: true,
-      path: InformationPaths.UserInfo,
-    },
-    {
-      name: m.familySpouse,
-      navHide: true,
-      path: InformationPaths.Spouse,
-    },
-    {
-      name: m.familyChild,
-      navHide: true,
-      path: InformationPaths.Child,
     },
     {
       name: m.petitions,
