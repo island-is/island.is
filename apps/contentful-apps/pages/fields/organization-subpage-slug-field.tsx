@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Stack, Text, TextInput } from '@contentful/f36-components'
@@ -21,6 +21,7 @@ const OrganizationSubpageSlugField = () => {
   const [organizationPageId, setOrganizationPageId] = useState(
     sdk.entry.fields.organizationPage.getValue()?.sys?.id,
   )
+  const initialTitleChange = useRef(true)
   const [hasEntryBeenPublished, setHasEntryBeenPublished] = useState(
     Boolean(sdk.entry.getSys()?.firstPublishedAt),
   )
@@ -38,13 +39,13 @@ const OrganizationSubpageSlugField = () => {
     return sdk.entry.fields.title
       .getForLocale(sdk.field.locale)
       .onValueChanged((newTitle) => {
-        if (hasEntryBeenPublished) return
+        if (hasEntryBeenPublished || initialTitleChange.current) {
+          initialTitleChange.current = false
+          return
+        }
+
         if (newTitle) {
-          setValue(
-            slugify(String(newTitle), {
-              customReplacements: [['ö', 'o']],
-            }),
-          )
+          setValue(slugify(String(newTitle)))
         }
       })
   }, [hasEntryBeenPublished, sdk.entry.fields.title, sdk.field.locale])
