@@ -37,6 +37,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import {
@@ -76,6 +77,7 @@ const Category: Screen<CategoryProps> = ({
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hashArray, setHashArray] = useState<string[]>([])
+  const { activeLocale } = useI18n()
 
   const Router = useRouter()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -364,6 +366,27 @@ const Category: Screen<CategoryProps> = ({
                   )}
                   <Stack space={2}>
                     {sortedArticles.map((article) => {
+                      let topicCardProps = {}
+                      if (
+                        article.__typename === 'Article' &&
+                        (hasProcessEntries(article as Article) ||
+                          article.processEntryButtonText)
+                      ) {
+                        topicCardProps = {
+                          tag: n(
+                            article.processEntryButtonText || 'application',
+                            'Umsókn',
+                          ),
+                        }
+                      } else if (article.__typename === 'Manual') {
+                        topicCardProps = {
+                          tag: n(
+                            'manualCardTag',
+                            activeLocale === 'is' ? 'Handbók' : 'Manual',
+                          ),
+                        }
+                      }
+
                       return (
                         <FocusableBox key={article.slug} borderRadius="large">
                           <TopicCard
@@ -373,17 +396,7 @@ const Category: Screen<CategoryProps> = ({
                                 [article.slug],
                               ).href
                             }
-                            {...(hasProcessEntries(article as Article) ||
-                            (article.__typename === 'Article' &&
-                              article.processEntryButtonText)
-                              ? {
-                                  tag: n(
-                                    (article as Article)
-                                      .processEntryButtonText || 'application',
-                                    'Umsókn',
-                                  ),
-                                }
-                              : {})}
+                            {...topicCardProps}
                           >
                             {article.title}
                           </TopicCard>
