@@ -30,7 +30,7 @@ function Permissions() {
   const [filteredPermissions, filterPermissions] = useLooseSearch(
     permissionsList.data,
     ['environments[0].displayName[0].value', 'scopeName'],
-    'environments[0].displayName[0].value',
+    'scopeName',
   )
 
   const handleSearch = (value = '') => {
