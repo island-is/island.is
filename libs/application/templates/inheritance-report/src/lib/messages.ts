@@ -111,8 +111,7 @@ export const m = defineMessages({
   },
   applicationDescriptionText: {
     id: 'ir.application:applicationDescriptionText',
-    defaultMessage:
-      'Upplýsingar til fylla út erfðafjárskýrslu.',
+    defaultMessage: 'Upplýsingar til fylla út erfðafjárskýrslu.',
     description: '',
   },
   funeralExpensesTitle: {
