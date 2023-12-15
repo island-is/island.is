@@ -175,7 +175,7 @@ export const getLocalrunValueFile = async (
     containerer: 'docker',
     containererCommand: 'run',
     containererFlags: '-it --rm',
-    ports: [['2525'], mocksConfigs.ports],
+    ports: ['2525', ...mocksConfigs.ports],
     mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json:z`],
     image: 'docker.io/bbyars/mountebank:2.8.1',
     command: 'start --configfile=/app/default.json',
@@ -184,6 +184,7 @@ export const getLocalrunValueFile = async (
   const mocks = [
     mocksObj.containerer,
     mocksObj.containererCommand,
+    `--name ${mocksObj.image.split(':')[0].split('/').pop()}`,
     mocksObj.containererFlags,
     mocksObj.ports.map((p) => `-p ${p}:${p}`).join(' '),
     mocksObj.mounts.map((m) => `-v ${m}`).join(' '),
