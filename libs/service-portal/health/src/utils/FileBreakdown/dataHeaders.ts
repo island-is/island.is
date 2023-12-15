@@ -43,3 +43,5 @@ export const dentistHeaders = [
   'Verð tannlæknis',
   'Greiðsluþátttaka',
 ]
+
+export const healthCenterHeaders = ['Frá', 'Til', 'Heilsugæsla', 'Læknir']

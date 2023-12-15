@@ -6,6 +6,7 @@ import {
 import {
   aidHeaders,
   dentistHeaders,
+  healthCenterHeaders,
   nutritionHeaders,
   paymentOverviewHeaders,
   paymentParticipationHeaders,
@@ -14,6 +15,7 @@ import {
   RightsPortalAidOrNutrition,
   RightsPortalCopaymentBill,
   RightsPortalDentistBill,
+  RightsPortalHealthCenterRecord,
   RightsPortalPaymentOverviewBill,
 } from '@island.is/api/schema'
 import { totalNumber } from '../format'
@@ -140,4 +142,19 @@ export const exportDentistFile = async (
   ]
 
   await downloadFile(name, dentistHeaders, [...dataArray, total], type)
+}
+
+export const exportHealthCenterFile = async (
+  data: Array<RightsPortalHealthCenterRecord>,
+  type: FileTypes,
+) => {
+  const name = `Heilusgaesla_sundurlidun`
+  const dataArray = data.map((item) => [
+    item.dateFrom ? formatDate(item.dateFrom) : '',
+    item.healthCenterName ?? '',
+    item.dateFrom ? formatDate(item.dateFrom) : '',
+    item.doctor ?? '',
+  ])
+
+  await downloadFile(name, healthCenterHeaders, dataArray, type)
 }
