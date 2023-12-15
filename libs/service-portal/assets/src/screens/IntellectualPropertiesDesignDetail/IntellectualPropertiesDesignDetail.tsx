@@ -65,42 +65,6 @@ const IntellectualPropertiesDesignDetail = () => {
 
       <Stack space="containerGutter">
         <Box>
-          <Inline space={2}>
-            <Button
-              size="medium"
-              icon="reader"
-              iconType="outline"
-              variant="utility"
-            >
-              {formatMessage(ipMessages.invalidation)}
-            </Button>
-            <Button
-              size="medium"
-              icon="reader"
-              iconType="outline"
-              variant="utility"
-            >
-              {formatMessage(ipMessages.mortgage)}
-            </Button>
-            <Button
-              size="medium"
-              icon="reader"
-              iconType="outline"
-              variant="utility"
-            >
-              {formatMessage(ipMessages.usagePermit)}
-            </Button>
-            <Button
-              size="medium"
-              icon="reader"
-              iconType="outline"
-              variant="utility"
-            >
-              {formatMessage(ipMessages.revocation)}
-            </Button>
-          </Inline>
-        </Box>
-        <Box>
           <Text variant="eyebrow" as="div" paddingBottom={2} color="purple400">
             {formatMessage(ipMessages.images)}
           </Text>

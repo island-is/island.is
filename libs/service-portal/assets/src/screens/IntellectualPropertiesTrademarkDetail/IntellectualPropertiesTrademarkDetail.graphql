@@ -9,6 +9,7 @@ query getIntellectualPropertiesTrademarkById(
     subType
     status
     canRenew
+    applicationNumber
     lifecycle {
       applicationDate
       publishDate
@@ -18,18 +19,17 @@ query getIntellectualPropertiesTrademarkById(
     }
     imageCategories
     isColorMark
-    imagePath
     media {
       mediaType
       mediaPath
     }
     markOwners {
       name
-      address
+      addressFull
     }
     markAgent {
       name
-      address
+      addressFull
     }
     markCategories {
       categoryNumber

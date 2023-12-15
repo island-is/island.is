@@ -15,6 +15,7 @@ export enum TrademarkType {
   ANIMATION = 'Animation',
   MULTIMEDIA = 'Multimedia',
   TEXT = 'Text',
+  IMAGE = 'Image',
 }
 
 registerEnumType(TrademarkType, { name: 'TrademarkType' })
@@ -54,9 +55,6 @@ export class Trademark {
 
   @Field(() => Person, { nullable: true })
   markAgent?: Person
-
-  @Field(() => String, { nullable: true })
-  imagePath?: string
 
   @Field(() => ApplicationLifecycle)
   lifecycle?: ApplicationLifecycle

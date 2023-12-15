@@ -63,38 +63,6 @@ const IntellectualPropertiesPatentDetail = () => {
         />
       </Box>
       <Stack space="containerGutter">
-        <GridRow>
-          <GridColumn span="12/12">
-            <Box marginBottom={3} paddingRight={2}>
-              <Inline space={2}>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {formatMessage(ipMessages.mortgage)}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {formatMessage(ipMessages.usagePermit)}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {formatMessage(ipMessages.revocation)}
-                </Button>
-              </Inline>
-            </Box>
-          </GridColumn>
-        </GridRow>
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}

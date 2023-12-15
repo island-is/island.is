@@ -13,6 +13,8 @@ export const mapTrademarkType = (type: string | null | undefined) => {
     ? TrademarkType.AUDIO
     : type === 'orðmerki'
     ? TrademarkType.TEXT
+    : type === 'myndmerki'
+    ? TrademarkType.IMAGE
     : null
 }
 
@@ -27,4 +29,20 @@ export const mapTrademarkSubtype = (
     : trademark.certificationMark
     ? TrademarkSubType.CERTIFICATION_MARK
     : TrademarkSubType.TRADEMARK
+}
+
+export const mapFullAddress = (
+  streetAddress?: string | undefined | null,
+  postalCode?: string | undefined | null,
+  city?: string | undefined | null,
+) => {
+  if (!streetAddress) {
+    return `${postalCode + ' '}${city}`
+  }
+
+  if (!postalCode && !city) {
+    return streetAddress
+  }
+
+  return `${streetAddress}, ${postalCode + ' '}${city}`
 }

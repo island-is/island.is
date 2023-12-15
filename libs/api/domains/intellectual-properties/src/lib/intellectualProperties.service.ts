@@ -8,7 +8,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { IntellectualPropertiesClientService } from '@island.is/clients/intellectual-properties'
 import { Patent } from './models/patent.model'
 import { Trademark } from './models/trademark.model'
-import { mapTrademarkType, mapTrademarkSubtype } from './mapper'
+import { mapTrademarkType, mapTrademarkSubtype, mapFullAddress } from './mapper'
 import { parseDateIfValid } from './models/utils'
 import { Image } from './models/image.model'
 
@@ -68,8 +68,14 @@ export class IntellectualPropertiesService {
       applicationNumber: trademark.applicationNumber ?? undefined,
       registrationNumber: trademark.registrationNumber ?? undefined,
       status: trademark.status ?? undefined,
+      media: {
+        mediaPath:
+          trademark.orginalImagePath ?? trademark.media?.mediaPath ?? undefined,
+        mediaType: trademark.media?.mediaPath ?? undefined,
+      },
       markOwners: trademark.markOwners?.map((o) => ({
         name: o.name ?? '',
+        addressFull: mapFullAddress(o.address, o.postalCode, o.county),
         address: o.address ?? '',
         postalCode: o.postalCode ?? '',
         county: o.county ?? '',
@@ -78,17 +84,26 @@ export class IntellectualPropertiesService {
         },
         nationalId: o.ssn ?? '',
       })),
-      markCategories: trademark.markCategories ?? [],
+      markCategories: (trademark.markCategories ?? []).map((mc) => {
+        return {
+          categoryNumber: mc.categoryNumber ?? undefined,
+          categoryDescription: mc.categoryDescription ?? undefined,
+        }
+      }),
       markAgent: trademark.markAgent
         ? {
             name: trademark?.markAgent?.name ?? '',
+            addressFull: mapFullAddress(
+              trademark.markAgent.address,
+              trademark.markAgent.postalCode,
+              trademark.markAgent.county,
+            ),
             address: trademark.markAgent.address ?? '',
             postalCode: trademark.markAgent.postalCode ?? '',
             county: trademark.markAgent.county ?? '',
             nationalId: trademark.markAgent.ssn ?? '',
           }
         : undefined,
-      imagePath: trademark.imagePath ?? '',
       lifecycle: {
         applicationDate: formatDate(trademark.applicationDate),
         registrationDate: formatDate(trademark.dateRegistration),
@@ -149,6 +164,7 @@ export class IntellectualPropertiesService {
       owner: {
         name: patent.ownerName ?? '',
         address: patent.ownerHome ?? '',
+        addressFull: mapFullAddress(patent.ownerHome),
         country: {
           name: patent.ownerCountry?.name ?? '',
           code: patent.ownerCountry?.code ?? '',
@@ -159,6 +175,11 @@ export class IntellectualPropertiesService {
         nationalId: patent.patentAgent?.ssn ?? '',
         name: patent.patentAgent?.name ?? '',
         address: patent.patentAgent?.address ?? '',
+        addressFull: mapFullAddress(
+          patent.patentAgent?.address,
+          patent.patentAgent?.postalCode,
+          patent.patentAgent?.city,
+        ),
         postalCode: patent.patentAgent?.postalCode ?? '',
         city: patent.patentAgent?.city ?? '',
         mobilePhone: patent.patentAgent?.mobile ?? '',
@@ -173,6 +194,7 @@ export class IntellectualPropertiesService {
         ?.map((i) => ({
           ...i,
           name: i.name ?? '',
+          addressFull: mapFullAddress(i.address, i.postalCode, i.city),
           address: i.address ?? '',
           postalCode: i.postalCode ?? '',
           city: i.city ?? '',
@@ -252,6 +274,7 @@ export class IntellectualPropertiesService {
       classification: response.classification?.category ?? [],
       owners: response.owners?.map((o) => ({
         name: o.name ?? '',
+        addressFull: mapFullAddress(o.address, o.postalcode, o.city),
         address: o.address ?? '',
         postalCode: o.postalcode ?? '',
         city: o.city ?? '',
@@ -266,6 +289,7 @@ export class IntellectualPropertiesService {
       })),
       designers: response.designers?.map((d) => ({
         name: d.name ?? '',
+        addressFull: mapFullAddress(d.address, d.postalcode, d.city),
         address: d.address ?? '',
         postalCode: d.postalcode ?? '',
         city: d.city ?? '',
@@ -281,6 +305,11 @@ export class IntellectualPropertiesService {
       agent: {
         name: response?.agent?.name ?? '',
         address: response?.agent?.address ?? '',
+        addressFull: mapFullAddress(
+          response?.agent?.address,
+          response?.agent?.postalcode,
+          response?.agent?.city,
+        ),
         postalCode: response?.agent?.postalcode ?? '',
         city: response?.agent?.city ?? '',
         country: {

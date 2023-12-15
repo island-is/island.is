@@ -13,9 +13,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Button,
   Divider,
-  Inline,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -72,26 +70,13 @@ const IntellectualPropertiesTrademarkDetail = () => {
         />
       </Box>
       <Stack space="containerGutter">
-        <Box marginBottom={3} paddingRight={2}>
-          <Inline space={2}>
-            <Button
-              size="medium"
-              icon="reader"
-              iconType="outline"
-              variant="utility"
-            >
-              {formatMessage(ipMessages.registrationCertificate)}
-            </Button>
-          </Inline>
-        </Box>
-
         {ip?.type === TrademarkType.TEXT && (
           <Box>
             <Text variant="eyebrow" as="div" color="purple400">
               {formatMessage(ipMessages.text)}
             </Text>
-            {ip?.imagePath && (
-              <Image url={ip.imagePath} title={ip.text ?? ''} />
+            {ip?.media?.mediaPath && (
+              <Image url={ip.media.mediaPath} title={ip.text ?? ''} />
             )}
           </Box>
         )}
@@ -121,6 +106,22 @@ const IntellectualPropertiesTrademarkDetail = () => {
             )}
           </Box>
         )}
+        {ip?.type === TrademarkType.IMAGE && (
+          <Box>
+            <Text variant="eyebrow" as="div" color="purple400" marginBottom={2}>
+              {formatMessage(ipMessages.image)}
+            </Text>
+            {ip.media?.mediaPath && (
+              <Image
+                url={ip.media?.mediaPath}
+                title={ip?.text ?? ''}
+                height="352px"
+                width="352px"
+                isRemoteUrl
+              />
+            )}
+          </Box>
+        )}
         {ip?.type === TrademarkType.AUDIO && (
           <Box>
             <Text
@@ -140,7 +141,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
             label={ipMessages.name}
-            content={ip?.text ?? ip?.vmId ?? ''}
+            content={ip?.text ? ip.text : ip?.vmId ?? ''}
             loading={loading}
           />
           <Divider />
@@ -226,8 +227,8 @@ const IntellectualPropertiesTrademarkDetail = () => {
                 dataArray={chunk(
                   [
                     {
-                      title: formatMessage(ipMessages.expires),
-                      value: ip?.vmId ? formatDate(ip?.vmId) : '',
+                      title: formatMessage(ipMessages.applicationNumber),
+                      value: ip?.applicationNumber ?? '',
                     },
                     {
                       title: formatMessage(ipMessages.imageCategories),
@@ -238,6 +239,10 @@ const IntellectualPropertiesTrademarkDetail = () => {
                       value: ip?.isColorMark
                         ? formatMessage(m.yes)
                         : formatMessage(m.no),
+                    },
+                    {
+                      title: '',
+                      value: '',
                     },
                   ].filter(isDefined),
                   2,
@@ -255,12 +260,12 @@ const IntellectualPropertiesTrademarkDetail = () => {
           <Divider />
           <UserInfoLine
             label={formatMessage(ipMessages.address)}
-            content={ip?.markOwners?.[0]?.address ?? ''}
+            content={ip?.markOwners?.[0]?.addressFull ?? ''}
             loading={loading}
           />
           <Divider />
         </Stack>
-        {ip?.markAgent?.name && ip?.markAgent.address && (
+        {ip?.markAgent?.name && ip?.markAgent.addressFull && (
           <Stack space="p2">
             <UserInfoLine
               title={formatMessage(ipMessages.agent)}
@@ -271,7 +276,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(ipMessages.address)}
-              content={ip?.markAgent?.address ?? ''}
+              content={ip?.markAgent?.addressFull ?? ''}
               loading={loading}
             />
             <Divider />
