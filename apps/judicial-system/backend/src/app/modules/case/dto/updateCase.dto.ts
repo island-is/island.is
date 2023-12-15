@@ -423,5 +423,5 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly requestCourtOfAppealRulingToBeNotPublished?: string
+  readonly requestAppealRulingNotToBePublished?: string
 }

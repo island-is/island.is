@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.addColumn(
         'case',
-        'request_court_of_appeal_ruling_to_be_not_published',
+        'request_appeal_ruling_not_to_be_published',
         {
           type: Sequelize.BOOLEAN,
           allowNull: true,
@@ -19,7 +19,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.removeColumn(
         'case',
-        'request_court_of_appeal_ruling_to_be_not_published',
+        'request_appeal_ruling_not_to_be_published',
         {
           transaction: t,
         },
