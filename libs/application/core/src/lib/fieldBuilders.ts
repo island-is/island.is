@@ -613,7 +613,6 @@ export function buildNationalIdWithNameField(
   const {
     disabled,
     required,
-    customId,
     customNationalIdLabel,
     customNameLabel,
     onNationalIdChange,
@@ -627,7 +626,6 @@ export function buildNationalIdWithNameField(
     ...extractCommonFields(data),
     disabled,
     required,
-    customId,
     customNationalIdLabel,
     customNameLabel,
     onNationalIdChange,

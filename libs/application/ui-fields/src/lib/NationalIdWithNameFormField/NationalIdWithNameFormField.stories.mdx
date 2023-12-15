@@ -20,7 +20,7 @@ export const createMockApplication = (data = {}) => ({
   created: new Date(),
   attachments: {},
   answers: data.answers || {},
-  externalData: {},
+  externalData: data.externalData || {},
 })
 
 <Meta
@@ -38,10 +38,9 @@ You can create a NationalIdWithNameFormField using the following function `build
   language="typescript"
   code={dedent(`
     buildNationalIdWithNameField({
-      id: 'field.id',
+      id: 'seller',
       disabled: isDisabled,
       required: isRequired,
-      customId: 'seller',
       customNationalIdLabel: m.sellerNationalId,
       customNameLabel: m.sellerName,
       onNationalIdChange: setNationalId,
@@ -60,10 +59,9 @@ The previous configuration object will result in the following component:
     <NationalIdWithNameFormField
       application={createMockApplication()}
       field={{
-        id: 'field.id',
+        id: 'seller',
         disabled: false,
         required: false,
-        customId: 'seller',
         customNationalIdLabel: 'Kennitala seljanda',
         customNameLabel: 'Nafn seljanda',
         minAgePerson: 18,

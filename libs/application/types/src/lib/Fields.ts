@@ -392,7 +392,6 @@ export interface NationalIdWithNameField extends BaseField {
   component: FieldComponents.NATIONAL_ID_WITH_NAME
   disabled?: boolean
   required?: boolean
-  customId?: string
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
   onNationalIdChange?: (s: string) => void

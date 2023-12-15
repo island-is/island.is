@@ -18,7 +18,6 @@ export const NationalIdWithNameFormField: FC<
       application={application}
       disabled={field.disabled}
       required={field.required}
-      customId={field.customId}
       customNationalIdLabel={field.customNationalIdLabel}
       customNameLabel={field.customNameLabel}
       onNationalIdChange={field.onNationalIdChange}
