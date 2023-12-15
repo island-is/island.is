@@ -2,14 +2,12 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen } from '@testing-library/react'
 
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
-import {
-  UserContext,
-  UserProvider,
-} from '@island.is/judicial-system-web/src/components'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
   CaseType,
+  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
@@ -52,6 +50,14 @@ describe('Statement', () => {
                 nationalId: '',
                 title: '',
                 role: UserRole.PROSECUTOR,
+                institution: {
+                  id: '',
+                  created: '',
+                  modified: '',
+                  type: InstitutionType.PROSECUTORS_OFFICE,
+                  name: '',
+                  active: true,
+                },
               },
             }}
           >
@@ -70,10 +76,6 @@ describe('Statement', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(
-      screen.getByText(
-        'Þess er óskað að birtingu úrskurðar á vef Landsréttar verði frestað',
-      ),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('checkbox')).toBeInTheDocument()
   })
 })
