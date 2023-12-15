@@ -75,7 +75,9 @@ parse_cli() {
   # echo "DEBUG: REMOVE_CONTAINERS_ON_START=${REMOVE_CONTAINERS_ON_START}"
   # echo "DEBUG: REMOVE_CONTAINERS_ON_FAIL=${REMOVE_CONTAINERS_ON_FAIL}"
   # echo "DEBUG: REMOVE_CONTAINERS_FORCE=${REMOVE_CONTAINERS_FORCE}"
-  if [ ${#PROXIES} -eq 0 ]; then return; fi
+  if [ ${#PROXIES[@]} -eq 0 ]; then
+    PROXIES=("es" "soffia" "xroad" "redis" "db")
+  fi
   local unknown_proxies
   unknown_proxies=()
   for proxy in "${PROXIES[@]}"; do
