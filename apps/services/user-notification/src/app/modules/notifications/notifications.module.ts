@@ -27,8 +27,13 @@ import {
 } from './messageProcessor.service'
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import * as userProfile from '@island.is/clients/user-profile'
+import {
+  UserProfileApi,
+  V2MeApi,
+  Configuration,
+} from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
+import { UserProfileScope } from '@island.is/auth/scopes'
 
 @Module({
   imports: [
@@ -71,26 +76,37 @@ import { NotificationsService } from './notifications.service'
           ),
         }),
     },
-    {
-      provide: userProfile.UserProfileApi,
+    ...[
+      {
+        api: UserProfileApi,
+        name: 'services-user-notification',
+        scope: ['@island.is/user-profile:admin'],
+      },
+      {
+        api: V2MeApi,
+        name: 'services-user-notification-v2',
+        scope: [UserProfileScope.system],
+      },
+    ].map(({ api, name, scope }) => ({
+      provide: api,
       useFactory: () =>
-        new userProfile.UserProfileApi(
-          new userProfile.Configuration({
+        new api(
+          new Configuration({
             basePath: environment.userProfileServiceBasePath,
             fetchApi: createEnhancedFetch({
-              name: 'services-user-notification',
+              name: name,
               circuitBreaker: true,
               autoAuth: {
                 issuer: environment.identityServerPath,
                 clientId: environment.notificationsClientId,
                 clientSecret: environment.notificationsClientSecret,
-                scope: ['@island.is/user-profile:admin'],
+                scope: scope,
                 mode: 'auto',
               },
             }),
           }),
         ),
-    },
+    })),
     {
       provide: IS_RUNNING_AS_WORKER,
       useValue: environment.isWorker,
