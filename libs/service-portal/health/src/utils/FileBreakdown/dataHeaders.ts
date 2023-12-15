@@ -45,3 +45,20 @@ export const dentistHeaders = [
 ]
 
 export const healthCenterHeaders = ['Frá', 'Til', 'Heilsugæsla', 'Læknir']
+
+export const medicineHeaders = [
+  'Dagsetning',
+  'Skýring',
+  'Greiðsluþátttökuverð',
+  'Greitt af einstakling',
+]
+export const medicineLineHeaders = [
+  'Lyfjaheiti',
+  'Styrkur',
+  'Magn',
+  'Fjöldi',
+  'Söluverð',
+  'Greiðsluþátttökuverð',
+  'Umframverð',
+  'Greitt af einstakling',
+]

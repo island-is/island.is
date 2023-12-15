@@ -7,6 +7,8 @@ import {
   aidHeaders,
   dentistHeaders,
   healthCenterHeaders,
+  medicineHeaders,
+  medicineLineHeaders,
   nutritionHeaders,
   paymentOverviewHeaders,
   paymentParticipationHeaders,
@@ -15,6 +17,8 @@ import {
   RightsPortalAidOrNutrition,
   RightsPortalCopaymentBill,
   RightsPortalDentistBill,
+  RightsPortalDrugBill,
+  RightsPortalDrugBillLine,
   RightsPortalHealthCenterRecord,
   RightsPortalPaymentOverviewBill,
 } from '@island.is/api/schema'
@@ -157,4 +161,45 @@ export const exportHealthCenterFile = async (
   ])
 
   await downloadFile(name, healthCenterHeaders, dataArray, type)
+}
+
+export const exportMedicineFile = async (
+  preData: string[],
+  data: Array<RightsPortalDrugBillLine>,
+  total: { part: string; excess: string; customer: string },
+  type: FileTypes,
+) => {
+  const name = `Lyfjareikningur_sundurlidun`
+
+  const dataArray = data.map((item) => [
+    item.drugName ?? '',
+    item.strength ?? '',
+    item.quantity ?? '',
+    item.units ?? '',
+    amountFormat(item.salesPrice ?? 0),
+    amountFormat(item.copaymentAmount ?? 0),
+    amountFormat(item.excessAmount ?? 0),
+    amountFormat(item.customerAmount ?? 0),
+  ])
+
+  const totalArray = [
+    'Samtals',
+    '',
+    '',
+    '',
+    '',
+    total.part,
+    total.excess,
+    total.customer,
+  ]
+
+  const fileArray = [
+    preData,
+    [''],
+    medicineLineHeaders,
+    ...dataArray,
+    totalArray,
+  ]
+
+  await downloadFile(name, medicineHeaders, fileArray, type)
 }
