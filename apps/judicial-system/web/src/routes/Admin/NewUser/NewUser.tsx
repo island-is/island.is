@@ -1,7 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/client'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -13,9 +12,9 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import UserForm from '../UserForm/UserForm'
+import { useCreateUserMutation } from './createUser.generated'
 import * as styles from '../Users/Users.css'
 
 const user: User = {
@@ -37,16 +36,16 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const {
     allInstitutions,
-    loading: institutionLoading,
-    loaded: institutionLoaded,
+    loading: institutionsLoading,
+    loaded: institutionsLoaded,
   } = useInstitution()
   const { formatMessage } = useIntl()
 
-  const [createUserMutation, { loading: createLoading }] =
-    useMutation(CreateUserMutation)
+  const [createUserMutation, { loading: userCreating }] =
+    useCreateUserMutation()
 
   const createUser = async (user: User): Promise<void> => {
-    if (createLoading === false && user) {
+    if (!userCreating && user && user.institution) {
       await createUserMutation({
         variables: {
           input: {
@@ -66,9 +65,9 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(constants.USERS_ROUTE)
   }
 
-  return institutionLoading ? (
+  return institutionsLoading ? (
     <Skeleton />
-  ) : institutionLoaded ? (
+  ) : institutionsLoaded ? (
     <Box background="purple100">
       <div className={styles.userManagementContainer}>
         <PageHeader title={formatMessage(titles.admin.newUser)} />
@@ -76,7 +75,7 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
           user={user}
           institutions={allInstitutions}
           onSave={createUser}
-          loading={createLoading}
+          loading={userCreating}
         />
       </div>
     </Box>
