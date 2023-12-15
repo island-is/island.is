@@ -2,6 +2,8 @@ import { BrowserContext, expect, test } from '@playwright/test'
 
 import { JUDICIAL_SYSTEM_JUDGE_HOME_URL, urls } from '../../../support/urls'
 import { judicialSystemSession } from '../../../support/session'
+import { verifyRequestCompletion } from '../../../support/api-tools'
+import { verify } from 'crypto'
 
 export function addTests() {
   test.use({ baseURL: urls.judicialSystemBaseUrl })
@@ -32,6 +34,10 @@ export function addTests() {
       // Reception and assignment
       await expect(page).toHaveURL(/.*\/domur\/mottaka\/.*/)
       await page.getByTestId('courtCaseNumber').fill('R-63/2023')
+      await Promise.all([
+        verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+        page.keyboard.press('Tab'),
+      ])
       await page.getByText('Veldu dómara/aðstoðarmann').click()
       await page.getByTestId('select-judge').getByText('Test Dómari').click()
       await page.getByTestId('continueButton').click()
@@ -48,6 +54,7 @@ export function addTests() {
       await page.locator('input[id=courtDate]').fill(today)
       await page.keyboard.press('Escape')
       await page.locator('input[id=courtDate-time]').fill('09:00')
+      await page.keyboard.press('Tab')
       await page
         .locator('input[id=react-select-defenderName-input]')
         .fill('Saul Goodmann')
@@ -55,6 +62,10 @@ export function addTests() {
       await page
         .locator('input[name=defenderEmail]')
         .fill('jl-auto-defender@kolibri.is')
+      await Promise.all([
+        verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+        page.keyboard.press('Tab'),
+      ])
       await page.getByTestId('continueButton').click()
       await page.getByTestId('modalSecondaryButton').click()
 
@@ -66,6 +77,10 @@ export function addTests() {
       await page.locator('input[id=validToDate]').fill(custodyEndDate)
       await page.keyboard.press('Escape')
       await page.locator('input[id=validToDate-time]').fill('16:00')
+      await Promise.all([
+        verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+        page.keyboard.press('Tab'),
+      ])
       await page.getByTestId('continueButton').click()
 
       // Court record
@@ -75,13 +90,18 @@ export function addTests() {
       await page.locator('input[id=courtEndTime]').fill(today)
       await page.keyboard.press('Escape')
       await page.locator('input[id=courtEndTime-time]').fill('10:00')
-      await page.keyboard.press('Escape')
+      await Promise.all([
+        verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+        page.keyboard.press('Tab'),
+      ])
       await page.getByTestId('continueButton').click()
 
       // Confirmation
       await expect(page).toHaveURL(/.*\/domur\/stadfesta\/.*/)
-      await page.getByTestId('continueButton').click()
-      await page.getByTestId('modalPrimaryButton').click({ timeout: 9000 })
+      await Promise.all([
+        verifyRequestCompletion(page, '/api/graphql', 'RequestRulingSignature'),
+        page.getByTestId('continueButton').click(),
+      ])
     })
   })
 }
