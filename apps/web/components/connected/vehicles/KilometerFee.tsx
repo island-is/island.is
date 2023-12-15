@@ -96,6 +96,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
     key: T,
     value: InputState[T],
   ) => {
+    setResult(0)
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
 
@@ -109,7 +110,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
   const canCalculate =
     Object.keys(inputState).every((key) =>
       Boolean(inputState[key as keyof InputState]),
-    ) && result !== calculate(inputState, slice)
+    ) && result === 0
 
   return (
     <Box background="blue100" paddingY={[3, 3, 5]} paddingX={[3, 3, 3, 3, 12]}>
