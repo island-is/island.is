@@ -31,13 +31,13 @@ export const AdditionalVehicle = ({
   error: Record<string, string>
 }) => {
   const fieldIndex = `${fieldName}[${index}]`
-  const propertyNumberField = `${fieldIndex}.assetNumber`
-  const propertyNumberInput = useWatch({
-    name: propertyNumberField,
+  const vehicleNumberField = `${fieldIndex}.assetNumber`
+  const vehicleNumberInput = useWatch({
+    name: vehicleNumberField,
     defaultValue: '',
   })
-  const addressField = `${fieldIndex}.description`
-  const address = useWatch({ name: addressField, defaultValue: '' })
+  const nameField = `${fieldIndex}.description`
+  const name = useWatch({ name: nameField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
   const shareField = `${fieldIndex}.share`
@@ -49,9 +49,9 @@ export const AdditionalVehicle = ({
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: GetVehicleInput }>(GET_VEHICLE_QUERY, {
       onCompleted: (data) => {
-        clearErrors(addressField)
+        clearErrors(nameField)
         setValue(
-          addressField,
+          nameField,
           `${data?.syslumennGetVehicle?.manufacturer} ${data.syslumennGetVehicle?.modelName}`,
         )
       },
@@ -59,20 +59,16 @@ export const AdditionalVehicle = ({
     })
 
   useEffect(() => {
-    // According to Skra.is:
-    // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
-    // The property number is a seven digit informationless sequence.
-    // Has the prefix F.
-    if (propertyNumberInput.trim().length > 0) {
+    if (vehicleNumberInput.trim().length > 0) {
       getProperty({
         variables: {
           input: {
-            vehicleId: propertyNumberInput.trim().toUpperCase(),
+            vehicleId: vehicleNumberInput.trim().toUpperCase(),
           },
         },
       })
     }
-  }, [getProperty, address, addressField, propertyNumberInput, setValue])
+  }, [getProperty, name, nameField, vehicleNumberInput, setValue])
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
@@ -107,21 +103,21 @@ export const AdditionalVehicle = ({
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
           <InputController
-            id={propertyNumberField}
-            name={propertyNumberField}
+            id={vehicleNumberField}
+            name={vehicleNumberField}
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.assetNumber}
             error={error?.assetNumber}
-            placeholder="F1234567"
+            placeholder="JOL25"
             required
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
           <InputController
-            id={addressField}
-            name={addressField}
-            label={formatMessage(m.address)}
+            id={nameField}
+            name={nameField}
+            label={formatMessage(m.vehicleNameLabel)}
             loading={queryLoading}
             readOnly
             defaultValue={field.description}
@@ -132,7 +128,7 @@ export const AdditionalVehicle = ({
           <InputController
             id={marketValueField}
             name={marketValueField}
-            label={formatMessage(m.realEstateValueTitle)}
+            label={formatMessage(m.vehicleMarketLabel)}
             defaultValue={field.marketValue}
             placeholder={'0 kr.'}
             error={error?.marketValue}
