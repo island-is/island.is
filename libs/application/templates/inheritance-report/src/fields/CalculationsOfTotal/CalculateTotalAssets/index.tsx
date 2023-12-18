@@ -14,10 +14,14 @@ export const CalculateTotalAssets: FC<
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
+  const money = getValueViaPath<string>(answers, 'assets.money.value') || '0'
+  const inventoryValue =
+    getValueViaPath<string>(answers, 'assets.inventory.value') || '0'
+
   const [total] = useState(
     (getValueViaPath<number>(answers, 'assets.otherAssets.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.money.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.stocks.total') || 0) +
+      parseInt(money) +
+      parseInt(inventoryValue) +
       (getValueViaPath<number>(answers, 'assets.claims.total') || 0) +
       (getValueViaPath<number>(answers, 'assets.bankAccounts.total') || 0) +
       (getValueViaPath<number>(answers, 'assets.inventory.total') || 0) +
