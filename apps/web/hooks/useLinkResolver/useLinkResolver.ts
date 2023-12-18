@@ -67,6 +67,10 @@ export const routesTemplate = {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
   },
+  articlegroup: {
+    is: '/flokkur/[slug]#[subgroupSlug]',
+    en: '/en/category/[slug]#[subgroupSlug]',
+  },
   news: {
     is: '/frett/[slug]',
     en: '/en/news/[slug]',

@@ -174,13 +174,24 @@ export class RecyclingRequestService {
       // nameOfRequestor and partnerId are not required arguments
       // But partnerId and partnerId could not both be null at the same time
       if (!nameOfRequestor && !partnerId) {
+        if (!nameOfRequestor) {
+          this.logger.error(`nameOfRequestor is missing`)
+        } else {
+          this.logger.error(`partnerId is missing`)
+        }
+
         errors.operation = 'Checking arguments'
         errors.message = `Not all required fields are filled. Please contact admin.`
         return errors
       }
+
       // If requestType is 'deregistered'
       // partnerId could not be null when create requestType for recyclingPartner.
       if (requestType === 'deregistered' && !partnerId) {
+        this.logger.error(
+          `If requestType is deregistered partnerId could not be null when create requestType for recyclingPartner`,
+        )
+
         errors.operation = 'Checking partnerId'
         errors.message = `Not all required fields are filled. Please contact admin.`
         return errors
@@ -194,6 +205,10 @@ export class RecyclingRequestService {
           requestType === 'deregistered'
         )
       ) {
+        this.logger.error(
+          `RequestType is not 'pendingRecycle', 'cancelled' or 'deregistered'`,
+        )
+
         errors.operation = 'Checking requestType'
         errors.message = `RequestType is incorrect. Please contact admin.`
         return errors
@@ -211,6 +226,10 @@ export class RecyclingRequestService {
         newRecyclingRequest.recyclingPartnerId = partnerId
         const partner = await this.recycllingPartnerService.findOne(partnerId)
         if (!partner) {
+          this.logger.error(
+            `The recycling station is not in the recycling station list`,
+          )
+
           errors.operation = 'Checking partner'
           errors.message = `Your station is not in the recycling station list. Please contact admin.`
           return errors
@@ -221,6 +240,8 @@ export class RecyclingRequestService {
       // Checking if 'permno' is already in the database
       const isVehicle = await this.vehicleService.findByVehicleId(permno)
       if (!isVehicle) {
+        this.logger.error(`Citizen has not accepted to recycle the vehicle`)
+
         errors.operation = 'Checking vehicle'
         errors.message = `Citizen has not accepted to recycle the vehicle.`
         return errors
@@ -240,6 +261,10 @@ export class RecyclingRequestService {
         // 1. Check 'pendingRecycle'/'handOver' requestType
         const resRequestType = await this.findAllWithPermno(permno)
         if (!requestType || resRequestType.length == 0) {
+          this.logger.error(
+            `Citizen has not accepted to deregistered the vehicle.`,
+          )
+
           errors.operation = 'Checking vehicle status'
           errors.message = `Citizen has not accepted to recycle the vehicle.`
           return errors
@@ -249,6 +274,10 @@ export class RecyclingRequestService {
               resRequestType[0]['dataValues']['requestType'],
             )
           ) {
+            this.logger.error(
+              `Citizen has not accepted to recycle the vehicle.`,
+            )
+
             errors.operation = 'Checking vehicle status'
             errors.message = `Citizen has not accepted to recycle the vehicle.`
             return errors
@@ -264,6 +293,11 @@ export class RecyclingRequestService {
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
         } catch (err) {
+          this.logger.error(`Could not start deregistered process.`, {
+            permno: newRecyclingRequest.vehicleId,
+            newRecyclingRequest,
+          })
+
           errors.operation = 'handOver'
           errors.message = `Could not start deregistered process. Please try again later.`
           return errors
@@ -282,6 +316,11 @@ export class RecyclingRequestService {
           req.requestType = RecyclingRequestTypes.pendingRecycle
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
+
+          this.logger.error(`Deregistered process failed.`, {
+            permno: newRecyclingRequest.vehicleId,
+            newRecyclingRequest,
+          })
           errors.operation = 'deregistered'
           errors.message = `deregistered process failed. Please try again later.`
           return errors
@@ -314,6 +353,15 @@ export class RecyclingRequestService {
             req.requestType = RecyclingRequestTypes.paymentFailed
             req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
             await req.save()
+
+            this.logger.error(
+              `Vehicle has been successful deregistered but payment process failed.`,
+              {
+                permno: newRecyclingRequest.vehicleId,
+                newRecyclingRequest,
+              },
+            )
+
             errors.operation = 'paymentFailed'
             errors.message = `Vehicle has been successful deregistered but payment process failed. Please contact admin.`
             return errors
@@ -334,6 +382,15 @@ export class RecyclingRequestService {
           req.requestType = RecyclingRequestTypes.paymentFailed
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
+
+          this.logger.error(
+            `Vehicle has been successful deregistered but payment process failed.`,
+            {
+              permno: newRecyclingRequest.vehicleId,
+              newRecyclingRequest,
+            },
+          )
+
           errors.operation = 'paymentFailed'
           errors.message = `Vehicle has been successful deregistered but payment process failed. Please contact admin.`
           return errors
@@ -358,10 +415,15 @@ export class RecyclingRequestService {
       else {
         await newRecyclingRequest.save()
       }
+
       const status = new RequestStatus()
       status.status = true
       return status
     } catch (err) {
+      this.logger.error(`Something went wrong.`, {
+        err,
+      })
+
       errors.operation = 'general'
       errors.message = `Something went wrong. Please try again later.`
       return errors

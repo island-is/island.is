@@ -1549,6 +1549,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Hvaðan ertu að þiggja bætur?`,
       description: 'Where are you receiving benefits from?',
     },
+    alertTitle: {
+      id: 'pl.application:employer.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
+    alertDescription: {
+      id: 'pl.application:employer.alert.description',
+      defaultMessage:
+        'Aðeins þeir sem eru ekki í ráðningu og eru ekki með neinn vinnuveitanda merkja við „Já“ hér að neðan.',
+      description:
+        'Only those who are not employed and do not have an employer tick "Yes" below.',
+    },
     addEmployer: {
       id: 'pl.application:employer.add',
       defaultMessage: 'Bæta við vinnuveitanda',
