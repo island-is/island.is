@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
+import { logger } from '@island.is/logging'
 
 import {
   RecyclingRequestModel,
@@ -58,17 +59,34 @@ export class VehicleService {
     }
   }
 
+  async updateMileage(permno: string, mileage: number): Promise<boolean> {
+    const findVehicle = await this.findByVehicleId(permno)
+    if (findVehicle) {
+      findVehicle.mileage = mileage ?? 0
+      await findVehicle.save()
+      return true
+    } else {
+      const errorMsg = `failed to update mileage: ${mileage} on vehicle: ${permno}`
+      logger.error(errorMsg)
+      throw new Error(errorMsg)
+    }
+  }
+
   async create(vehicle: VehicleModel): Promise<boolean> {
     try {
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
       if (findVehicle) {
-        // Remove old request if new owner
-        if (vehicle.ownerNationalId === findVehicle.ownerNationalId) {
-          return true
-        } else {
-          await findVehicle.destroy()
+        findVehicle.mileage = vehicle.mileage
+        if (vehicle.ownerNationalId !== findVehicle.ownerNationalId) {
+          findVehicle.ownerNationalId = vehicle.ownerNationalId
         }
+        await findVehicle.save()
+        return true
+      } else {
+        // new registration
+        await vehicle.save()
+        return true
       }
       // Save vehicle to database
       await vehicle.save()
