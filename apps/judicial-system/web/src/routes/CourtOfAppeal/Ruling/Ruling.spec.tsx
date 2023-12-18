@@ -1,8 +1,12 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen } from '@testing-library/react'
 
-import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseAppealRulingDecision,
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
@@ -32,6 +36,8 @@ describe('COA - Ruling', () => {
           <FormContextWrapper
             theCase={{
               ...mockCase(CaseType.CUSTODY),
+              state: CaseState.ACCEPTED,
+              decision: CaseDecision.ACCEPTING,
               appealRulingDecision: CaseAppealRulingDecision.CHANGED,
             }}
           >
@@ -53,6 +59,8 @@ describe('COA - Ruling', () => {
           <FormContextWrapper
             theCase={{
               ...mockCase(CaseType.CUSTODY),
+              state: CaseState.ACCEPTED,
+              decision: CaseDecision.ACCEPTING,
               appealRulingDecision:
                 CaseAppealRulingDecision.DISMISSED_FROM_COURT,
             }}

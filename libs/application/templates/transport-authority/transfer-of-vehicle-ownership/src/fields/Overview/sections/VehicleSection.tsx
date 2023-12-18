@@ -67,7 +67,9 @@ export const VehicleSection: FC<
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Text>{getValueViaPath(answers, 'vehicle.type', '') as string}</Text>
+          <Text>
+            {getValueViaPath(answers, 'pickVehicle.type', '') as string}
+          </Text>
           <Text>
             {carColor ? `${carColor} - ` : ''}
             {carPlate}

@@ -11,6 +11,7 @@ export const countryAreas = [
 
 export type Filters = {
   area: Array<string>
+  candidate: Array<string>
   input: string
 }
 

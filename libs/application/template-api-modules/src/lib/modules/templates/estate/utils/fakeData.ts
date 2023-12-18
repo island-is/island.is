@@ -6,6 +6,12 @@ export const getFakeData = (
 ): EstateInfo => {
   const data: EstateInfo = {
     addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
+    availableSettlements: {
+      divisionOfEstateByHeirs: 'Í lagi',
+      estateWithoutAssets: 'Í lagi',
+      officialDivision: 'Í lagi',
+      permitForUndividedEstate: 'Í lagi',
+    },
     cash: [],
     marriageSettlement: false,
     assets: [
@@ -91,7 +97,19 @@ export const getFakeData = (
   }
 
   if (application.applicant.endsWith('7789')) {
+    // Uncomment the following line to test for <18 rejections
     data.estateMembers.push(fakeChild)
+
+    // I'm just a programmer. I had little direction about what these validation messages might be.
+    // This is just fake data.
+    data.availableSettlements = {
+      divisionOfEstateByHeirs: 'Í lagi',
+      estateWithoutAssets:
+        'Ríkið hefur áskilið sér þann rétt að hægja á vinnslu þessa dánarbús vegna gruns um skattsviks.',
+      permitForUndividedEstate: 'Í lagi',
+      officialDivision:
+        'Því miður er maki hins látna með punkta á ökuskírteini og stendur í heiftarlegum vanskilum.',
+    }
   } else {
     data.estateMembers.push({
       ...fakeChild,

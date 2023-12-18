@@ -87,7 +87,7 @@ export const CreateUserMutation = gql`
 `
 
 export const UsersQuery = gql`
-  query Users {
+  query SomeUsers {
     users {
       id
       name
@@ -104,45 +104,6 @@ export const UsersQuery = gql`
       active
       latestLogin
       loginCount
-    }
-  }
-`
-
-export const UserQuery = gql`
-  query User($input: UserQueryInput!) {
-    user(input: $input) {
-      id
-      name
-      nationalId
-      mobileNumber
-      role
-      title
-      email
-      institution {
-        id
-        type
-        name
-      }
-      active
-    }
-  }
-`
-
-export const UpdateUserMutation = gql`
-  mutation UpdateUser($input: UpdateUserInput!) {
-    updateUser(input: $input) {
-      id
-      modified
-    }
-  }
-`
-
-export const InstitutionsQuery = gql`
-  query Institutions {
-    institutions {
-      id
-      type
-      name
     }
   }
 `

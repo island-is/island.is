@@ -57,12 +57,14 @@ export class EnergyFundsService extends BaseTemplateApiService {
       )
     }
 
+    const onlyElectricVehiclesWithGrant = onlyElectricVehicles.filter(
+      (x) => x.vehicleGrant !== undefined,
+    )
+
     // Validate that user has at least 1 vehicle that fulfills requirements
     if (
-      !onlyElectricVehicles ||
-      !onlyElectricVehicles.length ||
-      onlyElectricVehicles.filter((x) => x.vehicleGrant !== undefined)
-        .length === 0
+      !onlyElectricVehiclesWithGrant ||
+      !onlyElectricVehiclesWithGrant.length
     ) {
       throw new TemplateApiError(
         {
@@ -74,13 +76,11 @@ export class EnergyFundsService extends BaseTemplateApiService {
     }
 
     return await Promise.all(
-      onlyElectricVehicles?.map(async (vehicle) => {
-        let vehicleGrantPriceAmount: number | undefined
-        let vehicleGrantItemCode: string | undefined
+      onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
         let hasReceivedSubsidy: boolean | undefined
 
         // Only validate if fewer than 5 items
-        if (onlyElectricVehicles.length < 5) {
+        if (onlyElectricVehiclesWithGrant.length < 5) {
           // Get subsidy status
           hasReceivedSubsidy =
             await this.energyFundsClientService.checkVehicleSubsidyAvilability(
@@ -100,8 +100,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
           fuelCode: vehicle.fuelCode,
           vehicleRegistrationCode: vehicle.vehicleRegistrationCode,
           importCode: vehicle.importCode,
-          vehicleGrant: vehicleGrantPriceAmount,
-          vehicleGrantItemCode: vehicleGrantItemCode,
+          vehicleGrant: vehicle.vehicleGrant,
+          vehicleGrantItemCode: vehicle.vehicleGrantItemCode,
           hasReceivedSubsidy: hasReceivedSubsidy,
         }
       }),
