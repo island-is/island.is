@@ -1119,7 +1119,7 @@ export const m = defineMessages({
   intellectualPropertiesTooltip: {
     id: 'service.portal:intellectual-property-tooltip',
     defaultMessage:
-      'Hugverkastofan hefur umsjón með gögnum um hugverkaréttindi..',
+      'Hugverkastofan hefur umsjón með gögnum um hugverkaréttindi.',
   },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',
