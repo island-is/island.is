@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatPlausiblePathToParams,
-  ServicePortalModuleComponent,
   ServicePortalPaths,
 } from '@island.is/service-portal/core'
 import {
