@@ -107,7 +107,7 @@ export class VehicleResolver {
   async updateSkilavottordVehicleMileage(
     @CurrentUser() user: User,
     @Args('permno') permno: string,
-    @Args('permno') mileage: number,
+    @Args('mileage') mileage: number,
   ) {
     return await this.vehicleService.updateMileage(permno, mileage)
   }
