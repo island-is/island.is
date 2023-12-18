@@ -596,6 +596,12 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
+  notFilledOut: {
+    id: 'ir.application:notFilledOut',
+    defaultMessage:
+      'Ekki fyllt út',
+    description: '',
+  },
   assetOverview: {
     id: 'ir.application:assetOverview',
     defaultMessage: 'Yfirlit eigna',

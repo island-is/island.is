@@ -11,6 +11,7 @@ import {
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
+import { overviewAssets } from '../OverviewSections/OverviewAssets'
 
 export const assets = buildSection({
   id: 'estateProperties',
@@ -206,14 +207,14 @@ export const assets = buildSection({
             }),
             buildTextField({
               id: 'assets.inventory.info',
-              title: m.moneyText,
-              placeholder: m.moneyPlaceholder,
+              title: m.inventoryTextField,
+              placeholder: m.inventoryTextField,
               variant: 'textarea',
               rows: 7,
             }),
             buildTextField({
               id: 'assets.inventory.value',
-              title: m.moneyValue,
+              title: m.inventoryValueTitle,
               width: 'half',
               variant: 'currency',
             }),
@@ -489,6 +490,7 @@ export const assets = buildSection({
           title: m.assetOverview,
           description: m.assetOverviewDescription,
           children: [
+            ...overviewAssets,
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewRealEstate',
