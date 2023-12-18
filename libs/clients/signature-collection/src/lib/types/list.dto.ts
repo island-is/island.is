@@ -17,8 +17,6 @@ export interface List {
 }
 
 export function mapList(list: MedmaelalistiDTO): List {
-  // TODO: Aggregate owners
-  // TODO: Status of open list, closed, extended
   return {
     id: list.id?.toString() ?? '',
     collectionId: list.medmaelasofnun?.id?.toString() ?? '',
@@ -28,7 +26,7 @@ export function mapList(list: MedmaelalistiDTO): List {
     area: {
       id: list.svaedi?.id?.toString() ?? '',
       name: list.svaedi?.nafn?.toString() ?? '',
-      min: list.svaedi?.fjoldi ?? 999,
+      min: list.svaedi?.fjoldi ?? 0,
     },
     owner: {
       nationalId: list.frambod?.kennitala ?? '',
