@@ -1,4 +1,7 @@
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  createEnhancedFetch,
+  defaultCacheKeyWithHeader,
+} from '@island.is/clients/middlewares'
 import { ConfigType } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
 
@@ -21,6 +24,7 @@ export const ApiConfiguration = {
               noPrefix: true,
               ttl: 0,
             }),
+            cacheKey: defaultCacheKeyWithHeader('X-Param-National-Id'),
             shared: false,
             overrideCacheControl: config.cacheControl,
           }

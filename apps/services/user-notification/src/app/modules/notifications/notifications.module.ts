@@ -28,9 +28,9 @@ import {
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
-  UserProfileApi,
-  V2MeApi,
   Configuration,
+  V2UsersApi,
+  V2UserTokensApi,
 } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { UserProfileScope } from '@island.is/auth/scopes'
@@ -78,16 +78,14 @@ import { UserProfileScope } from '@island.is/auth/scopes'
     },
     ...[
       {
-        api: UserProfileApi,
-        name: 'services-user-notification',
-        scope: ['@island.is/user-profile:admin'],
+        api: V2UsersApi,
+        name: 'services-user-notification-v2',
       },
       {
-        api: V2MeApi,
-        name: 'services-user-notification-v2',
-        scope: [UserProfileScope.system],
+        api: V2UserTokensApi,
+        name: 'services-user-token-profile-v2',
       },
-    ].map(({ api, name, scope }) => ({
+    ].map(({ api, name }) => ({
       provide: api,
       useFactory: () =>
         new api(
@@ -100,7 +98,7 @@ import { UserProfileScope } from '@island.is/auth/scopes'
                 issuer: environment.identityServerPath,
                 clientId: environment.notificationsClientId,
                 clientSecret: environment.notificationsClientSecret,
-                scope: scope,
+                scope: [UserProfileScope.admin],
                 mode: 'auto',
               },
             }),
