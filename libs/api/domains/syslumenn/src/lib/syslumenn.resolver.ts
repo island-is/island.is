@@ -143,16 +143,7 @@ export class SyslumennResolver {
   syslumennGetVehicle(
     @Args('input') input: GetVehicleInput,
   ): Promise<VehicleRegistration> {
-    const response = this.syslumennService
-      .getVehicle(input.vehicleId)
-      .catch((e) => {
-        return Promise.resolve({
-          licenseNumber: '',
-          manufacturer: '',
-          color: '',
-        })
-      })
-    return response
+    return this.syslumennService.getVehicle(input.vehicleId)
   }
 
   @Query(() => PropertyDetail, { nullable: true })
