@@ -24,7 +24,6 @@ import {
   ApplicationListAdminResponseDto,
 } from './dto/applicationAdmin.response.dto'
 import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
-import { PaginationDto } from '@island.is/nest/pagination'
 import { ApplicationAdminPaginatedSerializer } from './tools/applicationAdminPaginated.serializer'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
