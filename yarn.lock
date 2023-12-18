@@ -17522,10 +17522,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.160":
-  version: 4.14.160
-  resolution: "@types/lodash@npm:4.14.160"
-  checksum: af129ded217ae41de1a7a278d9fc15a762099afbfa5d38cff967f53347c451c53870ee193c322395f6e1f30c80b17df5e6395b3a10e3cca71675ea31406ec5bb
+"@types/lodash@npm:4.14.202":
+  version: 4.14.202
+  resolution: "@types/lodash@npm:4.14.202"
+  checksum: a91acf3564a568c6f199912f3eb2c76c99c5a0d7e219394294213b3f2d54f672619f0fde4da22b29dc5d4c31457cd799acc2e5cb6bd90f9af04a1578483b6ff7
   languageName: node
   linkType: hard
 
@@ -33807,7 +33807,7 @@ __metadata:
     "@types/js-base64": 3.0.0
     "@types/js-cookie": 2.2.6
     "@types/js-yaml": 4.0.3
-    "@types/lodash": 4.14.160
+    "@types/lodash": 4.14.202
     "@types/mailparser": 3.4.0
     "@types/memoizee": 0.4.5
     "@types/node": 18.14.2

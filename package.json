@@ -374,7 +374,7 @@
     "@types/js-base64": "3.0.0",
     "@types/js-cookie": "2.2.6",
     "@types/js-yaml": "4.0.3",
-    "@types/lodash": "4.14.160",
+    "@types/lodash": "4.14.202",
     "@types/mailparser": "3.4.0",
     "@types/memoizee": "0.4.5",
     "@types/node": "18.14.2",
