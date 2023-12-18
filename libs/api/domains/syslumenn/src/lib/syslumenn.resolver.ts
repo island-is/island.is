@@ -146,7 +146,6 @@ export class SyslumennResolver {
     const response = this.syslumennService
       .getVehicle(input.vehicleId)
       .catch((e) => {
-        console.log(e)
         return Promise.resolve({
           licenseNumber: '',
           manufacturer: '',
