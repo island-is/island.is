@@ -133,7 +133,13 @@ export const AdditionalEstateMember = ({
       ) : (
         <Box paddingY={2}>
           <LookupPerson
-            field={{ id: fieldIndex, props: { alertWhenUnder18: selectedEstate === EstateTypes.divisionOfEstateByHeirs } }}
+            field={{
+              id: fieldIndex,
+              props: {
+                alertWhenUnder18:
+                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+              },
+            }}
             error={error}
           />
         </Box>
