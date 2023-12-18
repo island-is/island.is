@@ -19,7 +19,7 @@ export const confirmation = {
     },
     alertMessage: {
       id: 'hlc.application:confirmation.general.alertMessage',
-      defaultMessage: 'Þú getur nú nálgast vottorðið inni á mínum síðum',
+      defaultMessage: 'Þú getur nálgast vottorðið á mínum síðum á island.is',
       description: 'Confirmation alert message',
     },
   }),
