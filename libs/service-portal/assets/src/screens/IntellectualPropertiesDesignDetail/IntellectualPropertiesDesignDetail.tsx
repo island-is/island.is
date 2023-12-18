@@ -10,20 +10,16 @@ import {
   formatDate,
   m,
 } from '@island.is/service-portal/core'
-import {
-  Box,
-  Button,
-  Divider,
-  Inline,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
 import { isDefined } from '@island.is/shared/utils'
 import { useGetIntellectualPropertiesDesignQuery } from './IntellectualPropertiesDesignDetail.generated'
 import { ipMessages } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
+import { useMemo } from 'react'
+import { orderTimelineData } from '../../utils/timelineMapper'
+import { makeArrayEven } from '../../utils/makeArrayEven'
 
 type UseParams = {
   id: string
@@ -42,10 +38,73 @@ const IntellectualPropertiesDesignDetail = () => {
     },
   })
 
+  const ip = data?.intellectualPropertiesDesign
+
+  const orderedDates = useMemo(
+    () =>
+      orderTimelineData([
+        {
+          date: ip?.lifecycle.internationalRegistrationDate ?? undefined,
+          message: formatMessage(ipMessages.internationalRegistration),
+        },
+        {
+          date: ip?.lifecycle.publishDate ?? undefined,
+          message: formatMessage(ipMessages.publish),
+        },
+        {
+          date: ip?.lifecycle.registrationDate ?? undefined,
+          message: formatMessage(ipMessages.registration),
+        },
+        {
+          date: ip?.lifecycle.expiryDate ?? undefined,
+          message: formatMessage(ipMessages.expires),
+        },
+      ]),
+    [formatMessage, ip?.lifecycle],
+  )
+
+  const extraInfoArray = useMemo(() => {
+    if (ip) {
+      const extraInfoArray = [
+        ip?.lifecycle?.internationalRegistrationDate
+          ? {
+              title: formatMessage(ipMessages.internationalRegistrationDate),
+              value: ip?.lifecycle.internationalRegistrationDate,
+            }
+          : null,
+        ip?.applicationNumber
+          ? {
+              title: formatMessage(ipMessages.applicationNumber),
+              value: ip?.applicationNumber ?? '',
+            }
+          : null,
+        ip?.classification
+          ? {
+              title: formatMessage(ipMessages.classification),
+              value: ip?.classification?.[0] ?? '',
+            }
+          : null,
+        ip?.lifecycle.registrationDate
+          ? {
+              title: formatMessage(ipMessages.registrationDate),
+              value: formatDate(ip.lifecycle.registrationDate),
+            }
+          : null,
+        ip?.status
+          ? {
+              title: formatMessage(m.status),
+              value: ip?.status,
+            }
+          : null,
+      ].filter(isDefined)
+
+      return makeArrayEven(extraInfoArray, { title: '', value: '' })
+    }
+  }, [formatMessage, ip])
+
   if (error && !loading) {
     return <Problem type="not_found" />
   }
-  const ip = data?.intellectualPropertiesDesign
 
   if (!ip && !loading) {
     return <Problem type="no_data" />
@@ -137,65 +196,19 @@ const IntellectualPropertiesDesignDetail = () => {
             <>
               <Timeline
                 title={formatMessage(ipMessages.timeline)}
-                maxDate={new Date(ip.lifecycle.expiryDate)}
-                minDate={new Date(ip.lifecycle.internationalRegistrationDate)}
+                maxDate={orderedDates[orderedDates.length - 1].date}
+                minDate={orderedDates[0].date}
               >
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.lifecycle.internationalRegistrationDate
-                      ? formatDate(ip.lifecycle.internationalRegistrationDate)
-                      : ''}
-                  </Text>
-                  <Text>
-                    {formatMessage(ipMessages.internationalRegistration)}
-                  </Text>
-                </Stack>
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.lifecycle.expiryDate
-                      ? formatDate(ip.lifecycle.expiryDate)
-                      : ''}
-                  </Text>
-                  <Text>{formatMessage(ipMessages.expires)}</Text>
-                </Stack>
+                {orderedDates.map((datapoint) => (
+                  <Stack key="list-item-application-date" space="smallGutter">
+                    <Text variant="h5">{formatDate(datapoint.date)}</Text>
+                    <Text>{datapoint.message}</Text>
+                  </Stack>
+                ))}
               </Timeline>
               <TableGrid
                 title={formatMessage(ipMessages.otherInformation)}
-                dataArray={chunk(
-                  [
-                    {
-                      title: formatMessage(
-                        ipMessages.internationalRegistrationDate,
-                      ),
-                      value: ip?.lifecycle.internationalRegistrationDate
-                        ? formatDate(ip.lifecycle.internationalRegistrationDate)
-                        : '',
-                    },
-                    {
-                      title: formatMessage(ipMessages.applicationNumber),
-                      value: ip?.applicationNumber ?? '',
-                    },
-                    {
-                      title: formatMessage(ipMessages.classification),
-                      value: ip?.classification?.[0] ?? '',
-                    },
-                    {
-                      title: formatMessage(ipMessages.registrationDate),
-                      value: ip?.lifecycle.registrationDate
-                        ? formatDate(ip.lifecycle.registrationDate)
-                        : '',
-                    },
-                    {
-                      title: formatMessage(m.status),
-                      value: ip?.status ?? '',
-                    },
-                    {
-                      title: '',
-                      value: '',
-                    },
-                  ].filter(isDefined),
-                  2,
-                )}
+                dataArray={chunk(extraInfoArray, 2)}
               />
             </>
           )}

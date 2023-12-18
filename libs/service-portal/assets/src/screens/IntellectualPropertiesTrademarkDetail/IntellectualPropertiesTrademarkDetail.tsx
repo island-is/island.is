@@ -26,7 +26,8 @@ import { isDefined } from '@island.is/shared/utils'
 import { useGetIntellectualPropertiesTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { orderTimelineData } from '../../utils/timelineMapper'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
+import { makeArrayEven } from '../../utils/makeArrayEven'
 
 type UseParams = {
   id: string
@@ -82,10 +83,12 @@ const IntellectualPropertiesTrademarkDetail = () => {
   const extraInfoArray = useMemo(() => {
     if (ip) {
       const extraInfoArray = [
-        {
-          title: formatMessage(ipMessages.applicationNumber),
-          value: ip?.applicationNumber ?? '',
-        },
+        ip?.applicationNumber
+          ? {
+              title: formatMessage(ipMessages.applicationNumber),
+              value: ip?.applicationNumber ?? '',
+            }
+          : null,
         ip?.imageCategories
           ? {
               title: formatMessage(ipMessages.imageCategories),
@@ -98,19 +101,17 @@ const IntellectualPropertiesTrademarkDetail = () => {
               value: ip.registrationNumber,
             }
           : null,
-        {
-          title: formatMessage(ipMessages.colorMark),
-          value: ip?.isColorMark ? formatMessage(m.yes) : formatMessage(m.no),
-        },
+        ip?.isColorMark
+          ? {
+              title: formatMessage(ipMessages.colorMark),
+              value: ip?.isColorMark
+                ? formatMessage(m.yes)
+                : formatMessage(m.no),
+            }
+          : null,
       ].filter(isDefined)
 
-      if (extraInfoArray.length % 2 !== 0) {
-        extraInfoArray.push({
-          title: '',
-          value: '',
-        })
-      }
-      return extraInfoArray
+      return makeArrayEven(extraInfoArray, { title: '', value: '' })
     }
   }, [formatMessage, ip])
 
