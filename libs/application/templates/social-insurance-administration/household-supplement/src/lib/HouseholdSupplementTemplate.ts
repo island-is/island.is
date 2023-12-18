@@ -43,6 +43,7 @@ import {
   Roles,
   States,
   Actions,
+  BankAccountType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   getApplicationAnswers,
@@ -119,7 +120,12 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearFileUpload', 'clearTemp', 'restoreAnswersFromTemp'],
+        exit: [
+          'clearBankAccountInfo',
+          'clearFileUpload',
+          'clearTemp',
+          'restoreAnswersFromTemp',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -454,6 +460,24 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 
         if (householdSupplementHousing !== HouseholdSupplementHousing.RENTER) {
           unset(answers, 'fileUpload.leaseAgreement')
+        }
+
+        return context
+      }),
+      clearBankAccountInfo: assign((context) => {
+        const { application } = context
+        const { bankAccountType } = getApplicationAnswers(application.answers)
+
+        if (bankAccountType === BankAccountType.ICELANDIC) {
+          unset(application.answers, 'paymentInfo.iban')
+          unset(application.answers, 'paymentInfo.swift')
+          unset(application.answers, 'paymentInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.currency')
+        }
+
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          unset(application.answers, 'paymentInfo.bank')
         }
 
         return context
