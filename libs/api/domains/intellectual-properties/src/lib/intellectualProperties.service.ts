@@ -7,7 +7,7 @@ import addMonths from 'date-fns/addMonths'
 import { isDefined } from '@island.is/shared/utils'
 import { IntellectualPropertiesClientService } from '@island.is/clients/intellectual-properties'
 import { Patent } from './models/patent.model'
-import { Trademark } from './models/trademark.model'
+import { Trademark, TrademarkType } from './models/trademark.model'
 import { mapTrademarkType, mapTrademarkSubtype, mapFullAddress } from './mapper'
 import { parseDateIfValid } from './models/utils'
 import { Image } from './models/image.model'
@@ -59,6 +59,12 @@ export class IntellectualPropertiesService {
       return null
     }
 
+    const type = mapTrademarkType(trademark.type) ?? undefined
+    const mediaPath =
+      type === TrademarkType.IMAGE || type === TrademarkType.TEXT_AND_IMAGE
+        ? trademark.orginalImagePath
+        : trademark.media?.mediaPath
+
     return {
       ...trademark,
       vmId: trademark.vmid,
@@ -69,9 +75,8 @@ export class IntellectualPropertiesService {
       registrationNumber: trademark.registrationNumber ?? undefined,
       status: trademark.status ?? undefined,
       media: {
-        mediaPath:
-          trademark.orginalImagePath ?? trademark.media?.mediaPath ?? undefined,
-        mediaType: trademark.media?.mediaPath ?? undefined,
+        mediaPath: mediaPath ?? undefined,
+        mediaType: trademark.media?.mediaType ?? undefined,
       },
       markOwners: trademark.markOwners?.map((o) => ({
         name: o.name ?? '',

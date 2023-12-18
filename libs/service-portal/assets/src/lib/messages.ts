@@ -945,6 +945,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:max-valid-objection-date',
     defaultMessage: 'Andmælafrestur',
   },
+  productsAndServices: {
+    id: 'sp.intellectual-property:products-and-services',
+    defaultMessage: 'Vörur og þjónusta',
+  },
   imageCategories: {
     id: 'sp.intellectual-property:image-categories',
     defaultMessage: 'Myndflokkar',

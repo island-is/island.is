@@ -5,17 +5,23 @@ export const mapTrademarkType = (type: string | null | undefined) => {
   if (!type) {
     return null
   }
-  return type === 'margmiðlunarmerki'
-    ? TrademarkType.MULTIMEDIA
-    : type === 'hreyfimerki'
-    ? TrademarkType.ANIMATION
-    : type === 'hljóðmerki'
-    ? TrademarkType.AUDIO
-    : type === 'orðmerki'
-    ? TrademarkType.TEXT
-    : type === 'myndmerki'
-    ? TrademarkType.IMAGE
-    : null
+
+  switch (type) {
+    case 'margmiðlunarmerki':
+      return TrademarkType.MULTIMEDIA
+    case 'hreyfimerki':
+      return TrademarkType.ANIMATION
+    case 'hljóðmerki':
+      return TrademarkType.AUDIO
+    case 'orðmerki':
+      return TrademarkType.TEXT
+    case 'myndmerki':
+      return TrademarkType.IMAGE
+    case 'orð- og myndmerki':
+      return TrademarkType.TEXT_AND_IMAGE
+    default:
+      return TrademarkType.UNKNOWN
+  }
 }
 
 export const mapTrademarkSubtype = (

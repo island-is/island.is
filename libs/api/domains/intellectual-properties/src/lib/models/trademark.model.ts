@@ -15,7 +15,9 @@ export enum TrademarkType {
   ANIMATION = 'Animation',
   MULTIMEDIA = 'Multimedia',
   TEXT = 'Text',
+  TEXT_AND_IMAGE = 'TextAndImage',
   IMAGE = 'Image',
+  UNKNOWN = 'Unknown',
 }
 
 registerEnumType(TrademarkType, { name: 'TrademarkType' })
