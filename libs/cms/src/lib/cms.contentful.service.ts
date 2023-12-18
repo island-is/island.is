@@ -236,7 +236,7 @@ export class CmsContentfulService {
 
         const title = organization?.fields.title || organization?.fields.title
 
-        return title ? title : null
+        return title ?? null
       }
     })
   }
