@@ -105,13 +105,14 @@ export class EstateTemplateService extends BaseTemplateApiService {
     //   Flag if any heir is under 18 years old without an advocate/defender
     //   Unless official division of estate is taking place, then the incoming data need not be validated
     if (youngheirs.length > 0) {
+      if (
+        applicationAnswers.selectedEstate !==
+        EstateTypes.divisionOfEstateByHeirs
+      ) {
+        return true
+      }
+
       if (youngheirs.some((heir) => !heir.advocate)) {
-        if (
-          applicationAnswers.selectedEstate ===
-          EstateTypes.divisionOfEstateByHeirs
-        ) {
-          return true
-        }
         this.logger.warn('[estate]: Heir under 18 without advocate')
         throw new TemplateApiError(
           {

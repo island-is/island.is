@@ -598,6 +598,32 @@ export const coreErrorMessages = defineMessages({
     description:
       'You do not have any electric vehicles where you are the main owner',
   },
+  noBankAccountError: {
+    id: 'application.system:core.fetch.data.noBankAccountError',
+    defaultMessage: 'Þú ert ekki með skráðan bankareikning',
+    description: 'No bank account error',
+  },
+  nationalRegistryName: {
+    id: 'application.system:core.fetch.data.nationalRegistryName',
+    defaultMessage: 'Nafn',
+    description: 'Name',
+  },
+  nationalRegistryNationalId: {
+    id: 'application.system:core.fetch.data.nationalRegistryNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'National ID',
+  },
+  nationalRegistryNameNotFoundForNationalId: {
+    id: 'application.system:core.fetch.data.nationalRegistryNameNotFoundForNationalId',
+    defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
+    description:
+      'Error message if there was no name associated with given national id',
+  },
+  nationalRegistryMinAgeNotFulfilled: {
+    id: 'application.system:core.fetch.data.nationalRegistryMinAgeNotFulfilled',
+    defaultMessage: 'Lágmarksaldur er {minAge} ára',
+    description: 'Min age not fulfilled error',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

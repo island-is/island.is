@@ -1,64 +1,67 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
-import Head from 'next/head'
+import React, { useEffect, useRef, useState } from 'react'
 import intersection from 'lodash/intersection'
+import Head from 'next/head'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+
 import {
-  Text,
-  Stack,
-  Box,
-  Link,
-  Breadcrumbs,
   AccordionCard,
-  TopicCard,
-  FocusableBox,
-  Navigation,
-  LinkContext,
+  Box,
+  Breadcrumbs,
   Button,
+  FocusableBox,
+  Link,
+  LinkContext,
+  Navigation,
+  Stack,
+  Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import { Card, Sticky } from '@island.is/web/components'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { Screen } from '@island.is/web/types'
 import {
-  GET_NAMESPACE_QUERY,
-  GET_ARTICLES_QUERY,
-  GET_CATEGORIES_QUERY,
-  GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
-} from '@island.is/web/screens/queries'
-import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
+  Article,
+  ArticleGroup,
+  ContentLanguage,
+  GetAnchorPagesInCategoryQuery,
+  GetArticleCategoriesQuery,
+  GetCategoryPagesQuery,
+  GetCategoryPagesQueryVariables,
+  GetNamespaceQuery,
+  Image,
+  QueryGetAnchorPagesInCategoryArgs,
+  QueryGetArticleCategoriesArgs,
+  QueryGetNamespaceArgs,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import {
-  GetAnchorPagesInCategoryQuery,
-  GetNamespaceQuery,
-  GetArticlesQuery,
-  QueryGetArticlesArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetArticleCategoriesQuery,
-  QueryGetArticleCategoriesArgs,
-  QueryGetAnchorPagesInCategoryArgs,
-  Image,
-  ArticleGroup,
-  Article,
-} from '@island.is/web/graphql/schema'
-import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
+import {
+  GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
+  GET_CATEGORIES_QUERY,
+  GET_CATEGORY_PAGES_QUERY,
+  GET_NAMESPACE_QUERY,
+} from '@island.is/web/screens/queries'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { hasProcessEntries } from '@island.is/web/utils/article'
+
 import {
   getActiveCategory,
   getHashArr,
   getHashString,
   updateHashArray,
 } from './utils'
-import { hasProcessEntries } from '@island.is/web/utils/article'
 
-type Articles = GetArticlesQuery['getArticles']
+type CategoryPages = NonNullable<GetCategoryPagesQuery['getCategoryPages']>
 type LifeEvents = GetAnchorPagesInCategoryQuery['getAnchorPagesInCategory']
 
 interface CategoryProps {
-  articles: Articles
+  pages: CategoryPages
   categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: GetNamespaceQuery['getNamespace']
   lifeEvents: LifeEvents
@@ -66,7 +69,7 @@ interface CategoryProps {
 }
 
 const Category: Screen<CategoryProps> = ({
-  articles,
+  pages,
   lifeEvents,
   categories,
   namespace,
@@ -74,6 +77,7 @@ const Category: Screen<CategoryProps> = ({
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hashArray, setHashArray] = useState<string[]>([])
+  const { activeLocale } = useI18n()
 
   const Router = useRouter()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -83,61 +87,62 @@ const Category: Screen<CategoryProps> = ({
 
   const getCurrentCategory = () => categories.find((x) => x.slug === slug)
 
-  // group articles
-  const { groups, cards, otherArticles } = articles.reduce(
-    (content, article) => {
-      // check if this is not the main category for this article
-      if (article?.category?.title !== getCurrentCategory()?.title) {
-        content.otherArticles.push(article)
+  // group pages
+  const { groups, cards, otherPages } = pages.reduce(
+    (content, page) => {
+      // check if this is not the main category for this page
+      if (page?.category?.title !== getCurrentCategory()?.title) {
+        content.otherPages.push(page)
         return content
       }
-      // Check if article belongs to multiple groups in this category
+      // Check if page belongs to multiple groups in this category
       else if (
-        article?.otherCategories &&
-        article.otherCategories
+        page?.__typename === 'Article' &&
+        page?.otherCategories &&
+        page.otherCategories
           .map((category) => category.title)
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
           .includes(getCurrentCategory().title)
       ) {
-        content.otherArticles.push(article)
+        content.otherPages.push(page)
       }
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      if (article?.group?.slug && !content.groups[article?.group?.slug]) {
+      if (page?.group?.slug && !content.groups[page?.group?.slug]) {
         // group does not exist create the collection
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
-        content.groups[article?.group?.slug] = {
-          title: article?.group?.title,
-          description: article?.group?.description,
-          articles: [article],
-          groupSlug: article?.group?.slug,
-          importance: article?.group?.importance,
+        content.groups[page?.group?.slug] = {
+          title: page?.group?.title,
+          description: page?.group?.description,
+          pages: [page],
+          groupSlug: page?.group?.slug,
+          importance: page?.group?.importance,
         }
-      } else if (article?.group?.slug) {
+      } else if (page?.group?.slug) {
         // group should exists push into collection
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
-        content.groups[article?.group?.slug].articles.push(article)
+        content.groups[page?.group?.slug].pages.push(page)
       } else {
-        // this article belongs to no group
+        // this page belongs to no group
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
-        content.cards.push(article)
+        content.cards.push(page)
       }
       return content
     },
     {
       groups: {},
       cards: [],
-      otherArticles: [] as Articles,
+      otherPages: [] as CategoryPages,
     },
   )
 
   // Get all available subgroups.
-  const availableSubgroups = articles
-    .map((article) => article.subgroup)
+  const availableSubgroups = pages
+    .map((page) => page.subgroup)
     .filter(
       (value, index, all) =>
         all.findIndex((t) => JSON.stringify(t) === JSON.stringify(value)) ===
@@ -178,8 +183,8 @@ const Category: Screen<CategoryProps> = ({
       }
     })
 
-  const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
-    const bySubgroup = articles.reduce((result, item) => {
+  const groupPagesBySubgroup = (pages: CategoryPages, groupSlug?: string) => {
+    const bySubgroup = pages.reduce((result, item) => {
       const key = item?.subgroup?.title ?? 'unknown'
 
       return {
@@ -190,15 +195,18 @@ const Category: Screen<CategoryProps> = ({
       }
     }, {})
 
-    // add "other" articles as well
-    const articlesBySubgroup = otherArticles.reduce((result, item) => {
-      const titles = item.otherSubgroups?.map((x) => x.title)
+    // add "other" pages as well
+    const pagesBySubgroup = otherPages.reduce((result, item) => {
+      const titles = (
+        item.__typename === 'Article' ? item.otherSubgroups : []
+      )?.map((x) => x.title)
       const subgroupsFound = intersection(Object.keys(result), titles)
       const key = 'unknown'
 
       // if there is no sub group found then at least show it in the group
       if (
         !subgroupsFound.length &&
+        item.__typename === 'Article' &&
         item.otherGroups?.find((x) => x.slug === groupSlug)
       ) {
         return {
@@ -219,7 +227,7 @@ const Category: Screen<CategoryProps> = ({
       }, result)
     }, bySubgroup)
 
-    return { articlesBySubgroup }
+    return { pagesBySubgroup }
   }
 
   const handleAccordionClick = (groupSlug: string) => {
@@ -228,10 +236,10 @@ const Category: Screen<CategoryProps> = ({
     window.location.href = `#${getHashString(updatedArr)}`
   }
 
-  const sortArticles = (articles: Articles) => {
-    // Sort articles by importance (which defaults to 0).
-    // If both articles being compared have the same importance we sort by comparing their titles.
-    const sortedArticles = articles.sort((a, b) => {
+  const sortPages = (pages: CategoryPages) => {
+    // Sort pages by importance (which defaults to 0).
+    // If both pages being compared have the same importance we sort by comparing their titles.
+    const sortedPages = pages.sort((a, b) => {
       if (!a.importance || !b.importance) {
         return a.importance ? -1 : b.importance ? 1 : sortAlpha('title')(a, b)
       }
@@ -245,14 +253,14 @@ const Category: Screen<CategoryProps> = ({
 
     // If it's sorted alphabetically we need to be able to communicate that.
     const isSortedAlphabetically =
-      JSON.stringify(sortedArticles) ===
-      JSON.stringify([...articles].sort(sortAlpha('title')))
+      JSON.stringify(sortedPages) ===
+      JSON.stringify([...pages].sort(sortAlpha('title')))
 
-    return { sortedArticles, isSortedAlphabetically }
+    return { sortedPages, isSortedAlphabetically }
   }
 
-  const sortSubgroups = (articlesBySubgroup: Record<string, Articles>) =>
-    Object.keys(articlesBySubgroup).sort((a, b) => {
+  const sortSubgroups = (pagesBySubgroup: Record<string, CategoryPages>) =>
+    Object.keys(pagesBySubgroup).sort((a, b) => {
       // 'unknown' is a valid subgroup key but we'll sort it to the bottom
       if (a === 'unknown') {
         return 1
@@ -291,7 +299,7 @@ const Category: Screen<CategoryProps> = ({
         : a.importance === b.importance && sortAlpha('title')(a, b),
   )
 
-  const ArticleGroupComponent = ({
+  const PageGroupComponent = ({
     groupSlug,
     index,
   }: {
@@ -300,11 +308,11 @@ const Category: Screen<CategoryProps> = ({
   }) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
-    const { title, description, articles } = groups[groupSlug]
+    const { title, description, pages } = groups[groupSlug]
 
-    const { articlesBySubgroup } = groupArticlesBySubgroup(articles, groupSlug)
+    const { pagesBySubgroup } = groupPagesBySubgroup(pages, groupSlug)
 
-    const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
+    const sortedSubgroupKeys = sortSubgroups(pagesBySubgroup)
     const expanded = hashArray.includes(groupSlug)
 
     return (
@@ -322,13 +330,13 @@ const Category: Screen<CategoryProps> = ({
         >
           <Box paddingTop={2}>
             {sortedSubgroupKeys.map((subgroup, index) => {
-              const { sortedArticles } = sortArticles(
+              const { sortedPages } = sortPages(
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
-                articlesBySubgroup[subgroup],
+                pagesBySubgroup[subgroup],
               )
 
-              // Articles with 1 subgroup only have the "other" group and don't get a heading.
+              // Pages with 1 subgroup only have the "other" group and don't get a heading.
               const hasSubgroups = sortedSubgroupKeys.length > 1
 
               const noSubgroupNameKeys = ['unknown', 'undefined', 'null']
@@ -354,28 +362,40 @@ const Category: Screen<CategoryProps> = ({
                     </Text>
                   )}
                   <Stack space={2}>
-                    {sortedArticles.map((article) => {
+                    {sortedPages.map((page) => {
+                      let topicCardProps = {}
+                      if (
+                        page.__typename === 'Article' &&
+                        (hasProcessEntries(page as Article) ||
+                          page.processEntryButtonText)
+                      ) {
+                        topicCardProps = {
+                          tag: n(
+                            page.processEntryButtonText || 'application',
+                            'Umsókn',
+                          ),
+                        }
+                      } else if (page.__typename === 'Manual') {
+                        topicCardProps = {
+                          tag: n(
+                            'manualCardTag',
+                            activeLocale === 'is' ? 'Handbók' : 'Manual',
+                          ),
+                        }
+                      }
+
                       return (
-                        <FocusableBox key={article.slug} borderRadius="large">
+                        <FocusableBox key={page.slug} borderRadius="large">
                           <TopicCard
                             href={
                               linkResolver(
-                                article.__typename?.toLowerCase() as LinkType,
-                                [article.slug],
+                                page.__typename?.toLowerCase() as LinkType,
+                                [page.slug],
                               ).href
                             }
-                            {...(hasProcessEntries(article as Article) ||
-                            article.processEntryButtonText
-                              ? {
-                                  tag: n(
-                                    article.processEntryButtonText ||
-                                      'application',
-                                    'Umsókn',
-                                  ),
-                                }
-                              : {})}
+                            {...topicCardProps}
                           >
-                            {article.title}
+                            {page.title}
                           </TopicCard>
                         </FocusableBox>
                       )
@@ -514,7 +534,7 @@ const Category: Screen<CategoryProps> = ({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             sortedGroups.map(({ groupSlug }, index) => (
-              <ArticleGroupComponent
+              <PageGroupComponent
                 groupSlug={groupSlug}
                 index={index}
                 key={index}
@@ -567,7 +587,7 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: { getArticles: articles },
+      data: { getCategoryPages: categoryPages },
     },
     {
       data: { getAnchorPagesInCategory: lifeEvents },
@@ -577,8 +597,8 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetArticlesQuery, QueryGetArticlesArgs>({
-      query: GET_ARTICLES_QUERY,
+    apolloClient.query<GetCategoryPagesQuery, GetCategoryPagesQueryVariables>({
+      query: GET_CATEGORY_PAGES_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -631,13 +651,13 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
     (category) => category.slug === slug,
   )
 
-  // if requested category si not in returned list of categories we assume it does not exist
+  // if requested category is not in returned in the list of categories we assume it does not exist
   if (!categoryExists) {
     throw new CustomNextError(404, 'Category not found')
   }
 
   return {
-    articles,
+    pages: categoryPages ?? [],
     lifeEvents,
     categories: getArticleCategories,
     namespace,

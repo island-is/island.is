@@ -52,6 +52,12 @@ export class Person extends PersonBase {
   @Field(() => Spouse, { nullable: true })
   spouse?: Spouse | null
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'Unique string. Can be used for URLs.',
+  })
+  baseId?: string | null
+
   //DEPRECATED USER PROPERTIES
 
   @Field(() => String, {

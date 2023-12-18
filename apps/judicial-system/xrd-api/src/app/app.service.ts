@@ -15,37 +15,10 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
-import { CaseOrigin } from '@island.is/judicial-system/types'
 
 import appModuleConfig from './app.config'
 import { CreateCaseDto } from './app.dto'
 import { Case } from './app.model'
-
-function reportError(
-  url: string,
-  title: { title: string; emoji: string },
-  info?: string,
-  error?: unknown,
-) {
-  return fetch(url, {
-    method: 'POST',
-    headers: { 'Content-type': 'application/json' },
-    body: JSON.stringify({
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `${title.emoji} *${title.title}*\n${info}${
-              error ? `\n>${JSON.stringify(error)}` : ''
-            }`,
-          },
-        },
-      ],
-    }),
-  })
-}
 
 @Injectable()
 export class AppService {
@@ -95,27 +68,11 @@ export class AppService {
   }
 
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
-    return this.auditTrailService
-      .audit(
-        'xrd-api',
-        AuditedAction.CREATE_CASE,
-        this.createCase(caseToCreate),
-        (theCase) => theCase.id,
-      )
-      .catch((reason) => {
-        reportError(
-          this.config.errorReportUrl,
-          {
-            title: 'Ekki tókst að stofna mál í gegnum Strauminn',
-            emoji: ':broken_heart:',
-          },
-          `${capitalize(caseTypes[caseToCreate.type])}: ${
-            caseToCreate.policeCaseNumber
-          }\nOrigin: ${CaseOrigin.LOKE}`,
-          reason,
-        )
-
-        throw reason
-      })
+    return this.auditTrailService.audit(
+      'xrd-api',
+      AuditedAction.CREATE_CASE,
+      this.createCase(caseToCreate),
+      (theCase) => theCase.id,
+    )
   }
 }

@@ -1,4 +1,4 @@
-import { downloadFile } from './downloadFile'
+import { downloadFile } from '@island.is/service-portal/core'
 import { PeriodHeaders } from './dataHeaders'
 import { SelectedPeriod } from '../components/FinanceTransactionPeriods/FinanceTransactionPeriodsTypes'
 import { GetChargeTypePeriodSubjectQuery } from '../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'

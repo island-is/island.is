@@ -38,8 +38,18 @@ export const m = defineMessages({
     defaultMessage: 'Landsfjórðungur',
     description: '',
   },
-  clearFilters: {
-    id: 'admin-portal.signature-collection:clearFilters',
+  candidate: {
+    id: 'admin-portal.signature-collection:candidate',
+    defaultMessage: 'Frambjóðandi',
+    description: '',
+  },
+  clearFilter: {
+    id: 'admin-portal.signature-collection:clearFilter',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
+  clearAllFilters: {
+    id: 'admin-portal.signature-collection:clearAllFilters',
     defaultMessage: 'Hreinsa allar síur',
     description: '',
   },
