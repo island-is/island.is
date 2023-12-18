@@ -213,12 +213,10 @@ export class DiscountService {
       })
 
       if (allExplicit === null || allExplicit.length <= 5) {
-        user.fund.credit = flightLegs
+        user.fund.credit = 2 //making sure we can get flight from and to
       } else {
         return null
       }
-      // need to query explicit code to count how many explicit codes user has received,
-      // add one or two credits?
     } else {
       user.fund.credit = user.fund.total - user.fund.used
     }
@@ -481,18 +479,6 @@ export class DiscountService {
       ],
     }
 
-    const backFlight: ExplicitFlight = {
-      connectable: true,
-      id: 'explicit',
-      flightLegs: [
-        {
-          origin: AKUREYRI_FLIGHT_CODES[0],
-          destination: REYKJAVIK_FLIGHT_CODES[0],
-          date,
-        },
-      ],
-    }
-
     const discount = await this.createExplicitDiscountCode(
       auth,
       body.nationalId,
@@ -500,13 +486,9 @@ export class DiscountService {
       auth.nationalId,
       body.comment,
       body.numberOfDaysUntilExpiration,
-      body.needsConnectionFlight
-        ? body.flightLegs === 2
-          ? [flight, backFlight]
-          : [flight]
-        : [],
+      body.needsConnectionFlight ? [flight] : [],
       isExplicit,
-      body.flightLegs,
+      1,
     )
     if (!discount) {
       throw new Error(`Could not create explicit discount`)
