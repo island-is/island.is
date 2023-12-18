@@ -1,14 +1,17 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
+import router from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   completedCaseStates,
   isCourtOfAppealsUser,
+  isDefenceUser,
+  isProsecutionUser,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
@@ -32,7 +35,7 @@ const AppealCaseFilesOverview: React.FC<
   })
 
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
+  const { user, limitedAccess } = useContext(UserContext)
 
   const fileDate = (category: CaseFileCategory) => {
     switch (category) {
@@ -93,7 +96,7 @@ const AppealCaseFilesOverview: React.FC<
     allFiles &&
     allFiles.length > 0 ? (
     <>
-      <Box marginBottom={5}>
+      <Box marginBottom={2}>
         <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(strings.title)}
         </Text>
@@ -127,6 +130,23 @@ const AppealCaseFilesOverview: React.FC<
           </PdfButton>
         ))}
       </Box>
+      {(isProsecutionUser(user) || isDefenceUser(user)) && (
+        <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+          <Button
+            icon="add"
+            onClick={() => {
+              router.push(
+                limitedAccess
+                  ? `${constants.DEFENDER_APPEAL_FILES_ROUTE}/${workingCase.id}`
+                  : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
+              )
+            }}
+          >
+            {formatMessage(strings.addFiles)}
+          </Button>
+        </Box>
+      )}
+
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
