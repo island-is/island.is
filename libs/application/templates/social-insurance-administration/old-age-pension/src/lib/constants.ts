@@ -1,6 +1,6 @@
 import { oldAgePensionFormMessage } from './messages'
 import { MessageDescriptor } from 'react-intl'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const oldAgePensionAge = 67
 export const earlyRetirementMinAge = 65

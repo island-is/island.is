@@ -6,12 +6,12 @@ import {
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/additionalSupportForTheElderlyUtils'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { YES } from '@island.is/application/types'
-import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 
 export const Payment = ({
   application,

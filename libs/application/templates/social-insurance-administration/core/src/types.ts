@@ -1,6 +1,5 @@
-import { BankAccountType } from './constants'
 import { MessageDescriptor } from 'react-intl'
-
+import { BankAccountType } from '.'
 export interface BankInfo {
   bank?: string
   ledger?: string

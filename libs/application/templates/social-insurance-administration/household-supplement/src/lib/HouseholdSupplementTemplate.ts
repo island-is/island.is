@@ -30,7 +30,7 @@ import { householdSupplementFormMessage, statesMessages } from './messages'
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
-} from '@island.is/application/templates/social-insurance-administration-core/messages'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
@@ -43,7 +43,7 @@ import {
   Roles,
   States,
   Actions,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,

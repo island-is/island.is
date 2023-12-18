@@ -28,16 +28,16 @@ import {
   getCurrencies,
   getYesNoOptions,
   getTaxOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   BankAccountType,
   FILE_SIZE_LIMIT,
   MONTHS,
   TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   getApplicationExternalData,
   getAvailableYears,

@@ -30,7 +30,7 @@ import { oldAgePensionFormMessage, statesMessages } from './messages'
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
-} from '@island.is/application/templates/social-insurance-administration-core/messages'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
@@ -46,7 +46,7 @@ import {
   Events,
   Roles,
   States,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,

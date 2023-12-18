@@ -8,8 +8,8 @@ import {
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { inReviewFormMessages } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
-import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'OldAgePensionInReviewUpload',

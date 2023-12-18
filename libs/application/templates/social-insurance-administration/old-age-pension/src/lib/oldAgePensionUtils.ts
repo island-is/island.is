@@ -30,7 +30,7 @@ import {
   BankAccountType,
   MONTHS,
   TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   Attachments,
   BankInfo,

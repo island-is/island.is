@@ -11,11 +11,11 @@ import { Payment } from './review-groups/Payment'
 import { HouseholdSupplement } from './review-groups/HouseholdSupplement'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Period } from './review-groups/Period'
-import { States } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 interface ReviewScreenProps {
   application: Application

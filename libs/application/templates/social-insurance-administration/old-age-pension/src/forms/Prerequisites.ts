@@ -21,12 +21,12 @@ import {
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { ApplicationType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../lib/oldAgePensionUtils'
-import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   NationalRegistryResidenceHistoryApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,

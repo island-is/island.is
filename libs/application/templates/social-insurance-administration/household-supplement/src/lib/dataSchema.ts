@@ -7,9 +7,9 @@ import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { NO, YES } from '@island.is/application/types'
 
 const isValidPhoneNumber = (phoneNumber: string) => {

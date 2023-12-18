@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty'
-import { BankInfo, PaymentInfo } from './types'
+import { BankInfo, PaymentInfo } from '../types'
 import { BankAccountType, TaxLevelOptions } from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
 import { Option, YES, NO } from '@island.is/application/types'

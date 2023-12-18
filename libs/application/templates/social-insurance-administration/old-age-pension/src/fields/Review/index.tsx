@@ -34,8 +34,8 @@ import {
 } from '@island.is/application/ui-components'
 import { OnePaymentPerYear } from './review-groups/OnePaymentPerYear'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { States } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 interface ReviewScreenProps {
   application: Application

@@ -21,7 +21,7 @@ import {
   YES,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { HouseholdSupplementHousing } from '../lib/constants'
 import {
   isExistsCohabitantOlderThan25,
@@ -34,7 +34,7 @@ import { ApplicantInfo } from '@island.is/application/templates/social-insurance
 import {
   BankAccountType,
   FILE_SIZE_LIMIT,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {
@@ -44,7 +44,7 @@ import {
   typeOfBankInfo,
   getCurrencies,
   getYesNoOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const HouseholdSupplementForm: Form = buildForm({

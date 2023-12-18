@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/types'
 import { SelectFormField } from '@island.is/application/ui-fields'
 
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   getApplicationAnswers,
   getAvailableMonths,

@@ -22,7 +22,7 @@ import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   Attachment,
@@ -327,9 +327,9 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         res.bankAccount.accountNumber = '123456'
       }
 
-      if (!res.emailAddress) {
-        res.emailAddress = 'mail@mail.is'
-      }
+      // if (!res.emailAddress) {
+      //   res.emailAddress = 'mail@mail.is'
+      // }
 
       if (!res.phoneNumber) {
         res.phoneNumber = '888-8888'

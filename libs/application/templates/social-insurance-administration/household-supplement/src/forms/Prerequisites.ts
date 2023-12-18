@@ -13,7 +13,7 @@ import {
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,

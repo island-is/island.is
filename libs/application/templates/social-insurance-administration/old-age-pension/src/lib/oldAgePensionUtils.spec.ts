@@ -19,7 +19,7 @@ import {
   filterValidEmployers,
 } from './oldAgePensionUtils'
 import { ApplicationType } from './constants'
-import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import * as kennitala from 'kennitala'
 
 function buildApplication(data?: {

@@ -28,7 +28,7 @@ import {
 import * as kennitala from 'kennitala'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   ApplicationType,
   Employment,
@@ -51,7 +51,7 @@ import {
   typeOfBankInfo,
   getYesNoOptions,
   getTaxOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {
@@ -59,7 +59,7 @@ import {
   FILE_SIZE_LIMIT,
   IS,
   TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',

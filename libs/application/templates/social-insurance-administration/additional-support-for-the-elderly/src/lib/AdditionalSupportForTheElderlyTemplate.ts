@@ -33,7 +33,7 @@ import {
   Events,
   Roles,
   States,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   additionalSupportForTheElderyFormMessage,
   statesMessages,
@@ -41,7 +41,7 @@ import {
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
-} from '@island.is/application/templates/social-insurance-administration-core/messages'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,

@@ -5,13 +5,13 @@ import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { NO, YES } from '@island.is/application/types'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   BankAccountType,
   TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

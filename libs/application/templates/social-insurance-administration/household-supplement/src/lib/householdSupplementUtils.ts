@@ -18,7 +18,7 @@ import {
 import {
   BankAccountType,
   MONTHS,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantPhonenumber = getValueViaPath(

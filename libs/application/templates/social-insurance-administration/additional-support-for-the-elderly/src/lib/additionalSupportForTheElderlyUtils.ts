@@ -13,7 +13,7 @@ import {
 import {
   BankAccountType,
   TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',

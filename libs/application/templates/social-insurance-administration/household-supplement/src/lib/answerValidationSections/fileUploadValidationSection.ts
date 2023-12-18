@@ -6,7 +6,7 @@ import {
 } from '../constants'
 import { getApplicationAnswers } from '../householdSupplementUtils'
 import { buildError } from './utils'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const fileUploadValidationSection = (
   newAnswer: unknown,
