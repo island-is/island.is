@@ -102,6 +102,8 @@ import { Manual } from './models/manual.model'
 import { GetSingleManualInput } from './dto/getSingleManual.input'
 import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
 import { EntryTitle } from './models/entryTitle.model'
+import { CategoryPage } from './models/categoryPage.model'
+import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -583,6 +585,17 @@ export class CmsResolver {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
       getElasticsearchIndex(input.lang),
       { type: 'webManual', slug: input.slug },
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [CategoryPage], { nullable: true })
+  getCategoryPages(
+    @Args('input') input: GetCategoryPagesInput,
+  ): Promise<typeof CategoryPage[] | null> {
+    return this.cmsElasticsearchService.getCategoryPages(
+      getElasticsearchIndex(input.lang),
+      input,
     )
   }
 

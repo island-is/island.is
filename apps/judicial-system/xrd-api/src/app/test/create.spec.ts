@@ -42,6 +42,7 @@ describe('AppController - Greate', () => {
     const caseToCreate: CreateCaseDto = {
       policeCaseNumber: '007-2022-1',
       type: CaseType.CUSTODY,
+      prosecutorNationalId: '1111111111',
       accusedNationalId: '00000000000',
     }
 

@@ -14,6 +14,7 @@ export enum ServicePortalPath {
   ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
   ApplicationPrescription = '/umsoknir/lyfsedlar',
   ApplicationDrivingLicense = '/umsoknir/okuskirteini',
+  CarRecycling = '/umsoknir/skilavottord',
 
   // Settings
   SettingsRoot = '/stillingar',
@@ -63,6 +64,7 @@ export enum ServicePortalPath {
   FinanceRoot = '/fjarmal',
   FinanceStatus = '/fjarmal/stada',
   FinanceTransactions = '/fjarmal/faerslur',
+  FinanceTransactionPeriods = '/fjarmal/faerslur/timabil',
   FinanceEmployeeClaims = '/fjarmal/laungreidendakrofur',
   FinanceLocalTax = '/fjarmal/utsvar',
   FinanceBills = '/fjarmal/greidslusedlar-og-greidslukvittanir',
@@ -89,6 +91,7 @@ export enum ServicePortalPath {
   TransportLowerAirfare = '/samgongur/loftbru',
   AssetsWorkMachines = '/samgongur/okutaeki/vinnuvelar',
   AssetsWorkMachinesDetail = '/samgongur/okutaeki/vinnuvelar/:regNumber/:id',
+
   // Education
   EducationHaskoli = '/menntun/haskoli',
   EducationDrivingLessons = '/menntun/okunam',
@@ -103,6 +106,10 @@ export enum ServicePortalPath {
   // Assets
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',
+  AssetsIntellectualProperties = '/eignir/hugverkarettindi',
+  AssetsIntellectualPropertiesTrademark = '/eignir/hugverkarettindi/vorumerki/:id',
+  AssetsIntellectualPropertiesPatent = '/eignir/hugverkarettindi/einkaleyfi/:id',
+  AssetsIntellectualPropertiesDesign = '/eignir/hugverkarettindi/honnun/:id',
 
   // Messages
   MessagesRoot = '/skilabod',

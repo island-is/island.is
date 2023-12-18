@@ -10,6 +10,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import {
+  DownloadFileButtons,
   UserInfoLine,
   amountFormat,
   formSubmit,
@@ -29,6 +30,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 import { HealthPaths } from '../../lib/paths'
+import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
 
 export const PaymentOverview = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -177,57 +179,79 @@ export const PaymentOverview = () => {
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
               ) : overview?.bills?.length ? (
-                <T.Table>
-                  <T.Head>
-                    <tr className={styles.tableRowStyle}>
-                      <T.HeadData>{formatMessage(m.date)}</T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.typeofService)}
-                      </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.totalPayment)}
-                      </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.insuranceShare)}
-                      </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.paymentDocument)}
-                      </T.HeadData>
-                    </tr>
-                  </T.Head>
-                  <T.Body>
-                    {overview?.bills?.map((item, index) => {
-                      return (
-                        <tr key={index} className={styles.tableRowStyle}>
-                          <T.Data>
-                            {item.date &&
-                              formatDateFns(item.date, 'dd.MM.yyyy')}
-                          </T.Data>
-                          <T.Data>{item.serviceType?.name}</T.Data>
-                          <T.Data>{amountFormat(item.totalAmount ?? 0)}</T.Data>
-                          <T.Data>
-                            {amountFormat(item.insuranceAmount ?? 0)}
-                          </T.Data>
-                          <T.Data>
-                            <Button
-                              iconType="outline"
-                              onClick={() =>
-                                item.downloadUrl
-                                  ? onFetchDocument(item?.downloadUrl)
-                                  : undefined
-                              }
-                              variant="text"
-                              icon="open"
-                              size="small"
-                            >
-                              {formatMessage(messages.fetchDocument)}
-                            </Button>
-                          </T.Data>
-                        </tr>
-                      )
-                    })}
-                  </T.Body>
-                </T.Table>
+                <>
+                  <T.Table>
+                    <T.Head>
+                      <tr className={styles.tableRowStyle}>
+                        <T.HeadData>{formatMessage(m.date)}</T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.typeofService)}
+                        </T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.totalPayment)}
+                        </T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.insuranceShare)}
+                        </T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.paymentDocument)}
+                        </T.HeadData>
+                      </tr>
+                    </T.Head>
+                    <T.Body>
+                      {overview?.bills?.map((item, index) => {
+                        return (
+                          <tr key={index} className={styles.tableRowStyle}>
+                            <T.Data>
+                              {item.date &&
+                                formatDateFns(item.date, 'dd.MM.yyyy')}
+                            </T.Data>
+                            <T.Data>{item.serviceType?.name}</T.Data>
+                            <T.Data>
+                              {amountFormat(item.totalAmount ?? 0)}
+                            </T.Data>
+                            <T.Data>
+                              {amountFormat(item.insuranceAmount ?? 0)}
+                            </T.Data>
+                            <T.Data>
+                              <Button
+                                iconType="outline"
+                                onClick={() =>
+                                  item.downloadUrl
+                                    ? onFetchDocument(item?.downloadUrl)
+                                    : undefined
+                                }
+                                variant="text"
+                                icon="open"
+                                size="small"
+                              >
+                                {formatMessage(messages.fetchDocument)}
+                              </Button>
+                            </T.Data>
+                          </tr>
+                        )
+                      })}
+                    </T.Body>
+                  </T.Table>
+                  <DownloadFileButtons
+                    BoxProps={{
+                      paddingTop: 2,
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'flexEnd',
+                    }}
+                    buttons={[
+                      {
+                        text: formatMessage(m.getAsExcel),
+                        onClick: () =>
+                          exportPaymentOverviewFile(
+                            overview?.bills ?? [],
+                            'xlsx',
+                          ),
+                      },
+                    ]}
+                  />
+                </>
               ) : (
                 <AlertMessage
                   type="warning"

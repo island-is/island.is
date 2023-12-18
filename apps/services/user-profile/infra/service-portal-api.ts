@@ -23,6 +23,11 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         staging: 'false',
         prod: 'false',
       },
+      USER_PROFILE_WORKER_PAGE_SIZE: {
+        dev: '3000',
+        staging: '3000',
+        prod: '3000',
+      },
     })
     .secrets({
       NOVA_URL: '/k8s/service-portal-api/NOVA_URL',

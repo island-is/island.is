@@ -50,6 +50,7 @@ export const useDynamicRoutes = () => {
 
     if (tabData?.RecordsTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceTransactions)
+      dynamicPathArray.push(ServicePortalPath.FinanceTransactionPeriods)
     }
     if (tabData?.employeeClaimsTap) {
       dynamicPathArray.push(ServicePortalPath.FinanceEmployeeClaims)
