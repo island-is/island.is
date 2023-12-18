@@ -188,12 +188,12 @@ const IntellectualPropertiesTrademarkDetail = () => {
     }
   }
 
-  if (!ip && !loading) {
-    return <Problem type="no_data" />
-  }
-
   if (error && !loading) {
     return <Problem type="not_found" />
+  }
+
+  if (!ip && !loading) {
+    return <Problem type="no_data" />
   }
 
   return (
@@ -239,7 +239,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
           <Divider />
         </Stack>
         {!loading && !error && orderedDates.length > 0 && (
-          <>
+          <Box>
             <Timeline
               title={formatMessage(ipMessages.timeline)}
               maxDate={orderedDates[orderedDates.length - 1].date}
@@ -256,7 +256,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
               title={formatMessage(ipMessages.information)}
               dataArray={chunk(extraInfoArray, 2)}
             />
-          </>
+          </Box>
         )}
         <Stack space="p2">
           <UserInfoLine
