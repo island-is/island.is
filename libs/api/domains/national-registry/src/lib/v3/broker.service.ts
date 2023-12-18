@@ -54,7 +54,7 @@ export class BrokerService {
       return null
     }
 
-    return formatPersonDiscriminated(user, useFakeApi)
+    return formatPersonDiscriminated(user, undefined, useFakeApi)
   }
 
   async getAddress(
@@ -134,6 +134,7 @@ export class BrokerService {
     const data =
       rawData?.hjuskaparstada ??
       (await this.nationalRegistryV3.getSpouse(nationalId))
+
     return data && formatSpouse(data)
   }
 
@@ -186,7 +187,7 @@ export class BrokerService {
       return null
     }
 
-    return formatPersonDiscriminated(child)
+    return formatPersonDiscriminated(child, nationalId, useFakeApi)
   }
 
   async getBirthplace(
