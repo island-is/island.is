@@ -26,6 +26,7 @@ import { UserProfileLocale } from './models/userProfileLocale.model'
 @Resolver()
 export class UserProfileResolver {
   constructor(private readonly userUserProfileService: UserProfileService) {}
+
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(
     @CurrentUser() user: User,

@@ -1847,6 +1847,7 @@ service-portal-api:
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.staging01.devland.is/minarsidur'
+    USER_PROFILE_WORKER_PAGE_SIZE: '3000'
   files:
     - 'islyklar.p12'
   grantNamespaces:
