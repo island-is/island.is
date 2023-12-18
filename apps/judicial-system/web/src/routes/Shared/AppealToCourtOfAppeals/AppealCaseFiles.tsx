@@ -44,9 +44,22 @@ const AppealFiles = () => {
   )
   const { sendNotification } = useCase()
 
-  const appealCaseFilesType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
+  const appealCaseFilesType = isDefenceUser(user)
+    ? CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
+    : CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE
+
+  const caseFilesTypesToDisplay = isDefenceUser(user)
+    ? [
+        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+      ]
+    : [
+        CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+      ]
+
   const previousUrl = `${
     isDefenceUser(user)
       ? constants.DEFENDER_ROUTE
@@ -86,7 +99,9 @@ const AppealFiles = () => {
           </Text>
           <InputFileUpload
             fileList={uploadFiles.filter(
-              (file) => file.category === appealCaseFilesType,
+              (file) =>
+                file.category &&
+                caseFilesTypesToDisplay.includes(file.category),
             )}
             accept={'application/pdf'}
             header={formatMessage(core.uploadBoxTitle)}

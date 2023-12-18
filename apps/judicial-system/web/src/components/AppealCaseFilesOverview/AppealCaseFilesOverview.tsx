@@ -76,7 +76,11 @@ const AppealCaseFilesOverview: React.FC<
           [
             CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
             CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-          ].includes(caseFile.category))),
+          ].includes(caseFile.category)) ||
+        [
+          CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        ].includes(caseFile.category)),
   )
 
   const appealRulingFiles = workingCase.caseFiles?.filter(
@@ -113,10 +117,10 @@ const AppealCaseFilesOverview: React.FC<
               <Box display="flex" flexDirection="column">
                 <Text>
                   {`${formatDate(
-                    fileDate(file.category),
+                    fileDate(file.category) ?? file.created,
                     'dd.MM.y',
                   )} kl. ${formatDate(
-                    fileDate(file.category),
+                    fileDate(file.category) ?? file.created,
                     constants.TIME_FORMAT,
                   )}`}
                 </Text>
