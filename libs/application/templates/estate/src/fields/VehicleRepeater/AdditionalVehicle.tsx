@@ -49,16 +49,17 @@ export const AdditionalVehicle = ({
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: GetVehicleInput }>(GET_VEHICLE_QUERY, {
       onCompleted: (data) => {
-        const textValue =
+        const carName =
           `${data?.syslumennGetVehicle?.manufacturer} ${data.syslumennGetVehicle?.modelName}`.trim()
-        if (textValue.length === 0 || textValue.includes('null')) {
+        if (
+          carName.length === 0 ||
+          carName.startsWith('null') ||
+          carName.endsWith('null')
+        ) {
           return
         }
         clearErrors(nameField)
-        setValue(
-          nameField,
-          `${data?.syslumennGetVehicle?.manufacturer} ${data.syslumennGetVehicle?.modelName}`,
-        )
+        setValue(nameField, carName)
       },
       fetchPolicy: 'network-only',
     })
