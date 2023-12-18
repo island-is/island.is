@@ -530,6 +530,7 @@ application-system-api:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
+    APPLICATION_SYSTEM_FORM_URL: 'http://web-application-system-form'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'

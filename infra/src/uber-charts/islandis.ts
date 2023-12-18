@@ -59,10 +59,6 @@ import { ServiceBuilder } from '../dsl/dsl'
 const endorsement = endorsementServiceSetup({})
 
 const documentsService = serviceDocumentsSetup()
-const appSystemApi = appSystemApiSetup({
-  documentsService,
-  servicesEndorsementApi: endorsement,
-})
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
@@ -80,6 +76,12 @@ const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
 
+const appSystemForm = appSystemFormSetup()
+const appSystemApi = appSystemApiSetup({
+  documentsService,
+  servicesEndorsementApi: endorsement,
+  appSystemForm,
+})
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -92,7 +94,6 @@ const api = apiSetup({
   authAdminApi,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
-const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()

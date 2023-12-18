@@ -522,6 +522,7 @@ application-system-api:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
+    APPLICATION_SYSTEM_FORM_URL: 'http://web-application-system-form'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
