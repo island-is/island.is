@@ -6,8 +6,14 @@ export const error = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
-  emptyHealthLicenseList: {
-    id: 'hlc.application:error.emptyHealthLicenses',
+  emptyHealthLicenseListTitle: {
+    id: 'hlc.application:error.emptyHealthLicenseListTitle',
+    defaultMessage:
+      'Samkvæmt starfsleyfaskrá embættis landlæknis ertu ekki með skráð starfsleyfi',
+    description: 'Empty health license list',
+  },
+  emptyHealthLicenseListMessage: {
+    id: 'hlc.application:error.emptyHealthLicenseListMessage',
     defaultMessage:
       'Samkvæmt starfsleyfaskrá embættis landlæknis ertu ekki með skráð starfsleyfi',
     description: 'Empty health license list',
