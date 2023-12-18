@@ -8,7 +8,8 @@ export const error = defineMessages({
   },
   emptyHealthLicenseList: {
     id: 'hlc.application:error.emptyHealthLicenses',
-    defaultMessage: 'Þú ert ekki með nein virk starfsleyfi',
+    defaultMessage:
+      'Samkvæmt starfsleyfaskrá embættis landlæknis ertu ekki með skráð starfsleyfi',
     description: 'Empty health license list',
   },
 })
