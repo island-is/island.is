@@ -54,12 +54,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
     const found = selectedComparison.some((x) => x.id === dataItem.id)
 
     if (found) {
-      const a = selectedComparison.filter((item) => {
-        if (item.id !== dataItem.id) {
-          return true
-        }
-        return false
-      })
+      const a = selectedComparison.filter((item) => item.id !== dataItem.id)
 
       setSelectedComparison(a)
     }
@@ -291,7 +286,7 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
   }
 
   if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Síða er ekki opin')
+    throw new CustomNextError(404, 'Page not found')
   }
 
   const allResolvedPromises = await Promise.all(

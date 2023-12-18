@@ -1,7 +1,9 @@
-import { Box, Button, Checkbox, LinkV2, Text } from '@island.is/island-ui/core'
 import React from 'react'
-import * as styles from './ListViewCard.css'
+
+import { Box, Button, Checkbox, LinkV2, Text } from '@island.is/island-ui/core'
+
 import { CTAProps } from '../ActionCategoryCard/ActionCategoryCard'
+import * as styles from './ListViewCard.css'
 
 type InfoItems = {
   icon?: React.ReactNode
@@ -10,7 +12,7 @@ type InfoItems = {
 
 type CardProps = {
   infoItems: Array<InfoItems>
-  onCheck?: (e: any) => void
+  onCheck?: () => void
   buttonLabel?: string
   checkboxLabel?: string
   cta: CTAProps

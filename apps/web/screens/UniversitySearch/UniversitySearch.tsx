@@ -1192,7 +1192,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
   }
 
   if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Síða er ekki opin')
+    throw new CustomNextError(404, 'Page not found')
   }
 
   const newResponse =

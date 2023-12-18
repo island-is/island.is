@@ -201,7 +201,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
   ])
 
   if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
-    throw new CustomNextError(404, 'Organization page not found')
+    throw new CustomNextError(404, 'Page not found')
   }
 
   return {
