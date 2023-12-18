@@ -65,22 +65,22 @@ const PaperUpload = () => {
           paddingX={withPaperUpload ? 0 : 5}
           paddingY={withPaperUpload ? 0 : 3}
           borderRadius="large"
-          cursor="pointer"
-          onClick={() => setWithPaperUpload(!withPaperUpload)}
         >
           <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-            <Checkbox
-              label={formatMessage(m.uploadFile)}
-              checked={withPaperUpload}
-              onChange={() => setWithPaperUpload(!withPaperUpload)}
-            />
+            <Box onClick={() => setWithPaperUpload(!withPaperUpload)}>
+              <Checkbox
+                label={formatMessage(m.uploadFile)}
+                checked={withPaperUpload}
+                onChange={() => setWithPaperUpload(!withPaperUpload)}
+              />
+            </Box>
             {withPaperUpload && (
               <Button
                 variant="utility"
                 icon="document"
                 onClick={() => downloadFile()}
               >
-                Sækja template
+                {formatMessage(m.downloadTemplate)}
               </Button>
             )}
           </Box>
@@ -101,7 +101,7 @@ const PaperUpload = () => {
                 accept=".xlsx"
               />
             </Box>
-            {uploadResults.length > 0 && (
+            {uploadResults.length > 0 ? (
               <Box marginTop={7} marginBottom={3}>
                 <Text variant="h4">{formatMessage(m.uploadResultsHeader)}</Text>
                 <Accordion dividerOnTop={false}>
@@ -144,6 +144,11 @@ const PaperUpload = () => {
                     </Box>
                   </AccordionItem>
                 </Accordion>
+              </Box>
+            ) : (
+              <Box marginTop={7} marginBottom={3}>
+                <Text variant="h4">{formatMessage(m.uploadResultsHeader)}</Text>
+                <Text marginTop={2}>{formatMessage(m.noUploadResults)}</Text>
               </Box>
             )}
           </>

@@ -172,6 +172,11 @@ export const m = defineMessages({
     defaultMessage: 'Tekið er við skjölum með endingu: .xlsx, .xls',
     description: '',
   },
+  downloadTemplate: {
+    id: 'admin-portal.signature-collection:downloadTemplate',
+    defaultMessage: 'Sækja template',
+    description: '',
+  },
   uploadButton: {
     id: 'admin-portal.signature-collection:uploadButton',
     defaultMessage: 'Velja skjöl',
@@ -180,6 +185,12 @@ export const m = defineMessages({
   uploadResultsHeader: {
     id: 'admin-portal.signature-collection:uploadResultsHeader',
     defaultMessage: 'Niðurstöður',
+    description: '',
+  },
+  noUploadResults: {
+    id: 'admin-portal.signature-collection:uploadResultsHeader',
+    defaultMessage:
+      'Engar niðurstöður komu upp úr skjalinu sem hlaðið var upp.',
     description: '',
   },
   totalListResults: {
