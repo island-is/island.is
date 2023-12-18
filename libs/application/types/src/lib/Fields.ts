@@ -146,7 +146,7 @@ export enum FieldComponents {
   PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
   IMAGE = 'ImageFormField',
   PDF_LINK_BUTTON = 'PdfLinkButtonFormField',
-  NATIONAL_ID_WITH_NAME = 'NationalIdWithName',
+  NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -390,7 +390,8 @@ export interface PdfLinkButtonField extends BaseField {
 export interface NationalIdWithNameField extends BaseField {
   readonly type: FieldTypes.NATIONAL_ID_WITH_NAME
   component: FieldComponents.NATIONAL_ID_WITH_NAME
-  customId?: string
+  disabled?: boolean
+  required?: boolean
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
   onNationalIdChange?: (s: string) => void
@@ -398,7 +399,6 @@ export interface NationalIdWithNameField extends BaseField {
   nationalIdDefaultValue?: string
   nameDefaultValue?: string
   errorMessage?: string
-  disabled?: boolean
   minAgePerson?: number
 }
 

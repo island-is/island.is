@@ -16,7 +16,8 @@ export const NationalIdWithNameFormField: FC<
     <NationalIdWithName
       id={field.id}
       application={application}
-      customId={field.customId}
+      disabled={field.disabled}
+      required={field.required}
       customNationalIdLabel={field.customNationalIdLabel}
       customNameLabel={field.customNameLabel}
       onNationalIdChange={field.onNationalIdChange}
@@ -24,7 +25,6 @@ export const NationalIdWithNameFormField: FC<
       nationalIdDefaultValue={field.nationalIdDefaultValue}
       nameDefaultValue={field.nameDefaultValue}
       errorMessage={field.errorMessage}
-      disabled={field.disabled}
       minAgePerson={field.minAgePerson}
     />
   )

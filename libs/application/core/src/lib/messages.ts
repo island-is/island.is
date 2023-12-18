@@ -626,7 +626,7 @@ export const coreErrorMessages = defineMessages({
   },
   nationalRegistryMinAgeNotFulfilled: {
     id: 'application.system:core.fetch.data.nationalRegistryMinAgeNotFulfilled',
-    defaultMessage: 'Lágmarksaldur til að opna umsókn er {minAge} ára',
+    defaultMessage: 'Lágmarksaldur er {minAge} ára',
     description: 'Min age not fulfilled error',
   },
 })
