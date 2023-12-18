@@ -1117,8 +1117,9 @@ export const m = defineMessages({
     defaultMessage: 'Hugverkaréttindi',
   },
   intellectualPropertiesTooltip: {
-    id: 'service.portal:intellectualProperty-tooltip',
-    defaultMessage: 'Hugverkastofan tooltip.',
+    id: 'service.portal:intellectual-property-tooltip',
+    defaultMessage:
+      'Hugverkastofan hefur umsjón með gögnum um hugverkaréttindi..',
   },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',
