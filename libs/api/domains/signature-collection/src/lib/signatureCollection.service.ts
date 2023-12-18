@@ -30,8 +30,6 @@ export class SignatureCollectionService {
   }
 
   async canSign(nationalId: string): Promise<SignatureCollectionSuccess> {
-    // TODO: return list person is signed on, look into when connecting application
-    // TODO: take in list user is trying to sign, look into when connecting application
     return this.signatureCollectionClientService.canSign(nationalId)
   }
 

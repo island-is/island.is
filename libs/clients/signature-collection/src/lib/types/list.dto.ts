@@ -10,7 +10,7 @@ export interface List {
   active: boolean
   startTime: Date
   endTime: Date
-  collectionId?: string
+  collectionId: string
   collectors?: UserBase[]
   numberOfSignatures: number
   link?: string

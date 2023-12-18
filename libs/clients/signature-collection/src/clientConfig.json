@@ -320,6 +320,12 @@
             "required": true,
             "style": "simple",
             "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "bladsida",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "requestBody": {
@@ -899,7 +905,7 @@
           "svaedi": { "$ref": "#/components/schemas/SvaediDTO" },
           "medmaeli": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+            "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
           },
           "medmaelalistar": {
             "type": "array",
@@ -1095,7 +1101,9 @@
           "kennitala": { "type": "string" },
           "nafn": { "type": "string", "nullable": true },
           "heimilisfang": { "type": "string", "nullable": true },
-          "medmaeliTegund": { "type": "integer", "format": "int32" },
+          "medmaeliTegund": { "type": "string", "nullable": true },
+          "medmaeliTegundNr": { "type": "integer", "format": "int32" },
+          "bladsidaNr": { "type": "integer", "format": "int32" },
           "dagsetning": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
@@ -1114,6 +1122,22 @@
         },
         "additionalProperties": false
       },
+      "MedmaeliDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "medmaelalistiID": { "type": "integer", "format": "int32" },
+          "kennitala": { "type": "string" },
+          "nafn": { "type": "string", "nullable": true },
+          "heimilisfang": { "type": "string", "nullable": true },
+          "medmaeliTegund": { "type": "string", "nullable": true },
+          "medmaeliTegundNr": { "type": "integer", "format": "int32" },
+          "bladsidaNr": { "type": "integer", "format": "int32" },
+          "dagsetning": { "type": "string", "format": "date-time" },
+          "valid": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
       "SvaediDTO": {
         "type": "object",
         "properties": {
@@ -1125,6 +1149,10 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "Bearer": { "type": "http", "scheme": "Bearer", "bearerFormat": "Bearer" }
     }
-  }
+  },
+  "security": [{ "Bearer": [] }]
 }

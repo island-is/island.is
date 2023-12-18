@@ -6,7 +6,7 @@ import {
   GetListsForUser,
   GetSignedList,
 } from './queries'
-import { CancelCollection } from './mutations'
+import { cancelCollectionMutation } from './mutations'
 import {
   SignatureCollectionList,
   SignatureCollectionSignature,
@@ -104,12 +104,4 @@ export const useIsOwner = () => {
     (getIsOwner?.signatureCollectionIsOwner as SignatureCollectionSuccess) ??
     false
   return { isOwner, loadingIsOwner, refetchIsOwner }
-}
-
-export const useCancelCollection = () => {
-  const [cancelCollection, { loading: loadingCancelCollection }] =
-    useMutation<SignatureCollectionSuccess>(CancelCollection, {
-      variables: { input: { id: '1000027' } },
-    })
-  return { cancelCollection, loadingCancelCollection }
 }

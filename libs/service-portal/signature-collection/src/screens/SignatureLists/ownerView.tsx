@@ -21,6 +21,7 @@ const OwnerView = () => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const { listsForUser, loadingUserLists } = useGetListsForUser()
+  const collectionId = listsForUser[0]?.collectionId
   return (
     <div>
       {!loadingUserLists ? (
@@ -87,7 +88,9 @@ const OwnerView = () => {
               })}
             </Stack>
           </Box>
-          {listsForUser.length > 0 && <CancelCollection />}
+          {listsForUser.length > 0 && (
+            <CancelCollection collectionId={collectionId} />
+          )}
         </Box>
       ) : (
         <Skeleton />

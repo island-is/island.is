@@ -5,7 +5,11 @@ import {
   MedmaelasofnunApi,
   MedmaeliApi,
 } from '../../gen/fetch'
-import { GetListInput, CreateListInput } from './signature-collection.types'
+import {
+  GetListInput,
+  CreateListInput,
+  ReasonKey,
+} from './signature-collection.types'
 import {
   Collection,
   mapCollectionInfo,
@@ -18,6 +22,7 @@ import { Signee } from './types/user.dto'
 import { BulkUpload } from './types/bulkUpload.dto'
 
 import { User } from '@island.is/auth-nest-tools'
+import { Success, mapReasons } from './types/success.dto'
 
 @Injectable()
 export class SignatureCollectionClientService {
@@ -28,7 +33,7 @@ export class SignatureCollectionClientService {
   ) {}
 
   async currentCollectionInfo(): Promise<CollectionInfo> {
-    // TODO: Will be updated to include optional election type category so that we can get just active or most recent collection of type
+    // includeInactive: false will return collections as active until electionday for collection has passed
     const res = await this.collectionsApi.medmaelasofnunGet({
       includeInactive: false,
     })
@@ -91,7 +96,6 @@ export class SignatureCollectionClientService {
   }
 
   async getAreas(collectionId: number) {
-    // const collection{Id} = await this.currentCollectionInfo()
     const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
       iD: collectionId,
     })
@@ -142,7 +146,7 @@ export class SignatureCollectionClientService {
     return mapSignature(signature)
   }
 
-  async unsignList(signatureId: string): Promise<{ success: boolean }> {
+  async unsignList(signatureId: string): Promise<Success> {
     const signature = await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
       iD: parseInt(signatureId),
     })
@@ -153,12 +157,11 @@ export class SignatureCollectionClientService {
     collectionId: string,
     nationalId: string,
     listIds?: string[],
-  ): Promise<{ success: boolean }> {
+  ): Promise<Success> {
     const { id, isPresidential, isActive } = await this.currentCollectionInfo()
-    // TODO: Error mapping
     // Lists can only be removed from current collection if it is open
     if (id !== parseInt(collectionId) || !isActive) {
-      return { success: false }
+      return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
     if (isPresidential) {
@@ -169,17 +172,17 @@ export class SignatureCollectionClientService {
       return { success: true }
     }
     if (!listIds || listIds.length === 0) {
-      return { success: false }
+      return { success: false, reasons: [ReasonKey.NoListToRemove] }
     }
     const { ownedLists } = await this.getSignee(nationalId)
     if (!ownedLists || ownedLists.length === 0) {
-      return { success: false }
+      return { success: false, reasons: [ReasonKey.NoListToRemove] }
     }
     const listsToRemove = ownedLists.filter((list) => listIds.includes(list.id))
     if (listsToRemove.length === 0) {
-      return { success: false }
+      return { success: false, reasons: [ReasonKey.NoListToRemove] }
     }
-    // TODO: check if all where successfully removed
+
     listsToRemove.map(
       async (list) =>
         await this.listsApi.medmaelalistarIDRemoveMedmaelalistiUserPost({
@@ -199,17 +202,15 @@ export class SignatureCollectionClientService {
 
   async getSignedList(nationalId: string): Promise<List | null> {
     const { signature } = await this.getSignee(nationalId)
-    if (!signature || signature.length === 0) {
+    if (!signature) {
       return null
     }
-    // TODO: find active signature when skra updates api
-    return this.getList(signature[0].listId)
+    return this.getList(signature.listId)
   }
 
-  async canSign(nationalId: string): Promise<{ success: boolean }> {
-    const { canSign } = await this.getSignee(nationalId)
-    //  TODO: map errors and reasons
-    return { success: canSign }
+  async canSign(nationalId: string): Promise<Success> {
+    const { canSign, canSignInfo } = await this.getSignee(nationalId)
+    return { success: canSign, reasons: canSignInfo }
   }
 
   async getSignee(nationalId: string): Promise<Signee> {
@@ -220,22 +221,21 @@ export class SignatureCollectionClientService {
         iD: id,
       },
     )
+    const activeSignature = user.medmaeli?.find((signature) => signature.valid)
 
-    // TODO: find active signature when skra updates api
     return {
       nationalId: user.kennitala ?? '',
       name: user.nafn ?? '',
       electionName: user.kosningNafn ?? '',
       canSign: user.maKjosa ?? false,
-
+      canSignInfo: user.maKjosaInfo ? mapReasons(user.maKjosaInfo) : [],
       canCreate: user.maFrambod ?? false,
+      canCreateInfo: user.maFrambodInfo ? mapReasons(user.maFrambodInfo) : [],
       area: user.svaedi && {
         id: user.svaedi?.id?.toString() ?? '',
         name: user.svaedi?.nafn?.toString() ?? '',
-        min: user.svaedi?.fjoldi ?? 999,
       },
-      signature:
-        user.medmaeli?.map((singature) => mapSignature(singature)) ?? [],
+      signature: activeSignature ? mapSignature(activeSignature) : null,
       ownedLists: user.medmaelalistar
         ? user.medmaelalistar?.map((list) => mapList(list))
         : [],
@@ -244,7 +244,6 @@ export class SignatureCollectionClientService {
   }
 
   async canCreate(nationalId: string): Promise<{ success: boolean }> {
-    // TODO: update when api returns correct data
     const { canCreate } = await this.getSignee(nationalId)
     return { success: canCreate }
   }
@@ -258,7 +257,6 @@ export class SignatureCollectionClientService {
     listId: string,
     nationalIds: string[],
   ): Promise<Signature[]> {
-    // TODO: scope admin
     // Takes a list of nationalIds listId and returns signatures found on list
     const signaturesFound = await this.listsApi.medmaelalistarIDComparePost({
       iD: parseInt(listId),
@@ -270,7 +268,6 @@ export class SignatureCollectionClientService {
   async compareBulkSignaturesOnAllLists(
     nationalIds: string[],
   ): Promise<Signature[]> {
-    // TODO: scope admin
     // Takes a list of nationalIds and returns signatures found on any list in current collection
     const { id } = await this.currentCollectionInfo()
     const signaturesFound =
@@ -281,14 +278,10 @@ export class SignatureCollectionClientService {
     return signaturesFound.map(mapSignature)
   }
 
-  //   - DelegateList
-  // TODO: check if owner
-  //   - UndelegateList
-  // TODO: check if owner
+  //   TODO: DelegateList
+  //   TODO: UndelegateList
 
   async extendDeadline(listId: string, newEndDate: Date): Promise<List> {
-    // TODO: scope admin
-
     const list = await this.listsApi.medmaelalistarIDExtendTimePatch({
       iD: parseInt(listId),
       newEndDate: newEndDate,
@@ -300,8 +293,6 @@ export class SignatureCollectionClientService {
     listId: string,
     nationalIds: string[],
   ): Promise<BulkUpload> {
-    // TODO: scope admin
-
     const signatures = await this.listsApi.medmaelalistarIDAddMedmaeliBulkPost({
       iD: parseInt(listId),
       requestBody: nationalIds,
@@ -324,7 +315,7 @@ export class SignatureCollectionClientService {
         })) ?? []),
         ...(signatures.ekkiIsRik?.map((nationalId) => ({
           nationalId,
-          reason: 'ekkiIsRik',
+          reason: 'Ekki með íslenskt ríkisfang',
         })) ?? []),
       ],
     }

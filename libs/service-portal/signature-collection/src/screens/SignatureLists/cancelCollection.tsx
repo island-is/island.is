@@ -3,19 +3,34 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import { useCancelCollection } from '../hooks'
+import { useIsOwner } from '../hooks'
+import { useMutation } from '@apollo/client'
+import { SignatureCollectionSuccess } from '../../types/schema'
+import { cancelCollectionMutation } from '../mutations'
 
-const CancelCollection = () => {
+const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { cancelCollection } = useCancelCollection()
+  const { refetchIsOwner } = useIsOwner()
+  const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
+    cancelCollectionMutation,
+    {
+      variables: { input: { id: collectionId } },
+    },
+  )
 
   const onUnSignList = async () => {
     setModalIsOpen(false)
     await cancelCollection().then(({ data }) => {
-      if (data?.success) {
-        // TODO: refetch isOwner and user lists
+      if (
+        (
+          data as any as {
+            signatureCollectionCancel: SignatureCollectionSuccess
+          }
+        ).signatureCollectionCancel.success
+      ) {
+        refetchIsOwner()
       } else {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
       }

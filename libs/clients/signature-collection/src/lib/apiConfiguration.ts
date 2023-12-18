@@ -11,9 +11,7 @@ import { SignatureCollectionClientConfig } from './signature-collection.config'
 export const ApiConfiguration = {
   provide: 'SignatureCollectionClientApiConfiguration',
   scope: LazyDuringDevScope,
-  // Necessary because of cache-manager.
-  // eslint-disable-next-line local-rules/no-async-module-init
-  useFactory: async (
+  useFactory: (
     config: ConfigType<typeof SignatureCollectionClientConfig>,
     xroadConfig: ConfigType<typeof XRoadConfig>,
   ) => {

@@ -18,3 +18,23 @@ export interface CreateListInput {
   owner: OwnerInput
   areas?: AreaInput[]
 }
+
+export enum Requirement {
+  medAldur = 'medAldur',
+  medIsRikisfang = 'medIsRikisfang',
+  byrAIsl = 'byrAIsl',
+  bjoAIslNylega = 'bjoAIslNylega',
+  bjoAIslUmsokn = 'bjoAIslUmsokn',
+}
+
+export enum ReasonKey {
+  UnderAge = 'underAge',
+  NoCitizenship = 'noCitizenship',
+  NotInArea = 'notInArea',
+  NotCurrentISResidency = 'noCurrenttISResidency',
+  NotRecentISResidency = 'notRecentISResidency',
+  NotISResidency = 'notISResidency',
+  DeniedByService = 'deniedByService',
+  CollectionNotOpen = 'collectionNotOpen',
+  NoListToRemove = 'noListToRemove',
+}

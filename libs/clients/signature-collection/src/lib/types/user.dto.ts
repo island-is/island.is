@@ -10,9 +10,11 @@ export interface UserBase {
 export interface Signee extends UserBase {
   electionName: string
   canSign: boolean
+  canSignInfo?: string[]
   canCreate: boolean
+  canCreateInfo?: string[]
   isOwner: boolean
-  area?: Area
-  signature: Signature[]
+  area?: Omit<Area, 'min' | 'max'>
+  signature: Signature | null
   ownedLists: List[]
 }
