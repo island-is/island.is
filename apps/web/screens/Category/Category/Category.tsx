@@ -63,7 +63,7 @@ type LifeEvents = GetAnchorPagesInCategoryQuery['getAnchorPagesInCategory']
 interface CategoryProps {
   pages: CategoryPages
   categories: GetArticleCategoriesQuery['getArticleCategories']
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   lifeEvents: LifeEvents
   slug: string
 }
@@ -80,8 +80,7 @@ const Category: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
 
   const Router = useRouter()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -90,29 +89,25 @@ const Category: Screen<CategoryProps> = ({
   // group pages
   const { groups, cards, otherPages } = pages.reduce(
     (content, page) => {
+      const currentCategoryTitle = getCurrentCategory()?.title
+
       // check if this is not the main category for this page
-      if (page?.category?.title !== getCurrentCategory()?.title) {
+      if (page?.category?.title !== currentCategoryTitle) {
         content.otherPages.push(page)
         return content
       }
       // Check if page belongs to multiple groups in this category
       else if (
-        page?.__typename === 'Article' &&
         page?.otherCategories &&
+        currentCategoryTitle &&
         page.otherCategories
           .map((category) => category.title)
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          .includes(getCurrentCategory().title)
+          .includes(currentCategoryTitle)
       ) {
         content.otherPages.push(page)
       }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       if (page?.group?.slug && !content.groups[page?.group?.slug]) {
         // group does not exist create the collection
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         content.groups[page?.group?.slug] = {
           title: page?.group?.title,
           description: page?.group?.description,
@@ -122,20 +117,25 @@ const Category: Screen<CategoryProps> = ({
         }
       } else if (page?.group?.slug) {
         // group should exists push into collection
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         content.groups[page?.group?.slug].pages.push(page)
       } else {
         // this page belongs to no group
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         content.cards.push(page)
       }
       return content
     },
     {
-      groups: {},
-      cards: [],
+      groups: {} as Record<
+        string,
+        {
+          title?: string
+          description?: string | null
+          pages: CategoryPages
+          groupSlug?: string
+          importance?: number | null
+        }
+      >,
+      cards: [] as CategoryPages,
       otherPages: [] as CategoryPages,
     },
   )
@@ -189,40 +189,31 @@ const Category: Screen<CategoryProps> = ({
 
       return {
         ...result,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        [key]: [...(result[key] || []), item],
+        [key]: [...(result[key as keyof typeof result] || []), item],
       }
     }, {})
 
     // add "other" pages as well
     const pagesBySubgroup = otherPages.reduce((result, item) => {
-      const titles = (
-        item.__typename === 'Article' ? item.otherSubgroups : []
-      )?.map((x) => x.title)
+      const titles = (item.otherSubgroups ?? []).map((x) => x.title)
       const subgroupsFound = intersection(Object.keys(result), titles)
       const key = 'unknown'
 
       // if there is no sub group found then at least show it in the group
       if (
         !subgroupsFound.length &&
-        item.__typename === 'Article' &&
         item.otherGroups?.find((x) => x.slug === groupSlug)
       ) {
         return {
           ...result,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          [key]: [...(result[key] || []), item],
+          [key]: [...(result[key as keyof typeof result] || []), item],
         }
       }
 
       return subgroupsFound.reduce((r, k) => {
         return {
           ...r,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          [k]: [...r[k], item],
+          [k]: [...r[k as keyof typeof r], item],
         }
       }, result)
     }, bySubgroup)
@@ -306,8 +297,6 @@ const Category: Screen<CategoryProps> = ({
     groupSlug: string
     index: number
   }) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     const { title, description, pages } = groups[groupSlug]
 
     const { pagesBySubgroup } = groupPagesBySubgroup(pages, groupSlug)
@@ -331,9 +320,7 @@ const Category: Screen<CategoryProps> = ({
           <Box paddingTop={2}>
             {sortedSubgroupKeys.map((subgroup, index) => {
               const { sortedPages } = sortPages(
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                pagesBySubgroup[subgroup],
+                pagesBySubgroup[subgroup as keyof typeof pagesBySubgroup],
               )
 
               // Pages with 1 subgroup only have the "other" group and don't get a heading.
@@ -550,9 +537,7 @@ const Category: Screen<CategoryProps> = ({
                 <Card
                   key={index}
                   link={linkResolver(typename as LinkType, [slug])}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  description={intro}
+                  description={intro ?? ''}
                   title={title}
                   image={(thumbnail || image) as Image}
                   tags={[
@@ -564,18 +549,17 @@ const Category: Screen<CategoryProps> = ({
               )
             },
           )}
-          {cards.map(
-            ({ __typename: typename, title, content, slug }, index) => {
-              return (
-                <Card
-                  key={index}
-                  title={title}
-                  description={content}
-                  link={linkResolver(typename as LinkType, [slug])}
-                />
-              )
-            },
-          )}
+          {cards.map((card, index) => {
+            const { __typename: typename, title, slug } = card
+            return (
+              <Card
+                key={index}
+                title={title}
+                description=""
+                link={linkResolver(typename as LinkType, [slug])}
+              />
+            )
+          })}
         </Stack>
       </SidebarLayout>
     </>

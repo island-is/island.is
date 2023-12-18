@@ -118,6 +118,19 @@ export const GET_CATEGORY_PAGES_QUERY = gql`
           title
           importance
         }
+        otherCategories {
+          title
+        }
+        otherSubgroups {
+          title
+          slug
+          importance
+        }
+        otherGroups {
+          title
+          slug
+          importance
+        }
       }
     }
   }
