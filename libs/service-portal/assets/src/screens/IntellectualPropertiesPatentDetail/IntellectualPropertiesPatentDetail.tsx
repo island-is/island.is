@@ -83,7 +83,7 @@ const IntellectualPropertiesPatentDetail = () => {
   }, [formatMessage, ip])
 
   if (error && !loading) {
-    return <Problem type="not_found" />
+    return <Problem error={error} />
   }
 
   if (!data?.intellectualPropertiesPatent && !loading) {

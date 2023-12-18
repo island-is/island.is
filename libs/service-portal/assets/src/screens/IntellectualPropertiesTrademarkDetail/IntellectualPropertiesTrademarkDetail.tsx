@@ -189,7 +189,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
   }
 
   if (error && !loading) {
-    return <Problem type="not_found" />
+    return <Problem error={error} />
   }
 
   if (!ip && !loading) {
