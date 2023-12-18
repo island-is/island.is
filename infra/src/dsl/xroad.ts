@@ -399,7 +399,7 @@ export const Passports = new XroadConf({
   },
 })
 
-export const SgnatureCollection = new XroadConf({
+export const SignatureCollection = new XroadConf({
   env: {
     XROAD_SIGNATURE_COLLECTION_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1',

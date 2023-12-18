@@ -28,7 +28,7 @@ export class SignatureCollectionClientService {
   ) {}
 
   async currentCollectionInfo(): Promise<CollectionInfo> {
-    // TODO: Will be updated to include optional election type caategory so that we can get just active or most recent collection of type
+    // TODO: Will be updated to include optional election type category so that we can get just active or most recent collection of type
     const res = await this.collectionsApi.medmaelasofnunGet({
       includeInactive: false,
     })
@@ -44,7 +44,6 @@ export class SignatureCollectionClientService {
     return current
   }
 
-  //   Current Collection
   async getCurrentCollection(): Promise<Collection> {
     const { id } = await this.currentCollectionInfo()
 
@@ -123,7 +122,6 @@ export class SignatureCollectionClientService {
     const lists = await this.listsApi.medmaelalistarAddListarPost({
       medmaelalistiRequestDTO: {
         sofnunID: id,
-
         kennitala: owner.nationalId,
         simi: owner.phone,
         netfang: owner.email,
@@ -160,12 +158,10 @@ export class SignatureCollectionClientService {
     // TODO: Error mapping
     // Lists can only be removed from current collection if it is open
     if (id !== parseInt(collectionId) || !isActive) {
-      console.log('Collection is not open')
       return { success: false }
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
     if (isPresidential) {
-      console.log('Remove all lists for owner')
       await this.collectionsApi.medmaelasofnunIDRemoveFrambodKennitalaPost({
         iD: id,
         kennitala: nationalId,
@@ -173,17 +169,14 @@ export class SignatureCollectionClientService {
       return { success: true }
     }
     if (!listIds || listIds.length === 0) {
-      console.log('No listsids to remove')
       return { success: false }
     }
     const { ownedLists } = await this.getSignee(nationalId)
     if (!ownedLists || ownedLists.length === 0) {
-      console.log('No lists owned')
       return { success: false }
     }
     const listsToRemove = ownedLists.filter((list) => listIds.includes(list.id))
     if (listsToRemove.length === 0) {
-      console.log('No lists to remove')
       return { success: false }
     }
     // TODO: check if all where successfully removed
@@ -193,7 +186,6 @@ export class SignatureCollectionClientService {
           iD: parseInt(list.id),
         }),
     )
-    console.log('removed lists')
     return { success: true }
   }
 
@@ -210,13 +202,13 @@ export class SignatureCollectionClientService {
     if (!signature || signature.length === 0) {
       return null
     }
-    // TODO: find active signature
+    // TODO: find active signature when skra updates api
     return this.getList(signature[0].listId)
   }
 
   async canSign(nationalId: string): Promise<{ success: boolean }> {
     const { canSign } = await this.getSignee(nationalId)
-    //  TODO: map errors like in bulk
+    //  TODO: map errors and reasons
     return { success: canSign }
   }
 
@@ -229,7 +221,7 @@ export class SignatureCollectionClientService {
       },
     )
 
-    // TODO: Look into active signature
+    // TODO: find active signature when skra updates api
     return {
       nationalId: user.kennitala ?? '',
       name: user.nafn ?? '',

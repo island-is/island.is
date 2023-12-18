@@ -9,7 +9,7 @@ import { Configuration } from '../../gen/fetch'
 import { SignatureCollectionClientConfig } from './signature-collection.config'
 
 export const ApiConfiguration = {
-  provide: 'NationalRegistryClientApiConfiguration',
+  provide: 'SignatureCollectionClientApiConfiguration',
   scope: LazyDuringDevScope,
   // Necessary because of cache-manager.
   // eslint-disable-next-line local-rules/no-async-module-init
