@@ -54,7 +54,7 @@ export class BrokerService {
       return null
     }
 
-    return formatPersonDiscriminated(user, useFakeApi)
+    return formatPersonDiscriminated(user, undefined, useFakeApi)
   }
 
   async getAddress(
@@ -187,7 +187,7 @@ export class BrokerService {
       return null
     }
 
-    return formatPersonDiscriminated(child, nationalId)
+    return formatPersonDiscriminated(child, nationalId, useFakeApi)
   }
 
   async getBirthplace(
