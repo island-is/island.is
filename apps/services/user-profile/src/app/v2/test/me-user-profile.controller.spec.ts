@@ -166,6 +166,7 @@ describe('MeUserProfileController', () => {
           documentNotifications: true,
           ...expectedTestValues,
           needsNudge: needsNudgeExpected,
+          emailNotifications: true,
         })
       },
     )
@@ -624,6 +625,76 @@ describe('MeUserProfileController', () => {
           ssn: testUserProfile.nationalId,
           email: testUserProfile.email,
           mobile: formattedNewPhoneNumber,
+        },
+      })
+    })
+
+    it('PATCH /v2/me should return 200 and update emailNotifications', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        emailNotifications: false,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        emailNotifications: false,
+      })
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.emailNotifications).toBe(false)
+
+      // Assert that islyklar api is called
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: testUserProfile.email,
+          mobile: testUserProfile.mobilePhoneNumber,
+          canNudge: false,
+        },
+      })
+    })
+
+    it('PATCH /v2/me should return 200 and update emailNotifications and email', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        emailNotifications: false,
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        emailNotifications: false,
+        email: newEmail,
+        emailVerified: true,
+      })
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.emailNotifications).toBe(false)
+      expect(userProfile.email).toBe(newEmail)
+      expect(userProfile.emailVerified).toBe(true)
+
+      // Assert that islyklar api is called
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: newEmail,
+          mobile: testUserProfile.mobilePhoneNumber,
+          canNudge: false,
         },
       })
     })
