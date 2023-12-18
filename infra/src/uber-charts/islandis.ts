@@ -84,7 +84,6 @@ const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
 
-
 const appSystemForm = appSystemFormSetup()
 const appSystemApi = appSystemApiSetup({
   documentsService,
