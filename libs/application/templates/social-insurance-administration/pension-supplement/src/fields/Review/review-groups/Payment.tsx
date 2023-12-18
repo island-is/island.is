@@ -10,6 +10,10 @@ import { pensionSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/pensionSupplementUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 
 export const Payment = ({
   application,
@@ -48,7 +52,7 @@ export const Payment = ({
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <DataValue
                 label={formatMessage(pensionSupplementFormMessage.payment.iban)}
-                value={iban}
+                value={friendlyFormatIBAN(iban)}
               />
             </GridColumn>
           </GridRow>
@@ -61,7 +65,7 @@ export const Payment = ({
                 label={formatMessage(
                   pensionSupplementFormMessage.payment.swift,
                 )}
-                value={swift}
+                value={friendlyFormatSWIFT(swift)}
               />
             </GridColumn>
             <GridColumn

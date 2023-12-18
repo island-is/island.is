@@ -19,6 +19,7 @@ import {
   coreMessages,
   pruneAfterDays,
   DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -57,7 +58,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: pruneAfterDays(1),
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -91,7 +92,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             description: statesMessages.draftDescription,
             historyLogs: {
@@ -134,7 +135,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
               label: statesMessages.pendingTag,
@@ -189,7 +190,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
               title: statesMessages.tryggingastofnunInReviewTitle,
@@ -246,7 +247,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(970),
+          lifecycle: pruneAfterDays(90),
           roles: [
             {
               id: Roles.APPLICANT,
