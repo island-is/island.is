@@ -253,11 +253,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
-    translation: 'oap.application',
+    translation: ['oap.application', 'sia.application'],
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
-    translation: 'hs.application',
+    translation: ['hs.application', 'sia.application'],
   },
   [ApplicationTypes.CAR_RECYCLING]: {
     slug: 'skilavottord',
@@ -277,7 +277,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
     slug: 'felagslegur-vidbotarstudningur',
-    translation: 'asfte.application',
+    translation: ['asfte.application', 'sia.application'],
   },
   [ApplicationTypes.ENERGY_FUNDS]: {
     slug: 'rafbila-styrkur',

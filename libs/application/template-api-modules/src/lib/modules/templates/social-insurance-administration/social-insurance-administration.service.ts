@@ -327,9 +327,9 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         res.bankAccount.accountNumber = '123456'
       }
 
-      // if (!res.emailAddress) {
-      //   res.emailAddress = 'mail@mail.is'
-      // }
+      if (!res.emailAddress) {
+        res.emailAddress = 'mail@mail.is'
+      }
 
       if (!res.phoneNumber) {
         res.phoneNumber = '888-8888'
