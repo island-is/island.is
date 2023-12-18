@@ -218,7 +218,8 @@ export class DiscountService {
         return null
       }
     }
-    if (user.fund.credit === 0) {
+
+    if (user.fund.credit === 0 && user.fund.total !== undefined) {
       return null
     }
 
