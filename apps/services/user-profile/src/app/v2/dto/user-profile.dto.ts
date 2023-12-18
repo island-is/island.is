@@ -8,6 +8,7 @@ import {
 } from 'class-validator'
 
 import { Locale } from '../../user-profile/types/localeTypes'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class UserProfileDto {
   @ApiProperty()
@@ -29,20 +30,17 @@ export class UserProfileDto {
   @IsEnum(Locale)
   readonly locale?: Locale
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly mobilePhoneNumberVerified?: boolean
+  readonly mobilePhoneNumberVerified!: boolean
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly emailVerified?: boolean
+  readonly emailVerified!: boolean
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly documentNotifications?: boolean
+  readonly documentNotifications!: boolean
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -53,4 +51,8 @@ export class UserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly needsNudge?: boolean | null
+
+  @ApiProperty()
+  @IsBoolean()
+  emailNotifications!: boolean
 }

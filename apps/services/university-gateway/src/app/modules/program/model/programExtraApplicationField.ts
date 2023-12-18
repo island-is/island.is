@@ -15,12 +15,19 @@ import {
 } from 'sequelize-typescript'
 import { Program } from './program'
 import { FieldType } from '@island.is/university-gateway'
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'program_extra_application_field',
 })
-export class ProgramExtraApplicationField extends Model {
+export class ProgramExtraApplicationField extends Model<
+  InferAttributes<ProgramExtraApplicationField>,
+  InferCreationAttributes<ProgramExtraApplicationField>
+> {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,

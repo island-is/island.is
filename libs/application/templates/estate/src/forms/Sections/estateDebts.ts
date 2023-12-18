@@ -10,11 +10,21 @@ import { EstateTypes, YES } from '../../lib/constants'
 export const estateDebts = buildSection({
   id: 'debts',
   title: m.debtsTitle,
-  condition: (answers) =>
-    getValueViaPath(answers, 'selectedEstate') ===
-    EstateTypes.estateWithoutAssets
-      ? getValueViaPath(answers, 'estateAssets.estateDebtsExist') === YES
-      : true,
+  condition: (answers) => {
+    const assetsExists = getValueViaPath(
+      answers,
+      'estateWithoutAssets.estateAssetsExist',
+    )
+    const debtExists = getValueViaPath(
+      answers,
+      'estateWithoutAssets.estateDebtsExist',
+    )
+    const selectedEstate = getValueViaPath(answers, 'selectedEstate')
+
+    return selectedEstate === EstateTypes.estateWithoutAssets
+      ? assetsExists === YES && debtExists === YES
+      : true
+  },
   children: [
     buildMultiField({
       id: 'debts',
@@ -42,26 +52,26 @@ export const estateDebts = buildSection({
           {
             fields: [
               {
-                title: m.debtsCreditorName.defaultMessage,
+                title: m.debtsCreditorName,
                 id: 'creditorName',
               },
               {
-                title: m.debtsNationalId.defaultMessage,
+                title: m.debtsNationalId,
                 id: 'nationalId',
                 format: '######-####',
               },
               {
-                title: m.debtsLoanIdentity.defaultMessage,
+                title: m.debtsLoanIdentity,
                 id: 'loanIdentity',
               },
               {
-                title: m.debtsBalance.defaultMessage,
+                title: m.debtsBalance,
                 id: 'balance',
                 currency: true,
               },
             ],
-            repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-            repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
+            repeaterButtonText: m.debtsRepeaterButton,
+            repeaterHeaderText: m.debtsCreditorHeader,
           },
         ),
       ],

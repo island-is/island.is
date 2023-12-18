@@ -295,10 +295,16 @@
                             }
                           },
                           "nameIs": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "nameEn": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "required": {
                             "type": "string",
@@ -320,24 +326,45 @@
                               "SPRING",
                               "FALL",
                               "SUMMER",
-                              "WHOLE-YEAR",
+                              "WHOLE_YEAR",
                               "ANY"
                             ]
                           },
                           "descriptionIs": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "descriptionEn": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "externalUrlIs": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "externalUrlEn": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "displayId": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "displayIdLong": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
                           }
                         }
                       }

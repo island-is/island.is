@@ -12,10 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -31,6 +28,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

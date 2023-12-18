@@ -87,11 +87,6 @@ export const messages = defineMessages({
     defaultMessage:
       'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
   },
-  paymentParticationFooterExplination: {
-    id: 'sp.health:payment-partication-footer-info',
-    defaultMessage:
-      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
-  },
   maximumMonthlyPayment: {
     id: 'sp.health:maximum-monthly-payment',
     defaultMessage: 'Hámarksgreiðsla þín á mánuði',
@@ -602,13 +597,21 @@ export const messages = defineMessages({
     id: 'sp.health:close-modal',
     defaultMessage: 'Loka sprettiglugga',
   },
+  chooseDoctorLabel: {
+    id: 'sp.health:choose-doctor-label',
+    defaultMessage: 'Viltu velja heimilislækni?',
+  },
+  chooseDoctorPlaceholder: {
+    id: 'sp.health:close-placeholder',
+    defaultMessage: 'Heimilislæknir',
+  },
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:
       'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
   },
   healthTooltip: {
-    id: 'service.portal:health-tooltip',
+    id: 'sp.health:health-tooltip',
     defaultMessage:
       'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
   },
@@ -636,6 +639,10 @@ export const messages = defineMessages({
   healthCenterNoDoctor: {
     id: 'sp.health:health-center-no-doctor',
     defaultMessage: 'Enginn læknir skráður',
+  },
+  healthCenterNoHealthCenterRegistered: {
+    id: 'sp.health:health-center-no-health-center',
+    defaultMessage: 'Enginn heilsugæsla skráð',
   },
   healthRegistrationSave: {
     id: 'sp.health:health-registration-save',
@@ -829,6 +836,18 @@ export const messages = defineMessages({
   medicineIsValidCertificate: {
     id: 'sp.health:medicine-is-valid-certificate',
     defaultMessage: 'Í gildi',
+  },
+  medicineIsRejectedCertificate: {
+    id: 'sp.health:medicine-is-rejected-certificate',
+    defaultMessage: 'Hafnað',
+  },
+  medicineIsExpiredCertificate: {
+    id: 'sp.health:medicine-is-expired-certificate',
+    defaultMessage: 'Útrunnið',
+  },
+  medicineIsProcessedCertificate: {
+    id: 'sp.health:medicine-is-processed-certificate',
+    defaultMessage: 'Í vinnslu',
   },
   medicineIsNotValidCertificate: {
     id: 'sp.health:medicine-is-not-valid-certificate',

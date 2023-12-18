@@ -1,5 +1,8 @@
 // TODO: Add tests
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  isIndictmentCase,
+  prosecutorCanSelectDefenderForInvestigationCase,
+} from '@island.is/judicial-system/types'
 import {
   CaseType,
   SessionArrangements,
@@ -164,7 +167,7 @@ export const isDefendantStepValidRC = (
     policeCaseNumbers.length > 0 &&
     !someDefendantIsInvalid(workingCase) &&
     (workingCase.defenderName
-      ? workingCase.requestSharedWithDefender !== undefined
+      ? Boolean(workingCase.requestSharedWithDefender)
       : true) &&
     validate([
       ...policeCaseNumbers.map(
@@ -184,13 +187,13 @@ export const isDefendantStepValidIC = (
   caseType: CaseType | undefined,
   policeCaseNumbers: string[],
 ): boolean => {
-  console.log(workingCase.defenderName)
   return (
     policeCaseNumbers.length > 0 &&
     workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
-    (workingCase.defenderName
-      ? workingCase.requestSharedWithDefender !== undefined
+    (prosecutorCanSelectDefenderForInvestigationCase(workingCase.type) &&
+    workingCase.defenderName
+      ? Boolean(workingCase.requestSharedWithDefender)
       : true) &&
     validate([
       [workingCase.type, ['empty']],

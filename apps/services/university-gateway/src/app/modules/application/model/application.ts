@@ -1,4 +1,8 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -12,12 +16,19 @@ import { Program } from '../../program/model/program'
 import { ProgramModeOfDelivery } from '../../program/model/programModeOfDelivery'
 import { University } from '../../university/model/university'
 import { ApplicationStatus } from '@island.is/university-gateway'
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'application',
 })
-export class Application extends Model {
+export class Application extends Model<
+  InferAttributes<Application>,
+  InferCreationAttributes<Application>
+> {
   @ApiProperty({
     description:
       'Application ID, should be the same application GUID that is used in island.is application system',
@@ -32,15 +43,15 @@ export class Application extends Model {
   })
   id!: CreationOptional<string>
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'External ID for the application (from University)',
     example: 'ABC12345',
   })
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  externalId!: string
+  externalId?: string
 
   @ApiProperty({
     description: 'Applicant national id',

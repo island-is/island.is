@@ -200,6 +200,7 @@ export type stepValidationsType = {
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
+  [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
 }
 
@@ -286,7 +287,8 @@ export const stepValidations = (): stepValidationsType => {
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealCaseStepValid(theCase),
     [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
-      validations.isCourtOfAppealRulingStepValid(theCase) &&
+      validations.isCourtOfAppealRulingStepValid(theCase),
+    [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase) =>
       theCase.appealState === 'COMPLETED',
     [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
   }

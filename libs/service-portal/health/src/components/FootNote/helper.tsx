@@ -20,7 +20,6 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str: React.ReactNode) => (
             <LinkButton
-              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
               text={String(str ?? '')}
             />
@@ -34,7 +33,6 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str: React.ReactNode) => (
             <LinkButton
-              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
               text={String(str ?? '')}
             />
@@ -47,7 +45,6 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str: React.ReactNode) => (
             <LinkButton
-              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
               text={String(str ?? '')}
             />
@@ -64,7 +61,6 @@ export const getFootNoteByType = (
         first: formatMessage(messages['occupationalDisclaimer'], {
           link: (str: React.ReactNode) => (
             <LinkButton
-              skipIcon
               to={formatMessage(messages['occupationalDisclaimerLink'])}
               text={String(str ?? '')}
             />

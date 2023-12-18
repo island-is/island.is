@@ -42,7 +42,13 @@ module.exports = {
             allowNull: true,
           },
           semester_season: {
-            type: Sequelize.ENUM('FALL', 'SPRING', 'SUMMER'),
+            type: Sequelize.ENUM(
+              'FALL',
+              'SPRING',
+              'SUMMER',
+              'WHOLE_YEAR',
+              'ANY',
+            ),
             allowNull: false,
           },
           created: {

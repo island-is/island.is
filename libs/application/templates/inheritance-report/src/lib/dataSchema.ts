@@ -1,4 +1,6 @@
 import * as z from 'zod'
+import * as kennitala from 'kennitala'
+import { YES } from './constants'
 
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -52,14 +54,8 @@ export const inheritanceReportSchema = z.object({
       .optional(),
     inventory: z
       .object({
-        data: z
-          .object({
-            inventory: z.string(),
-            inventoryValue: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
+        info: z.string().optional(),
+        value: z.string().optional(),
       })
       .optional(),
     bankAccounts: z
@@ -79,8 +75,19 @@ export const inheritanceReportSchema = z.object({
         data: z
           .object({
             issuer: z.string(),
+            nationalId: z.string(),
             value: z.string().refine((v) => v),
           })
+          .refine(
+            ({ nationalId }) => {
+              return nationalId && nationalId !== ''
+                ? kennitala.isValid(nationalId)
+                : true
+            },
+            {
+              path: ['nationalId'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -103,13 +110,8 @@ export const inheritanceReportSchema = z.object({
       .optional(),
     money: z
       .object({
-        data: z
-          .object({
-            moneyValue: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
+        info: z.string().optional(),
+        value: z.string().optional(),
       })
       .optional(),
     otherAssets: z
@@ -214,6 +216,9 @@ export const inheritanceReportSchema = z.object({
   heirsAdditionalInfo: z.string().optional(),
 
   totalDeduction: z.string(),
+
+  /* einkaskipti */
+  confirmAction: z.array(z.enum([YES])).length(1),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>

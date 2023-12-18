@@ -122,15 +122,17 @@ export class ApplicationService {
         nationalId: user.nationalId,
         universityId: university.id,
         programId: program.id,
-        modeOfDeliveryId: programModeOfDelivery.id,
+        programModeOfDeliveryId: programModeOfDelivery.id,
         status: ApplicationStatus.IN_REVIEW,
       })
     ).id
 
     // Create application in University DB
+    let applicationExternalId: string | undefined
     if (university.nationalId === UniversityNationalIds.REYKJAVIK_UNIVERSITY) {
       try {
-        await this.reykjavikUniversityClient.createApplication(applicationObj)
+        applicationExternalId =
+          await this.reykjavikUniversityClient.createApplication(applicationObj)
       } catch (e) {
         throw new Error(
           `Failed to create application in Reykjavik University DB`,
@@ -141,12 +143,25 @@ export class ApplicationService {
     ) {
       // TODO need to perform for all Uglu universities
       try {
-        await this.universityOfIcelandClient.createApplication(applicationObj)
+        applicationExternalId =
+          await this.universityOfIcelandClient.createApplication(applicationObj)
       } catch (e) {
         throw new Error(
           `Failed to create application in University of Iceland DB`,
         )
       }
+    }
+
+    // Update the application externalId
+    if (applicationExternalId) {
+      await this.applicationModel.update(
+        {
+          externalId: applicationExternalId,
+        },
+        {
+          where: { id: applicationId },
+        },
+      )
     }
 
     // Return the recently created application
@@ -174,6 +189,13 @@ export class ApplicationService {
     if (!application) {
       throw new Error(
         `Application with id ${applicationId} for user with national id ${user.nationalId} not found`,
+      )
+    }
+
+    // Check application external id
+    if (!application.externalId) {
+      throw new Error(
+        `Application with id ${applicationId} does not have external id set`,
       )
     }
 

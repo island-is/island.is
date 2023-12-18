@@ -571,6 +571,8 @@ components:
         type:
           type: string
           nullable: true
+        language:
+          type: string
     PaymentInfo:
       type: object
       additionalProperties: false

@@ -78,6 +78,12 @@ class InternalApplicationService {
       const application = applicationList[i]
 
       try {
+        if (!application.externalId) {
+          throw new Error(
+            `Application external id is empty for application ${application.id}`,
+          )
+        }
+
         const updatedApplicationStatus = await getApplicationStatus(
           application.externalId,
         )

@@ -101,6 +101,9 @@ export class InternalProgramService {
             specializationNameIs: specialization?.nameIs,
             specializationNameEn: specialization?.nameEn,
             universityId,
+            courses: [],
+            modeOfDelivery: [],
+            extraApplicationFields: [],
           }
 
           const modeOfDeliveryList = program.modeOfDelivery || []

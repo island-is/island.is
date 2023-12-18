@@ -11,6 +11,7 @@ import { ReykjavikUniversityApplicationClientConfig } from '@island.is/clients/u
 import { UniversityOfIcelandApplicationClientConfig } from '@island.is/clients/university-application/university-of-iceland'
 import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../environments'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { environment } from '../environments'
     ProgramModule,
     UniversityModule,
     AuditModule.forRoot(environment.audit),
+    AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

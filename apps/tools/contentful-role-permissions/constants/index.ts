@@ -47,6 +47,8 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'tabContent',
   'tabSection',
   'organization',
+  'chart',
+  'chartComponent',
 ]
 
 export const DEFAULT_READ_ONLY_ENTRY_IDS = [
