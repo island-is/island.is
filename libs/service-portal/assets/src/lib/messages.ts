@@ -925,6 +925,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:registration',
     defaultMessage: 'Skráning',
   },
+  registrationNumber: {
+    id: 'sp.intellectual-property:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+  },
   registrationDate: {
     id: 'sp.intellectual-property:registration-date',
     defaultMessage: 'Skráningardagur',

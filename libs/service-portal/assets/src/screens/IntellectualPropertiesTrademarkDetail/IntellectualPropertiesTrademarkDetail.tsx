@@ -26,6 +26,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { useGetIntellectualPropertiesTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { orderTimelineData } from '../../utils/timelineMapper'
+import { useCallback, useMemo } from 'react'
 
 type UseParams = {
   id: string
@@ -45,21 +46,75 @@ const IntellectualPropertiesTrademarkDetail = () => {
       },
     })
 
-  if (error && !loading) {
-    return <Problem type="not_found" />
-  }
-
   const ip = data?.intellectualPropertiesTrademark
-
-  if (!ip && !loading) {
-    return <Problem type="no_data" />
-  }
 
   const categories = ip?.markCategories?.filter(
     (c) => !!c.categoryDescription && !!c.categoryNumber,
   )
 
-  const heroMapper = (
+  const orderedDates = useMemo(
+    () =>
+      orderTimelineData([
+        {
+          date: ip?.lifecycle.applicationDate ?? undefined,
+          message: formatMessage(ipMessages.application),
+        },
+        {
+          date: ip?.lifecycle.maxValidObjectionDate ?? undefined,
+          message: formatMessage(ipMessages.maxValidObjectionDate),
+        },
+        {
+          date: ip?.lifecycle.registrationDate ?? undefined,
+          message: formatMessage(ipMessages.registration),
+        },
+        {
+          date: ip?.lifecycle.expiryDate ?? undefined,
+          message: formatMessage(ipMessages.expires),
+        },
+        {
+          date: ip?.lifecycle.publishDate ?? undefined,
+          message: formatMessage(ipMessages.publish),
+        },
+      ]),
+    [formatMessage, ip?.lifecycle],
+  )
+
+  const extraInfoArray = useMemo(() => {
+    if (ip) {
+      const extraInfoArray = [
+        {
+          title: formatMessage(ipMessages.applicationNumber),
+          value: ip?.applicationNumber ?? '',
+        },
+        ip?.imageCategories
+          ? {
+              title: formatMessage(ipMessages.imageCategories),
+              value: ip.imageCategories,
+            }
+          : null,
+        ip?.registrationNumber
+          ? {
+              title: formatMessage(ipMessages.registrationNumber),
+              value: ip.registrationNumber,
+            }
+          : null,
+        {
+          title: formatMessage(ipMessages.colorMark),
+          value: ip?.isColorMark ? formatMessage(m.yes) : formatMessage(m.no),
+        },
+      ].filter(isDefined)
+
+      if (extraInfoArray.length % 2 !== 0) {
+        extraInfoArray.push({
+          title: '',
+          value: '',
+        })
+      }
+      return extraInfoArray
+    }
+  }, [formatMessage, ip])
+
+  const mapTrademarkToHero = (
     type: TrademarkType,
     mediaUrl: string,
     mediaText: string,
@@ -132,28 +187,13 @@ const IntellectualPropertiesTrademarkDetail = () => {
     }
   }
 
-  const orderedDates = orderTimelineData([
-    {
-      date: ip?.lifecycle.applicationDate ?? undefined,
-      message: formatMessage(ipMessages.application),
-    },
-    {
-      date: ip?.lifecycle.maxValidObjectionDate ?? undefined,
-      message: formatMessage(ipMessages.maxValidObjectionDate),
-    },
-    {
-      date: ip?.lifecycle.registrationDate ?? undefined,
-      message: formatMessage(ipMessages.registration),
-    },
-    {
-      date: ip?.lifecycle.expiryDate ?? undefined,
-      message: formatMessage(ipMessages.expires),
-    },
-    {
-      date: ip?.lifecycle.publishDate ?? undefined,
-      message: formatMessage(ipMessages.publish),
-    },
-  ])
+  if (!ip && !loading) {
+    return <Problem type="no_data" />
+  }
+
+  if (error && !loading) {
+    return <Problem type="not_found" />
+  }
 
   return (
     <>
@@ -169,7 +209,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
       <Stack space="containerGutter">
         {ip?.type &&
           ip?.media?.mediaPath &&
-          heroMapper(ip.type, ip.media.mediaPath, ip?.text ?? '')}
+          mapTrademarkToHero(ip.type, ip.media.mediaPath, ip?.text ?? '')}
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
@@ -213,29 +253,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
             </Timeline>
             <TableGrid
               title={formatMessage(ipMessages.information)}
-              dataArray={chunk(
-                [
-                  {
-                    title: formatMessage(ipMessages.applicationNumber),
-                    value: ip?.applicationNumber ?? '',
-                  },
-                  {
-                    title: formatMessage(ipMessages.imageCategories),
-                    value: ip?.imageCategories ?? '',
-                  },
-                  {
-                    title: formatMessage(ipMessages.colorMark),
-                    value: ip?.isColorMark
-                      ? formatMessage(m.yes)
-                      : formatMessage(m.no),
-                  },
-                  {
-                    title: '',
-                    value: '',
-                  },
-                ].filter(isDefined),
-                2,
-              )}
+              dataArray={chunk(extraInfoArray, 2)}
             />
           </>
         )}

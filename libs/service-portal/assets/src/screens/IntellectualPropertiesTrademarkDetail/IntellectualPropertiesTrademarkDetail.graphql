@@ -10,6 +10,7 @@ query getIntellectualPropertiesTrademarkById(
     status
     canRenew
     applicationNumber
+    registrationNumber
     lifecycle {
       applicationDate
       publishDate
