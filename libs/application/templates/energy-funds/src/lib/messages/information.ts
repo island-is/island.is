@@ -91,7 +91,7 @@ export const information = {
         description: 'Vehicle title',
       },
       description: {
-        id: 'ef.application:information.labels.vehicle.title',
+        id: 'ef.application:information.labels.vehicle.description',
         defaultMessage:
           'Athugaðu að ekki er veittur styrkur fyrir kaup á bifreiðum sem kosta meira en 10.000.000,-',
         description: 'Vehicle description',

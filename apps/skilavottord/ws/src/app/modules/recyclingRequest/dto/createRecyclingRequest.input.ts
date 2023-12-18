@@ -8,4 +8,7 @@ export class CreateRecyclingRequestInput {
 
   @Field(() => RecyclingRequestTypes)
   requestType!: RecyclingRequestTypes
+
+  @Field()
+  fullName!: string
 }

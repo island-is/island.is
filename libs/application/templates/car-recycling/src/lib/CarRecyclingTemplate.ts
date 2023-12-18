@@ -1,5 +1,6 @@
 import {
   DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -64,7 +65,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: pruneAfterDays(1),
+          lifecycle: EphemeralStateLifeCycle,
           actionCard: {
             pendingAction: {
               title: '',
@@ -169,7 +170,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               write: 'all',
-              delete: true,
             },
           ],
         },

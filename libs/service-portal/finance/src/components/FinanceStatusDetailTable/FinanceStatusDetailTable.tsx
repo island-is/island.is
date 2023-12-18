@@ -10,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  DownloadFileButtons,
   amountFormat,
   formSubmit,
   m,
@@ -187,46 +188,34 @@ const FinanceStatusDetailTable = ({
           )}
         </Box>
       </Box>
-      <Box paddingX={2} paddingBottom={2} paddingTop={1} background="blue100">
-        <Button
-          colorScheme="default"
-          icon="arrowForward"
-          iconType="filled"
-          onClick={() =>
-            exportGjoldSundurlidunFile(
-              financeStatusDetails,
-              chargeType.name || 'details',
-              'xlsx',
-            )
-          }
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="text"
-        >
-          {formatMessage(m.getAsExcel)}
-        </Button>
-        <div className={styles.btnSpacer}>
-          <Button
-            colorScheme="default"
-            icon="arrowForward"
-            iconType="filled"
-            onClick={() =>
+      <DownloadFileButtons
+        BoxProps={{
+          paddingX: 2,
+          paddingBottom: 2,
+          paddingTop: 1,
+          background: 'blue100',
+        }}
+        buttons={[
+          {
+            text: formatMessage(m.getAsExcel),
+            onClick: () =>
+              exportGjoldSundurlidunFile(
+                financeStatusDetails,
+                chargeType.name || 'details',
+                'xlsx',
+              ),
+          },
+          {
+            text: formatMessage(m.getAsCsv),
+            onClick: () =>
               exportGjoldSundurlidunFile(
                 financeStatusDetails,
                 chargeType.name || 'details',
                 'csv',
-              )
-            }
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            {formatMessage(m.getAsCsv)}
-          </Button>
-        </div>
-      </Box>
+              ),
+          },
+        ]}
+      />
     </Box>
   )
 }
