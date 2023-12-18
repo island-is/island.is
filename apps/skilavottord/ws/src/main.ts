@@ -5,6 +5,6 @@ import { AppModule } from './app/app.module'
 bootstrap({
   appModule: AppModule,
   name: 'skilavottord-ws',
-  port: 3339,
+  port: 3333,
   stripNonClassValidatorInputs: false,
 })

@@ -1,37 +1,44 @@
+import { Module } from '@nestjs/common'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { CacheModule } from '@nestjs/cache-manager'
+import * as firebaseAdmin from 'firebase-admin'
+
 import {
   NationalRegistryV3ClientConfig,
   NationalRegistryV3ClientModule,
 } from '@island.is/clients/national-registry-v3'
 import { EmailModule } from '@island.is/email-service'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   FeatureFlagConfig,
   FeatureFlagModule,
 } from '@island.is/nest/feature-flags'
-import { Module } from '@nestjs/common'
-import * as firebaseAdmin from 'firebase-admin'
-import { CacheModule } from '@nestjs/cache-manager'
 import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
-import { environment } from '../../../environments/environment'
 import { QueueModule } from '@island.is/message-queue'
+
 import { NotificationsController } from './notifications.controller'
+import { environment } from '../../../environments/environment'
+import { FIREBASE_PROVIDER } from '../../../constants'
+import * as userProfile from '@island.is/clients/user-profile'
+import { NotificationsService } from './notifications.service'
+import { MeNotificationsController } from './me-notifications.controller'
+import { Notification } from './notification.model'
+import { UserNotificationsInfraController } from './infra.controller'
+import { NotificationDispatchService } from './notificationDispatch.service'
 import {
   IS_RUNNING_AS_WORKER,
   NotificationsWorkerService,
 } from './notificationsWorker.service'
-import { NotificationDispatchService } from './notificationDispatch.service'
 import {
   APP_PROTOCOL,
   MessageProcessorService,
 } from './messageProcessor.service'
-import { FIREBASE_PROVIDER } from '../../../constants'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import * as userProfile from '@island.is/clients/user-profile'
-import { NotificationsService } from './notifications.service'
 
 @Module({
   imports: [
+    SequelizeModule.forFeature([Notification]),
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
       max: 100, // 100 items max
@@ -56,7 +63,11 @@ import { NotificationsService } from './notifications.service'
       load: [XRoadConfig, NationalRegistryV3ClientConfig, FeatureFlagConfig],
     }),
   ],
-  controllers: [NotificationsController],
+  controllers: [
+    NotificationsController,
+    MeNotificationsController,
+    UserNotificationsInfraController,
+  ],
   providers: [
     NotificationsService,
     NotificationDispatchService,
@@ -65,11 +76,13 @@ import { NotificationsService } from './notifications.service'
     {
       provide: FIREBASE_PROVIDER,
       useFactory: () =>
-        firebaseAdmin.initializeApp({
-          credential: firebaseAdmin.credential.cert(
-            JSON.parse(environment.firebaseCredentials),
-          ),
-        }),
+        process.env.INIT_SCHEMA === 'true'
+          ? {}
+          : firebaseAdmin.initializeApp({
+              credential: firebaseAdmin.credential.cert(
+                JSON.parse(environment.firebaseCredentials),
+              ),
+            }),
     },
     {
       provide: userProfile.UserProfileApi,

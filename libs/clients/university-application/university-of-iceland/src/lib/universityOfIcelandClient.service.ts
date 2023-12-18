@@ -41,8 +41,8 @@ export class UniversityOfIcelandApplicationClient {
           ),
           applicationStartDate: program.applicationStartDate || new Date(),
           applicationEndDate: program.applicationEndDate || new Date(),
-          schoolAnswerDate: undefined, //TODO will not be used yet
-          studentAnswerDate: undefined, //TODO will not be used yet
+          schoolAnswerDate: undefined, //TODO missing in api
+          studentAnswerDate: undefined, //TODO missing in api
           degreeType: mapStringToEnum(program.degreeType, DegreeType),
           degreeAbbreviation: program.degreeAbbreviation || '',
           credits: program.credits || 0,
@@ -100,9 +100,9 @@ export class UniversityOfIcelandApplicationClient {
     return mappedRes
   }
 
-  async getCourses(externalId: string): Promise<ICourse[]> {
+  async getCourses(programExternalId: string): Promise<ICourse[]> {
     const res = await this.coursesApi.programExternalIdCoursesGet({
-      externalId,
+      externalId: programExternalId,
       // specializationExternalId // TODO missing in api
     })
 
@@ -137,28 +137,35 @@ export class UniversityOfIcelandApplicationClient {
           )
         }
 
-        //TODO how should we handle bundin skylda
-        const externalId = (course.externalId || []).join(',')
+        // Note: these fields are all array since we get "bundin skylda" as
+        // as array of courses. We will display them on out side are separate
+        // disconnected courses
+        const externalIdList = course.externalId || []
+        const nameIsList = course.nameIs || []
+        const nameEnList = course.nameEn || []
+        const descriptionIsList = course.descriptionIs || []
+        const descriptionEnList = course.descriptionEn || []
+        const externalUrlIsList = course.externalUrlIs || []
+        const externalUrlEnList = course.externalUrlEn || []
 
-        //TODO why is externalId empty
-        if (!externalId) continue
-
-        mappedRes.push({
-          externalId: externalId,
-          nameIs: course.nameIs || '',
-          nameEn: course.nameEn || '',
-          credits: Number(course.credits?.replace(',', '.')) || 0,
-          descriptionIs: course.descriptionIs,
-          descriptionEn: course.descriptionEn,
-          externalUrlIs: course.externalUrlIs,
-          externalUrlEn: course.externalUrlEn,
-          requirement: requirement,
-          semesterYear: Number(course.semesterYear),
-          semesterSeason: semesterSeason,
-        })
+        for (let i = 0; i < externalIdList.length; i++) {
+          mappedRes.push({
+            externalId: externalIdList[i],
+            nameIs: nameIsList[i],
+            nameEn: nameEnList[i],
+            credits: Number(course.credits?.replace(',', '.')) || 0,
+            descriptionIs: descriptionIsList[i],
+            descriptionEn: descriptionEnList[i],
+            externalUrlIs: externalUrlIsList[i],
+            externalUrlEn: externalUrlEnList[i],
+            requirement: requirement,
+            semesterYear: Number(course.semesterYear),
+            semesterSeason: semesterSeason,
+          })
+        }
       } catch (e) {
         logger.error(
-          `Failed to map course with externalId ${course.externalId?.toString()} for program with externalId ${externalId} (University of Iceland), reason:`,
+          `Failed to map course with externalId ${course.externalId?.toString()} for program with externalId ${programExternalId} (University of Iceland), reason:`,
           e,
         )
       }

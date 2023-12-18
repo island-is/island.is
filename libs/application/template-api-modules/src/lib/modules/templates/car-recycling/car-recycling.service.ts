@@ -9,12 +9,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  VehicleDto,
   errorMessages,
   getApplicationAnswers,
   getApplicationExternalData,
 } from '@island.is/application/templates/car-recycling'
 import { User } from '@island.is/auth-nest-tools'
-import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -49,24 +49,28 @@ export class CarRecyclingService extends BaseTemplateApiService {
     }
   }
 
-  async createVehicle(auth: User, vehicle: VehicleMiniDto) {
+  async createVehicle(auth: User, vehicle: VehicleDto) {
     if (vehicle && vehicle.permno) {
-      return await this.carRecyclingService.createVehicle(auth, vehicle.permno)
+      return await this.carRecyclingService.createVehicle(
+        auth,
+        vehicle.permno,
+        +vehicle.mileage.trim().replace('.', ''),
+      )
     }
   }
 
   async recycleVehicles(
     auth: User,
-    vehicle: VehicleMiniDto,
+    fullName: string,
+    vehicle: VehicleDto,
     recyclingRequestType: RecyclingRequestTypes,
   ) {
-    if (vehicle && vehicle.permno) {
-      return await this.carRecyclingService.recycleVehicle(
-        auth,
-        vehicle.permno,
-        recyclingRequestType,
-      )
-    }
+    return await this.carRecyclingService.recycleVehicle(
+      auth,
+      fullName.trim(),
+      vehicle.permno || '',
+      recyclingRequestType,
+    )
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -74,8 +78,23 @@ export class CarRecyclingService extends BaseTemplateApiService {
       application.answers,
     )
 
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+
     let isError = false
     try {
+      // Canceled recycling
+      const canceledResponses = canceledVehicles.map(async (vehicle) => {
+        this.recycleVehicles(
+          auth,
+          applicantName,
+          vehicle,
+          RecyclingRequestTypes.cancelled,
+        )
+      })
+
+      // Recycle
       const vehiclesResponses = selectedVehicles.map(async (vehicle) => {
         if (!isError) {
           // Create vehicle
@@ -90,6 +109,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
             // Recycle vehicle
             const response = await this.recycleVehicles(
               auth,
+              applicantName,
               vehicle,
               RecyclingRequestTypes.pendingRecycle,
             )
@@ -100,11 +120,6 @@ export class CarRecyclingService extends BaseTemplateApiService {
             }
           }
         }
-      })
-
-      // Cancel recycling
-      const canceledResponses = canceledVehicles.map(async (vehicle) => {
-        this.recycleVehicles(auth, vehicle, RecyclingRequestTypes.cancelled)
       })
 
       // Wait for all promises to resolve or reject

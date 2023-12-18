@@ -38,8 +38,18 @@ export const m = defineMessages({
     defaultMessage: 'Landsfjórðungur',
     description: '',
   },
-  clearFilters: {
-    id: 'admin-portal.signature-collection:clearFilters',
+  candidate: {
+    id: 'admin-portal.signature-collection:candidate',
+    defaultMessage: 'Frambjóðandi',
+    description: '',
+  },
+  clearFilter: {
+    id: 'admin-portal.signature-collection:clearFilter',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
+  clearAllFilters: {
+    id: 'admin-portal.signature-collection:clearAllFilters',
     defaultMessage: 'Hreinsa allar síur',
     description: '',
   },
@@ -73,6 +83,16 @@ export const m = defineMessages({
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
     defaultMessage: 'Meðmælalisti',
+    description: '',
+  },
+  noSignees: {
+    id: 'admin-portal.signature-collection:noLists',
+    defaultMessage: 'Engin meðmæli',
+    description: '',
+  },
+  noSigneesFoundBySearch: {
+    id: 'admin-portal.signature-collection:noSigneesFoundBySearch',
+    defaultMessage: 'Engin meðmæli fundust þegar leitað var að',
     description: '',
   },
   listSigneesNumberHeader: {
@@ -120,8 +140,8 @@ export const m = defineMessages({
     defaultMessage: 'Lorem ipsum',
     description: '',
   },
-  updateListEndTimeButton: {
-    id: 'admin-portal.signature-collection:updateListEndTimeButton',
+  updateListEndTime: {
+    id: 'admin-portal.signature-collection:updateListEndTime',
     defaultMessage: 'Framlengja lokadag',
     description: '',
   },

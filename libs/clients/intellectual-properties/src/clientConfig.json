@@ -1,0 +1,4687 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Hugverkastofan WebAPI",
+    "description": "Hugverkastofan WebAPI v3",
+    "contact": { "name": "Nói Steinn Einarsson", "email": "ut@hugverk.is" },
+    "version": "v3"
+  },
+  "servers": [{ "url": "/apiv3" }],
+  "paths": {
+    "/Certificate/CreateTrademarkCertificate": {
+      "get": {
+        "tags": ["Certificate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          { "name": "email", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "enum": ["Renewal", "Confirmation", "Registered"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": { "enum": ["Icelandic", "English"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          }
+        }
+      }
+    },
+    "/Certificate/CreateDesignCertificate": {
+      "get": {
+        "tags": ["Certificate"],
+        "parameters": [
+          {
+            "name": "applicationNumber",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "email", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": { "enum": ["Renewed", "Registered"], "type": "string" }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": { "enum": ["Icelandic", "English"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          }
+        }
+      }
+    },
+    "/Certificate/CreatePatentCertificate": {
+      "get": {
+        "tags": ["Certificate"],
+        "parameters": [
+          {
+            "name": "applicationNumber",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "email", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": { "enum": ["AnnualFee", "Granted"], "type": "string" }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": { "enum": ["Icelandic", "English"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          }
+        }
+      }
+    },
+    "/getPriceListBySource": {
+      "get": {
+        "tags": ["Common"],
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "schema": {
+              "enum": ["Einkaleyfaskra", "Honnunarskra", "Vorumerkjaskra"],
+              "type": "string"
+            }
+          },
+          { "name": "code", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.Prices.PriceList"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.Prices.PriceList"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.Prices.PriceList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Country": {
+      "get": {
+        "tags": ["Country"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.CountryItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.CountryItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.CountryItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Customers/{kennitala}/documents/{documentId}": {
+      "get": {
+        "tags": ["Customers"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "authenticationType",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.IslandISModels.Document"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.IslandISModels.Document"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.IslandISModels.Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.IslandISModels.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.IslandISModels.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.IslandISModels.Error"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/DesignApplication/{id}": {
+      "get": {
+        "tags": ["DesignApplication"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignApplication/{id}/{type}": {
+      "get": {
+        "tags": ["DesignApplication"],
+        "parameters": [
+          {
+            "name": "designid",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignApplication/SubmitCase": {
+      "post": {
+        "tags": ["DesignApplication"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.DesignCase"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.DesignCase"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.DesignCase"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.DesignCase"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignApplication/postDesignRenewal": {
+      "post": {
+        "tags": ["DesignApplication"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignRenewalModels.DesignRenewalApplication"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignRenewalModels.DesignRenewalApplication"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignRenewalModels.DesignRenewalApplication"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignRenewalModels.DesignRenewalApplication"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignApplication/postDesignApplication": {
+      "post": {
+        "tags": ["DesignApplication"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.DesignApplication"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.DesignApplication"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.DesignApplication"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.DesignApplication"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignApplicationRenew": {
+      "get": {
+        "tags": ["DesignApplicationRenew"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignApplicationRenew/{id}/{type}": {
+      "get": {
+        "tags": ["DesignApplicationRenew"],
+        "parameters": [
+          {
+            "name": "designid",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignSearch/getAll": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "parameters": [
+          {
+            "name": "pager",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DesignSearch/getDesigns": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "parameters": [
+          { "name": "hid", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchDesign"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchDesign"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchDesign"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DesignSearch/getDesignImage": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "parameters": [
+          { "name": "hid", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "designNumber",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "imageNumber",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "size", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignSearch/byDate": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "parameters": [
+          { "name": "from", "in": "query", "schema": { "type": "string" } },
+          { "name": "to", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "pager",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DesignSearch": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "parameters": [
+          {
+            "name": "selectedCommand",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "searchText",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "formateForDataTable",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/DesignSearch/getDesignBySSN": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignIS"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignIS"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignIS"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DesignSearch/getDesignInvolvedPartyBySSN": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "origin",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "Allt",
+                "Thjodskra",
+                "Fyrirtaekjaskra",
+                "Umbodsmenn",
+                "Eigendur"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DesignSearch/GetByHID": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "parameters": [
+          { "name": "hid", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/DesignSearch/getElectronicCaseTypesForDesign": {
+      "get": {
+        "tags": ["DesignSearch"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Email/SendEmail": {
+      "post": {
+        "tags": ["Email"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Entities.EmailModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Entities.EmailModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Entities.EmailModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Entities.EmailModel"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/Gazette": {
+      "get": {
+        "tags": ["Gazette"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.TrademarkGazetteSimple"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.TrademarkGazetteSimple"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.TrademarkGazetteSimple"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Gazette/{id}": {
+      "get": {
+        "tags": ["Gazette"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Trademarks"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Trademarks"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Trademarks"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Gazette/{id}/{type}": {
+      "get": {
+        "tags": ["Gazette"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Trademarks"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Trademarks"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Trademarks"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/GoPro/getCasesBySSN": {
+      "get": {
+        "tags": ["GoPro"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.GoProCaseContract"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.GoProCaseContract"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.GoProCaseContract"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Patent/EPConfirmation": {
+      "post": {
+        "tags": ["Patent"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalClient.EPConfirmationWrapper"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalClient.EPConfirmationWrapper"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalClient.EPConfirmationWrapper"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalClient.EPConfirmationWrapper"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/Patent/SPCApplication": {
+      "post": {
+        "tags": ["Patent"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalClient.SPCApplicationWrapper"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalClient.SPCApplicationWrapper"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalClient.SPCApplicationWrapper"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalClient.SPCApplicationWrapper"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/Patent/getInvolvedPartyBySSN": {
+      "get": {
+        "tags": ["Patent"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "origin",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "Allt",
+                "Thjodskra",
+                "Fyrirtaekjaskra",
+                "Umbodsmenn",
+                "Eigendur"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Patent/GetAgentBySSN": {
+      "get": {
+        "tags": ["Patent"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "origin",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "Allt",
+                "Thjodskra",
+                "Fyrirtaekjaskra",
+                "Umbodsmenn",
+                "Eigendur"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalClient.InvolvedParty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Patent/{id}": {
+      "get": {
+        "tags": ["Patent"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "searchType",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "SPCApplication",
+                "RenewalApplication",
+                "EPConfirmation",
+                "GeneralQuery",
+                "IslandIS",
+                "IslandISAgent"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "confirmType",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Patent/GetListByIdList": {
+      "post": {
+        "tags": ["Patent"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentIds"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentIds"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentIds"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentIds"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Patent/RenewalRequest": {
+      "post": {
+        "tags": ["Patent"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Wrapper"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Wrapper"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Wrapper"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Wrapper"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/Patent/SubmitCase": {
+      "post": {
+        "tags": ["Patent"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCase"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCase"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCase"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCase"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/PatentApplication/PatentApplication": {
+      "post": {
+        "tags": ["PatentApplication"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentApplication"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentApplication"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentApplication"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentApplication"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/PatentSearch/byDate": {
+      "get": {
+        "tags": ["PatentSearch"],
+        "parameters": [
+          { "name": "from", "in": "query", "schema": { "type": "string" } },
+          { "name": "to", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "pager",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatentSearch/PatentsBySSN": {
+      "get": {
+        "tags": ["PatentSearch"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentIS"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentIS"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentIS"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatentSearch/allApplicationNumbers": {
+      "get": {
+        "tags": ["PatentSearch"],
+        "parameters": [
+          {
+            "name": "pager",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentApplicationNumber"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentApplicationNumber"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentApplicationNumber"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatentSearch/allPatents": {
+      "get": {
+        "tags": ["PatentSearch"],
+        "parameters": [
+          {
+            "name": "pager",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatentSearch/Search": {
+      "get": {
+        "tags": ["PatentSearch"],
+        "parameters": [
+          {
+            "name": "inventor",
+            "in": "query",
+            "schema": { "type": "string", "default": "" }
+          },
+          {
+            "name": "applicant",
+            "in": "query",
+            "schema": { "type": "string", "default": "" }
+          },
+          {
+            "name": "applicationNr",
+            "in": "query",
+            "schema": { "type": "string", "default": "" }
+          },
+          {
+            "name": "patentName",
+            "in": "query",
+            "schema": { "type": "string", "default": "" }
+          },
+          {
+            "name": "patentNumber",
+            "in": "query",
+            "schema": { "type": "string", "default": "" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PatentSearch/getElectronicCaseTypesForPatent": {
+      "get": {
+        "tags": ["PatentSearch"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SPC/{id}": {
+      "get": {
+        "tags": ["SPC"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.SPC"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.SPC"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.SPC"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TBRFeeRenewal": {
+      "get": {
+        "tags": ["TBRFeeRenewal"],
+        "parameters": [
+          {
+            "name": "systemName",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "operationType",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "hannanirCount",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "yearCount",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "adilaskipti",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "innfaersla",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TBRFeeRenewal/{id}/{type}": {
+      "get": {
+        "tags": ["TBRFeeRenewal"],
+        "parameters": [
+          {
+            "name": "designid",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkApplication/application": {
+      "post": {
+        "tags": ["TrademarkApplication"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkApplication"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkApplication"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkApplication"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkApplication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/TrademarkApplication/renewal": {
+      "post": {
+        "tags": ["TrademarkApplication"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkRenewal"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkRenewal"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkRenewal"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkRenewal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/TrademarkApplication/alltrademarktypes": {
+      "get": {
+        "tags": ["TrademarkApplication"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SharePointAPI.TrademarkTypes"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SharePointAPI.TrademarkTypes"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SharePointAPI.TrademarkTypes"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TrademarkApplication/SubmitCase": {
+      "post": {
+        "tags": ["TrademarkApplication"],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkCase"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkCase"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkCase"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.TrademarkCase"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/Trademarks/getAll": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          {
+            "name": "pager",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getById": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "key", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getTrademarksBySSN": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarksIS"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarksIS"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarksIS"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getByDate": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "from", "in": "query", "schema": { "type": "string" } },
+          { "name": "to", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "pager",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getThumbnail": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "path", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/Trademarks/getMedia": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/Trademarks/getAllUIDs": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          {
+            "name": "pager",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarksUIDs"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarksUIDs"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarksUIDs"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getAllWordCategories": {
+      "get": {
+        "tags": ["Trademarks"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkCategory"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkCategory"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getWordCategory": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "category", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkCategory"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkCategory"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkCategory"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getAllImageCategories": {
+      "get": {
+        "tags": ["Trademarks"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkImageCategory"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkImageCategory"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkImageCategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getImageCategory": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "category", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkImageCategory"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkImageCategory"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkImageCategory"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getInvolvedPartyBySSN": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "origin",
+            "in": "query",
+            "schema": {
+              "enum": [
+                "Allt",
+                "Thjodskra",
+                "Fyrirtaekjaskra",
+                "Umbodsmenn",
+                "Eigendur"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.InvolvedParty"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.InvolvedParty"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.InvolvedParty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getPriceList": {
+      "get": {
+        "tags": ["Trademarks"],
+        "parameters": [
+          { "name": "code", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.PriceList"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.PriceList"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.PriceList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getElectronicCaseTypes": {
+      "get": {
+        "tags": ["Trademarks"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.ElectronicCaseType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trademarks/getAllAvailableStatuses": {
+      "get": {
+        "tags": ["Trademarks"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.TermInfo"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.TermInfo"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.TermInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TrademarkUpdate/UpdateTrademarkImageCategories": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            },
+            "application/json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            },
+            "text/json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            },
+            "application/*+json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/UpdateTrademarkOwner": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          { "name": "ownerID", "in": "query", "schema": { "type": "string" } },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePointAPI.UpdateOwner"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePointAPI.UpdateOwner"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePointAPI.UpdateOwner"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePointAPI.UpdateOwner"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/UpdateTrademarkCategories": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.CategoriesList"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.CategoriesList"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.CategoriesList"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.CategoriesList"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/UpdateTrademarStatus": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "newStatus",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/RegisterTrademarkInspector": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "inspectorName",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "inspectorSSN",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/GetTrademarksByInspector": {
+      "get": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          {
+            "name": "inspectorSSN",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HUX.ELS.API.Common.DesignApplicationModels.Agent": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true },
+          "annadTexti": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.Attachment": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "string", "format": "byte", "nullable": true },
+          "fileName": { "type": "string", "nullable": true },
+          "designNumber": { "type": "string", "nullable": true },
+          "designImageNumber": { "type": "string", "nullable": true },
+          "attachmentType": {
+            "enum": [
+              "Image",
+              "General",
+              "Umbod",
+              "Allsherjarumbod",
+              "OtherUmbod"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.Contact": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.Design": {
+        "type": "object",
+        "properties": {
+          "specification": { "type": "string", "nullable": true },
+          "desciption": { "type": "string", "nullable": true },
+          "decoration": { "type": "boolean" },
+          "colours": { "type": "boolean" },
+          "image": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Attachment"
+          },
+          "extraImages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Attachment"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.DesignApplication": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "nullable": true },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Owner"
+            },
+            "nullable": true
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Contact"
+            },
+            "nullable": true
+          },
+          "designers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Designer"
+            },
+            "nullable": true
+          },
+          "agents": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Agent"
+          },
+          "designs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Design"
+            },
+            "nullable": true
+          },
+          "priorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Priority"
+            },
+            "nullable": true
+          },
+          "ownershipTransferDocument": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Attachment"
+          },
+          "deferRegistrationUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "requestInspection": { "type": "boolean" },
+          "requestProtectionForNumberOfYears": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Attachment"
+            },
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.User"
+          },
+          "umbod": {
+            "enum": [
+              "None",
+              "UmbodAttached",
+              "UmbodExists",
+              "AlsherjarUmbodAttached",
+              "AlsherjarUmbodExists"
+            ],
+            "type": "string"
+          },
+          "sendToEmail": { "type": "string", "nullable": true },
+          "designerSameAsOwner": { "type": "boolean" },
+          "referenceNo": { "type": "string", "nullable": true },
+          "paid": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.DesignCase": {
+        "type": "object",
+        "properties": {
+          "caseType": { "type": "string", "nullable": true },
+          "hid": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "newOwner": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Owner"
+          },
+          "newAgent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Agent"
+          },
+          "newMedia": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.SimpleAttachment"
+          },
+          "description": { "type": "string", "nullable": true },
+          "applicant": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Agent"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.SimpleAttachment"
+            },
+            "nullable": true
+          },
+          "lienHolder": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.LienHolder"
+          },
+          "usageRightsHolder": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.UsageRightsHolder"
+          },
+          "paid": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.Designer": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.Owner": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true },
+          "isForeign": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.Priority": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date-time" },
+          "country": { "type": "string", "nullable": true },
+          "number": { "type": "string", "nullable": true },
+          "comment": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.SimpleAttachment": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "string", "format": "byte", "nullable": true },
+          "fileName": { "type": "string", "nullable": true },
+          "designNumber": { "type": "string", "nullable": true },
+          "designImageNumber": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignApplicationModels.User": {
+        "type": "object",
+        "properties": {
+          "ip": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.CountryItem": {
+        "type": "object",
+        "properties": {
+          "heiti": { "type": "string", "nullable": true },
+          "landakodi": { "type": "string", "nullable": true },
+          "adiliAdParis": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignCountry": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignIS": {
+        "type": "object",
+        "properties": {
+          "applicationDate": { "type": "string", "format": "date-time" },
+          "hid": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "specification": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchAgent": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalcode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "countryDetails": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignCountry"
+          },
+          "email": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true },
+          "mobilephone": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchAppeal": {
+        "type": "object",
+        "properties": {
+          "appellant": { "type": "string", "nullable": true },
+          "dateReceived": { "type": "string", "format": "date-time" },
+          "reason": { "type": "string", "nullable": true },
+          "dateConclusion": { "type": "string", "format": "date-time" },
+          "conclusion": { "type": "string", "nullable": true },
+          "extract": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchClassification": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchContact": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalcode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "countryDetails": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignCountry"
+          },
+          "email": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true },
+          "mobilephone": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchDesign": {
+        "type": "object",
+        "properties": {
+          "designNumber": { "type": "integer", "format": "int32" },
+          "designImage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchImage"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchDesigner": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalcode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "countryDetails": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignCountry"
+          },
+          "email": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true },
+          "mobilephone": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchImage": {
+        "type": "object",
+        "properties": {
+          "imageNumber": { "type": "integer", "format": "int32" },
+          "value": { "type": "string", "format": "byte", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchLicense": {
+        "type": "object",
+        "properties": {
+          "holder": { "type": "string", "nullable": true },
+          "date": { "type": "string", "format": "date-time" },
+          "expires": { "type": "string", "format": "date-time" },
+          "comment": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchModel": {
+        "type": "object",
+        "properties": {
+          "applicationDate": { "type": "string", "format": "date-time" },
+          "applicationDateAvailable": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status_ID": { "type": "integer", "format": "int32" },
+          "hid": { "type": "string", "nullable": true },
+          "applicationImmidiateAvailability": { "type": "boolean" },
+          "applicationDatePublishedAsAvailable": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "applicationDeadlineDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dmNumber": { "type": "string", "nullable": true },
+          "internationalRegistrationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "wipoBulletinNumber": { "type": "string", "nullable": true },
+          "announcementDate": { "type": "string", "format": "date-time" },
+          "validTo": { "type": "string", "format": "date-time" },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "registrationDate": { "type": "string", "format": "date-time" },
+          "publishDate": { "type": "string", "format": "date-time" },
+          "agent_ID": { "type": "integer", "format": "int32" },
+          "dividedFrom": { "type": "string", "nullable": true },
+          "dividedTo": { "type": "string", "nullable": true },
+          "referenceNumber": { "type": "string", "nullable": true },
+          "createDate": { "type": "string", "format": "date-time" },
+          "lastModified": { "type": "string", "format": "date-time" },
+          "id": { "type": "integer", "format": "int32" },
+          "status": { "type": "string", "nullable": true },
+          "contact_ID": { "type": "integer", "format": "int32" },
+          "applicationNumber": { "type": "string", "nullable": true },
+          "specification": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchSpecification"
+          },
+          "description": { "type": "string", "nullable": true },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchOwner"
+            },
+            "nullable": true
+          },
+          "designers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchDesigner"
+            },
+            "nullable": true
+          },
+          "agent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchAgent"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchContact"
+          },
+          "design": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchDesign"
+            },
+            "nullable": true
+          },
+          "priority": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchPriority"
+            },
+            "nullable": true
+          },
+          "classification": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchClassification"
+          },
+          "objections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchObjection"
+            },
+            "nullable": true
+          },
+          "appeals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchAppeal"
+            },
+            "nullable": true
+          },
+          "pledges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchPledge"
+            },
+            "nullable": true
+          },
+          "licenses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchLicense"
+            },
+            "nullable": true
+          },
+          "canRenew": { "type": "boolean" },
+          "canRenewWithResumption": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchObjection": {
+        "type": "object",
+        "properties": {
+          "opponent": { "type": "string", "nullable": true },
+          "dateReceived": { "type": "string", "format": "date-time" },
+          "reason": { "type": "string", "nullable": true },
+          "dateConclusion": { "type": "string", "format": "date-time" },
+          "conclusion": { "type": "string", "nullable": true },
+          "extract": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchOwner": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalcode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "countryDetails": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignCountry"
+          },
+          "email": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true },
+          "mobilephone": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchPledge": {
+        "type": "object",
+        "properties": {
+          "holder": { "type": "string", "nullable": true },
+          "date": { "type": "string", "format": "date-time" },
+          "location": { "type": "string", "nullable": true },
+          "liftedDate": { "type": "string", "format": "date-time" },
+          "comment": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchPriority": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "number": { "type": "string", "nullable": true },
+          "comment": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignModels.DesignSearchSpecification": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "nullable": true },
+          "number": { "type": "string", "nullable": true },
+          "designIsDecoration": { "type": "string", "nullable": true },
+          "designShouldBeProtectedInColors": {
+            "type": "string",
+            "nullable": true
+          },
+          "specificationText": { "type": "string", "nullable": true },
+          "specificationCount": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.DesignRenewalModels.DesignRenewalApplication": {
+        "type": "object",
+        "properties": {
+          "hid": { "type": "string", "nullable": true },
+          "applicant": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Agent"
+          },
+          "coRegistrationsToDelete": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "imagesToDelete": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.Attachment"
+            },
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.User"
+          },
+          "umbod": {
+            "enum": [
+              "None",
+              "UmbodAttached",
+              "UmbodExists",
+              "AlsherjarUmbodAttached",
+              "AlsherjarUmbodExists"
+            ],
+            "type": "string"
+          },
+          "sendToEmail": { "type": "string", "nullable": true },
+          "paid": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.IslandISModels.Document": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "content": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.IslandISModels.Error": {
+        "type": "object",
+        "properties": {
+          "errorMessage": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.Agent": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "country": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCountry"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.AnnualFees": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "patents_ID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "expires": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "number": { "type": "integer", "format": "int32", "nullable": true },
+          "amount": { "type": "string", "nullable": true },
+          "surCharge": { "type": "boolean", "nullable": true },
+          "paid": { "type": "string", "nullable": true },
+          "payer": { "type": "string", "nullable": true },
+          "agentID": { "type": "integer", "format": "int32", "nullable": true },
+          "patent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Patent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.AnnualFeeSimple": {
+        "type": "object",
+        "properties": {
+          "annualFeeDatePaid": { "type": "string", "format": "date-time" },
+          "annualFeeDueDate": { "type": "string", "format": "date-time" },
+          "annualFeeNumber": { "type": "string", "nullable": true },
+          "paymentMadeBy": { "type": "string", "nullable": true },
+          "surCharget": { "type": "boolean" },
+          "id": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.Applicant": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.InternalClassification": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string", "nullable": true },
+          "sequence": { "type": "string", "nullable": true },
+          "createDate": { "type": "string", "format": "date-time" },
+          "type": { "type": "string", "nullable": true },
+          "datePublised": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.Inventor": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "country": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCountry"
+          },
+          "county": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.LienHolder": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "date": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.Owner": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "state": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true },
+          "id": { "type": "integer", "format": "int32" },
+          "country": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCountry"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.Patent": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "nullable": true },
+          "applicationNumber": { "type": "string", "nullable": true },
+          "epApplicationNumber": { "type": "string", "nullable": true },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "patentName": { "type": "string", "nullable": true },
+          "patentNameInOrgLanguage": { "type": "string", "nullable": true },
+          "patentIcelandicName": { "type": "string", "nullable": true },
+          "ownerName": { "type": "string", "nullable": true },
+          "ownerHome": { "type": "string", "nullable": true },
+          "ownerCountry": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCountry"
+          },
+          "expires": { "type": "string", "format": "date-time" },
+          "registeredDate": { "type": "string", "format": "date-time" },
+          "epDatePublication": { "type": "string", "format": "date-time" },
+          "epDateProvisionPublishedInGazette": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "epApplicationDate": { "type": "string", "format": "date-time" },
+          "applicationDatePublishedAsAvailable": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maxValidDate": { "type": "string", "format": "date-time" },
+          "epDateTranslationSubmitted": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "applicationDate": { "type": "string", "format": "date-time" },
+          "nextAnnualFee": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.AnnualFees"
+          },
+          "currentAnnualFee": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.AnnualFees"
+          },
+          "annualFees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.AnnualFeeSimple"
+            },
+            "nullable": true
+          },
+          "paymentDue": { "type": "integer", "format": "int32" },
+          "applicationFee": { "type": "integer", "format": "int32" },
+          "canRenew": { "type": "boolean" },
+          "error": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "statusText": { "type": "string", "nullable": true },
+          "statusDate": { "type": "string", "format": "date-time" },
+          "alive": { "type": "boolean" },
+          "epoStatus": { "type": "string", "nullable": true },
+          "dataURL": { "type": "string", "nullable": true },
+          "patentAgent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Agent"
+          },
+          "classificationType": { "type": "string", "nullable": true },
+          "inventors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Inventor"
+            },
+            "nullable": true
+          },
+          "internalClassifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.InternalClassification"
+            },
+            "nullable": true
+          },
+          "priorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Priority"
+            },
+            "nullable": true
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Owner"
+            },
+            "nullable": true
+          },
+          "appDate": { "type": "string", "format": "date-time" },
+          "regDate": { "type": "string", "format": "date-time" },
+          "spc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.SPC"
+            },
+            "nullable": true
+          },
+          "lastModified": { "type": "string", "format": "date-time" },
+          "language": { "type": "string", "nullable": true },
+          "spcNumbers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "pct": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PCT"
+          },
+          "pct_is": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PCT_IS"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PatentApplication": {
+        "type": "object",
+        "properties": {
+          "patentName": { "type": "string", "nullable": true },
+          "applicationNumber": { "type": "string", "nullable": true },
+          "patentNameInOrgLanguage": { "type": "string", "nullable": true },
+          "numberOfClaims": { "type": "integer", "format": "int32" },
+          "referenceNumber": { "type": "string", "nullable": true },
+          "applicationInEOLF": { "type": "boolean" },
+          "pctDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "pctApplicationNumber": { "type": "string", "nullable": true },
+          "applicantHasGainedRights": { "type": "boolean" },
+          "applicationBy88gr": { "type": "boolean" },
+          "orginalApplicationNumber": { "type": "string", "nullable": true },
+          "applicationAppliesToBiologicalElement": { "type": "boolean" },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Owner"
+            },
+            "nullable": true
+          },
+          "inventors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Inventor"
+            },
+            "nullable": true
+          },
+          "agent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Agent"
+          },
+          "priorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Priority"
+            },
+            "nullable": true
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentApplicationAttachment"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PatentApplicationAttachment": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "extension": { "type": "string", "nullable": true },
+          "type": {
+            "enum": [
+              "General",
+              "Umbod",
+              "Allsherjarumbod",
+              "OtherUmbod",
+              "Application",
+              "Summary",
+              "Description",
+              "PatentDemands",
+              "Drawings",
+              "Priority",
+              "ListOfAminoAcids"
+            ],
+            "type": "string"
+          },
+          "content": { "type": "string", "format": "byte", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PatentApplicationNumber": {
+        "type": "object",
+        "properties": {
+          "applicationNumber": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PatentCase": {
+        "type": "object",
+        "properties": {
+          "caseType": { "type": "string", "nullable": true },
+          "enkid": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "newOwner": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Owner"
+          },
+          "newAgent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Agent"
+          },
+          "description": { "type": "string", "nullable": true },
+          "applicant": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Agent"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignApplicationModels.SimpleAttachment"
+            },
+            "nullable": true
+          },
+          "prices": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.PriceList"
+          },
+          "lienHolder": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.LienHolder"
+          },
+          "usageRightsHolder": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.UsageRightsHolder"
+          },
+          "paid": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PatentCountry": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PatentIds": {
+        "type": "object",
+        "properties": {
+          "applicationNumbers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PatentIS": {
+        "type": "object",
+        "properties": {
+          "applicationNumber": { "type": "string", "nullable": true },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "patentName": { "type": "string", "nullable": true },
+          "patentNameInOrgLanguage": { "type": "string", "nullable": true },
+          "applicationDate": { "type": "string", "format": "date-time" },
+          "statusText": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PCT": {
+        "type": "object",
+        "properties": {
+          "pct_number": { "type": "string", "nullable": true },
+          "pct_date": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.PCT_IS": {
+        "type": "object",
+        "properties": {
+          "pct_is_number": { "type": "string", "nullable": true },
+          "pct_is_applicationdate": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.Priority": {
+        "type": "object",
+        "properties": {
+          "dateApplication": { "type": "string", "format": "date-time" },
+          "country": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.PatentCountry"
+          },
+          "number": { "type": "string", "nullable": true },
+          "createDate": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.SPC": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "spcNumber": { "type": "string", "nullable": true },
+          "applicationDate": { "type": "string", "format": "date-time" },
+          "product": { "type": "string", "nullable": true },
+          "medicineName": { "type": "string", "nullable": true },
+          "medicineForChildren": { "type": "boolean" },
+          "maxDuration": { "type": "string", "format": "date-time" },
+          "status": { "type": "string", "nullable": true },
+          "spcAgent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Agent"
+          },
+          "agent": { "type": "integer", "format": "int32" },
+          "icelandicMarketingAuthorizationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateIcelandicMarketingAuthorization": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "foreignMarketingAuthorizationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateForeignMarketingAuthorization": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "grant_published_in_gazette_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "published_in_gazette_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "referenceNumber": { "type": "string", "nullable": true },
+          "lastModified": { "type": "string", "format": "date-time" },
+          "canRenew": { "type": "boolean" },
+          "message": { "type": "string", "nullable": true },
+          "annualFee": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.AnnualFees"
+          },
+          "annualFeeList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.AnnualFees"
+            },
+            "nullable": true
+          },
+          "lastAnnualFee": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.AnnualFees"
+          },
+          "parentPatent": { "type": "string", "nullable": true },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Owner"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.UsageRightsHolder": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "date": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.PatentModels.Wrapper": {
+        "type": "object",
+        "properties": {
+          "applicationNumbers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "applicant": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.Applicant"
+          },
+          "applicationDate": { "type": "string", "nullable": true },
+          "referenceNumber": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.Prices.PriceList": {
+        "type": "object",
+        "properties": {
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.Prices.UnitPrice"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.Prices.UnitPrice": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "descriptionEN": { "type": "string", "nullable": true },
+          "fee": { "type": "string", "nullable": true },
+          "caseType": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.Agent": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.Attachment": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "attachmentType": {
+            "enum": [
+              "Logo",
+              "General",
+              "Umbod",
+              "Allsherjarumbod",
+              "OtherUmbod",
+              "Image",
+              "Sound",
+              "Video",
+              "Certification"
+            ],
+            "type": "string"
+          },
+          "value": { "type": "string", "format": "byte", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.BasedOn1mgr33grvmlDetails": {
+        "type": "object",
+        "properties": {
+          "vmid": { "type": "string", "nullable": true },
+          "date": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "number": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.BasedOn1mgr34grvmlDetails": {
+        "type": "object",
+        "properties": {
+          "vmid": { "type": "string", "nullable": true },
+          "date": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "number": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.BasedOn57grvmlDetails": {
+        "type": "object",
+        "properties": {
+          "vmid": { "type": "string", "nullable": true },
+          "internationalRegDate": { "type": "string", "nullable": true },
+          "internationalRegNumber": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.Category": {
+        "type": "object",
+        "properties": {
+          "categoryNumber": { "type": "string", "nullable": true },
+          "categoryDescription": { "type": "string", "nullable": true },
+          "dropCategory": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.Contact": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.Owner": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true },
+          "isForeign": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.PriceList": {
+        "type": "object",
+        "properties": {
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.UnitPrice"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.Priority": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "nullable": true },
+          "categories": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "number": { "type": "string", "nullable": true },
+          "comment": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.SimpleAttachment": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "value": { "type": "string", "format": "byte", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.TrademarkApplication": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "ordmerki",
+              "myndOgOrdmerki",
+              "myndmerki",
+              "hljodmerki",
+              "thrividdarmerki",
+              "thrividdarmerkimedordhluta",
+              "stadsetningarmerki",
+              "mynsturmerki",
+              "litamerki",
+              "hreyfimerki",
+              "margmidlunarmerki",
+              "heilmyndarmerki",
+              "annad"
+            ],
+            "type": "string"
+          },
+          "title": { "type": "string", "nullable": true },
+          "colorMark": { "type": "boolean" },
+          "threeDMark": { "type": "boolean" },
+          "certificationMark": { "type": "boolean" },
+          "nonProfitOrganization": { "type": "boolean" },
+          "basedOn57grvml": { "type": "boolean" },
+          "basedOn1mgr33grvml": { "type": "boolean" },
+          "basedOn1mgr34grvml": { "type": "boolean" },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Owner"
+            },
+            "nullable": true
+          },
+          "contact": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Contact"
+          },
+          "priorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Priority"
+            },
+            "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Category"
+            },
+            "nullable": true
+          },
+          "agent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Agent"
+          },
+          "image": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Attachment"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Attachment"
+            },
+            "nullable": true
+          },
+          "currentUser": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.User"
+          },
+          "sendToEmail": { "type": "string", "nullable": true },
+          "umbod": {
+            "enum": [
+              "None",
+              "UmbodAttached",
+              "UmbodExists",
+              "AlsherjarUmbodAttached",
+              "AlsherjarUmbodExists"
+            ],
+            "type": "string"
+          },
+          "agentComment": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "basedOn57GrvmlDetails": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.BasedOn57grvmlDetails"
+          },
+          "basedOn1Mgr33GrvmlDetails": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.BasedOn1mgr33grvmlDetails"
+          },
+          "basedOn1Mgr34GrvmlDetails": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.BasedOn1mgr34grvmlDetails"
+          },
+          "paid": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.TrademarkCase": {
+        "type": "object",
+        "properties": {
+          "caseType": { "type": "string", "nullable": true },
+          "vmid": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "newOwner": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Owner"
+            },
+            "nullable": true
+          },
+          "newTrademarkText": { "type": "string", "nullable": true },
+          "newAgent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Agent"
+          },
+          "newTrademarkType": { "type": "string", "nullable": true },
+          "newMedia": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.SimpleAttachment"
+          },
+          "newCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Category"
+            },
+            "nullable": true
+          },
+          "description": { "type": "string", "nullable": true },
+          "applicant": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Agent"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.SimpleAttachment"
+            },
+            "nullable": true
+          },
+          "prices": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.PriceList"
+          },
+          "lienHolder": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.LienHolder"
+          },
+          "usageRightsHolder": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.PatentModels.UsageRightsHolder"
+          },
+          "paid": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.TrademarkRenewal": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "nullable": true },
+          "trademarkVMId": { "type": "string", "nullable": true },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "categoryChanges": { "type": "boolean" },
+          "yfirtaka": { "type": "boolean" },
+          "endurupptaka": { "type": "boolean" },
+          "categoryListAttached": { "type": "boolean" },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Category"
+            },
+            "nullable": true
+          },
+          "applicationBy": {
+            "enum": ["Owner", "CurrentAgent", "OtherAgent"],
+            "type": "string"
+          },
+          "otherAgent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Agent"
+          },
+          "ownerWillBe": {
+            "enum": ["Unchanged", "Changed", "TransferOfOwnership"],
+            "type": "string"
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Owner"
+            },
+            "nullable": true
+          },
+          "contact": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Contact"
+          },
+          "image": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Attachment"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Attachment"
+            },
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.User"
+          },
+          "umbod": {
+            "enum": [
+              "None",
+              "UmbodAttached",
+              "UmbodExists",
+              "AlsherjarUmbodAttached",
+              "AlsherjarUmbodExists"
+            ],
+            "type": "string"
+          },
+          "agent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.Agent"
+          },
+          "comment": { "type": "string", "nullable": true },
+          "sendToEmail": { "type": "string", "nullable": true },
+          "paid": { "type": "boolean" },
+          "unchanged": { "type": "boolean" },
+          "newTrademarkType": {
+            "enum": [
+              "ordmerki",
+              "myndOgOrdmerki",
+              "myndmerki",
+              "hljodmerki",
+              "thrividdarmerki",
+              "thrividdarmerkimedordhluta",
+              "stadsetningarmerki",
+              "mynsturmerki",
+              "litamerki",
+              "hreyfimerki",
+              "margmidlunarmerki",
+              "heilmyndarmerki",
+              "annad"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.UnitPrice": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "fee": { "type": "string", "nullable": true },
+          "caseType": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TMApplicationModels.User": {
+        "type": "object",
+        "properties": {
+          "ip": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.Agents": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "ssn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.Categories": {
+        "type": "object",
+        "properties": {
+          "categoryNumber": { "type": "string", "nullable": true },
+          "categoryDescription": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.Diary": {
+        "type": "object",
+        "properties": {
+          "tegundFaerslu": { "type": "string", "nullable": true },
+          "texti": { "type": "string", "nullable": true },
+          "dagsetning": { "type": "string", "nullable": true },
+          "settInnAf": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.InvolvedParty": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "systemID": { "type": "string", "nullable": true },
+          "systemOrigin": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.Media": {
+        "type": "object",
+        "properties": {
+          "mediaPath": { "type": "string", "nullable": true },
+          "mediaType": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.Observation": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "nullable": true },
+          "date": { "type": "string", "format": "date-time" },
+          "subject": { "type": "string", "nullable": true },
+          "person": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.Owners": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "isForeign": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.Priority": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "nullable": true },
+          "categories": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "number": { "type": "string", "nullable": true },
+          "comment": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.TrademarkCategory": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "nullable": true },
+          "number": { "type": "integer", "format": "int32" },
+          "title": { "type": "string", "nullable": true },
+          "overlap": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.TrademarkImageCategory": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "number": { "type": "string", "nullable": true },
+          "text": { "type": "string", "nullable": true },
+          "subCategory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.TrademarkImageCategory"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.Trademarks": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "applicationNumber": { "type": "string", "nullable": true },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "detailStatus": { "type": "string", "nullable": true },
+          "statusEN": { "type": "string", "nullable": true },
+          "markOwners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Owners"
+            },
+            "nullable": true
+          },
+          "markCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Categories"
+            },
+            "nullable": true
+          },
+          "markDiary": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Diary"
+            },
+            "nullable": true
+          },
+          "markObservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Observation"
+            },
+            "nullable": true
+          },
+          "markAgent": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Agents"
+          },
+          "imagePath": { "type": "string", "nullable": true },
+          "orginalImagePath": { "type": "string", "nullable": true },
+          "applicationDate": { "type": "string", "nullable": true },
+          "dateExpires": { "type": "string", "nullable": true },
+          "dateRegistration": { "type": "string", "nullable": true },
+          "dateInternationalRegistration": {
+            "type": "string",
+            "nullable": true
+          },
+          "mpNumber": { "type": "string", "nullable": true },
+          "vmid": { "type": "string", "nullable": true },
+          "dateModified": { "type": "string", "nullable": true },
+          "dateEftiraTilnefningar": { "type": "string", "nullable": true },
+          "isFelagamerki": { "type": "boolean" },
+          "isColorMark": { "type": "boolean" },
+          "skradVegnaMarkadsfestu": { "type": "boolean" },
+          "useLimitedTo": { "type": "string", "nullable": true },
+          "dateUnRegistered": { "type": "string", "nullable": true },
+          "datePublished": { "type": "string", "nullable": true },
+          "dateRenewed": { "type": "string", "nullable": true },
+          "imageCategories": { "type": "string", "nullable": true },
+          "priority": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Priority"
+            },
+            "nullable": true
+          },
+          "is3DMark": { "type": "boolean" },
+          "deleted": { "type": "boolean" },
+          "description": { "type": "string", "nullable": true },
+          "media": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Media"
+          },
+          "certificationMark": { "type": "boolean" },
+          "canRenew": { "type": "boolean" },
+          "canRenewWithResumption": { "type": "boolean" },
+          "inspectorName": { "type": "string", "nullable": true },
+          "inspectorSSN": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.TrademarksIS": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "statusEN": { "type": "string", "nullable": true },
+          "applicationDate": { "type": "string", "nullable": true },
+          "vmid": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.Common.TrademarkModels.TrademarksUIDs": {
+        "type": "object",
+        "properties": { "vmid": { "type": "string", "nullable": true } },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.Agents": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalAddress": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.ChangeLog": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "description": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "changeDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.Classifications": {
+        "type": "object",
+        "properties": {
+          "number": { "type": "string", "nullable": true },
+          "text": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.InternationalRegistration": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "intRegistrationNumber": { "type": "string", "nullable": true },
+          "intRegistrationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.Notifications": {
+        "type": "object",
+        "properties": {
+          "notification": { "type": "string", "nullable": true },
+          "createdBy": { "type": "string", "nullable": true },
+          "createdDate": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.Owners": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalAddress": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "isForeign": { "type": "boolean", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.OwnersTrademarks": {
+        "type": "object",
+        "properties": {
+          "trademarkId": { "type": "integer", "format": "int64" },
+          "ownerId": { "type": "integer", "format": "int64" },
+          "owner": {
+            "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Owners"
+          },
+          "trademark": {
+            "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Trademarks"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.TrademarkGazetteSimple": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "gazetteDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "gazetteNumber": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.API.GazetteCore.GazetteModels.Trademarks": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "vmid": { "type": "string", "nullable": true },
+          "internationalRegistration": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "registrationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "applicationNumber": { "type": "string", "nullable": true },
+          "isColorMark": { "type": "boolean", "nullable": true },
+          "trademarkGazette": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "is3Dmark": { "type": "boolean", "nullable": true },
+          "isFelagamerki": { "type": "boolean", "nullable": true },
+          "isRepublished": { "type": "boolean", "nullable": true },
+          "publishedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "applicationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "imagePath": { "type": "string", "nullable": true },
+          "tegund": { "type": "string", "nullable": true },
+          "trademarkText": { "type": "string", "nullable": true },
+          "imageCategories": { "type": "string", "nullable": true },
+          "agentNavigation": {
+            "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Agents"
+          },
+          "changeLogNavigation": {
+            "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.ChangeLog"
+          },
+          "internationalRegistrationNavigation": {
+            "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.InternationalRegistration"
+          },
+          "ownersTrademarks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.OwnersTrademarks"
+            },
+            "nullable": true
+          },
+          "trademarkClassifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Classifications"
+            },
+            "nullable": true
+          },
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.GazetteCore.GazetteModels.Notifications"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.APIv2.Controllers.CategoriesList": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.Category"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.APIv2.Controllers.Category": {
+        "type": "object",
+        "properties": {
+          "number": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "dropCategory": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.APIv2.Entities.EmailAttachment": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string", "nullable": true },
+          "fileContent": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "contentType": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.APIv2.Entities.EmailModel": {
+        "required": ["body", "subject", "system", "to"],
+        "type": "object",
+        "properties": {
+          "to": { "type": "string" },
+          "cc": { "type": "string", "nullable": true },
+          "bcc": { "type": "string", "nullable": true },
+          "subject": { "type": "string" },
+          "body": { "type": "string" },
+          "system": {
+            "enum": ["Trademark", "Patent", "Design", "External"],
+            "type": "string"
+          },
+          "objectID": { "type": "string", "nullable": true },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.APIv2.Entities.EmailAttachment"
+            },
+            "nullable": true
+          },
+          "isHtml": { "type": "boolean" },
+          "bodyImage": { "type": "string", "format": "byte", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InternalClient.Agent": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32", "nullable": true },
+          "ssn": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InternalClient.Attachment": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "extentsion": { "type": "string", "nullable": true },
+          "type": {
+            "enum": ["General", "Umbod", "Allsherjarumbod", "OtherUmbod"],
+            "type": "string",
+            "nullable": true
+          },
+          "content": { "type": "string", "format": "byte", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InternalClient.ElectronicCaseType": {
+        "type": "object",
+        "properties": {
+          "goProCaseType": { "type": "string", "nullable": true },
+          "caseType": { "type": "string", "nullable": true },
+          "apiValue": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InternalClient.EPConfirmationWrapper": {
+        "type": "object",
+        "properties": {
+          "patentID": { "type": "string", "nullable": true },
+          "applicationNumber": { "type": "string", "nullable": true },
+          "applicationYear": { "type": "string", "nullable": true },
+          "patentIcelandicName": { "type": "string", "nullable": true },
+          "agent": { "$ref": "#/components/schemas/InternalClient.Agent" },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InternalClient.Attachment"
+            },
+            "nullable": true
+          },
+          "employee": { "type": "string", "nullable": true },
+          "confirmType": { "type": "string", "nullable": true },
+          "referenceNumber": { "type": "string", "nullable": true },
+          "language": { "type": "string", "nullable": true },
+          "isPaid": { "type": "boolean", "nullable": true },
+          "tbrCode": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InternalClient.GoProCaseContract": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "caseNumber": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "contactName": { "type": "string", "nullable": true },
+          "contactSSN": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InternalClient.InvolvedParty": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "systemID": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InternalClient.SPCApplicationWrapper": {
+        "type": "object",
+        "properties": {
+          "patentID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "applicationNumber": { "type": "string", "nullable": true },
+          "product": { "type": "string", "nullable": true },
+          "medicineName": { "type": "string", "nullable": true },
+          "medicineForChildren": { "type": "boolean", "nullable": true },
+          "icelandicMarketingAuthorizationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateIcelandicMarketingAuthorization": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateIcelandicMarketingNotification": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "foreignMarketingAuthorizationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateForeignMarketingAuthorization": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateForeignMarketingNotification": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "firstCertificateInIceland": { "type": "boolean", "nullable": true },
+          "referenceNumber": { "type": "string", "nullable": true },
+          "agent": { "$ref": "#/components/schemas/InternalClient.Agent" },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InternalClient.Attachment"
+            },
+            "nullable": true
+          },
+          "spcNumber": { "type": "string", "nullable": true },
+          "employee": { "type": "string", "nullable": true },
+          "isPaid": { "type": "boolean", "nullable": true },
+          "tbrCode": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InternalClient.TermInfo": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "parent": { "$ref": "#/components/schemas/InternalClient.TermInfo" },
+          "children": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/InternalClient.TermInfo" },
+            "nullable": true
+          },
+          "url": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SharePointAPI.TrademarkTypes": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "nullable": true },
+          "text": { "type": "boolean", "nullable": true },
+          "image": { "type": "boolean", "nullable": true },
+          "movement": { "type": "boolean", "nullable": true },
+          "sound": { "type": "boolean", "nullable": true },
+          "descriptionRequired": { "type": "boolean", "nullable": true },
+          "format": { "type": "string", "nullable": true },
+          "webAPIValue": { "type": "string", "nullable": true },
+          "termStoreValue": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SharePointAPI.UpdateOwner": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": { "additionalProperties": false }
+    }
+  }
+}
