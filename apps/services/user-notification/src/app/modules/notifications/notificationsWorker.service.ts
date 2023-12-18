@@ -1,3 +1,7 @@
+import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
+import { join } from 'path'
+import { InjectModel } from '@nestjs/sequelize'
+
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
@@ -6,13 +10,13 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
-import { join } from 'path'
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+
 import { MessageProcessorService } from './messageProcessor.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
+import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { NotificationsService } from './notifications.service'
 import { HnippTemplate } from './dto/hnippTemplate.response'
+import { Notification } from './notification.model'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 
@@ -39,6 +43,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly isRunningAsWorker: boolean,
     @Inject(EmailService)
     private readonly emailService: EmailService,
+    @InjectModel(Notification)
+    private readonly notificationModel: typeof Notification,
   ) {}
 
   onApplicationBootstrap() {
@@ -232,7 +238,39 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
-        this.logger.info('Message received by worker ... ...', { messageId })
+        this.logger.info('Message received by worker', { messageId })
+
+        const notification = { messageId, ...message }
+        const messageIdExists = await this.notificationModel.count({
+          where: { messageId },
+        })
+
+        if (messageIdExists > 0) {
+          // messageId exists do nothing
+          this.logger.debug(
+            'notification with messageId already exists in db',
+            {
+              messageId,
+            },
+          )
+        } else {
+          // messageId does not exist
+          // write to db
+          try {
+            const res = await this.notificationModel.create(notification)
+            if (res) {
+              this.logger.info('notification written to db', {
+                notification,
+                messageId,
+              })
+            }
+          } catch (e) {
+            this.logger.error('error writing notification to db', {
+              e,
+              messageId,
+            })
+          }
+        }
 
         const profile =
           await this.userProfileApi.userProfileControllerFindUserProfile({

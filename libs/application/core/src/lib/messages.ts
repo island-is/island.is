@@ -311,6 +311,18 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Erfingi undir 18 ára án málsvara',
     description: 'Young estate heirs without advocate error',
   },
+  errorDataProviderEstateValidationFailed: {
+    id: 'application.system:core.error.dataProviderEstateValidationFailed',
+    defaultMessage: 'Gögnum hafnað',
+    description:
+      'Text that appears when district comissioner has validation fails in pre-data',
+  },
+  errorDataProviderEstateValidationFailedSummary: {
+    id: 'application.system:core.error.dataProviderEstateValidationFailedSummary',
+    defaultMessage: 'Svar frá Sýslumanni: {message}',
+    description:
+      'Text that appears when district comissioner has validation fails in pre-data',
+  },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
@@ -375,6 +387,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.payment.submitTitle',
     defaultMessage: 'Sending umsóknar mistókst',
     description: 'Message indicating submission after payment failed',
+  },
+  applicationSubmitFailed: {
+    id: 'application.system:core.application.SubmitFailed',
+    defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission of application failed',
   },
   paymentSubmitRetryButtonCaption: {
     id: 'application.system:core.payment.retryCaption',
@@ -573,6 +590,18 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:copyLink.copyLinkErrorToast',
     defaultMessage: 'Tókst ekki að afrita hlekk',
     description: 'Copy link error toast',
+  },
+  electricVehicleListEmptyOwner: {
+    id: 'application.system:core.fetch.data.electricVehicleListEmptyOwner',
+    defaultMessage:
+      'Þú átt engan rafbíl þar sem þú ert aðaleigandi og uppfyllir umsóknarskilyrði',
+    description:
+      'You do not have any electric vehicles where you are the main owner',
+  },
+  noBankAccountError: {
+    id: 'application.system:core.fetch.data.noBankAccountError',
+    defaultMessage: 'Þú ert ekki með skráðan bankareikning',
+    description: 'No bank account error',
   },
 })
 

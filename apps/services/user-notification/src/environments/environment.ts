@@ -51,6 +51,9 @@ export const environment = {
       }),
   },
   contentfulAccessToken: env.CONTENTFUL_ACCESS_TOKEN,
+  auth: {
+    issuer: env.IDENTITY_SERVER_ISSUER_URL,
+  },
 
   emailOptions: isDevelopment
     ? {

@@ -9,8 +9,10 @@ import {
   UseInterceptors,
   Version,
   VERSION_NEUTRAL,
+  Controller,
+  Post,
+  HttpCode,
 } from '@nestjs/common'
-import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
   ApiOkResponse,
   ApiBody,
@@ -31,7 +33,7 @@ import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor) // auto-caching GET responses
+@UseInterceptors(CacheInterceptor)
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -71,8 +73,7 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Fetches all templates',
-    summary: 'Fetches all templates',
+    summary: 'Fetches all notification templates',
     includeNoContentResponse: true,
     response: { status: 200, type: [HnippTemplate] },
     request: {
@@ -94,8 +95,7 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Fetches a single template',
-    summary: 'Fetches a single template',
+    summary: 'Fetches a single notification template',
     includeNoContentResponse: true,
     response: { status: 200, type: HnippTemplate },
     request: {
@@ -126,7 +126,6 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Creates a new notification and adds to queue',
     summary: 'Creates a new notification and adds to queue',
     includeNoContentResponse: true,
     response: { status: 201, type: CreateNotificationResponse },

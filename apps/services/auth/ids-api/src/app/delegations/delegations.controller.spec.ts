@@ -1,35 +1,43 @@
+import { getModelToken } from '@nestjs/sequelize'
+import faker from 'faker'
+import times from 'lodash/times'
+import request from 'supertest'
+
 import {
   ApiScope,
+  Client,
+  ClientAllowedScope,
+  Delegation,
+  DelegationDTO,
   DelegationType,
   Domain,
-  MergedDelegationDTO,
   InactiveReason,
+  MergedDelegationDTO,
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeType,
   UNKNOWN_NAME,
-  DelegationDTO,
-  Delegation,
-  Client,
-  ClientAllowedScope,
 } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  createClient,
+  createDelegation,
+  createDelegationModels,
+  createDomain,
+} from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
   createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
-import { getModelToken } from '@nestjs/sequelize'
-import times from 'lodash/times'
-import faker from 'faker'
-import request from 'supertest'
+
 import {
-  setupWithAuth,
-  defaultScopes,
   defaultDomains,
+  defaultScopes,
+  setupWithAuth,
 } from '../../../test/setup'
 import {
   getFakeName,
@@ -44,12 +52,6 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
-import {
-  createClient,
-  createDelegation,
-  createDelegationModels,
-  createDomain,
-} from '@island.is/services/auth/testing'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -70,6 +72,8 @@ describe('DelegationsController', () => {
       scope: [defaultScopes.testUserHasAccess.name],
     })
 
+    const domain = createDomain()
+
     beforeAll(async () => {
       app = await setupWithAuth({
         user,
@@ -81,6 +85,9 @@ describe('DelegationsController', () => {
       )
 
       await prTypeModel.create(personalRepresentativeType)
+
+      const domainModel = app.get<typeof Domain>(getModelToken(Domain))
+      await domainModel.create(domain)
 
       apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
       prModel = app.get<typeof PersonalRepresentative>(
@@ -423,9 +430,6 @@ describe('DelegationsController', () => {
         ]
 
         beforeAll(async () => {
-          const domainModel = app.get<typeof Domain>(getModelToken(Domain))
-          const domain = await domainModel.create(createDomain())
-
           await apiScopeModel.bulkCreate(
             scopes.map(([name, enabled, _]) =>
               getPRenabledApiScope(domain.name, enabled, name),
