@@ -1,6 +1,5 @@
 import { ICalendar } from 'datebook'
 import _uniqBy from 'lodash/uniqBy'
-import { userInfo } from 'os'
 
 import {
   Inject,
