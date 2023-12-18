@@ -213,24 +213,22 @@ export class DiscountService {
       })
 
       if (allExplicit === null || allExplicit.length <= 5) {
-        user.fund.credit = flightLegs
+        user.fund.credit = 2 //making sure we can get flight from and to
       } else {
         return null
       }
-      // need to query explicit code to count how many explicit codes user has received,
-      // add one or two credits?
     } else {
       user.fund.credit = user.fund.total - user.fund.used
     }
 
-    const getDiscount = async () => {
+    const getDiscount = async (unconFlights: Flight[] | ExplicitFlight[]) => {
       const discount = await this.createDiscountCode(
         {
           ...user,
           postalcode: postalCode,
         },
         nationalId,
-        unConnectedFlights,
+        unconFlights,
         numberOfDaysUntilExpiration,
         true,
       )
@@ -260,7 +258,7 @@ export class DiscountService {
 
     const discounts = []
     for (let i = 0; i < flightLegs; i++) {
-      discounts.push(await getDiscount())
+      discounts.push(await getDiscount(unConnectedFlights.slice(i, i + 1)))
     }
 
     return discounts
@@ -490,7 +488,7 @@ export class DiscountService {
       body.numberOfDaysUntilExpiration,
       body.needsConnectionFlight ? [flight] : [],
       isExplicit,
-      body.flightLegs,
+      1,
     )
     if (!discount) {
       throw new Error(`Could not create explicit discount`)

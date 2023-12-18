@@ -8,6 +8,7 @@ import {
 import { messages } from '../../lib/messages'
 import ExpiringTable from '../../components/ExpiringTable/ExpiringTable'
 import { ExpiringExpandedTableRow } from '../../components/ExpiringTable/ExpiringExpandedTableRow'
+import { exportNutritionFile } from '../../utils/FileBreakdown'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -41,6 +42,7 @@ const NutritionTable = ({ data, footnote, link, linkText }: Props) => {
       footnote={footnote}
       link={link}
       linkText={linkText}
+      onExport={() => exportNutritionFile(data ?? [], 'xlsx')}
     >
       {data.map((rowItem, idx) => (
         <ExpiringExpandedTableRow
@@ -48,7 +50,7 @@ const NutritionTable = ({ data, footnote, link, linkText }: Props) => {
           expiring={rowItem.expiring}
           visibleValues={[
             rowItem.name ?? '',
-            rowItem.available ?? '',
+            rowItem.maxUnitRefund ?? '',
             rowItem.refund.type === 'amount'
               ? rowItem.refund.value
                 ? amountFormat(rowItem.refund.value)
