@@ -491,57 +491,7 @@ export const assets = buildSection({
           description: m.assetOverviewDescription,
           children: [
             ...overviewAssets,
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewRealEstate',
-              title: m.realEstate,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.realEstateEstimation,
-              display: 'flex',
-              value: ({ answers }) => {
-                const total = getValueViaPath(
-                  answers,
-                  'assets.realEstate.total',
-                )
-                return formatCurrency(String(total))
-              },
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewVehicles',
-              title: m.vehicles,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.marketValue,
-              display: 'flex',
-              value: ({ answers }) => {
-                const total = getValueViaPath(answers, 'assets.vehicles.total')
-                return formatCurrency(String(total))
-              },
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewGuns',
-              title: m.guns,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.marketValue,
-              display: 'flex',
-              value: ({ answers }) => {
-                const total = getValueViaPath(answers, 'assets.guns.total')
-                return formatCurrency(String(total))
-              },
-            }),
+ 
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewInventory',

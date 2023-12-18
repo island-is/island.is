@@ -29,7 +29,7 @@ export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({
 }) => {
   const { formatMessage } = useLocale()
   return (
-    <GridRow>
+    <GridRow marginBottom={2}>
       {field.props.cards(application).length ? (
         field.props.cards(application).map(({ title, description }, idx) => {
           return (

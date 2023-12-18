@@ -98,3 +98,107 @@ export interface Prenup {
   nationalId: string
   partnerNationalId?: string
 }
+
+export interface EstateAssets {
+  guns: Guns
+  money: Money
+  claims: Claims
+  stocks: Stocks
+  vehicles: Vehicles
+  inventory: Inventory
+  realEstate: RealEstate
+  otherAssets: OtherAssets
+  bankAccounts: BankAccounts
+}
+
+export interface Guns {
+  data: GunsData[]
+  total: number
+}
+
+export interface GunsData {
+  assetNumber: string
+  description: string
+  propertyValuation: string
+  taxFreeInheritance: number
+}
+
+export interface Money {
+  info: string
+  value: string
+}
+
+export interface ClaimsData {
+  value: string
+  issuer: string
+  nationalId: string
+  taxFreeInheritance: number
+}
+export interface Claims {
+  data: ClaimsData[]
+  total: number
+}
+
+export interface StocksData {
+  value: string
+  faceValue: string
+  nationalId: string
+  organization: string
+  rateOfExchange: string
+  taxFreeInheritance: number
+}
+export interface Stocks {
+  data: StocksData[]
+  total: number
+}
+
+export interface VehiclesData {
+  assetNumber: string
+  description: string
+  propertyValuation: string
+  taxFreeInheritance: number
+}
+
+export interface Vehicles {
+  data: VehiclesData[]
+  total: number
+}
+
+export interface Inventory {
+  info: string
+  value: string
+}
+
+export interface RealEstateData {
+  share: number
+  assetNumber: string
+  description: string
+  propertyValuation: string
+  taxFreeInheritance: number
+}
+
+export interface RealEstate {
+  data: RealEstateData[]
+  total: number
+}
+
+export interface otherassetsData {
+  otherAssets: string
+  otherAssetsValue: string
+  taxFreeInheritance: number
+}
+export interface OtherAssets {
+  data: otherassetsData[]
+  total: number
+}
+
+export interface BankAccountsData {
+  balance: string
+  accountNumber: string
+  taxFreeInheritance: number
+}
+
+export interface BankAccounts {
+  data: BankAccountsData[]
+  total: number
+}
