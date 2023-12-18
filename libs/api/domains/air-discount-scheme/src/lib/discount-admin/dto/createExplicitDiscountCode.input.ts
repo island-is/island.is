@@ -19,7 +19,4 @@ export class CreateExplicitDiscountCodeInput {
 
   @Field((_) => Boolean)
   isExplicit!: boolean
-
-  @Field((_) => Int)
-  flightLegs!: number
 }

@@ -8,6 +8,7 @@ import {
 import { messages } from '../../lib/messages'
 import ExpiringTable from '../../components/ExpiringTable/ExpiringTable'
 import { ExpiringExpandedTableRow } from '../../components/ExpiringTable/ExpiringExpandedTableRow'
+import { exportAidTable } from '../../utils/FileBreakdown'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -63,6 +64,7 @@ const AidsTable = ({ data, footnote, link, linkText }: Props) => {
       footnote={footnote}
       link={link}
       linkText={linkText}
+      onExport={() => exportAidTable(data ?? [], 'xlsx')}
     >
       {data.map((rowItem, idx) => (
         <ExpiringExpandedTableRow
