@@ -13,7 +13,6 @@ export const OpenApiDocumentation = ({ spec }: OpenApiDocumentationProps) => {
       <RedocStandalone
         spec={spec}
         options={{
-          noAutoAuth: true,
           showExtensions: true,
           hideHostname: true,
         }}

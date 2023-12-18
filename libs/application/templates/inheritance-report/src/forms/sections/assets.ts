@@ -202,41 +202,21 @@ export const assets = buildSection({
               title: m.inventoryTitle,
               description: m.inventoryDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
-            buildDescriptionField({
-              id: 'assets.inventory.total',
-              title: '',
+            buildTextField({
+              id: 'assets.inventory.info',
+              title: m.moneyText,
+              placeholder: m.moneyPlaceholder,
+              variant: 'textarea',
+              rows: 7,
             }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'assets.inventory.data',
-                doesNotRequireAnswer: true,
-                component: 'ReportFieldsRepeater',
-              },
-              {
-                fields: [
-                  {
-                    title: m.inventoryTextField.defaultMessage,
-                    id: 'inventory',
-                    placeholder: m.inventoryTextFieldPlaceholder.defaultMessage,
-                    variant: 'textarea',
-                    rows: 7,
-                    width: 'full',
-                  },
-                  {
-                    title: m.inventoryValueTitle.defaultMessage,
-                    id: 'inventoryValue',
-                    currency: true,
-                    width: 'half',
-                    required: true,
-                  },
-                ],
-                repeaterButtonText: m.addInventory.defaultMessage,
-                repeaterHeaderText: m.inventoryTitle.defaultMessage,
-                sumField: 'inventoryValue',
-              },
-            ),
+            buildTextField({
+              id: 'assets.inventory.value',
+              title: m.moneyValue,
+              width: 'half',
+              variant: 'currency',
+            }),
           ],
         }),
       ],
@@ -403,6 +383,7 @@ export const assets = buildSection({
                     id: 'value',
                     color: 'white',
                     readOnly: true,
+                    currency: true,
                   },
                 ],
                 repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
@@ -571,7 +552,7 @@ export const assets = buildSection({
               label: m.marketValue,
               display: 'flex',
               value: ({ answers }) => {
-                const total = getValueViaPath(answers, 'assets.inventory.total')
+                const total = getValueViaPath(answers, 'assets.inventory.value')
                 return formatCurrency(String(total))
               },
             }),
