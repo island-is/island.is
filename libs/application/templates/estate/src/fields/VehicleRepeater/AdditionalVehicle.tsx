@@ -15,7 +15,6 @@ import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { GET_VEHICLE_QUERY } from '../../graphql'
 import { GetVehicleInput, Query } from '@island.is/api/schema'
-import { debounce } from 'lodash'
 
 export const AdditionalVehicle = ({
   field,
