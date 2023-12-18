@@ -1,0 +1,17 @@
+mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+    name
+    nationalId
+    mobileNumber
+    role
+    title
+    email
+    institution {
+      id
+      type
+      name
+    }
+    active
+  }
+}

@@ -34,7 +34,7 @@ export const EnergyFundsSchema = z.object({
   }),
   grant: z.object({
     bankNumber: z.string().min(1),
-    grantAmount: z.string().optional(),
+    grantAmount: z.number().optional(),
   }),
 })
 

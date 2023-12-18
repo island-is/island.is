@@ -89,7 +89,7 @@ export const PrerequisitesForm: Form = buildForm({
         buildMultiField({
           id: 'isNotEligible',
           title: householdSupplementFormMessage.pre.isNotEligibleLabel,
-          condition: (FormValue, externalData) => {
+          condition: (_, externalData) => {
             const { isEligible } = getApplicationExternalData(externalData)
             // Show if applicant is not eligible
             return !isEligible

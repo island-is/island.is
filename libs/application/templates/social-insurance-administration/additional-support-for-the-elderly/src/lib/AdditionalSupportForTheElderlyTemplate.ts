@@ -26,6 +26,7 @@ import {
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import {
   Actions,
@@ -42,7 +43,18 @@ import {
   statesMessages as coreSIAStatesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { dataSchema } from './dataSchema'
-import { getApplicationAnswers } from './additionalSupportForTheElderlyUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from './additionalSupportForTheElderlyUtils'
+
+function isEligible(context: ApplicationContext) {
+  const { application } = context
+  const { externalData } = application
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
+}
 
 const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -85,13 +97,22 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
             },
           ],
         },
         on: {
-          SUBMIT: States.DRAFT,
+          SUBMIT: [
+            {
+              target: States.DRAFT,
+              cond: isEligible,
+            },
+            {
+              actions: 'setApproveExternalData',
+            },
+          ],
         },
       },
       [States.DRAFT]: {
@@ -349,6 +370,13 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      setApproveExternalData: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'approveExternalData', true)
+        return context
+      }),
       /**
        * Copy the current answers to temp. If the user cancels the edits,
        * we will restore the answers to their original state from temp.

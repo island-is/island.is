@@ -19,6 +19,7 @@ import Logo from '@island.is/application/templates/social-insurance-administrati
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import { getApplicationExternalData } from '../lib/additionalSupportForTheElderlyUtils'
 
@@ -76,13 +77,17 @@ export const PrerequisitesForm: Form = buildForm({
               provider: SocialInsuranceAdministrationCurrenciesApi,
               title: '',
             }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+              title: '',
+            }),
           ],
         }),
         buildMultiField({
           id: 'isNotEligible',
           title:
             additionalSupportForTheElderyFormMessage.pre.isNotEligibleLabel,
-          condition: (FormValue, externalData) => {
+          condition: (_, externalData) => {
             const { isEligible } = getApplicationExternalData(externalData)
             // Show if applicant is not eligible
             return !isEligible
