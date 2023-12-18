@@ -39,6 +39,11 @@ export const m = defineMessages({
     defaultMessage: 'Listar sem ég hef mælt með',
     description: '',
   },
+  mySigneeListsByAreaHeader: {
+    id: 'sp.signatureCollection:mySigneeListsByAreaHeader',
+    defaultMessage: 'Listar á mínu svæði sem hægt er að mæla með',
+    description: '',
+  },
   signList: {
     id: 'sp.signatureCollection:signList',
     defaultMessage: 'Mæla með lista',
@@ -116,6 +121,11 @@ export const m = defineMessages({
   noSignees: {
     id: 'sp.signatureCollection:noSignees',
     defaultMessage: 'Engin meðmæli',
+    description: '',
+  },
+  noSigneesFoundBySearch: {
+    id: 'sp.signatureCollection:noSigneesFoundBySearch',
+    defaultMessage: 'Engin meðmæli fundust þegar leitað var að',
     description: '',
   },
   signeeDate: {

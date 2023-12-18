@@ -214,12 +214,15 @@ const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
       style={{
         y,
         boxShadow,
-        // Prevents text selection when dragging
-        userSelect: isDragging ? 'none' : 'auto',
       }}
       className={styles.reorderItem}
       dragListener={false}
       dragControls={controls}
+      onPointerDown={(evt) => {
+        controls.start(evt)
+        // Prevents text selection when dragging
+        evt.preventDefault()
+      }}
     >
       {caseFile.isHeading && caseFile.chapter !== undefined ? (
         renderChapter(caseFile.chapter, caseFile.displayText)

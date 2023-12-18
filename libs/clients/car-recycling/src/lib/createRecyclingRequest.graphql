@@ -1,0 +1,19 @@
+mutation skilavottordVehicleOwner($input: CreateOwnerInput!) {
+  createSkilavottordVehicleOwnerAppSys(input: $input)
+}
+
+mutation skilavottordVehicle($input: CreateVehicleInput!) {
+  createSkilavottordVehicleAppSys(input: $input)
+}
+
+mutation skilavottordRecyclingRequest($input: CreateRecyclingRequestInput!) {
+  createSkilavottordRecyclingRequestAppSys(input: $input) {
+    ... on RequestErrors {
+      message
+      operation
+    }
+    ... on RequestStatus {
+      status
+    }
+  }
+}

@@ -85,6 +85,11 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
                 type: 'referencedBy',
                 value: manual.fields.title,
               },
+              {
+                key: chapter.sys.id,
+                type: 'referencedBy',
+                value: chapter.fields.title,
+              },
             ],
           }
         } catch (error) {

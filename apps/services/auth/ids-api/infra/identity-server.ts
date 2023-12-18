@@ -83,6 +83,11 @@ export const serviceSetup = (services: {
         staging: 'https://cdn.contentful.com',
         prod: 'https://cdn.contentful.com',
       },
+      Application__AllowedRedirectUris: {
+        dev: 'https://beta.dev01.devland.is/minarsidur',
+        staging: 'https://beta.staging01.devland.is/minarsidur',
+        prod: 'https://island.is/minarsidur',
+      },
     })
     .secrets({
       IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',
@@ -98,6 +103,10 @@ export const serviceSetup = (services: {
       FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       ContentfulSettings__AccessToken:
         '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
+      Redaction__UserIdentifiers__KeyId:
+        '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID',
+      Redaction__UserIdentifiers__Key:
+        '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY',
     })
     .ingress({
       primary: {

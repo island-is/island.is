@@ -3,9 +3,12 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseState } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCourtOfAppealsQuery,
   mockJudgeQuery,
