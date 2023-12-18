@@ -68,7 +68,7 @@ export const PersonalSection = buildSection({
           format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.phone,
+            application.externalData?.userProfile?.data?.mobilePhoneNumber,
         }),
       ],
     }),
