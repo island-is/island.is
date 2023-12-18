@@ -41,7 +41,6 @@ import {
   MessageProcessorService,
 } from './messageProcessor.service'
 
-
 @Module({
   imports: [
     SequelizeModule.forFeature([Notification]),
