@@ -8,7 +8,11 @@ import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
-import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+  getTaxLevelOption,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { YES } from '@island.is/application/types'
@@ -47,7 +51,7 @@ export const PaymentInformation = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.iban,
                 )}
-                value={iban}
+                value={friendlyFormatIBAN(iban)}
               />
             </GridColumn>
           </GridRow>
@@ -60,7 +64,7 @@ export const PaymentInformation = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.swift,
                 )}
-                value={swift}
+                value={friendlyFormatSWIFT(swift)}
               />
             </GridColumn>
             <GridColumn

@@ -9,6 +9,10 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/householdSupplementUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 
 export const Payment = ({
   application,
@@ -52,7 +56,7 @@ export const Payment = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.iban,
                 )}
-                value={iban}
+                value={friendlyFormatIBAN(iban)}
               />
             </GridColumn>
           </GridRow>
@@ -65,7 +69,7 @@ export const Payment = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.swift,
                 )}
-                value={swift}
+                value={friendlyFormatSWIFT(swift)}
               />
             </GridColumn>
             <GridColumn
