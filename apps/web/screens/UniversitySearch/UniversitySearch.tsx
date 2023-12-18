@@ -117,8 +117,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const n = useNamespace(namespace)
 
-  const isMobileScreenWidth = width < theme.breakpoints.md
-  const isTabletScreenWidth = width < theme.breakpoints.lg
+  const isMobileScreenWidth = width < theme.breakpoints.lg
+  const isTabletScreenWidth = width < theme.breakpoints.xl
 
   const [selectedPage, setSelectedPage] = useState(1)
   const [selectedComparison, setSelectedComparison] = useState<
@@ -127,14 +127,15 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
   const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    data
-      .sort((x, y) => {
-        if (x.nameIs > y.nameIs) return 1
-        return -1
-      })
-      .map((item: UniversityGatewayProgram, index: number) => {
-        return { item, refIndex: index, score: 1 }
-      }),
+    data &&
+      [...data]
+        .sort((x, y) => {
+          if (x.nameIs > y.nameIs) return 1
+          return -1
+        })
+        .map((item: UniversityGatewayProgram, index: number) => {
+          return { item, refIndex: index, score: 1 }
+        }),
   )
   const { linkResolver } = useLinkResolver()
 
