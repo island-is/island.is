@@ -1,6 +1,5 @@
 export { NationalIdWithName } from './NationalIdWithName'
 export { ApplicationStatus } from './ApplicationStatus'
 export { MachinesField } from './MachinesField'
-export { BuyerField } from './BuyerField'
 export { Review } from './Review'
 export { RejectedConclusion } from './RejectedConclusion'

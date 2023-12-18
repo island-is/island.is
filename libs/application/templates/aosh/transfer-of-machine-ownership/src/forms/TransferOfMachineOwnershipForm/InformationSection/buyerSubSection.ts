@@ -1,6 +1,6 @@
 import {
-  buildCustomField,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
   buildTextField,
@@ -16,7 +16,11 @@ export const buyerSubSection = buildSubSection({
       title: information.labels.buyer.title,
       description: information.labels.buyer.description,
       children: [
-        // NationalIdwithName custom component
+        buildNationalIdWithNameField({
+          id: 'buyer',
+          title: information.labels.buyer.nationalId,
+          width: 'full',
+        }),
         buildTextField({
           id: 'buyer.email',
           title: information.labels.buyer.email,
@@ -29,11 +33,6 @@ export const buyerSubSection = buildSubSection({
           title: information.labels.buyer.phone,
           width: 'half',
           required: true,
-        }),
-        buildCustomField({
-          id: 'buyerCustomField',
-          component: 'BuyerField',
-          title: '',
         }),
       ],
     }),

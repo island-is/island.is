@@ -40,12 +40,13 @@ export const Overview: FC<
   })
 
   const [loading, setLoading] = useState(false)
-
   const doApproveAndSubmit = async () => {
     const approveAnswers = getApproveAnswers(
       reviewerNationalId,
       application.answers,
+      buyerOperator || {},
     )
+
     const resApprove = await submitApplication({
       variables: {
         input: {
@@ -55,18 +56,17 @@ export const Overview: FC<
         },
       },
     })
-
-    const updatedApplication = resApprove?.data?.submitApplication
-
-    await submitApplication({
-      variables: {
-        input: {
-          id: application.id,
-          event: DefaultEvents.SUBMIT,
-          answers: updatedApplication,
+    if (resApprove?.data) {
+      await submitApplication({
+        variables: {
+          input: {
+            id: application.id,
+            event: DefaultEvents.SUBMIT,
+            answers: approveAnswers,
+          },
         },
-      },
-    })
+      })
+    }
     setLoading(false)
     setStep && setStep('conclusion')
   }

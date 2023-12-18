@@ -105,20 +105,21 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         400,
       )
     }
-    if (!answers.machine.id) {
+    const machineId = answers.machine.id || answers.pickMachine.id
+    if (!machineId) {
       throw new Error('Machine has not been selected')
     }
     await this.workMachineClientService.confirmOwnerChange(auth, {
       applicationId: application.id,
-      machineId: answers.machine.id,
-      machineMoreInfo: answers.location.moreInfo,
-      machinePostalCode: answers.location.postCode,
+      machineId: machineId,
+      machineMoreInfo: answers?.location?.moreInfo,
+      machinePostalCode: answers?.location?.postCode,
       buyerNationalId: answers.buyer.nationalId,
       delegateNationalId: auth.nationalId || answers.buyer.nationalId,
       supervisorNationalId: answers.buyerOperator?.nationalId,
       supervisorEmail: answers.buyerOperator?.email,
       supervisorPhoneNumber: answers.buyerOperator?.phone?.replace(/-/g, ''),
-      machineAddress: answers.location.address,
+      machineAddress: answers?.location?.address,
     })
 
     // send email/sms to all recipients
@@ -187,21 +188,21 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     }
 
     const answers = application.answers as TransferOfMachineOwnershipAnswers
-    if (!answers.machine.id) {
+    const machineId = answers.machine.id || answers.pickMachine.id
+    if (!machineId) {
       throw new Error('Ekki er búið að velja vél')
     }
     const ownerChange: ChangeMachineOwner = {
       applicationId: application.id,
-      machineId: answers.machine.id,
+      machineId: machineId,
       buyerNationalId: answers.buyer.nationalId,
       sellerNationalId: answers.seller.nationalId,
       delegateNationalId: auth.nationalId || answers.seller.nationalId,
       dateOfOwnerChange: new Date(),
       paymentId: paymentId,
-      phoneNumber: answers.buyer.phone,
+      phoneNumber: answers.buyer.phone?.replace(/\+\d{3}/, ''),
       email: answers.buyer.email,
     }
-
     await this.workMachineClientService.initiateOwnerChangeProcess(
       auth,
       ownerChange,

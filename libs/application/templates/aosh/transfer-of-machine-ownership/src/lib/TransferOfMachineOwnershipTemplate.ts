@@ -234,7 +234,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewSellerForm),
                 ),
               write: {
-                answers: ['buyerOperator', 'location', 'rejecter'],
+                answers: ['location', 'rejecter'],
               },
               read: 'all',
               delete: true,
@@ -246,7 +246,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: ['buyerOperator', 'location', 'rejecter'],
+                answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
               },
               read: 'all',
             },

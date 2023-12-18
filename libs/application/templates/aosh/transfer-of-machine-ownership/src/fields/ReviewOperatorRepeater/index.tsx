@@ -12,23 +12,21 @@ import { useLocale } from '@island.is/localization'
 import debounce from 'lodash/debounce'
 import { InputController } from '@island.is/shared/form-fields'
 import { ReviewScreenProps } from '../../shared'
-import { NationalIdWithName } from '../NationalIdWithName'
+import { NationalIdWithName } from '@island.is/application/ui-components'
 import { error, information, review } from '../../lib/messages'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
+import { useFormContext } from 'react-hook-form'
 
 export const ReviewOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = ({ setStep, setBuyerOperator, buyerOperator = {}, ...props }) => {
-  const { application } = props
-  const { locale, formatMessage } = useLocale()
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const { formatMessage } = useLocale()
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   )
   const [genericErrorMessage, setGenericErrorMessage] = useState<
     string | undefined
   >(undefined)
+  const { setValue } = useFormContext()
   const [name, setName] = useState<string | null>(buyerOperator?.name || null)
   const [nationalId, setNationalId] = useState<string | null>(
     buyerOperator?.nationalId || null,
@@ -47,31 +45,11 @@ export const ReviewOperatorRepeater: FC<
     setPhone('')
     setBuyerOperator && setBuyerOperator({})
     buyerOperator = {}
-    const res = await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            buyerOperator: {
-              name,
-              nationalId,
-              email,
-              phone,
-              wasRemoved: 'true',
-            },
-          },
-        },
-        locale,
-      },
-    })
+    setValue('buyerOperator', { wasRemoved: 'true' })
 
-    if (!res.data) {
-      setGenericErrorMessage(formatMessage(error.couldNotUpdateApplication))
-    } else {
-      setGenericErrorMessage(undefined)
-      setErrorMessage(undefined)
-      setStep && setStep('overview')
-    }
+    setGenericErrorMessage(undefined)
+    setErrorMessage(undefined)
+    setStep && setStep('overview')
   }
 
   const onBackButtonClick = () => {
@@ -83,30 +61,11 @@ export const ReviewOperatorRepeater: FC<
   const onForwardButtonClick = async () => {
     if (name && nationalId && email && phone && setBuyerOperator) {
       setBuyerOperator({ name, nationalId, email, phone })
-      const res = await updateApplication({
-        variables: {
-          input: {
-            id: application.id,
-            answers: {
-              buyerOperator: {
-                name,
-                nationalId,
-                email,
-                phone,
-              },
-            },
-          },
-          locale,
-        },
-      })
+      setValue('buyerOperator', { name, nationalId, email, phone })
 
-      if (!res.data) {
-        setGenericErrorMessage(formatMessage(error.couldNotUpdateApplication))
-      } else {
-        setGenericErrorMessage(undefined)
-        setErrorMessage(undefined)
-        setStep && setStep('overview')
-      }
+      setGenericErrorMessage(undefined)
+      setErrorMessage(undefined)
+      setStep && setStep('overview')
     } else {
       setGenericErrorMessage(undefined)
       setErrorMessage(formatMessage(error.fillInValidInput))
@@ -137,6 +96,7 @@ export const ReviewOperatorRepeater: FC<
         </Box>
         <NationalIdWithName
           {...props}
+          id="buyerOperator"
           customNameLabel={formatMessage(information.labels.operator.name)}
           customNationalIdLabel={formatMessage(
             information.labels.operator.nationalId,

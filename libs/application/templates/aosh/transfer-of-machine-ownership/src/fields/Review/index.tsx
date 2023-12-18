@@ -8,9 +8,8 @@ import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
 import { Operator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { conclusion } from '../../lib/messages'
-import { buyerOperatorSubSection } from '../../forms/TransferOfMachineOwnershipForm/buyerOperatorSection'
+import { useFormContext } from 'react-hook-form'
+import { ReviewConclusion } from '../ReviewConclusion'
 
 export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
@@ -24,9 +23,9 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const [buyerOperator, setBuyerOperator] = useState<Operator>(
     getValueViaPath(application.answers, 'buyerOperator') as Operator,
   )
+  const { getValues } = useFormContext()
 
   const reviewerNationalId = userInfo?.profile.nationalId || null
-
   const filteredBuyerOperator =
     buyerOperator?.wasRemoved !== 'true' ? buyerOperator : null
 
@@ -56,30 +55,25 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         )
       case 'conclusion':
         return (
-          <>
-            {buildFormConclusionSection({
-              sectionTitle: conclusion.general.sectionTitle,
-              multiFieldTitle: conclusion.general.title,
-              alertTitle: conclusion.default.accordionTitle,
-              alertMessage: conclusion.default.alertMessage,
-              expandableHeader: conclusion.default.accordionTitle,
-              expandableDescription: conclusion.default.accordionText,
-            })}
-          </>
+          <ReviewConclusion
+            setStep={setStep}
+            reviewerNationalId={reviewerNationalId}
+            buyerOperator={filteredBuyerOperator}
+            {...props}
+          />
         )
       case 'addPeople':
-        return <>{buyerOperatorSubSection}</>
-      // <>
-      // {buyerOperatorSubSection}
-      // </>
-      // <ReviewOperatorRepeater
-      //   setStep={setStep}
-      //   reviewerNationalId={reviewerNationalId}
-      //   setBuyerOperator={setBuyerOperator}
-      //   buyerOperator={buyerOperator}
-      //   {...props}
-      // />
-      //)
+        return (
+          <ReviewOperatorRepeater
+            setStep={setStep}
+            reviewerNationalId={reviewerNationalId}
+            setBuyerOperator={setBuyerOperator}
+            buyerOperator={
+              (getValues('buyerOperator') as Operator) || buyerOperator
+            }
+            {...props}
+          />
+        )
       case 'location':
         return (
           <Location
