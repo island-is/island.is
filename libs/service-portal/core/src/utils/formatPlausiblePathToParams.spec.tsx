@@ -5,7 +5,19 @@ import { formatPlausiblePathToParams } from './formatPlausiblePathToParams'
 const AssetDetailPath = '/fasteignir/:id'
 
 describe('formatPlausiblePathToParams', () => {
-  it('should return path object when path exists in ServicePortalPath enum', async () => {
+  it('should return path object when path matches from string', async () => {
+    // arrange
+    const anyPath = '/fjarmal'
+    const pageOrigin = window.location.origin
+    const rootPath = ServicePortalPaths.Base
+    // assert
+    expect(formatPlausiblePathToParams(anyPath, [anyPath])).toStrictEqual({
+      url: `${pageOrigin}${rootPath}${anyPath}`,
+      location: anyPath,
+    })
+  })
+
+  it('should return path object when no overwrite provided', async () => {
     // arrange
     const anyPath = '/fjarmal'
     const pageOrigin = window.location.origin
@@ -24,21 +36,35 @@ describe('formatPlausiblePathToParams', () => {
     const rootPath = ServicePortalPaths.Base
 
     // assert
-    expect(formatPlausiblePathToParams(anyPath)).toStrictEqual({
+
+    // On array
+    expect(
+      formatPlausiblePathToParams(anyPath, [AssetDetailPath]),
+    ).toStrictEqual({
       url: `${pageOrigin}${rootPath}${AssetDetailPath}`,
       location: AssetDetailPath,
     })
+
+    // On string
+    expect(formatPlausiblePathToParams(anyPath, AssetDetailPath)).toStrictEqual(
+      {
+        url: `${pageOrigin}${rootPath}${AssetDetailPath}`,
+        location: AssetDetailPath,
+      },
+    )
   })
 
-  it('should return root url and current location when path is not available in ServicePortalPath enum', async () => {
+  it('should return root url and empty location when path is not available in overwrite', async () => {
     // arrange
     const anyPath = '/non-existant-path'
     const pageOrigin = window.location.origin
     const rootPath = ServicePortalPaths.Base
     // assert
-    expect(formatPlausiblePathToParams(anyPath)).toStrictEqual({
+    expect(
+      formatPlausiblePathToParams(anyPath, ['/some-other-path']),
+    ).toStrictEqual({
       url: `${pageOrigin}${rootPath}`,
-      location: undefined,
+      location: '',
     })
   })
 
@@ -46,6 +72,8 @@ describe('formatPlausiblePathToParams', () => {
     // arrange
     const fileName = 'file_name.jpg'
     // assert
-    expect(formatPlausiblePathToParams('/', fileName).fileName).toBe(fileName)
+    expect(formatPlausiblePathToParams('/', '', fileName).fileName).toBe(
+      fileName,
+    )
   })
 })

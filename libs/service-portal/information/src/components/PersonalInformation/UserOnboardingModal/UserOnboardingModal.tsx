@@ -3,6 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatPlausiblePathToParams,
   ServicePortalModuleComponent,
+  ServicePortalPaths,
 } from '@island.is/service-portal/core'
 import {
   ModalBase,
@@ -33,7 +34,9 @@ export const UserOnboardingModal = () => {
   const { pathname } = useLocation()
 
   const dropOnboardingSideEffects = () => {
-    servicePortalCloseOnBoardingModal(formatPlausiblePathToParams(pathname))
+    servicePortalCloseOnBoardingModal(
+      formatPlausiblePathToParams(pathname, ServicePortalPaths.Base),
+    )
     sessionStorage.setItem(
       onboardingModalStorage.key,
       onboardingModalStorage.value,
