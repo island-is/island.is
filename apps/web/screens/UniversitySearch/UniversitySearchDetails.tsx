@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import ReactHtmlParser from 'react-html-parser'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import ReactHtmlParser from 'react-html-parser'
-
 import getConfig from 'next/config'
 
 import {
@@ -98,18 +97,18 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     const dictionary: { [key: string]: Array<UniversityGatewayProgramCourse> } =
       {}
 
-    array.forEach((course: any) => {
-      const keyValue = course[mapByKey]
+    array.forEach((arrayItem: any) => {
+      const keyValue = arrayItem[mapByKey]
 
       if (keyValue === undefined) {
         return
       }
       if (dictionary[keyValue] === undefined) {
         // If the key doesn't exist in the dictionary, create a new array
-        dictionary[keyValue] = [course]
+        dictionary[keyValue] = [arrayItem]
       } else {
         // If the key already exists, push the value to the existing array
-        dictionary[keyValue].push(course)
+        dictionary[keyValue].push(arrayItem)
       }
     })
 
@@ -133,7 +132,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
       const contentItems: Array<React.ReactElement> = []
       for (const x in mappedBySemester) {
         contentItems.push(
-          <Box className={styles.capitalizeText}>
+          <Box className={[styles.courseTypeIcon, styles.capitalizeText]}>
             <Text variant="h4" color="blue400" paddingBottom={2} paddingTop={2}>
               {n(x, TranslationDefaults[x])}
             </Text>
@@ -147,7 +146,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                   <Text variant="h4" as="p" paddingBottom={1} paddingTop={1}>
                     {locale === 'en' ? item.nameEn : item.nameIs}
                   </Text>
-                  <Box className={styles.courseTypeIconBlue}>
+                  <Box className={styles.courseTypeIcon}>
                     <Text
                       fontWeight="semiBold"
                       color={

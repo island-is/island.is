@@ -34,8 +34,6 @@ interface LandingPageProps {
 }
 const LandingPage: Screen<LandingPageProps> = ({
   organizationPage,
-  organization,
-  locale,
   namespace,
 }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -6,14 +6,14 @@ import { CmsContentfulService } from '../cms.contentful.service'
 
 type LogoUrl = string | null
 
-export type OrganizationLogoByKeyDataLoader = DataLoader<
+export type OrganizationLogoByReferenceIdDataLoader = DataLoader<
   string,
   LogoUrl,
   string
 >
 
 @Injectable()
-export class OrganizationLogoByKeyLoader
+export class OrganizationLogoByReferenceIdLoader
   implements NestDataLoader<string, LogoUrl>
 {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
@@ -30,7 +30,7 @@ export class OrganizationLogoByKeyLoader
     return organizationLogos
   }
 
-  generateDataLoader(): OrganizationLogoByKeyDataLoader {
+  generateDataLoader(): OrganizationLogoByReferenceIdDataLoader {
     return new DataLoader((keys) => this.loadOrganizationLogo(keys))
   }
 }

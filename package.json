@@ -173,6 +173,7 @@
     "formik": "2.2.9",
     "framer-motion": "6.5.1",
     "fridagar": "^3.2.0",
+    "fuse.js": "7.0.0",
     "geoip-lite": "1.4.7",
     "glob": "10.3.3",
     "graphql": "16.6.0",

@@ -127,9 +127,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
   const [filteredResults, setFilteredResults] = useState<Array<any>>(
-    data.map((item: UniversityGatewayProgram, index: number) => {
-      return { item, refIndex: index, score: 1 }
-    }),
+    data
+      .sort((x, y) => {
+        if (x.nameIs > y.nameIs) return 1
+        return -1
+      })
+      .map((item: UniversityGatewayProgram, index: number) => {
+        return { item, refIndex: index, score: 1 }
+      }),
   )
   const { linkResolver } = useLinkResolver()
 
@@ -663,6 +668,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       icon={'listView'}
                       type="outline"
                       color={gridView ? 'dark200' : 'blue400'}
+                      useStroke
                     />
                   </button>
                 </Box>
