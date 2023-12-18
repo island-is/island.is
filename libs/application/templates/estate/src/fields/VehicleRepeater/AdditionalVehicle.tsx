@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
@@ -15,6 +14,7 @@ import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { GET_VEHICLE_QUERY } from '../../graphql'
 import { GetVehicleInput, Query } from '@island.is/api/schema'
+import { useLocale } from '@island.is/localization'
 
 export const AdditionalVehicle = ({
   field,
@@ -43,11 +43,17 @@ export const AdditionalVehicle = ({
   const marketValueField = `${fieldIndex}.marketValue`
 
   const { control, setValue, clearErrors } = useFormContext()
+
   const { formatMessage } = useLocale()
 
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: GetVehicleInput }>(GET_VEHICLE_QUERY, {
       onCompleted: (data) => {
+        const textValue =
+          `${data?.syslumennGetVehicle?.manufacturer} ${data.syslumennGetVehicle?.modelName}`.trim()
+        if (textValue.length === 0 || textValue.includes('null')) {
+          return
+        }
         clearErrors(nameField)
         setValue(
           nameField,
@@ -66,6 +72,8 @@ export const AdditionalVehicle = ({
           },
         },
       })
+    } else {
+      setValue(nameField, '')
     }
   }, [getProperty, name, nameField, vehicleNumberInput, setValue])
 
@@ -89,7 +97,7 @@ export const AdditionalVehicle = ({
         defaultValue={field.share || ''}
         render={() => <input type="hidden" />}
       />
-      <Text variant="h4">{formatMessage(m.realEstateRepeaterHeader)}</Text>
+      <Text variant="h4">{formatMessage(m.vehicleRepeaterHeader)}</Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"

@@ -19,7 +19,7 @@ import { InputController } from '@island.is/shared/form-fields'
 export const VehicleRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
 > = ({ application, field, errors }) => {
-  const error = (errors as any)?.estate?.assets
+  const error = (errors as any)?.estate?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({
@@ -67,7 +67,7 @@ export const VehicleRepeater: FC<
             >
               <ProfileCard
                 disabled={!vehicle.enabled}
-                title={vehicle.description}
+                title={vehicle?.description ?? vehicle?.assetNumber ?? ''}
                 description={[
                   `${formatMessage(m.propertyNumber)}: ${vehicle.assetNumber}`,
                   <Box marginTop={1} as="span">
@@ -96,7 +96,7 @@ export const VehicleRepeater: FC<
                 <InputController
                   id={`${id}[${index}].marketValue`}
                   name={`${id}[${index}].marketValue`}
-                  label={formatMessage(m.realEstateValueTitle)}
+                  label={formatMessage(m.marketValueTitle)}
                   disabled={!vehicle.enabled}
                   backgroundColor="blue"
                   placeholder="0 kr."
@@ -111,7 +111,7 @@ export const VehicleRepeater: FC<
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field: AssetFormField, index) => (
+      {fields.map((field: AssetFormField, index: number) => (
         <Box key={field.id} hidden={field.initial}>
           <AdditionalVehicle
             field={field}
@@ -130,7 +130,7 @@ export const VehicleRepeater: FC<
           onClick={handleAddProperty}
           size="small"
         >
-          {formatMessage(m.addProperty)}
+          {formatMessage(m.addVehicle)}
         </Button>
       </Box>
     </Box>
