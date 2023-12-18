@@ -153,7 +153,7 @@ const PassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  attachment: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema),
 })
 
 const ChildrenPassportSchema = z.object({
