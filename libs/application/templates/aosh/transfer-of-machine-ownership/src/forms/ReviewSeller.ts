@@ -1,11 +1,8 @@
-import {
-  buildForm,
-  buildSection,
-  buildCustomField,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { information, externalData, payment, review } from '../lib/messages'
+import { information, externalData, payment, conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const ReviewSellerForm: Form = buildForm({
   id: 'ReviewSellerForm',
@@ -28,17 +25,13 @@ export const ReviewSellerForm: Form = buildForm({
       title: payment.general.sectionTitle,
       children: [],
     }),
-    buildSection({
-      id: 'reviewSellerSection',
-      title: review.general.sectionTitle,
-      children: [
-        buildCustomField({
-          component: 'ReviewConclusion',
-          id: 'reviewConclusion',
-          title: '',
-          description: '',
-        }),
-      ],
+    buildFormConclusionSection({
+      sectionTitle: conclusion.general.sectionTitle,
+      multiFieldTitle: conclusion.general.title,
+      alertTitle: conclusion.default.accordionTitle,
+      alertMessage: conclusion.default.alertMessage,
+      expandableHeader: conclusion.default.accordionTitle,
+      expandableDescription: conclusion.default.accordionText,
     }),
   ],
 })

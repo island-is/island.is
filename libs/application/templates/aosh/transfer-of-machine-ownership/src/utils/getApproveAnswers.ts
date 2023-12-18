@@ -1,9 +1,10 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-
+import { Operator } from '../shared'
 export const getApproveAnswers = (
   reviewerNationalId: string,
   answers: FormValue,
+  buyerOperator: Operator,
 ) => {
   const returnAnswers = {}
   // If reviewer is buyer
@@ -28,6 +29,13 @@ export const getApproveAnswers = (
         email: getValueViaPath(answers, 'buyer.email', '') as string,
         phone: getValueViaPath(answers, 'buyer.phone', '') as string,
         approved: true,
+      },
+    })
+    Object.assign(returnAnswers, {
+      buyerOperator: {
+        ...buyerOperator,
+        wasRemoved: buyerOperator.nationalId ? 'false' : 'true',
+        approved: buyerOperator.nationalId ? true : null,
       },
     })
   }

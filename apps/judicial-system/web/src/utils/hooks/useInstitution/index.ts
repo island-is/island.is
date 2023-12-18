@@ -1,16 +1,11 @@
-import { useQuery } from '@apollo/client'
-
 import {
   Institution,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+
+import { useInstitutionsQuery } from './getInstitutions.generated'
 
 let allInstitutions: Institution[]
-
-interface InstitutionData {
-  institutions: Institution[]
-}
 
 const institutions: {
   districtCourts: Institution[]
@@ -27,7 +22,7 @@ const institutions: {
 }
 
 const useInstitution = (skip = false) => {
-  const { data, loading } = useQuery<InstitutionData>(InstitutionsQuery, {
+  const { data, loading } = useInstitutionsQuery({
     skip: skip || Boolean(allInstitutions),
     errorPolicy: 'all',
   })

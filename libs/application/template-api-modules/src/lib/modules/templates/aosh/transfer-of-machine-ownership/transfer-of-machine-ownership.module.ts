@@ -4,9 +4,9 @@ import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { TransferOfMachineOwnershipTemplateService } from './transfer-of-machine-ownership.service'
 import { ConfigModule } from '@nestjs/config'
 import {
-  TransferOfMachineOwnershipClientConfig,
-  TransferOfMachineOwnershipClientModule,
-} from '@island.is/clients/aosh/transfer-of-machine-ownership'
+  WorkMachinesClientConfig,
+  WorkMachinesClientModule,
+} from '@island.is/clients/work-machines'
 import {
   ChargeFjsV2ClientConfig,
   ChargeFjsV2ClientModule,
@@ -18,14 +18,11 @@ export class TransferOfMachineOwnershipTemplateModule {
       module: TransferOfMachineOwnershipTemplateModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        TransferOfMachineOwnershipClientModule,
+        WorkMachinesClientModule,
         ChargeFjsV2ClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [
-            TransferOfMachineOwnershipClientConfig,
-            ChargeFjsV2ClientConfig,
-          ],
+          load: [WorkMachinesClientConfig, ChargeFjsV2ClientConfig],
         }),
       ],
       providers: [TransferOfMachineOwnershipTemplateService],

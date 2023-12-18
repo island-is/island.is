@@ -11,7 +11,7 @@ export const StatusStep: FC<
   title,
   description,
   tagVariant = 'blue',
-  tagText = 'Í bið',
+  tagText = review.tags.text,
   visible = true,
   reviewer = [],
   reviewerNationalId = '',

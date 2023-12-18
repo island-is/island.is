@@ -10,6 +10,8 @@ import {
   UserProfile,
   UserProfileLocaleEnum,
 } from '@island.is/clients/user-profile'
+import { getModelToken } from '@nestjs/sequelize'
+import { Notification } from './notification.model'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
@@ -45,6 +47,7 @@ const mockProfile: UserProfile = {
   profileImageUrl: '',
   emailStatus: 'VERIFIED',
   mobileStatus: 'VERIFIED',
+  lastNudge: new Date(),
 }
 
 describe('MessageProcessorService', () => {
@@ -54,12 +57,17 @@ describe('MessageProcessorService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [CacheModule.register({}), LoggingModule],
+
       providers: [
         MessageProcessorService,
         NotificationsService,
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
+        },
+        {
+          provide: getModelToken(Notification),
+          useClass: jest.fn(() => ({})),
         },
       ],
     }).compile()

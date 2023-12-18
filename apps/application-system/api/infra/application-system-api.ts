@@ -11,6 +11,7 @@ import {
 import {
   Base,
   ChargeFjsV2,
+  EnergyFunds,
   Client,
   CriminalRecord,
   DataProtectionComplaint,
@@ -31,7 +32,8 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   DirectorateOfImmigration,
-  TransferOfMachineOwnership,
+  SocialInsuranceAdministration,
+  OccupationalLicenses,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -120,6 +122,7 @@ export const workerSetup =
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  skilavottordWs: ServiceBuilder<'skilavottord-ws'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -234,6 +237,12 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
+      RECYCLING_FUND_GQL_BASE_PATH: ref(
+        (h) =>
+          `http://${h.svc(
+            services.skilavottordWs,
+          )}/app/skilavottord/api/graphql`,
+      ),
     })
     .xroad(
       Base,
@@ -249,6 +258,7 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      EnergyFunds,
       Finance,
       Properties,
       RskCompanyInfo,
@@ -258,7 +268,8 @@ export const serviceSetup = (services: {
       Passports,
       EHIC,
       DirectorateOfImmigration,
-      TransferOfMachineOwnership,
+      SocialInsuranceAdministration,
+      OccupationalLicenses,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

@@ -1,7 +1,9 @@
 import {
-  buildCustomField,
   buildMultiField,
+  buildNationalIdWithNameField,
+  buildPhoneField,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 
@@ -14,10 +16,23 @@ export const buyerSubSection = buildSubSection({
       title: information.labels.buyer.title,
       description: information.labels.buyer.description,
       children: [
-        buildCustomField({
-          id: 'buyerCustomField',
-          component: 'BuyerField',
-          title: '',
+        buildNationalIdWithNameField({
+          id: 'buyer',
+          title: information.labels.buyer.nationalId,
+          width: 'full',
+        }),
+        buildTextField({
+          id: 'buyer.email',
+          title: information.labels.buyer.email,
+          width: 'half',
+          variant: 'email',
+          required: true,
+        }),
+        buildPhoneField({
+          id: 'buyer.phone',
+          title: information.labels.buyer.phone,
+          width: 'half',
+          required: true,
         }),
       ],
     }),

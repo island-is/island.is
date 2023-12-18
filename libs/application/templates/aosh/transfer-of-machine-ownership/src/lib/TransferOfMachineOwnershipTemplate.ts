@@ -18,13 +18,11 @@ import {
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { MachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { Operator } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
@@ -35,6 +33,8 @@ import {
 } from '../dataProviders'
 import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
+import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -92,10 +92,61 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.Custom,
+    },
   ],
+  requiredScopes: [ApiScope.vinnueftirlitid],
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'Gagnaöflun',
+          status: 'draft',
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardPrerequisites,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                VinnueftirlitidPaymentCatalogApi,
+                MachinesApi,
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: 'Tilkynning um eigendaskipti að tæki',
@@ -112,7 +163,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
 
           roles: [
@@ -123,21 +173,8 @@ const template: ApplicationTemplate<
                   (module) =>
                     Promise.resolve(module.TransferOfMachineOwnershipForm),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
               write: 'all',
               delete: true,
-              api: [
-                IdentityApi,
-                UserProfileApi,
-                VinnueftirlitidPaymentCatalogApi,
-                MachinesApi,
-              ],
             },
           ],
         },
@@ -182,7 +219,6 @@ const template: ApplicationTemplate<
             ],
             pendingAction: reviewStatePendingAction,
           },
-          progress: 0.65,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -198,7 +234,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewSellerForm),
                 ),
               write: {
-                answers: ['buyerOperator', 'location', 'rejecter'],
+                answers: ['location', 'rejecter'],
               },
               read: 'all',
               delete: true,
@@ -210,7 +246,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: ['buyerOperator', 'location', 'rejecter'],
+                answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
               },
               read: 'all',
             },
@@ -226,7 +262,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           status: 'rejected',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.rejectApplication,
@@ -261,7 +296,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -287,6 +321,14 @@ const template: ApplicationTemplate<
             },
             {
               id: Roles.BUYER,
+              formLoader: () =>
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.BUYEROPERATOR,
               formLoader: () =>
                 import('../forms/Approved').then((module) =>
                   Promise.resolve(module.Approved),

@@ -26,9 +26,9 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { MachineDetails } from './models/machineDetails'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalWorkMachinesModule)
 @Resolver()
 @Audit({ namespace: '@island.is/api/work-machines' })
 export class WorkMachinesResolver {
@@ -41,6 +41,7 @@ export class WorkMachinesResolver {
   ) {}
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => PaginatedCollectionResponse, {
     name: 'workMachinesPaginatedCollection',
     nullable: true,
@@ -58,11 +59,13 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => Document, {
     name: 'workMachinesCollectionDocument',
     nullable: true,
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   async getWorkMachinesCollectionDocument(
     @Args('input', {
       type: () => GetDocumentsInput,
@@ -80,6 +83,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => WorkMachine, { name: 'workMachine', nullable: true })
   @Audit()
   async getWorkMachineById(
@@ -88,5 +92,33 @@ export class WorkMachinesResolver {
     input: GetWorkMachineInput,
   ) {
     return this.workMachinesService.getWorkMachineById(user, input)
+  }
+
+  @Scopes(
+    ApiScope.vinnueftirlitid,
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+  )
+  @Query(() => MachineDetails)
+  @Audit()
+  async getWorkerMachineDetails(
+    @CurrentUser() auth: User,
+    @Args('id') id: string,
+  ) {
+    return this.workMachinesService.getMachineDetails(auth, id)
+  }
+
+  @Scopes(
+    ApiScope.vinnueftirlitid,
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+  )
+  @Query(() => Boolean)
+  @Audit()
+  async getWorkerMachinePaymentRequired(
+    @CurrentUser() auth: User,
+    @Args('regNumber') regNumber: string,
+  ) {
+    return this.workMachinesService.isPaymentRequired(auth, regNumber)
   }
 }

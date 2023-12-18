@@ -3,12 +3,13 @@ import { FC, useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { ApplicationStatus } from '../ApplicationStatus'
 import { Overview } from '../Overview'
-import { ReviewConclusion } from '../ReviewConclusion'
 import { Location } from '../Location'
 import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
 import { Operator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
+import { useFormContext } from 'react-hook-form'
+import { ReviewConclusion } from '../ReviewConclusion'
 
 export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
@@ -22,9 +23,9 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const [buyerOperator, setBuyerOperator] = useState<Operator>(
     getValueViaPath(application.answers, 'buyerOperator') as Operator,
   )
+  const { getValues } = useFormContext()
 
   const reviewerNationalId = userInfo?.profile.nationalId || null
-
   const filteredBuyerOperator =
     buyerOperator?.wasRemoved !== 'true' ? buyerOperator : null
 
@@ -67,7 +68,9 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
             setBuyerOperator={setBuyerOperator}
-            buyerOperator={buyerOperator}
+            buyerOperator={
+              (getValues('buyerOperator') as Operator) || buyerOperator
+            }
             {...props}
           />
         )

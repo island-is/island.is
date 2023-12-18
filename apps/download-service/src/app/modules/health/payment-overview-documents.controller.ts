@@ -24,7 +24,7 @@ import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights
 import { GetGetHealthPaymentDocumentDto } from './dto/getHealthPaymentDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.health)
+@Scopes(ApiScope.healthPayments)
 @Controller('health')
 export class HealthPaymentsOverviewController {
   constructor(

@@ -17,7 +17,6 @@ import { conclusion } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
 import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 import { coreMessages } from '@island.is/application/core'
-import { ConclusionImage } from '../../assets/conclusion'
 
 export const ReviewConclusion: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -48,9 +47,6 @@ export const ReviewConclusion: FC<
       >
         <Text>{formatMessage(conclusion.approved.accordionText)}</Text>
       </AccordionCard>
-      <Box marginTop={3}>
-        <ConclusionImage />
-      </Box>
 
       <Divider />
 

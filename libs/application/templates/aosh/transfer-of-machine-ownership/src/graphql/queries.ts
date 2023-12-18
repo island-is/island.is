@@ -9,25 +9,17 @@ export const IDENTITY_QUERY = `
 
 export const GET_MACHINE_DETAILS = `
 query GetMachineDetails($id: String!) {
-  aoshMachineDetails(id: $id) {
+  getWorkerMachineDetails(id: $id) {
     id
-    registrationNumber
+    regNumber
     type
+    subType
     status
     category
-    subCategory
-    productionYear
-    registrationDate
     ownerNumber
-    productionNumber
-    productionCountry
-    licensePlateNumber
-    links {
-      href
-      rel
-      method
-      displayTitle
-    }
+    plate
+    disabled
+    supervisorName
   }
 }
 `
