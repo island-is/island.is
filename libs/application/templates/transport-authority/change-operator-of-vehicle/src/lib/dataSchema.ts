@@ -98,7 +98,7 @@ export const ChangeOperatorOfVehicleSchema = z.object({
   owner: UserInformationSchema,
   ownerCoOwner: z.array(UserInformationSchema),
   vehicle: z.object({
-    plate: z.string(),
+    mileage: z.string().refine((p) => parseInt(p?.split(' ')[0]) >= 0),
   }),
   operators: z.array(OperatorInformationSchema),
   oldOperators: z.array(OldOperatorInformationSchema),

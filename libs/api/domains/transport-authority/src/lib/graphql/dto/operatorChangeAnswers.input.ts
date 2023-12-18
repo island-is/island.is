@@ -7,6 +7,12 @@ export class OperatorChangeAnswersPickVehicle {
 }
 
 @InputType()
+export class OperatorChangeAnswersVehicle {
+  @Field(() => String, { nullable: true })
+  mileage?: string
+}
+
+@InputType()
 export class OperatorChangeAnswersUser {
   @Field(() => String, { nullable: false })
   nationalId!: string
@@ -31,6 +37,9 @@ export class OperatorChangeAnswersMainOperator {
 export class OperatorChangeAnswers {
   @Field(() => OperatorChangeAnswersPickVehicle, { nullable: false })
   pickVehicle!: OperatorChangeAnswersPickVehicle
+
+  @Field(() => OperatorChangeAnswersVehicle, { nullable: false })
+  vehicle!: OperatorChangeAnswersVehicle
 
   @Field(() => OperatorChangeAnswersUser, { nullable: false })
   owner!: OperatorChangeAnswersUser

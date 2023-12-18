@@ -7,6 +7,12 @@ export class CoOwnerChangeAnswersPickVehicle {
 }
 
 @InputType()
+export class CoOwnerChangeAnswersVehicle {
+  @Field(() => String, { nullable: true })
+  mileage?: string
+}
+
+@InputType()
 export class CoOwnerChangeAnswersUser {
   @Field(() => String, { nullable: false })
   nationalId!: string
@@ -43,6 +49,9 @@ export class CoOwnerChangeAnswersCoOwners {
 export class CoOwnerChangeAnswers {
   @Field(() => CoOwnerChangeAnswersPickVehicle, { nullable: false })
   pickVehicle!: CoOwnerChangeAnswersPickVehicle
+
+  @Field(() => CoOwnerChangeAnswersVehicle, { nullable: false })
+  vehicle!: CoOwnerChangeAnswersVehicle
 
   @Field(() => CoOwnerChangeAnswersUser, { nullable: false })
   owner!: CoOwnerChangeAnswersUser

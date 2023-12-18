@@ -2,7 +2,6 @@ import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
-  buildDateField,
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
@@ -45,25 +44,6 @@ export const vehicleSubSection = buildSubSection({
             ) as VehiclesCurrentVehicle
             return vehicle.make
           },
-        }),
-        buildTextField({
-          id: 'vehicle.salePrice',
-          title: information.labels.vehicle.salePrice,
-          width: 'full',
-          variant: 'currency',
-        }),
-        buildDateField({
-          id: 'vehicle.date',
-          title: information.labels.vehicle.date,
-          required: true,
-          width: 'full',
-          maxDate: new Date(),
-          minDate: () => {
-            const minDate = new Date()
-            minDate.setDate(minDate.getDate() - 6)
-            return minDate
-          },
-          defaultValue: new Date().toISOString().substring(0, 10),
         }),
         buildTextField({
           id: 'vehicle.mileage',

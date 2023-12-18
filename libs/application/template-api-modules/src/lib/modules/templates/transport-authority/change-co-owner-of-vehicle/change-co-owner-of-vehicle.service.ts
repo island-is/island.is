@@ -149,6 +149,10 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       ...(filteredNewCoOwners ? filteredNewCoOwners : []),
     ]
 
+    const mileage = answers?.vehicle?.mileage
+      ? Number(answers?.vehicle?.mileage) || 0
+      : null
+
     const result =
       await this.vehicleOwnerChangeClient.validateAllForOwnerChange(auth, {
         permno: permno,
@@ -163,6 +167,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         dateOfPurchase: new Date(application.created),
         dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: currentOwnerChange?.saleAmount,
+        mileage: mileage,
         insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
         operators: currentOperators?.map((operator) => ({
           ssn: operator.ssn || '',
@@ -383,6 +388,10 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       permno,
     )
 
+    const mileage = answers?.vehicle?.mileage
+      ? Number(answers?.vehicle?.mileage) || 0
+      : null
+
     await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
       permno: permno,
       seller: {
@@ -396,6 +405,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       dateOfPurchase: new Date(application.created),
       dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: currentOwnerChange?.saleAmount,
+      mileage: mileage,
       insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
       operators: currentOperators?.map((operator) => ({
         ssn: operator.ssn || '',

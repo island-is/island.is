@@ -143,11 +143,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
+    const mileage = answers?.vehicle?.mileage
+      ? Number(answers?.vehicle?.mileage) || 0
+      : null
+
     const result =
       await this.vehicleOperatorsClient.validateAllForOperatorChange(
         auth,
         permno,
         operators,
+        mileage,
       )
 
     // If we get any error messages, we will just throw an error with a default title
@@ -354,7 +359,16 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    await this.vehicleOperatorsClient.saveOperators(auth, permno, operators)
+    const mileage = answers?.vehicle?.mileage
+      ? Number(answers?.vehicle?.mileage) || 0
+      : null
+
+    await this.vehicleOperatorsClient.saveOperators(
+      auth,
+      permno,
+      operators,
+      mileage,
+    )
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 

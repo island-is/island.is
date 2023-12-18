@@ -188,6 +188,10 @@ export class TransportAuthorityApi {
       ...(filteredNewCoOwners ? filteredNewCoOwners : []),
     ]
 
+    const mileage = answers?.vehicle?.mileage
+      ? Number(answers?.vehicle?.mileage) || 0
+      : null
+
     const result =
       await this.vehicleOwnerChangeClient.validateAllForOwnerChange(user, {
         permno: permno,
@@ -202,6 +206,7 @@ export class TransportAuthorityApi {
         dateOfPurchase: new Date(),
         dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
         saleAmount: currentOwnerChange?.saleAmount,
+        mileage: mileage,
         insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
         operators: currentOperators?.map((operator) => ({
           ssn: operator.ssn || '',
@@ -292,11 +297,16 @@ export class TransportAuthorityApi {
           : true,
     }))
 
+    const mileage = answers?.vehicle?.mileage
+      ? Number(answers?.vehicle?.mileage) || 0
+      : null
+
     const result =
       await this.vehicleOperatorsClient.validateAllForOperatorChange(
         user,
         permno,
         operators,
+        mileage,
       )
 
     return result
