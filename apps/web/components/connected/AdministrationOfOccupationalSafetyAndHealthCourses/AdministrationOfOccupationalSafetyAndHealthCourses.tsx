@@ -17,7 +17,7 @@ import { GET_ADMINISTRATION_OF_SAFETY_AND_HEALTH_COURSES_QUERY } from './queries
 import { getCurrencyString, parseDateString } from './utils'
 
 const normalizesAndMatch = (value1: string, value2: string) => {
-  return value1.toLowerCase().trim() === value2.toLowerCase().trim()
+  return value1.toLowerCase().trim().includes(value2.toLowerCase().trim())
 }
 
 interface AdministrationOfOccupationalSafetyAndHealthCoursesProps {
