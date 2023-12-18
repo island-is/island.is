@@ -51,6 +51,25 @@ export class ManualSyncService implements CmsSyncProvider<IManual> {
             })
           }
 
+          if (mapped.category?.slug) {
+            tags.push({
+              key: mapped.category.slug,
+              type: 'category',
+            })
+          }
+          if (mapped.group?.slug) {
+            tags.push({
+              key: mapped.group.slug,
+              type: 'group',
+            })
+          }
+          if (mapped.subgroup?.slug) {
+            tags.push({
+              key: mapped.subgroup.slug,
+              type: 'subgroup',
+            })
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
