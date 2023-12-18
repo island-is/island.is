@@ -14,6 +14,7 @@ import {
   formatDate,
   m,
   periodFormat,
+  DownloadFileButtons,
 } from '@island.is/service-portal/core'
 import { useGetChargeTypePeriodSubjectQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
@@ -63,37 +64,25 @@ export default function FinanceTransactionSelectedPeriod({
       </Box>
 
       {data?.getChargeTypePeriodSubject.records?.length ? (
-        <Box paddingBottom={4} display="flex" flexDirection="row">
-          <Button
-            colorScheme="default"
-            icon="arrowForward"
-            iconType="filled"
-            onClick={() =>
-              exportPeriodBreakdownFile(data, period, 'ValinTimabil', 'xlsx')
-            }
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            {formatMessage(m.getAsExcel)}
-          </Button>
-          <Box marginLeft={2} />
-          <Button
-            colorScheme="default"
-            icon="arrowForward"
-            iconType="filled"
-            onClick={() =>
-              exportPeriodBreakdownFile(data, period, 'ValinTimabil', 'csv')
-            }
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            {formatMessage(m.getAsCsv)}
-          </Button>
-        </Box>
+        <DownloadFileButtons
+          BoxProps={{
+            paddingBottom: 4,
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+          buttons={[
+            {
+              text: formatMessage(m.getAsExcel),
+              onClick: () =>
+                exportPeriodBreakdownFile(data, period, 'ValinTimabil', 'xlsx'),
+            },
+            {
+              text: formatMessage(m.getAsCsv),
+              onClick: () =>
+                exportPeriodBreakdownFile(data, period, 'ValinTimabil', 'csv'),
+            },
+          ]}
+        />
       ) : null}
 
       {error && (

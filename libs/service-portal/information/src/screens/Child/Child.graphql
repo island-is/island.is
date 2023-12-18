@@ -11,6 +11,7 @@ query NationalRegistryChildCustody(
       details {
         nationalId
         fullName
+        baseId
         __typename
         name {
           firstName

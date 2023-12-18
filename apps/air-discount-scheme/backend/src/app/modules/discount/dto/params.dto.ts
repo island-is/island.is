@@ -34,9 +34,6 @@ export class CreateExplicitDiscountCodeParams {
 
   @IsBoolean()
   readonly isExplicit!: boolean
-
-  @IsNumber()
-  readonly flightLegs!: number
 }
 
 export class CreateSuperExplicitDiscountCodeParams {
@@ -58,7 +55,4 @@ export class CreateSuperExplicitDiscountCodeParams {
 
   @IsBoolean()
   readonly isExplicit!: boolean
-
-  @IsNumber()
-  readonly flightLegs!: number
 }
