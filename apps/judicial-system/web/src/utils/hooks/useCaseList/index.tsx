@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseState,
@@ -180,6 +181,7 @@ const useCaseList = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          height: theme.spacing[3],
         }}
       >
         <LoadingDots single />

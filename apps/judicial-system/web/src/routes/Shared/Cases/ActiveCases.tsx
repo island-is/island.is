@@ -338,7 +338,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   )}
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
-                  <AnimatePresence exitBeforeEnter>
+                  <AnimatePresence exitBeforeEnter initial={false}>
                     {isOpeningCaseId === c.id && showLoading ? (
                       <div className={styles.deleteButtonWrapper}>
                         <LoadingIndicator />

@@ -90,10 +90,10 @@ export const td = style({
 })
 
 export const deleteButtonWrapper = style({
-  marginRight: 24,
+  margin: '0 auto',
   padding: 10,
-  minWidth: 36,
-  minHeight: 36,
+  width: 44,
+  height: 44,
 })
 
 export const deleteButton = style({
