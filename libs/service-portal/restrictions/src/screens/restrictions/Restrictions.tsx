@@ -47,7 +47,7 @@ export default function Restrictions() {
 
   const allowRestrictions = isAfter(dateUntil, new Date())
   const hasRestrictions = data.disabledUntil !== null && allowRestrictions
-  const showElectronicIdWarning = idp.includes('sim')
+  const showElectronicIdWarning = !idp.includes('sim')
 
   const formattedDate = formatDate(data.disabledUntil)
   const intent = allowRestrictions
