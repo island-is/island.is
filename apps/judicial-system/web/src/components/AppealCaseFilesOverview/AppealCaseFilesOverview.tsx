@@ -134,22 +134,24 @@ const AppealCaseFilesOverview: React.FC<
           </PdfButton>
         ))}
       </Box>
-      {(isProsecutionUser(user) || isDefenceUser(user)) && (
-        <Box display="flex" justifyContent="flexEnd" marginTop={3}>
-          <Button
-            icon="add"
-            onClick={() => {
-              router.push(
-                limitedAccess
-                  ? `${constants.DEFENDER_APPEAL_FILES_ROUTE}/${workingCase.id}`
-                  : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
-              )
-            }}
-          >
-            {formatMessage(strings.addFiles)}
-          </Button>
-        </Box>
-      )}
+      {(isProsecutionUser(user) || isDefenceUser(user)) &&
+        workingCase.appealState &&
+        workingCase.appealState !== CaseAppealState.COMPLETED && (
+          <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+            <Button
+              icon="add"
+              onClick={() => {
+                router.push(
+                  limitedAccess
+                    ? `${constants.DEFENDER_APPEAL_FILES_ROUTE}/${workingCase.id}`
+                    : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }}
+            >
+              {formatMessage(strings.addFiles)}
+            </Button>
+          </Box>
+        )}
 
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
