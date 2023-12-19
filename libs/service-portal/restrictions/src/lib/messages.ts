@@ -52,4 +52,17 @@ export const m = defineMessages({
     id: 'portals:modal-confirm',
     defaultMessage: 'Staðfesta',
   },
+  messageEnabledRestriction: {
+    id: 'portals:enabled-restriction',
+    defaultMessage: 'Þú ert með virka takmörkun til {date}',
+  },
+  warningElectronicId: {
+    id: 'portals:warning-electronic-id',
+    defaultMessage:
+      'Aðeins er hægt að virkja takmarkanir við innskráningu með því að vera skráður inn með rafrænum skilríkjum í síma.',
+  },
+  invalidIntent: {
+    id: 'portals:invalid-intent',
+    defaultMessage: 'Ógild aðgerð',
+  },
 })

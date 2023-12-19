@@ -3,6 +3,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 
 import { restrictionsLoader } from './screens/restrictions/Restrictions.loader'
+import { restrictionsAction } from './screens/restrictions/Restrictions.action'
 import { Paths } from './lib/paths'
 import { m } from './lib/messages'
 
@@ -21,6 +22,7 @@ export const restrictionsModule: PortalModule = {
         name: m.restrictions,
         path: Paths.Restrictions,
         loader: restrictionsLoader(args),
+        action: restrictionsAction(args),
         element: <Restrictions />,
       },
     ]
