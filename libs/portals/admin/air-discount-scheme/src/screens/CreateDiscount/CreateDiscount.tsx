@@ -39,17 +39,12 @@ const AdminCreateDiscount = () => {
     },
   ]
 
-  const possibleFlightLegs = [
-    { label: 'Aðra leið', value: 1 },
-    { label: 'Báðar leiðir', value: 2 },
-  ]
-
   const [createExplicitDiscountCode] = useCreateExplicitDiscountCodeMutation()
   const [nationalId, setNationalId] = useState('')
   const [postalcode, setPostalcode] = useState('')
   const [comment, setComment] = useState('')
   const [length, setLength] = useState(options[0])
-  const [flightLegs, setFlightLegs] = useState(possibleFlightLegs[0])
+
   const [needsConnecting, setNeedsConnecting] = useState(typeOptions[0])
   const [discountCode, setDiscountCode] = useState<
     CreateExplicitDiscountCodeMutation | undefined | null
@@ -76,10 +71,9 @@ const AdminCreateDiscount = () => {
               {discountCode ? (
                 <>
                   {discountCode?.createAirDiscountSchemeExplicitDiscountCode?.map(
-                    (item, i) => {
+                    (item) => {
                       return (
                         <>
-                          <Text variant="h2">Leið {i + 1}</Text>
                           <Text variant="h3">
                             Venjulegur kóði: {item.discountCode}
                           </Text>
@@ -108,6 +102,7 @@ const AdminCreateDiscount = () => {
                       setPostalcode('')
                       setComment('')
                       setDiscountCode(null)
+                      setNeedsConnecting(typeOptions[0])
                     }}
                   >
                     Búa til nýjan kóða
@@ -159,20 +154,6 @@ const AdminCreateDiscount = () => {
                     options={typeOptions}
                   />
                   <Select
-                    name="flightLegs"
-                    label="Leið"
-                    required
-                    onChange={(opt) => {
-                      setFlightLegs(
-                        possibleFlightLegs.find(
-                          (item) => item.value === opt?.value,
-                        ) ?? possibleFlightLegs[0],
-                      )
-                    }}
-                    value={flightLegs}
-                    options={possibleFlightLegs}
-                  />
-                  <Select
                     name="length"
                     label="Tímalengd"
                     required
@@ -214,7 +195,6 @@ const AdminCreateDiscount = () => {
                 comment,
                 numberOfDaysUntilExpiration: parseInt(length.value, 10),
                 isExplicit: false,
-                flightLegs: flightLegs.value,
                 needsConnectionFlight: needsConnecting.value,
               },
             },

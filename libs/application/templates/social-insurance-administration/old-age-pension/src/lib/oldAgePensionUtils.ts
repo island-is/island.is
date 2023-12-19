@@ -477,7 +477,7 @@ export function getAttachments(application: Application) {
   if (employmentStatus === Employment.SELFEMPLOYED) {
     const selfEmpoyed = answers.employment as SelfEmployed
     getAttachmentDetails(
-      selfEmpoyed?.SelfEmployedAttachment,
+      selfEmpoyed?.selfEmployedAttachment,
       AttachmentTypes.SELF_EMPLOYED_ATTACHMENT,
     )
   }

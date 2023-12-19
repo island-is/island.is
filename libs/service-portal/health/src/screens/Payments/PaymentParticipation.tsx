@@ -9,12 +9,15 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import {
+  DownloadFileButtons,
   UserInfoLine,
   amountFormat,
   m,
   numberFormat,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
+import { totalNumber } from '../../utils/format'
+import { exportPaymentParticipationFile } from '../../utils/FileBreakdown/filesStructure'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
@@ -269,37 +272,27 @@ export const PaymentPartication = () => {
                     </span>
                   </T.Data>
                   <T.Data></T.Data>
-                  <T.Data>
-                    {amountFormat(
-                      bills?.reduce((a, b) => {
-                        return a + (b?.totalAmount ?? 0)
-                      }, 0) ?? 0,
-                    )}
-                  </T.Data>
-                  <T.Data>
-                    {amountFormat(
-                      bills?.reduce((a, b) => {
-                        return a + (b?.insuranceAmount ?? 0)
-                      }, 0) ?? 0,
-                    )}
-                  </T.Data>
-                  <T.Data>
-                    {amountFormat(
-                      bills?.reduce((a, b) => {
-                        return a + (b?.ownAmount ?? 0)
-                      }, 0) ?? 0,
-                    )}
-                  </T.Data>
-                  <T.Data>
-                    {amountFormat(
-                      bills?.reduce((a, b) => {
-                        return a + (b?.overpaid ?? 0)
-                      }, 0) ?? 0,
-                    )}
-                  </T.Data>
+                  <T.Data>{totalNumber(bills, 'totalAmount')}</T.Data>
+                  <T.Data>{totalNumber(bills, 'insuranceAmount')}</T.Data>
+                  <T.Data>{totalNumber(bills, 'ownAmount')}</T.Data>
+                  <T.Data>{totalNumber(bills, 'overpaid')}</T.Data>
                 </T.Row>
               </T.Foot>
             </T.Table>
+            <DownloadFileButtons
+              BoxProps={{
+                paddingTop: 2,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flexEnd',
+              }}
+              buttons={[
+                {
+                  text: formatMessage(m.getAsExcel),
+                  onClick: () => exportPaymentParticipationFile(bills, 'xlsx'),
+                },
+              ]}
+            />
           </Box>
         ) : undefined}
       </Box>

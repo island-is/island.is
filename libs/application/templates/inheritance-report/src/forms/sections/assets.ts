@@ -383,6 +383,7 @@ export const assets = buildSection({
                     id: 'value',
                     color: 'white',
                     readOnly: true,
+                    currency: true,
                   },
                 ],
                 repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
