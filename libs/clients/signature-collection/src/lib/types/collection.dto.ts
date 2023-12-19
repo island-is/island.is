@@ -12,7 +12,7 @@ export interface CollectionInfo {
   isActive: boolean
   isPresidential: boolean
 }
-export interface Collection {
+export interface Collection extends Omit<CollectionInfo, 'id'> {
   id: string
   name: string
   startTime: Date
@@ -43,16 +43,28 @@ export function mapCollectionInfo(
 export function mapCollection(
   collection: MedmaelasofnunExtendedDTO,
 ): Collection {
+  const { id: id, sofnunStart: startTime, sofnunEnd: endTime } = collection
+  if (id == null || startTime == null || endTime == null) {
+    logger.warn(
+      'Received partial collection information from the national registry.',
+      collection,
+    )
+    throw new Error(
+      'Received partial collection information from the national registry.',
+    )
+  }
   return {
-    id: collection.id?.toString() ?? '',
+    id: id?.toString(),
     name: collection.kosningNafn ?? '',
-    startTime: collection.sofnunStart ?? new Date(),
-    endTime: collection.sofnunEnd ?? new Date(),
+    startTime,
+    endTime,
     areas:
       collection.svaedi?.map(({ id, nafn, fjoldi }) => ({
         id: id?.toString() ?? '',
         name: nafn ?? '',
         min: fjoldi ?? 0,
       })) ?? [],
+    isActive: startTime < new Date() && endTime > new Date(),
+    isPresidential: collection.kosningTegund == 'Forsetakosning',
   }
 }

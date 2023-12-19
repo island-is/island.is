@@ -95,7 +95,11 @@ export class SignatureCollectionClientService {
     return signatures.map((signature) => mapSignature(signature))
   }
 
-  async getAreas(collectionId: number) {
+  async getAreas(collectionId?: number) {
+    if (!collectionId) {
+      const { id } = await this.currentCollectionInfo()
+      collectionId = id
+    }
     const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
       iD: collectionId,
     })

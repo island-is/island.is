@@ -28,17 +28,16 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     )
   }
 
-  async canCreate({ auth, application }: TemplateApiModuleActionProps) {
-    const res = await this.signatureCollectionClientService.canCreate(
+  async ownerRequirements({ auth, application }: TemplateApiModuleActionProps) {
+    const canCreate = await this.signatureCollectionClientService.canCreate(
       auth.nationalId,
     )
-    return res.success
+    const isOwner = await this.signatureCollectionClientService.isOwner(
+      auth.nationalId,
+    )
   }
 
-  async isOwner({ auth, application }: TemplateApiModuleActionProps) {
-    const res = await this.signatureCollectionClientService.isOwner(
-      auth.nationalId,
-    )
-    return res.success
+  async getAreas({ auth, application }: TemplateApiModuleActionProps) {
+    return await this.signatureCollectionClientService.getAreas()
   }
 }
