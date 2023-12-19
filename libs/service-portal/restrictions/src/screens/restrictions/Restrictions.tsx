@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl'
 import { Form, useLoaderData } from 'react-router-dom'
 import isAfter from 'date-fns/isAfter'
 
+import { useUserDecodedIdToken } from '@island.is/auth/react'
 import {
   AlertMessage,
   Box,
@@ -36,16 +37,19 @@ const FormWrapper = ({ children, intent }: FormWrapperProps) => (
 
 export default function Restrictions() {
   const { formatMessage } = useLocale()
-
+  const { idp } = useUserDecodedIdToken()
   const data = useLoaderData() as RestrictionsLoaderResult
   const { isLoading, isSubmitting } = useSubmitting()
 
   const [showModal, setShowModal] = useState(false)
 
-  const allowRestrictions = !isAfter(new Date(data.disabledUntil), new Date())
-  const showWarning = true
-  const hasRestrictions = true
-  const date = formatDate(data.disabledUntil)
+  const dateUntil = new Date(data.disabledUntil)
+
+  const allowRestrictions = isAfter(dateUntil, new Date())
+  const hasRestrictions = data.disabledUntil !== null && allowRestrictions
+  const showElectronicIdWarning = idp.includes('sim')
+
+  const formattedDate = formatDate(data.disabledUntil)
   const intent = allowRestrictions
     ? RestrictionsIntent.Enable
     : RestrictionsIntent.Disable
@@ -79,31 +83,32 @@ export default function Restrictions() {
                 <div className={styles.whiteSpacePreWrap}>
                   <FormattedMessage
                     {...m.messageEnabledRestriction}
-                    values={{ date: <b>{date}</b> }}
+                    values={{ date: <b>{formattedDate}</b> }}
                   />
                 </div>
               }
             />
           )}
-          {showWarning && (
+          {showElectronicIdWarning ? (
             <AlertMessage
               type="warning"
               message={formatMessage(m.warningElectronicId)}
             />
+          ) : (
+            <div>
+              <Button
+                {...(allowRestrictions
+                  ? { onClick: () => setShowModal(true) }
+                  : { type: 'submit', loading: isSubmitting || isLoading })}
+              >
+                {formatMessage(
+                  allowRestrictions
+                    ? m.enableRestrictions
+                    : m.disableRestrictions,
+                )}
+              </Button>
+            </div>
           )}
-          <div>
-            <Button
-              {...(allowRestrictions
-                ? { onClick: () => setShowModal(true) }
-                : { type: 'submit', loading: isSubmitting || isLoading })}
-            >
-              {formatMessage(
-                allowRestrictions
-                  ? m.enableRestrictions
-                  : m.disableRestrictions,
-              )}
-            </Button>
-          </div>
         </Box>
       </FormWrapper>
       {showModal && (
@@ -128,7 +133,7 @@ export default function Restrictions() {
                 <Text variant="h3" fontWeight="light">
                   <FormattedMessage
                     {...m.modalDescription}
-                    values={{ date: <b>{date}</b> }}
+                    values={{ date: <b>{formattedDate}</b> }}
                   />
                 </Text>
                 <Text variant="h3" fontWeight="light" marginTop={2}>
