@@ -21,6 +21,7 @@ import {
   Broker,
   PropertyDetail,
   TemporaryEventLicence,
+  VehicleRegistration,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -41,6 +42,7 @@ import {
   cleanPropertyNumber,
   mapTemporaryEventLicence,
   mapMasterLicence,
+  mapVehicle,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -337,6 +339,15 @@ export class SyslumennService {
 
   async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
     return await this.getAsset(vehicleId, AssetType.Vehicle, mapAssetName)
+  }
+
+  async getVehicle(vehicleId: string): Promise<VehicleRegistration> {
+    const { id, api } = await this.createApi()
+    const response = await api.okutaekiGet({
+      audkenni: id,
+      fastanumer: vehicleId,
+    })
+    return mapVehicle(response)
   }
 
   async getMortgageCertificate(

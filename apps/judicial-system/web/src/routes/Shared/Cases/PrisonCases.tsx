@@ -13,7 +13,6 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
@@ -24,8 +23,6 @@ export const PrisonCases: React.FC = () => {
   const { user } = useContext(UserContext)
 
   const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
-
-  const { getCaseToOpen } = useCase()
 
   const { data, error, loading } = usePrisonCasesQuery({
     fetchPolicy: 'no-cache',
@@ -41,10 +38,6 @@ export const PrisonCases: React.FC = () => {
 
     return partition(resCases, (c) => !c.isValidToDateInThePast)
   }, [resCases])
-
-  const handleRowClick = (id: string) => {
-    getCaseToOpen(id)
-  }
 
   return (
     <SharedPageLayout>
@@ -75,11 +68,7 @@ export const PrisonCases: React.FC = () => {
           />
           <Box marginBottom={[5, 5, 12]}>
             {loading || !user || activeCases.length > 0 ? (
-              <PastCasesTable
-                cases={activeCases}
-                onRowClick={handleRowClick}
-                loading={loading}
-              />
+              <PastCasesTable cases={activeCases} loading={loading} />
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage
@@ -107,7 +96,6 @@ export const PrisonCases: React.FC = () => {
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
           cases={pastCases}
-          onRowClick={handleRowClick}
           loading={loading}
           testid="pastCasesTable"
         />
