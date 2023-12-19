@@ -87,7 +87,8 @@ export class WorkMachinesClientService {
       }) || []
     )
   }
-  public async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
+
+  async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
@@ -104,7 +105,7 @@ export class WorkMachinesClientService {
     }
   }
 
-  public async isPaymentRequired(auth: Auth, regNumber: string) {
+  async isPaymentRequired(auth: Auth, regNumber: string) {
     const result = await this.machineCategoryApiWithAuth(
       auth,
     ).apiMachineCategoryGet({ registrationNumber: regNumber })
@@ -112,7 +113,7 @@ export class WorkMachinesClientService {
     return result.paymentRequiredForOwnerChange || false
   }
 
-  public async initiateOwnerChangeProcess(
+  async initiateOwnerChangeProcess(
     auth: Auth,
     ownerChange: ChangeMachineOwner,
   ) {
@@ -123,10 +124,7 @@ export class WorkMachinesClientService {
     )
   }
 
-  public async confirmOwnerChange(
-    auth: Auth,
-    confirmChange: ConfirmOwnerChange,
-  ) {
+  async confirmOwnerChange(auth: Auth, confirmChange: ConfirmOwnerChange) {
     const input = confirmChangeToApiRequest(
       confirmChange,
       auth.nationalId || '',

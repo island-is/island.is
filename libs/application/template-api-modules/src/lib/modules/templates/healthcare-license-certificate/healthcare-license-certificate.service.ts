@@ -36,8 +36,8 @@ export class HealthcareLicenseCertificateService extends BaseTemplateApiService 
     if (!result || !result.length) {
       throw new TemplateApiError(
         {
-          title: errorMsg.emptyHealthLicenseList,
-          summary: errorMsg.emptyHealthLicenseList,
+          title: errorMsg.emptyHealthLicenseListTitle,
+          summary: errorMsg.emptyHealthLicenseListMessage,
         },
         400,
       )
