@@ -1,4 +1,4 @@
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useId } from 'react'
 import { m } from '../../lib/messages'
@@ -8,6 +8,11 @@ type Props = {
   onEmailChange: (channel: React.ChangeEvent<HTMLInputElement>) => void
   onClose: (visible: boolean) => void
   onSave: () => void
+  phoneValue?: string
+  emailValue?: string
+  emailError?: string
+  phoneError?: string
+  alreadyExistsError?: string
   visible?: boolean
 }
 
@@ -16,6 +21,11 @@ export const AddChannel = ({
   onEmailChange,
   onClose,
   onSave,
+  phoneValue,
+  emailValue,
+  emailError,
+  phoneError,
+  alreadyExistsError,
   visible = false,
 }: Props) => {
   const localEmailId = useId()
@@ -36,7 +46,10 @@ export const AddChannel = ({
             size="xs"
             id={localEmailId}
             name="email"
+            type="email"
+            errorMessage={emailError}
             label={formatMessage(m.email)}
+            value={emailValue}
             onChange={(e) =>
               onEmailChange(e as React.ChangeEvent<HTMLInputElement>)
             }
@@ -47,6 +60,8 @@ export const AddChannel = ({
             size="xs"
             id={localPhoneId}
             name="tel"
+            errorMessage={phoneError}
+            value={phoneValue}
             label={formatMessage(m.phone)}
             onChange={(e) =>
               onPhoneChange(e as React.ChangeEvent<HTMLInputElement>)
@@ -55,10 +70,21 @@ export const AddChannel = ({
         </Box>
       </Box>
       <Box className={styles.contentWrap}>
+        {alreadyExistsError && (
+          <Box width="full">
+            <Text>
+              <span className={styles.errorText}>{alreadyExistsError}</span>
+            </Text>
+          </Box>
+        )}
         <Button size="small" variant="ghost" onClick={() => onClose(visible)}>
           {formatMessage(m.cancel)}
         </Button>
-        <Button size="small" onClick={onSave}>
+        <Button
+          disabled={!phoneValue || !emailValue}
+          size="small"
+          onClick={onSave}
+        >
           {formatMessage(m.saveChanges)}
         </Button>
       </Box>

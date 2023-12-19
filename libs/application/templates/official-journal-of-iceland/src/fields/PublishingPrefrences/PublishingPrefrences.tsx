@@ -13,8 +13,9 @@ import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { m } from '../../lib/messages'
-import { BooleanValue } from '../../shared'
+import { BooleanValue, VERDSKRA_LINK } from '../../shared'
 import { getWeekdayDates } from '../../utils/isWeekday'
+import { isValidEmail, isValidPhone } from '../../utils/validation'
 import * as styles from './PublishingPrefrences.css'
 
 export type CommunicationChannel = {
@@ -35,10 +36,53 @@ export const PublishingPrefrences: React.FC<
 
   const [newEmail, setNewEmail] = useState('')
   const [newPhone, setNewPhone] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [phoneError, setPhoneError] = useState('')
+  const [alreadyExistsError, setAlreadyExistsError] = useState('')
+
+  const onSave = () => {
+    setEmailError('')
+    setPhoneError('')
+    setAlreadyExistsError('')
+
+    const validEmail = isValidEmail(newEmail)
+    const validPhone = isValidPhone(newPhone)
+
+    const found = communicationChannels.find(
+      (c) => c.email === newEmail && c.phone === newPhone,
+    )
+
+    if (!validEmail) {
+      setEmailError(f(m.emailError))
+    }
+
+    if (!validPhone) {
+      setPhoneError(f(m.phoneError))
+    }
+
+    if (found) {
+      setAlreadyExistsError(f(m.alreadyExistsError))
+    }
+
+    if (validEmail && validPhone && !found) {
+      setCommunicationChannels((prev) => [
+        ...prev,
+        {
+          email: newEmail,
+          phone: newPhone,
+        },
+      ])
+      setNewEmail('')
+      setNewPhone('')
+    }
+  }
 
   const onCloseAddChannel = () => {
     setNewEmail('')
     setNewPhone('')
+    setEmailError('')
+    setPhoneError('')
+    setAlreadyExistsError('')
     setAddChannelToggle(false)
   }
 
@@ -67,7 +111,7 @@ export const PublishingPrefrences: React.FC<
               label: (
                 <Text>
                   {f(m.requestFastTrack)}{' '}
-                  <Link href="https://www.stjornartidindi.is/PdfVersions.aspx?recordId=0f574646-eb9d-430b-bbe7-936e7c9389a0">
+                  <Link href={VERDSKRA_LINK}>
                     <span className={styles.fastTrackLink}>
                       {f(m.requestFastTrackLink)}
                     </span>
@@ -88,23 +132,35 @@ export const PublishingPrefrences: React.FC<
           <ChannelList
             channels={communicationChannels}
             onRemoveChannel={(channel) =>
-              communicationChannels.filter(
-                (c) => c.email !== channel.email && c.phone !== channel.phone,
+              setCommunicationChannels((prev) =>
+                prev.filter(
+                  (c) => c.email !== channel.email && c.phone !== channel.phone,
+                ),
               )
             }
-            onAddChannel={(channel) => null}
+            onEditChannel={(channel) => {
+              setNewEmail(channel.email)
+              setNewPhone(channel.phone)
+              setAddChannelToggle(true)
+            }}
           />
           <AddChannel
             visible={addChannelToggle}
-            onPhoneChange={(e) => setNewPhone(e.target.value)}
-            onEmailChange={(e) => setNewEmail(e.target.value)}
+            onPhoneChange={(e) => {
+              setPhoneError('')
+              setNewPhone(e.target.value)
+            }}
+            onEmailChange={(e) => {
+              setEmailError('')
+              setNewEmail(e.target.value)
+            }}
             onClose={onCloseAddChannel}
-            onSave={() =>
-              setCommunicationChannels([
-                ...communicationChannels,
-                { phone: newPhone, email: newEmail },
-              ])
-            }
+            onSave={onSave}
+            phoneValue={newPhone}
+            emailValue={newEmail}
+            emailError={emailError}
+            phoneError={phoneError}
+            alreadyExistsError={alreadyExistsError}
           />
           <Button
             size="small"

@@ -4,8 +4,7 @@ import { recipe } from '@vanilla-extract/recipes'
 
 export const addChannel = recipe({
   base: {
-    opacity: 0,
-    visibility: 'hidden',
+    display: 'none',
     borderLeftWidth: 2,
     padding: theme.spacing[4],
     borderLeftColor: theme.color.blue400,
@@ -15,8 +14,7 @@ export const addChannel = recipe({
   variants: {
     visible: {
       true: {
-        opacity: 1,
-        visibility: 'visible',
+        display: 'block',
       },
     },
   },
@@ -37,4 +35,9 @@ export const phoneWrap = style({
   flex: 1,
   width: '100%',
   minWidth: 260,
+})
+
+export const errorText = style({
+  fontSize: 14,
+  color: theme.color.red600,
 })

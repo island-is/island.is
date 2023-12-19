@@ -1,6 +1,18 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  emailError: {
+    id: 'ojoi.application:emailError',
+    defaultMessage: 'Netfang er ekki gilt',
+  },
+  phoneError: {
+    id: 'ojoi.application:phoneError',
+    defaultMessage: 'Símanúmer er ekki gilt',
+  },
+  alreadyExistsError: {
+    id: 'ojoi.application:alreadyExistsError',
+    defaultMessage: 'Þessi samskiptaleið er þegar til',
+  },
   saveChanges: {
     id: 'ojoi.application:saveChanges',
     defaultMessage: 'Vista breytingar',

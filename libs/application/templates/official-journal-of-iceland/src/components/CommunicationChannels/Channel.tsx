@@ -3,17 +3,17 @@ import { CommunicationChannel } from '../../fields/PublishingPrefrences/Publishi
 
 type Props = {
   channel: CommunicationChannel
-  onAddChannel: (channel: CommunicationChannel) => void
+  onEditChannel: (channel: CommunicationChannel) => void
   onRemoveChannel: (channel: CommunicationChannel) => void
 }
 
-export const Channel = ({ channel, onAddChannel, onRemoveChannel }: Props) => {
+export const Channel = ({ channel, onEditChannel, onRemoveChannel }: Props) => {
   return (
     <T.Row>
       <T.Data>{channel.email}</T.Data>
       <T.Data>{channel.phone}</T.Data>
       <T.Data>
-        <button type="button" onClick={() => onAddChannel(channel)}>
+        <button type="button" onClick={() => onEditChannel(channel)}>
           <Icon icon="pencil" />
         </button>
       </T.Data>
