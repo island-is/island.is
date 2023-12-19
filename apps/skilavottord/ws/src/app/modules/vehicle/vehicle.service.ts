@@ -61,21 +61,33 @@ export class VehicleService {
     }
   }
 
+  async updateMileage(permno: string, mileage: number): Promise<boolean> {
+    const findVehicle = await this.findByVehicleId(permno)
+    if (findVehicle) {
+      findVehicle.mileage = mileage ?? 0
+      await findVehicle.save()
+      return true
+    } else {
+      const errorMsg = `failed to update mileage: ${mileage} on vehicle: ${permno}`
+      this.logger.error(errorMsg)
+      throw new Error(errorMsg)
+    }
+  }
+
   async create(vehicle: VehicleModel): Promise<boolean> {
     try {
       // check if vehicle is already in db
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
       // if vehicle is found in db, check if there is new owner of vehicle
       if (findVehicle) {
-        if (vehicle.ownerNationalId === findVehicle.ownerNationalId) {
-          return true
-        } else {
-          this.logger.info('vehicle has new owner, update national-id')
+        findVehicle.mileage = vehicle.mileage
+        if (vehicle.ownerNationalId !== findVehicle.ownerNationalId) {
           findVehicle.ownerNationalId = vehicle.ownerNationalId
-          await findVehicle.save()
-          return true
         }
+        await findVehicle.save()
+        return true
       } else {
+        // new registration
         await vehicle.save()
         return true
       }
