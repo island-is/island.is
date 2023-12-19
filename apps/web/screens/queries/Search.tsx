@@ -290,6 +290,14 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           title
           slug
+          category {
+            id
+            title
+            slug
+          }
+          group {
+            title
+          }
         }
         ... on ManualChapterItem {
           id

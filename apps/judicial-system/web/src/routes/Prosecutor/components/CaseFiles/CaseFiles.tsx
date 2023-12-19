@@ -18,7 +18,6 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  MarkdownWrapper,
   PageLayout,
   ParentCaseFiles,
   ProsecutorCaseInfo,
@@ -204,17 +203,6 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
-        <Box marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(strings.descriptionHeading)}
-            </Text>
-          </Box>
-          <MarkdownWrapper
-            markdown={formatMessage(strings.descriptionList)}
-            textProps={{ marginBottom: 0 }}
-          />
-        </Box>
         <SectionHeading
           title={formatMessage(strings.policeCaseFilesHeading)}
           description={formatMessage(strings.policeCaseFilesIntroduction)}

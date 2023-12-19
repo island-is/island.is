@@ -26,7 +26,7 @@ import { Employers } from './review-groups/Employers'
 import { PaymentInformation } from './review-groups/PaymentInformation'
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
-import { ApplicationType, Employment } from '../../lib/constants'
+import { ApplicationType } from '../../lib/constants'
 import {
   RadioValue,
   ReviewGroup,
@@ -55,7 +55,7 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const { employmentStatus, applicationType, comment } = getApplicationAnswers(
+  const { applicationType, comment } = getApplicationAnswers(
     application.answers,
   )
   const { state } = application
@@ -184,7 +184,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <PaymentInformation {...childProps} />
       <ResidenceHistory {...childProps} />
-      {employmentStatus === Employment.EMPLOYEE && (
+      {applicationType === ApplicationType.HALF_OLD_AGE_PENSION && (
         <Employers {...childProps} />
       )}
       <Period {...childProps} />

@@ -30,7 +30,7 @@ export enum AttachmentTypes {
   PENSION = 'pension',
   EARLY_RETIREMENT = 'earlyRetirement',
   FISHERMAN = 'fishermen',
-  SELF_EMPLOYED_ATTACHMENT = 'SelfEmployedAttachment',
+  SELF_EMPLOYED_ATTACHMENT = 'selfEmployedAttachment',
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
   FOREIGN_BANK_ACCOUNT = 'foreignBankAccount',
 }
