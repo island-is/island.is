@@ -152,7 +152,6 @@ const AppealCaseFilesOverview: React.FC<
             </Button>
           </Box>
         )}
-
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

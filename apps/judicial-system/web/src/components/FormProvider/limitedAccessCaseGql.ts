@@ -121,6 +121,7 @@ const LimitedAccessCaseQuery = gql`
       appealRulingDecision
       appealCaseNumber
       appealRulingModifiedHistory
+      requestAppealRulingNotToBePublished
       appealAssistant {
         id
         name

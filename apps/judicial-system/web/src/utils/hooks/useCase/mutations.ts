@@ -420,6 +420,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       }
       appealConclusion
       appealRulingDecision
+      requestAppealRulingNotToBePublished
     }
   }
 `

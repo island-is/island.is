@@ -20,6 +20,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   useCase,
@@ -89,7 +90,7 @@ const AppealFiles = () => {
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.appealCaseFilesTitle)}
             marginBottom={1}
@@ -119,6 +120,7 @@ const AppealFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
+        <RequestAppealRulingNotToBePublishedCheckbox />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

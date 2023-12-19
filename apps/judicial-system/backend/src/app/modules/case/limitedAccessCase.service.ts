@@ -90,6 +90,7 @@ export const attributes: (keyof Case)[] = [
   'appealRulingDecision',
   'appealReceivedByCourtDate',
   'appealRulingModifiedHistory',
+  'requestAppealRulingNotToBePublished',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -99,6 +100,7 @@ export interface LimitedAccessUpdateCase
     | 'appealState'
     | 'defendantStatementDate'
     | 'openedByDefender'
+    | 'requestAppealRulingNotToBePublished'
   > {}
 
 export const include: Includeable[] = [
