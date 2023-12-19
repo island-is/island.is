@@ -1,5 +1,5 @@
+import { sortAlpha } from '@island.is/shared/utils'
 import {
-  ArticleCategory,
   GetArticleCategoriesQuery,
   GetCategoryPagesQuery,
 } from '@island.is/web/graphql/schema'
@@ -53,9 +53,10 @@ export type CategoryPages = NonNullable<
   GetCategoryPagesQuery['getCategoryPages']
 >
 
-type CategoryGroups = {
+export type CategoryGroups = {
   title: string
   description: string
+  importance: number
   slug: string
   subgroups: {
     title?: string
@@ -89,9 +90,67 @@ const isSameSubGroup = (subgroup1: Subgroup, subgroup2: Subgroup) => {
   return subgroup1?.title === subgroup2?.title
 }
 
+const sortPages = (pages: CategoryPages) => {
+  // Sort pages by importance (which defaults to 0).
+  // If both pages being compared have the same importance we sort by comparing their titles.
+  const sortedPages = pages.sort((a, b) => {
+    if (!a.importance || !b.importance) {
+      return a.importance ? -1 : b.importance ? 1 : sortAlpha('title')(a, b)
+    }
+
+    return a.importance > b.importance
+      ? -1
+      : a.importance === b.importance
+      ? sortAlpha('title')(a, b)
+      : 1
+  })
+
+  // If it's sorted alphabetically we need to be able to communicate that.
+  const isSortedAlphabetically =
+    JSON.stringify(sortedPages) ===
+    JSON.stringify([...pages].sort(sortAlpha('title')))
+
+  return { sortedPages, isSortedAlphabetically }
+}
+
+const sortSubgroups = (subgroups: CategoryGroups[number]['subgroups']) =>
+  subgroups.sort((a, b) => {
+    // 'unknown' is a valid subgroup key but we'll sort it to the bottom
+    if (!a.title) {
+      return 1
+    } else if (!b.title) {
+      return -1
+    }
+
+    if (a?.importance && b?.importance) {
+      return a.importance > b.importance
+        ? -1
+        : a.importance === b.importance
+        ? sortAlpha('title')(a, b)
+        : 1
+    }
+    // Fall back to alphabet
+    return a.title.localeCompare(b.title)
+  })
+
+const sortCategoryGroups = (categoryGroups: CategoryGroups) => {
+  // Sort the groups
+  categoryGroups.sort((a, b) => {
+    if (a.importance > b.importance) return -1
+    if (a.importance < b.importance) return 1
+    return sortAlpha('title')(a, b)
+  })
+  for (const group of categoryGroups) {
+    sortSubgroups(group.subgroups)
+    for (const subgroup of group.subgroups) {
+      sortPages(subgroup.pages)
+    }
+  }
+}
+
 export const extractCategoryGroups = (
   pages: CategoryPages,
-  selectedCategory: ArticleCategories[number],
+  selectedCategory: ArticleCategories[number] | undefined,
 ): CategoryGroups => {
   if (!selectedCategory?.title) return []
 
@@ -115,10 +174,11 @@ export const extractCategoryGroups = (
         groupMap.set(key, {
           title: pageGroup.title,
           slug: pageGroup.slug,
+          importance: pageGroup.importance ?? 0,
           description: pageGroup.description ?? '',
           subgroups: [
             {
-              title: pageSubgroup?.title ?? '',
+              title: pageSubgroup?.title,
               importance: pageSubgroup?.importance ?? 0,
               pages: [page],
             },
@@ -158,10 +218,11 @@ export const extractCategoryGroups = (
         groupMap.set(key, {
           title: pageSecondaryGroup.title,
           slug: pageSecondaryGroup.slug,
+          importance: pageSecondaryGroup.importance ?? 0,
           description: pageSecondaryGroup.description ?? '',
           subgroups: [
             {
-              title: pageSecondarySubgroup?.title ?? '',
+              title: pageSecondarySubgroup?.title,
               importance: pageSecondarySubgroup?.importance ?? 0,
               pages: [page],
             },
@@ -191,8 +252,7 @@ export const extractCategoryGroups = (
   }
 
   const categoryGroups = Array.from(groupMap, ([_, value]) => value)
-
-  // TODO: sort
+  sortCategoryGroups(categoryGroups)
 
   return categoryGroups
 }
