@@ -233,7 +233,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 vehicle.recyclingRequests &&
                 vehicle.recyclingRequests[0].nameOfRequestor
               }
-              mileage={vehicle.mileage || undefined}
+              mileage={vehicle.mileage || 0}
               control={control}
               showMileage
             />
