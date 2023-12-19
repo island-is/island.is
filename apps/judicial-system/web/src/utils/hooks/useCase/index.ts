@@ -4,13 +4,11 @@ import formatISO from 'date-fns/formatISO'
 import isNil from 'lodash/isNil'
 import isUndefined from 'lodash/isUndefined'
 import omitBy from 'lodash/omitBy'
-import { useMutation } from '@apollo/client'
 
 import { toast } from '@island.is/island-ui/core'
 import {
   CaseTransition,
   NotificationType,
-  SendNotificationResponse,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
@@ -20,16 +18,26 @@ import {
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 
+import { useCreateCaseMutation } from './createCase.generated'
+import { useCreateCourtCaseMutation } from './createCourtCase.generated'
+import { useExtendCaseMutation } from './extendCase.generated'
 import {
-  CreateCaseMutation,
-  CreateCourtCaseMutation,
-  ExtendCaseMutation,
   LimitedAccessTransitionCaseMutation,
+  useLimitedAccessTransitionCaseMutation,
+} from './limitedAccessTransitionCase.generated'
+import {
   LimitedAccessUpdateCaseMutation,
-  SendNotificationMutation,
+  useLimitedAccessUpdateCaseMutation,
+} from './limitedAccessUpdateCase.generated'
+import { useSendNotificationMutation } from './sendNotification.generated'
+import {
   TransitionCaseMutation,
+  useTransitionCaseMutation,
+} from './transitionCase.generated'
+import {
   UpdateCaseMutation,
-} from './mutations'
+  useUpdateCaseMutation,
+} from './updateCase.generated'
 
 type ChildKeys = Pick<
   UpdateCase,
@@ -53,38 +61,6 @@ export type autofillFunc = (
   workingCase: Case,
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
-
-interface CreateCaseMutationResponse {
-  createCase: Case
-}
-
-interface CreateCourtCaseMutationResponse {
-  createCourtCase: Case
-}
-
-interface UpdateCaseMutationResponse {
-  updateCase: Case
-}
-
-interface LimitedAccessUpdateCaseMutationResponse {
-  limitedAccessUpdateCase: Case
-}
-
-interface TransitionCaseMutationResponse {
-  transitionCase: Case
-}
-
-interface LimitedAccessTransitionCaseMutationResponse {
-  limitedAccessTransitionCase: Case
-}
-
-interface SendNotificationMutationResponse {
-  sendNotification: SendNotificationResponse
-}
-
-interface ExtendCaseMutationResponse {
-  extendCase: Case
-}
 
 function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
   return [
@@ -169,42 +145,34 @@ const useCase = () => {
   const { formatMessage } = useIntl()
 
   const [createCaseMutation, { loading: isCreatingCase }] =
-    useMutation<CreateCaseMutationResponse>(CreateCaseMutation)
+    useCreateCaseMutation()
 
   const [createCourtCaseMutation, { loading: isCreatingCourtCase }] =
-    useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
+    useCreateCourtCaseMutation()
 
   const [updateCaseMutation, { loading: isUpdatingCase }] =
-    useMutation<UpdateCaseMutationResponse>(UpdateCaseMutation, {
-      fetchPolicy: 'no-cache',
-    })
+    useUpdateCaseMutation()
 
   const [
     limitedAccessUpdateCaseMutation,
     { loading: isLimitedAccessUpdatingCase },
-  ] = useMutation<LimitedAccessUpdateCaseMutationResponse>(
-    LimitedAccessUpdateCaseMutation,
-    {
-      fetchPolicy: 'no-cache',
-    },
-  )
+  ] = useLimitedAccessUpdateCaseMutation()
+
   const [transitionCaseMutation, { loading: isTransitioningCase }] =
-    useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
+    useTransitionCaseMutation()
 
   const [
     limitedAccessTransitionCaseMutation,
     { loading: isLimitedAccessTransitioningCase },
-  ] = useMutation<LimitedAccessTransitionCaseMutationResponse>(
-    LimitedAccessTransitionCaseMutation,
-  )
+  ] = useLimitedAccessTransitionCaseMutation()
 
   const [
     sendNotificationMutation,
     { loading: isSendingNotification, error: sendNotificationError },
-  ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
+  ] = useSendNotificationMutation()
 
   const [extendCaseMutation, { loading: isExtendingCase }] =
-    useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
+    useExtendCaseMutation()
 
   const createCase = useMemo(
     () =>
@@ -230,7 +198,7 @@ const useCase = () => {
             })
 
             if (data) {
-              return data.createCase
+              return data.createCase as Case
             }
           }
         } catch (error) {
@@ -258,7 +226,7 @@ const useCase = () => {
             if (data?.createCourtCase?.courtCaseNumber && !errors) {
               setWorkingCase((theCase) => ({
                 ...theCase,
-                courtCaseNumber: data.createCourtCase.courtCaseNumber,
+                courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
               }))
 
               setCourtCaseNumberErrorMessage('')
@@ -297,8 +265,7 @@ const useCase = () => {
           variables: { input: { id, ...updateCase } },
         })
 
-        const res = data as UpdateCaseMutationResponse &
-          LimitedAccessUpdateCaseMutationResponse
+        const res = data as UpdateCaseMutation & LimitedAccessUpdateCaseMutation
 
         return res && res[resultType]
       } catch (error) {
@@ -338,11 +305,11 @@ const useCase = () => {
             },
           })
 
-          const res = data as TransitionCaseMutationResponse &
-            LimitedAccessTransitionCaseMutationResponse
+          const res = data as TransitionCaseMutation &
+            LimitedAccessTransitionCaseMutation
 
-          const state = res && res[resultType].state
-          const appealState = res && res[resultType].appealState
+          const state = res && res[resultType]?.state
+          const appealState = res && res[resultType]?.appealState
 
           if (!state && !appealState) {
             return false
@@ -351,7 +318,7 @@ const useCase = () => {
           if (setWorkingCase) {
             setWorkingCase((theCase) => ({
               ...theCase,
-              ...res[resultType],
+              ...(res[resultType] as Case),
             }))
           }
 
@@ -434,7 +401,7 @@ const useCase = () => {
         throw new Error()
       }
 
-      setWorkingCase((theCase) => ({ ...theCase, ...newWorkingCase }))
+      setWorkingCase((theCase) => ({ ...theCase, ...(newWorkingCase as Case) }))
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
     }

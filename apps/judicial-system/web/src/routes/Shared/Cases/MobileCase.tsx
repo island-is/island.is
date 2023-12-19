@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
 
 import { displayCaseType } from './utils'
