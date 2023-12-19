@@ -88,7 +88,7 @@ const isSameSubGroup = (subgroup1: Subgroup, subgroup2: Subgroup) => {
 const sortPages = (pages: CategoryPages) => {
   // Sort pages by importance (which defaults to 0).
   // If both pages being compared have the same importance we sort by comparing their titles.
-  const sortedPages = pages.sort((a, b) => {
+  pages.sort((a, b) => {
     if (!a.importance || !b.importance) {
       return a.importance ? -1 : b.importance ? 1 : sortAlpha('title')(a, b)
     }
@@ -99,13 +99,6 @@ const sortPages = (pages: CategoryPages) => {
       ? sortAlpha('title')(a, b)
       : 1
   })
-
-  // If it's sorted alphabetically we need to be able to communicate that.
-  const isSortedAlphabetically =
-    JSON.stringify(sortedPages) ===
-    JSON.stringify([...pages].sort(sortAlpha('title')))
-
-  return { sortedPages, isSortedAlphabetically }
 }
 
 const sortSubgroups = (subgroups: CategoryGroups[number]['subgroups']) =>
