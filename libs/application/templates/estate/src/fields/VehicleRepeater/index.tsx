@@ -52,64 +52,66 @@ export const VehicleRepeater: FC<
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.length > 0 && fields.reduce((acc, vehicle: AssetFormField, index) => {
-          const fieldError = error && error[index] ? error[index] : null
-
-          if (!vehicle.initial) {
-            return acc
-          }
-          return [
-            ...acc,
-            <GridColumn
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={3}
-              key={vehicle.id}
-            >
-              <ProfileCard
-                disabled={!vehicle.enabled}
-                title={vehicle?.description ?? vehicle?.assetNumber ?? ''}
-                description={[
-                  `${formatMessage(m.propertyNumber)}: ${vehicle.assetNumber}`,
-                  <Box marginTop={1} as="span">
-                    <Button
-                      variant="text"
-                      icon={vehicle.enabled ? 'remove' : 'add'}
-                      size="small"
-                      iconType="outline"
-                      onClick={() => {
-                        const updatedVehicle = {
-                          ...vehicle,
-                          enabled: !vehicle.enabled,
-                        }
-                        update(index, updatedVehicle)
-                        clearErrors(`${id}[${index}].marketValue`)
-                      }}
-                    >
-                      {vehicle.enabled
-                        ? formatMessage(m.inheritanceDisableMember)
-                        : formatMessage(m.inheritanceEnableMember)}
-                    </Button>
-                  </Box>,
-                ]}
-              />
-              <Box marginTop={2}>
-                <InputController
-                  id={`${id}[${index}].marketValue`}
-                  name={`${id}[${index}].marketValue`}
-                  label={formatMessage(m.marketValueTitle)}
+        {fields.length &&
+          fields.map((vehicle: AssetFormField, index) => {
+            console.log('VEHICLE', vehicle)
+            const fieldError = error && error[index] ? error[index] : null
+            if (!vehicle.initial) {
+              return null
+            }
+            return (
+              <GridColumn
+                span={['12/12', '12/12', '6/12']}
+                paddingBottom={3}
+                key={vehicle.id}
+              >
+                <ProfileCard
                   disabled={!vehicle.enabled}
-                  backgroundColor="blue"
-                  placeholder="0 kr."
-                  defaultValue={vehicle.marketValue}
-                  error={fieldError?.marketValue}
-                  currency
-                  size="sm"
-                  required
+                  title={vehicle?.description ?? vehicle?.assetNumber ?? ''}
+                  description={[
+                    `${formatMessage(m.propertyNumber)}: ${
+                      vehicle.assetNumber
+                    }`,
+                    <Box marginTop={1} as="span">
+                      <Button
+                        variant="text"
+                        icon={vehicle.enabled ? 'remove' : 'add'}
+                        size="small"
+                        iconType="outline"
+                        onClick={() => {
+                          const updatedVehicle = {
+                            ...vehicle,
+                            enabled: !vehicle.enabled,
+                          }
+                          update(index, updatedVehicle)
+                          clearErrors(`${id}[${index}].marketValue`)
+                        }}
+                      >
+                        {vehicle.enabled
+                          ? formatMessage(m.inheritanceDisableMember)
+                          : formatMessage(m.inheritanceEnableMember)}
+                      </Button>
+                    </Box>,
+                  ]}
                 />
-              </Box>
-            </GridColumn>,
-          ]
-        }, [] as JSX.Element[])}
+                <Box marginTop={2}>
+                  <InputController
+                    id={`${id}[${index}].marketValue`}
+                    name={`${id}[${index}].marketValue`}
+                    label={formatMessage(m.marketValueTitle)}
+                    disabled={!vehicle.enabled}
+                    backgroundColor="blue"
+                    placeholder="0 kr."
+                    defaultValue={vehicle.marketValue}
+                    error={fieldError?.marketValue}
+                    currency
+                    size="sm"
+                    required
+                  />
+                </Box>
+              </GridColumn>
+            )
+          })}
       </GridRow>
       {fields.map((field: AssetFormField, index: number) => (
         <Box key={field.id} hidden={field.initial}>
