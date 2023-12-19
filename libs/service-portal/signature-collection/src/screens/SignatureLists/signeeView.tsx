@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import { useGetListsBySigneeArea, useGetSignedList } from '../hooks'
+import { useGetListsForUser, useGetSignedList } from '../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../Skeletons'
 
@@ -14,13 +14,13 @@ const SigneeView = () => {
 
   const { signedList, loadingSignedList, refetchSignedList } =
     useGetSignedList()
-  const { listsBySigneeArea, loadingAreaLists, refetchListsBySigneeArea } =
-    useGetListsBySigneeArea('SF')
+  const { listsForUser, loadingUserLists, refetchListsForUser } =
+    useGetListsForUser()
 
   const onUnSignList = () => {
     setModalIsOpen(false)
     refetchSignedList()
-    refetchListsBySigneeArea()
+    refetchListsForUser()
   }
 
   const SignedList = () => {
@@ -59,24 +59,26 @@ const SigneeView = () => {
       </Modal>
     )
   }
-
   return (
-    <>
-      {!loadingSignedList && !loadingAreaLists ? (
+    <div>
+      {!loadingSignedList && !loadingUserLists ? (
         <Box>
-          <Box marginTop={10}>
-            <Text variant="h4" marginBottom={3}>
-              {formatMessage(m.mySigneeListsHeader)}
-            </Text>
-            <SignedList />
-          </Box>
+          {!!signedList && (
+            <Box marginTop={10}>
+              <Text variant="h4" marginBottom={3}>
+                {formatMessage(m.mySigneeListsHeader)}
+              </Text>
+              <SignedList />
+            </Box>
+          )}
 
           <Box marginTop={10}>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.mySigneeListsByAreaHeader)}
             </Text>
+
             <Stack space={5}>
-              {listsBySigneeArea.map((list) => {
+              {listsForUser?.map((list) => {
                 return (
                   <ActionCard
                     key={list.id}
@@ -88,7 +90,7 @@ const SigneeView = () => {
                       label: formatMessage(m.signList),
                       variant: 'text',
                       icon: 'arrowForward',
-                      disabled: Object.keys(signedList).length !== 0,
+                      disabled: signedList !== null,
                       onClick: () => {
                         window.open(
                           `${document.location.origin}/umsoknir/maela-med-lista/`,
@@ -104,7 +106,7 @@ const SigneeView = () => {
       ) : (
         <Skeleton />
       )}
-    </>
+    </div>
   )
 }
 
