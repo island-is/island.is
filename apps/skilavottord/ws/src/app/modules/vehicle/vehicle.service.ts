@@ -1,20 +1,23 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
-import { logger } from '@island.is/logging'
 
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
 } from '../recyclingRequest'
 import { RecyclingPartnerModel } from '../recyclingPartner'
+
 import { VehicleModel } from './vehicle.model'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class VehicleService {
   constructor(
     @InjectModel(VehicleModel)
     private vehicleModel: VehicleModel,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   async findAllByFilter(
@@ -67,7 +70,7 @@ export class VehicleService {
       return true
     } else {
       const errorMsg = `failed to update mileage: ${mileage} on vehicle: ${permno}`
-      logger.error(errorMsg)
+      this.logger.error(errorMsg)
       throw new Error(errorMsg)
     }
   }
