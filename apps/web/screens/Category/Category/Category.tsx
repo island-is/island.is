@@ -147,17 +147,10 @@ const Category: Screen<CategoryProps> = ({
         >
           <Box paddingTop={2}>
             {group.subgroups.map((subgroup, index) => {
-              // Pages with 1 subgroup only have the "other" group and don't get a heading.
+              // Groups with 1 subgroup only have the "other" group and don't get a heading.
               const hasSubgroups = group.subgroups.length > 1
 
-              const noSubgroupNameKeys = ['unknown', 'undefined', 'null']
-
-              // Rename unknown group to 'Other'
-              const subgroupName =
-                noSubgroupNameKeys.indexOf(subgroup.title ?? '') !== -1 ||
-                !subgroup.title
-                  ? n('other')
-                  : subgroup.title
+              const subgroupName = subgroup.title || n('other')
 
               const heading = hasSubgroups ? subgroupName : ''
 
