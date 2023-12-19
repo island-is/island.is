@@ -491,42 +491,6 @@ export const assets = buildSection({
           description: m.assetOverviewDescription,
           children: [
             ...overviewAssets,
- 
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewInventory',
-              title: m.inventoryTitle,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.marketValue,
-              display: 'flex',
-              value: ({ answers }) => {
-                const total = getValueViaPath(answers, 'assets.inventory.value')
-                return formatCurrency(String(total))
-              },
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewBanks',
-              title: m.estateBankInfo,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.banksBalance,
-              display: 'flex',
-              value: ({ answers }) => {
-                const total = getValueViaPath(
-                  answers,
-                  'assets.bankAccounts.total',
-                )
-                return formatCurrency(String(total))
-              },
-            }),
             buildDividerField({}),
             buildDescriptionField({
               id: 'overviewClaims',
