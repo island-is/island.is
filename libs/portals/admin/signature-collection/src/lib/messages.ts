@@ -212,7 +212,7 @@ export const m = defineMessages({
   // Compare lists
   compareLists: {
     id: 'admin-portal.signature-collection:compareLists',
-    defaultMessage: 'Bera saman',
+    defaultMessage: 'Bera saman lista',
     description: '',
   },
   compareListsDescription: {
@@ -230,6 +230,12 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:compareListsResultsDescription',
     defaultMessage:
       'Eftirfarandi aðilar eru í yfirkjörstjórn eða landskjörstjórn og ættu ekki að vera skráðir á lista.',
+    description: '',
+  },
+  compareListsNoResultsDescription: {
+    id: 'admin-portal.signature-collection:compareListsNoResultsDescription',
+    defaultMessage:
+      'Enginn fannst í yfirkjörstjórn eða landskjörstjórn sem er skráður á lista.',
     description: '',
   },
   deleteFromList: {
