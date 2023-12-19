@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 
@@ -7,13 +7,17 @@ import {
   RecyclingRequestTypes,
 } from '../recyclingRequest'
 import { RecyclingPartnerModel } from '../recyclingPartner'
+
 import { VehicleModel } from './vehicle.model'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class VehicleService {
   constructor(
     @InjectModel(VehicleModel)
     private vehicleModel: VehicleModel,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   async findAllByFilter(
@@ -58,17 +62,34 @@ export class VehicleService {
     }
   }
 
+  async updateMileage(permno: string, mileage: number): Promise<boolean> {
+    const findVehicle = await this.findByVehicleId(permno)
+    if (findVehicle) {
+      findVehicle.mileage = mileage ?? 0
+      await findVehicle.save()
+      return true
+    } else {
+      const errorMsg = `failed to update mileage: ${mileage} on vehicle: ${permno}`
+      this.logger.error(errorMsg)
+      throw new Error(errorMsg)
+    }
+  }
+
   async create(vehicle: VehicleModel): Promise<boolean> {
     try {
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
       if (findVehicle) {
-        // Remove old request if new owner
-        if (vehicle.ownerNationalId === findVehicle.ownerNationalId) {
-          return true
-        } else {
-          await findVehicle.destroy()
+        findVehicle.mileage = vehicle.mileage
+        if (vehicle.ownerNationalId !== findVehicle.ownerNationalId) {
+          findVehicle.ownerNationalId = vehicle.ownerNationalId
         }
+        await findVehicle.save()
+        return true
+      } else {
+        // new registration
+        await vehicle.save()
+        return true
       }
       // Save vehicle to database
       await vehicle.save()
