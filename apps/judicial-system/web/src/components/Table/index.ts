@@ -1,4 +1,3 @@
-export { default as CategoryCard } from './CategoryCard/CategoryCard'
 export { default as ColumnCaseType } from './ColumnCaseType/ColumnCaseType'
 export { default as CourtCaseNumber } from './CourtCaseNumber/CourtCaseNumber'
 export { default as DefendantInfo } from './DefendantInfo/DefendantInfo'

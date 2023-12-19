@@ -102,12 +102,8 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const {
-    transitionCase,
-    isTransitioningCase,
-    isSendingNotification,
-    getCaseToOpen,
-  } = useCase()
+  const { transitionCase, isTransitioningCase, isSendingNotification } =
+    useCase()
 
   const { data, error, loading, refetch } = useCasesQuery({
     fetchPolicy: 'no-cache',
@@ -164,10 +160,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }
 
-  const handleRowClick = (id: string) => {
-    getCaseToOpen(id)
-  }
-
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
@@ -177,7 +169,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
           <CreateCaseButton user={user} />
         ) : null}
       </div>
-
       <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
         <Select
           name="filter-cases"
@@ -190,7 +181,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
           value={filter}
         />
       </Box>
-
       {error ? (
         <div
           className={styles.infoContainer}
@@ -211,7 +201,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
             ) : activeCases.length > 0 ? (
               <ActiveCases
                 cases={activeCases}
-                onRowClick={handleRowClick}
                 isDeletingCase={isTransitioningCase || isSendingNotification}
                 onDeleteCase={deleteCase}
               />
@@ -232,7 +221,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
           cases={pastCases}
-          onRowClick={handleRowClick}
           loading={loading || isFiltering}
           testid="pastCasesTable"
         />

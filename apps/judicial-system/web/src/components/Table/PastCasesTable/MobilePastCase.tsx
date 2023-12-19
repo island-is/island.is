@@ -10,8 +10,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import { TagCaseState } from '@island.is/judicial-system-web/src/components'
-import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CategoryCard } from '@island.is/judicial-system-web/src/routes/Shared/Cases/MobileCase'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {
@@ -19,6 +19,7 @@ interface Props {
   onClick: () => void
   isCourtRole: boolean
   children: React.ReactNode
+  isLoading?: boolean
 }
 
 const MobilePastCase: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const MobilePastCase: React.FC<Props> = ({
   onClick,
   isCourtRole,
   children,
+  isLoading = false,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -42,6 +44,7 @@ const MobilePastCase: React.FC<Props> = ({
           courtDate={theCase.courtDate}
         />,
       ]}
+      isLoading={isLoading}
     >
       <Text title={theCase.policeCaseNumbers.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
