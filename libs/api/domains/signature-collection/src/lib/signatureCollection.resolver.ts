@@ -12,23 +12,25 @@ import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionSignature } from './models/signature.model'
-import { SignatureCollectionNationalIdsInput } from './dto/signatureListNationalIds.input'
+import {
+  SignatureCollectionListNationalIdsInput,
+  SignatureCollectionNationalIdsInput,
+} from './dto/signatureListNationalIds.input'
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
-import { SignatureCollectionFindSignatureInput } from './dto/findSignature.input'
 import { SignatureCollectionAreaInput } from './dto/area.input'
+import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
+import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
+@Audit({ namespace: '@island.is/api/signature-collection' })
 export class SignatureCollectionResolver {
   constructor(private signatureCollectionService: SignatureCollectionService) {}
 
   @Query(() => SignatureCollectionSuccess)
-  signatureCollectionTest(): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.test()
-  }
-  @Query(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionIsOwner(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSuccess> {
@@ -36,6 +38,7 @@ export class SignatureCollectionResolver {
   }
 
   @Query(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionCanCreate(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSuccess> {
@@ -43,6 +46,7 @@ export class SignatureCollectionResolver {
   }
 
   @Query(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionCanSign(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSuccess> {
@@ -50,11 +54,13 @@ export class SignatureCollectionResolver {
   }
 
   @Query(() => SignatureCollection)
+  @Audit()
   async signatureCollectionCurrent(): Promise<SignatureCollection> {
     return this.signatureCollectionService.current()
   }
 
   @Query(() => [SignatureCollectionList])
+  @Audit()
   async signatureCollectionAllLists(): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allLists()
   }
@@ -64,15 +70,16 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.allOpenLists()
   }
 
-  //   TODO: Can take in owner parameter?
   @Query(() => [SignatureCollectionList])
-  async signatureCollectionListsByOwner(
+  @Audit()
+  async signatureCollectionListsForUser(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionList[]> {
-    return this.signatureCollectionService.listsByOwner(user.nationalId)
+    return this.signatureCollectionService.listsForUser(user.nationalId)
   }
 
   @Query(() => [SignatureCollectionList])
+  @Audit()
   async signatureCollectionListsByArea(
     @Args('input') input: SignatureCollectionAreaInput,
   ): Promise<SignatureCollectionList[]> {
@@ -80,14 +87,15 @@ export class SignatureCollectionResolver {
   }
 
   @Query(() => SignatureCollectionList)
+  @Audit()
   async signatureCollectionList(
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionList> {
     return this.signatureCollectionService.list(input.id)
   }
 
-  //   TODO: If none found what should we return
   @Query(() => SignatureCollectionList, { nullable: true })
+  @Audit()
   async signatureCollectionSignedList(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionList | null> {
@@ -95,48 +103,41 @@ export class SignatureCollectionResolver {
   }
 
   @Query(() => [SignatureCollectionSignature], { nullable: true })
+  @Audit()
   async signatureCollectionSignatures(
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSignature[]> {
     return this.signatureCollectionService.signatures(input.id)
   }
-  @Query(() => SignatureCollectionSignature, { nullable: true })
-  async signatureCollectionFindSignature(
-    @Args('input') input: SignatureCollectionFindSignatureInput,
-  ): Promise<SignatureCollectionSignature | null> {
-    return this.signatureCollectionService.findSignature(input)
-  }
-
-  @Query(() => SignatureCollectionBulk)
-  async signatureCollectionCompareLists(
-    @Args('input') input: SignatureCollectionNationalIdsInput,
-  ): Promise<SignatureCollectionBulk | null> {
-    return this.signatureCollectionService.compareLists(input)
-  }
 
   @Query(() => SignatureCollectionSignee)
+  @Audit()
   async signatureCollectionSignee(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSignee> {
     return this.signatureCollectionService.signee(user.nationalId)
   }
 
-  @Mutation(() => SignatureCollectionSuccess)
+  @Mutation(() => [SignatureCollectionList])
+  @Audit()
   async signatureCollectionCreate(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListInput,
-  ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.create(input)
+  ): Promise<SignatureCollectionList[]> {
+    return this.signatureCollectionService.create(user, input)
   }
-  @Mutation(() => SignatureCollectionSuccess)
+
+  @Mutation(() => SignatureCollectionSignature)
+  @Audit()
   async signatureCollectionSign(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
-  ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.sign(input.id)
+  ): Promise<SignatureCollectionSignature> {
+    return this.signatureCollectionService.sign(input.id, user.nationalId)
   }
 
   @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionUnsign(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
@@ -145,34 +146,63 @@ export class SignatureCollectionResolver {
   }
 
   @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionCancel(
     @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.cancel(user.nationalId)
+    return this.signatureCollectionService.cancel(user.nationalId, input)
   }
 
   @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionDelegateList(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionNationalIdsInput,
+    @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.delegateList(input)
   }
 
   @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionUndelegateList(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionNationalIdsInput,
+    @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.undelegateList(input)
   }
-  //   TODO: signatureCollectionExtendDeadline
+
+  @Mutation(() => SignatureCollectionList)
+  @Audit()
+  async signatureCollectionExtendDeadline(
+    @Args('input') input: SignatureCollectionExtendDeadlineInput,
+  ): Promise<SignatureCollectionList> {
+    return this.signatureCollectionService.extendDeadline(input)
+  }
 
   @Mutation(() => SignatureCollectionBulk)
+  @Audit()
   async signatureCollectionBulkUploadSignatures(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionNationalIdsInput,
+    @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionBulk> {
     return this.signatureCollectionService.bulkUploadSignatures(input)
+  }
+
+  @Mutation(() => [SignatureCollectionSignature])
+  @Audit()
+  async signatureCollectionBulkCompareSignaturesAllLists(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionNationalIdsInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return this.signatureCollectionService.bulkCompareSignaturesAllLists(input)
+  }
+
+  @Mutation(() => [SignatureCollectionSignature])
+  @Audit()
+  async signatureCollectionCompareList(
+    @Args('input') input: SignatureCollectionListNationalIdsInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return this.signatureCollectionService.compareLists(input)
   }
 }

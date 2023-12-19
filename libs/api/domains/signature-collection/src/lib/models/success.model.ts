@@ -4,4 +4,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 export class SignatureCollectionSuccess {
   @Field()
   success!: boolean
+
+  @Field(() => [String], { nullable: true })
+  reasons?: string[]
 }
