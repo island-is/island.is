@@ -25,6 +25,7 @@ export enum GenericLicenseOrganizationSlug {
   DisabilityLicense = 'tryggingastofnun',
   PCard = 'syslumenn',
   EHIC = 'sjukratryggingar-islands',
+  Passport = 'thjodskra-islands',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -35,6 +36,7 @@ export enum GenericLicenseProviderId {
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
   DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
   IcelandicHealthInsurance = 'IcelandicHealthInsurance', // Sjúkratryggingar Íslands
+  RegistersIceland = 'RegistersIceland', // Þjóðskrá
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
@@ -144,7 +146,7 @@ export type GenericLicenseUserdata = {
 }
 
 export type GenericLicenseFetchResult = {
-  data: unknown
+  data: Array<unknown>
   fetch: GenericLicenseFetch
 }
 
@@ -278,10 +280,10 @@ export interface GenericLicenseClient<LicenseType> {
 
 export interface GenericLicenseMapper {
   parsePayload: (
-    payload?: unknown,
+    payload: Array<unknown>,
     locale?: Locale,
     labels?: GenericLicenseLabels,
-  ) => GenericUserLicensePayload | null
+  ) => Array<GenericUserLicensePayload>
 }
 
 export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'

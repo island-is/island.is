@@ -31,72 +31,77 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
   }
 
   parsePayload(
-    payload?: unknown,
+    payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): GenericUserLicensePayload | null {
-    if (!payload) return null
+  ): Array<GenericUserLicensePayload> {
+    if (!payload) return []
 
-    const typedPayload = payload as VinnuvelaDto
-
-    const expired: boolean | null = this.checkLicenseExpirationDate(payload)
-
+    const typedPayload = payload as Array<VinnuvelaDto>
     const label = labels?.labels
-    const data: Array<GenericLicenseDataField> = [
-      {
-        name: getLabel('basicInfoLicense', locale, label),
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('licenseNumber', locale, label),
-        value: typedPayload.skirteinisNumer?.toString(),
-      },
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('fullName', locale, label),
-        value: typedPayload?.fulltNafn ?? '',
-      },
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('placeOfIssue', locale, label),
-        value: typedPayload.utgafuStadur ?? '',
-      },
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('firstPublishedDate', locale, label),
-        value: typedPayload.fyrstiUtgafuDagur?.toString(),
-      },
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('validTo', locale, label),
-        value: getLabel('seeRights', locale, label),
-      },
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('drivingLicenseNumber', locale, label),
-        value: typedPayload.okuskirteinisNumer ?? '',
-      },
-      {
-        type: GenericLicenseDataFieldType.Group,
-        label: getLabel('classesOfRights', locale, label),
-        fields: (typedPayload.vinnuvelaRettindi ?? [])
-          .filter((field) => field.kenna || field.stjorna)
-          .map((field) => ({
-            type: GenericLicenseDataFieldType.Category,
-            name: field.flokkur ?? '',
-            label: field.fulltHeiti ?? field.stuttHeiti ?? '',
-            description: field.fulltHeiti ?? field.stuttHeiti ?? '',
-            fields: this.parseVvrRights(field, locale, labels),
-          })),
-      },
-    ]
 
-    return {
-      data,
-      rawData: JSON.stringify(typedPayload),
-      metadata: {
-        licenseNumber: typedPayload.skirteinisNumer?.toString() ?? '',
-        expired: expired,
+    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
+      (t) => {
+        const expired: boolean | null = this.checkLicenseExpirationDate(t)
+
+        const data: Array<GenericLicenseDataField> = [
+          {
+            name: getLabel('basicInfoLicense', locale, label),
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('licenseNumber', locale, label),
+            value: t.skirteinisNumer?.toString(),
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('fullName', locale, label),
+            value: t?.fulltNafn ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('placeOfIssue', locale, label),
+            value: t.utgafuStadur ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('firstPublishedDate', locale, label),
+            value: t.fyrstiUtgafuDagur?.toString(),
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('validTo', locale, label),
+            value: getLabel('seeRights', locale, label),
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('drivingLicenseNumber', locale, label),
+            value: t.okuskirteinisNumer ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Group,
+            label: getLabel('classesOfRights', locale, label),
+            fields: (t.vinnuvelaRettindi ?? [])
+              .filter((field) => field.kenna || field.stjorna)
+              .map((field) => ({
+                type: GenericLicenseDataFieldType.Category,
+                name: field.flokkur ?? '',
+                label: field.fulltHeiti ?? field.stuttHeiti ?? '',
+                description: field.fulltHeiti ?? field.stuttHeiti ?? '',
+                fields: this.parseVvrRights(field, locale, labels),
+              })),
+          },
+        ]
+
+        return {
+          data,
+          rawData: JSON.stringify(t),
+          metadata: {
+            licenseNumber: t.skirteinisNumer?.toString() ?? '',
+            expired: expired,
+          },
+        }
       },
-    }
+    )
+    return mappedPayload
   }
 
   parseVvrRights(

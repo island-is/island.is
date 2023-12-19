@@ -17,67 +17,71 @@ import { Injectable } from '@nestjs/common'
 @Injectable()
 export class AdrLicensePayloadMapper implements GenericLicenseMapper {
   parsePayload(
-    payload: unknown,
+    payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): GenericUserLicensePayload | null {
-    if (!payload) return null
+  ): Array<GenericUserLicensePayload> {
+    if (!payload) return []
 
-    const typedPayload = payload as FlattenedAdrDto
+    const typedPayload = payload as Array<FlattenedAdrDto>
 
     const label = labels?.labels
 
-    const data: Array<GenericLicenseDataField> = [
-      {
-        name: getLabel('basicInfoLicense', locale, label),
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('licenseNumber', locale, label),
-        value: typedPayload.skirteinisNumer?.toString(),
-      },
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('fullName', locale, label),
-        value: typedPayload.fulltNafn ?? '',
-      },
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('publisher', locale, label),
-        value: 'Vinnueftirlitið',
-      },
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('validTo', locale, label),
-        value: typedPayload.gildirTil ?? '',
-      },
-    ]
+    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
+      (t) => {
+        const data: Array<GenericLicenseDataField> = [
+          {
+            name: getLabel('basicInfoLicense', locale, label),
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('licenseNumber', locale, label),
+            value: t.skirteinisNumer?.toString(),
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('fullName', locale, label),
+            value: t.fulltNafn ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('publisher', locale, label),
+            value: 'Vinnueftirlitið',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('validTo', locale, label),
+            value: t.gildirTil ?? '',
+          },
+        ]
 
-    const adrRights = (typedPayload.adrRettindi ?? []).filter(
-      (field) => field.grunn,
+        const adrRights = (t.adrRettindi ?? []).filter((field) => field.grunn)
+        const tankar = this.parseRights(
+          getLabel('tanks', locale, label) ?? '',
+          adrRights.filter((field) => field.tankar),
+        )
+
+        if (tankar) data.push(tankar)
+
+        const grunn = this.parseRights(
+          getLabel('otherThanTanks', locale, label) ?? '',
+          adrRights,
+        )
+        if (grunn) data.push(grunn)
+
+        return {
+          data,
+          rawData: JSON.stringify(t),
+          metadata: {
+            licenseNumber: t.skirteinisNumer?.toString() ?? '',
+            expired: t.gildirTil
+              ? !isAfter(new Date(t.gildirTil), new Date())
+              : null,
+            expireDate: t.gildirTil ?? undefined,
+          },
+        }
+      },
     )
-    const tankar = this.parseRights(
-      getLabel('tanks', locale, label) ?? '',
-      adrRights.filter((field) => field.tankar),
-    )
 
-    if (tankar) data.push(tankar)
-
-    const grunn = this.parseRights(
-      getLabel('otherThanTanks', locale, label) ?? '',
-      adrRights,
-    )
-    if (grunn) data.push(grunn)
-
-    return {
-      data,
-      rawData: JSON.stringify(typedPayload),
-      metadata: {
-        licenseNumber: typedPayload.skirteinisNumer?.toString() ?? '',
-        expired: typedPayload.gildirTil
-          ? !isAfter(new Date(typedPayload.gildirTil), new Date())
-          : null,
-        expireDate: typedPayload.gildirTil ?? undefined,
-      },
-    }
+    return mappedPayload
   }
 
   private parseRights(

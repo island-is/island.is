@@ -107,7 +107,7 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GetGenericLicenseInput,
   ) {
-    const license = await this.licenseServiceService.getLicense(
+    const license = await this.licenseServiceService.getLicensesOfType(
       user,
       locale,
       input.licenseType,
