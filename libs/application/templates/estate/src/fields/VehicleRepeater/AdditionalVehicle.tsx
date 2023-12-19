@@ -48,6 +48,9 @@ export const AdditionalVehicle = ({
 
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: GetVehicleInput }>(GET_VEHICLE_QUERY, {
+      onError: (_e) => {
+        setValue(nameField, '')
+      },
       onCompleted: (data) => {
         const carName =
           `${data?.syslumennGetVehicle?.manufacturer} ${data.syslumennGetVehicle?.modelName}`.trim()
@@ -56,6 +59,7 @@ export const AdditionalVehicle = ({
           carName.startsWith('null') ||
           carName.endsWith('null')
         ) {
+          setValue(nameField, '')
           return
         }
         clearErrors(nameField)
@@ -129,7 +133,13 @@ export const AdditionalVehicle = ({
             loading={queryLoading}
             readOnly
             defaultValue={field.description}
-            error={error?.description}
+            error={
+              error?.description
+                ? error.description
+                : queryLoading
+                ? ''
+                : undefined
+            }
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>

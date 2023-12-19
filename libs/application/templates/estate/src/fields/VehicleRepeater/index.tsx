@@ -52,7 +52,7 @@ export const VehicleRepeater: FC<
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.length &&
+        {fields.length > 0 &&
           fields.map((vehicle: AssetFormField, index) => {
             const fieldError = error && error[index] ? error[index] : null
             if (!vehicle.initial) {
