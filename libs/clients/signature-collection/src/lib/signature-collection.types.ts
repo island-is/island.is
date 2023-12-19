@@ -46,4 +46,5 @@ export enum ReasonKey {
   DeniedByService = 'deniedByService',
   CollectionNotOpen = 'collectionNotOpen',
   NoListToRemove = 'noListToRemove',
+  SignatureNotFound = 'signatureNotFound',
 }

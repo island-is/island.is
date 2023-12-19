@@ -101,8 +101,12 @@ export class SignatureCollectionService {
     )
   }
 
-  async unsign(signatureId: string): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.unsignList(signatureId)
+  async unsign(signatureId: string, nationalId: string): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.unsignList(signatureId, nationalId)
+  }
+
+  async unsignAdmin(signatureId: string): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.unsignListAdmin(signatureId)
   }
 
   async cancel(
@@ -147,9 +151,11 @@ export class SignatureCollectionService {
     )
   }
 
-  async bulkUploadSignatures(input: SignatureCollectionListBulkUploadInput): Promise<SignatureCollectionBulk> {
+  async bulkUploadSignatures(
+    input: SignatureCollectionListBulkUploadInput,
+  ): Promise<SignatureCollectionBulk> {
     return await this.signatureCollectionClientService.bulkUploadSignatures(
-    input
+      input,
     )
   }
 

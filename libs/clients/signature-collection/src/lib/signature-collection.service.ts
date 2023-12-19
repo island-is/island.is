@@ -148,10 +148,24 @@ export class SignatureCollectionClientService {
     return mapSignature(signature)
   }
 
-  async unsignList(signatureId: string): Promise<Success> {
-    const signature = await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
-      iD: parseInt(signatureId),
-    })
+  async unsignList(signatureId: string, nationalId: string): Promise<Success> {
+    const { signature } = await this.getSignee(nationalId)
+    if (!signature || signature.id !== signatureId) {
+      return { success: false, reasons: [ReasonKey.SignatureNotFound] }
+    }
+    const signatureRemoved =
+      await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
+        iD: parseInt(signatureId),
+      })
+    return { success: !!signatureRemoved }
+  }
+
+  async unsignListAdmin(signatureId: string): Promise<Success> {
+    const signature = await this.signatureApi.medmaeliIDRemoveMedmaeliAdminPost(
+      {
+        iD: parseInt(signatureId),
+      },
+    )
     return { success: !!signature }
   }
 

@@ -143,7 +143,16 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.unsign(input.id)
+    return this.signatureCollectionService.unsign(input.id, user.nationalId)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionUnsignAdmin(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.unsignAdmin(input.id)
   }
 
   @Mutation(() => SignatureCollectionSuccess)
