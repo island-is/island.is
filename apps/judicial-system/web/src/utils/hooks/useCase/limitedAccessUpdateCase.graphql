@@ -131,5 +131,6 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
     }
     appealConclusion
     appealRulingDecision
+    requestAppealRulingNotToBePublished
   }
 }
