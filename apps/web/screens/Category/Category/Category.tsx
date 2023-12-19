@@ -60,6 +60,7 @@ type LifeEvents = GetAnchorPagesInCategoryQuery['getAnchorPagesInCategory']
 
 interface CategoryProps {
   groups: CategoryGroups
+  selectedCategory: GetArticleCategoriesQuery['getArticleCategories'][number]
   categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: Record<string, string>
   lifeEvents: LifeEvents
@@ -68,6 +69,7 @@ interface CategoryProps {
 
 const Category: Screen<CategoryProps> = ({
   groups,
+  selectedCategory,
   lifeEvents,
   categories,
   namespace,
@@ -86,9 +88,6 @@ const Category: Screen<CategoryProps> = ({
 
   useContentfulId(getCurrentCategory()?.id)
 
-  // find current category in categories list
-  const category = getCurrentCategory()
-
   useEffect(() => {
     const urlHash = window.location.hash ?? ''
     if (urlHash && urlHash.length > 0) {
@@ -104,7 +103,7 @@ const Category: Screen<CategoryProps> = ({
   const sidebarCategoryLinks = categories
     .filter(
       (item) =>
-        category?.id === item.id ||
+        selectedCategory?.id === item.id ||
         (item?.slug !== 'thjonusta-island-is' &&
           item?.slug !== 'services-on-island-is'),
     )
@@ -131,9 +130,6 @@ const Category: Screen<CategoryProps> = ({
     index: number
   }) => {
     const groupSlug = group.slug
-
-    // TODO: rework
-    const sortedSubgroupKeys = group.subgroups.map((s) => s.title)
     const expanded = hashArray.includes(groupSlug)
 
     return (
@@ -152,15 +148,14 @@ const Category: Screen<CategoryProps> = ({
           <Box paddingTop={2}>
             {group.subgroups.map((subgroup, index) => {
               // Pages with 1 subgroup only have the "other" group and don't get a heading.
-              const hasSubgroups = sortedSubgroupKeys.length > 1
+              const hasSubgroups = group.subgroups.length > 1
 
               const noSubgroupNameKeys = ['unknown', 'undefined', 'null']
 
-              // TODO: rework
               // Rename unknown group to 'Other'
               const subgroupName =
                 noSubgroupNameKeys.indexOf(subgroup.title ?? '') !== -1 ||
-                !subgroup
+                !subgroup.title
                   ? n('other')
                   : subgroup.title
 
@@ -230,7 +225,7 @@ const Category: Screen<CategoryProps> = ({
   return (
     <>
       <Head>
-        <title>{category?.title} | Ísland.is</title>
+        <title>{selectedCategory?.title} | Ísland.is</title>
       </Head>
       <SidebarLayout
         isSticky={false}
@@ -335,15 +330,15 @@ const Category: Screen<CategoryProps> = ({
             }}
             items={sidebarCategoryLinks}
             title={n('sidebarHeader')}
-            activeItemTitle={category?.title}
+            activeItemTitle={selectedCategory?.title}
           />
         </Box>
         <Box paddingBottom={[5, 5, 10]}>
           <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
-            {category?.title}
+            {selectedCategory?.title}
           </Text>
           <Text variant="intro" as="p">
-            {category?.description}
+            {selectedCategory?.description}
           </Text>
         </Box>
         <Stack space={2}>
@@ -454,6 +449,7 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
   return {
     groups: extractCategoryGroups(categoryPages ?? [], selectedCategory),
     lifeEvents,
+    selectedCategory,
     categories: getArticleCategories,
     namespace,
     slug,
