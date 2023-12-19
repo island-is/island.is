@@ -148,6 +148,56 @@ const sortCategoryGroups = (categoryGroups: CategoryGroups) => {
   }
 }
 
+const addPageToGroupMap = (
+  groupMap: Map<string, CategoryGroups[number]>,
+  page: CategoryPages[number],
+  pageGroup: CategoryPages[number]['group'],
+  pageSubgroup: CategoryPages[number]['subgroup'],
+) => {
+  const key = pageGroup?.slug
+
+  // We skip adding pages if they don't have a group key
+  if (!key) return
+
+  if (!groupMap.has(key)) {
+    // Group wasn't found so we create it
+    groupMap.set(key, {
+      title: pageGroup.title,
+      slug: pageGroup.slug,
+      importance: pageGroup.importance ?? 0,
+      description: pageGroup.description ?? '',
+      subgroups: [
+        {
+          title: pageSubgroup?.title,
+          importance: pageSubgroup?.importance ?? 0,
+          pages: [page],
+        },
+      ],
+    })
+
+    return
+  }
+
+  const group = groupMap.get(key)
+  if (!group) return
+
+  const subGroupIndex = group.subgroups.findIndex((subgroup) =>
+    isSameSubGroup(subgroup, pageSubgroup),
+  )
+
+  if (subGroupIndex < 0) {
+    // Subgroup wasn't found so we create it
+    group.subgroups.push({
+      title: pageSubgroup?.title,
+      importance: pageSubgroup?.importance ?? 0,
+      pages: [page],
+    })
+  } else {
+    // Subgroup was found so we append the page to it
+    group.subgroups[subGroupIndex].pages.push(page)
+  }
+}
+
 export const extractCategoryGroups = (
   pages: CategoryPages,
   selectedCategory: ArticleCategories[number] | undefined,
@@ -157,97 +207,18 @@ export const extractCategoryGroups = (
   const groupMap = new Map<string, CategoryGroups[number]>()
 
   for (const page of pages) {
-    const pageCategory = page.category
-    const pageGroup = page.group
-    const pageSubgroup = page.subgroup
+    const mainCategory = page.category
+    const secondaryCategory = page.otherCategories?.[0]
 
-    const pageSecondaryCategory = page.otherCategories?.[0]
-    const pageSecondaryGroup = page.otherGroups?.[0]
-    const pageSecondarySubgroup = page.otherSubgroups?.[0]
-
-    // Main category matches selected category
-    if (isSameCategory(pageCategory, selectedCategory) && pageGroup?.slug) {
-      const key = pageGroup.slug
-
-      if (!groupMap.has(key)) {
-        // Group wasn't found so we create it
-        groupMap.set(key, {
-          title: pageGroup.title,
-          slug: pageGroup.slug,
-          importance: pageGroup.importance ?? 0,
-          description: pageGroup.description ?? '',
-          subgroups: [
-            {
-              title: pageSubgroup?.title,
-              importance: pageSubgroup?.importance ?? 0,
-              pages: [page],
-            },
-          ],
-        })
-      } else {
-        const group = groupMap.get(key)
-        if (!group) continue
-
-        const subGroupIndex = group.subgroups.findIndex((subgroup) =>
-          isSameSubGroup(subgroup, pageSubgroup),
-        )
-
-        if (subGroupIndex < 0) {
-          // Subgroup wasn't found so we create it
-          group.subgroups.push({
-            title: pageSubgroup?.title,
-            importance: pageSubgroup?.importance ?? 0,
-            pages: [page],
-          })
-        } else {
-          // Subgroup was found so we append the page to it
-          group.subgroups[subGroupIndex].pages.push(page)
-        }
-      }
-    }
-
-    // "Secondary" category matches selected category
-    else if (
-      isSameCategory(pageSecondaryCategory, selectedCategory) &&
-      pageSecondaryGroup?.slug
-    ) {
-      const key = pageSecondaryGroup.slug
-
-      if (!groupMap.has(key)) {
-        // Group wasn't found so we create it
-        groupMap.set(key, {
-          title: pageSecondaryGroup.title,
-          slug: pageSecondaryGroup.slug,
-          importance: pageSecondaryGroup.importance ?? 0,
-          description: pageSecondaryGroup.description ?? '',
-          subgroups: [
-            {
-              title: pageSecondarySubgroup?.title,
-              importance: pageSecondarySubgroup?.importance ?? 0,
-              pages: [page],
-            },
-          ],
-        })
-      } else {
-        const group = groupMap.get(key)
-        if (!group) continue
-
-        const subGroupIndex = group.subgroups.findIndex((subgroup) =>
-          isSameSubGroup(subgroup, pageSecondarySubgroup),
-        )
-
-        if (subGroupIndex < 0) {
-          // Subgroup wasn't found so we create it
-          group.subgroups.push({
-            title: pageSecondarySubgroup?.title,
-            importance: pageSecondarySubgroup?.importance ?? 0,
-            pages: [page],
-          })
-        } else {
-          // Subgroup was found so we append the page to it
-          group.subgroups[subGroupIndex].pages.push(page)
-        }
-      }
+    if (isSameCategory(mainCategory, selectedCategory)) {
+      addPageToGroupMap(groupMap, page, page.group, page.subgroup)
+    } else if (isSameCategory(secondaryCategory, selectedCategory)) {
+      addPageToGroupMap(
+        groupMap,
+        page,
+        page.otherGroups?.[0],
+        page.otherSubgroups?.[0],
+      )
     }
   }
 
