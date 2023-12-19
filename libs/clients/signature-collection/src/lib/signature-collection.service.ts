@@ -4,11 +4,13 @@ import {
   MedmaelalistarApi,
   MedmaelasofnunApi,
   MedmaeliApi,
+  MedmaeliBulkItemDTO,
 } from '../../gen/fetch'
 import {
   GetListInput,
   CreateListInput,
   ReasonKey,
+  BulkUploadInput,
 } from './signature-collection.types'
 import {
   Collection,
@@ -289,18 +291,26 @@ export class SignatureCollectionClientService {
     return mapList(list)
   }
 
-  async bulkUploadSignatures(
-    listId: string,
-    nationalIds: string[],
-  ): Promise<BulkUpload> {
+  async bulkUploadSignatures({
+    listId,
+    upload,
+  }: BulkUploadInput): Promise<BulkUpload> {
+    const medmaeli: MedmaeliBulkItemDTO[] = upload.map((user) => ({
+      kennitala: user.nationalId,
+      bladsida: user.pageNumber,
+    }))
     const signatures = await this.listsApi.medmaelalistarIDAddMedmaeliBulkPost({
       iD: parseInt(listId),
-      requestBody: nationalIds,
+      medmaeliBulkRequestDTO: { medmaeli },
     })
     return {
       success:
         signatures?.medmaeli?.map((signature) => mapSignature(signature)) ?? [],
       failed: [
+        ...(signatures.medMedmaeliALista?.map((nationalId) => ({
+          nationalId,
+          reason: 'Þegar meðmæli á lista',
+        })) ?? []),
         ...(signatures.notFound?.map((nationalId) => ({
           nationalId,
           reason: 'Kennitala fannst ekki',

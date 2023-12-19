@@ -19,6 +19,15 @@ export interface CreateListInput {
   areas?: AreaInput[]
 }
 
+export interface BulkUploadUser {
+  pageNumber: number
+  nationalId: string
+}
+export interface BulkUploadInput {
+  listId: string
+  upload: BulkUploadUser[]
+}
+
 export enum Requirement {
   medAldur = 'medAldur',
   medIsRikisfang = 'medIsRikisfang',

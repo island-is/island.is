@@ -22,6 +22,7 @@ import { SignatureCollectionListInput } from './dto/singatureList.input'
 import { SignatureCollectionAreaInput } from './dto/area.input'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { Audit } from '@island.is/nest/audit'
+import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -184,7 +185,7 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionBulkUploadSignatures(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionListNationalIdsInput,
+    @Args('input') input: SignatureCollectionListBulkUploadInput,
   ): Promise<SignatureCollectionBulk> {
     return this.signatureCollectionService.bulkUploadSignatures(input)
   }
