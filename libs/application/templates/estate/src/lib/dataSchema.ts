@@ -107,14 +107,7 @@ export const estateSchema = z.object({
           })
           .optional(),
       })
-      .refine(
-        ({ nationalId, advocate }) => {
-          return kennitala.info(nationalId as string).age < 18 ? advocate : true
-        },
-        {
-          path: ['nationalId'],
-        },
-      )
+
       .refine(
         ({ foreignCitizenship, nationalId }) => {
           return !foreignCitizenship?.length

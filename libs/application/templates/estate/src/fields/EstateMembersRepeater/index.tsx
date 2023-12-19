@@ -7,9 +7,11 @@ import {
   Button,
   GridColumn,
   GridRow,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
+import * as kennitala from 'kennitala'
 import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
 import { Answers } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
@@ -19,16 +21,32 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
-import { EstateTypes, relationWithApplicant } from '../../lib/constants'
+import { EstateTypes, heirAgeValidation, relationWithApplicant } from '../../lib/constants'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
-> = ({ application, field, errors }) => {
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { id } = field
   const { formatMessage } = useLocale()
+  const { getValues, setError } = useFormContext()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const values = getValues()
+      const selectedEstate = application.answers.selectedEstate
+      const hasEstateMemberUnder18 = values.estate?.estateMembers?.some((member: EstateMember) => kennitala.info(member.nationalId)?.age < 18 && !member.advocate && member.enabled)
+      if (hasEstateMemberUnder18 && selectedEstate === EstateTypes.divisionOfEstateByHeirs) {
+        setError(heirAgeValidation, {
+          type: 'custom',
+          message: 'custom villa',
+        })
+        return [false, 'villa']
+      }
+      return [true, null]
+    })
 
   const { clearErrors } = useFormContext()
 
@@ -290,6 +308,7 @@ export const EstateMembersRepeater: FC<
           </Box>
         )
       })}
+      
       <Box marginTop={3}>
         <Button
           variant="text"
@@ -301,6 +320,11 @@ export const EstateMembersRepeater: FC<
           {formatMessage(m.inheritanceAddMember)}
         </Button>
       </Box>
+      {errors && errors[heirAgeValidation] ? (
+        <InputError
+          errorMessage={formatMessage(m.inheritanceAgeValidation)}
+        />
+      ) : null}
     </Box>
   )
 }
