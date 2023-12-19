@@ -304,7 +304,7 @@ export const overviewAssets = [
     space: 'gutter',
   }),
   buildDescriptionField({
-    id: 'overviewInventory',
+    id: 'moneyInfo',
     title: m.moneyText,
     description: (application: Application) =>
       getValueViaPath<string>(application.answers, 'assets.money.info'),
@@ -323,4 +323,30 @@ export const overviewAssets = [
     },
   }),
   buildDividerField({}),
+  buildDescriptionField({
+    id: 'overviewOtherAssets',
+    title: m.otherAssetsTitle,
+    titleVariant: 'h3',
+    marginBottom: 'gutter',
+    space: 'gutter',
+  }),
+
+  buildKeyValueField({
+    label: m.otherAssetsTotal,
+    display: 'flex',
+    value: ({ answers }) => {
+      const total = getValueViaPath(
+        answers,
+        'assets.otherAssets.total',
+      )
+      return formatCurrency(String(total))
+    },
+  }),
+  buildDividerField({}),
+  buildCustomField({
+    title: '',
+    id: 'assets.assetsTotal',
+    doesNotRequireAnswer: true,
+    component: 'CalculateTotalAssets',
+  }),
 ]
