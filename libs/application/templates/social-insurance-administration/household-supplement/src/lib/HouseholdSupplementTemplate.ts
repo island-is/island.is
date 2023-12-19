@@ -67,10 +67,8 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   name: householdSupplementFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.householdSupplementApplication,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.HouseholdSupplement.translation,
-    'sia.application',
-  ],
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {

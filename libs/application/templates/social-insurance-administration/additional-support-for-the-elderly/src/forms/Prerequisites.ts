@@ -15,7 +15,6 @@ import {
 } from '@island.is/application/types'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import {
-  errorMessages,
   socialInsuranceAdministrationMessage,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
@@ -43,8 +42,7 @@ export const PrerequisitesForm: Form = buildForm({
           title: socialInsuranceAdministrationMessage.pre.externalDataSection,
           subTitle:
             socialInsuranceAdministrationMessage.pre.externalDataDescription,
-          checkboxLabel: errorMessages.noEmailFound,
-          //socialInsuranceAdministrationMessage.pre.checkboxProvider,
+          checkboxLabel: socialInsuranceAdministrationMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',

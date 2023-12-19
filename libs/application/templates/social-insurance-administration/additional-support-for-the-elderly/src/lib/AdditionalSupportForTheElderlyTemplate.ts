@@ -65,10 +65,8 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   type: ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY,
   name: additionalSupportForTheElderyFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,
-    'sia.application',
-  ],
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
