@@ -625,7 +625,7 @@ export function getAppealedDate(
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }
 
-export function prosecutorShouldSelectDefenderForInvestigationCase(
+export function prosecutorCanSelectDefenderForInvestigationCase(
   type: CaseType,
 ) {
   return [
