@@ -28,6 +28,7 @@ import { ConsentService } from './services/consent.service'
 import { ConsentTenantsService } from './services/consentTenants.service'
 import { DomainService } from './services/domain.service'
 import { MeDelegationsService } from './services/meDelegations.service'
+import { LoginRestrictionResolver } from './resolvers/loginRestriction.resolver'
 
 @Module({
   providers: [
@@ -51,6 +52,7 @@ import { MeDelegationsService } from './services/meDelegations.service'
     ConsentService,
     ConsentTenantsResolver,
     ConsentTenantsService,
+    LoginRestrictionResolver,
   ],
   imports: [
     AuthPublicApiClientModule,
