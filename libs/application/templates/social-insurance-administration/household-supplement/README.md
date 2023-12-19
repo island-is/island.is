@@ -45,10 +45,10 @@ All localisation can be found on Contentful.
 - [Household supplement application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/hs.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../localization/README.md#message-extraction).
+When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
 
 ## Setup
 
-See [application-system](../../../../apps/application-system/README.md) setup on how to get started.
+See [application-system](../../../../../apps/application-system/README.md) setup on how to get started.
 
 Once you have everything running you can navigate to [http://localhost:4242/umsoknir/heimilisuppbot](http://localhost:4242/umsoknir/heimilisuppbot) and start developing.
