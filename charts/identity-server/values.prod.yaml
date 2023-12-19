@@ -180,6 +180,8 @@ identity-server:
     IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
     IdentityServer__SigningCertificate__Passphrase: '/k8s/identity-server/SigningCertificatePassphrase'
     PersistenceSettings__AccessTokenManagementSettings__ClientSecret: '/k8s/identity-server/ClientSecret'
+    Redaction__UserIdentifiers__Key: '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY'
+    Redaction__UserIdentifiers__KeyId: '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID'
     Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList'
   securityContext:
     allowPrivilegeEscalation: false

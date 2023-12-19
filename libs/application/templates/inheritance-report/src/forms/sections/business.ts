@@ -57,8 +57,6 @@ export const business = buildSection({
                 ],
                 repeaterButtonText:
                   m.businessAssetRepeaterButton.defaultMessage,
-                repeaterHeaderText:
-                  m.businessAssetRepeaterHeader.defaultMessage,
                 sumField: 'businessAssetValue',
               },
             ),
@@ -112,7 +110,6 @@ export const business = buildSection({
                   },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
                 sumField: 'debtValue',
               },
             ),

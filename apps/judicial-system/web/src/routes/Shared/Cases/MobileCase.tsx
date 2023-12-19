@@ -2,6 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import { AnimatePresence } from 'framer-motion'
 
 import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
@@ -10,7 +11,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
 
 import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
@@ -19,20 +21,21 @@ interface CategoryCardProps {
   heading: string | React.ReactNode
   tags?: React.ReactNode
   onClick: () => void
+  isLoading?: boolean
 }
 
-const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
-  heading,
-  onClick,
-  tags,
-  children,
-}) => {
+export const CategoryCard: React.FC<
+  React.PropsWithChildren<CategoryCardProps>
+> = ({ heading, onClick, tags, children, isLoading = false }) => {
+  const { LoadingIndicator } = useCaseList()
+
   return (
     <FocusableBox
       className={styles.card}
       height="full"
       width="full"
       component="button"
+      aria-disabled={isLoading}
       onClick={onClick}
     >
       <Box>
@@ -42,6 +45,7 @@ const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
         {children}
         <Box marginTop={3}>{tags}</Box>
       </Box>
+      <AnimatePresence>{isLoading && <LoadingIndicator />}</AnimatePresence>
     </FocusableBox>
   )
 }
@@ -50,6 +54,7 @@ interface Props {
   theCase: CaseListEntry
   onClick: () => void
   isCourtRole: boolean
+  isLoading?: boolean
 }
 
 const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
@@ -57,6 +62,7 @@ const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
   onClick,
   isCourtRole,
   children,
+  isLoading = false,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -73,6 +79,7 @@ const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
           courtDate={theCase.courtDate}
         />,
       ]}
+      isLoading={isLoading}
     >
       <Text title={theCase.policeCaseNumbers.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}

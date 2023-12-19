@@ -1,7 +1,7 @@
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 import { LinkButton } from '@island.is/service-portal/core'
+import { LicensePaths } from '../lib/paths'
 
 interface Category {
   id:
@@ -582,19 +582,19 @@ export const getTitleAndLogo = (type: string) => {
 export const getPathFromType = (type: string) => {
   switch (type) {
     case LicenseType.AdrLicense:
-      return ServicePortalPath.ADRLicensesDetail
+      return LicensePaths.ADRLicensesDetail
     case LicenseType.DriversLicense:
-      return ServicePortalPath.DrivingLicensesDetail
+      return LicensePaths.DrivingLicensesDetail
     case LicenseType.FirearmLicense:
-      return ServicePortalPath.FirearmLicensesDetail
+      return LicensePaths.FirearmLicensesDetail
     case LicenseType.MachineLicense:
-      return ServicePortalPath.MachineLicensesDetail
+      return LicensePaths.MachineLicensesDetail
     case LicenseType.DisabilityLicense:
-      return ServicePortalPath.DisabilityLicense
+      return LicensePaths.DisabilityLicense
     case LicenseType.PCard:
-      return ServicePortalPath.PCardDetail
+      return LicensePaths.PCardDetail
     case LicenseType.Ehic:
-      return ServicePortalPath.EhicDetail
+      return LicensePaths.EhicDetail
     default:
       return ''
   }
