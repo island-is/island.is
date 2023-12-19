@@ -1,4 +1,8 @@
-import { buildSubmitField, getValueViaPath } from '@island.is/application/core'
+import {
+  buildSubmitField,
+  getValueViaPath,
+  coreMessages,
+} from '@island.is/application/core'
 import {
   DataProviderItem,
   ExternalData,
@@ -81,12 +85,12 @@ export function findSubmitField(screen: FormScreen): SubmitField | undefined {
     return buildSubmitField({
       id: 'submit',
       placement: 'footer',
-      title: 'externalData.submitButtonTitle',
+      title: coreMessages.buttonApprove,
       refetchApplicationAfterSubmit: true,
       actions: [
         {
           event: 'SUBMIT',
-          name: 'externalData.submitButtonTitle',
+          name: coreMessages.buttonApprove,
           type: 'primary',
         },
       ],

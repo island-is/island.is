@@ -252,8 +252,7 @@ export function buildCertificateTemplateNoPayment(data: {
           displayStatus: 'success',
         })
         .lifecycle(pruneAfterDays(90))
-        .setForm(conslusionForm)
-        .addOnEntry(getPdfApi),
+        .setForm(conslusionForm),
     )
 
   return application.build()

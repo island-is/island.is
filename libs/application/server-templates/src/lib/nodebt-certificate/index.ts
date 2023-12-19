@@ -18,6 +18,7 @@ export const noDebtCertificate = buildCertificateTemplateNoPayment({
   additionalProvider: {
     title: m.noDebtCertificateInformationTitle,
     subTitle: m.noDebtCertificateInformationSubTitle,
+    provider: pdfApi,
   },
   getPdfApi: pdfApi,
   pdfKey:
