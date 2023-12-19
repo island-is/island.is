@@ -13,7 +13,7 @@ import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -156,7 +156,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },
@@ -208,7 +208,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               },
               {
                 title: formatMessage(core.caseType),
-                value: capitalize(caseTypes[workingCase.type]),
+                value: capitalize(formatCaseType(workingCase.type)),
               },
               ...(workingCase.courtDate
                 ? [

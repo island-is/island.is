@@ -10,11 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  CaseFileCategory,
-  CaseState,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import {
@@ -30,6 +26,8 @@ import RestrictionLength from '@island.is/judicial-system-web/src/components/Res
 import {
   CaseAppealRulingDecision,
   CaseDecision,
+  CaseFileCategory,
+  CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,

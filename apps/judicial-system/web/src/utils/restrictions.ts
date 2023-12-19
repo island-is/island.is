@@ -30,9 +30,9 @@ export const restrictionsCheckboxes: CheckboxInfo[] = [
 
 export const formatRequestedCustodyRestrictions = (
   formatMessage: IntlFormatters['formatMessage'],
-  type: CaseType,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  requestedOtherRestrictions?: string,
+  type?: CaseType | null,
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
+  requestedOtherRestrictions?: string | null,
 ) => {
   const hasRequestedCustodyRestrictions =
     requestedCustodyRestrictions && requestedCustodyRestrictions?.length > 0
@@ -74,7 +74,7 @@ export const travelBanRestrictionsCheckboxes = [
 export function formatCustodyRestrictions(
   formatMessage: IntlShape['formatMessage'],
   caseType: CaseType,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
 ) {
   const restrictions = getSupportedCaseCustodyRestrictions(
     requestedCustodyRestrictions,

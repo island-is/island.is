@@ -30,9 +30,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
+  useDefendants,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {

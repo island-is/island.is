@@ -4,7 +4,6 @@ import router from 'next/router'
 
 import { AlertMessage, Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { NotificationType } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -19,7 +18,10 @@ import {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  NotificationType,
+  SessionArrangements,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,

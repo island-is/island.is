@@ -207,7 +207,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
 
     if (workingCase.defendants && workingCase.defendants.length > 0) {
       indictmentIntroductionAutofill = [
-        workingCase.prosecutor?.institution?.name.toUpperCase(),
+        workingCase.prosecutor?.institution?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
@@ -353,7 +353,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
               <Checkbox
                 name="requestDriversLicenseSuspension"
                 label={formatMessage(strings.demandsRequestSuspension)}
-                checked={workingCase.requestDriversLicenseSuspension}
+                checked={Boolean(workingCase.requestDriversLicenseSuspension)}
                 onChange={() => {
                   setAndSendCaseToServer(
                     [

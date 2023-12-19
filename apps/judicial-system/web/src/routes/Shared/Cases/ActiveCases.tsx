@@ -245,13 +245,13 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         as="span"
                         variant="small"
                         color="dark400"
-                        title={c.policeCaseNumbers.join(', ')}
+                        title={c.policeCaseNumbers?.join(', ')}
                       >
                         {displayFirstPlusRemaining(c.policeCaseNumbers)}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span" title={c.policeCaseNumbers.join(', ')}>
+                    <Text as="span" title={c.policeCaseNumbers?.join(', ')}>
                       {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
                     </Text>
                   )}
@@ -295,7 +295,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 </td>
                 <td className={styles.td}>
                   <Text as="span">
-                    {format(parseISO(c.created), 'd.M.y', {
+                    {format(parseISO(c.created ?? ''), 'd.M.y', {
                       locale: localeIS,
                     })}
                   </Text>

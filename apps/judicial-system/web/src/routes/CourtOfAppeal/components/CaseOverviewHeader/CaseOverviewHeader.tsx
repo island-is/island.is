@@ -46,7 +46,9 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
 
       if (existingEventIndex === -1) {
         acc.push(event)
-      } else if (event.created < acc[existingEventIndex].created) {
+      } else if (
+        (event.created ?? '') < (acc[existingEventIndex].created ?? '')
+      ) {
         acc[existingEventIndex] = event
       }
 

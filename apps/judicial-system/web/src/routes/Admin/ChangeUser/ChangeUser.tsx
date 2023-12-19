@@ -35,7 +35,16 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
     useUpdateUserMutation()
 
   const saveUser = async (user: User) => {
-    if (!userUpdating && user && user.institution) {
+    if (
+      !userUpdating &&
+      user.name &&
+      user.role &&
+      user.title &&
+      user.mobileNumber &&
+      user.email &&
+      user.active &&
+      user.institution
+    ) {
       await updateUserMutation({
         variables: {
           input: {

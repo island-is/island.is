@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  completedCaseStates,
+  isCompletedCase,
   isDefenceUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -36,7 +36,7 @@ const IndictmentOverview = () => {
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
-  const caseIsClosed = completedCaseStates.includes(workingCase.state)
+  const caseIsClosed = isCompletedCase(workingCase.state)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),

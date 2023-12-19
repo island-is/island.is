@@ -201,7 +201,7 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
         {
           courtStartDate: workingCase.courtDate,
           courtLocation:
-            workingCase.court &&
+            workingCase.court?.name &&
             `í ${
               workingCase.court.name.indexOf('dómur') > -1
                 ? workingCase.court.name.replace('dómur', 'dómi')

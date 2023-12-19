@@ -29,8 +29,10 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import {
+  useCase,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo } from '../../components'
@@ -47,7 +49,7 @@ export interface PoliceCase {
 }
 
 const getPoliceCases: (theCase: Case) => PoliceCase[] = (theCase: Case) =>
-  theCase.policeCaseNumbers.length > 0
+  theCase.policeCaseNumbers && theCase.policeCaseNumbers.length > 0
     ? theCase.policeCaseNumbers.map((policeCaseNumber) => ({
         number: policeCaseNumber,
         subtypes:
@@ -439,33 +441,35 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
                 exit={{ opacity: 0, y: 10 }}
               >
                 <Box component="section" marginBottom={3}>
-                  <PoliceCaseInfo
-                    index={index}
-                    policeCaseNumbers={workingCase.policeCaseNumbers}
-                    subtypes={
-                      workingCase.indictmentSubtypes &&
-                      workingCase.indictmentSubtypes[
-                        workingCase.policeCaseNumbers[index]
-                      ]
-                    }
-                    crimeScene={
-                      workingCase.crimeScenes &&
-                      workingCase.crimeScenes[
-                        workingCase.policeCaseNumbers[index]
-                      ]
-                    }
-                    setPoliceCase={handleSetPoliceCase}
-                    deletePoliceCase={
-                      workingCase.policeCaseNumbers.length > 1 &&
-                      !(workingCase.origin === CaseOrigin.LOKE && index === 0)
-                        ? handleDeletePoliceCase
-                        : undefined
-                    }
-                    updatePoliceCase={handleUpdatePoliceCase}
-                    policeCaseNumberImmutable={
-                      workingCase.origin === CaseOrigin.LOKE && index === 0
-                    }
-                  />
+                  {workingCase.policeCaseNumbers && (
+                    <PoliceCaseInfo
+                      index={index}
+                      policeCaseNumbers={workingCase.policeCaseNumbers}
+                      subtypes={
+                        workingCase.indictmentSubtypes &&
+                        workingCase.indictmentSubtypes[
+                          workingCase.policeCaseNumbers[index]
+                        ]
+                      }
+                      crimeScene={
+                        workingCase.crimeScenes &&
+                        workingCase.crimeScenes[
+                          workingCase.policeCaseNumbers[index]
+                        ]
+                      }
+                      setPoliceCase={handleSetPoliceCase}
+                      deletePoliceCase={
+                        workingCase.policeCaseNumbers.length > 1 &&
+                        !(workingCase.origin === CaseOrigin.LOKE && index === 0)
+                          ? handleDeletePoliceCase
+                          : undefined
+                      }
+                      updatePoliceCase={handleUpdatePoliceCase}
+                      policeCaseNumberImmutable={
+                        workingCase.origin === CaseOrigin.LOKE && index === 0
+                      }
+                    />
+                  )}
                 </Box>
               </motion.div>
             ))}

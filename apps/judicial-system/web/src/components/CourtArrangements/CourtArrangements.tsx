@@ -2,28 +2,29 @@ import React, { useEffect, useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { NotificationType } from '@island.is/judicial-system/types'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
+import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
+import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-} from '../../utils/formHelper'
-import { useCase } from '../../utils/hooks'
-import { formatDateForServer } from '../../utils/hooks/useCase'
-import { hasSentNotification } from '../../utils/stepHelper'
-import BlueBox from '../BlueBox/BlueBox'
-import DateTime from '../DateTime/DateTime'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  formatDateForServer,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleCourtDateChange: (date: Date | undefined, valid: boolean) => void
-  selectedCourtDate?: string
+  selectedCourtDate?: string | null
 }
 
 export const useCourtArrangements = (workingCase: Case) => {
-  const [courtDate, setCourtDate] = useState<string>()
+  const [courtDate, setCourtDate] = useState<string | null>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
 
   useEffect(() => {

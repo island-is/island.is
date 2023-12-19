@@ -45,7 +45,17 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
     useCreateUserMutation()
 
   const createUser = async (user: User): Promise<void> => {
-    if (!userCreating && user && user.institution) {
+    if (
+      !userCreating &&
+      user.nationalId &&
+      user.name &&
+      user.role &&
+      user.title &&
+      user.mobileNumber &&
+      user.email &&
+      user.active &&
+      user.institution
+    ) {
       await createUserMutation({
         variables: {
           input: {

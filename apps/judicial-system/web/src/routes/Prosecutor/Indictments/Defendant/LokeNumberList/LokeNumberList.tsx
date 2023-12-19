@@ -31,7 +31,7 @@ export const LokeNumberList: React.FC<Props> = (props) => {
     if (policeCaseInfo) {
       const available = policeCaseInfo?.filter(
         (caseInfo) =>
-          !workingCase.policeCaseNumbers.includes(caseInfo.policeCaseNumber),
+          !workingCase.policeCaseNumbers?.includes(caseInfo.policeCaseNumber),
       )
       setAvailablePoliceCases(available)
     }

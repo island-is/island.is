@@ -13,10 +13,11 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
-  CaseTransition,
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
+import {
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonSystemUser,
@@ -58,6 +59,8 @@ import {
   CaseAppealDecision,
   CaseAppealState,
   CaseDecision,
+  CaseState,
+  CaseTransition,
   InstitutionType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
@@ -66,9 +69,9 @@ import {
 import {
   ReactSelectOption,
   TempCase as Case,
-  TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 import {
+  UpdateCase,
   useAppealAlertBanner,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -515,7 +518,7 @@ export const SignedVerdictOverview: React.FC = () => {
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
@@ -544,7 +547,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   ? [
                       {
                         title: formatMessage(core.caseType),
-                        value: capitalize(caseTypes[workingCase.type]),
+                        value: capitalize(formatCaseType(workingCase.type)),
                       },
                     ]
                   : []),

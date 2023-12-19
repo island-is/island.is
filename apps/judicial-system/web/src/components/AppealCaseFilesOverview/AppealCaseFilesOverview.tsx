@@ -6,8 +6,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseFileCategory,
-  completedCaseStates,
+  isCompletedCase,
   isCourtOfAppealsUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -18,6 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealState,
+  CaseFileCategory,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -91,7 +91,7 @@ const AppealCaseFilesOverview: React.FC<
       ? appealRulingFiles
       : appealCaseFiles?.concat(appealRulingFiles ?? [])
 
-  return completedCaseStates.includes(workingCase.state) &&
+  return isCompletedCase(workingCase.state) &&
     allFiles &&
     allFiles.length > 0 ? (
     <>

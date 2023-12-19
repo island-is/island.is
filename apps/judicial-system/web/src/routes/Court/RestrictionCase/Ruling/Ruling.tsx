@@ -54,9 +54,9 @@ export function getConclusionAutofill(
   workingCase: Case,
   decision: CaseDecision,
   defendant: Defendant,
-  validToDate?: string,
-  isCustodyIsolation?: boolean,
-  isolationToDate?: string,
+  validToDate?: string | null,
+  isCustodyIsolation?: boolean | null,
+  isolationToDate?: string | null,
 ) {
   const isolationEndsBeforeValidToDate =
     validToDate &&

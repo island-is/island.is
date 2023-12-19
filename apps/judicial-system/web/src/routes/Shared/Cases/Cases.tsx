@@ -6,8 +6,7 @@ import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
-  CaseTransition,
-  completedCaseStates,
+  isCompletedCase,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -31,6 +30,7 @@ import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Tab
 import {
   CaseListEntry,
   CaseState,
+  CaseTransition,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -137,9 +137,9 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
 
     return partition(casesWithoutDeleted, (c) => {
       if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
-        return !completedCaseStates.includes(c.state)
+        return !isCompletedCase(c.state)
       } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingSignatureDate)
+        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
       }
     })
   }, [resCases, user])

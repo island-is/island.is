@@ -78,7 +78,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   }, [personData, personError, setName])
 
   const selectInstitutions = props.institutions.map((institution) => ({
-    label: institution.name,
+    label: institution.name ?? '',
     value: institution.id,
     institution,
   }))
@@ -420,7 +420,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
           <Checkbox
             name="active"
             label="Virkur notandi"
-            checked={user.active}
+            checked={Boolean(user.active)}
             onChange={({ target }) =>
               setUser({ ...user, active: target.checked })
             }

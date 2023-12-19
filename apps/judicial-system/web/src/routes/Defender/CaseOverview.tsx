@@ -4,9 +4,12 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
-  completedCaseStates,
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
+import {
+  isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -61,7 +64,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const shouldDisplayAlertBanner =
-    completedCaseStates.includes(workingCase.state) &&
+    isCompletedCase(workingCase.state) &&
     (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
       workingCase.hasBeenAppealed)
 
@@ -79,7 +82,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
       >
         <PageHeader title={formatMessage(titles.defender.caseOverview)} />
         <FormContentContainer>
-          {!completedCaseStates.includes(workingCase.state) &&
+          {!isCompletedCase(workingCase.state) &&
             workingCase.caseResentExplanation && (
               <Box marginBottom={5}>
                 <CaseResentExplanation
@@ -89,13 +92,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
             )}
           <Box marginBottom={5}>
             <CaseTitleInfoAndTags />
-            {completedCaseStates.includes(workingCase.state) &&
+            {isCompletedCase(workingCase.state) &&
               isRestrictionCase(workingCase.type) &&
               workingCase.state === CaseState.ACCEPTED && (
                 <CaseDates workingCase={workingCase} />
               )}
           </Box>
-          {completedCaseStates.includes(workingCase.state) &&
+          {isCompletedCase(workingCase.state) &&
             workingCase.caseModifiedExplanation && (
               <Box marginBottom={5}>
                 <AlertMessage
@@ -131,7 +134,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
@@ -166,7 +169,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   ? [
                       {
                         title: formatMessage(core.caseType),
-                        value: capitalize(caseTypes[workingCase.type]),
+                        value: capitalize(formatCaseType(workingCase.type)),
                       },
                     ]
                   : []),
@@ -231,7 +234,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               }
             />
           </Box>
-          {completedCaseStates.includes(workingCase.state) && (
+          {isCompletedCase(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
                 title={formatMessage(conclusion.title)}
@@ -254,7 +257,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
             RequestSharedWithDefender.READY_FOR_COURT ||
             workingCase.requestSharedWithDefender ===
               RequestSharedWithDefender.COURT_DATE ||
-            completedCaseStates.includes(workingCase.state)) && (
+            isCompletedCase(workingCase.state)) && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={3}>
                 {formatMessage(strings.documentHeading)}
@@ -267,7 +270,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   pdfType={'request'}
                 />
 
-                {completedCaseStates.includes(workingCase.state) && (
+                {isCompletedCase(workingCase.state) && (
                   <>
                     <PdfButton
                       renderAs="row"

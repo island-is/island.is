@@ -1,9 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import type { SignedUrl as TSignedUrl } from '@island.is/judicial-system/types'
-
 @ObjectType()
-export class SignedUrl implements TSignedUrl {
+export class SignedUrl {
   @Field()
   readonly url!: string
 }

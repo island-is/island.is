@@ -50,7 +50,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        b['created'].localeCompare(a['created']),
+        (b['created'] ?? '').localeCompare(a['created'] ?? ''),
       ),
     [cases],
   )

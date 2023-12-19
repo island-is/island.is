@@ -42,8 +42,8 @@ import {
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  autofillEntry,
   formatDateForServer,
+  UpdateCase,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   legalProvisions,
@@ -59,11 +59,11 @@ import * as styles from './PoliceDemands.css'
 
 export interface DemandsAutofillProps {
   defendant: Defendant
-  caseType: CaseType
-  requestedValidToDate?: string | Date
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  parentCaseDecision?: CaseDecision
-  courtName?: string
+  caseType?: CaseType | null
+  requestedValidToDate?: string | Date | null
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null
+  parentCaseDecision?: CaseDecision | null
+  courtName?: string | null
 }
 
 export const getDemandsAutofill = (
@@ -141,10 +141,10 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const onDemandsChange = React.useCallback(
     (
-      entry: autofillEntry,
-      caseType: CaseType,
-      requestedValidToDate: Date | string | undefined,
-      requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
+      entry: UpdateCase,
+      caseType?: CaseType | null,
+      requestedValidToDate?: Date | string | null,
+      requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
     ) => {
       setAndSendCaseToServer(
         [

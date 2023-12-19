@@ -55,7 +55,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
-  const userRoleToString = (userRole: UserRole) => {
+  const userRoleToString = (userRole?: UserRole | null) => {
     switch (userRole) {
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
@@ -72,6 +72,8 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Aðstoðarmaður dómara'
       case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
+      default:
+        return 'Óþekkt'
     }
   }
 
@@ -103,7 +105,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
             options={
               institutionsLoaded
                 ? allInstitutions.map((i) => {
-                    return { label: i.name, value: i.id }
+                    return { label: i.name ?? '', value: i.id }
                   })
                 : []
             }

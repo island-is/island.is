@@ -5,10 +5,7 @@ import { useRouter } from 'next/router'
 import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  CaseFileCategory,
-  isDefenceUser,
-} from '@island.is/judicial-system/types'
+import { isDefenceUser } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -23,6 +20,7 @@ import {
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   CaseAppealDecision,
+  CaseFileCategory,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {

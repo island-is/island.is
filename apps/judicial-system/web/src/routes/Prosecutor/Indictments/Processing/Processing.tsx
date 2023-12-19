@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { CaseTransition } from '@island.is/judicial-system/types'
 import {
   processing as m,
   titles,
@@ -20,6 +19,7 @@ import CommentsInput from '@island.is/judicial-system-web/src/components/Comment
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseState,
+  CaseTransition,
   Institution,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {

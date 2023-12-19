@@ -190,7 +190,7 @@ const PoliceReport = () => {
                   tooltip={formatMessage(
                     icReportForm.prosecutorOnly.checkbox.tooltip,
                   )}
-                  checked={workingCase.requestProsecutorOnlySession}
+                  checked={Boolean(workingCase.requestProsecutorOnlySession)}
                   onChange={(evt) => {
                     setWorkingCase({
                       ...workingCase,

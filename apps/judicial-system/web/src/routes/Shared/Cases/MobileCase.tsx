@@ -74,7 +74,7 @@ const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
         />,
       ]}
     >
-      <Text title={theCase.policeCaseNumbers.join(', ')}>
+      <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
       {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}
