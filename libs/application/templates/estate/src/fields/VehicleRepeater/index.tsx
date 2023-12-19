@@ -54,7 +54,6 @@ export const VehicleRepeater: FC<
       <GridRow>
         {fields.length &&
           fields.map((vehicle: AssetFormField, index) => {
-            console.log('VEHICLE', vehicle)
             const fieldError = error && error[index] ? error[index] : null
             if (!vehicle.initial) {
               return null
