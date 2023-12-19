@@ -101,12 +101,20 @@ export class SignatureCollectionService {
     )
   }
 
-  async unsign(signatureId: string, nationalId: string): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.unsignList(signatureId, nationalId)
+  async unsign(
+    signatureId: string,
+    nationalId: string,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.unsignList(
+      signatureId,
+      nationalId,
+    )
   }
 
   async unsignAdmin(signatureId: string): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.unsignListAdmin(signatureId)
+    return await this.signatureCollectionClientService.unsignListAdmin(
+      signatureId,
+    )
   }
 
   async cancel(
