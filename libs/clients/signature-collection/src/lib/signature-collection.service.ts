@@ -4,11 +4,13 @@ import {
   MedmaelalistarApi,
   MedmaelasofnunApi,
   MedmaeliApi,
+  MedmaeliBulkItemDTO,
 } from '../../gen/fetch'
 import {
   GetListInput,
   CreateListInput,
   ReasonKey,
+  BulkUploadInput,
 } from './signature-collection.types'
 import {
   Collection,
@@ -146,10 +148,24 @@ export class SignatureCollectionClientService {
     return mapSignature(signature)
   }
 
-  async unsignList(signatureId: string): Promise<Success> {
-    const signature = await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
-      iD: parseInt(signatureId),
-    })
+  async unsignList(signatureId: string, nationalId: string): Promise<Success> {
+    const { signature } = await this.getSignee(nationalId)
+    if (!signature || signature.id !== signatureId) {
+      return { success: false, reasons: [ReasonKey.SignatureNotFound] }
+    }
+    const signatureRemoved =
+      await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
+        iD: parseInt(signatureId),
+      })
+    return { success: !!signatureRemoved }
+  }
+
+  async unsignListAdmin(signatureId: string): Promise<Success> {
+    const signature = await this.signatureApi.medmaeliIDRemoveMedmaeliAdminPost(
+      {
+        iD: parseInt(signatureId),
+      },
+    )
     return { success: !!signature }
   }
 
@@ -289,18 +305,26 @@ export class SignatureCollectionClientService {
     return mapList(list)
   }
 
-  async bulkUploadSignatures(
-    listId: string,
-    nationalIds: string[],
-  ): Promise<BulkUpload> {
+  async bulkUploadSignatures({
+    listId,
+    upload,
+  }: BulkUploadInput): Promise<BulkUpload> {
+    const medmaeli: MedmaeliBulkItemDTO[] = upload.map((user) => ({
+      kennitala: user.nationalId,
+      bladsida: user.pageNumber,
+    }))
     const signatures = await this.listsApi.medmaelalistarIDAddMedmaeliBulkPost({
       iD: parseInt(listId),
-      requestBody: nationalIds,
+      medmaeliBulkRequestDTO: { medmaeli },
     })
     return {
       success:
         signatures?.medmaeli?.map((signature) => mapSignature(signature)) ?? [],
       failed: [
+        ...(signatures.medMedmaeliALista?.map((nationalId) => ({
+          nationalId,
+          reason: 'Þegar meðmæli á lista',
+        })) ?? []),
         ...(signatures.notFound?.map((nationalId) => ({
           nationalId,
           reason: 'Kennitala fannst ekki',
