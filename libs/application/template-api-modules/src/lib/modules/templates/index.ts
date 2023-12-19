@@ -103,6 +103,10 @@ import { SocialInsuranceAdministrationModule } from './social-insurance-administ
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
+import { SignatureListCreationModule } from './signature-collection/signature-list-creation/signature-list-creation.module'
+import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
+import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
+import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -158,6 +162,8 @@ export const modules = [
   CitizenshipModule,
   EnergyFundsModule,
   HealthcareLicenseCertificateModule,
+  SignatureListCreationModule,
+  SignatureListSigningModule,
 ]
 
 export const services = [
@@ -214,4 +220,6 @@ export const services = [
   CitizenshipService,
   EnergyFundsService,
   HealthcareLicenseCertificateService,
+  SignatureListCreationService,
+  SignatureListSigningService,
 ]

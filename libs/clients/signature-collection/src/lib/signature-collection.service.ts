@@ -243,9 +243,9 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async canCreate(nationalId: string): Promise<{ success: boolean }> {
-    const { canCreate } = await this.getSignee(nationalId)
-    return { success: canCreate }
+  async canCreate(nationalId: string): Promise<Success> {
+    const { canCreate, canCreateInfo } = await this.getSignee(nationalId)
+    return { success: canCreate, reasons: canCreateInfo }
   }
 
   async isOwner(nationalId: string): Promise<{ success: boolean }> {

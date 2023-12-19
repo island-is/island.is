@@ -9,12 +9,14 @@ import {
   NationalRegistryUserApi,
   StateLifeCycle,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { Events, Roles, States } from './constants'
+import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import { CanCreateApi } from '../dataProviders'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -58,7 +60,7 @@ const CreateListTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryUserApi, UserProfileApi, CanCreateApi],
             },
           ],
         },
@@ -110,12 +112,12 @@ const CreateListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: WeekLifeCycle,
-          /* Add when ready
+
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          })*/
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

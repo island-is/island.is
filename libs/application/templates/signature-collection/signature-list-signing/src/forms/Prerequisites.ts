@@ -16,6 +16,7 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
+import { CanSignApi } from '../dataProviders/index';
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
@@ -71,6 +72,11 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
+              title: m.userProfileProviderTitle,
+              subTitle: m.userProfileProviderSubtitle,
+            }),
+            buildDataProviderItem({
+              provider: CanSignApi,
               title: m.userProfileProviderTitle,
               subTitle: m.userProfileProviderSubtitle,
             }),

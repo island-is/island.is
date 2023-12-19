@@ -34,6 +34,7 @@ import {
   DirectorateOfImmigration,
   SocialInsuranceAdministration,
   OccupationalLicenses,
+  SignatureCollection,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -270,6 +271,7 @@ export const serviceSetup = (services: {
       DirectorateOfImmigration,
       SocialInsuranceAdministration,
       OccupationalLicenses,
+      SignatureCollection,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

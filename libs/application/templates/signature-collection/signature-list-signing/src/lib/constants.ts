@@ -17,5 +17,5 @@ export type SubmitResponse = {
 }
 
 export enum ApiActions {
-  submitApplication = 'submitApplication',
+  submitApplication = 'signList',
 }
