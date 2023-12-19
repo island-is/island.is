@@ -1,0 +1,18 @@
+{
+  "name": "restrictions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/service-portal/restrictions/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/restrictions/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    }
+  }
+}

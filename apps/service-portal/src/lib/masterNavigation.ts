@@ -1,4 +1,5 @@
 import { PortalNavigationItem, m } from '@island.is/portals/core'
+import { restrictionsNavigation } from '@island.is/restrictions'
 import { ServicePortalPaths } from './paths'
 import { documentsNavigation } from '@island.is/service-portal/documents'
 import { financeNavigation } from '@island.is/service-portal/finance'
@@ -40,6 +41,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
         ...delegationsNavigationChildren,
         sessionsNavigation,
         consentNavigation,
+        restrictionsNavigation,
       ],
     },
     companyNavigation,
