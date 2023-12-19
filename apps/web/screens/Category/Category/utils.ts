@@ -49,9 +49,7 @@ export const getHashArr = (
   return null
 }
 
-export type CategoryPages = NonNullable<
-  GetCategoryPagesQuery['getCategoryPages']
->
+type CategoryPages = NonNullable<GetCategoryPagesQuery['getCategoryPages']>
 
 export type CategoryGroups = {
   title: string
@@ -64,9 +62,6 @@ export type CategoryGroups = {
     pages: CategoryPages
   }[]
 }[]
-
-export type ArticleCategories =
-  GetArticleCategoriesQuery['getArticleCategories']
 
 type Category =
   | {
@@ -115,7 +110,6 @@ const sortPages = (pages: CategoryPages) => {
 
 const sortSubgroups = (subgroups: CategoryGroups[number]['subgroups']) =>
   subgroups.sort((a, b) => {
-    // 'unknown' is a valid subgroup key but we'll sort it to the bottom
     if (!a.title) {
       return 1
     } else if (!b.title) {
@@ -200,7 +194,9 @@ const addPageToGroupMap = (
 
 export const extractCategoryGroups = (
   pages: CategoryPages,
-  selectedCategory: ArticleCategories[number] | undefined,
+  selectedCategory:
+    | GetArticleCategoriesQuery['getArticleCategories'][number]
+    | undefined,
 ): CategoryGroups => {
   if (!selectedCategory?.title) return []
 
