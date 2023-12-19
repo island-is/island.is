@@ -33,4 +33,16 @@ export const strings = defineMessages({
       'Tilkynning hefur verið send Landsrétti{isDefenceUser, select, true { og sækjanda} other {}}.',
     description: 'Texti í Gögn hafa verið send Landsrétti modal',
   },
+  appealActorAndDate: {
+    id: 'judicial.system.core:appeal_case_files.appeal_actor_and_date',
+    defaultMessage:
+      'Kært af {appealedByProsecutor, select, true {sækjanda} other {verjanda}} {date}',
+    description: 'Texti sem sýnir hver kærði og hvenær á gagnaskjá kærumála',
+  },
+  appealActorInCourt: {
+    id: 'judicial.system.core:appeal_case_files.appeal_actor_in_court',
+    defaultMessage:
+      '{appealedByProsecutor, select, true {Sækjandi} other {Varnaraðili}} kærði í þinghaldi',
+    description: 'Texti sem sýnir hver kærði í þinghaldi á gagnaskjá kærumála',
+  },
 })
