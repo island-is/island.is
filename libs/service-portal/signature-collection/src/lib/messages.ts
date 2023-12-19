@@ -77,8 +77,13 @@ export const m = defineMessages({
     description: '',
   },
   cancelCollectionModalConfirmButton: {
-    id: 'sp.signatureCollection:modelConfirmButton',
+    id: 'sp.signatureCollection:modalConfirmButton',
     defaultMessage: 'Já, hætta við söfnun meðmæla',
+    description: '',
+  },
+  cancelCollectionModalToastError: {
+    id: 'sp.signatureCollection:modalToastError',
+    defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
     description: '',
   },
 

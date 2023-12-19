@@ -7,7 +7,7 @@ import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as styles from './DefendantInfo.css'
 
 interface Props {
-  defendants?: Defendant[]
+  defendants?: Defendant[] | null
 }
 
 const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = ({
