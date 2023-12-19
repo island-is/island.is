@@ -3,12 +3,12 @@
 import { buildCustomField, buildMultiField } from '@island.is/application/core'
 import { MultiField } from '@island.is/application/types'
 export const CompleteField: MultiField = buildMultiField({
-  id: 'additionsAndDocuments',
+  id: 'complete',
   title: '',
   space: 2,
   children: [
     buildCustomField({
-      id: 'additionsAndDocuments',
+      id: 'complete',
       title: '',
       component: 'Complete',
     }),

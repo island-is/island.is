@@ -252,6 +252,15 @@ export const m = defineMessages({
     id: 'ojoi.application:summarySectionTitle',
     defaultMessage: 'Samantekt',
   },
+  summaryFormTitle: {
+    id: 'ojoi.application:summaryFormTitle',
+    defaultMessage: 'Samantekt',
+  },
+  summaryFormIntro: {
+    id: 'ojoi.application:summaryFormIntro',
+    defaultMessage:
+      'Með því að senda auglýsingu til birtingar staðfestir þú eftirfarandi forsendur og felur Stjórnartíðindum að undirbúa útgáfu hennar.',
+  },
   completeFormTitle: {
     id: 'ojoi.application:summaryFormTitle',
     defaultMessage: 'Mál hefur verið sent inn til yfirferðar',
@@ -317,5 +326,51 @@ export const m = defineMessages({
     id: 'ojoi.application:messagesPlaceholder',
     defaultMessage:
       'Hér er hægt að skrifa skilaboð til Stjórnartíðinda varðandi auglýsinguna.',
+  },
+  completeBulletOne: {
+    id: 'ojoi.application:completeBulletOne',
+    defaultMessage:
+      'Starfsfólk mun fara yfir auglýsinguna og þú færð staðfestingu þegar auglýsingin þín fer í birtingu',
+  },
+  completeBulletTwo: {
+    id: 'ojoi.application:completeBulletTwo',
+    defaultMessage:
+      'Ef auglýsingin þarfnast einhverra breytinga færð þú tilkynningu um það.',
+  },
+  summaryPropertySender: {
+    id: 'ojoi.application:summaryPropertySender',
+    defaultMessage: 'Sendandi',
+  },
+  summaryPropertyType: {
+    id: 'ojoi.application:summaryPropertyType',
+    defaultMessage: 'Tegund',
+  },
+  summaryPropertyCaseTitle: {
+    id: 'ojoi.application:summaryPropertyCaseTitle',
+    defaultMessage: 'Heiti auglýsingar',
+  },
+  summaryPropertyCaseDepartment: {
+    id: 'ojoi.application:summaryPropertyCaseDepartment',
+    defaultMessage: 'Deild',
+  },
+  summaryPropertyDateOfSubmission: {
+    id: 'ojoi.application:summaryPropertyDateOfSubmission',
+    defaultMessage: 'Dagsetning innsendingar',
+  },
+  summaryPropertyCaseFastTrack: {
+    id: 'ojoi.application:summaryPropertyCaseFastTrack',
+    defaultMessage: 'Ósk um harðbirtingu',
+  },
+  summaryPropertyEstimatedDateOfPublication: {
+    id: 'ojoi.application:summaryPropertyEstimatedDateOfPublication',
+    defaultMessage: 'Áætluð dagsetning birtingar',
+  },
+  summaryPropertyEstimatedPrice: {
+    id: 'ojoi.application:summaryPropertyEstimatedPrice',
+    defaultMessage: 'Áætlað verð',
+  },
+  summaryPropertyCaseClassicifation: {
+    id: 'ojoi.application:summaryPropertyCaseClassicifation',
+    defaultMessage: 'Málflokkun auglýsingar',
   },
 })
