@@ -110,7 +110,7 @@ const AppealFiles = () => {
             </Text>
           )}
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.appealCaseFilesTitle)}
             marginBottom={1}
