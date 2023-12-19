@@ -98,6 +98,7 @@ export const GET_CATEGORY_PAGES_QUERY = gql`
           title
           slug
           importance
+          description
         }
       }
       ... on Manual {
@@ -130,6 +131,7 @@ export const GET_CATEGORY_PAGES_QUERY = gql`
           title
           slug
           importance
+          description
         }
       }
     }

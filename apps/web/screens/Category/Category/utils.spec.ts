@@ -1,4 +1,6 @@
 import {
+  CategoryPages,
+  extractCategoryGroups,
   getActiveCategory,
   getHashArr,
   getHashString,
@@ -30,7 +32,7 @@ describe('Update hash array', () => {
   })
 
   it('should return array with id', () => {
-    const hashArr = []
+    const hashArr: string[] = []
     const updatedHashArray = [categoryId]
     expect(updateHashArray(hashArr, categoryId)).toEqual(updatedHashArray)
   })
@@ -150,5 +152,51 @@ describe('Get Hash String from Hash Array', () => {
   it('should turn separated string to an array', () => {
     const hash = 'kisa,hundur'
     expect(getHashArr(hash)).toEqual(['kisa', 'hundur'])
+  })
+})
+
+describe('Extracting category groups from pages', () => {
+  // TODO: find better name
+  it('should handle most common case', () => {
+    const selectedCategory = {
+      id: 'category-id',
+      slug: 'category-slug',
+      title: 'Category Title',
+      __typename: 'ArticleCategory',
+      description: '',
+    } as const
+
+    const group = {
+      slug: 'group-slug',
+      title: 'Group title',
+      __typename: 'ArticleGroup',
+    } as const
+
+    const pages: CategoryPages = [
+      {
+        id: 'page-id',
+        body: [],
+        slug: 'page-slug',
+        title: 'Page title',
+        __typename: 'Article',
+        category: selectedCategory,
+        group,
+      },
+      {
+        id: 'page-id2',
+        body: [],
+        slug: 'page-slug2',
+        title: 'Page title2',
+        __typename: 'Article',
+        otherCategories: [selectedCategory],
+        otherGroups: [group],
+      },
+    ]
+
+    const result = extractCategoryGroups(pages, selectedCategory)
+
+    // There should only be one group
+    expect(result.length).toBe(1)
+    console.log(JSON.stringify(result))
   })
 })
