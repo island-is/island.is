@@ -7,7 +7,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import {
   PaginatedCollectionResponse,
@@ -27,6 +27,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { MachineDetails } from './models/machineDetails'
+import { ChangeMachineSupervisor } from '@island.is/clients/work-machines'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -120,5 +121,20 @@ export class WorkMachinesResolver {
     @Args('regNumber') regNumber: string,
   ) {
     return this.workMachinesService.isPaymentRequired(auth, regNumber)
+  }
+
+  @Mutation(() => Boolean)
+  async changeMachineSupervisor(
+    @CurrentUser() auth: User,
+    @Args('input') input: ChangeMachineSupervisor,
+  ): Promise<boolean> {
+    try {
+      await this.workMachinesService.changeMachineSupervisor(auth, input)
+      return true // Operation was successful
+    } catch (error) {
+      console.log('changeMachineSupervisor Error: ', error)
+      // Handle errors here
+      return false // Operation failed
+    }
   }
 }

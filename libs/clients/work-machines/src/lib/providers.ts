@@ -75,6 +75,11 @@ export const apiProviders = [
     provide: MachinesDocumentApi,
     acceptHeader: 'application/vnd.ver.hateoas.v1+json',
   },
+  {
+    api: MachineSupervisorChangeApi,
+    provide: MachineSupervisorChangeApi,
+    acceptHeader: 'application/json-patch+json',
+  },
 ].map(({ api, provide, acceptHeader }) => ({
   provide: provide,
   scope: LazyDuringDevScope,
