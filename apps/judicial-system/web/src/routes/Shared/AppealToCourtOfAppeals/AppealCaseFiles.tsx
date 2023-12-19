@@ -4,10 +4,13 @@ import { useRouter } from 'next/router'
 
 import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  CaseAppealDecision,
   CaseFileCategory,
   isDefenceUser,
   NotificationType,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -85,12 +88,29 @@ const AppealFiles = () => {
             {formatMessage(strings.title)}
           </Text>
         </Box>
-        {workingCase.rulingDate && (
-          <Box marginBottom={7}>
+        <Box marginBottom={7}>
+          {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
-          </Box>
-        )}
-        <Box component="section" marginBottom={5}>
+          )}
+          {(workingCase.prosecutorPostponedAppealDate ||
+            workingCase.accusedPostponedAppealDate) && (
+            <Text variant="h5" as="h5">
+              {workingCase.prosecutorAppealDecision ===
+                CaseAppealDecision.APPEAL ||
+              workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+                ? formatMessage(strings.appealActorInCourt, {
+                    appealedByProsecutor:
+                      workingCase.appealedByRole === UserRole.PROSECUTOR,
+                  })
+                : formatMessage(strings.appealActorAndDate, {
+                    appealedByProsecutor:
+                      workingCase.appealedByRole === UserRole.PROSECUTOR,
+                    date: formatDate(workingCase.appealedDate, 'PPPp'),
+                  })}
+            </Text>
+          )}
+        </Box>
+        <Box component="section" marginBottom={10}>
           <SectionHeading
             title={formatMessage(strings.appealCaseFilesTitle)}
             marginBottom={1}
