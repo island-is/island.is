@@ -22,6 +22,7 @@ import { SignatureCollectionListInput } from './dto/singatureList.input'
 import { SignatureCollectionAreaInput } from './dto/area.input'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { Audit } from '@island.is/nest/audit'
+import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -142,7 +143,16 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.unsign(input.id)
+    return this.signatureCollectionService.unsign(input.id, user.nationalId)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionUnsignAdmin(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.unsignAdmin(input.id)
   }
 
   @Mutation(() => SignatureCollectionSuccess)
@@ -184,7 +194,7 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionBulkUploadSignatures(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionListNationalIdsInput,
+    @Args('input') input: SignatureCollectionListBulkUploadInput,
   ): Promise<SignatureCollectionBulk> {
     return this.signatureCollectionService.bulkUploadSignatures(input)
   }

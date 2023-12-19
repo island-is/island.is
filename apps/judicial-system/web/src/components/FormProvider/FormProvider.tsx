@@ -9,9 +9,9 @@ import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
-import { CaseState } from '@island.is/judicial-system/types'
 import {
   CaseOrigin,
+  CaseState,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
