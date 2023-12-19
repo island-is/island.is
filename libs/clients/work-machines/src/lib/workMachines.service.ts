@@ -45,6 +45,7 @@ export class WorkMachinesClientService {
   private machineCategoryApiWithAuth(auth: Auth) {
     return this.machineCategoryApi.withMiddleware(new AuthMiddleware(auth))
   }
+
   getWorkMachines = (
     user: User,
     input: ApiMachinesGetRequest,
