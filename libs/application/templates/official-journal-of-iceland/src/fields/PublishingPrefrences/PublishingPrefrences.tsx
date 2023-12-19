@@ -86,6 +86,21 @@ export const PublishingPrefrences: React.FC<
     setAddChannelToggle(false)
   }
 
+  const onRemoveChannel = (channel: CommunicationChannel) => {
+    setCommunicationChannels((prev) =>
+      prev.filter(
+        (c) => c.email !== channel.email && c.phone !== channel.phone,
+      ),
+    )
+  }
+
+  const onEditChannel = (channel: CommunicationChannel) => {
+    onRemoveChannel(channel)
+    setNewEmail(channel.email)
+    setNewPhone(channel.phone)
+    setAddChannelToggle(true)
+  }
+
   return (
     <Box>
       <FormIntro
@@ -131,18 +146,8 @@ export const PublishingPrefrences: React.FC<
         <Box width="full">
           <ChannelList
             channels={communicationChannels}
-            onRemoveChannel={(channel) =>
-              setCommunicationChannels((prev) =>
-                prev.filter(
-                  (c) => c.email !== channel.email && c.phone !== channel.phone,
-                ),
-              )
-            }
-            onEditChannel={(channel) => {
-              setNewEmail(channel.email)
-              setNewPhone(channel.phone)
-              setAddChannelToggle(true)
-            }}
+            onRemoveChannel={onRemoveChannel}
+            onEditChannel={onEditChannel}
           />
           <AddChannel
             visible={addChannelToggle}
