@@ -76,6 +76,7 @@ export class WorkMachinesClientService {
       }) || []
     )
   }
+  
   public async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
     const [type, ...subType] = result.type?.split(' ') || ''
