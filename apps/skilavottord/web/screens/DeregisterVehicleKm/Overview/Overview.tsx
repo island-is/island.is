@@ -121,10 +121,6 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   }, [loading])
 
   const handleDeregister = () => {
-    console.log(
-      'routes.deregisterVehicle.select',
-      routes.deregisterVehicle.select,
-    )
     router.push(`${routes.deregisterVehicleKM.select}`)
   }
 

@@ -80,11 +80,7 @@ const UpdateSkilavottordVehicleMileageMutation = gql`
 `
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    control,
-    watch,
-    formState: { errors },
-  } = useForm({
+  const { control, watch } = useForm({
     mode: 'onChange',
   })
 
