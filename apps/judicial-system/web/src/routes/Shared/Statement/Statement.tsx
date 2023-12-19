@@ -14,10 +14,10 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   CaseAppealDecision,
   CaseFileCategory,

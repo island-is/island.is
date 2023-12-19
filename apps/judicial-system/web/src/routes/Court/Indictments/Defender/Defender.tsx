@@ -10,13 +10,13 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 

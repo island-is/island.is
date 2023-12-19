@@ -15,6 +15,7 @@ import {
   CourtCaseNumber,
   DefendantInfo,
   getDurationDate,
+  MobileAppealCase,
   SortButton,
   TableContainer,
   TableHeaderText,
@@ -26,12 +27,11 @@ import {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  useCaseList,
   useSortAppealCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
 
-import MobileAppealCase from './MobileAppealCase'
 import * as styles from '../Table.css'
 
 interface Props {

@@ -14,6 +14,7 @@ import {
   AlertBanner,
   AppealCaseFilesOverview,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -23,9 +24,10 @@ import {
   PageTitle,
   RulingModifiedModal,
 } from '@island.is/judicial-system-web/src/components'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getAppealDecision } from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
+import {
+  getAppealDecision,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'

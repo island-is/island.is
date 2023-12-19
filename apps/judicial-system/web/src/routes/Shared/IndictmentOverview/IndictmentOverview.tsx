@@ -14,17 +14,16 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  IndictmentCaseFilesList,
+  IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
   PageTitle,
+  useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import IndictmentsLawsBrokenAccordionItem, {
-  useIndictmentsLawsBroken,
-} from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
-import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 
 import { strings } from './IndictmentOverview.strings'
 

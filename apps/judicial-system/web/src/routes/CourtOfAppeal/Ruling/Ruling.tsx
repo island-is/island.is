@@ -20,9 +20,9 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  RestrictionLength,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import RestrictionLength from '@island.is/judicial-system-web/src/components/RestrictionLength/RestrictionLength'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
@@ -34,12 +34,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useOnceOn,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'

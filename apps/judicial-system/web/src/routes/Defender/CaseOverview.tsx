@@ -19,7 +19,9 @@ import {
   AppealCaseFilesOverview,
   CaseDates,
   CaseResentExplanation,
+  CaseTitleInfoAndTags,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   InfoCard,
@@ -35,12 +37,10 @@ import {
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
-import CaseTitleInfoAndTags from '../../components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
-import { api } from '../../services'
-import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 

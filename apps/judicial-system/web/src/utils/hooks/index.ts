@@ -13,8 +13,19 @@ export { default as useViewport } from './useViewport/useViewport'
 export { default as useOnceOn } from './useOnceOn'
 export type { CaseFileStatus, CaseFileWithStatus } from './useCourtUpload'
 export { UploadState, useCourtUpload } from './useCourtUpload'
-export { default as useAppealAlertBanner } from './useAppealAlertBanner'
+export {
+  getAppealDecision,
+  default as useAppealAlertBanner,
+} from './useAppealAlertBanner'
 export { default as useSortCases } from './useSort/useSortCases'
 export { default as useSortAppealCases } from './useSort/useSortAppealCases'
 export { useGeoLocation } from './useGeoLocation/useGeoLocation'
 export { default as useDefendants } from './useDefendants'
+export {
+  type UpdateIndictmentCount,
+  default as useIndictmentCounts,
+} from './useIndictmentCounts'
+export { default as useSections } from './useSections'
+export { default as useCaseList } from './useCaseList'
+export { default as useStringHelpers } from './useStringHelpers/useStringHelpers'
+export { default as useNationalRegistry } from './useNationalRegistry'

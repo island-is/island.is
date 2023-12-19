@@ -21,12 +21,14 @@ import {
   DropdownMenu,
   Logo,
   PageHeader,
-  PastCasesTable,
   SectionHeading,
   SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
+import {
+  PastCasesTable,
+  TableSkeleton,
+} from '@island.is/judicial-system-web/src/components/Table'
 import {
   CaseListEntry,
   CaseState,

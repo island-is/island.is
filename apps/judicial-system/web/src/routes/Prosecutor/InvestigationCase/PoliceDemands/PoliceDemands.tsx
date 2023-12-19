@@ -14,10 +14,10 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,

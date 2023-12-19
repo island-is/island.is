@@ -14,11 +14,11 @@ import {
   FormContext,
   FormFooter,
   Modal,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseState,
   CaseTransition,
@@ -31,10 +31,10 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {

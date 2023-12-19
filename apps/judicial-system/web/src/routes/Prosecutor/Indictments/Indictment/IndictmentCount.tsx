@@ -29,9 +29,10 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useIndictmentCounts, {
+import {
   UpdateIndictmentCount,
-} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+  useIndictmentCounts,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'

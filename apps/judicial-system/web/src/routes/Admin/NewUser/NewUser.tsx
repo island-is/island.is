@@ -5,8 +5,10 @@ import { useRouter } from 'next/router'
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Skeleton } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  PageHeader,
+  Skeleton,
+} from '@island.is/judicial-system-web/src/components'
 import {
   User,
   UserRole,

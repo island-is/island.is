@@ -8,8 +8,8 @@ import {
   BlueBox,
   DefenderInput,
   DefenderNotFound,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 

@@ -21,7 +21,7 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { ReactSelectOption } from '../../../types'
 import {

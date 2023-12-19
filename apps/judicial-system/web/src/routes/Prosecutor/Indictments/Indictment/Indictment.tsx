@@ -26,13 +26,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  UpdateIndictmentCount,
   useCase,
   useDeb,
+  useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useIndictmentCounts, {
-  UpdateIndictmentCount,
-} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { IndictmentCount } from './IndictmentCount'

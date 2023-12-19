@@ -26,13 +26,13 @@ import {
   FormFooter,
   IndictmentInfo,
   InfoBox,
+  Item,
   PageHeader,
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
   CaseFile,
   CaseFileCategory,

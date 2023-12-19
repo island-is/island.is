@@ -28,9 +28,9 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { stepValidationsType } from '../../utils/formHelper'
-import useSections from '../../utils/hooks/useSections'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'

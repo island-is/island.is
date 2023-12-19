@@ -35,8 +35,10 @@ import {
   AppealCaseFilesOverview,
   CaseDates,
   CaseFilesAccordionItem,
+  CaseTitleInfoAndTags,
   CommentsAccordionItem,
   Conclusion,
+  conclusion,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormContext,
@@ -53,8 +55,6 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
-import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
   CaseAppealState,

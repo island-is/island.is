@@ -20,8 +20,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import {
+  formatDateForServer,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 

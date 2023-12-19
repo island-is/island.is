@@ -13,6 +13,7 @@ import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
+  FormContext,
   FormFooter,
   Modal,
   PageHeader,
@@ -20,7 +21,6 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   CaseFileCategory,
   CaseTransition,

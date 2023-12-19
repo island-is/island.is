@@ -7,14 +7,14 @@ import * as constants from '@island.is/judicial-system/consts'
 import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  CommentsInput,
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

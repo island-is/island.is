@@ -28,10 +28,10 @@ import {
   FormContext,
   FormFooter,
   HideableText,
+  PageHeader,
   PageLayout,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseDecision,
   CaseType,
@@ -41,14 +41,14 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
+  useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import { formatCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { isCourtRecordStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { formatCustodyRestrictions } from '../../../../utils/restrictions'
-import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import AppealSections from '../../components/AppealSections/AppealSections'
 
 export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {

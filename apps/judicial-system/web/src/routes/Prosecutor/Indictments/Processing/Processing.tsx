@@ -9,14 +9,14 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CommentsInput,
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseState,
   CaseTransition,

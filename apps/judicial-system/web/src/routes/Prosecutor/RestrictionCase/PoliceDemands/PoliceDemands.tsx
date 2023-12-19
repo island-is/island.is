@@ -19,10 +19,10 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
@@ -37,14 +37,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
+  UpdateCase,
   useCase,
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  formatDateForServer,
-  UpdateCase,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   legalProvisions,
   travelBanProvisions,

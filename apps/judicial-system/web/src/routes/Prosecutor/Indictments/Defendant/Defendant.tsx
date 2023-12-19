@@ -17,11 +17,11 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseOrigin,
   Defendant as TDefendant,

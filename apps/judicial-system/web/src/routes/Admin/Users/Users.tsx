@@ -16,8 +16,10 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
-import { Loading } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  Loading,
+  PageHeader,
+} from '@island.is/judicial-system-web/src/components'
 import {
   User,
   UserRole,
