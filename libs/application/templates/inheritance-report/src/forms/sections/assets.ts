@@ -491,56 +491,7 @@ export const assets = buildSection({
           description: m.assetOverviewDescription,
           children: [
             ...overviewAssets,
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewClaims',
-              title: m.claimsTitle,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.totalValue,
-              display: 'flex',
-              value: ({ answers }) => {
-                const total = getValueViaPath(answers, 'assets.claims.total')
-                return formatCurrency(String(total))
-              },
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewStocks',
-              title: m.stocksTitle,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.totalValue,
-              display: 'flex',
-              value: ({ answers }) => {
-                const total = getValueViaPath(answers, 'assets.stocks.total')
-                return formatCurrency(String(total))
-              },
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewMoney',
-              title: m.moneyTitle,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.totalValue,
-              display: 'flex',
-              value: ({ answers }) => {
-                const total = getValueViaPath(answers, 'assets.money.value')
-                return formatCurrency(String(total))
-              },
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
+              buildDescriptionField({
               id: 'overviewOtherAssets',
               title: m.otherAssetsTitle,
               titleVariant: 'h3',

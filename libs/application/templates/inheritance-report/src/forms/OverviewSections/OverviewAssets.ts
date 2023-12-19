@@ -7,8 +7,10 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
+import { format as formatNationalId } from 'kennitala'
+
 import { m } from '../../lib/messages'
-import { EstateAssets } from '../../types'
+import { ClaimsData, EstateAssets, StocksData } from '../../types'
 
 export const overviewAssets = [
   buildDescriptionField({
@@ -173,17 +175,6 @@ export const overviewAssets = [
     marginBottom: 'gutter',
     space: 'gutter',
   }),
-  buildKeyValueField({
-    label: m.banksBalance,
-    display: 'flex',
-    value: ({ answers }) => {
-      const total = getValueViaPath(
-        answers,
-        'assets.bankAccounts.total',
-      )
-      return formatCurrency(String(total))
-    },
-  }),
   buildCustomField(
     {
       title: '',
@@ -193,21 +184,27 @@ export const overviewAssets = [
     },
     {
       cards: ({ answers }: Application) => {
-        const gunAssets = (answers.assets as unknown as EstateAssets).bankAccounts.data
+        const bankAccounts = (answers.assets as unknown as EstateAssets)
+          .bankAccounts.data
         return (
-          gunAssets.map((asset: any) => ({
+          bankAccounts.map((asset: any) => ({
             title: asset.accountNumber,
             description: [
-             
-                (asset.balance
-                  ? formatCurrency(asset.balance)
-                  : '0 kr.'),
+              asset.balance ? formatCurrency(asset.balance) : '0 kr.',
             ],
           })) ?? []
         )
       },
     },
   ),
+  buildKeyValueField({
+    label: m.banksBalance,
+    display: 'flex',
+    value: ({ answers }) => {
+      const total = getValueViaPath(answers, 'assets.bankAccounts.total')
+      return formatCurrency(String(total))
+    },
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewClaims',
@@ -225,18 +222,15 @@ export const overviewAssets = [
     },
     {
       cards: ({ answers }: Application) => {
-        console.log(answers)
-        const gunAssets = (answers.assets as unknown as EstateAssets).claims.data
+        const claims = (answers.assets as unknown as EstateAssets).claims
+          .data
         return (
-          gunAssets.map((asset: any) => ({
-            title: asset.description,
+          claims.map((asset: ClaimsData) => ({
+            title: asset.issuer,
             description: [
-              `${m.gunNumber.defaultMessage}: ${asset.issuer}`,
-              m.gunValuation.defaultMessage +
+              m.claimsAmount.defaultMessage +
                 ': ' +
-                (asset.value
-                  ? formatCurrency(asset.value)
-                  : '0 kr.'),
+                (asset.value ? formatCurrency(asset.value) : '0 kr.'),
             ],
           })) ?? []
         )
@@ -251,4 +245,82 @@ export const overviewAssets = [
       return formatCurrency(String(total))
     },
   }),
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'overviewStocks',
+    title: m.stocksTitle,
+    titleVariant: 'h3',
+    marginBottom: 'gutter',
+    space: 'gutter',
+  }),
+  buildCustomField(
+    {
+      title: '',
+      id: 'estateAssetsCards',
+      component: 'Cards',
+      doesNotRequireAnswer: true,
+    },
+    {
+      cards: ({ answers }: Application) => {
+        console.log(answers)
+        const stocks = (answers.assets as unknown as EstateAssets).stocks
+          .data
+        return (
+          stocks.map((stock: StocksData) => ({
+            title: stock.organization,
+            description: [
+              `${m.stocksNationalId.defaultMessage}: ${formatNationalId (
+                stock.nationalId ?? '',
+              )}`,
+              `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(
+                stock.faceValue ?? '0',
+              )}`,
+              `${m.stocksRateOfChange.defaultMessage}: ${
+                stock.rateOfExchange?.replace('.', ',') ?? '0'
+              }`,
+              `${m.stocksValue.defaultMessage}: ${formatCurrency(
+                stock.value ?? '0',
+              )}`,
+            ],
+          })) ?? []
+        )
+      },
+    },
+  ),
+  buildKeyValueField({
+    label: m.totalValue,
+    display: 'flex',
+    value: ({ answers }) => {
+      const total = getValueViaPath(answers, 'assets.stocks.total')
+      return formatCurrency(String(total))
+    },
+  }),
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'overviewMoney',
+    title: m.moneyTitle,
+    titleVariant: 'h3',
+    marginBottom: 'gutter',
+    space: 'gutter',
+  }),
+  buildDescriptionField({
+    id: 'overviewInventory',
+    title: m.moneyText,
+    description: (application: Application) =>
+      getValueViaPath<string>(application.answers, 'assets.money.info'),
+    titleVariant: 'h4',
+    space: 'gutter',
+    marginBottom: 'gutter',
+    condition: (answers) =>
+      getValueViaPath<string>(answers, 'assets.money.info') !== '',
+  }),
+  buildKeyValueField({
+    label: m.totalValue,
+    display: 'flex',
+    value: ({ answers }) => {
+      const total = getValueViaPath(answers, 'assets.money.value')
+      return formatCurrency(String(total))
+    },
+  }),
+  buildDividerField({}),
 ]
