@@ -1,12 +1,11 @@
-import React, { ChangeEvent, FC, useState } from 'react'
-import { Box, Text, Stack } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
+import React, { FC } from 'react'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 import { InputController } from '@island.is/shared/form-fields'
 import { Control, FieldValues } from 'react-hook-form'
-import { createTrue } from '@ts-morph/common/lib/typescript'
 
 interface BoxProps {
   vehicleId: string
