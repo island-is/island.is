@@ -6,9 +6,9 @@ import { displayFirstPlusRemaining } from '@island.is/judicial-system/formatters
 import * as styles from './CourtCaseNumber.css'
 
 interface Props {
-  courtCaseNumber?: string
+  courtCaseNumber?: string | null
   policeCaseNumbers: string[]
-  appealCaseNumber?: string
+  appealCaseNumber?: string | null
 }
 
 const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = ({
