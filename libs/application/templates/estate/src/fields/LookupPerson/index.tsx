@@ -22,12 +22,14 @@ type LookupProps = {
       alertWhenUnder18?: boolean
     }
   }
+  nested?: boolean
   error: Record<string, string> | any
 }
 
 export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   field,
   error,
+  nested = false,
 }) => {
   const { formatMessage } = useLocale()
   const { id, props } = field
@@ -65,7 +67,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
       setValue(`${id}.name`, '')
     }
   }, [personName, personNationalId, getIdentity, setValue, clearErrors, id])
-
+  
   return (
     <Box>
       <GridRow>
@@ -77,7 +79,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
             />
           </GridColumn>
         )}
-        <GridColumn span="6/12">
+        <GridColumn span={nested ? ['1/1', '1/2'] : "6/12"}>
           <InputController
             id={`${id}.nationalId`}
             name={`${id}.nationalId`}
@@ -85,16 +87,18 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
             format="######-####"
             backgroundColor="blue"
             loading={queryLoading}
+            size={nested ? 'sm' : 'md'}
             required={props?.requiredNationalId ?? true}
             error={error?.nationalId || error?.name}
           />
         </GridColumn>
-        <GridColumn span="6/12">
+        <GridColumn span={nested ? ['1/1', '1/2'] : "6/12"}>
           <InputController
             id={`${id}.name`}
             name={`${id}.name`}
             label={formatMessage(m.name)}
             readOnly
+            size={nested ? 'sm' : 'md'}
             error={error?.name ? error?.name : undefined}
           />
         </GridColumn>

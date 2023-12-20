@@ -21,7 +21,11 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
-import { EstateTypes, heirAgeValidation, relationWithApplicant } from '../../lib/constants'
+import {
+  EstateTypes,
+  heirAgeValidation,
+  relationWithApplicant,
+} from '../../lib/constants'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
@@ -37,8 +41,16 @@ export const EstateMembersRepeater: FC<
     setBeforeSubmitCallback(async () => {
       const values = getValues()
       const selectedEstate = application.answers.selectedEstate
-      const hasEstateMemberUnder18 = values.estate?.estateMembers?.some((member: EstateMember) => kennitala.info(member.nationalId)?.age < 18 && !member.advocate && member.enabled)
-      if (hasEstateMemberUnder18 && selectedEstate === EstateTypes.divisionOfEstateByHeirs) {
+      const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
+        (member: EstateMember) =>
+          kennitala.info(member.nationalId)?.age < 18 &&
+          !member.advocate &&
+          member.enabled,
+      )
+      if (
+        hasEstateMemberUnder18 &&
+        selectedEstate === EstateTypes.divisionOfEstateByHeirs
+      ) {
         setError(heirAgeValidation, {
           type: 'custom',
           message: 'custom villa',
@@ -75,13 +87,18 @@ export const EstateMembersRepeater: FC<
       name: undefined,
     })
 
-    useEffect(() => {
-      const values = getValues()
-      const hasEstateMemberUnder18 = values.estate?.estateMembers?.some((member: EstateMember) => kennitala.info(member.nationalId)?.age < 18 && !member.advocate && member.enabled)
-      if(!hasEstateMemberUnder18) {
-        clearErrors(heirAgeValidation)
-      }
-    }, [fields])
+  useEffect(() => {
+    const values = getValues()
+    const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
+      (member: EstateMember) =>
+        kennitala.info(member.nationalId)?.age < 18 &&
+        !member.advocate &&
+        member.enabled,
+    )
+    if (!hasEstateMemberUnder18) {
+      clearErrors(heirAgeValidation)
+    }
+  }, [fields])
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
@@ -91,7 +108,6 @@ export const EstateMembersRepeater: FC<
       replace(externalData.estate.estateMembers)
     }
   }, [])
-
 
   return (
     <Box>
@@ -142,7 +158,6 @@ export const EstateMembersRepeater: FC<
                   id={`${id}[${index}].nationalId`}
                   name={`${id}[${index}].nationalId`}
                   label={formatMessage(m.inheritanceKtLabel)}
-                  readOnly
                   defaultValue={formatNationalId(member.nationalId || '')}
                   backgroundColor="white"
                   disabled={!member.enabled}
@@ -317,7 +332,7 @@ export const EstateMembersRepeater: FC<
           </Box>
         )
       })}
-      
+
       <Box marginTop={3}>
         <Button
           variant="text"
@@ -330,9 +345,7 @@ export const EstateMembersRepeater: FC<
         </Button>
       </Box>
       {errors && errors[heirAgeValidation] ? (
-        <InputError
-          errorMessage={formatMessage(m.inheritanceAgeValidation)}
-        />
+        <InputError errorMessage={formatMessage(m.inheritanceAgeValidation)} />
       ) : null}
     </Box>
   )

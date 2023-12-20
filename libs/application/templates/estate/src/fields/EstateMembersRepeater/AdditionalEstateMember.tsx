@@ -6,6 +6,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
+import * as kennitala from 'kennitala'
 import {
   Box,
   GridColumn,
@@ -51,6 +52,11 @@ export const AdditionalEstateMember = ({
   const enabledField = `${fieldIndex}.enabled`
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
+  
+  const advocateNationalId = `${fieldIndex}.advocate.nationalId`
+  const advocateName = `${fieldIndex}.advocate.name`
+  const advocatePhone = `${fieldIndex}.advocate.phone`
+  const advocateEmail = `${fieldIndex}.advocate.email`
 
   const selectedEstate = application.answers.selectedEstate
 
@@ -59,14 +65,18 @@ export const AdditionalEstateMember = ({
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
-  const { control, setValue, clearErrors } = useFormContext()
+  const { control, setValue, clearErrors, getValues } = useFormContext()
 
+  const values = getValues()
+  const currentEstateMember = values?.estate.estateMembers?.[index]
   useEffect(() => {
     clearErrors(nameField)
     clearErrors(relationField)
     clearErrors(dateOfBirthField)
     clearErrors(`${fieldIndex}.nationalId`)
   }, [foreignCitizenship])
+
+  console.log(error)
 
   return (
     <Box position="relative" key={field.id} marginTop={7}>
@@ -134,7 +144,7 @@ export const AdditionalEstateMember = ({
         <Box paddingY={2}>
           <LookupPerson
             field={{
-              id: fieldIndex,
+              id: `${fieldIndex}`,
               props: {
                 alertWhenUnder18:
                   selectedEstate === EstateTypes.divisionOfEstateByHeirs,
@@ -219,6 +229,58 @@ export const AdditionalEstateMember = ({
           </Box>
         </GridColumn>
       </GridRow>
+        {/* ADVOCATE */}
+        {currentEstateMember?.nationalId && kennitala.info(currentEstateMember.nationalId).age < 18 && (
+              <Box
+                marginTop={2}
+                paddingY={5}
+                paddingX={7}
+                borderRadius="large"
+                border="standard"
+              >
+                <GridRow>
+                <GridColumn span={['1/1']} paddingBottom={2}>
+                    <Text variant="h4">
+                      {formatMessage(m.inheritanceAdvocateLabel)}
+                    </Text>
+                  </GridColumn>
+                  <GridColumn span={['1/1']} paddingBottom={3}>
+                    <LookupPerson
+                      nested
+                      field={{
+                        id: ``,
+                        props: {
+                          alertWhenUnder18: true,
+                        },
+                      }}
+                      error={error}
+                    />
+                  </GridColumn>
+   
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={advocatePhone}
+                      name={advocatePhone}
+                      label={formatMessage(m.phone)}
+                      backgroundColor="blue"
+                      format="###-####"
+                      size="sm"
+                      required
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={advocateEmail}
+                      name={advocateEmail}
+                      label={formatMessage(m.email)}
+                      backgroundColor="blue"
+                      size="sm"
+                      required
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+            )}
     </Box>
   )
 }
