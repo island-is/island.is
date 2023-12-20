@@ -4,6 +4,7 @@ import {
   AdrAndMachine,
   Base,
   ChargeFjsV2,
+  EnergyFunds,
   Client,
   CriminalRecord,
   Disability,
@@ -38,6 +39,7 @@ import {
   ShipRegistry,
   DistrictCommissioners,
   DirectorateOfImmigration,
+  SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
 } from '../../../infra/src/dsl/xroad'
@@ -376,6 +378,7 @@ export const serviceSetup = (services: {
       VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
+      EnergyFunds,
       UniversityOfIceland,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
@@ -385,6 +388,7 @@ export const serviceSetup = (services: {
       HousingBenefitCalculator,
       ShipRegistry,
       DirectorateOfImmigration,
+      SignatureCollection,
       SocialInsuranceAdministration,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })

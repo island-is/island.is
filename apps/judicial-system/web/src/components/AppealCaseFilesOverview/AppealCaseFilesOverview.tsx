@@ -9,7 +9,6 @@ import {
   CaseFileCategory,
   completedCaseStates,
   isCourtOfAppealsUser,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   FileNotFoundModal,
@@ -17,7 +16,10 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealState,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AppealCaseFilesOverview.strings'

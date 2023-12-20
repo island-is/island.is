@@ -21,6 +21,7 @@ import {
   Broker,
   PropertyDetail,
   TemporaryEventLicence,
+  VehicleRegistration,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -41,6 +42,7 @@ import {
   cleanPropertyNumber,
   mapTemporaryEventLicence,
   mapMasterLicence,
+  mapVehicle,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -339,6 +341,15 @@ export class SyslumennService {
     return await this.getAsset(vehicleId, AssetType.Vehicle, mapAssetName)
   }
 
+  async getVehicle(vehicleId: string): Promise<VehicleRegistration> {
+    const { id, api } = await this.createApi()
+    const response = await api.okutaekiGet({
+      audkenni: id,
+      fastanumer: vehicleId,
+    })
+    return mapVehicle(response)
+  }
+
   async getMortgageCertificate(
     propertyNumber: string,
   ): Promise<MortgageCertificate> {
@@ -468,6 +479,19 @@ export class SyslumennService {
   async getEstateInfo(nationalId: string): Promise<EstateInfo[]> {
     const { id, api } = await this.createApi()
     const res = await api.upplysingarUrDanarbuiPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+    return res.yfirlit?.map(mapEstateInfo) ?? []
+  }
+
+  async getEstateInfoWithAvailableSettlements(
+    nationalId: string,
+  ): Promise<EstateInfo[]> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarRadstofunDanarbusPost({
       fyrirspurn: {
         audkenni: id,
         kennitala: nationalId,

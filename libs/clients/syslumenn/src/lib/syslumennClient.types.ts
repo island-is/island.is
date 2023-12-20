@@ -228,6 +228,13 @@ export type EstateAsset = {
   marketValue?: string
 }
 
+export type AvailableSettlements = {
+  estateWithoutAssets: string
+  officialDivision: string
+  permitForUndividedEstate: string
+  divisionOfEstateByHeirs: string
+}
+
 export interface EstateRegistrant extends EstateCommon {
   applicantEmail: string
   applicantPhone: string
@@ -261,6 +268,7 @@ interface EstateCommon {
 
 export interface EstateInfo extends EstateCommon {
   addressOfDeceased: string
+  availableSettlements?: AvailableSettlements
 }
 
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
@@ -287,4 +295,11 @@ export interface MasterLicence {
   dateOfPublication?: Date
   profession?: string
   office?: string
+}
+
+export interface VehicleRegistration {
+  modelName?: string
+  manufacturer?: string
+  licensePlate?: string
+  color?: string
 }

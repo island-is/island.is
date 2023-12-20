@@ -8,7 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  ServicePortalPath,
+  ServicePortalPaths,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import * as styles from './Sidemenu.css'
@@ -91,7 +91,7 @@ const Sidemenu = ({
           <Box className={styles.navWrapper}>
             {navigation?.children?.map(
               (navRoot, index) =>
-                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                navRoot.path !== ServicePortalPaths.Root &&
                 !navRoot.navHide && (
                   <SidemenuItem
                     item={navRoot}

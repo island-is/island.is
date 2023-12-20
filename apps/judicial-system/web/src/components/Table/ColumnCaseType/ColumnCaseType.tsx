@@ -11,8 +11,8 @@ import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Share
 
 interface Props {
   type: CaseType
-  decision?: CaseDecision
-  parentCaseId?: string
+  decision?: CaseDecision | null
+  parentCaseId?: string | null
 }
 
 const ColumnCaseType: React.FC<Props> = ({ type, decision, parentCaseId }) => {
