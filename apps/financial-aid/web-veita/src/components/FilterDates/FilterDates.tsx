@@ -15,7 +15,6 @@ const FilterDates = ({
   periodTo,
   minDateCreated,
 }: Props) => {
-  const minDate = minDateCreated ? new Date(minDateCreated) : undefined
   return (
     <Box
       display="flex"
@@ -29,7 +28,7 @@ const FilterDates = ({
           label="Frá"
           size="xs"
           placeholderText="Frá"
-          minDate={minDate}
+          minDate={new Date(minDateCreated)}
           maxDate={periodTo}
           selected={periodFrom ? periodFrom : new Date(minDateCreated)}
           handleChange={(from) => onDateChange({ from })}

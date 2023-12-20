@@ -14,9 +14,7 @@ export interface Filters {
   period: PeriodFilter
 }
 
-const useFilter = (router: NextRouter, minDateCreated?: string) => {
-  const fromMinDate = minDateCreated ? new Date(minDateCreated) : undefined
-
+const useFilter = (router: NextRouter) => {
   const [currentPage, setCurrentPage] = useState<number>(
     router?.query?.page ? parseInt(router.query.page as string) : 1,
   )
@@ -24,7 +22,7 @@ const useFilter = (router: NextRouter, minDateCreated?: string) => {
     applicationState: [],
     staff: [],
     period: {
-      from: fromMinDate,
+      from: undefined,
       to: new Date(),
     },
   })
@@ -34,7 +32,7 @@ const useFilter = (router: NextRouter, minDateCreated?: string) => {
       applicationState: [],
       staff: [],
       period: {
-        from: fromMinDate,
+        from: undefined,
         to: new Date(),
       },
     })
@@ -42,7 +40,12 @@ const useFilter = (router: NextRouter, minDateCreated?: string) => {
   }
 
   const onClearFilterOrFillFromRoute = () => {
-    if (router?.query?.state || router?.query?.staff) {
+    if (
+      router?.query?.state ||
+      router?.query?.staff ||
+      router?.query?.periodTo ||
+      router?.query?.periodFrom
+    ) {
       setActiveFilters((prev) => ({
         ...prev,
         applicationState: router?.query?.state
@@ -51,6 +54,14 @@ const useFilter = (router: NextRouter, minDateCreated?: string) => {
         staff: router?.query?.staff
           ? ((router?.query?.staff as string).split(',') as string[])
           : [],
+        period: {
+          from: router?.query?.periodFrom
+            ? new Date(router?.query?.periodFrom as string)
+            : undefined,
+          to: router?.query?.periodTo
+            ? new Date(router?.query?.periodTo as string)
+            : new Date(),
+        },
       }))
     } else {
       onFilterClear()

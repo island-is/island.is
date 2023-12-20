@@ -48,7 +48,7 @@ export const ApplicationsOverviewProcessed = () => {
     onFilterClear,
     onClearFilterOrFillFromRoute,
     handleDateChange,
-  } = useFilter(router, minDateCreated)
+  } = useFilter(router)
 
   const { filterTable, error, loading } = useApplicationFilter(
     router,
@@ -59,10 +59,6 @@ export const ApplicationsOverviewProcessed = () => {
   useEffect(() => {
     filterTable(activeFilters, currentPage)
   }, [activeFilters])
-
-  // useEffect(() => {
-  //   if (minDateCreated) handleDateChange({ from: new Date(minDateCreated) })
-  // }, [minDateCreated])
 
   useEffect(() => {
     onClearFilterOrFillFromRoute()
