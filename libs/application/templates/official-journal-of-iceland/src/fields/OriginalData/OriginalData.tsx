@@ -1,16 +1,12 @@
-import { FieldBaseProps } from '@island.is/application/types'
-import { FileUploadController } from '@island.is/application/ui-components'
-import { Box } from '@island.is/island-ui/core'
-import { FC } from 'react'
+import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { m } from '../../lib/messages'
+import { OJOIFieldBaseProps } from '../../lib/types'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../shared'
 
-export const OriginalData: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+export const OriginalData = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
   // TODO: handle file upload
@@ -24,14 +20,17 @@ export const OriginalData: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Box>
         <FormGroup>
           <Box width="full">
-            <FileUploadController
+            <InputFileUpload
               id="originalData"
-              application={application}
               accept={UPLOAD_ACCEPT}
               maxSize={FILE_SIZE_LIMIT}
               header={f(m.originalDataFileUploadHeader)}
               description={f(m.originalDataFileUploadDescription)}
               buttonLabel={f(m.originalDataFileUploadButton)}
+              fileList={[]}
+              onRemove={function (file: UploadFile): void {
+                throw new Error('Function not implemented.')
+              }}
             />
           </Box>
         </FormGroup>

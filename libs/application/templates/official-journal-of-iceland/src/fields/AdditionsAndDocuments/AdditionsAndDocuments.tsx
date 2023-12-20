@@ -1,20 +1,22 @@
-import { FieldBaseProps } from '@island.is/application/types'
-import { FileUploadController } from '@island.is/application/ui-components'
-import { Box, RadioButton } from '@island.is/island-ui/core'
-import { FC, useState } from 'react'
+import {
+  Box,
+  InputFileUpload,
+  RadioButton,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import { useState } from 'react'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { m } from '../../lib/messages'
+import { OJOIFieldBaseProps } from '../../lib/types'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../shared'
 
-export const AdditionsAndDocuments: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
+export const AdditionsAndDocuments = ({ application }: OJOIFieldBaseProps) => {
   const [isDocuments, setIsDocuments] = useState<boolean>(true)
   const { f } = useFormatMessage(application)
 
-  // TODO: handle file upload
+  // TODO: Create wrapper around file upload component to handle file upload
 
   return (
     <Box>
@@ -25,14 +27,17 @@ export const AdditionsAndDocuments: FC<
       <Box>
         <FormGroup>
           <Box width="full">
-            <FileUploadController
+            <InputFileUpload
               id="files"
-              application={application}
               accept={UPLOAD_ACCEPT}
               maxSize={FILE_SIZE_LIMIT}
               header={f(m.fileUploadHeader)}
               description={f(m.fileUploadDescription)}
               buttonLabel={f(m.fileUploadButton)}
+              fileList={[]}
+              onRemove={function (file: UploadFile): void {
+                throw new Error('Function not implemented.')
+              }}
             />
           </Box>
         </FormGroup>

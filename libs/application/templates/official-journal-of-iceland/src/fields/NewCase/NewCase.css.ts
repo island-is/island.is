@@ -10,11 +10,15 @@ export const modalBase = style({
   zIndex: 1,
   width: '100%',
   maxWidth: 888,
+  height: '90vh',
+  overflowY: 'auto',
 })
 
 export const modalContent = style({
   display: 'flex',
-  minHeight: 888,
+  backgroundColor: theme.color.white,
+  paddingInline: theme.spacing[3],
+  paddingBlock: theme.spacing[10],
 })
 
 export const modalContentInner = style({

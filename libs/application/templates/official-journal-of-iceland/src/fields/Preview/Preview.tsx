@@ -1,13 +1,10 @@
-import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { useFormatMessage } from '../../hooks'
 import { m } from '../../lib/messages'
+import { OJOIFieldBaseProps } from '../../lib/types'
 
-export const Preview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+export const Preview = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
   const copyPreviewUrl = () => {

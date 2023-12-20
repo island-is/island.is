@@ -1,15 +1,12 @@
-import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
 import { CompleteImage } from '../../assets/CompleteImage'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { useFormatMessage } from '../../hooks'
 import { m } from '../../lib/messages'
+import { OJOIFieldBaseProps } from '../../lib/types'
 import * as styles from './Complete.css'
 
-export const Complete: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+export const Complete = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
   return (

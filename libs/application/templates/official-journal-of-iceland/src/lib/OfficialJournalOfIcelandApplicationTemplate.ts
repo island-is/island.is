@@ -17,8 +17,8 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
-import { TemplateApiActions } from '../shared'
 import { hasApprovedExternalData } from '../utils/hasApprovedExternalData'
+import { TemplateApiActions } from './types'
 
 export enum ApplicationStates {
   PREREQUISITS = 'prerequisites',
@@ -99,9 +99,9 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
-            action: TemplateApiActions.getCaseData,
+            action: TemplateApiActions.getOptions,
             shouldPersistToExternalData: true,
-            externalDataId: 'caseData',
+            externalDataId: 'options',
             throwOnError: false,
           }),
           roles: [

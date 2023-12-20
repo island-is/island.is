@@ -1,4 +1,3 @@
-import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Input, Link, Text } from '@island.is/island-ui/core'
 import {
   CheckboxController,
@@ -13,19 +12,17 @@ import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { m } from '../../lib/messages'
-import { BooleanValue, VERDSKRA_LINK } from '../../shared'
+import { BooleanValue, OJOIFieldBaseProps } from '../../lib/types'
+import { VERDSKRA_LINK } from '../../shared'
 import { getWeekdayDates } from '../../utils/isWeekday'
 import { isValidEmail, isValidPhone } from '../../utils/validation'
 import * as styles from './PublishingPrefrences.css'
-
 export type CommunicationChannel = {
   phone: string
   email: string
 }
 
-export const PublishingPrefrences: React.FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
+export const PublishingPrefrences = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
   const [addChannelToggle, setAddChannelToggle] = useState(false)
   const today = new Date()

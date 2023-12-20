@@ -1,11 +1,10 @@
-import { FieldBaseProps } from '@island.is/application/types'
 import { useUserInfo } from '@island.is/auth/react'
 import { Box, Stack } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { Property } from '../../components/Property/Property'
 import { useFormatMessage } from '../../hooks'
 import { m } from '../../lib/messages'
+import { OJOIFieldBaseProps } from '../../lib/types'
 
 const MOCK_DATA = {
   sender: 'Stofnun X',
@@ -20,9 +19,7 @@ const MOCK_DATA = {
   caseClassicifation: 'Verkföll og vinnudeilur',
 }
 
-export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+export const Summary = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
   const user = useUserInfo()
