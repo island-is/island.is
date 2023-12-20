@@ -1,4 +1,4 @@
-mutation BulkUpload($input: SignatureCollectionListNationalIdsInput!) {
+mutation BulkUpload($input: SignatureCollectionListBulkUploadInput!) {
   signatureCollectionBulkUploadSignatures(input: $input) {
     success {
       id
