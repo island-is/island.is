@@ -16,7 +16,7 @@ import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { StateLifeCycle } from '@island.is/application/types'
-import { CanSignApi } from '../dataProviders'
+import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -33,6 +33,7 @@ const SignListTemplate: ApplicationTemplate<
   name: m.applicationName,
   institution: m.institution,
   featureFlag: Features.signatureListCreation,
+  allowQueryParameters: true,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -60,7 +61,12 @@ const SignListTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, CanSignApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                CanSignApi,
+                GetListApi,
+              ],
             },
           ],
         },

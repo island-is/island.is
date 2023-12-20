@@ -16,6 +16,11 @@ export interface List {
   link?: string
 }
 
+export function getLink(id: string): string {
+  // TODO: create hash function
+  return `https://island.is/umsoknir/maela-med-lista/?collector=${id}`
+}
+
 export function mapList(list: MedmaelalistiDTO): List {
   return {
     id: list.id?.toString() ?? '',
@@ -34,6 +39,6 @@ export function mapList(list: MedmaelalistiDTO): List {
     },
     active: true,
     numberOfSignatures: list.fjoldiMedmaela ?? 0,
-    link: '',
+    link: getLink(list.frambod?.kennitala ?? ''),
   }
 }

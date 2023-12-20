@@ -87,7 +87,7 @@ export class SignatureCollectionService {
   async create(
     user: User,
     input: SignatureCollectionListInput,
-  ): Promise<SignatureCollectionList[]> {
+  ): Promise<string> {
     return await this.signatureCollectionClientService.createLists(input)
   }
 

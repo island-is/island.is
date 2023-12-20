@@ -20,7 +20,7 @@ import {
   CollectionInfo,
   mapCollection,
 } from './types/collection.dto'
-import { List, mapList } from './types/list.dto'
+import { List, getLink, mapList } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { BulkUpload } from './types/bulkUpload.dto'
@@ -68,7 +68,13 @@ export class SignatureCollectionClientService {
       const { isOwner, area } = await this.getSignee(nationalId)
       if (isOwner) {
         // TODO: check if actor and if type collection not presidentional send in area of actor
-        return { sofnunID: id, frambodKennitala: nationalId }
+        return areaId
+          ? {
+              sofnunID: id,
+              frambodKennitala: nationalId,
+              svaediID: parseInt(areaId),
+            }
+          : { sofnunID: id, frambodKennitala: nationalId }
       } else if (area) {
         return { sofnunID: id, svaediID: parseInt(area?.id) }
       }
@@ -117,7 +123,7 @@ export class SignatureCollectionClientService {
     collectionId,
     owner,
     areas,
-  }: CreateListInput): Promise<List[]> {
+  }: CreateListInput): Promise<string> {
     const { id, isActive } = await this.currentCollectionInfo()
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
@@ -144,8 +150,12 @@ export class SignatureCollectionClientService {
         })),
       },
     })
-    console.log(lists)
-    return lists.map((list) => mapList(list))
+    if (filteredAreas.length !== lists.length) {
+      throw new Error('Not all lists created')
+    }
+
+    const link = getLink(owner.nationalId)
+    return link
   }
 
   async signList(listId: string, nationalId: string): Promise<Signature> {
@@ -153,6 +163,7 @@ export class SignatureCollectionClientService {
       kennitala: nationalId,
       iD: parseInt(listId),
     })
+    console.log(signature)
     return mapSignature(signature)
   }
 
@@ -280,6 +291,7 @@ export class SignatureCollectionClientService {
       },
     )
     const activeSignature = user.medmaeli?.find((signature) => signature.valid)
+    console.log(activeSignature)
     const ownedLists = user.medmaelalistar
       ? user.medmaelalistar?.map((list) => mapList(list))
       : []

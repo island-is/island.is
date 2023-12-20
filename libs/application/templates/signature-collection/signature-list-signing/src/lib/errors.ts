@@ -73,4 +73,16 @@ export const errorMessages = {
       description: '',
     },
   }),
+  submitFailure: defineMessages({
+    title: {
+      id: 'slc.application:error.submitFailure.title',
+      defaultMessage: 'Ekitthvað fór úrskeiðis',
+      description: '',
+    },
+    summary: {
+      id: 'slc.application:error.submitFailure.summary',
+      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      description: '',
+    },
+  }),
 }

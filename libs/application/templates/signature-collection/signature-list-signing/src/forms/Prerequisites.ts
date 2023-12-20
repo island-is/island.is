@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDataProviderItem,
   buildDescriptionField,
   buildExternalDataProvider,
@@ -16,7 +17,7 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
-import { CanSignApi } from '../dataProviders/index'
+import { CanSignApi, GetListApi } from '../dataProviders/index'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
@@ -37,6 +38,11 @@ export const Prerequisites: Form = buildForm({
             buildDescriptionField({
               id: 'introText',
               title: '',
+            }),
+            buildCustomField({
+              id: 'initialQuery',
+              title: '',
+              component: 'InitialQuery',
             }),
           ],
         }),
@@ -77,6 +83,11 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CanSignApi,
+              title: m.userProfileProviderTitle,
+              subTitle: m.userProfileProviderSubtitle,
+            }),
+            buildDataProviderItem({
+              provider: GetListApi,
               title: m.userProfileProviderTitle,
               subTitle: m.userProfileProviderSubtitle,
             }),

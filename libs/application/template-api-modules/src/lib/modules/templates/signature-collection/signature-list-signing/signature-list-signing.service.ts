@@ -20,16 +20,27 @@ export class SignatureListSigningService extends BaseTemplateApiService {
     super(ApplicationTypes.SIGNATURE_LIST_SIGNING)
   }
 
-  async signList({ application }: TemplateApiModuleActionProps) {
-    // Pretend to be doing stuff for a short while
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  async signList({ auth, application }: TemplateApiModuleActionProps) {
+    const listId = (application.externalData.getList.data as any).id
+    const signature = await this.signatureCollectionClientService.signList(
+      listId,
+      auth.nationalId,
+    )
+    if (signature) {
+      return signature
+    } else {
+      throw new TemplateApiError(errorMessages.submitFailure, 405)
+    }
   }
 
   async canSign({ auth, application }: TemplateApiModuleActionProps) {
-    const { canSign, canSignInfo } =
-      await this.signatureCollectionClientService.getSignee(auth.nationalId)
+    const signee = await this.signatureCollectionClientService.getSignee(
+      auth.nationalId,
+    )
+    const { canSign, canSignInfo } = signee
+
     if (canSign) {
-      return true
+      return signee
     }
     if (!canSignInfo) {
       // canCreateInfo will always be defined if canCreate is false but we need to check for typescript
@@ -45,12 +56,24 @@ export class SignatureListSigningService extends BaseTemplateApiService {
           return errorMessages.residency
         case ReasonKey.CollectionNotOpen:
           return errorMessages.active
-        case ReasonKey.AlreadyOwner:
+        case ReasonKey.AlreadySigned:
           return errorMessages.signer
         default:
           return errorMessages.deniedByService
       }
     })
     throw new TemplateApiError(errors, 400)
+  }
+
+  async getList({ application }: TemplateApiModuleActionProps) {
+    const areaId = (
+      (application.externalData.canSign.data as any)?.area as { id: string }
+    ).id
+    const ownerId = application.answers.initialQuery as string
+    const list = await this.signatureCollectionClientService.getLists({
+      nationalId: ownerId,
+      areaId,
+    })
+    return list[0]
   }
 }

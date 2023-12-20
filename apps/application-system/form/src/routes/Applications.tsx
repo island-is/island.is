@@ -50,7 +50,6 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const { search } = useLocation()
 
   const query = React.useMemo(() => new URLSearchParams(search), [search])
-
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
@@ -62,6 +61,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       >
     | undefined
   >(undefined)
+  const queryParam = template?.allowQueryParameters ?? query.get('q')
 
   useApplicationNamespaces(type)
 
@@ -82,7 +82,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        if (slug) {
+        if (slug && queryParam) {
+          navigate(`../${slug}/${createApplication.id}/?q=${queryParam}`)
+        } else if (slug) {
           navigate(`../${slug}/${createApplication.id}`)
         }
       },

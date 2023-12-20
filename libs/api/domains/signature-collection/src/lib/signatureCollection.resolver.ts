@@ -119,12 +119,12 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.signee(user.nationalId)
   }
 
-  @Mutation(() => [SignatureCollectionList])
+  @Mutation(() => String)
   @Audit()
   async signatureCollectionCreate(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListInput,
-  ): Promise<SignatureCollectionList[]> {
+  ): Promise<string> {
     return this.signatureCollectionService.create(user, input)
   }
 
