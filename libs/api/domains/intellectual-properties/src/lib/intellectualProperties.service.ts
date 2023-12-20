@@ -48,11 +48,8 @@ export class IntellectualPropertiesService {
   ): Promise<Trademark | null> {
     const trademark = await this.ipService.getTrademarkByVmId(user, trademarkId)
 
-    const formatDate = (date: string | undefined | null) =>
-      parseDateIfValid(date, 'dd.MM.yyyy HH:mm:ss')
-
     const objectionDate = trademark.datePublished
-      ? formatDate(trademark?.datePublished)
+      ? parseDateIfValid(trademark?.datePublished)
       : undefined
 
     if (!trademark.vmid) {
@@ -110,16 +107,16 @@ export class IntellectualPropertiesService {
           }
         : undefined,
       lifecycle: {
-        applicationDate: formatDate(trademark.applicationDate),
-        registrationDate: formatDate(trademark.dateRegistration),
-        unregistrationDate: formatDate(trademark.dateUnRegistered),
-        internationalRegistrationDate: formatDate(
+        applicationDate: parseDateIfValid(trademark.applicationDate),
+        registrationDate: parseDateIfValid(trademark.dateRegistration),
+        unregistrationDate: parseDateIfValid(trademark.dateUnRegistered),
+        internationalRegistrationDate: parseDateIfValid(
           trademark.dateInternationalRegistration,
         ),
-        expiryDate: formatDate(trademark.dateExpires),
-        renewalDate: formatDate(trademark.dateRenewed),
-        lastModified: formatDate(trademark.dateModified),
-        publishDate: formatDate(trademark.datePublished),
+        expiryDate: parseDateIfValid(trademark.dateExpires),
+        renewalDate: parseDateIfValid(trademark.dateRenewed),
+        lastModified: parseDateIfValid(trademark.dateModified),
+        publishDate: parseDateIfValid(trademark.datePublished),
         maxValidObjectionDate: objectionDate
           ? addMonths(objectionDate, 2)
           : undefined,
@@ -167,7 +164,29 @@ export class IntellectualPropertiesService {
     return {
       ...patent,
       applicationNumber: patent.applicationNumber,
+      epApplicationNumber: patent.epApplicationNumber ?? undefined,
       name,
+      nameInOrgLanguage: patent.patentNameInOrgLanguage ?? undefined,
+      classifications: patent.internalClassifications?.map((ic) => ({
+        category: ic.category ?? '',
+        sequence: ic.sequence ? parseInt(ic.sequence) : undefined,
+        creationDate: parseDateIfValid(ic.createDate),
+        publicationDate: parseDateIfValid(ic.datePublised),
+        type: ic.type ?? '',
+      })),
+      priorites: patent.priorities?.map((p) => ({
+        applicationDate: parseDateIfValid(p.dateApplication),
+        country: {
+          code: p.country?.code ?? '',
+          name: p.country?.name ?? '',
+        },
+        number: p.number ?? '',
+        creationDate: parseDateIfValid(p.createDate),
+      })),
+      pct: {
+        number: patent.pct?.pctNumber ?? '',
+        date: parseDateIfValid(patent.pct?.pctDate),
+      },
       owner: {
         name: patent.ownerName ?? '',
         address: patent.ownerHome ?? '',
@@ -213,9 +232,23 @@ export class IntellectualPropertiesService {
         }))
         .filter(isDefined),
       lifecycle: {
-        ...patent,
-        registrationDate: parseDateIfValid(patent.registeredDate),
+        applicationDate: parseDateIfValid(patent.appDate),
+        registrationDate: parseDateIfValid(patent.regDate),
+        expiryDate: parseDateIfValid(patent.expires),
+        publishDate: parseDateIfValid(
+          patent.applicationDatePublishedAsAvailable,
+        ),
+        maxValidDate: parseDateIfValid(patent.maxValidDate),
+        lastModified: parseDateIfValid(patent.lastModified),
       },
+      epApplicationDate: parseDateIfValid(patent.epApplicationDate),
+      epProvisionPublishedInGazette: parseDateIfValid(
+        patent.epDateProvisionPublishedInGazette,
+      ),
+      epTranslationSubmittedDate: parseDateIfValid(
+        patent.epDateTranslationSubmitted,
+      ),
+      epPublishDate: parseDateIfValid(patent.epDatePublication),
       status: patent.status ?? '',
       statusText: patent.statusText ?? '',
     }
@@ -278,7 +311,9 @@ export class IntellectualPropertiesService {
         specificationText: response.specification?.specificationText ?? '',
         specificationCount: response.specification?.specificationCount ?? '',
       },
-      classification: response.classification?.category ?? [],
+      classification: response.classification?.category?.map((c) => ({
+        category: c,
+      })),
       owners: response.owners?.map((o) => ({
         name: o.name ?? '',
         addressFull: mapFullAddress(o.address, o.postalcode, o.city),
