@@ -745,11 +745,6 @@ export const OldAgePensionForm: Form = buildForm({
           title: oldAgePensionFormMessage.period.periodTitle,
           description: oldAgePensionFormMessage.period.periodDescription,
           children: [
-            // buildCustomField({
-            //   id: 'period',
-            //   component: 'Period',
-            //   title: oldAgePensionFormMessage.period.periodTitle,
-            // }),
             buildSelectField({
               id: 'period.year',
               title: oldAgePensionFormMessage.period.periodTitle,
