@@ -5,7 +5,6 @@ import { FetchResult, MutationFunctionOptions } from '@apollo/client'
 import { Exact } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
-  CaseState,
   isAcceptingCaseDecision,
   isDistrictCourtUser,
   isInvestigationCase,
@@ -25,6 +24,7 @@ import {
 import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
 import {
   CaseDecision,
+  CaseState,
   CaseType,
   RequestSignatureInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
