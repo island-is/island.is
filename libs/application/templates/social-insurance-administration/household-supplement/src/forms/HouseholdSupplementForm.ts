@@ -28,12 +28,12 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getAvailableYears,
-  getAvailableMonths,
 } from '../lib/householdSupplementUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   BankAccountType,
   FILE_SIZE_LIMIT,
+  MONTHS,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
@@ -391,13 +391,7 @@ export const HouseholdSupplementForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.monthDefaultText,
-              options: (application: Application) => {
-                const { selectedYear: year } = getApplicationAnswers(
-                  application.answers,
-                )
-                const rightYear = year ?? new Date().getFullYear().toString()
-                return getAvailableMonths(application, rightYear)
-              },
+              options: MONTHS,
             }),
           ],
         }),

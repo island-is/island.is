@@ -38,7 +38,6 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getAvailableMonths,
   getAvailableYears,
   isEarlyRetirement,
 } from '../lib/oldAgePensionUtils'
@@ -58,6 +57,7 @@ import {
   BankAccountType,
   FILE_SIZE_LIMIT,
   IS,
+  MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
@@ -779,13 +779,7 @@ export const OldAgePensionForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.monthDefaultText,
-              options: (application: Application) => {
-                const { selectedYear: year } = getApplicationAnswers(
-                  application.answers,
-                )
-                const rightYear = year ?? new Date().getFullYear().toString()
-                return getAvailableMonths(application, rightYear)
-              },
+              options: MONTHS,
             }),
             buildAlertMessageField({
               id: 'period.alert',
