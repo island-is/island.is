@@ -173,7 +173,7 @@ export class VehiclesService {
     })
 
     // String of owners where owner can delegate registration.
-    const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(', ')
+    const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(',').map(i => i.trim())
 
     const owner = res?.currentOwnerInfo?.nationalId
     const operators = res?.operators?.filter(
