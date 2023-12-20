@@ -253,7 +253,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
-    translation: ['oap.application', 'sia.application'],
+    translation: ['oap.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
