@@ -122,6 +122,8 @@ export class TransportAuthorityApi {
       (x) => x.type === 'operator',
     )
 
+    const mileage = answers?.vehicleMileage?.value
+
     const result =
       await this.vehicleOwnerChangeClient.validateAllForOwnerChange(user, {
         permno: answers?.pickVehicle?.plate,
@@ -136,9 +138,7 @@ export class TransportAuthorityApi {
         dateOfPurchase: new Date(answers?.vehicle?.date),
         dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
-        mileage: answers?.vehicle?.mileage
-          ? Number(answers?.vehicle?.mileage) || 0
-          : null,
+        mileage: mileage ? Number(mileage) || 0 : null,
         insuranceCompanyCode: answers?.insurance?.value || '',
         coOwners: buyerCoOwners?.map((coOwner) => ({
           ssn: coOwner.nationalId,
@@ -188,6 +188,8 @@ export class TransportAuthorityApi {
       ...(filteredNewCoOwners ? filteredNewCoOwners : []),
     ]
 
+    const mileage = answers?.vehicleMileage?.value
+
     const result =
       await this.vehicleOwnerChangeClient.validateAllForOwnerChange(user, {
         permno: permno,
@@ -202,6 +204,7 @@ export class TransportAuthorityApi {
         dateOfPurchase: new Date(),
         dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
         saleAmount: currentOwnerChange?.saleAmount,
+        mileage: mileage ? Number(mileage) || 0 : null,
         insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
         operators: currentOperators?.map((operator) => ({
           ssn: operator.ssn || '',
@@ -292,11 +295,14 @@ export class TransportAuthorityApi {
           : true,
     }))
 
+    const mileage = answers?.vehicleMileage?.value
+
     const result =
       await this.vehicleOperatorsClient.validateAllForOperatorChange(
         user,
         permno,
         operators,
+        mileage ? Number(mileage) || 0 : null,
       )
 
     return result

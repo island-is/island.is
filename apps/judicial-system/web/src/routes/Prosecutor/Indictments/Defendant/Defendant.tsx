@@ -36,7 +36,7 @@ import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/
 import { DefendantInfo } from '../../components'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
-import { useGetPoliceCaseInfoQuery } from './getPoliceCaseInfo.generated'
+import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
 import { defendant } from './Defendant.strings'
 
 export interface PoliceCase {
@@ -115,7 +115,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     setPoliceCases(getPoliceCases(workingCase))
   }, [workingCase])
 
-  const { data, loading, error } = useGetPoliceCaseInfoQuery({
+  const { data, loading, error } = usePoliceCaseInfoQuery({
     variables: {
       input: {
         caseId: workingCase.id,

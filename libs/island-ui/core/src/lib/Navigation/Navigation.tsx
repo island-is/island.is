@@ -276,6 +276,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
               colorScheme={colorScheme}
               items={items}
               renderLink={renderLink}
+              asSpan={asSpan}
               isVisible={mobileMenuOpen}
               menuState={menu}
               onClick={() => {
