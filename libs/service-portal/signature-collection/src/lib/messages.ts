@@ -51,7 +51,7 @@ export const m = defineMessages({
   },
   unSignList: {
     id: 'sp.signatureCollection:unSignList',
-    defaultMessage: 'Draga meðmæli mitt til baka',
+    defaultMessage: 'Draga til baka',
     description: '',
   },
   unSignModalMessage: {

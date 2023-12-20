@@ -1,7 +1,14 @@
-import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  GridColumn,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { Modal } from '@island.is/service-portal/core'
+import { IntroHeader, Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import { useGetListsForUser, useGetSignedList } from '../hooks'
 import format from 'date-fns/format'
@@ -30,9 +37,9 @@ const SigneeView = () => {
         isVisible={modalIsOpen}
         toggleClose={false}
         initialVisibility={false}
+        onCloseModal={() => setModalIsOpen(false)}
         disclosure={
           <ActionCard
-            backgroundColor="blue"
             heading={signedList.owner.name + ' - ' + signedList.area.name}
             eyebrow={format(new Date(signedList.endTime), 'dd.MM.yyyy')}
             text={formatMessage(m.collectionTitle)}
@@ -63,6 +70,33 @@ const SigneeView = () => {
     <div>
       {!loadingSignedList && !loadingUserLists ? (
         <Box>
+          <IntroHeader
+            title={formatMessage(m.pageTitle)}
+            intro={formatMessage(m.pageDescription)}
+          >
+            {listsForUser.length === 0 && (
+              <GridColumn span={['8/8', '3/8']}>
+                <Box
+                  display={'flex'}
+                  justifyContent={['flexStart', 'flexEnd']}
+                  paddingTop={[2]}
+                >
+                  <Button
+                    icon="open"
+                    iconType="outline"
+                    onClick={() =>
+                      window.open(
+                        `${document.location.origin}/umsoknir/medmaelalisti/`,
+                      )
+                    }
+                    size="small"
+                  >
+                    {formatMessage(m.createListButton)}
+                  </Button>
+                </Box>
+              </GridColumn>
+            )}
+          </IntroHeader>
           {!!signedList && (
             <Box marginTop={10}>
               <Text variant="h4" marginBottom={3}>
