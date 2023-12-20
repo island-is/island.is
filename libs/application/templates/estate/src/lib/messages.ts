@@ -1028,7 +1028,7 @@ export const m = defineMessages({
   inheritanceAgeValidation: {
     id: 'es.application:inheritanceAgeValidation',
     defaultMessage:
-      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir 18 er skráður',
+      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara',
     description: '',
   },
 

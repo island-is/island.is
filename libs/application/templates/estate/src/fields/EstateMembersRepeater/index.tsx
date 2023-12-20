@@ -75,6 +75,14 @@ export const EstateMembersRepeater: FC<
       name: undefined,
     })
 
+    useEffect(() => {
+      const values = getValues()
+      const hasEstateMemberUnder18 = values.estate?.estateMembers?.some((member: EstateMember) => kennitala.info(member.nationalId)?.age < 18 && !member.advocate && member.enabled)
+      if(!hasEstateMemberUnder18) {
+        clearErrors(heirAgeValidation)
+      }
+    }, [fields])
+
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
       // ran into a problem with "append", as it appeared to be getting called multiple times
@@ -83,6 +91,7 @@ export const EstateMembersRepeater: FC<
       replace(externalData.estate.estateMembers)
     }
   }, [])
+
 
   return (
     <Box>
