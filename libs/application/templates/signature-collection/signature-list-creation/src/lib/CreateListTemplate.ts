@@ -16,7 +16,7 @@ import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
-import { OwnerRequirementsApi } from '../dataProviders'
+import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -60,7 +60,12 @@ const CreateListTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, OwnerRequirementsApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                OwnerRequirementsApi,
+                CurrentCollectionApi,
+              ],
             },
           ],
         },

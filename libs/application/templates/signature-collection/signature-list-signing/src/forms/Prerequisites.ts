@@ -16,7 +16,7 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
-import { CanSignApi } from '../dataProviders/index';
+import { CanSignApi } from '../dataProviders/index'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',

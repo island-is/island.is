@@ -1,3 +1,4 @@
+import { ReasonKey } from '../signature-collection.types'
 import { Area } from './area.dto'
 import { List } from './list.dto'
 import { Signature } from './signature.dto'
@@ -10,9 +11,9 @@ export interface UserBase {
 export interface Signee extends UserBase {
   electionName: string
   canSign: boolean
-  canSignInfo?: string[]
+  canSignInfo?: ReasonKey[]
   canCreate: boolean
-  canCreateInfo?: string[]
+  canCreateInfo?: ReasonKey[]
   isOwner: boolean
   area?: Omit<Area, 'min' | 'max'>
   signature: Signature | null

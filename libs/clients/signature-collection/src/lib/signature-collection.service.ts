@@ -11,6 +11,8 @@ import {
   CreateListInput,
   ReasonKey,
   BulkUploadInput,
+  CanCreateInput,
+  CanSignInput,
 } from './signature-collection.types'
 import {
   Collection,
@@ -111,10 +113,11 @@ export class SignatureCollectionClientService {
     }))
   }
 
-  async createLists(
-    { collectionId, owner, areas }: CreateListInput,
-    user: User,
-  ): Promise<List[]> {
+  async createLists({
+    collectionId,
+    owner,
+    areas,
+  }: CreateListInput): Promise<List[]> {
     const { id, isActive } = await this.currentCollectionInfo()
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
@@ -141,6 +144,7 @@ export class SignatureCollectionClientService {
         })),
       },
     })
+    console.log(lists)
     return lists.map((list) => mapList(list))
   }
 
@@ -228,13 +232,47 @@ export class SignatureCollectionClientService {
     return this.getList(signature.listId)
   }
 
-  async canSign(nationalId: string): Promise<Success> {
-    const { canSign, canSignInfo } = await this.getSignee(nationalId)
-    return { success: canSign, reasons: canSignInfo }
+  async canSign({
+    requirementsMet = false,
+    canSignInfo,
+    isActive,
+    activeSignature,
+  }: CanSignInput): Promise<Success> {
+    const reasons = mapReasons({
+      ...canSignInfo,
+      active: isActive,
+      notSigned: activeSignature === undefined,
+    })
+    return { success: requirementsMet && isActive && !activeSignature, reasons }
+  }
+
+  async canCreate({
+    requirementsMet = false,
+    canCreateInfo,
+    isPresidential,
+    isActive,
+    ownedLists,
+  }: CanCreateInput): Promise<Success> {
+    // can create if requirements met and collection is active
+    // if collection is presidential and user has no lists otherwise does not have lists for all areas of collection
+    const alreadyOwnsAllLists = isPresidential
+      ? ownedLists.length > 0
+      : await this.getAreas().then(
+          (areas) => areas.length === ownedLists.length,
+        )
+
+    const canCreate = requirementsMet && isActive && !alreadyOwnsAllLists
+    const reasons =
+      mapReasons({
+        ...canCreateInfo,
+        active: isActive,
+        notOwner: !alreadyOwnsAllLists,
+      }) ?? []
+    return { success: canCreate, reasons }
   }
 
   async getSignee(nationalId: string): Promise<Signee> {
-    const { id } = await this.currentCollectionInfo()
+    const { id, isPresidential, isActive } = await this.currentCollectionInfo()
     const user = await this.collectionsApi.medmaelasofnunIDEinsInfoKennitalaGet(
       {
         kennitala: nationalId,
@@ -242,30 +280,42 @@ export class SignatureCollectionClientService {
       },
     )
     const activeSignature = user.medmaeli?.find((signature) => signature.valid)
+    const ownedLists = user.medmaelalistar
+      ? user.medmaelalistar?.map((list) => mapList(list))
+      : []
+
+    const { success: canCreate, reasons: canCreateInfo } = await this.canCreate(
+      {
+        requirementsMet: user.maFrambod,
+        canCreateInfo: user.maFrambodInfo,
+        ownedLists,
+        isPresidential,
+        isActive,
+      },
+    )
+    const { success: canSign, reasons: canSignInfo } = await this.canSign({
+      requirementsMet: user.maKjosa,
+      isActive,
+      canSignInfo: user.maKjosaInfo,
+      activeSignature,
+    })
 
     return {
       nationalId: user.kennitala ?? '',
       name: user.nafn ?? '',
       electionName: user.kosningNafn ?? '',
-      canSign: user.maKjosa ?? false,
-      canSignInfo: user.maKjosaInfo ? mapReasons(user.maKjosaInfo) : [],
-      canCreate: user.maFrambod ?? false,
-      canCreateInfo: user.maFrambodInfo ? mapReasons(user.maFrambodInfo) : [],
+      canSign,
+      canSignInfo,
+      canCreate,
+      canCreateInfo,
       area: user.svaedi && {
         id: user.svaedi?.id?.toString() ?? '',
         name: user.svaedi?.nafn?.toString() ?? '',
       },
       signature: activeSignature ? mapSignature(activeSignature) : null,
-      ownedLists: user.medmaelalistar
-        ? user.medmaelalistar?.map((list) => mapList(list))
-        : [],
+      ownedLists,
       isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
     }
-  }
-
-  async canCreate(nationalId: string): Promise<Success> {
-    const { canCreate, canCreateInfo } = await this.getSignee(nationalId)
-    return { success: canCreate, reasons: canCreateInfo }
   }
 
   async isOwner(nationalId: string): Promise<{ success: boolean }> {
