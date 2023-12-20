@@ -43,7 +43,7 @@ const ApplicationsFilterTable = ({
 
   const staff = (staffName?: string) => (
     <Box className={tableStyles.rowContent}>
-      <Text>{staffName}</Text>
+      {staffName && <Text>{staffName}</Text>}
     </Box>
   )
 

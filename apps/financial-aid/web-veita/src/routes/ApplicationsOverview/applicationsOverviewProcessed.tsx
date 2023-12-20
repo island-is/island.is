@@ -6,6 +6,7 @@ import {
   Box,
   Pagination,
   SkeletonLoader,
+  Button,
 } from '@island.is/island-ui/core'
 import {
   ApplicationsFilterTable,
@@ -48,6 +49,7 @@ export const ApplicationsOverviewProcessed = () => {
     onFilterClear,
     onClearFilterOrFillFromRoute,
     handleDateChange,
+    onFilterClearAll,
   } = useFilter(router)
 
   const { filterTable, error, loading } = useApplicationFilter(
@@ -112,11 +114,21 @@ export const ApplicationsOverviewProcessed = () => {
               minDateCreated={minDateCreated}
             />
 
-            <Text fontWeight="semiBold" whiteSpace="nowrap">
-              {`${totalCount} ${
-                totalCount === 1 ? 'niðurstaða' : 'niðurstöður'
-              }`}
-            </Text>
+            <Box>
+              <Text fontWeight="semiBold" whiteSpace="nowrap">
+                {`${totalCount} ${
+                  totalCount === 1 ? 'niðurstaða' : 'niðurstöður'
+                }`}
+              </Text>
+              <Button
+                icon="reload"
+                onClick={onFilterClearAll}
+                variant="text"
+                size="small"
+              >
+                Hreinsa síu
+              </Button>
+            </Box>
           </Box>
         </LoadingContainer>
 
@@ -141,21 +153,26 @@ export const ApplicationsOverviewProcessed = () => {
       </Box>
 
       <Box marginBottom={[3, 3, 7]}>
-        <Pagination
-          page={currentPage}
-          totalPages={
-            totalCount ? Math.ceil(totalCount / applicationPageSize) : 0
-          }
-          renderLink={(page, className, children) => (
-            <Box
-              cursor="pointer"
-              className={className}
-              onClick={() => onPageChange(page)}
-            >
-              {children}
-            </Box>
-          )}
-        />
+        <LoadingContainer
+          isLoading={totalCount === undefined}
+          loader={<SkeletonLoader height={32} />}
+        >
+          <Pagination
+            page={currentPage}
+            totalPages={
+              totalCount ? Math.ceil(totalCount / applicationPageSize) : 0
+            }
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => onPageChange(page)}
+              >
+                {children}
+              </Box>
+            )}
+          />
+        </LoadingContainer>
       </Box>
     </Box>
   )

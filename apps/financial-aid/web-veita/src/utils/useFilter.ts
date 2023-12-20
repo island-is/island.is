@@ -28,6 +28,14 @@ const useFilter = (router: NextRouter) => {
   })
 
   const onFilterClear = () => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      applicationState: [],
+      staff: [],
+    }))
+  }
+
+  const onFilterClearAll = () => {
     setActiveFilters({
       applicationState: [],
       staff: [],
@@ -64,7 +72,7 @@ const useFilter = (router: NextRouter) => {
         },
       }))
     } else {
-      onFilterClear()
+      onFilterClearAll()
     }
   }
 
@@ -105,6 +113,7 @@ const useFilter = (router: NextRouter) => {
     onFilterClear,
     onClearFilterOrFillFromRoute,
     handleDateChange,
+    onFilterClearAll,
   }
 }
 export default useFilter
