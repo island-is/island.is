@@ -148,6 +148,13 @@ export class UniversityOfIcelandApplicationClient {
         const externalUrlIsList = course.externalUrlIs || []
         const externalUrlEnList = course.externalUrlEn || []
 
+        // If more than one item in the array, then this is a "bundin skylda".
+        // We need to set the requirement as RESTRICTED_ELECTIVE ("bundið val"),
+        // since there is not a requirement type for RESTRICTED_MANDATORY
+        if (externalIdList.length > 1) {
+          requirement = Requirement.RESTRICTED_ELECTIVE
+        }
+
         for (let i = 0; i < externalIdList.length; i++) {
           mappedRes.push({
             externalId: externalIdList[i],
