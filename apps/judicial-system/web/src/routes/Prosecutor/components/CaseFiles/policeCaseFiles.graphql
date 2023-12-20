@@ -1,4 +1,4 @@
-query GetPoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
+query PoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
   policeCaseFiles(input: $input) {
     id
     name
