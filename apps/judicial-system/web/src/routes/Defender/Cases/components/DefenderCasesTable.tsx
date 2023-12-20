@@ -27,8 +27,10 @@ import {
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import {
+  CaseListEntry,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'

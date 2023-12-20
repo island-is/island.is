@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
-import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
@@ -14,10 +13,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
+import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -27,29 +24,20 @@ export const PrisonCases: React.FC = () => {
 
   const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
-  const { getCaseToOpen } = useCase()
-
-  const { data, error, loading } = useQuery<{
-    cases?: CaseListEntry[]
-  }>(CasesQuery, {
+  const { data, error, loading } = usePrisonCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
   const resCases = data?.cases
 
-  const [activeCases, pastCases]: [CaseListEntry[], CaseListEntry[]] =
-    useMemo(() => {
-      if (!resCases) {
-        return [[], []]
-      }
+  const [activeCases, pastCases] = useMemo(() => {
+    if (!resCases) {
+      return [[], []]
+    }
 
-      return partition(resCases, (c) => !c.isValidToDateInThePast)
-    }, [resCases])
-
-  const handleRowClick = (id: string) => {
-    getCaseToOpen(id)
-  }
+    return partition(resCases, (c) => !c.isValidToDateInThePast)
+  }, [resCases])
 
   return (
     <SharedPageLayout>
@@ -80,11 +68,7 @@ export const PrisonCases: React.FC = () => {
           />
           <Box marginBottom={[5, 5, 12]}>
             {loading || !user || activeCases.length > 0 ? (
-              <PastCasesTable
-                cases={activeCases}
-                onRowClick={handleRowClick}
-                loading={loading}
-              />
+              <PastCasesTable cases={activeCases} loading={loading} />
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage
@@ -112,7 +96,6 @@ export const PrisonCases: React.FC = () => {
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
           cases={pastCases}
-          onRowClick={handleRowClick}
           loading={loading}
           testid="pastCasesTable"
         />

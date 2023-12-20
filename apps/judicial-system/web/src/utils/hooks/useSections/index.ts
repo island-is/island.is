@@ -13,7 +13,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
   completedCaseStates,
   isDefenceUser,
   isDistrictCourtUser,
@@ -26,6 +25,7 @@ import { RouteSection } from '@island.is/judicial-system-web/src/components/Page
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
   CaseAppealState,
+  CaseState,
   CaseType,
   Gender,
   InstitutionType,
