@@ -7,9 +7,6 @@ export const getSelectedMachine = (
   answers: FormValue,
 ) => {
   const machineId = getValueViaPath(answers, 'pickMachine.id', '') as Machine
-  console.log('machineId', machineId)
-  console.log('externalData', externalData)
-  console.log('answers', answers)
   const machines = getValueViaPath(
     externalData,
     'machinesList.data',
