@@ -15,9 +15,8 @@ import {
 import * as styles from './Layout.css'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader, ServicePortalPaths } from '@island.is/service-portal/core'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
-import { ServicePortalPaths } from '../../lib/paths'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { theme } from '@island.is/island-ui/theme'
 

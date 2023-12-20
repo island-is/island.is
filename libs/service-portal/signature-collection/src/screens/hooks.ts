@@ -1,12 +1,12 @@
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import {
   GetIsOwner,
   GetListById,
   GetListSignatures,
-  GetListsBySigneeArea,
-  GetOwnerLists,
+  GetListsForUser,
   GetSignedList,
 } from './queries'
+import { cancelCollectionMutation } from './mutations'
 import {
   SignatureCollectionList,
   SignatureCollectionSignature,
@@ -21,12 +21,8 @@ interface ListSignees {
   signatureCollectionSignatures?: SignatureCollectionSignature[]
 }
 
-interface OwnerLists {
-  signatureCollectionListsByOwner?: SignatureCollectionList[]
-}
-
-interface ListsByArea {
-  signatureCollectionListsByArea?: SignatureCollectionList[]
+interface ListsForUser {
+  signatureCollectionListsForUser?: SignatureCollectionList[]
 }
 
 interface IsOwner {
@@ -49,7 +45,6 @@ export const useGetSignatureList = (listId: string) => {
       },
     },
   })
-
   const listInfo =
     (signatureList?.signatureCollectionList as SignatureCollectionList) ?? {}
   return { listInfo, refetchSignatureList, loadingList }
@@ -67,7 +62,6 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
       },
     },
   })
-
   const listSignees =
     (listSignatures?.signatureCollectionSignatures as SignatureCollectionSignature[]) ??
     []
@@ -80,48 +74,34 @@ export const useGetSignedList = () => {
     loading: loadingSignedList,
     refetch: refetchSignedList,
   } = useQuery<SignedList>(GetSignedList)
-
   const signedList =
     (getSignedList?.signatureCollectionSignedList as SignatureCollectionList) ??
-    {}
+    null
   return { signedList, loadingSignedList, refetchSignedList }
 }
 
-export const useGetOwnerLists = () => {
-  const { data: getOwnerLists, loading: loadingLists } =
-    useQuery<OwnerLists>(GetOwnerLists)
-
-  const ownerLists =
-    (getOwnerLists?.signatureCollectionListsByOwner as SignatureCollectionList[]) ??
-    []
-  return { ownerLists, loadingLists }
-}
-
-export const useGetListsBySigneeArea = (area: string) => {
+export const useGetListsForUser = () => {
   const {
-    data: getListsBySigneeArea,
-    loading: loadingAreaLists,
-    refetch: refetchListsBySigneeArea,
-  } = useQuery<ListsByArea>(GetListsBySigneeArea, {
-    variables: {
-      input: {
-        areaId: area,
-      },
-    },
-  })
+    data: getListsForUser,
+    loading: loadingUserLists,
+    refetch: refetchListsForUser,
+  } = useQuery<ListsForUser>(GetListsForUser)
 
-  const listsBySigneeArea =
-    (getListsBySigneeArea?.signatureCollectionListsByArea as SignatureCollectionList[]) ??
+  const listsForUser =
+    (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionList[]) ??
     []
-  return { listsBySigneeArea, loadingAreaLists, refetchListsBySigneeArea }
+  return { listsForUser, loadingUserLists, refetchListsForUser }
 }
 
 export const useIsOwner = () => {
-  const { data: getIsOwner, loading: loadingIsOwner } =
-    useQuery<IsOwner>(GetIsOwner)
+  const {
+    data: getIsOwner,
+    loading: loadingIsOwner,
+    refetch: refetchIsOwner,
+  } = useQuery<IsOwner>(GetIsOwner)
 
   const isOwner =
     (getIsOwner?.signatureCollectionIsOwner as SignatureCollectionSuccess) ??
     false
-  return { isOwner, loadingIsOwner }
+  return { isOwner, loadingIsOwner, refetchIsOwner }
 }
