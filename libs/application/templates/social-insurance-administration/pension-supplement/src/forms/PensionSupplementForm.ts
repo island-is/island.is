@@ -26,8 +26,9 @@ import {
   getApplicationReasonOptions,
   getApplicationAnswers,
   getApplicationExternalData,
+  getAvailableYears,
 } from '../lib/pensionSupplementUtils'
-import { ApplicationReason } from '../lib/constants'
+import { ApplicationReason, MONTHS } from '../lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import isEmpty from 'lodash/isEmpty'
 import {
@@ -320,10 +321,23 @@ export const PensionSupplementForm: Form = buildForm({
           title: pensionSupplementFormMessage.info.periodTitle,
           description: pensionSupplementFormMessage.info.periodDescription,
           children: [
-            buildCustomField({
-              id: 'period',
-              title: pensionSupplementFormMessage.info.periodTitle,
-              component: 'Period',
+            buildSelectField({
+              id: 'period.year',
+              title: pensionSupplementFormMessage.info.periodYear,
+              width: 'half',
+              placeholder:
+                pensionSupplementFormMessage.info.periodYearDefaultText,
+              options: (application: Application) => {
+                return getAvailableYears(application)
+              },
+            }),
+            buildSelectField({
+              id: 'period.month',
+              title: pensionSupplementFormMessage.info.periodMonth,
+              width: 'half',
+              placeholder:
+                pensionSupplementFormMessage.info.periodMonthDefaultText,
+              options: MONTHS,
             }),
           ],
         }),

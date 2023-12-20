@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { errorMessages, validatorErrorMessages } from './messages'
 import { ApplicationReason } from './constants'
 import addYears from 'date-fns/addYears'
+import addMonths from 'date-fns/addMonths'
 import {
   formatBankInfo,
   validIBAN,
@@ -119,11 +120,12 @@ export const dataSchema = z.object({
     .refine(
       (p) => {
         const today = new Date()
-        const startDate = addYears(today, -2)
+        const startDate = addYears(today.setMonth(today.getMonth()), -2)
+        const endDate = addMonths(new Date(), 6)
         const selectedDate = new Date(p.year + p.month)
-        return startDate < selectedDate
+        return startDate < selectedDate && selectedDate < endDate
       },
-      { params: errorMessages.period },
+      { params: errorMessages.period, path: ['month'] },
     ),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
