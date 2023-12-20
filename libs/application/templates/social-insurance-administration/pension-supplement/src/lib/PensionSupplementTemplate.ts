@@ -45,7 +45,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
   type: ApplicationTypes.PENSION_SUPPLEMENT,
   name: pensionSupplementFormMessage.shared.applicationTitle,
   institution: pensionSupplementFormMessage.shared.institution,
-  readyForProduction: false, // hafa þetta svona atm?
   translationNamespaces: [
     ApplicationConfigurations.PensionSupplement.translation,
   ],
