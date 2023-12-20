@@ -163,6 +163,48 @@ export class VehiclesService {
     }
   }
 
+  private async isAllowedMileageRegistration(
+    auth: User,
+    permno: string,
+  ): Promise<boolean> {
+    const res = await this.getVehicleDetail(auth, {
+      clientPersidno: auth.nationalId,
+      permno,
+    })
+
+    // String of owners where owner can delegate registration.
+    const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(', ')
+
+    const owner = res?.currentOwnerInfo?.nationalId
+    const operators = res?.operators?.filter(
+      (operator) => operator.mainoperator,
+    )
+    const mainOperator = operators?.map((mainOp) => mainOp.nationalId)
+    const isCreditInstitutionOwner = owner
+      ? allowedCoOwners?.includes(owner)
+      : false
+
+    // If owner is authenticated
+    if (owner === auth.nationalId) {
+      // If owner is credit institution and car has operators
+      if (isCreditInstitutionOwner && operators?.length) {
+        return false
+      }
+      return true
+    }
+
+    // If main operator is authenticated and owner is credit institution
+    if (
+      mainOperator &&
+      mainOperator.includes(auth.nationalId) &&
+      isCreditInstitutionOwner
+    ) {
+      return true
+    }
+
+    return false
+  }
+
   async getVehiclesSearch(
     auth: User,
     search: string,
@@ -256,6 +298,27 @@ export class VehiclesService {
     if (typeof res === 'string') {
       return res === 'true'
     }
+    return res
+  }
+
+  async canUserRegisterMileage(
+    auth: User,
+    input: CanregistermileagePermnoGetRequest,
+  ): Promise<boolean> {
+    if (!input) return false
+
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return false
+    }
+
+    const res = await this.isAllowedMileageRegistration(auth, input.permno)
+
     return res
   }
 
