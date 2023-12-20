@@ -132,13 +132,14 @@ export class IntellectualPropertiesService {
     const patents = await this.ipService.getPatents(user)
     return patents
       .map((patent) => {
-        if (!patent.applicationNumber || !patent.patentName) {
+        const name = patent.patentName || patent.patentNameInOrgLanguage
+        if (!patent.applicationNumber || !name) {
           return null
         }
         const mappedPatent: Patent = {
           ...patent,
           applicationNumber: patent.applicationNumber,
-          name: patent.patentName,
+          name,
           lifecycle: {
             applicationDate: parseDateIfValid(patent.applicationDate),
           },
