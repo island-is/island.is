@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType('AuthLoginRestrictionInput')
-export class LoginRestrictionInput {
+@InputType('CreateAuthLoginRestrictionInput')
+export class CreateLoginRestrictionInput {
   @Field(() => Date)
   until!: Date
 }

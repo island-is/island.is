@@ -10,7 +10,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 
-import { LoginRestrictionInput } from '../dto/loginRestriction.input'
+import { CreateLoginRestrictionInput } from '../dto/loginRestriction.input'
 import { LoginRestriction } from '../models/loginRestriction.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -32,10 +32,10 @@ export class LoginRestrictionResolver {
     )
   }
 
-  @Mutation(() => LoginRestriction, { name: 'setAuthLoginRestriction' })
-  setLoginRestriction(
+  @Mutation(() => LoginRestriction, { name: 'createAuthLoginRestriction' })
+  createLoginRestriction(
     @CurrentUser() user: User,
-    @Args('input') input: LoginRestrictionInput,
+    @Args('input') input: CreateLoginRestrictionInput,
   ): Promise<LoginRestriction> {
     this.loginRestriction[user.nationalId] = {
       restricted: true,
