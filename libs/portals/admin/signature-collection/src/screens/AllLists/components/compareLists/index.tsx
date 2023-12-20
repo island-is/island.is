@@ -46,7 +46,13 @@ const CompareLists = () => {
 
   const onChange = async (newFile: File[]) => {
     setFileList(createFileList(newFile, fileList))
-    compareLists(await getFileData(newFile))
+    let data = await getFileData(newFile)
+
+    data = data.map((d: { Kennitala: any }) => {
+      return String(d.Kennitala)
+    })
+
+    compareLists(data)
   }
 
   return (

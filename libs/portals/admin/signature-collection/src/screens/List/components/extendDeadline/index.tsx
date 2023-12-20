@@ -1,13 +1,47 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button, DatePicker, Input } from '@island.is/island-ui/core'
-import { m } from '../../../lib/messages'
+import {
+  Box,
+  Button,
+  DatePicker,
+  Input,
+  toast,
+} from '@island.is/island-ui/core'
+import { m } from '../../../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import format from 'date-fns/format'
+import { useExtendDeadlineMutation } from './extendDeadline.generated'
 
-const ActionExtendDeadline = ({ endTime }: { endTime: string }) => {
+const ActionExtendDeadline = ({
+  listId,
+  endTime,
+}: {
+  listId: string
+  endTime: string
+}) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
+  const [newEndDate, setNewEndDate] = useState(endTime)
+  const [extendDeadlineMutation, { loading }] = useExtendDeadlineMutation()
+
+  const extendDeadline = async (newEndDate: string) => {
+    try {
+      const res = await extendDeadlineMutation({
+        variables: {
+          input: {
+            id: listId,
+            newEndDate: newEndDate,
+          },
+        },
+      })
+
+      if (res.data) {
+        toast.success('Tókst að uppfæra lokadag')
+      }
+    } catch (e) {
+      toast.error(e.message)
+    }
+  }
 
   return (
     <Box>
@@ -41,12 +75,19 @@ const ActionExtendDeadline = ({ endTime }: { endTime: string }) => {
           <DatePicker
             locale="is"
             label={formatMessage(m.listEndTime)}
-            selected={new Date(endTime)}
+            selected={new Date(newEndDate)}
+            handleChange={(date) => setNewEndDate(new Date(date).toISOString())}
             placeholderText=""
             showTimeInput
           />
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
-            <Button onClick={() => setModalChangeDateIsOpen(false)}>
+            <Button
+              onClick={() => {
+                console.log(newEndDate)
+                extendDeadline(newEndDate)
+                setModalChangeDateIsOpen(false)
+              }}
+            >
               {formatMessage(m.updateListEndTime)}
             </Button>
           </Box>

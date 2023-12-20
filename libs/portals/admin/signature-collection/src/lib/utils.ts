@@ -19,7 +19,7 @@ export type Filters = {
 
 export const downloadFile = () => {
   const name = 'meðmæli.xlsx'
-  const sheetData = [['Kennitala'], []]
+  const sheetData = [['Kennitala', 'Bls'], []]
 
   const getFile = (name: string, output: string | undefined) => {
     const uri =
@@ -46,7 +46,7 @@ export const downloadFile = () => {
   getFile(name, excelBuffer)
 }
 
-// Bulk compare
+// Bulk upload and compare
 export const createFileList = (files: File[], fileList: UploadFile[]) => {
   const uploadFiles = files.map((file) => fileToObject(file))
   const uploadFilesWithKey = uploadFiles.map((f) => ({
@@ -66,7 +66,8 @@ export const getFileData = async (newFile: File[]) => {
   for (let i = 0; i < sheets.length; i++) {
     const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
     temp.forEach((res) => {
-      data.push(String((res as any).Kennitala))
+      console.log(res)
+      data.push(res)
     })
   }
 

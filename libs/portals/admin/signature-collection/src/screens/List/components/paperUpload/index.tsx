@@ -7,49 +7,59 @@ import {
   AccordionItem,
   UploadFile,
   Button,
-  fileToObject,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
+import { m } from '../../../../lib/messages'
 import { useState } from 'react'
-import XLSX from 'xlsx'
 import { format as formatNationalId } from 'kennitala'
-import { downloadFile } from '../../../lib/utils'
-import { uuid } from 'uuidv4'
+import {
+  createFileList,
+  downloadFile,
+  getFileData,
+} from '../../../../lib/utils'
+import { useBulkUploadMutation } from './paperUpload.generated'
 
-const PaperUpload = () => {
+const PaperUpload = ({ listId }: { listId: string }) => {
   const { formatMessage } = useLocale()
   const [withPaperUpload, setWithPaperUpload] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
-  const [uploadResults, setUploadResults] = useState([])
+  const [uploadResults, setUploadResults] = useState<any>()
+  const [uploadMutation, { loading }] = useBulkUploadMutation()
 
-  const createFileList = (files: File[]) => {
-    const uploadFiles = files.map((file) => fileToObject(file))
-    const uploadFilesWithKey = uploadFiles.map((f) => ({
-      ...f,
-      key: uuid(),
-    }))
-    const newFileList = [...fileList, ...uploadFilesWithKey]
-    setFileList(newFileList)
+  const paperUpload = async (
+    data: Array<{ nationalId: string; pageNumber: number }>,
+  ) => {
+    try {
+      const res = await uploadMutation({
+        variables: {
+          input: {
+            listId: listId,
+            upload: data,
+          },
+        },
+      })
+
+      if (res.data) {
+        setUploadResults(res.data?.signatureCollectionBulkUploadSignatures)
+      }
+    } catch (e) {
+      toast.error(e.message)
+    }
   }
 
   const onChange = async (newFile: File[]) => {
-    createFileList(newFile)
+    setFileList(createFileList(newFile, fileList))
+    let data = await getFileData(newFile)
 
-    const buffer = await newFile[0].arrayBuffer()
-    const file = XLSX.read(buffer, { type: 'buffer' })
+    data = data.map((d: { Kennitala: any; Bls: number }) => {
+      return {
+        nationalId: String(d.Kennitala),
+        pageNumber: d.Bls,
+      }
+    })
 
-    const data = [] as any
-    const sheets = file.SheetNames
-
-    for (let i = 0; i < sheets.length; i++) {
-      const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
-      temp.forEach((res) => {
-        data.push(res)
-      })
-    }
-
-    setUploadResults(data)
+    paperUpload(data)
   }
 
   return (
@@ -99,9 +109,10 @@ const PaperUpload = () => {
                 onChange={onChange}
                 onRemove={() => setFileList([])}
                 accept=".xlsx"
+                multiple={false}
               />
             </Box>
-            {uploadResults.length > 0 ? (
+            {uploadResults && Object.keys(uploadResults).length > 0 ? (
               <Box marginTop={7} marginBottom={3}>
                 <Text variant="h4">{formatMessage(m.uploadResultsHeader)}</Text>
                 <Accordion dividerOnTop={false}>
@@ -111,37 +122,44 @@ const PaperUpload = () => {
                     label={
                       formatMessage(m.nationalIdsSuccess) +
                       ' (' +
-                      uploadResults.length +
+                      uploadResults.success.length +
                       ')'
                     }
                   >
-                    {uploadResults.map((res: any, index: number) => {
+                    {uploadResults.success.map((res: any, index: number) => {
                       return (
                         <Text key={index} marginBottom={1}>
-                          {formatNationalId(res.Kennitala)}
+                          {formatNationalId(res.signee.nationalId)}
                         </Text>
                       )
                     })}
                   </AccordionItem>
                   <AccordionItem
-                    id="uploadError"
+                    id="uploadFailed"
                     labelVariant="default"
                     labelColor="red600"
-                    label={formatMessage(m.nationalIdsError)}
+                    label={
+                      formatMessage(m.nationalIdsError) +
+                      ' (' +
+                      uploadResults.failed.length +
+                      ')'
+                    }
                   >
-                    {/* Temp harðkóðuð uppsetning */}
-                    <Box
-                      display="flex"
-                      justifyContent="spaceBetween"
-                      marginBottom={1}
-                    >
-                      <Text>010130-3019</Text>
-                      <Text>á röngu formatti</Text>
-                    </Box>
-                    <Box display="flex" justifyContent="spaceBetween">
-                      <Text>010130-2399</Text>
-                      <Text>ekki í réttu kjördæmi</Text>
-                    </Box>
+                    {uploadResults.failed.map((res: any, index: number) => {
+                      return (
+                        <Box
+                          key={index}
+                          display="flex"
+                          justifyContent="spaceBetween"
+                          marginBottom={1}
+                        >
+                          <Text marginBottom={1}>
+                            {formatNationalId(res.nationalId)}
+                          </Text>
+                          <Text marginBottom={1}>{res.reason}</Text>
+                        </Box>
+                      )
+                    })}
                   </AccordionItem>
                 </Accordion>
               </Box>
