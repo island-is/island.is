@@ -2,7 +2,6 @@ import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
-  buildDateField,
   buildSubSection,
   buildCustomField,
 } from '@island.is/application/core'
@@ -46,25 +45,6 @@ export const vehicleSubSection = buildSubSection({
             ) as VehiclesCurrentVehicle
             return vehicle.make
           },
-        }),
-        buildTextField({
-          id: 'vehicle.salePrice',
-          title: information.labels.vehicle.salePrice,
-          width: 'full',
-          variant: 'currency',
-        }),
-        buildDateField({
-          id: 'vehicle.date',
-          title: information.labels.vehicle.date,
-          required: true,
-          width: 'full',
-          maxDate: new Date(),
-          minDate: () => {
-            const minDate = new Date()
-            minDate.setDate(minDate.getDate() - 6)
-            return minDate
-          },
-          defaultValue: new Date().toISOString().substring(0, 10),
         }),
         // Note: when buildHiddenInputField is ready, we can use that (to set vehicleMileage.isRequired)
         // with buildTextField instead of this custom component
