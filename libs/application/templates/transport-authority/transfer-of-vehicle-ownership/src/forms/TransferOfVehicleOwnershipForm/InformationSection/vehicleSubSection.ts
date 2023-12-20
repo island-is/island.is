@@ -4,6 +4,7 @@ import {
   buildTextField,
   buildDateField,
   buildSubSection,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { VehiclesCurrentVehicle } from '../../../shared'
@@ -65,12 +66,13 @@ export const vehicleSubSection = buildSubSection({
           },
           defaultValue: new Date().toISOString().substring(0, 10),
         }),
-        buildTextField({
-          id: 'vehicle.mileage',
+        // Note: when buildHiddenInputField is ready, we can use that (to set vehicleMileage.isRequired)
+        // with buildTextField instead of this custom component
+        buildCustomField({
+          component: 'MileageField',
+          id: 'vehicleMileage.value',
           title: information.labels.vehicle.mileage,
-          width: 'full',
-          variant: 'number',
-          required: true,
+          description: '',
         }),
       ],
     }),

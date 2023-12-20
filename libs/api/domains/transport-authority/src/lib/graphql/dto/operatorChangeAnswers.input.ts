@@ -7,9 +7,9 @@ export class OperatorChangeAnswersPickVehicle {
 }
 
 @InputType()
-export class OperatorChangeAnswersVehicle {
+export class OperatorChangeAnswersVehicleMileage {
   @Field(() => String, { nullable: true })
-  mileage?: string
+  value?: string
 }
 
 @InputType()
@@ -38,8 +38,8 @@ export class OperatorChangeAnswers {
   @Field(() => OperatorChangeAnswersPickVehicle, { nullable: false })
   pickVehicle!: OperatorChangeAnswersPickVehicle
 
-  @Field(() => OperatorChangeAnswersVehicle, { nullable: false })
-  vehicle!: OperatorChangeAnswersVehicle
+  @Field(() => OperatorChangeAnswersVehicleMileage, { nullable: false })
+  vehicleMileage!: OperatorChangeAnswersVehicleMileage
 
   @Field(() => OperatorChangeAnswersUser, { nullable: false })
   owner!: OperatorChangeAnswersUser

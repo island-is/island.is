@@ -42,6 +42,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
+import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
@@ -50,6 +51,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
+    private readonly vehicleCodetablesClient: VehicleCodetablesClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
@@ -104,11 +106,15 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
             )
         }
 
+        const electricFuelCodes =
+          this.vehicleCodetablesClient.getElectricFueldCodes()
+
         return {
           permno: vehicle.permno || undefined,
           make: vehicle.make || undefined,
           color: vehicle.color || undefined,
           role: vehicle.role || undefined,
+          requireMileage: electricFuelCodes.includes(vehicle.fuelCode || ''),
           isDebtLess: debtStatus?.isDebtLess,
           validationErrorMessages: validation?.hasError
             ? validation.errorMessages
@@ -149,9 +155,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       ...(filteredNewCoOwners ? filteredNewCoOwners : []),
     ]
 
-    const mileage = answers?.vehicle?.mileage
-      ? Number(answers?.vehicle?.mileage) || 0
-      : null
+    const mileage = answers?.vehicleMileage?.value
 
     const result =
       await this.vehicleOwnerChangeClient.validateAllForOwnerChange(auth, {
@@ -167,7 +171,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         dateOfPurchase: new Date(application.created),
         dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: currentOwnerChange?.saleAmount,
-        mileage: mileage,
+        mileage: mileage ? Number(mileage) || 0 : null,
         insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
         operators: currentOperators?.map((operator) => ({
           ssn: operator.ssn || '',
@@ -178,8 +182,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
           isMainOperator: operator.isMainOperator || false,
         })),
         coOwners: filteredCoOwners.map((x) => ({
-          ssn: x.nationalId!,
-          email: x.email!,
+          ssn: x.nationalId || '',
+          email: x.email || '',
         })),
       })
 
@@ -388,9 +392,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       permno,
     )
 
-    const mileage = answers?.vehicle?.mileage
-      ? Number(answers?.vehicle?.mileage) || 0
-      : null
+    const mileage = answers?.vehicleMileage?.value
 
     await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
       permno: permno,
@@ -405,7 +407,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       dateOfPurchase: new Date(application.created),
       dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: currentOwnerChange?.saleAmount,
-      mileage: mileage,
+      mileage: mileage ? Number(mileage) || 0 : null,
       insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
       operators: currentOperators?.map((operator) => ({
         ssn: operator.ssn || '',
@@ -416,8 +418,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         isMainOperator: operator.isMainOperator || false,
       })),
       coOwners: filteredCoOwners.map((x) => ({
-        ssn: x.nationalId!,
-        email: x.email!,
+        ssn: x.nationalId || '',
+        email: x.email || '',
       })),
     })
 

@@ -97,9 +97,31 @@ export const ChangeOperatorOfVehicleSchema = z.object({
   }),
   owner: UserInformationSchema,
   ownerCoOwner: z.array(UserInformationSchema),
-  vehicle: z.object({
-    mileage: z.string().refine((p) => parseInt(p?.split(' ')[0]) >= 0),
-  }),
+  vehicleMileage: z
+    .object({
+      isRequired: z.boolean().optional(),
+      value: z.string().optional(),
+    })
+    .refine(
+      (x) => {
+        if (x.isRequired) {
+          return (
+            x.value !== undefined &&
+            x.value !== '' &&
+            parseInt(x.value?.split(' ')[0]) > 0
+          )
+        } else {
+          return (
+            x.value === undefined ||
+            x.value === '' ||
+            parseInt(x.value?.split(' ')[0]) >= 0
+          )
+        }
+      },
+      {
+        path: ['value'],
+      },
+    ),
   operators: z.array(OperatorInformationSchema),
   oldOperators: z.array(OldOperatorInformationSchema),
   mainOperator: z.object({

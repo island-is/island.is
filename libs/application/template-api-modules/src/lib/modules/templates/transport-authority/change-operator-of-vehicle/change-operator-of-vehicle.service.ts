@@ -40,6 +40,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
+import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
@@ -47,6 +48,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
+    private readonly vehicleCodetablesClient: VehicleCodetablesClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
@@ -102,11 +104,15 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
             )
         }
 
+        const electricFuelCodes =
+          this.vehicleCodetablesClient.getElectricFueldCodes()
+
         return {
           permno: vehicle.permno || undefined,
           make: vehicle.make || undefined,
           color: vehicle.color || undefined,
           role: vehicle.role || undefined,
+          requireMileage: electricFuelCodes.includes(vehicle.fuelCode || ''),
           isDebtLess: debtStatus?.isDebtLess,
           validationErrorMessages: validation?.hasError
             ? validation.errorMessages
@@ -143,16 +149,14 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    const mileage = answers?.vehicle?.mileage
-      ? Number(answers?.vehicle?.mileage) || 0
-      : null
+    const mileage = answers?.vehicleMileage?.value
 
     const result =
       await this.vehicleOperatorsClient.validateAllForOperatorChange(
         auth,
         permno,
         operators,
-        mileage,
+        mileage ? Number(mileage) || 0 : null,
       )
 
     // If we get any error messages, we will just throw an error with a default title
@@ -359,15 +363,13 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    const mileage = answers?.vehicle?.mileage
-      ? Number(answers?.vehicle?.mileage) || 0
-      : null
+    const mileage = answers?.vehicleMileage?.value
 
     await this.vehicleOperatorsClient.saveOperators(
       auth,
       permno,
       operators,
-      mileage,
+      mileage ? Number(mileage) || 0 : null,
     )
 
     // 3. Notify everyone in the process that the application has successfully been submitted
