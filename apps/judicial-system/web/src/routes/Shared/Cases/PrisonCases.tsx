@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
-import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
@@ -14,9 +13,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
+import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -26,23 +24,20 @@ export const PrisonCases: React.FC = () => {
 
   const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
-  const { data, error, loading } = useQuery<{
-    cases?: CaseListEntry[]
-  }>(CasesQuery, {
+  const { data, error, loading } = usePrisonCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
   const resCases = data?.cases
 
-  const [activeCases, pastCases]: [CaseListEntry[], CaseListEntry[]] =
-    useMemo(() => {
-      if (!resCases) {
-        return [[], []]
-      }
+  const [activeCases, pastCases] = useMemo(() => {
+    if (!resCases) {
+      return [[], []]
+    }
 
-      return partition(resCases, (c) => !c.isValidToDateInThePast)
-    }, [resCases])
+    return partition(resCases, (c) => !c.isValidToDateInThePast)
+  }, [resCases])
 
   return (
     <SharedPageLayout>

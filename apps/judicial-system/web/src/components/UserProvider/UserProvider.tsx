@@ -9,7 +9,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { useGetCurrentUserQuery } from './getCurrentUser.generated'
+import { useCurrentUserQuery } from './currentUser.generated'
 
 interface UserProvider {
   isAuthenticated?: boolean
@@ -33,7 +33,7 @@ export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
-  const { data } = useGetCurrentUserQuery({
+  const { data } = useCurrentUserQuery({
     skip: !isAuthenticated || Boolean(user),
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',

@@ -320,18 +320,14 @@
             "required": true,
             "style": "simple",
             "schema": { "type": "integer", "format": "int32" }
-          },
-          {
-            "name": "bladsida",
-            "in": "query",
-            "style": "form",
-            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "type": "array", "items": { "type": "string" } }
+              "schema": {
+                "$ref": "#/components/schemas/MedmaeliBulkRequestDTO"
+              }
             }
           }
         },
@@ -876,6 +872,36 @@
           }
         }
       }
+    },
+    "/Medmaeli/{ID}/RemoveMedmaeliAdmin": {
+      "post": {
+        "tags": ["Medmaeli"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -917,8 +943,8 @@
       "EinstaklingurMaFrambodInfo": {
         "type": "object",
         "properties": {
-          "medAldur": { "type": "boolean" },
-          "medIsRikisfang": { "type": "boolean" }
+          "aldur": { "type": "boolean" },
+          "rikisfang": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -926,11 +952,9 @@
         "type": "object",
         "properties": {
           "kennitala": { "type": "string" },
-          "medAldur": { "type": "boolean" },
-          "medIsRikisfang": { "type": "boolean" },
-          "byrAIsl": { "type": "boolean" },
-          "bjoAIslNylega": { "type": "boolean" },
-          "bjoAIslUmsokn": { "type": "boolean" }
+          "aldur": { "type": "boolean" },
+          "rikisfang": { "type": "boolean" },
+          "buseta": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -1108,6 +1132,24 @@
         },
         "additionalProperties": false
       },
+      "MedmaeliBulkItemDTO": {
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string" },
+          "bladsida": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "MedmaeliBulkRequestDTO": {
+        "type": "object",
+        "properties": {
+          "medmaeli": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MedmaeliBulkItemDTO" }
+          }
+        },
+        "additionalProperties": false
+      },
       "MedmaeliBulkResponseDTO": {
         "type": "object",
         "properties": {
@@ -1115,6 +1157,10 @@
           "undirAldri": { "type": "array", "items": { "type": "string" } },
           "ekkiIsRik": { "type": "array", "items": { "type": "string" } },
           "ekkiASvaedi": { "type": "array", "items": { "type": "string" } },
+          "medMedmaeliALista": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "medmaeli": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
