@@ -257,7 +257,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
-    translation: ['hs.application', 'sia.application'],
+    translation: ['hs.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.CAR_RECYCLING]: {
     slug: 'skilavottord',
@@ -277,7 +277,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
     slug: 'felagslegur-vidbotarstudningur',
-    translation: ['asfte.application', 'sia.application'],
+    translation: ['asfte.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.ENERGY_FUNDS]: {
     slug: 'rafbila-styrkur',
