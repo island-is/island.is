@@ -330,6 +330,7 @@ const FormExternalDataProvider: FC<
               }}
               checked={value}
               hasError={error !== undefined}
+              errorMessage={id ? errors[id] as string : undefined}
               backgroundColor="blue"
               dataTestId="agree-to-data-providers"
               name={`${id}`}
