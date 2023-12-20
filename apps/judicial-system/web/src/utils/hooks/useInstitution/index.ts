@@ -3,7 +3,7 @@ import {
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { useInstitutionsQuery } from './getInstitutions.generated'
+import { useInstitutionsQuery } from './institutions.generated'
 
 let allInstitutions: Institution[]
 
