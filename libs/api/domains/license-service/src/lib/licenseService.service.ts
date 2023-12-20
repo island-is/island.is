@@ -21,6 +21,7 @@ import {
   GenericLicenseFetchResult,
   LICENSE_MAPPER_FACTORY,
   GenericLicenseMapper,
+  DEFAULT_LICENSE_ID,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 import {
@@ -241,7 +242,7 @@ export class LicenseServiceService {
     const licensesOfType =
       (await this.getLicensesOfType(user, locale, licenseType)) ?? []
 
-    if (!licenseId) {
+    if (!licenseId || licenseId === DEFAULT_LICENSE_ID) {
       return licensesOfType[0] ?? null
     }
 
