@@ -12,7 +12,7 @@ This application template allows applicants to apply for household supplement.
 
 This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
 
-The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá, TR and user profile. If the applicant is not a pensioner (old age, disability or rehabilitation) they cannot advance to the next step and make an application.
+The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá and TR. If the applicant is not a pensioner (old age, disability or rehabilitation), has a spouse that does not belong to an institution for the elderly or do not have a registered domicile in Iceland they cannot advance to the next step and make an application.
 
 #### Draft
 
