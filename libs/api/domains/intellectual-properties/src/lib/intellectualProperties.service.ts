@@ -158,15 +158,16 @@ export class IntellectualPropertiesService {
     )
 
     const patent = response[0]
+    const name = patent.patentName || patent.patentNameInOrgLanguage
 
-    if (!patent.applicationNumber || !patent.patentName) {
+    if (!patent.applicationNumber || !name) {
       return null
     }
 
     return {
       ...patent,
       applicationNumber: patent.applicationNumber,
-      name: patent.patentName,
+      name,
       owner: {
         name: patent.ownerName ?? '',
         address: patent.ownerHome ?? '',
