@@ -16,3 +16,7 @@ export const PlateAvailableSearch = dynamic(
 export const PublicShipSearch = dynamic(() => import('./PublicShipSearch'), {
   ssr: false,
 })
+
+export const KilometerFee = dynamic(() => import('./KilometerFee'), {
+  ssr: true,
+})

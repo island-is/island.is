@@ -23,6 +23,7 @@ import {
   ChartsCardsProps,
   DrivingInstructorList,
   EmailSignup,
+  KilometerFee,
   MasterList,
   OneColumnTextSlice,
   OverviewLinksSlice,
@@ -109,6 +110,8 @@ export const webRenderConnectedComponent = (
       return (
         <AdministrationOfOccupationalSafetyAndHealthCourses slice={slice} />
       )
+    case 'KilometerFee':
+      return <KilometerFee slice={slice} />
     default:
       break
   }

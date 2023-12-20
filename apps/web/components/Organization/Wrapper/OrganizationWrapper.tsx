@@ -66,6 +66,7 @@ import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/Heilbrigdisstofnun
 import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
+import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
 import { HmsHeader } from './Themes/HmsTheme'
 import { HveFooter, HveHeader } from './Themes/HveTheme'
 import {
@@ -152,6 +153,7 @@ const lightThemes = [
   'samgongustofa',
   'rettindagaesla-fatlads-folks',
   'vinnueftirlitid',
+  'hljodbokasafn-islands',
 ]
 
 export const getThemeConfig = (
@@ -276,6 +278,8 @@ export const OrganizationHeader: React.FC<
       return <RikissaksoknariHeader organizationPage={organizationPage} />
     case 'vinnueftirlitid':
       return <VinnueftilitidHeader organizationPage={organizationPage} />
+    case 'hljodbokasafn-islands':
+      return <HljodbokasafnIslandsHeader organizationPage={organizationPage} />
     default:
       return (
         <DefaultHeader
@@ -771,6 +775,8 @@ export const OrganizationWrapper: React.FC<
 
   const SidebarContainer = stickySidebar ? Sticky : Box
 
+  const sidebarCards = organizationPage.sidebarCards ?? []
+
   return (
     <>
       <HeadWithSocialSharing
@@ -963,6 +969,32 @@ export const OrganizationWrapper: React.FC<
           <Box className="rs_read" paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}
           </Box>
+
+          {isMobile && sidebarCards.length > 0 && (
+            <Box marginY={4}>
+              <Stack space={3}>
+                {sidebarCards.map((card) => {
+                  if (card.__typename === 'SidebarCard') {
+                    return (
+                      <ProfileCard
+                        key={card.id}
+                        title={card.title}
+                        description={card.contentString}
+                        link={card.link ?? undefined}
+                        size="small"
+                      />
+                    )
+                  }
+
+                  if (card.__typename === 'ConnectedComponent') {
+                    return renderConnectedComponent(card)
+                  }
+
+                  return null
+                })}
+              </Stack>
+            </Box>
+          )}
         </SidebarLayout>
       )}
 
