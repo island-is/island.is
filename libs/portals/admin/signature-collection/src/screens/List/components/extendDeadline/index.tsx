@@ -36,7 +36,7 @@ const ActionExtendDeadline = ({
       })
 
       if (res.data) {
-        toast.success('Tókst að uppfæra lokadag')
+        toast.success(formatMessage(m.updateListEndTimeSuccess))
       }
     } catch (e) {
       toast.error(e.message)
@@ -83,7 +83,6 @@ const ActionExtendDeadline = ({
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               onClick={() => {
-                console.log(newEndDate)
                 extendDeadline(newEndDate)
                 setModalChangeDateIsOpen(false)
               }}

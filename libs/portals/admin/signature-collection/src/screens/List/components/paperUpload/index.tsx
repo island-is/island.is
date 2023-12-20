@@ -112,61 +112,58 @@ const PaperUpload = ({ listId }: { listId: string }) => {
                 multiple={false}
               />
             </Box>
-            {uploadResults && Object.keys(uploadResults).length > 0 ? (
+            {fileList.length > 0 && (
               <Box marginTop={7} marginBottom={3}>
                 <Text variant="h4">{formatMessage(m.uploadResultsHeader)}</Text>
-                <Accordion dividerOnTop={false}>
-                  <AccordionItem
-                    id="uploadSuccess"
-                    labelVariant="default"
-                    label={
-                      formatMessage(m.nationalIdsSuccess) +
-                      ' (' +
-                      uploadResults.success.length +
-                      ')'
-                    }
-                  >
-                    {uploadResults.success.map((res: any, index: number) => {
-                      return (
-                        <Text key={index} marginBottom={1}>
-                          {formatNationalId(res.signee.nationalId)}
-                        </Text>
-                      )
-                    })}
-                  </AccordionItem>
-                  <AccordionItem
-                    id="uploadFailed"
-                    labelVariant="default"
-                    labelColor="red600"
-                    label={
-                      formatMessage(m.nationalIdsError) +
-                      ' (' +
-                      uploadResults.failed.length +
-                      ')'
-                    }
-                  >
-                    {uploadResults.failed.map((res: any, index: number) => {
-                      return (
-                        <Box
-                          key={index}
-                          display="flex"
-                          justifyContent="spaceBetween"
-                          marginBottom={1}
-                        >
-                          <Text marginBottom={1}>
-                            {formatNationalId(res.nationalId)}
+                {uploadResults && Object.keys(uploadResults).length > 0 && (
+                  <Accordion dividerOnTop={false}>
+                    <AccordionItem
+                      id="uploadSuccess"
+                      labelVariant="default"
+                      label={
+                        formatMessage(m.nationalIdsSuccess) +
+                        ' (' +
+                        uploadResults.success.length +
+                        ')'
+                      }
+                    >
+                      {uploadResults.success.map((res: any, index: number) => {
+                        return (
+                          <Text key={index} marginBottom={1}>
+                            {formatNationalId(res.signee.nationalId)}
                           </Text>
-                          <Text marginBottom={1}>{res.reason}</Text>
-                        </Box>
-                      )
-                    })}
-                  </AccordionItem>
-                </Accordion>
-              </Box>
-            ) : (
-              <Box marginTop={7} marginBottom={3}>
-                <Text variant="h4">{formatMessage(m.uploadResultsHeader)}</Text>
-                <Text marginTop={2}>{formatMessage(m.noUploadResults)}</Text>
+                        )
+                      })}
+                    </AccordionItem>
+                    <AccordionItem
+                      id="uploadFailed"
+                      labelVariant="default"
+                      labelColor="red600"
+                      label={
+                        formatMessage(m.nationalIdsError) +
+                        ' (' +
+                        uploadResults.failed.length +
+                        ')'
+                      }
+                    >
+                      {uploadResults.failed.map((res: any, index: number) => {
+                        return (
+                          <Box
+                            key={index}
+                            display="flex"
+                            justifyContent="spaceBetween"
+                            marginBottom={1}
+                          >
+                            <Text marginBottom={1}>
+                              {formatNationalId(res.nationalId)}
+                            </Text>
+                            <Text marginBottom={1}>{res.reason}</Text>
+                          </Box>
+                        )
+                      })}
+                    </AccordionItem>
+                  </Accordion>
+                )}
               </Box>
             )}
           </>

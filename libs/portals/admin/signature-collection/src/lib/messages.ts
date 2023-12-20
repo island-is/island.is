@@ -145,6 +145,11 @@ export const m = defineMessages({
     defaultMessage: 'Framlengja lokadag',
     description: '',
   },
+  updateListEndTimeSuccess: {
+    id: 'admin-portal.signature-collection:updateListEndTimeSuccess',
+    defaultMessage: 'Tókst að framlengja lokadag',
+    description: '',
+  },
   confirmListReviewed: {
     id: 'admin-portal.signature-collection:confirmListReviewed',
     defaultMessage: 'Úrvinnslu lokið',

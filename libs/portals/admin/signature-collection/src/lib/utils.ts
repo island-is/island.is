@@ -66,7 +66,6 @@ export const getFileData = async (newFile: File[]) => {
   for (let i = 0; i < sheets.length; i++) {
     const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
     temp.forEach((res) => {
-      console.log(res)
       data.push(res)
     })
   }
