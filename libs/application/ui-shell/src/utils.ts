@@ -23,10 +23,8 @@ export function verifyExternalData(
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
     const dataProviderResult = externalData[id]
-    console.log(dataProviderResult)
-    console.log('id', id)
+
     if (!dataProviderResult || dataProviderResult.status === 'failure') {
-      console.log('verifyExternalData', id, dataProviderResult)
       return false
     }
   }
@@ -69,7 +67,6 @@ export function getFieldsWithNoAnswer(
 }
 
 export function findSubmitField(screen: FormScreen): SubmitField | undefined {
-  console.log('findSubmitField', screen)
   if (screen.type === FieldTypes.SUBMIT) {
     return screen
   }

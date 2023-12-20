@@ -55,8 +55,6 @@ export class FormService {
       formDto.children.push(this.sectionFactory.create(child))
     })
 
-    console.log('formDto rendiering ', formDto)
-
     return formDto
   }
 }
