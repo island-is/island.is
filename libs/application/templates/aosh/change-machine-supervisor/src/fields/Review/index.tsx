@@ -1,17 +1,33 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { useAuth } from '@island.is/auth/react'
-import { Box } from '@island.is/island-ui/core'
 import { FC, useState } from 'react'
-import { ReviewState } from '../../shared'
+import { Box } from '@island.is/island-ui/core'
 import { ApplicationStatus } from '../ApplicationStatus'
 import { Overview } from '../Overview'
+import { Location } from '../Location'
+import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
+import { Operator, MachineLocation, ReviewState } from '../../shared'
+import { getValueViaPath } from '@island.is/application/core'
+import { useAuth } from '@island.is/auth/react'
+import { useFormContext } from 'react-hook-form'
 import { ReviewConclusion } from '../ReviewConclusion'
 
 export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
+  const { application } = props
   const { userInfo } = useAuth()
   const [step, setStep] = useState<ReviewState>('states')
 
+  const [location, setLocation] = useState<MachineLocation>(
+    getValueViaPath(application.answers, 'location') as MachineLocation,
+  )
+
+  const [buyerOperator, setBuyerOperator] = useState<Operator>(
+    getValueViaPath(application.answers, 'buyerOperator') as Operator,
+  )
+  const { getValues } = useFormContext()
+
   const reviewerNationalId = userInfo?.profile.nationalId || null
+  const filteredBuyerOperator =
+    buyerOperator?.wasRemoved !== 'true' ? buyerOperator : null
 
   const displayScreen = (
     displayStep: ReviewState,
@@ -23,6 +39,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <ApplicationStatus
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
+            buyerOperator={filteredBuyerOperator}
             {...props}
           />
         )
@@ -31,6 +48,8 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <Overview
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
+            location={location}
+            buyerOperator={filteredBuyerOperator}
             {...props}
           />
         )
@@ -38,6 +57,28 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         return (
           <ReviewConclusion
             setStep={setStep}
+            reviewerNationalId={reviewerNationalId}
+            buyerOperator={filteredBuyerOperator}
+            {...props}
+          />
+        )
+      case 'addPeople':
+        return (
+          <ReviewOperatorRepeater
+            setStep={setStep}
+            reviewerNationalId={reviewerNationalId}
+            setBuyerOperator={setBuyerOperator}
+            buyerOperator={
+              (getValues('buyerOperator') as Operator) || buyerOperator
+            }
+            {...props}
+          />
+        )
+      case 'location':
+        return (
+          <Location
+            setStep={setStep}
+            setLocation={setLocation}
             reviewerNationalId={reviewerNationalId}
             {...props}
           />

@@ -2,40 +2,51 @@ import { defineMessages } from 'react-intl'
 
 export const review = {
   general: defineMessages({
+    title: {
+      id: 'aosh.tmo.application:review.general.title',
+      defaultMessage: 'Yfirlit eigendaskipta',
+      description: 'Title of overview screen',
+    },
     sectionTitle: {
-      id: 'ta.cov.application:review.general.sectionTitle',
+      id: 'aosh.tmo.application:review.general.sectionTitle',
       defaultMessage: 'Til samþykktar',
       description: 'Title of overview screen',
     },
+    description: {
+      id: 'aosh.tmo.application:review.general.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
+      description: 'Description of overview screen',
+    },
     approvedSectionTitle: {
-      id: 'ta.cov.application:review.general.approvedSectionTitle',
+      id: 'aosh.tmo.application:review.general.approvedSectionTitle',
       defaultMessage: 'Yfirlit',
       description: 'Approved section title of overview screen',
     },
   }),
   status: defineMessages({
     title: {
-      id: 'ta.cov.application:review.status.title',
+      id: 'aosh.tmo.application:review.status.title',
       defaultMessage: 'Staða tilkynningar',
       description: 'Title in status part of review process',
     },
     description: {
-      id: 'ta.cov.application:review.status.description',
+      id: 'aosh.tmo.application:review.status.description',
       defaultMessage: 'Hér að neðan kemur fram hvað gerist næst',
       description: 'Description in status part of review process',
     },
     viewOverview: {
-      id: 'ta.cov.application:review.status.viewOverview',
+      id: 'aosh.tmo.application:review.status.viewOverview',
       defaultMessage: 'Skoða yfirlit',
       description: 'View overview label in status part of review process',
     },
     openAgreement: {
-      id: 'ta.cov.application:review.status.openAgreement',
+      id: 'aosh.tmo.application:review.status.openAgreement',
       defaultMessage: 'Opna samþykki',
       description: 'Open agreement label in status part of review process',
     },
     youLabel: {
-      id: 'ta.cov.application:review.status.youLabel',
+      id: 'aosh.tmo.application:review.status.youLabel',
       defaultMessage: 'þú',
       description: 'You label in status part of review process',
     },
@@ -43,86 +54,70 @@ export const review = {
   step: {
     tagText: defineMessages({
       received: {
-        id: 'ta.cov.application:review.step.tagText.received',
+        id: 'aosh.tmo.application:review.step.tagText.received',
         defaultMessage: 'Móttekin',
         description: 'Received tag text in status step part of review process',
       },
       pendingApproval: {
-        id: 'ta.cov.application:review.step.tagText.pendingApproval',
+        id: 'aosh.tmo.application:review.step.tagText.pendingApproval',
         defaultMessage: 'Samþykki í bið',
         description:
           'Pending approval tag text in status step part of review process',
       },
     }),
     title: defineMessages({
-      transferOfVehicle: {
-        id: 'ta.cov.application:review.step.title.transferOfVehicle',
-        defaultMessage: 'Skráning umráðamanns á ökutæki {variable}',
+      transferOfMachine: {
+        id: 'aosh.tmo.application:review.step.title.transferOfMachine',
+        defaultMessage: 'Skráning eigendaskipta á tæki {variable}',
         description:
-          'Transfer of vehicle title in status step part of review process',
+          'Transfer of machine title in status step part of review process',
       },
       payment: {
-        id: 'ta.cov.application:review.step.title.payment',
+        id: 'aosh.tmo.application:review.step.title.payment',
         defaultMessage: 'Greiðsla móttekin',
         description: 'Payment title in status step part of review process',
       },
-      coOwner: {
-        id: 'ta.cov.application:review.step.title.coOwner',
-        defaultMessage: 'Samþykki meðeiganda',
-        description:
-          'Buyer coowner title in status step part of review process',
-      },
-      operator: {
-        id: 'ta.cov.application:review.step.title.operator',
-        defaultMessage: 'Samþykki umráðarmanns',
-        description:
-          'Buyer operator title in status step part of review process',
+      buyer: {
+        id: 'aosh.tmo.application:review.step.title.buyer',
+        defaultMessage: 'Samþykki kaupanda',
+        description: 'Buyer title in status step part of review process',
       },
     }),
     description: defineMessages({
-      transferOfVehicle: {
-        id: 'ta.cov.application:review.step.description.transferOfVehicle',
+      transferOfMachine: {
+        id: 'aosh.tmo.application:review.step.description.transferOfMachine',
         defaultMessage:
-          'Tilkynning um skráningu hefur borist til Samgöngustofu',
+          'Tilkynning um eigendaskiptu hefur borist Vinnueftirlitinu',
         description:
-          'Transfer of vehicle description in status step part of review process',
+          'Transfer of machine description in status step part of review process',
       },
       payment: {
-        id: 'ta.cov.application:review.step.description.payment',
-        defaultMessage:
-          'Greitt hefur verið fyrir skráningu umráðamanns af eiganda',
+        id: 'aosh.tmo.application:review.step.description.payment',
+        defaultMessage: 'Greitt hefur verið fyrir eigendaskiptin af seljanda',
         description:
           'Payment description in status step part of review process',
       },
-      coOwner: {
-        id: 'ta.cov.application:review.step.description.coOwner',
+      buyer: {
+        id: 'aosh.tmo.application:review.step.description.buyer',
         defaultMessage:
-          'Beðið er eftir að meðeigandi bifreiðar samþykki skráningu umráðamanns',
-        description:
-          'Buyer coowner description in status step part of review process',
-      },
-      operator: {
-        id: 'ta.cov.application:review.step.description.operator',
-        defaultMessage:
-          'Beðið er eftir að umráðamaður bifreiðar samþykki skráninguna',
-        description:
-          'Buyer operator description in status step part of review process',
+          'Beðið er eftir að nýr eigandi staðfesti eigendaskiptin',
+        description: 'Buyer description in status step part of review process',
       },
     }),
   },
   buttons: defineMessages({
     back: {
-      id: 'ta.cov.application:review.buttons.back',
+      id: 'aosh.tmo.application:review.buttons.back',
       defaultMessage: 'Til baka',
       description: 'Back button in review process',
     },
     reject: {
-      id: 'ta.cov.application:review.buttons.reject',
+      id: 'aosh.tmo.application:review.buttons.reject',
       defaultMessage: 'Hafna',
       description: 'Reject button in review process',
     },
     approve: {
-      id: 'ta.cov.application:review.buttons.approve',
+      id: 'aosh.tmo.application:review.buttons.approve',
       defaultMessage: `Samþykkja`,
       description: 'Approve button in review process',
     },

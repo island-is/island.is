@@ -1,25 +1,45 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
-  requiredValidMachine: {
-    id: 'ta.cov.application:error.requiredValidMachine',
-    defaultMessage: 'Ökutæki þarf að vera gilt',
-    description: 'Error message if the machine chosen is invalid or not chosen',
-  },
   nameByNationalId: {
-    id: 'ta.cov.application:error.nameByNationalId',
+    id: 'aosh.tmo.application:error.nameByNationalId',
     defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
     description:
       'Error message if there was no name associated with given national id',
   },
+  requiredValidMachine: {
+    id: 'aosh.tmo.application:error.requiredValidMachine',
+    defaultMessage: 'Tæki þarf að vera gilt',
+    description: 'Error message if the machine chosen is invalid or not chosen',
+  },
+  errorDataProvider: {
+    id: 'aosh.tmo.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in data provider',
+  },
+  couldNotUpdateApplication: {
+    id: 'aosh.tmo.application:error.couldNotUpdateApplication',
+    defaultMessage: 'Ekki tókst að uppfæra umsókn, vinsamlegast reynið aftur',
+    description: 'Could not update the application answers',
+  },
+  fillInValidInput: {
+    id: 'aosh.tmo.application:error.fillInValidInput',
+    defaultMessage: 'Vinsamlegast fylltu inn gilt gildi',
+    description: 'Need to fill in valid input',
+  },
   minAgeNotFulfilled: {
-    id: 'ta.cov.application:error.minAgeNotFulfilled',
+    id: 'aosh.tmo.application:error.minAgeNotFulfilled',
     defaultMessage:
-      'Lágmarksaldur til að mega vera umráðamaður ökutækis er 18 ára',
+      'Lágmarksaldur til að taka þátt í tilkynnu um eigendaskipti er 18 ára',
     description: 'Min age not fulfilled error',
   },
+  failedToFetchData: {
+    id: 'aosh.tmo.application:error.failedToFetchData',
+    defaultMessage: 'Ekki tókst að sækja gögn',
+    description: 'Failed to fetch data error',
+  },
   submitApplicationError: {
-    id: 'ta.cov.application:error.submitApplicationError',
+    id: 'aosh.tmo.application:error.submitApplicationError',
     defaultMessage: 'Villa kom upp við að skila inn umsókn',
     description: 'Failed to submit application',
   },

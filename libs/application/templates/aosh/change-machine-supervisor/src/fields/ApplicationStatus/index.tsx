@@ -1,17 +1,12 @@
-import {
-  FieldBaseProps,
-  FieldComponents,
-  FieldTypes,
-} from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { review } from '../../lib/messages'
+import { States } from '../../lib/constants'
 import { ReviewScreenProps } from '../../shared'
-import { getReviewSteps, hasReviewerApproved } from '../../utils'
-import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
+import { getReviewSteps } from '../../utils'
 import { StatusStep } from './StatusStep'
-import { coreMessages } from '@island.is/application/core'
 
 export const ApplicationStatus: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -20,11 +15,6 @@ export const ApplicationStatus: FC<
   const { formatMessage } = useLocale()
 
   const steps = getReviewSteps(application)
-
-  const showReviewButton = !hasReviewerApproved(
-    reviewerNationalId,
-    application.answers,
-  )
 
   return (
     <Box marginBottom={10}>
@@ -56,33 +46,18 @@ export const ApplicationStatus: FC<
             reviewer={step.reviewer}
             reviewerNationalId={reviewerNationalId}
             messageValue={step.messageValue}
+            isComplete={application.state === States.COMPLETED}
           />
         ))}
       </Box>
-      {showReviewButton && (
-        <>
-          <Divider />
-          <Box display="flex" justifyContent="flexEnd" paddingY={5}>
-            <Button onClick={() => setStep && setStep('overview')}>
-              {formatMessage(review.status.openAgreement)}
-            </Button>
-          </Box>
-        </>
-      )}
-
-      {!showReviewButton && (
-        <MessageWithLinkButtonFormField
-          application={application}
-          field={{
-            ...props.field,
-            type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
-            component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
-            url: '/minarsidur/umsoknir',
-            buttonTitle: coreMessages.openServicePortalButtonTitle,
-            message: coreMessages.openServicePortalMessageText,
-          }}
-        />
-      )}
+      <>
+        <Divider />
+        <Box display="flex" justifyContent="flexEnd" paddingY={5}>
+          <Button onClick={() => setStep && setStep('overview')}>
+            {formatMessage(review.status.viewOverview)}
+          </Button>
+        </Box>
+      </>
     </Box>
   )
 }

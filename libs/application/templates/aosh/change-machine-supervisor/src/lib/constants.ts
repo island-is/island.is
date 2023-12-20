@@ -3,12 +3,13 @@ import { DefaultEvents } from '@island.is/application/types'
 export type Events = {
   type:
     | DefaultEvents.SUBMIT
-    | DefaultEvents.APPROVE
-    | DefaultEvents.REJECT
     | DefaultEvents.ABORT
+    | DefaultEvents.REJECT
+    | DefaultEvents.APPROVE
 }
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   PAYMENT = 'payment',
   REVIEW = 'review',
@@ -18,5 +19,6 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
-  REVIEWER = 'reviewer',
+  BUYER = 'buyer',
+  BUYEROPERATOR = 'buyerOperator',
 }

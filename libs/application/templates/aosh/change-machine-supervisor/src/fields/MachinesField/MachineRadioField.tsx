@@ -13,7 +13,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { MachineHateoasDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
+import { MachineDto } from '@island.is/clients/work-machines'
 
 interface Option {
   value: string
@@ -22,69 +22,46 @@ interface Option {
 }
 
 interface MachineSearchFieldProps {
-  currentMachineList: MachineHateoasDto[]
+  currentMachineList: MachineDto[]
 }
 
 export const MachineRadioField: FC<
   React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
-> = ({ currentMachineList, application, errors }) => {
+> = ({ currentMachineList, application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [machineId, setMachineId] = useState<string>(
     getValueViaPath(application.answers, 'pickMachine.id', '') as string,
   )
-
+  const [isSelected, setSelected] = useState<boolean>(false)
   const onRadioControllerSelect = (s: string) => {
     const currentMachine = currentMachineList[parseInt(s, 10)]
-    setIsLoading(true)
-    console.log('onRadioController')
-    console.log('currentMachine', currentMachine)
+    setSelected(true)
     setValue('pickMachine.id', currentMachine.id)
+    setValue('pickMachine.isValid', currentMachine.disabled ? undefined : true)
     setValue('machine.id', currentMachine.id)
     setValue('machine.category', currentMachine.category)
-    setValue('machine.regNumber', currentMachine.registrationNumber)
-    const [type, ...subType] =
-      currentMachine.type?.split(' - ') || currentMachine.type?.split(' ') || []
-    setValue('machine.type', type || '')
-    setValue('machine.subType', subType.join() || '')
+    setValue('machine.regNumber', currentMachine.regNumber)
+    setValue('machine.type', currentMachine.type || '')
+    setValue('machine.subType', currentMachine.subType || '')
     setValue('machine.date', new Date().toISOString())
+    setValue('machine.ownerNumber', currentMachine.ownerNumber || '')
+    setValue('machine.plate', currentMachine.plate || '')
     setMachineId(currentMachine.id || '')
-    setIsLoading(false)
   }
 
-  function isCurrentMachineDisabled(status?: string | null): boolean {
-    const disabledStatuses = [
-      'Læst',
-      'Í skráningarferli',
-      'Eigandaskipti í gangi',
-      'Umráðamannaskipti í gangi',
-      'Afskráð tímabundið',
-      'Afskráð endanlega',
-    ]
-    if (status === undefined || status == null) return true
-    if (
-      disabledStatuses.includes(status) ||
-      status.startsWith(disabledStatuses[0])
-    ) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  const machineOptions = (machines: MachineHateoasDto[]) => {
+  const machineOptions = (machines: MachineDto[]) => {
     const options = [] as Option[]
     for (const [index, machine] of machines.entries()) {
-      const disabled = isCurrentMachineDisabled(machine.status)
+      const disabled = machine.disabled
       options.push({
         value: `${index}`,
         label: (
           <Box display="flex" flexDirection="column">
             <Box>
               <Text variant="default" color={disabled ? 'dark200' : 'dark400'}>
-                {machine.registrationNumber}
+                {machine.regNumber}
               </Text>
               <Text variant="small" color={disabled ? 'dark200' : 'dark400'}>
                 {machine.category}: {machine.type}
@@ -129,11 +106,11 @@ export const MachineRadioField: FC<
         largeButtons
         backgroundColor="blue"
         onSelect={onRadioControllerSelect}
-        options={machineOptions(currentMachineList as MachineHateoasDto[])}
+        options={machineOptions(currentMachineList as MachineDto[])}
       />
-      {machineId.length === 0 && (errors as any)?.machine && (
+      {machineId.length === 0 && isSelected ? (
         <InputError errorMessage={formatMessage(error.requiredValidMachine)} />
-      )}
+      ) : null}
     </div>
   )
 }

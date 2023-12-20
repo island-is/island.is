@@ -1,49 +1,31 @@
-import { z } from 'zod'
 import {
-  OperatorInformationSchema,
-  RejecterSchema,
   UserInformationSchema,
-  OldOperatorInformationSchema,
+  OperatorSchema,
+  RejecterSchema,
 } from '../lib/dataSchema'
-import { MessageDescriptor } from '@formatjs/intl'
 import { TagVariant } from '@island.is/island-ui/core'
+import { MessageDescriptor } from '@formatjs/intl'
+import { z } from 'zod'
 
-export type VehiclesCurrentVehicle = {
-  permno?: string
-  make?: string
-  color?: string
-  role?: string
+export interface ReviewScreenProps {
+  setStep?: (s: ReviewState) => void
+  setLocation?: (location: MachineLocation) => void
+  location?: MachineLocation
+  reviewerNationalId?: string
+  setBuyerOperator?: (s: Operator) => void
+  buyerOperator?: Operator | null
 }
 
-type VehicleValidationErrorMessage = {
-  errorNo?: string | null
-  defaultMessage?: string | null
-}
+export type ReviewState =
+  | 'states'
+  | 'overview'
+  | 'conclusion'
+  | 'addPeople'
+  | 'location'
 
-export type VehiclesCurrentVehicleWithOperatorChangeChecks = {
-  permno?: string
-  make?: string
-  color?: string
-  role?: string
-  isDebtLess?: boolean | null
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
-}
-
-export type OperatorField = {
-  nationalId: string
-  name: string
-  email: string
-  phone: string
-  approved?: boolean
-}
-
-export type OperatorFormField = Partial<
-  OperatorField & {
-    id: string
-    initial: boolean
-    dummy?: boolean
-  }
->
+export type UserInformation = z.TypeOf<typeof UserInformationSchema>
+export type Operator = z.TypeOf<typeof OperatorSchema>
+export type Rejecter = z.TypeOf<typeof RejecterSchema>
 
 interface ReviewerProps {
   nationalId: string
@@ -59,25 +41,22 @@ export interface ReviewSectionProps {
   tagVariant: TagVariant
   reviewer?: ReviewerProps[]
   messageValue?: string
+  isComplete?: boolean
 }
 
-export interface ReviewScreenProps {
-  setStep?: (s: ReviewState) => void
-  reviewerNationalId?: string
+export type Machine = {
+  id?: string
+  regNumber?: string
+  date?: string
+  subType?: string
+  type?: string
+  category?: string
+  plate?: string
+  ownerNumber?: string
 }
 
-export type ReviewState = 'states' | 'overview' | 'conclusion'
-
-export type UserInformation = z.TypeOf<typeof UserInformationSchema>
-export type OperatorInformation = z.TypeOf<typeof OperatorInformationSchema>
-export type Rejecter = z.TypeOf<typeof RejecterSchema>
-export type OldOperatorInformation = z.TypeOf<
-  typeof OldOperatorInformationSchema
->
-export type OldOperatorInformationFormField = Partial<
-  OldOperatorInformation & {
-    id: string
-    initial: boolean
-    dummy?: boolean
-  }
->
+export type MachineLocation = {
+  address?: string
+  postCode?: number
+  moreInfo?: string
+}

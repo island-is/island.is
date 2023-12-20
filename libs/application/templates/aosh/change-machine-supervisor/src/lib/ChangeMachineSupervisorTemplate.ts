@@ -1,33 +1,40 @@
 import {
-  getValueViaPath,
-  pruneAfterDays,
-  EphemeralStateLifeCycle,
-  coreHistoryMessages,
-  corePendingActionMessages,
-} from '@island.is/application/core'
-import { Events, States, Roles } from './constants'
-import { ApiActions, OperatorInformation, UserInformation } from '../shared'
-import { ChangeOperatorOfVehicleSchema } from './dataSchema'
-import { IdentityApi, UserProfileApi, MachinesApi } from '../dataProviders'
-import { application as applicationMessage } from './messages'
-import { assign } from 'xstate'
-import set from 'lodash/set'
-import { hasReviewerApproved } from '../utils'
-import { AuthDelegationType } from '@island.is/shared/types'
-import { Features } from '@island.is/feature-flags'
-import { ApiScope } from '@island.is/auth/scopes'
-import {
-  Application,
   ApplicationConfigurations,
+  ApplicationTemplate,
+  ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
   DefaultEvents,
-  PendingAction,
   defineTemplateApi,
+  PendingAction,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
+import {
+  EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
+  getValueViaPath,
+  pruneAfterDays,
+} from '@island.is/application/core'
+import { Events, States, Roles } from './constants'
+import { ApiActions } from '../shared'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { MachineAnswersSchema } from './dataSchema'
+import { application as applicationMessage } from './messages'
+import { assign } from 'xstate'
+import set from 'lodash/set'
+import {
+  IdentityApi,
+  UserProfileApi,
+  VinnueftirlitidPaymentCatalogApi,
+  MachinesApi,
+} from '../dataProviders'
+import { getChargeItemCodes, hasReviewerApproved } from '../utils'
+import { buildPaymentState } from '@island.is/application/utils'
+import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -38,14 +45,14 @@ const pruneInDaysAtMidnight = (application: Application, days: number) => {
 }
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
-  const plate = getValueViaPath(
+  const regNumber = getValueViaPath(
     application.answers,
-    'pickVehicle.plate',
+    'machine.regNumber',
     undefined,
   ) as string | undefined
   return {
     name: applicationMessage.name,
-    value: plate ? `- ${plate}` : '',
+    value: regNumber ? `- ${regNumber}` : '',
   }
 }
 
@@ -68,35 +75,81 @@ const reviewStatePendingAction = (
     }
   }
 }
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.CHANGE_MACHINE_SUPERVISOR,
+  type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
+  featureFlag: Features.transferOfMachineOwnership,
   translationNamespaces: [
-    ApplicationConfigurations.ChangeMachineSupervisor.translation,
+    ApplicationConfigurations.TransferOfMachineOwnership.translation,
   ],
-  dataSchema: ChangeOperatorOfVehicleSchema,
+  dataSchema: MachineAnswersSchema,
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
     },
     {
       type: AuthDelegationType.Custom,
-      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
-  requiredScopes: [ApiScope.samgongustofaVehicles],
+  requiredScopes: [ApiScope.vinnueftirlitid],
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'Gagnaöflun',
+          status: 'draft',
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardPrerequisites,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                VinnueftirlitidPaymentCatalogApi,
+                MachinesApi,
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
       [States.DRAFT]: {
         meta: {
-          name: 'Breyting umráðamanns á tæki',
+          name: 'Tilkynning um eigendaskipti að tæki',
           status: 'draft',
           actionCard: {
             tag: {
@@ -110,29 +163,18 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }),
+
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ChangeMachineSupervisorForm/index').then(
+                import('../forms/TransferOfMachineOwnershipForm/index').then(
                   (module) =>
-                    Promise.resolve(module.ChangeOperatorOfVehicleForm),
+                    Promise.resolve(module.TransferOfMachineOwnershipForm),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
               write: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi, MachinesApi],
             },
           ],
         },
@@ -140,10 +182,21 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
+        chargeItemCodes: getChargeItemCodes,
+        submitTarget: States.REVIEW,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.initReview,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
+      }),
       [States.REVIEW]: {
         entry: 'assignUsers',
         meta: {
-          name: 'Breyting umráðamanns á tæki',
+          name: 'Tilkynning um eigendaskipti að ökutæki',
           status: 'inprogress',
           actionCard: {
             tag: {
@@ -166,7 +219,6 @@ const template: ApplicationTemplate<
             ],
             pendingAction: reviewStatePendingAction,
           },
-          progress: 0.65,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -182,19 +234,19 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewSellerForm),
                 ),
               write: {
-                answers: [],
+                answers: ['location', 'rejecter'],
               },
               read: 'all',
               delete: true,
             },
             {
-              id: Roles.REVIEWER,
+              id: Roles.BUYER,
               formLoader: () =>
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: ['ownerCoOwner', 'operators', 'rejecter'],
+                answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
               },
               read: 'all',
             },
@@ -210,7 +262,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           status: 'rejected',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.rejectApplication,
@@ -231,7 +282,7 @@ const template: ApplicationTemplate<
               read: 'all',
             },
             {
-              id: Roles.REVIEWER,
+              id: Roles.BUYER,
               formLoader: () =>
                 import('../forms/Rejected').then((module) =>
                   Promise.resolve(module.Rejected),
@@ -245,7 +296,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -264,16 +314,24 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
                 ),
               read: 'all',
             },
             {
-              id: Roles.REVIEWER,
+              id: Roles.BUYER,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.BUYEROPERATOR,
+              formLoader: () =>
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
                 ),
               read: 'all',
             },
@@ -287,9 +345,9 @@ const template: ApplicationTemplate<
       assignUsers: assign((context) => {
         const { application } = context
 
-        const assigneeNationalIds = getNationalIdListOfReviewers(application)
-        if (assigneeNationalIds.length > 0) {
-          set(application, 'assignees', assigneeNationalIds)
+        const buyerNationalId = getBuyerNationalId(application)
+        if (buyerNationalId !== null && buyerNationalId !== '') {
+          set(application, 'assignees', [buyerNationalId])
         }
         return context
       }),
@@ -299,46 +357,35 @@ const template: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    const reviewerNationalIdList = getNationalIdListOfReviewers(application)
+    const buyerNationalId = getValueViaPath(
+      application.answers,
+      'buyer.nationalId',
+      '',
+    ) as string
+
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
-    if (
-      reviewerNationalIdList.includes(id) &&
-      application.assignees.includes(id)
-    ) {
-      return Roles.REVIEWER
+    if (id === buyerNationalId && application.assignees.includes(id)) {
+      return Roles.BUYER
     }
+
     return undefined
   },
 }
 
 export default template
 
-const getNationalIdListOfReviewers = (application: Application) => {
+const getBuyerNationalId = (application: Application) => {
   try {
-    const reviewerNationalIdList = [] as string[]
-    const ownerCoOwner = getValueViaPath(
+    const buyerNationalId = getValueViaPath(
       application.answers,
-      'ownerCoOwner',
-      [],
-    ) as UserInformation[]
-    const operators = getValueViaPath(
-      application.answers,
-      'operators',
-      [],
-    ) as OperatorInformation[]
-    ownerCoOwner?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
-    operators?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId!)
-      return nationalId
-    })
-    return reviewerNationalIdList
+      'buyer.nationalId',
+      '',
+    ) as string
+    return buyerNationalId
   } catch (error) {
     console.error(error)
-    return []
+    return ''
   }
 }

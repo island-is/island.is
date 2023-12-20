@@ -1,10 +1,19 @@
-export const formatPhoneNumber = (value: string): string =>
-  value.length === 7 ? value.substr(0, 3) + '-' + value.substr(3, 6) : value
+import { ChargeItemCode } from '@island.is/shared/constants'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-export { getChargeItemCodes } from './getChargeItemCodes'
+export const formatIsk = (value: number): string =>
+  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+
+export const formatPhoneNumber = (phoneNumber: string): string => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone?.formatNational() || phoneNumber
+}
+export { getSelectedMachine } from './getSelectedMachine'
 export { getReviewSteps } from './getReviewSteps'
 export { hasReviewerApproved } from './hasReviewerApproved'
 export { getApproveAnswers } from './getApproveAnswers'
-export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
-export { isRemovingOperatorOnly } from './isRemovingOperatorOnly'
+
+export const getChargeItemCodes = (): Array<string> => {
+  return [ChargeItemCode.AOSH_TRANSFER_OF_MACHINE_OWNERSHIP.toString()]
+}

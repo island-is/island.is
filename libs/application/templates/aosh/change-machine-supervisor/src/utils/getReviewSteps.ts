@@ -1,47 +1,34 @@
-import { ReviewSectionProps, UserInformation } from '../shared'
+import { Operator, ReviewSectionProps, UserInformation } from '../shared'
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { review } from '../lib/messages'
-import { OperatorInformation } from '../shared'
+import { States } from '../lib/constants'
 
 export const getReviewSteps = (application: Application) => {
-  const vehiclePlate = getValueViaPath(
+  const regNumber = getValueViaPath(
     application.answers,
-    'pickVehicle.plate',
+    'machine.regNumber',
     '',
   ) as string
 
-  const ownerCoOwner = getValueViaPath(
+  const buyer = getValueViaPath(application.answers, 'buyer') as UserInformation
+
+  const buyerApproved = getValueViaPath(
     application.answers,
-    'ownerCoOwner',
-    [],
-  ) as UserInformation[]
+    'buyer.approved',
+    false,
+  ) as boolean
 
-  const operators = getValueViaPath(
-    application.answers,
-    'operators',
-    [],
-  ) as OperatorInformation[]
-
-  const filteredOperators = operators.filter(
-    ({ wasRemoved }) => wasRemoved !== 'true',
-  )
-
-  const ownerCoOwnerNotApproved = ownerCoOwner.find(
-    (coOwner) => !coOwner.approved,
-  )
-  const operatorNotApproved = filteredOperators.find(
-    (operator) => !operator.approved,
-  )
+  const isComplete = application.state === States.COMPLETED
 
   const steps = [
-    // Transfer of vehicle: Always approved
+    // Transfer of machine: Always approved
     {
       tagText: review.step.tagText.received,
       tagVariant: 'mint',
-      title: review.step.title.transferOfVehicle,
-      description: review.step.description.transferOfVehicle,
-      messageValue: vehiclePlate,
+      title: review.step.title.transferOfMachine,
+      description: review.step.description.transferOfMachine,
+      messageValue: regNumber,
     },
     // Payment: Always approved
     {
@@ -50,39 +37,22 @@ export const getReviewSteps = (application: Application) => {
       title: review.step.title.payment,
       description: review.step.description.payment,
     },
-    // Sellers coowner
+    // Buyer
     {
-      tagText: !ownerCoOwnerNotApproved
-        ? review.step.tagText.received
-        : review.step.tagText.pendingApproval,
-      tagVariant: !ownerCoOwnerNotApproved ? 'mint' : 'purple',
-      title: review.step.title.coOwner,
-      description: review.step.description.coOwner,
-      visible: ownerCoOwner.length > 0,
-      reviewer: ownerCoOwner.map((reviewer) => {
-        return {
-          nationalId: reviewer.nationalId,
-          name: reviewer.name,
-          approved: reviewer.approved || false,
-        }
-      }),
-    },
-    // Buyers operators
-    {
-      tagText: !operatorNotApproved
-        ? review.step.tagText.received
-        : review.step.tagText.pendingApproval,
-      tagVariant: !operatorNotApproved ? 'mint' : 'purple',
-      title: review.step.title.operator,
-      description: review.step.description.operator,
-      visible: filteredOperators.length > 0,
-      reviewer: filteredOperators.map((reviewer) => {
-        return {
-          nationalId: reviewer.nationalId,
-          name: reviewer.name,
-          approved: reviewer.approved || false,
-        }
-      }),
+      tagText:
+        buyerApproved || isComplete
+          ? review.step.tagText.received
+          : review.step.tagText.pendingApproval,
+      tagVariant: buyerApproved || isComplete ? 'mint' : 'purple',
+      title: review.step.title.buyer,
+      description: review.step.description.buyer,
+      reviewer: [
+        {
+          nationalId: buyer.nationalId || '',
+          name: buyer.name || '',
+          approved: buyerApproved || isComplete,
+        },
+      ],
     },
   ] as ReviewSectionProps[]
 

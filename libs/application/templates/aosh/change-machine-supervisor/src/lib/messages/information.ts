@@ -3,216 +3,205 @@ import { defineMessages } from 'react-intl'
 export const information = {
   general: defineMessages({
     sectionTitle: {
-      id: 'ta.cov.application:information.general.sectionTitle',
+      id: 'aosh.tmo.application:information.general.sectionTitle',
       defaultMessage: 'Upplýsingar',
       description: 'Title of information section',
     },
     pageTitle: {
-      id: 'ta.cov.application:information.general.pageTitle',
+      id: 'aosh.tmo.application:information.general.pageTitle',
       defaultMessage: 'Upplýsingar',
       description: 'Title of information page',
+    },
+    description: {
+      id: 'aosh.tmo.application:information.general.description',
+      defaultMessage:
+        'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
+      description: 'Description of information page',
     },
   }),
   labels: {
     pickMachine: defineMessages({
       sectionTitle: {
-        id: 'ta.cov.application:information.labels.pickMachine.sectionTitle',
+        id: 'aosh.tmo.application:information.labels.pickMachine.sectionTitle',
         defaultMessage: 'Veldu tæki',
-        description: 'Pick vehicle section title',
-      },
-      title: {
-        id: 'ta.cov.application:information.labels.pickMachine.title',
-        defaultMessage: 'Veldu tæki',
-        description: 'Pick vehicle title',
-      },
-      description: {
-        id: 'ta.cov.application:information.labels.pickMachine.description',
-        defaultMessage:
-          'Hér að neðan er listi yfir tæki í þinni eigu. Veldu það tæki sem þú ætlar að bæta við/fella niður umráðamann á',
-        description: 'Pick vehicle description',
-      },
-      machine: {
-        id: 'ta.cov.application:information.labels.pickMachine.machine',
-        defaultMessage: 'Tæki',
-        description: 'Pick vehicle label',
-      },
-      placeholder: {
-        id: 'ta.cov.application:information.labels.pickMachine.placeholder',
-        defaultMessage: 'Veldu tæki',
-        description: 'Pick vehicle placeholder',
-      },
-      hasErrorTitle: {
-        id: 'ta.cov.application:information.labels.pickMachine.hasErrorTitle',
-        defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
-        description: 'Pick vehicle has an error title',
-      },
-    }),
-    owner: defineMessages({
-      sectionTitle: {
-        id: 'ta.cov.application:information.labels.owner.sectionTitle',
-        defaultMessage: 'Eigandi',
         description: 'Pick machine section title',
       },
       title: {
-        id: 'ta.cov.application:information.labels.owner.title',
-        defaultMessage: 'Eigandi',
+        id: 'aosh.tmo.application:information.labels.pickMachine.title',
+        defaultMessage: 'Veldu tæki til eigendaskipta',
+        description: 'Pick machine title',
+      },
+      description: {
+        id: 'aosh.tmo.application:information.labels.pickMachine.description',
+        defaultMessage:
+          'Hér að neðan er listi yfir vélar og tæki í þinni eigu. Veldu það tæki sem þú vilt selja',
+        description: 'Pick machine description',
+      },
+      vehicle: {
+        id: 'aosh.tmo.application:information.labels.pickMachine.vehicle',
+        defaultMessage: 'Tæki',
+        description: 'Pick machine label',
+      },
+      placeholder: {
+        id: 'aosh.tmo.application:information.labels.pickMachine.placeholder',
+        defaultMessage: 'Veldu tæki',
+        description: 'Pick machine placeholder',
+      },
+      hasErrorTitle: {
+        id: 'aosh.tmo.application:information.labels.pickMachine.hasErrorTitle',
+        defaultMessage: 'Ekki er hægt að selja þetta tæki vegna:',
+        description: 'Pick machine has an error title',
+      },
+    }),
+    machine: defineMessages({
+      sectionTitle: {
+        id: 'aosh.tmo.application:information.labels.machine.sectionTitle',
+        defaultMessage: 'Tæki',
+        description: 'Machine section title',
+      },
+      title: {
+        id: 'aosh.tmo.application:information.labels.machine.title',
+        defaultMessage: 'Tæki',
+        description: 'Machine title',
+      },
+      description: {
+        id: 'aosh.tmo.application:information.labels.machine.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Machine description',
+      },
+      plate: {
+        id: 'aosh.tmo.application:information.labels.machine.plate',
+        defaultMessage: 'Plötuskráningarnúmer',
+        description: 'Machine plate number label',
+      },
+      type: {
+        id: 'aosh.tmo.application:information.labels.machine.type',
+        defaultMessage: 'Tegund',
+        description: 'Machine type label',
+      },
+      date: {
+        id: 'aosh.tmo.application:information.labels.machine.date',
+        defaultMessage: 'Dagsetning kaupsamnings',
+        description: 'Date of purchase agreement label',
+      },
+      registrationNumber: {
+        id: 'aosh.tmo.application:information.labels.machine.registrationNumber',
+        defaultMessage: 'Skráningarnúmer',
+        description: 'Registration number label',
+      },
+      category: {
+        id: 'aosh.tmo.application:information.labels.machine.category',
+        defaultMessage: 'Yfirflokkur',
+        description: 'Category label',
+      },
+      ownerNumber: {
+        id: 'aosh.tmo.application:information.labels.machine.ownerNumber',
+        defaultMessage: 'Eigandanúmer',
+        description: 'Owner number label',
+      },
+      subType: {
+        id: 'aosh.tmo.application:information.labels.machine.subType',
+        defaultMessage: 'Gerð',
+        description: 'Sub type label',
+      },
+    }),
+    seller: defineMessages({
+      sectionTitle: {
+        id: 'aosh.tmo.application:information.labels.seller.sectionTitle',
+        defaultMessage: 'Seljandi',
+        description: 'Seller section title',
+      },
+      title: {
+        id: 'aosh.tmo.application:information.labels.seller.title',
+        defaultMessage: 'Seljandi',
         description: 'Seller title',
       },
       subtitle: {
-        id: 'ta.cov.application:information.labels.owner.subtitle',
+        id: 'aosh.tmo.application:information.labels.seller.subtitle',
         defaultMessage: 'Aðaleigandi',
         description: 'Main owner title',
       },
       description: {
-        id: 'ta.cov.application:information.labels.owner.description',
-        defaultMessage: ' ',
+        id: 'aosh.tmo.application:information.labels.seller.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
         description: 'Seller description',
       },
       nationalId: {
-        id: 'ta.cov.application:information.labels.owner.nationalId',
-        defaultMessage: 'Kennitala eiganda',
+        id: 'aosh.tmo.application:information.labels.seller.nationalId',
+        defaultMessage: 'Kennitala seljanda',
         description: 'Seller national ID label',
       },
       name: {
-        id: 'ta.cov.application:information.labels.owner.name',
-        defaultMessage: 'Nafn eiganda',
+        id: 'aosh.tmo.application:information.labels.seller.name',
+        defaultMessage: 'Nafn seljanda',
         description: 'Seller name label',
       },
       email: {
-        id: 'ta.cov.application:information.labels.owner.email',
+        id: 'aosh.tmo.application:information.labels.seller.email',
         defaultMessage: 'Netfang',
         description: 'Seller email label',
       },
       phone: {
-        id: 'ta.cov.application:information.labels.owner.phone',
+        id: 'aosh.tmo.application:information.labels.seller.phone',
         defaultMessage: 'Gsm númer',
         description: 'Seller phone number label',
       },
     }),
-    coOwner: defineMessages({
-      title: {
-        id: 'ta.cov.application:information.labels.coOwner.title',
-        defaultMessage: 'Meðeigandi',
-        description: 'Co-owner title',
-      },
-      nationalId: {
-        id: 'ta.cov.application:information.labels.coOwner.nationalId',
-        defaultMessage: 'Kennitala meðeiganda',
-        description: 'Co-owner national ID label',
-      },
-      name: {
-        id: 'ta.cov.application:information.labels.coOwner.name',
-        defaultMessage: 'Nafn meðeiganda',
-        description: 'Co-owner name label',
-      },
-      email: {
-        id: 'ta.cov.application:information.labels.coOwner.email',
-        defaultMessage: 'Netfang',
-        description: 'Co-owner email label',
-      },
-      phone: {
-        id: 'ta.cov.application:information.labels.coOwner.phone',
-        defaultMessage: 'Gsm númer',
-        description: 'Co-owner phone number label',
-      },
+    machineSubSection: defineMessages({
       error: {
-        id: 'ta.cov.application:information.labels.coOwner.error',
-        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
-        description: 'Co-owner error message',
+        id: 'aosh.tmo.application:information.labels.machineSubSection.error',
+        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um tæki',
+        description: 'Machine error message',
       },
     }),
-    operator: defineMessages({
-      sectionTitle: {
-        id: 'ta.cov.application:information.labels.operator.sectionTitle',
-        defaultMessage: 'Umráðamaður',
-        description: 'Operator section title',
-      },
+    supervisor: defineMessages({
       title: {
-        id: 'ta.cov.application:information.labels.operator.title',
-        defaultMessage: 'Upplýsingar um umráðamenn',
+        id: 'aosh.tmo.application:information.labels.supervisor.title',
+        defaultMessage: 'Umráðamaður',
         description: 'Operator title',
       },
       description: {
-        id: 'ta.cov.application:information.labels.operator.description',
-        defaultMessage: '  ',
+        id: 'aosh.tmo.application:information.labels.supervisor.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
         description: 'Operator description',
       },
-      operatorTitle: {
-        id: 'ta.cov.application:information.labels.operator.operatorTitle',
-        defaultMessage: 'Umráðamaður',
-        description: 'Operator operatorTitle',
-      },
-      operatorTempTitle: {
-        id: 'ta.cov.application:information.labels.operator.operatorTempTitle',
-        defaultMessage: 'Nýr umráðamaður',
-        description: 'Operator temp title',
-      },
       nationalId: {
-        id: 'ta.cov.application:information.labels.operator.nationalId',
+        id: 'aosh.tmo.application:information.labels.supervisor.nationalId',
         defaultMessage: 'Kennitala umráðamanns',
         description: 'Operator national ID label',
       },
       name: {
-        id: 'ta.cov.application:information.labels.operator.name',
+        id: 'aosh.tmo.application:information.labels.supervisor.name',
         defaultMessage: 'Nafn umráðamanns',
         description: 'Operator name label',
       },
       email: {
-        id: 'ta.cov.application:information.labels.operator.email',
+        id: 'aosh.tmo.application:information.labels.supervisor.email',
         defaultMessage: 'Netfang',
         description: 'Operator email label',
       },
       phone: {
-        id: 'ta.cov.application:information.labels.operator.phone',
+        id: 'aosh.tmo.application:information.labels.supervisor.phone',
         defaultMessage: 'Gsm númer',
         description: 'Operator phone number label',
       },
       remove: {
-        id: 'ta.cov.application:information.labels.operator.remove',
+        id: 'aosh.tmo.application:information.labels.supervisor.remove',
         defaultMessage: 'Fjarlægja umráðamann',
         description: 'Operator remove label',
       },
       add: {
-        id: 'ta.cov.application:information.labels.operator.add',
+        id: 'aosh.tmo.application:information.labels.supervisor.add',
         defaultMessage: 'Bæta við umráðamanni',
         description: 'Operator add label',
       },
-      main: {
-        id: 'ta.cov.application:information.labels.operator.main',
-        defaultMessage: 'aðal',
-        description: 'Main label - for main operator',
-      },
-      error: {
-        id: 'ta.cov.application:information.labels.operator.error',
-        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
-        description: 'Operator error message',
-      },
       identicalError: {
-        id: 'ta.cov.application:information.labels.operator.identicalError',
+        id: 'ta.cov.application:information.labels.supervisor.identicalError',
         defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
         description: 'operator identical error',
-      },
-    }),
-    mainOperator: defineMessages({
-      sectionTitle: {
-        id: 'ta.cov.application:information.labels.mainOperator.sectionTitle',
-        defaultMessage: 'Umráðamaður',
-        description: 'Main operator section title',
-      },
-      title: {
-        id: 'ta.cov.application:information.labels.mainOperator.title',
-        defaultMessage: 'Veldu aðal-umráðamann',
-        description: 'Main operator title',
-      },
-      description: {
-        id: 'ta.cov.application:information.labels.mainOperator.description',
-        defaultMessage: ' ',
-        description: 'Main operator description',
-      },
-      radioFieldLabel: {
-        id: 'ta.cov.application:information.labels.mainOperator.radioFieldLabel',
-        defaultMessage: 'Skráðir umráðamenn',
-        description: 'Main operator radio field label',
       },
     }),
   },

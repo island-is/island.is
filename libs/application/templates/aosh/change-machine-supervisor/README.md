@@ -1,4 +1,4 @@
-# application-templates-change-machine-supervisor
+# application-templates-aosh-transfer-of-machine-ownership
 
 This library was generated with [Nx](https://nx.dev).
 

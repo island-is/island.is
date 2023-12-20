@@ -1,4 +1,7 @@
-import { WorkMachinesClientService } from '@island.is/clients/work-machines'
+import {
+  ChangeMachineSupervisor,
+  WorkMachinesClientService,
+} from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
 import {
   WorkMachine,
@@ -138,9 +141,6 @@ export class WorkMachinesService {
     auth: User,
     changeSupervisor: ChangeMachineSupervisor,
   ): Promise<void> {
-    await this.transferOfMachineOwnershipClient.changeMachineSupervisor(
-      auth,
-      changeSupervisor,
-    )
+    await this.machineService.changeMachineSupervisor(auth, changeSupervisor)
   }
 }

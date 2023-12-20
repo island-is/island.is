@@ -1,5 +1,5 @@
+export { NationalIdWithName } from './NationalIdWithName'
+export { ApplicationStatus } from './ApplicationStatus'
 export { MachinesField } from './MachinesField'
-export { OperatorRepeater } from './OperatorRepeater'
 export { Review } from './Review'
 export { RejectedConclusion } from './RejectedConclusion'
-export { Conclusion } from './Conclusion'

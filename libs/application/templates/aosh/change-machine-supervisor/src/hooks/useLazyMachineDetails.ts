@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client'
-import { MachineHateoasDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
+import { MachineDto } from '@island.is/clients/work-machines'
 import { GET_MACHINE_DETAILS } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
 
 export const useLazyMachineDetails = () => {
   return useLazyQuery<
     {
-      aoshMachineDetails: MachineHateoasDto
+      getWorkerMachineDetails: MachineDto
     },
     {
       id: string

@@ -30,7 +30,7 @@ const RemovableUserSchemaBase = z
       return (
         wasRemoved === 'true' ||
         (nationalId &&
-          nationalId.length > 0 &&
+          nationalId.length !== 0 &&
           kennitala.isValid(nationalId) &&
           (kennitala.isCompany(nationalId) ||
             kennitala.info(nationalId).age >= 18))
@@ -64,49 +64,45 @@ export const UserInformationSchema = z.intersection(
   }),
 )
 
-export const OperatorInformationSchema = z.intersection(
+export const OperatorSchema = z.intersection(
   RemovableUserSchemaBase,
   z.object({
     approved: z.boolean().optional(),
   }),
 )
 
-export const OldOperatorInformationSchema = z.object({
-  nationalId: z
-    .string()
-    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
-  name: z.string().min(1),
-  wasRemoved: z.string().optional(),
-  startDate: z.string().optional(),
-})
-
 export const RejecterSchema = z.object({
-  plate: z.string(),
+  regNumber: z.string(),
   name: z.string(),
   nationalId: z.string(),
-  type: z.enum(['coOwner', 'operator']),
+  type: z.enum(['buyer']),
 })
 
-export const ChangeOperatorOfVehicleSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  pickVehicle: z.object({
-    vehicle: z.string().optional(),
-    plate: z.string().min(1),
+export const MachineAnswersSchema = z.object({
+  buyer: UserInformationSchema,
+  seller: UserInformationSchema,
+  machine: z.object({
+    id: z.string().optional(),
+    date: z.string().optional(),
     type: z.string().optional(),
-    color: z.string().optional(),
+    plate: z.string().optional(),
+    subType: z.string().optional(),
+    category: z.string().optional(),
+    regNumber: z.string().optional(),
+    ownerNumber: z.string().optional(),
   }),
-  owner: UserInformationSchema,
-  ownerCoOwner: z.array(UserInformationSchema),
-  vehicle: z.object({
-    plate: z.string(),
+  pickMachine: z.object({
+    index: z.string().optional(),
+    id: z.string().min(1),
   }),
-  operators: z.array(OperatorInformationSchema),
-  oldOperators: z.array(OldOperatorInformationSchema),
-  mainOperator: z.object({
-    nationalId: z.string(),
+  location: z.object({
+    address: z.string(),
+    postCode: z.number().optional(),
+    moreInfo: z.string(),
   }),
+  buyerOperator: OperatorSchema.optional(),
+  approveExternalData: z.boolean(),
   rejecter: RejecterSchema,
 })
-export type ChangeOperatorOfVehicle = z.TypeOf<
-  typeof ChangeOperatorOfVehicleSchema
->
+
+export type MachineAnswers = z.TypeOf<typeof MachineAnswersSchema>

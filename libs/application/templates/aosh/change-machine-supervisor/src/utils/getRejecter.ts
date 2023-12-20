@@ -1,41 +1,17 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { OperatorInformation, Rejecter, UserInformation } from '../shared'
+import { Rejecter, UserInformation } from '../shared'
 
 export const getRejecter = (reviewerNationalId: string, answers: FormValue) => {
-  const plate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
+  const id = getValueViaPath(answers, 'pickMachine.id', '') as string
+  const buyer = getValueViaPath(answers, 'buyer') as UserInformation
 
-  const ownerCoOwners = getValueViaPath(
-    answers,
-    'ownerCoOwner',
-    [],
-  ) as UserInformation[]
-  const ownerCoOwner = ownerCoOwners.find(
-    (ownerCoOwner) => ownerCoOwner.nationalId === reviewerNationalId,
-  )
-  if (ownerCoOwner) {
+  if (buyer && buyer.nationalId === reviewerNationalId) {
     return {
-      plate,
-      name: ownerCoOwner.name,
-      nationalId: ownerCoOwner.nationalId,
-      type: 'coOwner',
-    } as Rejecter
-  }
-
-  const operators = getValueViaPath(
-    answers,
-    'operators',
-    [],
-  ) as OperatorInformation[]
-  const operator = operators.find(
-    (operator) => operator.nationalId === reviewerNationalId,
-  )
-  if (operator) {
-    return {
-      plate,
-      name: operator.name,
-      nationalId: operator.nationalId,
-      type: 'operator',
+      regNumber: id,
+      name: buyer.name,
+      nationalId: buyer.nationalId,
+      type: 'buyer',
     } as Rejecter
   }
 

@@ -21,6 +21,7 @@ interface Props {
   nationalIdDefaultValue?: string
   nameDefaultValue?: string
   errorMessage?: string
+  disabled?: boolean
 }
 
 export const NationalIdWithName: FC<
@@ -36,6 +37,7 @@ export const NationalIdWithName: FC<
   nationalIdDefaultValue,
   nameDefaultValue,
   errorMessage,
+  disabled,
 }) => {
   const { id } = field
   const usedId = customId.length > 0 ? customId : id
@@ -107,7 +109,7 @@ export const NationalIdWithName: FC<
             label={
               customNationalIdLabel.length > 0
                 ? customNationalIdLabel
-                : formatMessage(information.labels.operator.nationalId)
+                : formatMessage(information.labels.buyer.nationalId)
             }
             defaultValue={defaultNationalId}
             format="######-####"
@@ -120,6 +122,7 @@ export const NationalIdWithName: FC<
             })}
             loading={queryLoading}
             error={nationalIdFieldErrors}
+            disabled={disabled}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
@@ -129,7 +132,7 @@ export const NationalIdWithName: FC<
             label={
               customNameLabel.length > 0
                 ? customNameLabel
-                : formatMessage(information.labels.operator.name)
+                : formatMessage(information.labels.buyer.name)
             }
             required
             error={

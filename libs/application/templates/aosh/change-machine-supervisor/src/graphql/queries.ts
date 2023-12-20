@@ -9,33 +9,17 @@ export const IDENTITY_QUERY = `
 
 export const GET_MACHINE_DETAILS = `
 query GetMachineDetails($id: String!) {
-  aoshMachineDetails(id: $id) {
+  getWorkerMachineDetails(id: $id) {
     id
-    registrationNumber
+    regNumber
     type
+    subType
     status
     category
-    subCategory
-    productionYear
-    registrationDate
     ownerNumber
-    productionNumber
-    productionCountry
+    plate
+    disabled
     supervisorName
-    supervisorNationalId
-    licensePlateNumber
-    _links {
-      href
-      rel
-      method
-      displayTitle
-    }
   }
 }
 `
-
-export const APPROVE_OWNER_CHANGE = `
-      mutation ConfirmOwnerChange($input: ConfirmOwnerChange!) {
-        confirmOwnerChange(input: $input)
-      }
-    `

@@ -10,39 +10,27 @@ import {
 import { ReviewScreenProps } from '../../shared'
 import { useLocale } from '@island.is/localization'
 import { overview, review, error as errorMsg } from '../../lib/messages'
+import { States } from '../../lib/constants'
 import {
-  VehicleSection,
-  OwnerSection,
-  CoOwnersSection,
+  MachineSection,
+  SellerSection,
+  BuyerSection,
   OperatorSection,
+  LocationSection,
 } from './sections'
-import {
-  getApproveAnswers,
-  hasReviewerApproved,
-  isLastReviewer,
-} from '../../utils'
+import { getApproveAnswers, hasReviewerApproved } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
-import {
-  APPLICATION_APPLICATION,
-  SUBMIT_APPLICATION,
-} from '@island.is/application/graphql'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { useMutation } from '@apollo/client'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({ setStep, reviewerNationalId = '', ...props }) => {
+> = ({ setStep, reviewerNationalId = '', buyerOperator = {}, ...props }) => {
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
   const [rejectModalVisibility, setRejectModalVisibility] =
     useState<boolean>(false)
-
-  const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
-    onError: (e) => {
-      console.error(e, e.message)
-      return
-    },
-  })
 
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
@@ -51,76 +39,36 @@ export const Overview: FC<
     },
   })
 
-  const [loading, setLoading] = useState<boolean>(false)
-
+  const [loading, setLoading] = useState(false)
   const doApproveAndSubmit = async () => {
-    // Need to get updated application answers, in case any other reviewer has approved
-    const applicationInfo = await getApplicationInfo({
+    const approveAnswers = getApproveAnswers(
+      reviewerNationalId,
+      application.answers,
+      buyerOperator || {},
+    )
+
+    const resApprove = await submitApplication({
       variables: {
         input: {
           id: application.id,
+          event: DefaultEvents.APPROVE,
+          answers: approveAnswers,
         },
-        locale: 'is',
       },
-      fetchPolicy: 'no-cache',
     })
-    const updatedApplication = applicationInfo?.data?.applicationApplication
-
-    if (updatedApplication) {
-      const currentAnswers = updatedApplication.answers
-
-      const approveAnswers = getApproveAnswers(
-        reviewerNationalId,
-        currentAnswers,
-      )
-
-      // First approve application only (event=APPROVE)
-      const resApprove = await submitApplication({
+    if (resApprove?.data) {
+      await submitApplication({
         variables: {
           input: {
             id: application.id,
-            event: DefaultEvents.APPROVE,
+            event: DefaultEvents.SUBMIT,
             answers: approveAnswers,
           },
         },
       })
-
-      const updatedApplication2 = resApprove?.data?.submitApplication
-
-      if (updatedApplication2) {
-        const isLast = isLastReviewer(
-          reviewerNationalId,
-          updatedApplication2.answers,
-        )
-
-        // Then check if user is the last approver (using newer updated application answers), if so we
-        // need to submit the application (event=SUBMIT) to change the state to COMPLETED
-        if (isLast) {
-          const approveAnswers2 = getApproveAnswers(
-            reviewerNationalId,
-            updatedApplication2.answers,
-          )
-
-          const resSubmit = await submitApplication({
-            variables: {
-              input: {
-                id: application.id,
-                event: DefaultEvents.SUBMIT,
-                answers: approveAnswers2,
-              },
-            },
-          })
-
-          if (resSubmit?.data) {
-            setLoading(false)
-            setStep && setStep('conclusion')
-          }
-        } else {
-          setLoading(false)
-          setStep && setStep('conclusion')
-        }
-      }
     }
+    setLoading(false)
+    setStep && setStep('conclusion')
   }
 
   const onBackButtonClick = () => {
@@ -133,6 +81,7 @@ export const Overview: FC<
 
   const onApproveButtonClick = async () => {
     setLoading(true)
+
     await doApproveAndSubmit()
   }
 
@@ -145,10 +94,24 @@ export const Overview: FC<
         <Text marginBottom={4}>
           {formatMessage(overview.general.description)}
         </Text>
-        <VehicleSection {...props} />
-        <OwnerSection {...props} reviewerNationalId={reviewerNationalId} />
-        <CoOwnersSection {...props} reviewerNationalId={reviewerNationalId} />
-        <OperatorSection {...props} reviewerNationalId={reviewerNationalId} />
+        <MachineSection {...props} reviewerNationalId={reviewerNationalId} />
+        <SellerSection {...props} reviewerNationalId={reviewerNationalId} />
+        <BuyerSection
+          setStep={setStep}
+          {...props}
+          reviewerNationalId={reviewerNationalId}
+        />
+        <OperatorSection
+          reviewerNationalId={reviewerNationalId}
+          buyerOperator={buyerOperator}
+          {...props}
+        />
+
+        <LocationSection
+          setStep={setStep}
+          {...props}
+          reviewerNationalId={reviewerNationalId}
+        />
 
         {error && (
           <InputError
@@ -162,28 +125,29 @@ export const Overview: FC<
             <Button variant="ghost" onClick={onBackButtonClick}>
               {formatMessage(review.buttons.back)}
             </Button>
-            {!hasReviewerApproved(reviewerNationalId, application.answers) && (
-              <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
-                <Box marginLeft={3}>
-                  <Button
-                    icon="close"
-                    colorScheme="destructive"
-                    onClick={onRejectButtonClick}
-                  >
-                    {formatMessage(review.buttons.reject)}
-                  </Button>
+            {!hasReviewerApproved(reviewerNationalId, application.answers) &&
+              application.state !== States.COMPLETED && (
+                <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
+                  <Box marginLeft={3}>
+                    <Button
+                      icon="close"
+                      colorScheme="destructive"
+                      onClick={onRejectButtonClick}
+                    >
+                      {formatMessage(review.buttons.reject)}
+                    </Button>
+                  </Box>
+                  <Box marginLeft={3}>
+                    <Button
+                      icon="checkmark"
+                      loading={loading}
+                      onClick={onApproveButtonClick}
+                    >
+                      {formatMessage(review.buttons.approve)}
+                    </Button>
+                  </Box>
                 </Box>
-                <Box marginLeft={3}>
-                  <Button
-                    icon="checkmark"
-                    onClick={onApproveButtonClick}
-                    loading={loading}
-                  >
-                    {formatMessage(review.buttons.approve)}
-                  </Button>
-                </Box>
-              </Box>
-            )}
+              )}
           </Box>
         </Box>
       </Box>

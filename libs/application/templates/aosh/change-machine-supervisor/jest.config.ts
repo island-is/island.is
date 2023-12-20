@@ -1,12 +1,12 @@
 /* eslint-disable */
 export default {
-  displayName: 'application-templates-change-machine-supervisor',
-  preset: '../../../../jest.preset.js',
+  displayName: 'application-templates-aosh-change-machine-supervisor',
+  preset: '../../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/application/templates/change-machine-supervisor',
+    '../../../../../coverage/libs/application/templates/aosh/change-machine-supervisor',
 }
