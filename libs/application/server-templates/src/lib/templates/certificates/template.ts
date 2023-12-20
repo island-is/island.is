@@ -7,26 +7,38 @@ import {
   DataProviderBuilderItem,
   NationalRegistryUserApi,
   UserProfileApi,
+  Form,
+  FormModes,
+  VerifyPaymentApi,
+  InstitutionTypes,
 } from '@island.is/application/types'
 import {
   applicationBuilder,
-  fields,
   paymentState,
   prerequisitesState,
-  startForm,
   state,
+  startForm,
+  fields,
 } from '@island.is/application/utils'
-
-import { generateCompleted } from './forms'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+  pruneAfterDays,
+} from '@island.is/application/core'
+import { StaticText } from 'static-text'
 
 export function buildCertificateTemplate(data: {
   name: string
   additionalProvider: DataProviderBuilderItem
   getPdfApi: TemplateApi<unknown>
+  pdfKey: string
   templateId: ApplicationTypes
   title: string
+
+  institutionId: InstitutionTypes
   organizationId: InstitutionNationalIds
   chargeItemCodes: string[]
+  draftForm?: Form
 }) {
   const {
     name,
@@ -36,47 +48,10 @@ export function buildCertificateTemplate(data: {
     title,
     organizationId,
     chargeItemCodes,
+    draftForm,
+    institutionId,
+    pdfKey,
   } = data
-  const draftForm = startForm('Heimsk umsókn')
-    .startSection({ title: 'Fyrsti hluti' })
-    .startSubSection({ title: 'Fyrsta síðan' })
-    .page({
-      title: 'Hér er bara einn hlutur maður',
-      children: fields()
-        .textField({ placeholder: '', title: 'Hér er field', width: 'half' })
-        .textField({
-          placeholder: '',
-          title: 'Hér er annað field',
-          width: 'half',
-        })
-        .build(),
-    })
-    .endSubSection()
-    .startSubSection({ title: 'Síðasta síðan' })
-    .page({
-      title: 'Loka síðan maður!',
-      children: fields()
-        .descriptionField({
-          title: 'Hér sé lýsing',
-          description:
-            'Þetta form er smíðað aðeins öðruvísi en önnur form. Það þýðir samt ekkert að þetta form sé eitthvað verri en önnur form. Þvert á móti þá er þetta form miklu miklu betra ok?!',
-        })
-        .submitField()
-        .build(),
-    })
-    .endSubSection()
-    .endSection()
-    .endForm()
-
-  const completed = state('completed', 'completed')
-  const draft = state('draft', 'draft')
-
-  const payment = paymentState({
-    institutionId: organizationId,
-    chargeItemCodes: chargeItemCodes,
-    submitTarget: completed.name,
-    abortTarget: draft.name,
-  })
 
   const dataProviders = [
     {
@@ -114,25 +89,171 @@ export function buildCertificateTemplate(data: {
     subTitle?: string
   }[]
 
-  const s = providers.map((provider) => provider.provider)
+  const completed = state('completed', 'completed')
+  const draft = state('draft', 'draft')
 
-  const application = applicationBuilder(name, templateId)
+  const payment = paymentState({
+    institutionId: organizationId,
+    chargeItemCodes: chargeItemCodes,
+    submitTarget: completed.name,
+    abortTarget: draftForm ? draft.name : 'prerequisites',
+  })
+
+  if (draftForm) {
+    draft.setForm(draftForm).addTransition(DefaultEvents.SUBMIT, payment.name)
+  }
+
+  const conslusionForm = startForm({
+    title,
+    formMode: FormModes.COMPLETED,
+    renderLastScreenBackButton: false,
+    renderLastScreenButton: false,
+  })
+    .startSection({ title: 'Umsókn tókst' })
+    .page({
+      title: 'Hér er bara einn hlutur maður',
+      children: fields()
+        .pdfPreviewField({
+          id: 'uiForms.conclusionPdfPreview',
+          title: 'conclusion.information.pdfTitle',
+          pdfKey,
+          openMySitesLabel: 'Opna í Mínum síðum',
+          downloadPdfButtonLabel: 'Sækja PDF',
+          successTitle: 'Tókst',
+          successDescription: 'Umsókn þín hefur verið móttekin.',
+          verificationDescription:
+            'Vinsamlegast staðfestu upplýsingar hér að neðan.',
+          verificationLinkTitle: 'Leiðbeiningar um staðfestingu',
+          verificationLinkUrl: 'https://verification-url-example.com',
+          viewPdfButtonLabel: 'Skoða PDF',
+          openInboxButtonLabel: 'Opna tölvupóstinn',
+          confirmationMessage: 'Upplýsingum þínum hefur verið staðfest.',
+        })
+        .build(),
+    })
+    .endSection()
+    .endForm()
+
+  const application = applicationBuilder({
+    name,
+    applicatonType: templateId,
+    institution: institutionId,
+  })
     .addState(
       prerequisitesState({
         name,
         providers,
-        templateApis: s,
-        targetState: draft.name,
+        templateApis: providers.map((provider) => provider.provider),
+        targetState: draftForm ? draft.name : payment.name,
+      }).addHistoryLog({
+        logMessage: coreHistoryMessages.paymentStarted,
+        onEvent: DefaultEvents.SUBMIT,
+      }),
+    )
+    .addState(payment)
+    .addState(
+      completed
+        .addPendingAction({
+          title: corePendingActionMessages.applicationReceivedTitle,
+          content: corePendingActionMessages.certificateRecieved,
+          displayStatus: 'success',
+        })
+        .lifecycle(pruneAfterDays(90))
+        .setForm(conslusionForm)
+        .addOnEntry(getPdfApi)
+        .addOnEntry(VerifyPaymentApi.configure({ order: 0 })),
+    )
+
+  if (draftForm) application.addState(draft)
+
+  return application.build()
+}
+
+export function buildCertificateTemplateNoPayment(data: {
+  name: StaticText
+  additionalProvider: DataProviderBuilderItem
+  getPdfApi: TemplateApi<unknown>
+  pdfKey: string
+  templateId: ApplicationTypes
+  title: StaticText
+  institutionId: InstitutionTypes
+  organizationId: InstitutionNationalIds
+}) {
+  const {
+    name,
+    additionalProvider,
+    getPdfApi,
+    templateId,
+    title,
+    pdfKey,
+    institutionId,
+  } = data
+
+  const providers = [additionalProvider] as {
+    provider: TemplateApi
+    title: string
+    subTitle?: string
+  }[]
+
+  const completed = state('completed', 'completed')
+
+  const conslusionForm = startForm({
+    title,
+    formMode: FormModes.COMPLETED,
+    renderLastScreenBackButton: false,
+    renderLastScreenButton: false,
+  })
+    .startSection({ title: 'Umsókn tókst' })
+    .page({
+      title: 'Hér er bara einn hlutur maður',
+      children: fields()
+        .pdfPreviewField({
+          id: 'uiForms.conclusionPdfPreview',
+          title: 'conclusion.information.pdfTitle',
+          pdfKey,
+          openMySitesLabel: 'Opna í Mínum síðum',
+          downloadPdfButtonLabel: 'Sækja PDF',
+          successTitle: 'Tókst',
+          successDescription: 'Umsókn þín hefur verið móttekin.',
+          verificationDescription:
+            'Vinsamlegast staðfestu upplýsingar hér að neðan.',
+          verificationLinkTitle: 'Leiðbeiningar um staðfestingu',
+          verificationLinkUrl: 'https://verification-url-example.com',
+          viewPdfButtonLabel: 'Skoða PDF',
+          openInboxButtonLabel: 'Opna tölvupóstinn',
+          confirmationMessage: 'Upplýsingum þínum hefur verið staðfest.',
+        })
+        .build(),
+    })
+    .endSection()
+    .endForm()
+
+  const application = applicationBuilder({
+    name,
+    applicatonType: templateId,
+    institution: institutionId,
+  })
+    .addState(
+      prerequisitesState({
+        name: name,
+        providers,
+        templateApis: providers.map((provider) => provider.provider),
+        targetState: completed.name,
+      }).addHistoryLog({
+        logMessage: coreHistoryMessages.applicationSent,
+        onEvent: DefaultEvents.SUBMIT,
       }),
     )
     .addState(
-      draft
-        .setForm(draftForm)
-        .addTransition(DefaultEvents.SUBMIT, payment.name),
+      completed
+        .addPendingAction({
+          title: corePendingActionMessages.applicationReceivedTitle,
+          content: corePendingActionMessages.certificateRecieved,
+          displayStatus: 'success',
+        })
+        .lifecycle(pruneAfterDays(90))
+        .setForm(conslusionForm),
     )
-    .addState(payment)
-    .addState(completed.setForm(generateCompleted(title)).addOnEntry(getPdfApi)) //TODO ADD verify payment
-    .build()
 
-  return application
+  return application.build()
 }

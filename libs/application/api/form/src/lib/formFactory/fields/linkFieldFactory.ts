@@ -1,24 +1,25 @@
-import { DescriptionField } from '@island.is/application/types'
+import { LinkField } from '@island.is/application/types'
 import { FieldDto } from '../../dto/form.dto'
 import { IFieldFactory } from './IFormFieldFactory'
 import { Injectable } from '@nestjs/common'
 import { ContextService } from '@island.is/application/api/core'
 
 @Injectable()
-export class DescriptionFieldFactory implements IFieldFactory {
+export class LinkFieldFactory implements IFieldFactory {
   constructor(private contextService: ContextService) {}
-
-  createField(field: DescriptionField): FieldDto {
+  createField(field: LinkField): FieldDto {
     const result: FieldDto = {
       id: field.id,
-      description: field.description
-        ? this.contextService.formatText(field.description)
-        : '',
-      title: field.title ? this.contextService.formatText(field.title) : '',
+      title: field.title?.toString() ?? '',
       type: field.type,
       component: field.component,
       specifics: {
-        marginBottom: field.marginBottom?.toString() ?? undefined,
+        s3key: field.s3key
+          ? this.contextService.formatText(field.s3key)
+          : undefined,
+        link: field.link,
+        iconType: field.iconProps?.type?.toString(),
+        icon: field.iconProps?.icon?.toString(),
       },
     }
     return result

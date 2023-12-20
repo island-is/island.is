@@ -1,28 +1,42 @@
-import { Application } from '@island.is/application/types'
+import { formatText } from '@island.is/application/core'
+import {
+  Application,
+  FormText,
+  FormatMessage,
+} from '@island.is/application/types'
 import { Injectable } from '@nestjs/common'
 
 type Context = {
-  applicationData?: Application
+  application: Application
+  formatMessage: FormatMessage
 }
 
 @Injectable()
 export class ContextService {
-  private context: Context
+  private context: Partial<Context> | null = null
 
-  constructor() {
+  setContext(application: Application, formatMessage: FormatMessage) {
     this.context = {
-      applicationData: undefined,
+      application: application,
+      formatMessage: formatMessage,
     }
-  }
-
-  setContext(application: Application) {
-    this.context.applicationData = application
   }
 
   getContext(): Context {
-    if (!this.context.applicationData) {
-      throw new Error('Application data not set in context')
+    if (
+      !this.context ||
+      !this.context.application ||
+      !this.context.formatMessage
+    ) {
+      throw new Error(
+        'Context is not properly set did you forget to call setContext?',
+      )
     }
-    return this.context
+    return this.context as Context // Type assertion, as we checked for existence above
+  }
+
+  formatText(formText: FormText): string {
+    const { application, formatMessage } = this.getContext()
+    return formatText(formText, application, formatMessage)
   }
 }

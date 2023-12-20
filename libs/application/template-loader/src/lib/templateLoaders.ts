@@ -61,8 +61,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown> | void> = {
     import('@island.is/application/templates/driving-school-confirmation'),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
     import('@island.is/application/templates/mortgage-certificate'),
-  [ApplicationTypes.NO_DEBT_CERTIFICATE]: () =>
-    import('@island.is/application/templates/no-debt-certificate'),
+  [ApplicationTypes.NO_DEBT_CERTIFICATE]: () => {
+    return
+  },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: () =>
     import('@island.is/application/templates/financial-statements-inao'),
   [ApplicationTypes.OPERATING_LCENSE]: () =>

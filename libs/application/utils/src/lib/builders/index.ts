@@ -1,5 +1,6 @@
 export * from './paymentStateBuilder'
 export * from './template/templateBuilder'
 export * from './form/formBuilder'
+export * from './form/conclusionForm'
 export * from './template/applicationBuilder'
 export * from './state'

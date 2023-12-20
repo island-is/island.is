@@ -7,6 +7,7 @@ import { FormDto } from './dto/form.dto'
 import {
   Application as BaseApplication,
   Form,
+  FormatMessage,
 } from '@island.is/application/types'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import { SectionFactory } from './formFactory/formItems/sectionFactory'
@@ -22,17 +23,19 @@ export class FormService {
   async getFormByApplicationId(
     nationalId: string,
     application: BaseApplication,
-  ): Promise<FormDto> {
+    formatMessage: FormatMessage,
+  ): Promise<FormDto | undefined> {
     const template = await this.templateService.getApplicationTemplate(
       application.typeId,
     )
-    this.contextService.setContext(application)
+    this.contextService.setContext(application, formatMessage)
     //TODO: Refactor template functions
     const templateHelper = new ApplicationTemplateHelper(application, template)
+
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
     const form = templateHelper.getRoleInState(userRole)?.form
 
-    if (!form) throw new Error('Form not found')
+    if (!form) return undefined
     return this.renderForm(form)
   }
 
@@ -41,19 +44,16 @@ export class FormService {
 
     formDto.icon = form.icon
     formDto.id = form.id
-    formDto.logo = form.logo as unknown as string
+    formDto.logo = form.logo as unknown as string //TODO , Cant return a react component
     formDto.mode = form.mode
     formDto.renderLastScreenBackButton = form.renderLastScreenBackButton
     formDto.renderLastScreenButton = form.renderLastScreenButton
-    formDto.title = form.title as unknown as string
+    formDto.title = this.contextService.formatText(form.title)
     formDto.type = form.type
     formDto.children = []
-
     form.children.forEach((child) => {
       formDto.children.push(this.sectionFactory.create(child))
     })
-
-    console.log('formDto rendiering ', formDto)
 
     return formDto
   }

@@ -124,7 +124,6 @@ const ShellWrapper: FC<ShellWrapperProps> = ({
   nationalRegistryId,
   useJSON = false,
 }) => {
-  console.log('ShellWrapper')
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
@@ -133,7 +132,7 @@ const ShellWrapper: FC<ShellWrapperProps> = ({
   const applicationType = application.typeId as ApplicationTypes
 
   const config = ApplicationConfigurations[applicationType]
-  console.log('config', config)
+
   useApplicationNamespaces(application.typeId)
 
   useEffect(() => {
@@ -148,7 +147,7 @@ const ShellWrapper: FC<ShellWrapperProps> = ({
             JSON.stringify(application.form),
           ) as unknown as Form
           const ffooorm = converter.convertIForm(application.form)
-          console.log('ffooorm', ffooorm)
+
           const dataSchemaFromJSON = generateZodSchema(formFromJSON)
           setForm(ffooorm)
           setDataSchema(dataSchemaFromJSON)

@@ -8,6 +8,12 @@ import { ExternalDataProviderFactory } from './formFactory/formItems/externalDat
 import { DescriptionFieldFactory } from './formFactory/fields/descriptionFieldFactory'
 import { TextFieldFactory } from './formFactory/fields/textFieldFactory'
 import { SubmitFieldFactory } from './formFactory/fields/submitFieldFactory'
+import { PaymentPendingFieldFactory } from './formFactory/fields/paymentPendingFieldFactory'
+import { AlertMessageFieldFactory } from './formFactory/fields/alertMessageFieldFactory'
+import { LinkFieldFactory } from './formFactory/fields/linkFieldFactory'
+import { MessageWithLinkButtonFieldFactory } from './formFactory/fields/messageWithLinkButtonFieldFactory'
+import { ExpandableDescriptionFieldFactory } from './formFactory/fields/expandableDescriptionFieldFactory'
+import { PdfViewerFieldFactory } from './formFactory/fields/pdfViewerFieldFactory'
 
 @Module({
   imports: [ApplicationApiCoreModule],
@@ -20,6 +26,12 @@ import { SubmitFieldFactory } from './formFactory/fields/submitFieldFactory'
     DescriptionFieldFactory,
     TextFieldFactory,
     SubmitFieldFactory,
+    PaymentPendingFieldFactory,
+    AlertMessageFieldFactory,
+    LinkFieldFactory,
+    MessageWithLinkButtonFieldFactory,
+    ExpandableDescriptionFieldFactory,
+    PdfViewerFieldFactory,
   ],
   exports: [FormService],
 })

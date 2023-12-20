@@ -253,6 +253,44 @@ export function formatText<T extends FormTextArray | FormText>(
     ) as T extends FormTextArray ? string[] : string
   } else if (typeof text === 'object') {
     const staticTextObject = text as StaticTextObject
+
+    if (staticTextObject.values) {
+      return formatMessage(
+        staticTextObject,
+        staticTextObject.values,
+      ) as T extends FormTextArray ? string[] : string
+    }
+  }
+
+  return formatMessage(text) as T extends FormTextArray ? string[] : string
+}
+
+export function formatTextWithoutApplication<
+  T extends FormTextArray | FormText,
+>(
+  text: T,
+  formatMessage: MessageFormatter,
+): T extends FormTextArray ? string[] : string {
+  if (typeof text === 'function') {
+    const message = (text as () => StaticText | StaticText[])()
+
+    if (Array.isArray(message)) {
+      return message.map((m) =>
+        handleMessageFormatting(m, formatMessage),
+      ) as T extends FormTextArray ? string[] : string
+    }
+    return handleMessageFormatting(
+      message,
+      formatMessage,
+    ) as T extends FormTextArray ? string[] : string
+  } else if (Array.isArray(text)) {
+    const texts = text as StaticText[]
+    return texts.map((m) =>
+      handleMessageFormatting(m, formatMessage),
+    ) as T extends FormTextArray ? string[] : string
+  } else if (typeof text === 'object') {
+    const staticTextObject = text as StaticTextObject
+
     if (staticTextObject.values) {
       return formatMessage(
         staticTextObject,

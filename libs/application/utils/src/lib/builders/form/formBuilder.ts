@@ -23,20 +23,27 @@ import {
   StaticCheck,
   PdfViewerField,
 } from '@island.is/application/types'
+import { StaticText } from 'static-text'
 
 export class FormBuilder {
   private formDefinition: Form
   private section: SectionBuilder
   sectionsDefinitions: Section[] = []
 
-  constructor(id: string, title: string) {
+  constructor(
+    id: string,
+    title: StaticText,
+    formMode = FormModes.DRAFT,
+    renderLastScreenBackButton = true,
+    renderLastScreenButton = true,
+  ) {
     this.section = new SectionBuilder(this)
     this.formDefinition = buildForm({
       id,
       title,
-      mode: FormModes.DRAFT,
-      renderLastScreenBackButton: true,
-      renderLastScreenButton: true,
+      mode: formMode,
+      renderLastScreenBackButton,
+      renderLastScreenButton,
       children: [],
     })
   }
@@ -312,6 +319,17 @@ export function fields() {
   return new FieldBuilder()
 }
 
-export function startForm(title: string) {
-  return new FormBuilder('id', title)
+export function startForm(data: {
+  title: StaticText
+  formMode?: FormModes
+  renderLastScreenBackButton?: boolean
+  renderLastScreenButton?: boolean
+}) {
+  return new FormBuilder(
+    'id',
+    data.title,
+    data.formMode,
+    data.renderLastScreenBackButton,
+    data.renderLastScreenButton,
+  )
 }

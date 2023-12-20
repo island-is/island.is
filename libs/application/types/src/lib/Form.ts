@@ -194,7 +194,7 @@ export type RepeaterProps = {
 
 export type ValidationRecord = { [key: string]: string | ValidationRecord }
 
-type FieldValue = string | number | boolean | Date
+type FieldValue = string | number | boolean | Date | undefined
 
 export interface IField {
   id: string

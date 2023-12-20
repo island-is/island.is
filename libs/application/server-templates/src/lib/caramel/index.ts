@@ -1,6 +1,7 @@
 import {
   ApplicationTypes,
   InstitutionNationalIds,
+  InstitutionTypes,
   ValidateCriminalRecordApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -22,9 +23,11 @@ export const caramelPermission = buildCertificateTemplate({
     title: 'Information from the international caramel database',
     subTitle: 'Skjal sem inniheldur þín karmellu réttindi.',
   },
+  pdfKey: 'criminalRecord.data.contentBase64',
   getPdfApi: caramelPdfApi,
   templateId: ApplicationTypes.CARAMEL,
   title: 'Karamellukast',
   organizationId: InstitutionNationalIds.SYSLUMENN,
+  institutionId: InstitutionTypes.SYSLUMENN,
   chargeItemCodes: [ChargeItemCode.CRIMINAL_RECORD],
 })

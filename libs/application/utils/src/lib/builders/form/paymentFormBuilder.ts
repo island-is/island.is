@@ -2,7 +2,7 @@ import { Form } from '@island.is/application/types'
 import { fields, startForm } from './formBuilder'
 
 export function paymentForm(): Form {
-  return startForm('Greiðsla')
+  return startForm({ title: 'Greiðsla' })
     .startSection({ title: 'Greiðsla' })
     .page({
       title: 'Greiðsla',

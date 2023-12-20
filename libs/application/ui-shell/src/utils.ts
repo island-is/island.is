@@ -1,4 +1,8 @@
-import { buildSubmitField, getValueViaPath } from '@island.is/application/core'
+import {
+  buildSubmitField,
+  getValueViaPath,
+  coreMessages,
+} from '@island.is/application/core'
 import {
   DataProviderItem,
   ExternalData,
@@ -19,10 +23,8 @@ export function verifyExternalData(
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
     const dataProviderResult = externalData[id]
-    console.log(dataProviderResult)
-    console.log('id', id)
+
     if (!dataProviderResult || dataProviderResult.status === 'failure') {
-      console.log('verifyExternalData', id, dataProviderResult)
       return false
     }
   }
@@ -65,7 +67,6 @@ export function getFieldsWithNoAnswer(
 }
 
 export function findSubmitField(screen: FormScreen): SubmitField | undefined {
-  console.log('findSubmitField', screen)
   if (screen.type === FieldTypes.SUBMIT) {
     return screen
   }
@@ -81,12 +82,12 @@ export function findSubmitField(screen: FormScreen): SubmitField | undefined {
     return buildSubmitField({
       id: 'submit',
       placement: 'footer',
-      title: 'externalData.submitButtonTitle',
+      title: coreMessages.buttonApprove,
       refetchApplicationAfterSubmit: true,
       actions: [
         {
           event: 'SUBMIT',
-          name: 'externalData.submitButtonTitle',
+          name: coreMessages.buttonApprove,
           type: 'primary',
         },
       ],

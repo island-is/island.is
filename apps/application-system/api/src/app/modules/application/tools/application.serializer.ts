@@ -27,6 +27,7 @@ import {
 import { FormService } from '@island.is/application/api/form'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { getApplicationNameTranslationString } from '../utils/application'
+import { format } from 'path'
 
 @Injectable()
 export class ApplicationSerializer
@@ -130,6 +131,7 @@ export class ApplicationSerializer
     const form = await this.formService.getFormByApplicationId(
       nationalId,
       application,
+      intl.formatMessage,
     )
 
     const dto = plainToInstance(ApplicationResponseDto, {

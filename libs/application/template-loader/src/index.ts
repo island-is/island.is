@@ -61,7 +61,6 @@ export async function getApplicationTemplateByTypeId<
 >(
   templateId: ApplicationTypes,
 ): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {
-  console.log('templateloader getApplicationTemplateByTypeId for ', templateId)
   const templateLib = await loadTemplateLib(templateId)
 
   return templateLib.default as ApplicationTemplate<
@@ -104,7 +103,6 @@ export async function getApplicationDataProviders(
 export async function getApplicationStateInformation(
   application: Application,
 ): Promise<ApplicationStateMeta | null> {
-  console.log('getApplicationStateInformation for ', application.typeId)
   const template = await getApplicationTemplateByTypeId(application.typeId)
   if (!template) {
     return null
@@ -116,7 +114,6 @@ export async function getApplicationStateInformation(
 export async function getApplicationTranslationNamespaces(
   application: Application,
 ): Promise<string[]> {
-  console.log('getApplicationTranslationNamespaces for ', application.typeId)
   const template = await getApplicationTemplateByTypeId(application.typeId)
 
   // We load the core namespace for the application system + the ones defined in the application template

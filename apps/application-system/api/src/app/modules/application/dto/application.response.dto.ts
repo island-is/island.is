@@ -180,7 +180,7 @@ export class BaseApplicationResponseDto {
   @IsEnum(ApplicationStatus)
   status!: ApplicationStatus
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsObject()
   form?: FormDto
