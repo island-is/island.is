@@ -11,6 +11,7 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMapper,
+  DEFAULT_LICENSE_ID,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
@@ -96,7 +97,7 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(t),
           metadata: {
             licenseNumber: t.skirteinisNumer?.toString() ?? '',
-            licenseId: t.skirteinisNumer?.toString() ?? 'default',
+            licenseId: DEFAULT_LICENSE_ID,
             expired: expired,
           },
         }

@@ -1,6 +1,7 @@
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
+  DEFAULT_LICENSE_ID,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
@@ -81,7 +82,7 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(t),
           metadata: {
             licenseNumber: t.malsnumer?.toString() ?? '',
-            licenseId: t.malsnumer?.toString() ?? 'default',
+            licenseId: DEFAULT_LICENSE_ID,
             expired,
             expireDate: t.gildistimi?.toISOString(),
           },

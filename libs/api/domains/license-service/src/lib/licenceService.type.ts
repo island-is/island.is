@@ -294,3 +294,5 @@ export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
+
+export const DEFAULT_LICENSE_ID = 'default'

@@ -1,4 +1,5 @@
 import {
+  DEFAULT_LICENSE_ID,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
   GenericLicenseMapper,
@@ -97,7 +98,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(t),
           metadata: {
             licenseNumber: t.id?.toString() ?? '',
-            licenseId: t.id?.toString() ?? 'default',
+            licenseId: DEFAULT_LICENSE_ID,
             expired,
             expireDate: t.dateValidTo?.toISOString() ?? undefined,
             links: [
