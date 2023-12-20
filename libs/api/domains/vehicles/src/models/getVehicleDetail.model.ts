@@ -303,6 +303,9 @@ export class VehiclesOperator {
   serial?: number | null
 
   @Field(() => Boolean, { nullable: true })
+  mainOperator?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
   mainoperator?: boolean | null
 }
 

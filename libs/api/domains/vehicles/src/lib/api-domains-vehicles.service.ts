@@ -163,6 +163,7 @@ export class VehiclesService {
     }
   }
 
+  // This is a temporary solution until we can get this information from the SGS API.
   private async isAllowedMileageRegistration(
     auth: User,
     permno: string,
@@ -176,9 +177,7 @@ export class VehiclesService {
     const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(', ')
 
     const owner = res?.currentOwnerInfo?.nationalId
-    const operators = res?.operators?.filter(
-      (operator) => operator.mainoperator,
-    )
+    const operators = res?.operators?.filter((person) => person.mainOperator)
     const mainOperator = operators?.map((mainOp) => mainOp.nationalId)
     const isCreditInstitutionOwner = owner
       ? allowedCoOwners?.includes(owner)
@@ -252,7 +251,11 @@ export class VehiclesService {
   ): Promise<PostMileageReadingModel | null> {
     if (!input) return null
 
-    await this.hasVehicleServiceAuth(auth, input.permno)
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) return null
 
     const res = await this.getMileageWithAuth(auth).rootPost({
       postMileageReadingModel: input,
@@ -267,7 +270,11 @@ export class VehiclesService {
   ): Promise<PutMileageReadingModel | null> {
     if (!input) return null
 
-    await this.hasVehicleServiceAuth(auth, input.permno)
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) return null
 
     const res = await this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,

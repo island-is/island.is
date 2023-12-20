@@ -125,6 +125,8 @@ const VehicleMileage = () => {
     data?.vehicleMileageDetails?.requiresMileageRegistration
 
   const actionLoading = putActionLoading || postActionLoading
+  const hasUserPostAccess =
+    data?.vehicleMileageDetails?.canUserRegisterVehicleMileage === true
 
   if ((error || requiresMileageRegistration === false) && !loading) {
     return <Problem type="not_found" />
@@ -162,28 +164,34 @@ const VehicleMileage = () => {
                   </GridColumn>
                 ) : (
                   <GridColumn span={['8/8', '8/8', '8/8', '5/8']}>
-                    {isFormEditable ? (
-                      <>
+                    {hasUserPostAccess ? (
+                      isFormEditable ? (
+                        <>
+                          <Text as="h3" variant="h5">
+                            {formatMessage(messages.mileageSuccessFormTitle)}
+                          </Text>
+                          <Text variant="default" paddingTop={1}>
+                            {formatMessage(messages.mileageSuccessFormText, {
+                              date: icelandLocalTime(
+                                updateData?.vehicleMileagePost?.readDate ??
+                                  details?.[0].readDate ??
+                                  undefined,
+                              ),
+                            })}
+                          </Text>
+                        </>
+                      ) : canRegisterMileage === true ? (
                         <Text as="h3" variant="h5">
-                          {formatMessage(messages.mileageSuccessFormTitle)}
+                          {formatMessage(messages.vehicleMileageInputTitle)}
                         </Text>
-                        <Text variant="default" paddingTop={1}>
-                          {formatMessage(messages.mileageSuccessFormText, {
-                            date: icelandLocalTime(
-                              updateData?.vehicleMileagePost?.readDate ??
-                                details?.[0].readDate ??
-                                undefined,
-                            ),
-                          })}
+                      ) : (
+                        <Text as="h3" variant="h5">
+                          {formatMessage(messages.mileageAlreadyRegistered)}
                         </Text>
-                      </>
-                    ) : canRegisterMileage === true ? (
-                      <Text as="h3" variant="h5">
-                        {formatMessage(messages.vehicleMileageInputTitle)}
-                      </Text>
+                      )
                     ) : (
                       <Text as="h3" variant="h5">
-                        {formatMessage(messages.mileageAlreadyRegistered)}
+                        {formatMessage(messages.mileageYouAreNotAllowed)}
                       </Text>
                     )}
                   </GridColumn>
@@ -206,7 +214,10 @@ const VehicleMileage = () => {
                     size="xs"
                     maxLength={12}
                     error={errors.odometerStatus?.message}
-                    disabled={!isFormEditable && !canRegisterMileage}
+                    disabled={
+                      (!isFormEditable && !canRegisterMileage) ||
+                      !hasUserPostAccess
+                    }
                     defaultValue={''}
                     onChange={(e) => setFormValue(e.target.value)}
                     rules={{

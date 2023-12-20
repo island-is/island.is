@@ -850,6 +850,11 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:mileage-already-registered',
     defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð.',
   },
+  mileageYouAreNotAllowed: {
+    id: 'sp.vehicles:mileage-you-are-not-allowed',
+    defaultMessage:
+      'Eingöngu aðaleigandi eða umráðamaður yfir bifreið lánastofnunnar geta skráð kílómetrastöðu.',
+  },
   mileageExtLink: {
     id: 'sp.vehicles:mileage-external-link',
     defaultMessage: '/kilometragjald-a-vetnis-og-rafmagnsbila',
