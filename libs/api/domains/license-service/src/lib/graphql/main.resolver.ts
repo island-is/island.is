@@ -57,6 +57,9 @@ export class GetGenericLicensesInput {
 export class GetGenericLicenseInput {
   @Field(() => String)
   licenseType!: GenericLicenseType
+
+  @Field(() => String, { nullable: true })
+  licenseId?: string
 }
 
 @InputType()
@@ -107,10 +110,11 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GetGenericLicenseInput,
   ) {
-    const license = await this.licenseServiceService.getLicensesOfType(
+    const license = await this.licenseServiceService.getLicense(
       user,
       locale,
       input.licenseType,
+      input.licenseId,
     )
     return license
   }

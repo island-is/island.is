@@ -96,6 +96,7 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(t),
           metadata: {
             licenseNumber: t.skirteinisNumer?.toString() ?? '',
+            licenseId: t.skirteinisNumer?.toString() ?? 'default',
             expired: expired,
           },
         }

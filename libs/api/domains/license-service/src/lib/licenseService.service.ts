@@ -19,7 +19,6 @@ import {
   GenericLicenseOrganizationSlug,
   GenericLicenseUserdata,
   GenericLicenseFetchResult,
-  GenericUserLicensePayload,
   LICENSE_MAPPER_FACTORY,
   GenericLicenseMapper,
 } from './licenceService.type'
@@ -230,6 +229,26 @@ export class LicenseServiceService {
           fetch: licenseRes.fetch,
         },
       ]
+    )
+  }
+
+  async getLicense(
+    user: User,
+    locale: Locale,
+    licenseType: GenericLicenseType,
+    licenseId?: string,
+  ): Promise<GenericUserLicense | null> {
+    const licensesOfType =
+      (await this.getLicensesOfType(user, locale, licenseType)) ?? []
+
+    if (!licenseId) {
+      return licensesOfType[0] ?? null
+    }
+
+    return (
+      licensesOfType.find(
+        (l) => l.payload?.metadata?.licenseId === licenseId,
+      ) ?? null
     )
   }
 

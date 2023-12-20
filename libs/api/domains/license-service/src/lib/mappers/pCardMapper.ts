@@ -81,6 +81,7 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(t),
           metadata: {
             licenseNumber: t.malsnumer?.toString() ?? '',
+            licenseId: t.malsnumer?.toString() ?? 'default',
             expired,
             expireDate: t.gildistimi?.toISOString(),
           },

@@ -49,6 +49,7 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(typedPayload),
           metadata: {
             licenseNumber: t.kennitala?.toString() ?? '',
+            licenseId: 'default',
             expired: t.gildirtil
               ? !isAfter(new Date(t.gildirtil), new Date())
               : null,

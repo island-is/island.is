@@ -119,6 +119,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(t),
           metadata: {
             licenseNumber: t.licenseInfo?.licenseNumber?.toString() ?? '',
+            licenseId: t.licenseInfo?.licenseNumber?.toString() ?? 'default',
             expired,
             expireDate: t.licenseInfo?.expirationDate ?? undefined,
             links: [

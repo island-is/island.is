@@ -97,6 +97,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(t),
           metadata: {
             licenseNumber: t.id?.toString() ?? '',
+            licenseId: t.id?.toString() ?? 'default',
             expired,
             expireDate: t.dateValidTo?.toISOString() ?? undefined,
             links: [

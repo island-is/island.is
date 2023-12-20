@@ -72,6 +72,7 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
           rawData: JSON.stringify(t),
           metadata: {
             licenseNumber: t.skirteinisNumer?.toString() ?? '',
+            licenseId: t.skirteinisNumer?.toString() ?? 'default',
             expired: t.gildirTil
               ? !isAfter(new Date(t.gildirTil), new Date())
               : null,
