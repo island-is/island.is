@@ -686,7 +686,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                     )
                     .map((item, index) => {
                       const dataItem = item.item
-                      console.log('dataItem', dataItem)
                       return (
                         <Box marginBottom={3} key={index}>
                           <ActionCategoryCard

@@ -29,15 +29,13 @@ import * as styles from './UniversitySearch.css'
 interface LandingPageProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
   locale: string
 }
 const LandingPage: Screen<LandingPageProps> = ({
   organizationPage,
   namespace,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
@@ -93,7 +91,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                 marginBottom={
                   index === organizationPage.slices.length - 1 ? 5 : 0
                 }
-                paddingTop={
+                paddingBottom={
                   !organizationPage.description && index === 0 ? 0 : 6
                 }
               />

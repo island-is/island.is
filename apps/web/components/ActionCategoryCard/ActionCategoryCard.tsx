@@ -68,7 +68,7 @@ export type ActionCategoryCardProps = {
   colorScheme?: 'blue' | 'purple' | 'red'
   /** The heading above is truncated instead of overflowing */
   truncateHeading?: TextProps['truncate']
-  /** Use event listener to check wether or not to place the image below the text content */
+  /** Use event listener to check whether or not to place the image below the text content */
   autoStack?: boolean
   /** The card width breakpoint that the image should stack below content when autoStack = true */
   stackWidth?: number
