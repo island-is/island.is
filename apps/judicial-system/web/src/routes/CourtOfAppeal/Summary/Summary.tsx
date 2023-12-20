@@ -4,11 +4,6 @@ import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  CaseAppealState,
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
@@ -24,6 +19,11 @@ import {
   PageTitle,
   RulingModifiedModal,
 } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseAppealState,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAppealDecision,
   useCase,

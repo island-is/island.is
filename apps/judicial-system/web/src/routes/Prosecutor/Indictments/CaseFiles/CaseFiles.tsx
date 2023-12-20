@@ -5,7 +5,6 @@ import router from 'next/router'
 import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -17,6 +16,7 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useS3Upload,
   useUploadFiles,

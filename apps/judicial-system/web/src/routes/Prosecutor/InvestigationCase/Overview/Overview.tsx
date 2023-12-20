@@ -17,10 +17,6 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import {
   core,
   errors,
   icOverview as m,
@@ -44,7 +40,11 @@ import {
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 

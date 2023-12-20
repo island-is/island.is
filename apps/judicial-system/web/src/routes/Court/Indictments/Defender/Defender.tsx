@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { NotificationType } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -17,6 +16,7 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
