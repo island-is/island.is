@@ -13,6 +13,13 @@
           "libs/service-portal/restrictions/**/*.{ts,tsx,js,jsx}"
         ]
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/service-portal/restrictions/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/restrictions/codegen.yml"
+      }
     }
   }
 }

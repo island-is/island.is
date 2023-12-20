@@ -65,4 +65,8 @@ export const m = defineMessages({
     id: 'portals:invalid-intent',
     defaultMessage: 'Ógild aðgerð',
   },
+  invalidDate: {
+    id: 'portals:invalid-date',
+    defaultMessage: 'Dagsetning er ekki rétt',
+  },
 })

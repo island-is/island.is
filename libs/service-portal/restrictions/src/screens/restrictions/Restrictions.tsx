@@ -1,7 +1,8 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { Form, useLoaderData } from 'react-router-dom'
-import isAfter from 'date-fns/isAfter'
+import { Form, useActionData, useLoaderData } from 'react-router-dom'
+import addDays from 'date-fns/addDays'
+import startOfDay from 'date-fns/startOfDay'
 
 import { useUserDecodedIdToken } from '@island.is/auth/react'
 import {
@@ -16,43 +17,57 @@ import { IntroHeader } from '@island.is/portals/core'
 import { Modal } from '@island.is/react/components'
 import { useSubmitting } from '@island.is/react-spa/shared'
 
-import { RestrictionsIntent } from './Restrictions.action'
+import { RestrictionsIntent, RestrictionsResponse } from './Restrictions.action'
 import { m } from '../../lib/messages'
 import { formatDate } from '../../utils/formatDate'
-import { RestrictionsLoaderResult } from './Restrictions.loader'
+import { RestrictionsLoaderResponse } from './Restrictions.loader'
 
 import * as styles from './Restrictions.css'
 
 type FormWrapperProps = {
   children: ReactNode
   intent: RestrictionsIntent
+  date?: Date
 }
 
-const FormWrapper = ({ children, intent }: FormWrapperProps) => (
+const createFutureRestrictionDate = () => startOfDay(addDays(new Date(), 8))
+
+const FormWrapper = ({ children, intent, date }: FormWrapperProps) => (
   <Form method="post">
     <input type="hidden" name="intent" value={intent} />
+    {intent === RestrictionsIntent.Enable && date && (
+      <input type="hidden" name="until" value={date.toISOString()} />
+    )}
     {children}
   </Form>
 )
 
 export default function Restrictions() {
-  const { formatMessage } = useLocale()
-  const { idp } = useUserDecodedIdToken()
-  const data = useLoaderData() as RestrictionsLoaderResult
-  const { isLoading, isSubmitting } = useSubmitting()
-
   const [showModal, setShowModal] = useState(false)
 
-  const dateUntil = new Date(data.disabledUntil)
+  const { formatMessage } = useLocale()
+  const { idp } = useUserDecodedIdToken()
 
-  const allowRestrictions = isAfter(dateUntil, new Date())
-  const hasRestrictions = data.disabledUntil !== null && allowRestrictions
-  const showElectronicIdWarning = !idp.includes('sim')
+  const loaderData = useLoaderData() as RestrictionsLoaderResponse
+  const { isLoading, isSubmitting } = useSubmitting()
+  const actionData = useActionData() as RestrictionsResponse
 
-  const formattedDate = formatDate(data.disabledUntil)
-  const intent = allowRestrictions
+  const { restricted, until } =
+    actionData?.data === true ? loaderData : actionData?.data ?? loaderData
+
+  const dateUntil = until ? new Date(until) : null
+  const futureDate = createFutureRestrictionDate()
+
+  const formattedDate = dateUntil ? formatDate(futureDate) : null
+  const intent = !restricted
     ? RestrictionsIntent.Enable
     : RestrictionsIntent.Disable
+
+  useEffect(() => {
+    if (!isLoading && !isSubmitting) {
+      setShowModal(false)
+    }
+  }, [isLoading, isSubmitting])
 
   return (
     <>
@@ -76,7 +91,7 @@ export default function Restrictions() {
             </Text>
             <Text>{formatMessage(m.restrictionsDevicesDescription)}</Text>
           </Box>
-          {hasRestrictions && (
+          {restricted && formattedDate && (
             <AlertMessage
               type="info"
               message={
@@ -89,7 +104,8 @@ export default function Restrictions() {
               }
             />
           )}
-          {showElectronicIdWarning ? (
+          {/* TODO add ! when */}
+          {idp.includes('sim') ? (
             <AlertMessage
               type="warning"
               message={formatMessage(m.warningElectronicId)}
@@ -97,14 +113,18 @@ export default function Restrictions() {
           ) : (
             <div>
               <Button
-                {...(allowRestrictions
+                {...(!restricted
                   ? { onClick: () => setShowModal(true) }
-                  : { type: 'submit', loading: isSubmitting || isLoading })}
+                  : {
+                      type: 'submit',
+                      loading:
+                        intent === RestrictionsIntent.Disable
+                          ? isSubmitting || isLoading
+                          : false,
+                    })}
               >
                 {formatMessage(
-                  allowRestrictions
-                    ? m.enableRestrictions
-                    : m.disableRestrictions,
+                  !restricted ? m.enableRestrictions : m.disableRestrictions,
                 )}
               </Button>
             </div>
@@ -120,7 +140,7 @@ export default function Restrictions() {
           closeButtonLabel={formatMessage(m.closeModal)}
           scrollType="inside"
         >
-          <FormWrapper intent={intent}>
+          <FormWrapper intent={intent} date={futureDate}>
             <Box
               paddingY={3}
               paddingX={[0, 8]}
@@ -133,7 +153,11 @@ export default function Restrictions() {
                 <Text variant="h3" fontWeight="light">
                   <FormattedMessage
                     {...m.modalDescription}
-                    values={{ date: <b>{formattedDate}</b> }}
+                    values={{
+                      date: (
+                        <b>{formatDate(startOfDay(addDays(new Date(), 8)))}</b>
+                      ),
+                    }}
                   />
                 </Text>
                 <Text variant="h3" fontWeight="light" marginTop={2}>
