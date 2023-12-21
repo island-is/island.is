@@ -1,4 +1,4 @@
-import { Box, Button, Input, Link, Text } from '@island.is/island-ui/core'
+import { Box, Button, Input } from '@island.is/island-ui/core'
 import {
   CheckboxController,
   DatePickerController,
@@ -11,11 +11,9 @@ import { ChannelList } from '../../components/CommunicationChannels/ChannelList'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
-import { VERDSKRA_LINK } from '../../lib/constants'
-import { m } from '../../lib/messages'
+import { error, general, publishingPrefrences } from '../../lib/messages'
 import { BooleanValue, OJOIFieldBaseProps } from '../../lib/types'
 import { getWeekdayDates, isValidEmail, isValidPhone } from '../../lib/utils'
-import * as styles from './PublishingPrefrences.css'
 export type CommunicationChannel = {
   phone: string
   email: string
@@ -49,15 +47,19 @@ export const PublishingPrefrences = ({ application }: OJOIFieldBaseProps) => {
     )
 
     if (!validEmail) {
-      setEmailError(f(m.emailError))
+      setEmailError(f(error.xIsNotValid, { x: f(general.email) }))
     }
 
     if (!validPhone) {
-      setPhoneError(f(m.phoneError))
+      setPhoneError(f(error.xIsNotValid, { x: f(general.phoneNumber) }))
     }
 
     if (found) {
-      setAlreadyExistsError(f(m.alreadyExistsError))
+      setAlreadyExistsError(
+        f(error.xAlreadyExists, {
+          x: f(publishingPrefrences.general.communicationChannel).toLowerCase(),
+        }),
+      )
     }
 
     if (validEmail && validPhone && !found) {
@@ -100,10 +102,10 @@ export const PublishingPrefrences = ({ application }: OJOIFieldBaseProps) => {
   return (
     <Box>
       <FormIntro
-        title={f(m.publishingPreferencesFormTitle)}
-        description={f(m.publishingPreferencesFormIntro)}
+        title={f(publishingPrefrences.general.formTitle)}
+        description={f(publishingPrefrences.general.formIntro)}
       />
-      <FormGroup title={f(m.publishingPreferencesDateLabel)}>
+      <FormGroup title={f(publishingPrefrences.dateChapter.title)}>
         <DatePickerController
           size="sm"
           backgroundColor="blue"
@@ -113,31 +115,21 @@ export const PublishingPrefrences = ({ application }: OJOIFieldBaseProps) => {
           locale="is"
           maxDate={addYears(today, 1)}
           excludeDates={getWeekdayDates()}
-          label={f(m.date)}
+          label={f(publishingPrefrences.inputs.datepicker.label)}
         />
         <CheckboxController
           id="fastTrack"
           options={[
             {
-              label: (
-                <Text>
-                  {f(m.requestFastTrack)}{' '}
-                  <Link href={VERDSKRA_LINK}>
-                    <span className={styles.fastTrackLink}>
-                      {f(m.requestFastTrackLink)}
-                    </span>
-                  </Link>
-                  .
-                </Text>
-              ),
+              label: f(publishingPrefrences.inputs.fastTrack.label),
               value: BooleanValue.YES,
             },
           ]}
         />
       </FormGroup>
       <FormGroup
-        title={f(m.communicationChannelsTitle)}
-        description={f(m.communicationChannelsIntro)}
+        title={f(publishingPrefrences.communicationChapter.title)}
+        description={f(publishingPrefrences.communicationChapter.intro)}
       >
         <Box width="full">
           <ChannelList
@@ -168,19 +160,22 @@ export const PublishingPrefrences = ({ application }: OJOIFieldBaseProps) => {
             onClick={() => setAddChannelToggle((prev) => !prev)}
             icon="add"
           >
-            {f(m.addCommunicationChannel)}
+            {f(publishingPrefrences.buttons.addCommunicationChannel.label)}
           </Button>
         </Box>
       </FormGroup>
-      <FormGroup title={f(m.messagesTitle)} description={f(m.messagesIntro)}>
+      <FormGroup
+        title={f(publishingPrefrences.messagesChapter.title)}
+        description={f(publishingPrefrences.messagesChapter.intro)}
+      >
         <Box width="full">
           <Input
             rows={4}
             id="messages"
             name="messages"
             textarea
-            label={f(m.messagesTitle)}
-            placeholder={f(m.messagesPlaceholder)}
+            label={f(publishingPrefrences.inputs.messages.label)}
+            placeholder={f(publishingPrefrences.inputs.messages.placeholder)}
           />
         </Box>
       </FormGroup>
