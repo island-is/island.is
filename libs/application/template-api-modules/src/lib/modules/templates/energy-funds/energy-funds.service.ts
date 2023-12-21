@@ -149,8 +149,6 @@ export class EnergyFundsService extends BaseTemplateApiService {
         (currentvehicleDetails && currentvehicleDetails.vehicleGrant) || 0,
     }
 
-    console.log('answers', answers)
-
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
       subsidyInput: answers,
     })
