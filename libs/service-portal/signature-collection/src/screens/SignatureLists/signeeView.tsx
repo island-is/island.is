@@ -9,13 +9,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { IntroHeader, Modal } from '@island.is/service-portal/core'
+import { IntroHeader } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import { useGetListsForUser, useGetSignedList } from '../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../Skeletons'
 import { useMutation } from '@apollo/client'
 import { unSignList } from '../mutations'
+import { Modal } from '@island.is/react/components'
 
 const SigneeView = () => {
   useNamespaces('sp.signatureCollection')
@@ -41,48 +42,47 @@ const SigneeView = () => {
 
   const SignedList = () => {
     return (
-      <Modal
-        id="unSignList"
-        isVisible={modalIsOpen}
-        toggleClose={false}
-        initialVisibility={false}
-        onCloseModal={() => setModalIsOpen(false)}
-        disclosure={
-          <ActionCard
-            heading={signedList.owner.name + ' - ' + signedList.area.name}
-            eyebrow={format(new Date(signedList.endTime), 'dd.MM.yyyy')}
-            text={formatMessage(m.collectionTitle)}
-            cta={{
-              label: formatMessage(m.unSignList),
-              buttonType: {
-                variant: 'text',
-                colorScheme: 'destructive',
-              },
-              onClick: () => setModalIsOpen(true),
-              icon: undefined,
-            }}
-          />
-        }
-      >
-        <Text variant="h1" paddingTop={5}>
-          {formatMessage(m.unSignModalMessage)}
-        </Text>
-        <Box marginTop={10} display="flex" justifyContent="center">
-          <Button
-            onClick={() =>
-              unSign({
-                variables: {
-                  input: {
-                    id: signedList.collectionId,
+      <>
+        <ActionCard
+          heading={signedList.owner.name + ' - ' + signedList.area.name}
+          eyebrow={format(new Date(signedList.endTime), 'dd.MM.yyyy')}
+          text={formatMessage(m.collectionTitle)}
+          cta={{
+            label: formatMessage(m.unSignList),
+            buttonType: {
+              variant: 'text',
+              colorScheme: 'destructive',
+            },
+            onClick: () => setModalIsOpen(true),
+            icon: undefined,
+          }}
+        />
+        <Modal
+          label=""
+          closeButtonLabel=""
+          title={formatMessage(m.unSignModalMessage)}
+          id="unSignList"
+          isVisible={modalIsOpen}
+          onClose={() => setModalIsOpen(false)}
+        >
+          <Box marginTop={10} display="flex" justifyContent="center">
+            <Button
+              onClick={() => {
+                unSign({
+                  variables: {
+                    input: {
+                      id: signedList.collectionId,
+                    },
                   },
-                },
-              })
-            }
-          >
-            {formatMessage(m.unSignModalConfirmButton)}
-          </Button>
-        </Box>
-      </Modal>
+                })
+                setModalIsOpen(false)
+              }}
+            >
+              {formatMessage(m.unSignModalConfirmButton)}
+            </Button>
+          </Box>
+        </Modal>
+      </>
     )
   }
   return (
