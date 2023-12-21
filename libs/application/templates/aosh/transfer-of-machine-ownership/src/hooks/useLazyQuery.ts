@@ -3,10 +3,11 @@ import {
   OperationVariables,
   useApolloClient,
 } from '@apollo/client'
+import { MachineDto } from '@island.is/clients/work-machines'
 import { useCallback } from 'react'
 
 export const useLazyQuery = <
-  TData = any,
+  TData = MachineDto,
   TVariables extends OperationVariables = OperationVariables,
 >(
   query: DocumentNode,
@@ -19,6 +20,6 @@ export const useLazyQuery = <
         query,
         variables,
       }),
-    [client],
+    [client, query],
   )
 }
