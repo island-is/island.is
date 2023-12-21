@@ -1,4 +1,11 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { ContentTypeProps } from 'contentful-management'
 import XLSX from 'xlsx'
 import { PageExtensionSDK } from '@contentful/app-sdk'
@@ -8,7 +15,6 @@ import {
   Flex,
   FormControl,
   Grid,
-  MenuDivider,
   Select,
   Spinner,
   Stack,
@@ -18,14 +24,104 @@ import {
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
+import { useContentTypeData } from '../../hooks/useContentTypeData'
 
 const CONTENT_TYPES = ['price', 'supportQNA'] as const
 
+type ContentType = typeof CONTENT_TYPES[number]
 type Data = string[][]
 
 const capitalize = (value: string) => {
   if (value?.length < 1) return ''
   return value[0].toUpperCase() + value.slice(1)
+}
+
+const isReferenceField = (field: { type: string }) => {
+  return !(
+    field.type === 'Symbol' ||
+    field.type === 'Integer' ||
+    field.type === 'RichText'
+  )
+}
+
+interface ContentTypeSelectProps {
+  selectedContentType: string | null
+  setSelectedContentType: (value: ContentType) => void
+}
+
+const ContentTypeSelect = ({
+  selectedContentType,
+  setSelectedContentType,
+}: ContentTypeSelectProps) => {
+  return (
+    <FormControl>
+      <FormControl.Label>Content type</FormControl.Label>
+      <Select
+        id="content-type-select"
+        name="content-type-select"
+        value={selectedContentType}
+        onChange={(ev) => {
+          setSelectedContentType(ev.target.value as ContentType)
+        }}
+      >
+        {CONTENT_TYPES.map((type) => (
+          <Select.Option key={type} value={type}>
+            {capitalize(type)}
+          </Select.Option>
+        ))}
+      </Select>
+    </FormControl>
+  )
+}
+
+interface TagSelectProps {
+  selectedTag: string | null
+  setSelectedTag: (tag: string) => void
+}
+
+const TagSelect = ({ selectedTag, setSelectedTag }: TagSelectProps) => {
+  const cma = useCMA()
+  const [tagOptions, setTagOptions] = useState([])
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      const response = await cma.tag.getMany({
+        environmentId: CONTENTFUL_ENVIRONMENT,
+        spaceId: CONTENTFUL_SPACE,
+        query: {
+          limit: 1000,
+          'name[match]': 'owner-',
+        },
+      })
+
+      setTagOptions(response.items.map((item) => item.name))
+    }
+    fetchTags()
+  }, [cma.tag])
+
+  return (
+    <FormControl>
+      <FormControl.Label>Tag</FormControl.Label>
+      <Select
+        id="tag-select"
+        name="tag-select"
+        value={selectedTag}
+        onChange={(ev) => {
+          setSelectedTag(ev.target.value as typeof CONTENT_TYPES[number])
+        }}
+      >
+        <Select.Option value={null}>-</Select.Option>
+        {tagOptions.map((tag) => (
+          <Select.Option key={tag} value={tag}>
+            {tag}
+          </Select.Option>
+        ))}
+      </Select>
+      <FormControl.HelpText>
+        All imported entries will be tagged with this tag
+      </FormControl.HelpText>
+    </FormControl>
+  )
 }
 
 interface FileInputProps {
@@ -93,18 +189,146 @@ const FileInput = ({ setFileData }: FileInputProps) => {
   )
 }
 
+interface FieldMappingProps {
+  headCells: string[]
+  contentTypeData: ContentTypeProps
+  fieldMapping: { from: string; to: string | null }[]
+  setFieldMapping: Dispatch<SetStateAction<FieldMappingProps['fieldMapping']>>
+}
+
+const FieldMapping = ({
+  headCells,
+  contentTypeData,
+  fieldMapping,
+  setFieldMapping,
+}: FieldMappingProps) => {
+  useEffect(() => {
+    if (!contentTypeData) return
+    setFieldMapping(
+      contentTypeData.fields
+        .filter((field) => !isReferenceField(field))
+        .map((field) => {
+          return {
+            from: field.name,
+            to: null,
+          }
+        }),
+    )
+  }, [contentTypeData, setFieldMapping])
+  return (
+    <Stack flexDirection="column" spacing="spacingL">
+      {headCells.length > 0 &&
+        fieldMapping.map(({ from, to }, index) => {
+          const key = `${from}-${to}`
+          return (
+            <Grid key={key} columns="1fr 1fr">
+              <Text>{from}</Text>
+              <Select
+                id={key}
+                name={key}
+                value={to}
+                onChange={(ev) => {
+                  setFieldMapping((prev) => {
+                    const alreadyPresentIndex = prev.findIndex(
+                      (e) => e.to === ev.target.value,
+                    )
+                    if (alreadyPresentIndex >= 0) {
+                      prev[alreadyPresentIndex].to = undefined
+                    }
+                    prev[index].to = ev.target.value
+                    return [...prev]
+                  })
+                }}
+              >
+                <Select.Option value={null}>-</Select.Option>
+                {headCells.map((text) => (
+                  <Select.Option key={text} value={text}>
+                    {text}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Grid>
+          )
+        })}
+    </Stack>
+  )
+}
+
+interface ReferenceFieldMappingProps {
+  contentTypeData: ContentTypeProps
+  referenceFieldMapping: { from: string; to: string | null }[]
+  setReferenceFieldMapping: Dispatch<
+    SetStateAction<FieldMappingProps['fieldMapping']>
+  >
+}
+
+const ReferenceFieldMapping = ({
+  contentTypeData,
+  referenceFieldMapping,
+  setReferenceFieldMapping,
+}: ReferenceFieldMappingProps) => {
+  console.log(contentTypeData)
+  useEffect(() => {
+    if (!contentTypeData) return
+    setReferenceFieldMapping(
+      contentTypeData.fields
+        .filter((field) => isReferenceField(field))
+
+        .map((field) => {
+          return {
+            from: field.name,
+            to: null,
+          }
+        }),
+    )
+  }, [contentTypeData, setReferenceFieldMapping])
+  return (
+    <Stack flexDirection="column" spacing="spacingL">
+      {referenceFieldMapping.map(({ from, to }, index) => {
+        const key = `${from}-${to}`
+        return (
+          <Grid key={key} columns="1fr 1fr">
+            <Text>{from}</Text>
+            <Select
+              id={key}
+              name={key}
+              value={to}
+              onChange={(ev) => {
+                setReferenceFieldMapping((prev) => {
+                  const alreadyPresentIndex = prev.findIndex(
+                    (e) => e.to === ev.target.value,
+                  )
+                  if (alreadyPresentIndex >= 0) {
+                    prev[alreadyPresentIndex].to = undefined
+                  }
+                  prev[index].to = ev.target.value
+                  return [...prev]
+                })
+              }}
+            >
+              <Select.Option value={null}>-</Select.Option>
+              {['TODO'].map((text) => (
+                <Select.Option key={text} value={text}>
+                  {text}
+                </Select.Option>
+              ))}
+            </Select>
+          </Grid>
+        )
+      })}
+    </Stack>
+  )
+}
+
 const ContentImportScreen = () => {
   const sdk = useSDK<PageExtensionSDK>()
   const cma = useCMA()
   const [data, setData] = useState<Data>([])
-  const [loadingFile, setLoadingFile] = useState(false)
-  const [contentTypeData, setContentTypeData] = useState<ContentTypeProps>(null)
+
   const [selectedContentType, setSelectedContentType] =
     useState<typeof CONTENT_TYPES[number]>('price')
-  const [tagOptions, setTagOptions] = useState([])
-  const [selectedTag, setSelectedTag] = useState(null)
-  const [selectedSheetName, setSelectedSheetName] = useState<string>('')
-  const [sheetNames, setSheetNames] = useState([])
+  const contentTypeData = useContentTypeData(selectedContentType)
+  const [selectedTag, setSelectedTag] = useState('')
   const [fieldMapping, setFieldMapping] = useState<
     { from: string; to: string | null }[]
   >([])
@@ -112,67 +336,13 @@ const ContentImportScreen = () => {
     { from: string; to: string | null }[]
   >([])
 
-  useEffect(() => {
-    const fetchContentTypeData = async () => {
-      const response = await cma.contentType.get({
-        contentTypeId: selectedContentType,
-        environmentId: CONTENTFUL_ENVIRONMENT,
-        spaceId: CONTENTFUL_SPACE,
-      })
-
-      // TODO: handle multiple locales
-
-      setFieldMapping(
-        response.fields
-          .filter(
-            (field) => field.type === 'Symbol' || field.type === 'Integer',
-          )
-          .map((field) => {
-            return {
-              from: field.name,
-              to: null,
-            }
-          }),
-      )
-
-      setReferenceFieldMapping(
-        response.fields
-          .filter(
-            (field) => !(field.type === 'Symbol' || field.type === 'Integer'),
-          )
-          .map((field) => {
-            return {
-              from: field.name,
-              to: null,
-            }
-          }),
-      )
-
-      setContentTypeData(response)
+  const { headCells, bodyRows } = useMemo(() => {
+    return {
+      headCells: data?.[0] ?? [],
+      bodyRows:
+        data?.slice(1)?.filter((row) => row?.some((text) => text)) ?? [],
     }
-
-    fetchContentTypeData()
-  }, [cma.contentType, selectedContentType])
-
-  useEffect(() => {
-    const fetchTags = async () => {
-      const response = await cma.tag.getMany({
-        environmentId: CONTENTFUL_ENVIRONMENT,
-        spaceId: CONTENTFUL_SPACE,
-        query: {
-          limit: 1000,
-          'name[match]': 'owner-',
-        },
-      })
-
-      setTagOptions(response.items.map((item) => item.name))
-    }
-    fetchTags()
-  }, [cma.tag])
-
-  const headCells = data?.[0] ?? []
-  const bodyRows =
-    data?.slice(1)?.filter((row) => row?.some((text) => text)) ?? []
+  }, [data])
 
   return (
     <Box padding="spacingXl">
@@ -182,146 +352,35 @@ const ContentImportScreen = () => {
         alignItems="flex-start"
       >
         <Flex gap="16px">
-          <FormControl>
-            <FormControl.Label>Content type</FormControl.Label>
-            <Select
-              id="content-type-select"
-              name="content-type-select"
-              value={selectedContentType}
-              onChange={(ev) => {
-                setSelectedContentType(
-                  ev.target.value as typeof CONTENT_TYPES[number],
-                )
-              }}
-            >
-              {CONTENT_TYPES.map((type) => (
-                <Select.Option key={type} value={type}>
-                  {capitalize(type)}
-                </Select.Option>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Tag</FormControl.Label>
-            <Select
-              id="tag-select"
-              name="tag-select"
-              value={selectedTag}
-              onChange={(ev) => {
-                setSelectedTag(ev.target.value as typeof CONTENT_TYPES[number])
-              }}
-            >
-              <Select.Option value={null}>-</Select.Option>
-              {tagOptions.map((tag) => (
-                <Select.Option key={tag} value={tag}>
-                  {tag}
-                </Select.Option>
-              ))}
-            </Select>
-            <FormControl.HelpText>
-              All imported entries will be tagged with this tag
-            </FormControl.HelpText>
-          </FormControl>
+          <ContentTypeSelect
+            selectedContentType={selectedContentType}
+            setSelectedContentType={setSelectedContentType}
+          />
+          <TagSelect
+            selectedTag={selectedTag}
+            setSelectedTag={setSelectedTag}
+          />
         </Flex>
 
-        <FileInput setFileData={setData} />
-
-        {sheetNames.length > 0 && (
-          <Select
-            value={selectedSheetName}
-            onChange={(ev) => {
-              setSelectedSheetName(ev.target.value)
-            }}
-          >
-            {sheetNames.map((name) => (
-              <Select.Option key={name} value={name}>
-                {name}
-              </Select.Option>
-            ))}
-          </Select>
-        )}
-
-        <Stack flexDirection="column" spacing="spacingL">
-          {headCells.length > 0 &&
-            fieldMapping.map(({ from, to }, index) => {
-              const key = `${from}-${to}`
-              return (
-                <Grid key={key} columns="1fr 1fr">
-                  <Text>{from}</Text>
-                  <Select
-                    id={key}
-                    name={key}
-                    value={to}
-                    onChange={(ev) => {
-                      setFieldMapping((prev) => {
-                        const alreadyPresentIndex = prev.findIndex(
-                          (e) => e.to === ev.target.value,
-                        )
-                        if (alreadyPresentIndex >= 0) {
-                          prev[alreadyPresentIndex].to = undefined
-                        }
-                        prev[index].to = ev.target.value
-                        return [...prev]
-                      })
-                    }}
-                  >
-                    <Select.Option value={null}>-</Select.Option>
-                    {headCells.map((text) => (
-                      <Select.Option key={text} value={text}>
-                        {text}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Grid>
-              )
-            })}
-        </Stack>
-
-        {headCells.length > 0 &&
-          referenceFieldMapping.length > 0 &&
-          fieldMapping.length > 0 && <MenuDivider />}
-
-        <Stack flexDirection="column" spacing="spacingL">
-          {headCells.length > 0 &&
-            referenceFieldMapping.map(({ from, to }, index) => {
-              const key = `${from}-${to}`
-              return (
-                <Grid key={key} columns="1fr 1fr">
-                  <Text>{from}</Text>
-                  <Select
-                    id={key}
-                    name={key}
-                    value={to}
-                    onChange={(ev) => {
-                      setReferenceFieldMapping((prev) => {
-                        const alreadyPresentIndex = prev.findIndex(
-                          (e) => e.to === ev.target.value,
-                        )
-                        if (alreadyPresentIndex >= 0) {
-                          prev[alreadyPresentIndex].to = undefined
-                        }
-                        prev[index].to = ev.target.value
-                        return [...prev]
-                      })
-                    }}
-                  >
-                    <Select.Option value={null}>-</Select.Option>
-                    {headCells.map((text) => (
-                      <Select.Option key={text} value={text}>
-                        {text}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Grid>
-              )
-            })}
-        </Stack>
-
-        <Flex fullWidth flexDirection="row" justifyContent="flex-end">
+        <Flex fullWidth justifyContent="space-between">
+          <FileInput setFileData={setData} />
           <Button variant="primary" size="large">
             Import
           </Button>
         </Flex>
+
+        <FieldMapping
+          contentTypeData={contentTypeData}
+          fieldMapping={fieldMapping}
+          headCells={headCells}
+          setFieldMapping={setFieldMapping}
+        />
+
+        <ReferenceFieldMapping
+          contentTypeData={contentTypeData}
+          referenceFieldMapping={referenceFieldMapping}
+          setReferenceFieldMapping={setReferenceFieldMapping}
+        />
 
         <Table>
           <Table.Head>
