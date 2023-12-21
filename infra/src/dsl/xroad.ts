@@ -708,9 +708,9 @@ export const UniversityGatewayUniversityOfAkureyri = new XroadConf({
 export const UniversityGatewayBifrostUniversity = new XroadConf({
   env: {
     XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: {
-      dev: 'IS-DEV/EDU/12345/TODO-Protected/umsoknir-v1',
-      staging: 'IS-DEV/EDU/12345/TODO-Protected/umsoknir-v1',
-      prod: 'IS/EDU/1234567890/TODO-Protected/umsoknir-v1',
+      dev: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1',
     },
   },
 })

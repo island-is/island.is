@@ -15,7 +15,10 @@ export const BifrostUniversityApplicationClientConfig = defineConfig<
   load(env) {
     return {
       xroadPath: env.required(
-        // TODO set correct service code when ready (replace all "12345/TODO-Protected")
+        // TODO set correct service code when ready:
+        // - here
+        // - update-openapi-document in libs/clients/university-application/bifrost-university/project.json
+        // - UniversityGatewayBifrostUniversity in infra/src/dsl/xroad.ts (run "yarn charts islandis")
         'XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH',
         'IS-DEV/EDU/12345/TODO-Protected/umsoknir-v1',
       ),
