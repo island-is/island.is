@@ -28,6 +28,71 @@ const capitalize = (value: string) => {
   return value[0].toUpperCase() + value.slice(1)
 }
 
+interface FileInputProps {
+  setFileData: (fileData: Data) => void
+}
+
+const FileInput = ({ setFileData }: FileInputProps) => {
+  const sdk = useSDK<PageExtensionSDK>()
+  const [loading, setLoading] = useState(false)
+
+  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event?.target?.files?.[0]
+    if (!file) {
+      return
+    }
+
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      const workbook = XLSX.read(e.target.result, { type: 'binary' })
+
+      // In case there are multiple tabs in the excel file we ask which one to open
+      if (workbook.SheetNames.length > 1) {
+        sdk.dialogs
+          .openPrompt({
+            title: 'Select tab',
+            message: 'Enter tab name',
+          })
+          .then((value) => {
+            let sheet = workbook.Sheets[workbook.SheetNames[0]]
+
+            if (
+              typeof value === 'string' &&
+              workbook.SheetNames.includes(value)
+            ) {
+              sheet = workbook.Sheets[value]
+            }
+
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 })
+            setFileData(jsonData as Data)
+            setLoading(false)
+          })
+      } else {
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 })
+        setFileData(jsonData as Data)
+        setLoading(false)
+      }
+    }
+
+    reader.onerror = () => {
+      setLoading(false)
+    }
+
+    reader.readAsBinaryString(file)
+
+    setLoading(true)
+  }
+
+  return (
+    <Flex>
+      <input type="file" accept=".xlsx" onChange={onFileChange} />
+      {loading && <Spinner />}
+    </Flex>
+  )
+}
+
 const ContentImportScreen = () => {
   const sdk = useSDK<PageExtensionSDK>()
   const cma = useCMA()
@@ -38,6 +103,8 @@ const ContentImportScreen = () => {
     useState<typeof CONTENT_TYPES[number]>('price')
   const [tagOptions, setTagOptions] = useState([])
   const [selectedTag, setSelectedTag] = useState(null)
+  const [selectedSheetName, setSelectedSheetName] = useState<string>('')
+  const [sheetNames, setSheetNames] = useState([])
   const [fieldMapping, setFieldMapping] = useState<
     { from: string; to: string | null }[]
   >([])
@@ -103,35 +170,6 @@ const ContentImportScreen = () => {
     fetchTags()
   }, [cma.tag])
 
-  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event?.target?.files?.[0]
-    if (!file) {
-      return
-    }
-
-    const reader = new FileReader()
-
-    reader.onload = (e) => {
-      const workbook = XLSX.read(e.target.result, { type: 'binary' })
-      /* Get the first sheet */
-      const sheetName = workbook.SheetNames[0]
-      const sheet = workbook.Sheets[sheetName]
-
-      /* Convert the sheet data to JSON */
-      const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 })
-      setData(jsonData as Data)
-      setLoadingFile(false)
-    }
-
-    reader.onerror = () => {
-      setLoadingFile(false)
-    }
-
-    reader.readAsBinaryString(file)
-
-    setLoadingFile(true)
-  }
-
   const headCells = data?.[0] ?? []
   const bodyRows =
     data?.slice(1)?.filter((row) => row?.some((text) => text)) ?? []
@@ -186,10 +224,22 @@ const ContentImportScreen = () => {
           </FormControl>
         </Flex>
 
-        <Flex>
-          <input type="file" accept=".xlsx" onChange={onFileChange} />
-          {loadingFile && <Spinner />}
-        </Flex>
+        <FileInput setFileData={setData} />
+
+        {sheetNames.length > 0 && (
+          <Select
+            value={selectedSheetName}
+            onChange={(ev) => {
+              setSelectedSheetName(ev.target.value)
+            }}
+          >
+            {sheetNames.map((name) => (
+              <Select.Option key={name} value={name}>
+                {name}
+              </Select.Option>
+            ))}
+          </Select>
+        )}
 
         <Stack flexDirection="column" spacing="spacingL">
           {headCells.length > 0 &&
@@ -276,16 +326,16 @@ const ContentImportScreen = () => {
         <Table>
           <Table.Head>
             <Table.Row>
-              {headCells.map((text) => (
-                <Table.Cell key={text}>{text}</Table.Cell>
+              {headCells.map((text, index) => (
+                <Table.Cell key={index}>{text}</Table.Cell>
               ))}
             </Table.Row>
           </Table.Head>
           <Table.Body>
             {bodyRows.map((row, index) => (
               <Table.Row key={index}>
-                {(row ?? []).map((text) => (
-                  <Table.Cell key={text}>{text}</Table.Cell>
+                {(row ?? []).map((text, index) => (
+                  <Table.Cell key={index}>{text}</Table.Cell>
                 ))}
               </Table.Row>
             ))}
