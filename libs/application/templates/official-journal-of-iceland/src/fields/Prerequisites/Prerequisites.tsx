@@ -1,22 +1,19 @@
-import { Text, Box, Button, Checkbox } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 
-import React, { FC, useCallback, useEffect, useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
-import { m } from '../../lib/messages'
-import { FormWrap } from '../../components/FormWrap/FormWrap'
+import { useMutation } from '@apollo/client'
 import {
   SUBMIT_APPLICATION,
   UPDATE_APPLICATION,
 } from '@island.is/application/graphql'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
-import { useMutation } from '@apollo/client'
+import { DefaultEvents } from '@island.is/application/types'
+import { useCallback } from 'react'
+import { FormWrap } from '../../components/FormWrap/FormWrap'
+import { useFormatMessage } from '../../hooks'
+import { general, prerequisites } from '../../lib/messages'
+import { OJOIFieldBaseProps } from '../../lib/types'
 
-export const Prerequisites: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-  refetch,
-}) => {
-  const { locale, formatMessage } = useLocale()
+export const Prerequisites = ({ application, refetch }: OJOIFieldBaseProps) => {
+  const { f, locale } = useFormatMessage(application)
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
@@ -75,7 +72,7 @@ export const Prerequisites: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       footer={{
         prevButton: (
           <Button variant="ghost" onClick={onGoBack} preTextIcon="arrowBack">
-            {formatText(m.overview, application, formatMessage)}
+            {f(prerequisites.button.label)}
           </Button>
         ),
         nextButton: (
@@ -85,7 +82,7 @@ export const Prerequisites: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             onClick={onContinue}
             icon="arrowForward"
           >
-            {formatText(m.continue, application, formatMessage)}
+            {f(general.continue)}
           </Button>
         ),
       }}
@@ -93,28 +90,17 @@ export const Prerequisites: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
         <Box>
           <Text variant="h2" marginBottom={2}>
-            {formatText(m.prerequisitesFormTitle, application, formatMessage)}
+            {f(prerequisites.general.formTitle)}
           </Text>
           <Text marginBottom={2}>
-            {formatText(
-              m.prerequisitesSectionDescriptionIntro,
-              application,
-              formatMessage,
-            )}
-          </Text>
-          <Text marginBottom={2}>
-            {formatText(
-              m.prerequisitesSectionDescriptionMain,
-              application,
-              formatMessage,
-            )}
-          </Text>
-          <Text marginBottom={4}>
-            {formatText(
-              m.prerequisitesSectionDescriptionFinal,
-              application,
-              formatMessage,
-            )}
+            {f(prerequisites.general.formIntro, {
+              br: (
+                <>
+                  <br />
+                  <br />
+                </>
+              ),
+            })}
           </Text>
           <Box
             padding={3}
@@ -124,11 +110,7 @@ export const Prerequisites: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           >
             <Checkbox
               // large
-              label={formatText(
-                m.prerequisitesCheckboxLabel,
-                application,
-                formatMessage,
-              )}
+              label={f(prerequisites.checkbox.label)}
               checked={application.answers?.approveExternalData ? true : false}
               onChange={(e) => updateAnswers(e.target.checked)}
             />
