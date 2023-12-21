@@ -11,6 +11,26 @@ import {
   UniversityOfIcelandApplicationClientConfig,
   UniversityOfIcelandApplicationClientModule,
 } from '@island.is/clients/university-application/university-of-iceland'
+import {
+  UniversityOfAkureyriApplicationClientConfig,
+  UniversityOfAkureyriApplicationClientModule,
+} from '@island.is/clients/university-application/university-of-akureyri'
+import {
+  BifrostUniversityApplicationClientConfig,
+  BifrostUniversityApplicationClientModule,
+} from '@island.is/clients/university-application/bifrost-university'
+import {
+  IcelandUniversityOfTheArtsApplicationClientConfig,
+  IcelandUniversityOfTheArtsApplicationClientModule,
+} from '@island.is/clients/university-application/iceland-university-of-the-arts'
+import {
+  AgriculturalUniversityOfIcelandApplicationClientConfig,
+  AgriculturalUniversityOfIcelandApplicationClientModule,
+} from '@island.is/clients/university-application/agricultural-university-of-iceland'
+import {
+  HolarUniversityApplicationClientConfig,
+  HolarUniversityApplicationClientModule,
+} from '@island.is/clients/university-application/holar-university'
 import { UniversityGatewayWorkerService } from './worker.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../../environments'
@@ -41,6 +61,11 @@ import { LoggingModule } from '@island.is/logging'
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
+    UniversityOfAkureyriApplicationClientModule,
+    BifrostUniversityApplicationClientModule,
+    IcelandUniversityOfTheArtsApplicationClientModule,
+    AgriculturalUniversityOfIcelandApplicationClientModule,
+    HolarUniversityApplicationClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -48,6 +73,11 @@ import { LoggingModule } from '@island.is/logging'
         XRoadConfig,
         ReykjavikUniversityApplicationClientConfig,
         UniversityOfIcelandApplicationClientConfig,
+        UniversityOfAkureyriApplicationClientConfig,
+        BifrostUniversityApplicationClientConfig,
+        IcelandUniversityOfTheArtsApplicationClientConfig,
+        AgriculturalUniversityOfIcelandApplicationClientConfig,
+        HolarUniversityApplicationClientConfig,
       ],
     }),
   ],

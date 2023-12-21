@@ -6,6 +6,11 @@ import { ProgramCourse } from '../program/model/programCourse'
 import { Program } from '../program/model/program'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
+import { UniversityOfAkureyriApplicationClient } from '@island.is/clients/university-application/university-of-akureyri'
+import { BifrostUniversityApplicationClient } from '@island.is/clients/university-application/bifrost-university'
+import { IcelandUniversityOfTheArtsApplicationClient } from '@island.is/clients/university-application/iceland-university-of-the-arts'
+import { AgriculturalUniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/agricultural-university-of-iceland'
+import { HolarUniversityApplicationClient } from '@island.is/clients/university-application/holar-university'
 import { ICourse, UniversityNationalIds } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import { Op } from 'sequelize'
@@ -14,8 +19,12 @@ import { Op } from 'sequelize'
 export class InternalCourseService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
-
     private readonly universityOfIcelandClient: UniversityOfIcelandApplicationClient,
+    private readonly universityOfAkureyriClient: UniversityOfAkureyriApplicationClient,
+    private readonly bifrostUniversityClient: BifrostUniversityApplicationClient,
+    private readonly icelandUniversityOfTheArtsClient: IcelandUniversityOfTheArtsApplicationClient,
+    private readonly agriculturalUniversityOfIcelandClient: AgriculturalUniversityOfIcelandApplicationClient,
+    private readonly holarUniversityClient: HolarUniversityApplicationClient,
 
     @InjectModel(University)
     private universityModel: typeof University,
@@ -41,6 +50,32 @@ export class InternalCourseService {
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         (externalId: string) =>
           this.universityOfIcelandClient.getCourses(externalId),
+      ),
+      await this.doUpdateCoursesForUniversity(
+        UniversityNationalIds.UNIVERSITY_OF_AKUREYRI,
+        (externalId: string) =>
+          this.universityOfAkureyriClient.getCourses(externalId),
+      ),
+      // TODO add back when x-road is ready
+      // await this.doUpdateCoursesForUniversity(
+      //   UniversityNationalIds.BIFROST_UNIVERSITY,
+      //   (externalId: string) =>
+      //     this.bifrostUniversityClient.getCourses(externalId),
+      // ),
+      await this.doUpdateCoursesForUniversity(
+        UniversityNationalIds.ICELAND_UNIVERSITY_OF_THE_ARTS,
+        (externalId: string) =>
+          this.icelandUniversityOfTheArtsClient.getCourses(externalId),
+      ),
+      await this.doUpdateCoursesForUniversity(
+        UniversityNationalIds.AGRICULTURAL_UNIVERSITY_OF_ICELAND,
+        (externalId: string) =>
+          this.agriculturalUniversityOfIcelandClient.getCourses(externalId),
+      ),
+      await this.doUpdateCoursesForUniversity(
+        UniversityNationalIds.HOLAR_UNIVERSITY,
+        (externalId: string) =>
+          this.holarUniversityClient.getCourses(externalId),
       ),
     ]).catch((e) => {
       logger.error('Failed to update courses, reason:', e)
