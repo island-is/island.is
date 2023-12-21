@@ -188,6 +188,7 @@ const template: ApplicationTemplate<
             },
             {
               target: States.REVIEW,
+              actions: [ApiActions.initReview],
             },
           ],
         },

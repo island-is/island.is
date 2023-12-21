@@ -127,10 +127,4 @@ export class WorkMachinesService {
   async getMachineDetails(auth: User, id: string): Promise<MachineDto> {
     return this.machineService.getMachineDetail(auth, id)
   }
-
-  async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
-    return (
-      (await this.machineService.isPaymentRequired(auth, regNumber)) || false
-    )
-  }
 }

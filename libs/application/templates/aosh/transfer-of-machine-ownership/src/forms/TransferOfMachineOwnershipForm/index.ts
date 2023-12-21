@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/ui-forms'
 import { conclusion, externalData, payment } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
+import { isPaymentRequired } from '../../utils/isPaymentRequired'
 
 export const TransferOfMachineOwnershipForm: Form = buildForm({
   id: 'TransferOfMachineOwnershipFormDraft',

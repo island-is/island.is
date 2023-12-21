@@ -3,9 +3,11 @@ import {
   buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { information } from '../../../lib/messages'
+import { conclusion, information } from '../../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const buyerSubSection = buildSubSection({
   id: 'buyer',
@@ -34,6 +36,19 @@ export const buyerSubSection = buildSubSection({
           width: 'half',
           required: true,
         }),
+        // buildSubmitField({
+        //   id: 'submit',
+        //   placement: 'footer',
+        //   title: conclusion.general.title,
+        //   refetchApplicationAfterSubmit: true,
+        //   actions: [
+        //     {
+        //       event: DefaultEvents.SUBMIT,
+        //       name: conclusion.general.title,
+        //       type: 'primary',
+        //     },
+        //   ],
+        // }),
       ],
     }),
   ],

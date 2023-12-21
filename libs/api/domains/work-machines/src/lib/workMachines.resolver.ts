@@ -94,7 +94,11 @@ export class WorkMachinesResolver {
     return this.workMachinesService.getWorkMachineById(user, input)
   }
 
-  @Scopes(ApiScope.vinnueftirlitid)
+  @Scopes(
+    ApiScope.vinnueftirlitid,
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+  )
   @Query(() => MachineDetails)
   @Audit()
   async getWorkerMachineDetails(
@@ -102,15 +106,5 @@ export class WorkMachinesResolver {
     @Args('id') id: string,
   ) {
     return this.workMachinesService.getMachineDetails(auth, id)
-  }
-
-  @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => Boolean)
-  @Audit()
-  async getWorkerMachinePaymentRequired(
-    @CurrentUser() auth: User,
-    @Args('regNumber') regNumber: string,
-  ) {
-    return this.workMachinesService.isPaymentRequired(auth, regNumber)
   }
 }

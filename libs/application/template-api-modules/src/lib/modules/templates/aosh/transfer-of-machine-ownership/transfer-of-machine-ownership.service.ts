@@ -12,6 +12,7 @@ import { generateRequestReviewEmail } from './emailGenerators/requestReviewEmail
 import {
   getRecipientBySsn,
   getRecipients,
+  isPaymentRequiredForOwnerChange,
 } from './transfer-of-machine-ownership.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -163,31 +164,39 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
-    // 1. Validate payment
-
-    // 1a. Make sure a paymentUrl was created
-    const { paymentUrl, id: paymentId } = application.externalData.createCharge
-      .data as {
-      paymentUrl: string
-      id: string
-    }
-
-    if (!paymentUrl) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
-
-    // 1b. Make sure payment is fulfilled (has been paid)
-    const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
-    if (!payment?.fulfilled) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
-
+    console.log('INIT REVIEW !!!!!!!!!!!!!!!!!!!!!!!!')
     const answers = application.answers as TransferOfMachineOwnershipAnswers
+    // 1. Validate payment
+    const isPaymentRequired = isPaymentRequiredForOwnerChange(
+      application,
+      answers.machine.id || answers.pickMachine.id,
+    )
+    // 1a. Make sure a paymentUrl was created
+    const paymentData = application.externalData?.createCharge?.data as
+      | {
+          paymentUrl: string
+          id: string
+        }
+      | undefined
+    if (isPaymentRequired && paymentData) {
+      if (!paymentData?.paymentUrl) {
+        throw new Error(
+          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+        )
+      }
+
+      // 1b. Make sure payment is fulfilled (has been paid)
+      const payment: { fulfilled: boolean } | undefined =
+        await this.sharedTemplateAPIService.getPaymentStatus(
+          auth,
+          application.id,
+        )
+      if (!payment?.fulfilled) {
+        throw new Error(
+          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+        )
+      }
+    }
     const machineId = answers.machine.id || answers.pickMachine.id
     if (!machineId) {
       throw new Error('Ekki er búið að velja vél')
@@ -199,7 +208,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       sellerNationalId: answers.seller.nationalId,
       delegateNationalId: auth.nationalId || answers.seller.nationalId,
       dateOfOwnerChange: new Date(),
-      paymentId: paymentId,
+      paymentId: isPaymentRequired ? paymentData?.id || '' : '',
       phoneNumber: answers.buyer.phone?.replace(/\+\d{3}/, ''),
       email: answers.buyer.email,
     }

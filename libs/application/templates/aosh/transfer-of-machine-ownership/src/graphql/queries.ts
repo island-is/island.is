@@ -20,6 +20,7 @@ query GetMachineDetails($id: String!) {
     plate
     disabled
     supervisorName
+    paymentRequiredForOwnerChange
   }
 }
 `

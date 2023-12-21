@@ -34,4 +34,5 @@ export type MachineDto = {
   regNumber?: string
   supervisorName?: string
   status?: string
+  paymentRequiredForOwnerChange?: boolean
 }

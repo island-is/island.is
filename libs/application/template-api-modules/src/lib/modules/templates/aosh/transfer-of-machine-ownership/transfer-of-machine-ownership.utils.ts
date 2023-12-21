@@ -1,6 +1,9 @@
 import { join } from 'path'
 import { EmailRecipient, EmailRole } from './types'
 import { TransferOfMachineOwnershipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
+import { getValueViaPath } from '@island.is/application/core'
+import { ApplicationWithAttachments } from '@island.is/application/types'
+import { MachineDto } from '@island.is/clients/work-machines'
 export const getApplicationPruneDateStr = (
   applicationCreated: Date,
 ): string => {
@@ -95,4 +98,20 @@ export const getRoleNameById = (roleId: EmailRole): string | undefined => {
     default:
       undefined
   }
+}
+
+export const isPaymentRequiredForOwnerChange = (
+  application: ApplicationWithAttachments,
+  machineId: string,
+): boolean => {
+  const machines = getValueViaPath(
+    application.externalData,
+    'machinesList.data',
+    [],
+  ) as MachineDto[]
+
+  return (
+    machines.find((machine) => machine.id === machineId)
+      ?.paymentRequiredForOwnerChange || true
+  )
 }
