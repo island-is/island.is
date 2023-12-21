@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { FormWrap } from '../../components/FormWrap/FormWrap'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
-import { m } from '../../lib/messages'
+import { newCase as m } from '../../lib/messages'
 import { OJOIFieldBaseProps } from '../../lib/types'
 import { TemplateModal } from './TemplateModal'
 export const NewCase = ({ application }: OJOIFieldBaseProps) => {
@@ -104,7 +104,7 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
         header={{
           children: (
             <Text variant="h2" as="h1">
-              {f(m.newCaseFormTitle)}
+              {f(m.general.formTitle)}
             </Text>
           ),
           button: (
@@ -114,12 +114,12 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
               icon="copy"
               onClick={() => setToggle((prev) => !prev)}
             >
-              {f(m.copyOlderApplicationTemplate)}
+              {f(m.buttons.copyOldCase.label)}
             </Button>
           ),
         }}
       >
-        <Text marginBottom={4}>{f(m.newCaseIntro)}</Text>
+        <Text marginBottom={4}>{f(m.general.formIntro)}</Text>
         <FormGroup>
           <Box width="half">
             <SelectController
@@ -127,8 +127,8 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
               id="department"
               name="department"
               disabled={departments?.length === 1}
-              placeholder={f(m.chooseDepartment)}
-              label={f(m.department)}
+              placeholder={f(m.inputs.department.placeholder)}
+              label={f(m.inputs.department.label)}
               options={departmentOptions}
               defaultValue={newCase.department}
               onSelect={(value) =>
@@ -146,9 +146,9 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
               backgroundColor="blue"
               id="category"
               name="category"
-              label={f(m.publishingType)}
+              label={f(m.inputs.publishingType.label)}
               defaultValue={newCase.department}
-              placeholder={f(m.choosePublishingType)}
+              placeholder={f(m.inputs.publishingType.placeholder)}
               options={catOptions}
               onSelect={(value) => {
                 if (value.value)
@@ -162,10 +162,10 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
           <Box width="full">
             <Input
               backgroundColor="blue"
-              label={f(m.caseTitle)}
+              label={f(m.inputs.nameOfCase.label)}
               textarea
               rows={4}
-              placeholder={f(m.chooseCaseTitle)}
+              placeholder={f(m.inputs.nameOfCase.placeholder)}
               onChange={(e) =>
                 setNewCase({ ...newCase, title: e.target.value })
               }
@@ -174,16 +174,16 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
             />
           </Box>
         </FormGroup>
-        <FormGroup title={f(m.materialForPublication)}>
+        <FormGroup title={f(m.materialForPublicationChapter.title)}>
           <Box width="half">
             <SelectController
               size="sm"
               backgroundColor="blue"
               id="category"
               name="category"
-              label={f(m.contentTemplate)}
+              label={f(m.inputs.template.label)}
               defaultValue={newCase.template}
-              placeholder={f(m.chooseContentTemplate)}
+              placeholder={f(m.inputs.template.placeholder)}
               options={templateOptions}
               onSelect={(value) => {
                 if (value.value)
@@ -207,8 +207,8 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
           </Box>
         </FormGroup>
         <FormGroup
-          title={f(m.textOfSignatureSectionTitle)}
-          description={f(m.textOfSignatureSectionDescription)}
+          title={f(m.signatureChapter.title)}
+          description={f(m.signatureChapter.intro)}
         >
           <Box
             display="flex"
@@ -222,8 +222,8 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
                 backgroundColor="blue"
                 id="category"
                 name="category"
-                label={f(m.typeOfSignature)}
-                placeholder={f(m.chooseTypeOfSignature)}
+                label={f(m.inputs.signatureType.label)}
+                placeholder={f(m.inputs.signatureType.placeholder)}
                 options={signatureTypeOptions}
                 value={{
                   label: newCase.signatureType as string,
@@ -246,7 +246,7 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
                 icon="reload"
                 iconType="outline"
               >
-                {f(m.copyLastSignature)}
+                {f(m.buttons.copyLastSignature.label)}
               </Button>
             </Box>
           </Box>

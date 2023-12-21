@@ -19,6 +19,18 @@ export const newCase = {
       description: 'Title of the new case section',
     },
   }),
+  modal: defineMessages({
+    title: {
+      id: 'ojoi.application:newCase.modal.title',
+      defaultMessage: 'Mál til afritunar',
+      description: 'Title of the copy old case modal',
+    },
+    searchPlaceholder: {
+      id: 'ojoi.application:newCase.modal.searchPlaceholder',
+      defaultMessage: 'Sláðu inn leitarorð',
+      description: 'Placeholder for the search input',
+    },
+  }),
   materialForPublicationChapter: defineMessages({
     title: {
       id: 'ojoi.application:newCase.materialForPublicationChapter.title',
@@ -32,8 +44,8 @@ export const newCase = {
       defaultMessage: 'Texti undirritunarkafla',
       description: 'Title of the signature chapter',
     },
-    description: {
-      id: 'ojoi.application:newCase.signatureChapter.description',
+    intro: {
+      id: 'ojoi.application:newCase.signatureChapter.intro',
       defaultMessage: 'Undirritaðu með því að skrifa nafn þitt hér að neðan',
       description:
         'Hér má velja þá uppsetningu undirrritana sem best á við. Mikilvægt er að tryggja samræmi við frumtexta, til dæmis varðandi stað og dagsetningu.',
@@ -47,9 +59,9 @@ export const newCase = {
         description: 'Label for the copy old case button',
       },
     }),
-    copyLastSignatureButton: defineMessages({
+    copyLastSignature: defineMessages({
       label: {
-        id: 'ojoi.application:newCase.buttons.copyLastSignatureButton.label',
+        id: 'ojoi.application:newCase.buttons.copyLastSignature.label',
         defaultMessage: 'Afrita síðustu undirskrift',
         description: 'Label for the copy last signature button',
       },

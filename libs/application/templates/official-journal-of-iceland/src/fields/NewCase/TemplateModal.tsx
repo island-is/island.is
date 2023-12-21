@@ -15,7 +15,7 @@ import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { SEARCH_CASE_TEMPLATES } from '../../graphql/queries'
-import { m } from '../../lib/messages'
+import { general, newCase } from '../../lib/messages'
 import * as styles from './NewCase.css'
 
 type Props = {
@@ -89,7 +89,7 @@ export const TemplateModal = ({
       <Box className={styles.modalContent}>
         <Box className={styles.modalContentInner}>
           <Text marginBottom={4} variant="h2">
-            {f(m.caseForCopying)}
+            {f(newCase.modal.title)}
           </Text>
           <Box marginBottom={2} display="flex" justifyContent="flexStart">
             <Input
@@ -97,7 +97,7 @@ export const TemplateModal = ({
               onChange={(e) => setFilter(e.target.value)}
               icon={{ name: 'search' }}
               size="xs"
-              placeholder={f(m.searchPlaceholder)}
+              placeholder={f(newCase.modal.searchPlaceholder)}
               name="template-filter"
             />
           </Box>
@@ -126,7 +126,7 @@ export const TemplateModal = ({
             justifyContent="spaceBetween"
           >
             <Button variant="ghost" onClick={onClose}>
-              {f(m.cancel)}
+              {f(general.cancel)}
             </Button>
             <Button
               disabled={!selectedTemplateId}
@@ -140,7 +140,7 @@ export const TemplateModal = ({
                 }
               }}
             >
-              {f(m.confirm)}
+              {f(general.confirm)}
             </Button>
           </Box>
         </Box>
