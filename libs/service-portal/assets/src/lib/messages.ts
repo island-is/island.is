@@ -844,7 +844,7 @@ export const vehicleMessage = defineMessages({
   },
   mileageTagText: {
     id: 'sp.vehicles:mileage-tag-text',
-    defaultMessage: 'Skrá kílómetrastöðu',
+    defaultMessage: 'Kílómetragjald',
   },
   mileageAlreadyRegistered: {
     id: 'sp.vehicles:mileage-already-registered',

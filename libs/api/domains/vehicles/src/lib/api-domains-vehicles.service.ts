@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common'
 import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
@@ -30,6 +35,8 @@ import isSameDay from 'date-fns/isSameDay'
 
 const LOG_CATEGORY = 'vehicle-service'
 const UNAUTHORIZED_LOG = 'Vehicle user authorization failed'
+const UNAUTHORIZED_OWNERSHIP_LOG =
+  'Vehicle user ownership does not allow registration'
 
 const isReadDateToday = (d?: Date) => {
   if (!d) {
@@ -257,7 +264,13 @@ export class VehiclesService {
       auth,
       input.permno,
     )
-    if (!isAllowed) return null
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'postMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
 
     const res = await this.getMileageWithAuth(auth).rootPost({
       postMileageReadingModel: input,
@@ -276,7 +289,13 @@ export class VehiclesService {
       auth,
       input.permno,
     )
-    if (!isAllowed) return null
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'putMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
 
     const res = await this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,
