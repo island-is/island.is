@@ -6,7 +6,6 @@ import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
   completedCaseStates,
   isInvestigationCase,
   isRestrictionCase,
@@ -30,6 +29,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
+  CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'

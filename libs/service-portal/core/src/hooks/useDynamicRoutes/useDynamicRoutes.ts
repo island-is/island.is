@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
 import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
+import { DynamicPaths } from './paths'
 
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
@@ -49,17 +49,17 @@ export const useDynamicRoutes = () => {
     const tabData = data?.getCustomerTapControl
 
     if (tabData?.RecordsTap) {
-      dynamicPathArray.push(ServicePortalPath.FinanceTransactions)
-      dynamicPathArray.push(ServicePortalPath.FinanceTransactionPeriods)
+      dynamicPathArray.push(DynamicPaths.FinanceTransactions)
+      dynamicPathArray.push(DynamicPaths.FinanceTransactionPeriods)
     }
     if (tabData?.employeeClaimsTap) {
-      dynamicPathArray.push(ServicePortalPath.FinanceEmployeeClaims)
+      dynamicPathArray.push(DynamicPaths.FinanceEmployeeClaims)
     }
     if (tabData?.localTaxTap) {
-      dynamicPathArray.push(ServicePortalPath.FinanceLocalTax)
+      dynamicPathArray.push(DynamicPaths.FinanceLocalTax)
     }
     if (tabData?.schedulesTap) {
-      dynamicPathArray.push(ServicePortalPath.FinanceSchedule)
+      dynamicPathArray.push(DynamicPaths.FinanceSchedule)
     }
 
     /**
@@ -68,7 +68,7 @@ export const useDynamicRoutes = () => {
      */
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
     if (licenseBookData?.book?.id) {
-      dynamicPathArray.push(ServicePortalPath.EducationDrivingLessons)
+      dynamicPathArray.push(DynamicPaths.EducationDrivingLessons)
     }
 
     // Combine routes, no duplicates.
