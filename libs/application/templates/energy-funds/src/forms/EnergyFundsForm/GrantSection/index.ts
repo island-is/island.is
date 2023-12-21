@@ -26,7 +26,6 @@ export const GrantSection = buildSection({
           variant: 'currency',
           readOnly: true,
           defaultValue: (application: Application) => {
-            console.log('application', application)
             const vehicleGrantAmount = getValueViaPath(
               application.answers,
               'selectVehicle.grantAmount',

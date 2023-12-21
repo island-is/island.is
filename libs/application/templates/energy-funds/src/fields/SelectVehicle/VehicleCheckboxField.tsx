@@ -45,6 +45,13 @@ export const VehicleCheckboxField: FC<
     if (currentVehicle) {
       setValue('selectVehicle.plate', currentVehicle.permno || '')
       setValue('selectVehicle.grantAmount', currentVehicle.vehicleGrant)
+      setValue(
+        'selectVehicle.newRegistrationDate',
+        currentVehicle.newRegistrationDate
+          ? format(new Date(currentVehicle.newRegistrationDate), 'dd.MM.yyyy')
+          : '',
+      )
+      setValue('selectVehicle.type', currentVehicle.make)
     }
   }, [currentVehicle])
 
@@ -78,7 +85,9 @@ export const VehicleCheckboxField: FC<
                     {
                       amount: vehicle.vehicleGrant
                         ? `${formatIsk(vehicle.vehicleGrant)}`
-                        : '',
+                        : formatMessage(
+                            information.labels.pickVehicle.carNotEligable,
+                          ),
                     },
                   )}
                 </Tag>

@@ -62,7 +62,7 @@ export const userInformationSubSection = buildSubSection({
           required: true,
         }),
         buildTextField({
-          id: 'selectVehicle.firstRegistrationDate',
+          id: 'selectVehicle.newRegistrationDate',
           title: information.labels.vehicle.registrationDate,
           width: 'half',
           readOnly: true,
@@ -72,8 +72,8 @@ export const userInformationSubSection = buildSubSection({
               application.answers,
             ) as VehiclesCurrentVehicle
             return (
-              vehicle.firstRegistrationDate &&
-              format(new Date(vehicle.firstRegistrationDate), 'dd.MM.yyyy')
+              vehicle.newRegistrationDate &&
+              format(new Date(vehicle.newRegistrationDate), 'dd.MM.yyyy')
             )
           },
         }),
