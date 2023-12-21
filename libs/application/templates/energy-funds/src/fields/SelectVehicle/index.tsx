@@ -18,7 +18,7 @@ export const SelectVehicle: FC<React.PropsWithChildren<FieldBaseProps>> = (
     : []
   return (
     <Box paddingTop={2}>
-      {vehicles.length > 4 ? (
+      {vehicles.length > 5 ? (
         <VehicleSelectField currentVehicleList={vehicles} {...props} />
       ) : (
         <VehicleCheckboxField currentVehicleList={vehicles} {...props} />

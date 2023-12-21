@@ -146,14 +146,47 @@ export const information = {
         description: 'coOwner add label',
       },
       remove: {
-        id: 'ta.cov.application:information.labels.coOwner.remove',
+        id: 'ta.ccov.application:information.labels.coOwner.remove',
         defaultMessage: 'Fjarlægja meðeiganda',
         description: 'Co-owner remove label',
       },
       identicalError: {
-        id: 'ta.cov.application:information.labels.coOwner.identicalError',
+        id: 'ta.ccov.application:information.labels.coOwner.identicalError',
         defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
         description: 'coOwner identical error',
+      },
+    }),
+    vehicle: defineMessages({
+      sectionTitle: {
+        id: 'ta.ccov.application:information.labels.vehicle.sectionTitle',
+        defaultMessage: 'Ökutæki',
+        description: 'Vehicle section title',
+      },
+      title: {
+        id: 'ta.ccov.application:information.labels.vehicle.title',
+        defaultMessage: 'Ökutæki',
+        description: 'Vehicle title',
+      },
+      description: {
+        id: 'ta.ccov.application:information.labels.vehicle.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Vehicle description',
+      },
+      plate: {
+        id: 'ta.ccov.application:information.labels.vehicle.plate',
+        defaultMessage: 'Númer ökutækis',
+        description: 'Vehicle plate number label',
+      },
+      type: {
+        id: 'ta.ccov.application:information.labels.vehicle.type',
+        defaultMessage: 'Tegund ökutækis',
+        description: 'Vehicle type label',
+      },
+      mileage: {
+        id: 'ta.ccov.application:information.labels.vehicle.mileage',
+        defaultMessage: 'Kílómetrar',
+        description: 'Mileage for vehicle label',
       },
     }),
   },

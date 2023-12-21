@@ -21,6 +21,7 @@ describe('LimitedAccess Write Case File Guard', () => {
     CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
     CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
     CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
   ]
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen

@@ -90,14 +90,15 @@ export const VehicleSelectField: FC<
             !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
             !!response?.vehicleOwnerchangeChecksByPermno
               ?.validationErrorMessages?.length
-          setPlate(disabled ? '' : currentVehicle.permno || '')
+          const permno = disabled ? '' : currentVehicle.permno || ''
 
-          setValue(
-            'pickVehicle.plate',
-            disabled ? '' : currentVehicle.permno || '',
-          )
+          setPlate(permno)
+          setValue('pickVehicle.plate', permno)
           setValue('pickVehicle.color', currentVehicle.color || undefined)
           setValue('pickVehicle.type', currentVehicle.make || undefined)
+          if (permno) setValue('vehicleInfo.plate', permno)
+          if (permno) setValue('vehicleInfo.type', currentVehicle.make)
+
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
