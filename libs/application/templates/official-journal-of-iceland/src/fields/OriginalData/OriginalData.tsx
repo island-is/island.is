@@ -2,9 +2,9 @@ import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { OJOIFieldBaseProps } from '../../lib/types'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../shared'
 
 export const OriginalData = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)

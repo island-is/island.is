@@ -8,9 +8,9 @@ import { useState } from 'react'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { OJOIFieldBaseProps } from '../../lib/types'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../shared'
 
 export const AdditionsAndDocuments = ({ application }: OJOIFieldBaseProps) => {
   const [isDocuments, setIsDocuments] = useState<boolean>(true)

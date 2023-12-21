@@ -11,11 +11,10 @@ import { ChannelList } from '../../components/CommunicationChannels/ChannelList'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
+import { VERDSKRA_LINK } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { BooleanValue, OJOIFieldBaseProps } from '../../lib/types'
-import { VERDSKRA_LINK } from '../../shared'
-import { getWeekdayDates } from '../../utils/isWeekday'
-import { isValidEmail, isValidPhone } from '../../utils/validation'
+import { getWeekdayDates, isValidEmail, isValidPhone } from '../../lib/utils'
 import * as styles from './PublishingPrefrences.css'
 export type CommunicationChannel = {
   phone: string

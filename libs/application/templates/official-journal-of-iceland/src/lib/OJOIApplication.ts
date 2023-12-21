@@ -17,8 +17,8 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
-import { hasApprovedExternalData } from '../utils/hasApprovedExternalData'
 import { TemplateApiActions } from './types'
+import { hasApprovedExternalData } from './utils'
 
 export enum ApplicationStates {
   PREREQUISITS = 'prerequisites',
@@ -38,7 +38,7 @@ type Events =
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.EDIT }
 
-const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
+const OJOITemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -169,4 +169,4 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
   },
 }
 
-export default OfficalJournalOfIcelandApplicationTemplate
+export default OJOITemplate
