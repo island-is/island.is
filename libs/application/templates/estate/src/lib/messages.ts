@@ -1016,7 +1016,7 @@ export const m = defineMessages({
   },
   inheritanceAdvocateLabel: {
     id: 'es.application:inheritanceAdvocateLabel',
-    defaultMessage: 'Málsvari',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
   inheritanceUnder18Error: {
