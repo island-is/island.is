@@ -12,6 +12,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 
 import { CreateLoginRestrictionInput } from '../dto/loginRestriction.input'
 import { LoginRestriction } from '../models/loginRestriction.model'
+import { LoginRestrictionService } from '../services/loginRestriction.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -19,17 +20,15 @@ import { LoginRestriction } from '../models/loginRestriction.model'
 export class LoginRestrictionResolver {
   private loginRestriction: Record<string, LoginRestriction> = {}
 
+  constructor(
+    private readonly loginRestrictionsService: LoginRestrictionService,
+  ) {}
+
   @Query(() => LoginRestriction, {
     name: 'authLoginRestriction',
   })
   getLoginRestriction(@CurrentUser() user: User): Promise<LoginRestriction> {
-    const restriction = this.loginRestriction[user.nationalId]
-
-    return Promise.resolve(
-      restriction || {
-        restricted: false,
-      },
-    )
+    return this.loginRestrictionsService.getLoginRestriction(user)
   }
 
   @Mutation(() => LoginRestriction, { name: 'createAuthLoginRestriction' })
@@ -37,18 +36,14 @@ export class LoginRestrictionResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateLoginRestrictionInput,
   ): Promise<LoginRestriction> {
-    this.loginRestriction[user.nationalId] = {
-      restricted: true,
-      until: input.until,
-    }
-
-    return Promise.resolve(this.loginRestriction[user.nationalId])
+    return this.loginRestrictionsService.createLoginRestriction(
+      user,
+      input.until,
+    )
   }
 
   @Mutation(() => Boolean, { name: 'removeAuthLoginRestriction' })
   removeLoginRestriction(@CurrentUser() user: User): Promise<boolean> {
-    delete this.loginRestriction[user.nationalId]
-
-    return Promise.resolve(true)
+    return this.loginRestrictionsService.removeLoginRestriction(user)
   }
 }
