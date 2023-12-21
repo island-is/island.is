@@ -25,28 +25,24 @@ const Signees = () => {
   const [page, setPage] = useState(1)
 
   useEffect(() => {
-    if (searchTerm.length > 0) {
-      let filteredSignees = []
+    let filteredSignees: Signature[] = allSignees
 
-      filteredSignees = signees.filter((s) => {
-        return (
-          s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          s.signee.nationalId.includes(searchTerm)
-        )
-      })
+    filteredSignees = filteredSignees.filter((s) => {
+      return (
+        s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        formatNationalId(s.signee.nationalId).includes(searchTerm)
+      )
+    })
 
-      setPage(1)
-      setSignees(filteredSignees)
-    } else {
-      setSignees(allSignees)
-    }
+    setPage(1)
+    setSignees(filteredSignees)
   }, [searchTerm])
 
   return (
     <Box marginTop={7}>
       <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
 
-      <GridRow marginTop={3}>
+      <GridRow marginTop={3} marginBottom={5}>
         <GridColumn span={['12/12', '12/12', '7/12']}>
           <FilterInput
             name="searchSignee"
