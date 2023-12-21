@@ -327,9 +327,7 @@ export const PensionSupplementForm: Form = buildForm({
               width: 'half',
               placeholder:
                 pensionSupplementFormMessage.info.periodYearDefaultText,
-              options: (application: Application) => {
-                return getAvailableYears(application)
-              },
+              options: getAvailableYears(),
             }),
             buildSelectField({
               id: 'period.month',
