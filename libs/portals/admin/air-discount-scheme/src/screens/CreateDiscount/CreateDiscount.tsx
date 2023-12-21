@@ -18,6 +18,7 @@ import {
 } from './CreateDiscount.generated'
 import Modal from '../../components/Modal/Modal'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
+import { Problem, ProblemTypes } from '@island.is/react-spa/shared'
 
 const AdminCreateDiscount = () => {
   const options = [
@@ -53,7 +54,7 @@ const AdminCreateDiscount = () => {
   const [needsConnecting, setNeedsConnecting] = useState(typeOptions[0])
   const [discountCode, setDiscountCode] = useState<
     CreateExplicitDiscountCodeMutation | undefined | null
-  >(null)
+  >(undefined)
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -113,6 +114,12 @@ const AdminCreateDiscount = () => {
                     Búa til nýjan kóða
                   </Button>
                 </>
+              ) : discountCode === null ? (
+                <Problem
+                  type={ProblemTypes.notFound}
+                  title="Villa"
+                  message="Kennitala gæti verið röng eða þessi notandi er búinn með sína leggi"
+                />
               ) : (
                 <>
                   <Text variant="intro">
@@ -204,8 +211,9 @@ const AdminCreateDiscount = () => {
         show={showModal}
         onCancel={() => setShowModal(false)}
         onContinue={() => {
-          setDiscountCode(null)
+          setDiscountCode(undefined)
           setShowModal(false)
+
           createExplicitDiscountCode({
             variables: {
               input: {
@@ -218,9 +226,11 @@ const AdminCreateDiscount = () => {
                 needsConnectionFlight: needsConnecting.value,
               },
             },
-          }).then((data) => {
-            setDiscountCode(data.data ?? undefined)
           })
+            .then((data) => {
+              setDiscountCode(data.data ?? undefined)
+            })
+            .catch(() => setDiscountCode(null))
         }}
         t={{
           title: 'Búa til kóða handvirkt',
