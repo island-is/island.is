@@ -3,26 +3,13 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { CacheModule } from '@nestjs/cache-manager'
 import * as firebaseAdmin from 'firebase-admin'
 
-import {
-  NationalRegistryV3ClientConfig,
-  NationalRegistryV3ClientModule,
-} from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { EmailModule } from '@island.is/email-service'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import {
-  FeatureFlagConfig,
-  FeatureFlagModule,
-} from '@island.is/nest/feature-flags'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { QueueModule } from '@island.is/message-queue'
-import {
-  Configuration,
-  V2UsersApi,
-  V2UserTokensApi,
-} from '@island.is/clients/user-profile'
-import { UserProfileScope } from '@island.is/auth/scopes'
+import { UserProfileClientModule } from '@island.is/clients/user-profile'
 
 import { NotificationsController } from './notifications.controller'
 import { environment } from '../../../environments/environment'
@@ -60,13 +47,10 @@ import {
         },
       },
     }),
+    UserProfileClientModule,
     EmailModule.register(environment.emailOptions),
     FeatureFlagModule,
     NationalRegistryV3ClientModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [XRoadConfig, NationalRegistryV3ClientConfig, FeatureFlagConfig],
-    }),
   ],
   controllers: [
     NotificationsController,
@@ -89,35 +73,6 @@ import {
               ),
             }),
     },
-    ...[
-      {
-        api: V2UsersApi,
-        name: 'services-user-notification-v2',
-      },
-      {
-        api: V2UserTokensApi,
-        name: 'services-user-token-profile-v2',
-      },
-    ].map(({ api, name }) => ({
-      provide: api,
-      useFactory: () =>
-        new api(
-          new Configuration({
-            basePath: environment.userProfileServiceBasePath,
-            fetchApi: createEnhancedFetch({
-              name: name,
-              circuitBreaker: true,
-              autoAuth: {
-                issuer: environment.identityServerPath,
-                clientId: environment.notificationsClientId,
-                clientSecret: environment.notificationsClientSecret,
-                scope: [UserProfileScope.admin],
-                mode: 'auto',
-              },
-            }),
-          }),
-        ),
-    })),
     {
       provide: IS_RUNNING_AS_WORKER,
       useValue: environment.isWorker,

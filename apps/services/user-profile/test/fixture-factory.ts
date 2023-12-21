@@ -57,7 +57,7 @@ export class FixtureFactory {
   }) {
     const verificationModel = this.get(SmsVerification)
 
-    return await verificationModel.create<SmsVerification>({
+    return verificationModel.create<SmsVerification>({
       nationalId,
       mobilePhoneNumber,
       smsCode,
@@ -69,7 +69,7 @@ export class FixtureFactory {
   async createUserDeviceToken({ nationalId, deviceToken }) {
     const userDeviceTokenModel = this.get(UserDeviceTokens)
 
-    return await userDeviceTokenModel.create<UserDeviceTokens>({
+    return userDeviceTokenModel.create<UserDeviceTokens>({
       nationalId,
       deviceToken,
     })

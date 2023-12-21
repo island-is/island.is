@@ -5,7 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
 import { isDefined } from './utils'
 import { FIREBASE_PROVIDER } from '../../../constants'
-import { V2UserTokensApi } from '@island.is/clients/user-profile'
+import { V2UsersApi } from '@island.is/clients/user-profile'
 
 export class PushNotificationError extends Error {
   constructor(public readonly firebaseErrors: firebaseAdmin.FirebaseError[]) {
@@ -38,7 +38,7 @@ export class NotificationDispatchService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(FIREBASE_PROVIDER) private firebase: firebaseAdmin.app.App,
-    private userProfileApi: V2UserTokensApi,
+    private userProfileApi: V2UsersApi,
   ) {}
 
   async sendPushNotification({

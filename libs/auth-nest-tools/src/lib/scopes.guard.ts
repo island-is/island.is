@@ -15,12 +15,14 @@ export class ScopesGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ])
+
     const actorScopes = this.reflector.getAllAndOverride<string[]>(
       ACTOR_SCOPES_KEY,
       [context.getHandler(), context.getClass()],
     )
     const request = getRequest(context)
 
+    console.log('request auth', request?.auth)
     if (scopes && !this.hasScope(scopes, request.auth?.scope)) {
       return false
     }

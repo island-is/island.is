@@ -9,7 +9,9 @@ export class UserTokenService {
     private readonly userDeviceTokensModel: typeof UserDeviceTokens,
   ) {}
 
-  async findByNationalId(nationalId: string): Promise<UserDeviceTokens[]> {
+  async findAllUserTokensByNationalId(
+    nationalId: string,
+  ): Promise<UserDeviceTokens[]> {
     return this.userDeviceTokensModel.findAll({
       where: { nationalId },
       order: [['created', 'DESC']],

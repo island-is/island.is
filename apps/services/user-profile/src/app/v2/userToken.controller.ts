@@ -13,17 +13,17 @@ const namespace = '@island.is/user-profile/v2/userTokens'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(UserProfileScope.admin)
-@ApiTags('v2/userTokens')
+@ApiTags('v2/users')
 @ApiSecurity('oauth2', [UserProfileScope.admin])
 @Controller({
-  path: 'userTokens',
+  path: 'users/.nationalId/device-tokens',
   version: ['2'],
 })
 @Audit({ namespace })
 export class UserTokenController {
   constructor(private readonly userTokenService: UserTokenService) {}
 
-  @Get('/.nationalId')
+  @Get()
   @Documentation({
     description: 'Get user device tokens for given nationalId.',
     request: {
@@ -42,6 +42,6 @@ export class UserTokenController {
   findUserDeviceToken(
     @Headers('X-Param-National-Id') nationalId: string,
   ): Promise<UserDeviceTokenDto[]> {
-    return this.userTokenService.findByNationalId(nationalId)
+    return this.userTokenService.findAllUserTokensByNationalId(nationalId)
   }
 }
