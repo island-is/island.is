@@ -11,7 +11,7 @@ import {
 import { RecyclingRequestService } from './recyclingRequest.service'
 import { SamgongustofaService } from '../samgongustofa'
 
-// @Authorize()
+@Authorize()
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
   constructor(
@@ -67,9 +67,9 @@ export class RecyclingRequestResolver {
     return recyclingRequests
   }
 
-  // @Authorize({
-  //   roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin],
-  // })
+  @Authorize({
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin],
+  })
   @Query(() => Boolean)
   async skilavottordDeRegisterVehicle(
     @Args('vehiclePermno') permno: string,
