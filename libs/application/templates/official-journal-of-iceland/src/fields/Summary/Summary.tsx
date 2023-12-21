@@ -3,7 +3,7 @@ import { Box, Stack } from '@island.is/island-ui/core'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { Property } from '../../components/Property/Property'
 import { useFormatMessage } from '../../hooks'
-import { m } from '../../lib/messages'
+import { summary } from '../../lib/messages'
 import { OJOIFieldBaseProps } from '../../lib/types'
 
 const MOCK_DATA = {
@@ -27,38 +27,41 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
   return (
     <Box>
       <FormIntro
-        title={f(m.summaryFormTitle)}
-        description={f(m.summaryFormIntro)}
+        title={f(summary.general.formTitle)}
+        description={f(summary.general.formIntro)}
       />
       <Stack space={0} dividers>
-        <Property name={f(m.summaryPropertySender)} value={user.profile.name} />
-        <Property name={f(m.summaryPropertyType)} value={MOCK_DATA.type} />
         <Property
-          name={f(m.summaryPropertyCaseTitle)}
+          name={f(summary.properties.sender)}
+          value={user.profile.name}
+        />
+        <Property name={f(summary.properties.type)} value={MOCK_DATA.type} />
+        <Property
+          name={f(summary.properties.title)}
           value={MOCK_DATA.caseTitle}
         />
         <Property
-          name={f(m.summaryPropertyCaseDepartment)}
+          name={f(summary.properties.department)}
           value={MOCK_DATA.caseDepartment}
         />
         <Property
-          name={f(m.summaryPropertyDateOfSubmission)}
+          name={f(summary.properties.submissionDate)}
           value={MOCK_DATA.dateOfSubmission}
         />
         <Property
-          name={f(m.summaryPropertyCaseFastTrack)}
+          name={f(summary.properties.fastTrack)}
           value={MOCK_DATA.caseFastTrack}
         />
         <Property
-          name={f(m.summaryPropertyEstimatedDateOfPublication)}
+          name={f(summary.properties.estimatedDate)}
           value={MOCK_DATA.estimatedDateOfPublication}
         />
         <Property
-          name={f(m.summaryPropertyEstimatedPrice)}
+          name={f(summary.properties.estimatedPrice)}
           value={MOCK_DATA.estimatedPrice}
         />
         <Property
-          name={f(m.summaryPropertyCaseClassicifation)}
+          name={f(summary.properties.classification)}
           value={MOCK_DATA.caseClassicifation}
         />
       </Stack>
