@@ -69,7 +69,7 @@ const IntellectualPropertiesDesignDetail = () => {
         ip?.lifecycle?.internationalRegistrationDate
           ? {
               title: formatMessage(ipMessages.internationalRegistrationDate),
-              value: ip?.lifecycle.internationalRegistrationDate,
+              value: formatDate(ip?.lifecycle.internationalRegistrationDate),
             }
           : null,
         ip?.applicationNumber
@@ -81,7 +81,10 @@ const IntellectualPropertiesDesignDetail = () => {
         ip?.classification
           ? {
               title: formatMessage(ipMessages.classification),
-              value: ip?.classification?.[0] ?? '',
+              value: ip?.classification.reduce(
+                (result, current) => `${result}, ${current.category}`,
+                '',
+              ),
             }
           : null,
         ip?.lifecycle.registrationDate
