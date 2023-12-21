@@ -26,7 +26,7 @@ export class IntellectualPropertiesClientService {
 
   getTrademarks(user: User) {
     return this.trademarksApiWithAuth(user).trademarksGetTrademarksBySSNGet({
-      ssn: '0412685739',
+      ssn: user.nationalId,
     })
   }
 
@@ -38,7 +38,7 @@ export class IntellectualPropertiesClientService {
 
   getPatents(user: User) {
     return this.patentSearchApiWithAuth(user).apiPatentSearchPatentsBySSNGet({
-      ssn: '0412685739',
+      ssn: user.nationalId,
     })
   }
   getPatentByApplicationNumber(user: User, appId: string) {
@@ -49,7 +49,7 @@ export class IntellectualPropertiesClientService {
 
   getDesigns(user: User) {
     return this.designSearchApiWithAuth(user).designSearchGetDesignBySSNGet({
-      ssn: '0412685739',
+      ssn: user.nationalId,
     })
   }
 
