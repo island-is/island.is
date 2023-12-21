@@ -23,14 +23,14 @@ import { formatDate } from '../../utils/formatDate'
 import { RestrictionsLoaderResponse } from './Restrictions.loader'
 
 import * as styles from './Restrictions.css'
+const createFutureRestrictionDate = () => startOfDay(addDays(new Date(), 8))
+const IDP_SIM = 'audkenni_sim'
 
 type FormWrapperProps = {
   children: ReactNode
   intent: RestrictionsIntent
   date?: Date
 }
-
-const createFutureRestrictionDate = () => startOfDay(addDays(new Date(), 8))
 
 const FormWrapper = ({ children, intent, date }: FormWrapperProps) => (
   <Form method="post">
@@ -104,8 +104,8 @@ export default function Restrictions() {
               }
             />
           )}
-          {/* TODO add ! when */}
-          {idp.includes('sim') ? (
+          {/* if developer wants to try out this feature he has to use real phone number and login with two factor */}
+          {idp !== IDP_SIM ? (
             <AlertMessage
               type="warning"
               message={formatMessage(m.warningElectronicId)}
