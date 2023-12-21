@@ -23,8 +23,10 @@ import { formatDate } from '../../utils/formatDate'
 import { RestrictionsLoaderResponse } from './Restrictions.loader'
 
 import * as styles from './Restrictions.css'
-const createFutureRestrictionDate = () => startOfDay(addDays(new Date(), 8))
+
 const IDP_SIM = 'audkenni_sim'
+
+const createFutureRestrictionDate = () => startOfDay(addDays(new Date(), 8))
 
 type FormWrapperProps = {
   children: ReactNode
@@ -52,6 +54,7 @@ export default function Restrictions() {
   const { isLoading, isSubmitting } = useSubmitting()
   const actionData = useActionData() as RestrictionsResponse
 
+  const isSimIdp = idp === IDP_SIM
   const { restricted, until } =
     actionData?.data === true ? loaderData : actionData?.data ?? loaderData
 
@@ -91,7 +94,7 @@ export default function Restrictions() {
             </Text>
             <Text>{formatMessage(m.restrictionsDevicesDescription)}</Text>
           </Box>
-          {restricted && formattedDate && (
+          {restricted && formattedDate && isSimIdp && (
             <AlertMessage
               type="info"
               message={
@@ -105,7 +108,7 @@ export default function Restrictions() {
             />
           )}
           {/* if developer wants to try out this feature he has to use real phone number and login with two factor */}
-          {idp !== IDP_SIM ? (
+          {!isSimIdp ? (
             <AlertMessage
               type="warning"
               message={formatMessage(m.warningElectronicId)}
@@ -117,6 +120,7 @@ export default function Restrictions() {
                   ? { onClick: () => setShowModal(true) }
                   : {
                       type: 'submit',
+                      variant: 'ghost',
                       loading:
                         intent === RestrictionsIntent.Disable
                           ? isSubmitting || isLoading
@@ -150,18 +154,18 @@ export default function Restrictions() {
             >
               <Box rowGap={2} display="flex" flexDirection="column">
                 <Text variant="h2">{formatMessage(m.modalTitle)}</Text>
+                <Text variant="h3" fontWeight="light" marginTop={2}>
+                  {formatMessage(m.modalDescription)}
+                </Text>
                 <Text variant="h3" fontWeight="light">
                   <FormattedMessage
-                    {...m.modalDescription}
+                    {...m.modalConfirmText}
                     values={{
                       date: (
                         <b>{formatDate(startOfDay(addDays(new Date(), 8)))}</b>
                       ),
                     }}
                   />
-                </Text>
-                <Text variant="h3" fontWeight="light" marginTop={2}>
-                  {formatMessage(m.modalConfirmText)}
                 </Text>
               </Box>
               <Box
