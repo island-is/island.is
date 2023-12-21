@@ -1,0 +1,80 @@
+import { useMemo, useState } from 'react'
+import { Button, Flex, Stack, Table } from '@contentful/f36-components'
+
+import { FileData } from './utils'
+
+const ROW_COUNT_INCREMENT = 100
+
+export const getTableData = (data: FileData) => {
+  const headCells = data?.[0] ?? []
+  const bodyRows =
+    data?.slice(1).filter((row) => row?.some((text) => text)) ?? []
+
+  let longestRowLength = 0
+  for (const row of bodyRows) {
+    if (row.length > longestRowLength) {
+      longestRowLength = row.length
+    }
+  }
+
+  // Make sure we have as many head cells as we have fields in rows
+  if (headCells.length > longestRowLength) {
+    headCells.length = longestRowLength
+  }
+
+  return {
+    headCells,
+    bodyRows,
+  }
+}
+
+interface FileDataTableProps {
+  data: FileData
+}
+
+export const FileDataTable = ({ data }: FileDataTableProps) => {
+  const { headCells, bodyRows } = useMemo(() => getTableData(data), [data])
+  const [displayedRowCount, setDisplayedRowCount] =
+    useState(ROW_COUNT_INCREMENT)
+
+  return (
+    <Stack flexDirection="column" spacing="spacingM">
+      <Table
+        style={{
+          overflowX: 'scroll',
+          display: 'block',
+        }}
+      >
+        <Table.Head>
+          <Table.Row>
+            {headCells.map((text, index) => (
+              <Table.Cell key={index}>{text}</Table.Cell>
+            ))}
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          {bodyRows.slice(0, displayedRowCount).map((row, index) => (
+            <Table.Row key={index}>
+              {(row ?? []).map((text, index) => (
+                <Table.Cell key={index}>{text}</Table.Cell>
+              ))}
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
+
+      {displayedRowCount < bodyRows.length && (
+        <Flex fullWidth justifyContent="center">
+          <Button
+            onClick={() => {
+              setDisplayedRowCount((prev) => prev + ROW_COUNT_INCREMENT)
+            }}
+          >
+            Show {ROW_COUNT_INCREMENT} more (
+            {bodyRows.length - displayedRowCount} unseen)
+          </Button>
+        </Flex>
+      )}
+    </Stack>
+  )
+}
