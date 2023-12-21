@@ -101,4 +101,16 @@ export class VehiclesMileageResolver {
       permno: overview?.permno ?? '',
     })
   }
+
+  @ResolveField('canUserRegisterVehicleMileage', () => Boolean, {
+    nullable: true,
+  })
+  resolveCanUserRegisterMileage(
+    @Context('req') { user }: { user: User },
+    @Parent() overview: VehicleMileageOverview,
+  ): Promise<boolean> {
+    return this.vehiclesService.canUserRegisterMileage(user, {
+      permno: overview?.permno ?? '',
+    })
+  }
 }
