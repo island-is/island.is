@@ -16,10 +16,6 @@ import {
   UniversityOfAkureyriApplicationClientModule,
 } from '@island.is/clients/university-application/university-of-akureyri'
 import {
-  BifrostUniversityApplicationClientConfig,
-  BifrostUniversityApplicationClientModule,
-} from '@island.is/clients/university-application/bifrost-university'
-import {
   IcelandUniversityOfTheArtsApplicationClientConfig,
   IcelandUniversityOfTheArtsApplicationClientModule,
 } from '@island.is/clients/university-application/iceland-university-of-the-arts'
@@ -62,7 +58,6 @@ import { LoggingModule } from '@island.is/logging'
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
     UniversityOfAkureyriApplicationClientModule,
-    BifrostUniversityApplicationClientModule,
     IcelandUniversityOfTheArtsApplicationClientModule,
     AgriculturalUniversityOfIcelandApplicationClientModule,
     HolarUniversityApplicationClientModule,
@@ -74,7 +69,6 @@ import { LoggingModule } from '@island.is/logging'
         ReykjavikUniversityApplicationClientConfig,
         UniversityOfIcelandApplicationClientConfig,
         UniversityOfAkureyriApplicationClientConfig,
-        BifrostUniversityApplicationClientConfig,
         IcelandUniversityOfTheArtsApplicationClientConfig,
         AgriculturalUniversityOfIcelandApplicationClientConfig,
         HolarUniversityApplicationClientConfig,

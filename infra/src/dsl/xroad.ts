@@ -705,16 +705,6 @@ export const UniversityGatewayUniversityOfAkureyri = new XroadConf({
   },
 })
 
-export const UniversityGatewayBifrostUniversity = new XroadConf({
-  env: {
-    XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: {
-      dev: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
-      staging: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
-      prod: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1',
-    },
-  },
-})
-
 export const UniversityGatewayIcelandUniversityOfTheArts = new XroadConf({
   env: {
     XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: {

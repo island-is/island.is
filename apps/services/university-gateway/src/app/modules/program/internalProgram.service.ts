@@ -7,7 +7,6 @@ import { University } from '../university/model/university'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import { UniversityOfAkureyriApplicationClient } from '@island.is/clients/university-application/university-of-akureyri'
-import { BifrostUniversityApplicationClient } from '@island.is/clients/university-application/bifrost-university'
 import { IcelandUniversityOfTheArtsApplicationClient } from '@island.is/clients/university-application/iceland-university-of-the-arts'
 import { AgriculturalUniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/agricultural-university-of-iceland'
 import { HolarUniversityApplicationClient } from '@island.is/clients/university-application/holar-university'
@@ -20,7 +19,6 @@ export class InternalProgramService {
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
     private readonly universityOfIcelandClient: UniversityOfIcelandApplicationClient,
     private readonly universityOfAkureyriClient: UniversityOfAkureyriApplicationClient,
-    private readonly bifrostUniversityClient: BifrostUniversityApplicationClient,
     private readonly icelandUniversityOfTheArtsClient: IcelandUniversityOfTheArtsApplicationClient,
     private readonly agriculturalUniversityOfIcelandClient: AgriculturalUniversityOfIcelandApplicationClient,
     private readonly holarUniversityClient: HolarUniversityApplicationClient,
@@ -52,11 +50,6 @@ export class InternalProgramService {
         UniversityNationalIds.UNIVERSITY_OF_AKUREYRI,
         () => this.universityOfAkureyriClient.getPrograms(),
       ),
-      // TODO add back when x-road is ready
-      // await this.doUpdateProgramsForUniversity(
-      //   UniversityNationalIds.BIFROST_UNIVERSITY,
-      //   () => this.bifrostUniversityClient.getPrograms(),
-      // ),
       await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.ICELAND_UNIVERSITY_OF_THE_ARTS,
         () => this.icelandUniversityOfTheArtsClient.getPrograms(),
