@@ -23,7 +23,7 @@ type LookupProps = {
     }
   }
   nested?: boolean
-  message: string
+  message?: string
   error: Record<string, string> | any
 }
 
@@ -75,7 +75,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
       <GridRow>
         {props?.alertWhenUnder18 && nationalId.info(personNationalId).age < 18 && (
           <GridColumn span={['1/1']} paddingBottom={3}>
-            <AlertMessage type="warning" message={message} />
+            <AlertMessage type="warning" message={message ? message : formatMessage(m.inheritanceUnder18Error)} />
           </GridColumn>
         )}
         <GridColumn span={nested ? ['1/1', '1/2'] : '6/12'}>
