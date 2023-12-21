@@ -259,15 +259,7 @@ export function getAvailableYears() {
 
 // returns available months for selected year, since available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableMonths(
-  application: Application,
-  selectedYear: string,
-) {
-  const { applicantNationalId } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  if (!applicantNationalId) return []
+export function getAvailableMonths(selectedYear: string) {
   if (!selectedYear) return []
 
   const twoYearsBackInTime = subYears(new Date(), 2)

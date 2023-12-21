@@ -64,21 +64,10 @@ describe('getAvailableYears', () => {
 
 describe('getAvailableMonths', () => {
   it('should return available months for selected year, selected year same as start date', () => {
-    const application = buildApplication({
-      externalData: {
-        nationalRegistry: {
-          data: {
-            nationalId: '0101307789',
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
     const startDate = subYears(new Date(), 2)
     const endDate = addMonths(new Date(), 6)
     const selectedYear = startDate.getFullYear().toString()
-    const res = getAvailableMonths(application, selectedYear)
+    const res = getAvailableMonths(selectedYear)
 
     let months = MONTHS
 
@@ -92,21 +81,10 @@ describe('getAvailableMonths', () => {
   })
 
   it('should return available months for selected year, selected year same as end date', () => {
-    const application = buildApplication({
-      externalData: {
-        nationalRegistry: {
-          data: {
-            nationalId: '0101307789',
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
     const startDate = subYears(new Date(), 2)
     const endDate = addMonths(new Date(), 6)
     const selectedYear = endDate.getFullYear().toString()
-    const res = getAvailableMonths(application, selectedYear)
+    const res = getAvailableMonths(selectedYear)
 
     let months = MONTHS
 
@@ -120,21 +98,10 @@ describe('getAvailableMonths', () => {
   })
 
   it('should return available months for selected year, selected year is todays year', () => {
-    const application = buildApplication({
-      externalData: {
-        nationalRegistry: {
-          data: {
-            nationalId: '0101307789',
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
     const startDate = subYears(new Date(), 2)
     const endDate = addMonths(new Date(), 6)
     const selectedYear = new Date().getFullYear().toString()
-    const res = getAvailableMonths(application, selectedYear)
+    const res = getAvailableMonths(selectedYear)
 
     let months = MONTHS
 
