@@ -1,6 +1,7 @@
 import { buildSection } from '@island.is/application/core'
 import { Section } from '@island.is/application/types'
 import { additionsAndDocuments, newCase } from '../../lib/messages'
+import { preview } from '../../lib/messages/preview'
 import { AdditionsAndDocumentsField } from './fields/draft/AdditionsAndDocuments'
 import { NewCaseField } from './fields/draft/NewCase'
 import { OriginalDataField } from './fields/draft/OriginalData'
@@ -20,7 +21,7 @@ export const DraftSection: Section[] = [
   }),
   buildSection({
     id: 'Preview',
-    title: m.previewSectionTitle,
+    title: preview.general.sectionTitle,
     children: [PreviewField],
   }),
   buildSection({

@@ -1,7 +1,7 @@
-import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
+import { Box, Button, PdfViewer } from '@island.is/island-ui/core'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { useFormatMessage } from '../../hooks'
-import { m } from '../../lib/messages'
+import { preview } from '../../lib/messages'
 import { OJOIFieldBaseProps } from '../../lib/types'
 
 export const Preview = ({ application }: OJOIFieldBaseProps) => {
@@ -18,11 +18,16 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
   return (
     <Box>
       <FormIntro
-        title={f(m.previewFormTitle)}
-        description={f(m.previewFormIntro)}
-      >
-        <Text>{f(m.previewFormAdditionalIntroNote)}</Text>
-      </FormIntro>
+        title={f(preview.general.formTitle)}
+        description={f(preview.general.formIntro, {
+          br: (
+            <>
+              <br />
+              <br />
+            </>
+          ),
+        })}
+      />
       <Box marginBottom={3} display="flex" columnGap={2}>
         <Button
           onClick={fetchPdf}
@@ -30,7 +35,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
           icon="download"
           iconType="outline"
         >
-          {f(m.fetchPdf)}
+          {f(preview.buttons.fetchPdf)}
         </Button>
         <Button
           onClick={copyPreviewUrl}
@@ -38,7 +43,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
           icon="link"
           iconType="outline"
         >
-          {f(m.copyPreviewLink)}
+          {f(preview.buttons.copyPreviewLink)}
         </Button>
       </Box>
       <Box border="standard" borderRadius="large" paddingX={6} paddingY={10}>
