@@ -79,7 +79,7 @@ export const conclusion = {
     },
     firstText: {
       id: 'aosh.tmo.application:conclusion.rejected.firstText',
-      defaultMessage: `Beiðni um eigendaskipti á tækinu {regNumber} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
+      defaultMessage: `Beiðni um eigendaskipti á tækinu {regNumber} hefur verið afturkölluð.`,
       description: 'Conclusion rejected first text',
     },
     secondText: {
@@ -89,7 +89,7 @@ export const conclusion = {
     },
     thirdText: {
       id: 'aosh.tmo.application:conclusion.rejected.thirdText',
-      defaultMessage: `Vinsamlegast hafið samband við Vinnueftirlitið, someemail@vinnueftirlitid.is, ef nánari upplýsinga er þörf.`,
+      defaultMessage: `Vinsamlegast hafið samband við Vinnueftirlitið, vinnueftirlit@ver.is, ef nánari upplýsinga er þörf.`,
       description: 'Conclusion rejected third text',
     },
     buyer: {
