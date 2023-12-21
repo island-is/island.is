@@ -1,6 +1,6 @@
 import { buildSection } from '@island.is/application/core'
 import { Section } from '@island.is/application/types'
-import { m } from '../../lib/messages'
+import { additionsAndDocuments, newCase } from '../../lib/messages'
 import { AdditionsAndDocumentsField } from './fields/draft/AdditionsAndDocuments'
 import { NewCaseField } from './fields/draft/NewCase'
 import { OriginalDataField } from './fields/draft/OriginalData'
@@ -10,12 +10,12 @@ import { PublishingPreferencesField } from './fields/draft/PublishingPrefrences'
 export const DraftSection: Section[] = [
   buildSection({
     id: 'NewCase',
-    title: m.newCaseSectionTitle,
+    title: newCase.general.sectionTitle,
     children: [NewCaseField],
   }),
   buildSection({
     id: 'AdditionsAndDocuments',
-    title: m.additionsAndDocumentsSectionTitle,
+    title: additionsAndDocuments.general.sectionTitle,
     children: [AdditionsAndDocumentsField],
   }),
   buildSection({

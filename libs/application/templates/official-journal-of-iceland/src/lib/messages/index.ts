@@ -1,5 +1,6 @@
 // id format ex. -> ojoi.application:newCase.buttons.copyOldCase.label
 
+export * from './additionAndDocuments'
 export * from './error'
 export * from './general'
 export * from './messages'
