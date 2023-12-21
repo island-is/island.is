@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common'
-
 import { TemplateApiModuleActionProps } from '../../../../types'
-
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {

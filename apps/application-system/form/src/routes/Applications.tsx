@@ -61,7 +61,8 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       >
     | undefined
   >(undefined)
-  const queryParam = template?.allowQueryParameters ?? query.get('q')
+
+  const queryParam = template?.allowQueryParameters ? query.get('q') : undefined
 
   useApplicationNamespaces(type)
 
