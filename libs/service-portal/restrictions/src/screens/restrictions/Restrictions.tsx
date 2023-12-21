@@ -12,7 +12,7 @@ import {
   Divider,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { Modal } from '@island.is/react/components'
 import { useSubmitting } from '@island.is/react-spa/shared'
@@ -45,6 +45,7 @@ const FormWrapper = ({ children, intent, date }: FormWrapperProps) => (
 )
 
 export default function Restrictions() {
+  useNamespaces(['sp.restrictions'])
   const [showModal, setShowModal] = useState(false)
 
   const { formatMessage } = useLocale()
