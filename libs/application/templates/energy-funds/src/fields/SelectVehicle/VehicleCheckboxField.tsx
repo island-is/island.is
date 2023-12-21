@@ -44,8 +44,14 @@ export const VehicleCheckboxField: FC<
   useEffect(() => {
     if (currentVehicle) {
       setValue('selectVehicle.plate', currentVehicle.permno || '')
-      setValue('selectVehicle.vin', currentVehicle.vin || '')
-      setValue('selectedVehicle.grantAmount', currentVehicle.vehicleGrant)
+      setValue('selectVehicle.grantAmount', currentVehicle.vehicleGrant)
+      setValue(
+        'selectVehicle.newRegistrationDate',
+        currentVehicle.newRegistrationDate
+          ? format(new Date(currentVehicle.newRegistrationDate), 'dd.MM.yyyy')
+          : '',
+      )
+      setValue('selectVehicle.type', currentVehicle.make)
     }
   }, [currentVehicle])
 
@@ -60,8 +66,8 @@ export const VehicleCheckboxField: FC<
         subLabel: `${vehicle.color} - ${formatMessage(
           information.labels.pickVehicle.registrationDate,
         )}: ${
-          vehicle.firstRegistrationDate &&
-          format(new Date(vehicle.firstRegistrationDate), 'dd.MM.yyyy')
+          vehicle.newRegistrationDate &&
+          format(new Date(vehicle.newRegistrationDate), 'dd.MM.yyyy')
         }`,
         rightContent: (
           <div style={{ display: 'flex' }}>
@@ -79,7 +85,9 @@ export const VehicleCheckboxField: FC<
                     {
                       amount: vehicle.vehicleGrant
                         ? `${formatIsk(vehicle.vehicleGrant)}`
-                        : '',
+                        : formatMessage(
+                            information.labels.pickVehicle.carNotEligable,
+                          ),
                     },
                   )}
                 </Tag>
