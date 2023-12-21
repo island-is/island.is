@@ -23,7 +23,6 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import {
   EstateTypes,
-  heirAdvocateAgeValidation,
   heirAgeValidation,
   relationWithApplicant,
 } from '../../lib/constants'
@@ -83,16 +82,6 @@ export const EstateMembersRepeater: FC<
         return [false, 'invalid member age']
       }
 
-      if (
-        hasEstateMemberUnder18 &&
-        selectedEstate === EstateTypes.divisionOfEstateByHeirs
-      ) {
-        setError(heirAdvocateAgeValidation, {
-          type: 'custom',
-          message: 'custom villa',
-        })
-        return [false, 'villa']
-      }
       return [true, null]
     })
 
