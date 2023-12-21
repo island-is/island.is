@@ -39,8 +39,6 @@ export class RecyclingRequestService {
     disposalStation: string,
     mileage = 0,
   ) {
-    console.log('-----------> deRegisterVehicle--->')
-    console.log('-----------> mileage:' + mileage)
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
