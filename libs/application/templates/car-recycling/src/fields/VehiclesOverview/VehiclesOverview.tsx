@@ -24,6 +24,7 @@ import { carRecyclingMessages, errorMessages } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
 
 import { VehicleDto } from '../../shared/types'
+import { FuelCodes } from '../../shared'
 
 const VehiclesOverview: FC<FieldBaseProps> = ({
   application,
@@ -140,6 +141,22 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     setCanceledVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
   }
 
+  function mileageRequired(vehicle: VehicleDto): boolean {
+    const fuelCodes: string[] = Object.values(FuelCodes)
+
+    console.log('fuelCodes', fuelCodes)
+    return fuelCodes.find((code) => code === vehicle.fuelCode) ? true : false
+  }
+
+  function showError(vehicle: VehicleDto, index: number) {
+    if (mileageRequired(vehicle)) {
+      return (
+        errors &&
+        getErrorViaPath(errors, `vehicles.selectedVehicles[${index}].mileage`)
+      )
+    }
+  }
+
   return (
     <Box id="vehicles">
       <Box paddingTop={2}>
@@ -207,38 +224,34 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                   {vehicle.permno}
                 </Text>
 
-                <InputController
-                  required={true}
-                  id={vehicle.permno + 'input'}
-                  label={formatText(
-                    carRecyclingMessages.cars.mileage,
-                    application,
-                    formatMessage,
-                  )}
-                  backgroundColor="blue"
-                  placeholder="0"
-                  size="sm"
-                  type="number"
-                  defaultValue={vehicle.mileage}
-                  thousandSeparator
-                  suffix=" "
-                  error={
-                    errors &&
-                    getErrorViaPath(
-                      errors,
-                      `vehicles.selectedVehicles[${index}].mileage`,
-                    )
-                  }
-                  onChange={(e) => {
-                    const list = selectedVehiclesList.map((prevVehicle) =>
-                      vehicle.permno === prevVehicle.permno
-                        ? { ...vehicle, mileage: e.target.value }
-                        : prevVehicle,
-                    )
+                {mileageRequired(vehicle) && (
+                  <InputController
+                    required={mileageRequired(vehicle)}
+                    id={vehicle.permno + 'input'}
+                    label={formatText(
+                      carRecyclingMessages.cars.mileage,
+                      application,
+                      formatMessage,
+                    )}
+                    backgroundColor="blue"
+                    placeholder="0"
+                    size="sm"
+                    type="number"
+                    defaultValue={vehicle.mileage}
+                    thousandSeparator
+                    suffix=" "
+                    error={showError(vehicle, index)}
+                    onChange={(e) => {
+                      const list = selectedVehiclesList.map((prevVehicle) =>
+                        vehicle.permno === prevVehicle.permno
+                          ? { ...vehicle, mileage: e.target.value }
+                          : prevVehicle,
+                      )
 
-                    setSelectedVehiclesList(list)
-                  }}
-                />
+                      setSelectedVehiclesList(list)
+                    }}
+                  />
+                )}
               </Box>
               <Box
                 display="flex"

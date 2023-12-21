@@ -11,7 +11,6 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  CurrentVehiclesApi,
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -27,6 +26,7 @@ import { carRecyclingMessages, statesMessages } from './messages'
 import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
+import { VehicleSearchApi } from '../dataProviders'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -88,17 +88,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                UserProfileApi,
-                NationalRegistryUserApi,
-                CurrentVehiclesApi.configure({
-                  params: {
-                    showOwned: true,
-                    showCoOwned: true,
-                    showOperated: true,
-                  },
-                }),
-              ],
+              api: [UserProfileApi, NationalRegistryUserApi, VehicleSearchApi],
             },
           ],
         },
