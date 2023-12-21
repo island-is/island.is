@@ -5,6 +5,7 @@ import {
   GridColumn,
   Stack,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -13,6 +14,8 @@ import { useState } from 'react'
 import { useGetListsForUser, useGetSignedList } from '../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../Skeletons'
+import { useMutation } from '@apollo/client'
+import { unSignList } from '../mutations'
 
 const SigneeView = () => {
   useNamespaces('sp.signatureCollection')
@@ -21,19 +24,25 @@ const SigneeView = () => {
 
   const { signedList, loadingSignedList, refetchSignedList } =
     useGetSignedList()
-  const { listsForUser, loadingUserLists, refetchListsForUser } =
-    useGetListsForUser()
+  const { listsForUser, loadingUserLists } = useGetListsForUser()
 
-  const onUnSignList = () => {
-    setModalIsOpen(false)
-    refetchSignedList()
-    refetchListsForUser()
-  }
+  const [unSign] = useMutation(unSignList, {
+    onCompleted: (res) => {
+      refetchSignedList()
+
+      if (res.data?.signatureCollectionUnsign.success) {
+        toast.success(formatMessage(m.unSignSuccess))
+        setModalIsOpen(false)
+      } else {
+        toast.error(formatMessage(m.unSignError))
+      }
+    },
+  })
 
   const SignedList = () => {
     return (
       <Modal
-        id="cancelCollection"
+        id="unSignList"
         isVisible={modalIsOpen}
         toggleClose={false}
         initialVisibility={false}
@@ -59,7 +68,17 @@ const SigneeView = () => {
           {formatMessage(m.unSignModalMessage)}
         </Text>
         <Box marginTop={10} display="flex" justifyContent="center">
-          <Button onClick={() => onUnSignList()}>
+          <Button
+            onClick={() =>
+              unSign({
+                variables: {
+                  input: {
+                    id: signedList.collectionId,
+                  },
+                },
+              })
+            }
+          >
             {formatMessage(m.unSignModalConfirmButton)}
           </Button>
         </Box>

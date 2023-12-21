@@ -64,6 +64,16 @@ export const m = defineMessages({
     defaultMessage: 'Já, draga meðmæli tilbaka',
     description: '',
   },
+  unSignSuccess: {
+    id: 'sp.signatureCollection:unSignSuccess',
+    defaultMessage: 'Tókst að draga meðmæli til baka',
+    description: '',
+  },
+  unSignError: {
+    id: 'sp.signatureCollection:unSignError',
+    defaultMessage: 'Tókst ekki að draga meðmæli til baka',
+    description: '',
+  },
 
   /* Hætta við söfnun modal */
   cancelCollectionButton: {
