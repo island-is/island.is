@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, MultiField } from '@island.is/application/types'
-import { m } from '../../../../lib/messages'
+import { general } from '../../../../lib/messages'
 export const PublishingPreferencesField: MultiField = buildMultiField({
   id: 'PublishingPreferencesField',
   title: '',
@@ -18,13 +18,13 @@ export const PublishingPreferencesField: MultiField = buildMultiField({
     }),
     buildSubmitField({
       id: 'submit',
-      title: m.continue,
+      title: general.continue,
       placement: 'footer',
       refetchApplicationAfterSubmit: true,
       actions: [
         {
           event: DefaultEvents.SUBMIT,
-          name: m.continue,
+          name: general.continue,
           type: 'primary',
         },
       ],

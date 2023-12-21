@@ -1,6 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
+import { prerequisites, summary } from '../lib/messages'
 import { DraftSection } from './sections'
 export const Draft: Form = buildForm({
   id: 'OfficalJournalOfIcelandPreRequsitesForm',
@@ -11,13 +11,13 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'ExternalData',
-      title: m.prerequisitesSectionTitle,
+      title: prerequisites.general.sectionTitle,
       children: [],
     }),
     ...DraftSection,
     buildSection({
       id: 'Summary',
-      title: m.summarySectionTitle,
+      title: summary.general.sectionTitle,
       children: [],
     }),
   ],

@@ -2,7 +2,7 @@ import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
 import { CompleteImage } from '../../assets/CompleteImage'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { useFormatMessage } from '../../hooks'
-import { m } from '../../lib/messages'
+import { complete } from '../../lib/messages/complete'
 import { OJOIFieldBaseProps } from '../../lib/types'
 import * as styles from './Complete.css'
 
@@ -11,11 +11,11 @@ export const Complete = ({ application }: OJOIFieldBaseProps) => {
 
   return (
     <Box>
-      <FormIntro title={f(m.completeFormTitle)} />
+      <FormIntro title={f(complete.general.formTitle)} />
       <Box marginBottom={10}>
         <BulletList>
-          <Bullet>{f(m.completeBulletOne)}</Bullet>
-          <Bullet>{f(m.completeBulletTwo)}</Bullet>
+          <Bullet>{f(complete.bullets.first)}</Bullet>
+          <Bullet>{f(complete.bullets.second)}</Bullet>
         </BulletList>
       </Box>
       <Box className={styles.svgWrap}>

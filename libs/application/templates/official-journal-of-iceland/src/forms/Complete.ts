@@ -1,6 +1,13 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
+import {
+  additionsAndDocuments,
+  newCase,
+  originalData,
+  prerequisites,
+  preview,
+  publishingPrefrences,
+} from '../lib/messages'
 import { CompleteSection } from './sections'
 export const Complete: Form = buildForm({
   id: 'OfficalJournalOfIcelandPreRequsitesForm',
@@ -11,32 +18,32 @@ export const Complete: Form = buildForm({
   children: [
     buildSection({
       id: 'ExternalData',
-      title: m.prerequisitesSectionTitle,
+      title: prerequisites.general.sectionTitle,
       children: [],
     }),
     buildSection({
       id: 'NewCase',
-      title: m.newCaseSectionTitle,
+      title: newCase.general.sectionTitle,
       children: [],
     }),
     buildSection({
       id: 'AdditionsAndDocuments',
-      title: m.additionsAndDocumentsSectionTitle,
+      title: additionsAndDocuments.general.sectionTitle,
       children: [],
     }),
     buildSection({
       id: 'Preview',
-      title: m.previewSectionTitle,
+      title: preview.general.sectionTitle,
       children: [],
     }),
     buildSection({
       id: 'OriginalData',
-      title: m.originalDataSectionTitle,
+      title: originalData.general.sectionTitle,
       children: [],
     }),
     buildSection({
       id: 'PublicationPreferences',
-      title: m.publishingPreferencesSectionTitle,
+      title: publishingPrefrences.general.sectionTitle,
       children: [],
     }),
     CompleteSection,

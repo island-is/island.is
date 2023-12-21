@@ -3,7 +3,6 @@
 export * from './additionAndDocuments'
 export * from './error'
 export * from './general'
-export * from './messages'
 export * from './newCase'
 export * from './originalData'
 export * from './prerequisites'

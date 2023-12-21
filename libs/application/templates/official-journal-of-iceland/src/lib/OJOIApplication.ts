@@ -3,7 +3,6 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { OfficalJournalOfIcelandSchema } from './dataSchema'
-import { m } from './messages'
 
 import {
   Application,
@@ -17,6 +16,7 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
+import { general } from './messages'
 import { TemplateApiActions } from './types'
 import { hasApprovedExternalData } from './utils'
 
@@ -44,8 +44,8 @@ const OJOITemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND,
-  name: m.applicationName,
-  institution: m.institutionName,
+  name: general.applicationName,
+  institution: general.ministryOfJustice,
   translationNamespaces: [
     ApplicationConfigurations.OfficialJournalOfIceland.translation,
   ],

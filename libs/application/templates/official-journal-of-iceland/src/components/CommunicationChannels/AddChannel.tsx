@@ -1,7 +1,7 @@
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useId } from 'react'
-import { m } from '../../lib/messages'
+import { general } from '../../lib/messages'
 import * as styles from './AddChannel.css'
 type Props = {
   onPhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -48,7 +48,7 @@ export const AddChannel = ({
             name="email"
             type="email"
             errorMessage={emailError}
-            label={formatMessage(m.email)}
+            label={formatMessage(general.email)}
             value={emailValue}
             onChange={(e) =>
               onEmailChange(e as React.ChangeEvent<HTMLInputElement>)
@@ -62,7 +62,7 @@ export const AddChannel = ({
             name="tel"
             errorMessage={phoneError}
             value={phoneValue}
-            label={formatMessage(m.phone)}
+            label={formatMessage(general.phoneNumber)}
             onChange={(e) =>
               onPhoneChange(e as React.ChangeEvent<HTMLInputElement>)
             }
@@ -78,14 +78,14 @@ export const AddChannel = ({
           </Box>
         )}
         <Button size="small" variant="ghost" onClick={() => onClose(visible)}>
-          {formatMessage(m.cancel)}
+          {formatMessage(general.cancel)}
         </Button>
         <Button
           disabled={!phoneValue || !emailValue}
           size="small"
           onClick={onSave}
         >
-          {formatMessage(m.saveChanges)}
+          {formatMessage(general.saveChanges)}
         </Button>
       </Box>
     </Box>

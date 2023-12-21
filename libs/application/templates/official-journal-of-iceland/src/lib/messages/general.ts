@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const general = defineMessages({
+  applicationName: {
+    id: 'ojoi.application:general.applicationName',
+    defaultMessage: 'Stjórnartíðindi',
+  },
+  ministryOfJustice: {
+    id: 'ojoi.application:general.ministryOfJustice',
+    defaultMessage: 'Dómsmálaráðuneytið',
+  },
   phoneNumber: {
     id: 'ojoi.application:general.phoneNumber',
     defaultMessage: 'Símanúmer',
@@ -20,6 +28,10 @@ export const general = defineMessages({
   save: {
     id: 'ojoi.application:general.save',
     defaultMessage: 'Vista',
+  },
+  saveChanges: {
+    id: 'ojoi.application:general.saveChanges',
+    defaultMessage: 'Vista breytingar',
   },
   saveX: {
     id: 'ojoi.application:general.saveX',
