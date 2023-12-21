@@ -17,7 +17,7 @@ import {
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
 import { GenericFormField, Application } from '@island.is/application/types'
-import { EstateMember } from '../../types'
+import { ErrorValue, EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
 import { useEffect } from 'react'
@@ -53,8 +53,6 @@ export const AdditionalEstateMember = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
   
-  const advocateNationalId = `${fieldIndex}.advocate.nationalId`
-  const advocateName = `${fieldIndex}.advocate.name`
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
 
@@ -68,7 +66,9 @@ export const AdditionalEstateMember = ({
   const { control, setValue, clearErrors, getValues } = useFormContext()
 
   const values = getValues()
+
   const currentEstateMember = values?.estate.estateMembers?.[index]
+
   useEffect(() => {
     clearErrors(nameField)
     clearErrors(relationField)
@@ -76,7 +76,7 @@ export const AdditionalEstateMember = ({
     clearErrors(`${fieldIndex}.nationalId`)
   }, [foreignCitizenship])
 
-  console.log(error)
+  console.log({ error, currentEstateMember })
 
   return (
     <Box position="relative" key={field.id} marginTop={7}>
@@ -145,11 +145,9 @@ export const AdditionalEstateMember = ({
           <LookupPerson
             field={{
               id: `${fieldIndex}`,
-              props: {
-                alertWhenUnder18:
-                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+              props: { 
                 requiredNationalId:
-                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+                  selectedEstate === EstateTypes.estateWithoutAssets,
               },
             }}
             error={error}
@@ -244,19 +242,18 @@ export const AdditionalEstateMember = ({
                       {formatMessage(m.inheritanceAdvocateLabel)}
                     </Text>
                   </GridColumn>
-                  <GridColumn span={['1/1']} paddingBottom={3}>
+                  <GridColumn span={['1/1']} paddingBottom={2}>
                     <LookupPerson
                       nested
                       field={{
-                        id: ``,
+                        id: `${fieldIndex}.advocate`,
                         props: {
-                          alertWhenUnder18: true,
+                          alertWhenUnder18: selectedEstate === EstateTypes.estateWithoutAssets && kennitala.info(currentEstateMember.nationalId).age < 18,
                         },
                       }}
                       error={error}
                     />
                   </GridColumn>
-   
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
                       id={advocatePhone}
@@ -264,6 +261,7 @@ export const AdditionalEstateMember = ({
                       label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       format="###-####"
+                      error={(error?.advocate as unknown as ErrorValue)?.phone}
                       size="sm"
                       required
                     />
@@ -274,8 +272,10 @@ export const AdditionalEstateMember = ({
                       name={advocateEmail}
                       label={formatMessage(m.email)}
                       backgroundColor="blue"
+                      error={(error?.advocate as unknown as ErrorValue)?.email}
                       size="sm"
                       required
+
                     />
                   </GridColumn>
                 </GridRow>
