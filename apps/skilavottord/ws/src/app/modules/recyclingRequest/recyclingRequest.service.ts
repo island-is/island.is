@@ -314,7 +314,7 @@ export class RecyclingRequestService {
           req.requestType = RecyclingRequestTypes.pendingRecycle
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
-          this.logger.error(err)
+          this.logger.error(err.message)
           this.logger.error(`Deregistered process failed.`, {
             permno: newRecyclingRequest.vehicleId,
             newRecyclingRequest,
