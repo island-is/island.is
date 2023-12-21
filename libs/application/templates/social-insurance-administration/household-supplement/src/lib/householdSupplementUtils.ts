@@ -238,12 +238,7 @@ export function getAttachments(application: Application) {
 
 // returns available years. Available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableYears(application: Application) {
-  const { applicantNationalId } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  if (!applicantNationalId) return []
+export function getAvailableYears() {
   const today = new Date()
   const twoYearsBackInTime = subYears(
     today.setMonth(today.getMonth() + 1),

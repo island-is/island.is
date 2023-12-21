@@ -381,9 +381,7 @@ export const HouseholdSupplementForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.yearDefaultText,
-              options: (application: Application) => {
-                return getAvailableYears(application)
-              },
+              options: getAvailableYears(),
             }),
             buildSelectField({
               id: 'period.month',

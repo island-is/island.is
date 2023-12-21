@@ -40,24 +40,13 @@ function buildApplication(data?: {
 
 describe('getAvailableYears', () => {
   it('should return available years', () => {
-    const application = buildApplication({
-      externalData: {
-        nationalRegistry: {
-          data: {
-            nationalId: '0101307789',
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
     const today = new Date()
     const startDateYear = subYears(
       today.setMonth(today.getMonth() + 1),
       2,
     ).getFullYear()
     const endDateYear = addMonths(new Date(), 6).getFullYear()
-    const res = getAvailableYears(application)
+    const res = getAvailableYears()
 
     const expected = Array.from(
       Array(endDateYear - (startDateYear - 1)),
