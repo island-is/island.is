@@ -52,7 +52,7 @@ export const AdditionalEstateMember = ({
   const enabledField = `${fieldIndex}.enabled`
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
-  
+
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
 
@@ -75,8 +75,6 @@ export const AdditionalEstateMember = ({
     clearErrors(dateOfBirthField)
     clearErrors(`${fieldIndex}.nationalId`)
   }, [foreignCitizenship])
-
-  console.log({ error, currentEstateMember })
 
   return (
     <Box position="relative" key={field.id} marginTop={7}>
@@ -143,9 +141,10 @@ export const AdditionalEstateMember = ({
       ) : (
         <Box paddingY={2}>
           <LookupPerson
+            message={formatMessage(m.inheritanceUnder18Error)}
             field={{
               id: `${fieldIndex}`,
-              props: { 
+              props: {
                 requiredNationalId:
                   selectedEstate === EstateTypes.estateWithoutAssets,
               },
@@ -227,60 +226,66 @@ export const AdditionalEstateMember = ({
           </Box>
         </GridColumn>
       </GridRow>
-        {/* ADVOCATE */}
-        {currentEstateMember?.nationalId && kennitala.info(currentEstateMember.nationalId).age < 18 && (
-              <Box
-                marginTop={2}
-                paddingY={5}
-                paddingX={7}
-                borderRadius="large"
-                border="standard"
-              >
-                <GridRow>
-                <GridColumn span={['1/1']} paddingBottom={2}>
-                    <Text variant="h4">
-                      {formatMessage(m.inheritanceAdvocateLabel)}
-                    </Text>
-                  </GridColumn>
-                  <GridColumn span={['1/1']} paddingBottom={2}>
-                    <LookupPerson
-                      nested
-                      field={{
-                        id: `${fieldIndex}.advocate`,
-                        props: {
-                          alertWhenUnder18: selectedEstate === EstateTypes.estateWithoutAssets && kennitala.info(currentEstateMember.nationalId).age < 18,
-                        },
-                      }}
-                      error={error}
-                    />
-                  </GridColumn>
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
-                      id={advocatePhone}
-                      name={advocatePhone}
-                      label={formatMessage(m.phone)}
-                      backgroundColor="blue"
-                      format="###-####"
-                      error={(error?.advocate as unknown as ErrorValue)?.phone}
-                      size="sm"
-                      required
-                    />
-                  </GridColumn>
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
-                      id={advocateEmail}
-                      name={advocateEmail}
-                      label={formatMessage(m.email)}
-                      backgroundColor="blue"
-                      error={(error?.advocate as unknown as ErrorValue)?.email}
-                      size="sm"
-                      required
-
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-            )}
+      {/* ADVOCATE */}
+      {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
+        currentEstateMember?.nationalId &&
+        kennitala.info(currentEstateMember.nationalId).age < 18 && (
+          <Box
+            marginTop={2}
+            paddingY={5}
+            paddingX={7}
+            borderRadius="large"
+            border="standard"
+          >
+            <GridRow>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <Text variant="h4">
+                  {formatMessage(m.inheritanceAdvocateLabel)}
+                </Text>
+              </GridColumn>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <LookupPerson
+                  message={selectedEstate === EstateTypes.divisionOfEstateByHeirs ? formatMessage(m.inheritanceUnder18Error)
+                  : formatMessage(m.inheritanceUnder18ErrorAdvocate)}
+                  nested
+                  field={{
+                    id: `${fieldIndex}.advocate`,
+                    props: {
+                      alertWhenUnder18:
+                        selectedEstate !==
+                          EstateTypes.divisionOfEstateByHeirs &&
+                        kennitala.info(currentEstateMember.nationalId).age < 18,
+                    },
+                  }}
+                  error={error}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocatePhone}
+                  name={advocatePhone}
+                  label={formatMessage(m.phone)}
+                  backgroundColor="blue"
+                  format="###-####"
+                  error={(error?.advocate as unknown as ErrorValue)?.phone}
+                  size="sm"
+                  required
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocateEmail}
+                  name={advocateEmail}
+                  label={formatMessage(m.email)}
+                  backgroundColor="blue"
+                  error={(error?.advocate as unknown as ErrorValue)?.email}
+                  size="sm"
+                  required
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+        )}
     </Box>
   )
 }

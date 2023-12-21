@@ -23,6 +23,7 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import {
   EstateTypes,
+  heirAdvocateAgeValidation,
   heirAgeValidation,
   relationWithApplicant,
 } from '../../lib/constants'
@@ -38,30 +39,47 @@ export const EstateMembersRepeater: FC<
   })
   const values = getValues()
 
-  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
+  const selectedEstate = application.answers.selectedEstate
+
+  const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const memberAge = kennitala.info(member.nationalId)?.age
+      return memberAge < 18 && member?.nationalId && member.enabled
+    },
+  )
+
+  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
+    (member: EstateMember) => {
       const advocateAge =
         member.advocate && kennitala.info(member.advocate.nationalId)?.age
       return (
-        memberAge < 18 &&
+        hasEstateMemberUnder18 &&
         member?.advocate?.nationalId &&
         advocateAge &&
-        advocateAge < 18 &&
-        member.enabled
+        advocateAge < 18
       )
     },
   )
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
-      const selectedEstate = application.answers.selectedEstate
 
       if (
         hasEstateMemberUnder18withoutRep &&
-        selectedEstate === EstateTypes.estateWithoutAssets
+        selectedEstate !== EstateTypes.divisionOfEstateByHeirs
       ) {
         setError(heirAgeValidation, {
+          type: 'custom',
+          message: 'custom villa',
+        })
+        return [false, 'villa']
+      }
+
+      if (
+        hasEstateMemberUnder18 &&
+        selectedEstate === EstateTypes.divisionOfEstateByHeirs
+      ) {
+        setError(heirAdvocateAgeValidation, {
           type: 'custom',
           message: 'custom villa',
         })
@@ -98,10 +116,13 @@ export const EstateMembersRepeater: FC<
     })
 
   useEffect(() => {
-    if (!hasEstateMemberUnder18withoutRep) {
+    if(!hasEstateMemberUnder18 && selectedEstate === !EstateTypes.divisionOfEstateByHeirs) {
       clearErrors(heirAgeValidation)
     }
-  }, [fields, hasEstateMemberUnder18withoutRep, clearErrors])
+    if (!hasEstateMemberUnder18withoutRep) {
+      clearErrors(heirAdvocateAgeValidation)
+    }
+  }, [fields, hasEstateMemberUnder18withoutRep, hasEstateMemberUnder18, clearErrors])
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
@@ -350,7 +371,7 @@ export const EstateMembersRepeater: FC<
       {errors && errors[heirAgeValidation] ? (
         <Box marginTop={3}>
           <InputError
-            errorMessage={formatMessage(m.inheritanceAgeValidation)}
+            errorMessage={selectedEstate === EstateTypes.divisionOfEstateByHeirs ? formatMessage(m.inheritanceAgeValidation) : formatMessage(m.heirAdvocateAgeValidation)}
           />
         </Box>
       ) : null}

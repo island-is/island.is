@@ -23,12 +23,14 @@ type LookupProps = {
     }
   }
   nested?: boolean
+  message: string
   error: Record<string, string> | any
 }
 
 export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   field,
   error,
+  message,
   nested = false,
 }) => {
   const { formatMessage } = useLocale()
@@ -75,7 +77,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
           <GridColumn span={['1/1']} paddingBottom={3}>
             <AlertMessage
               type="warning"
-              message={formatMessage(m.inheritanceUnder18Error)}
+              message={message}
             />
           </GridColumn>
         )}

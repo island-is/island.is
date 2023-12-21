@@ -107,7 +107,6 @@ export const estateSchema = z.object({
           })
           .optional(),
       })
-
       .refine(
         ({ foreignCitizenship, nationalId }) => {
           return !foreignCitizenship?.length
@@ -138,7 +137,7 @@ export const estateSchema = z.object({
         },
       )
 
-      /* phone and email validation for advocates */
+      /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
           return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true

@@ -1025,7 +1025,19 @@ export const m = defineMessages({
       'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: '',
   },
+  inheritanceUnder18ErrorAdvocate: {
+    id: 'es.application:inheritanceUnder18ErrorAdvocate',
+    defaultMessage:
+      'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
   inheritanceAgeValidation: {
+    id: 'es.application:inheritanceAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
+    description: '',
+  },
+  heirAdvocateAgeValidation: {
     id: 'es.application:inheritanceAgeValidation',
     defaultMessage:
       'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
