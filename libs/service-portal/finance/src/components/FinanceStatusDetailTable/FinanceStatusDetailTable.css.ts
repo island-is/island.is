@@ -24,11 +24,6 @@ export const buttonWrap = style({
   display: 'flex',
 })
 
-export const btnSpacer = style({
-  marginLeft: theme.spacing[2],
-  display: 'inline-flex',
-})
-
 export const loadingDot = style({
   position: 'absolute',
   margin: 'auto',

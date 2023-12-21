@@ -19,7 +19,6 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -32,12 +31,16 @@ import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
 import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   directionType,
   sortableTableColumn,
   SortConfig,
-  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
+import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
@@ -46,13 +49,12 @@ import * as styles from './Cases.css'
 
 interface Props {
   cases: CaseListEntry[]
-  onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
 const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
+  const { cases, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
 
@@ -65,6 +67,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const { width } = useViewport()
+  const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
+    useCaseList()
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -122,16 +127,15 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
-  const { width } = useViewport()
-
   return width < theme.breakpoints.md ? (
     <>
       {cases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            onClick={() => onRowClick(theCase.id)}
+            onClick={() => handleOpenCase(theCase.id)}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
@@ -217,8 +221,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 data-testid="custody-cases-table-row"
                 role="button"
                 aria-label="Opna kröfu"
+                aria-disabled={isDeletingCase || isOpeningCaseId === c.id}
                 onClick={() => {
-                  user?.role && onRowClick(c.id)
+                  handleOpenCase(c.id)
                 }}
               >
                 <td className={styles.td}>
@@ -334,35 +339,48 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     </>
                   )}
                 </td>
-
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecutionUser(user) &&
-                    (c.state === CaseState.NEW ||
-                      c.state === CaseState.DRAFT ||
-                      c.state === CaseState.SUBMITTED ||
-                      c.state === CaseState.RECEIVED) && (
-                      <Box
-                        data-testid="deleteCase"
-                        component="button"
-                        aria-label="Viltu afturkalla kröfu?"
-                        className={styles.deleteButton}
-                        onClick={async (evt) => {
-                          evt.stopPropagation()
+                  <AnimatePresence exitBeforeEnter initial={false}>
+                    {isOpeningCaseId === c.id && showLoading ? (
+                      <div className={styles.deleteButtonWrapper}>
+                        <LoadingIndicator />
+                      </div>
+                    ) : (
+                      isProsecutionUser(user) &&
+                      (c.state === CaseState.NEW ||
+                        c.state === CaseState.DRAFT ||
+                        c.state === CaseState.SUBMITTED ||
+                        c.state === CaseState.RECEIVED) && (
+                        <motion.button
+                          key={`${c.id}-delete`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          data-testid="deleteCase"
+                          aria-label="Viltu afturkalla kröfu?"
+                          className={cn(
+                            styles.deleteButton,
+                            styles.deleteButtonWrapper,
+                          )}
+                          onClick={async (evt) => {
+                            evt.stopPropagation()
 
-                          await new Promise((resolve) => {
-                            setRequestToRemoveIndex(
-                              requestToRemoveIndex === i ? undefined : i,
-                            )
+                            await new Promise((resolve) => {
+                              setRequestToRemoveIndex(
+                                requestToRemoveIndex === i ? undefined : i,
+                              )
 
-                            resolve(true)
-                          })
+                              resolve(true)
+                            })
 
-                          await controls.start('isDeleting')
-                        }}
-                      >
-                        <Icon icon="close" color="blue400" />
-                      </Box>
+                            await controls.start('isDeleting')
+                          }}
+                        >
+                          <Icon icon="close" color="blue400" />
+                        </motion.button>
+                      )
                     )}
+                  </AnimatePresence>
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
                   <Button

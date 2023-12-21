@@ -32,6 +32,7 @@ import { EventLog } from './eventLog.model'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
+registerEnumType(CaseState, { name: 'CaseState' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
 registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
@@ -39,6 +40,7 @@ registerEnumType(UserRole, { name: 'UserRole' })
 registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
+registerEnumType(CaseDecision, { name: 'CaseDecision' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
 registerEnumType(RequestSharedWithDefender, {
   name: 'requestSharedWithDefender',
@@ -67,7 +69,7 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly description?: string
 
-  @Field(() => String)
+  @Field(() => CaseState)
   readonly state!: CaseState
 
   @Field(() => [String])
@@ -205,7 +207,7 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly ruling?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseDecision, { nullable: true })
   readonly decision?: CaseDecision
 
   @Field({ nullable: true })
@@ -369,4 +371,13 @@ export class Case implements TCase {
 
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]
+
+  @Field({ nullable: true })
+  readonly appealValidToDate?: string
+
+  @Field({ nullable: true })
+  readonly isAppealCustodyIsolation?: boolean
+
+  @Field({ nullable: true })
+  readonly appealIsolationToDate?: string
 }

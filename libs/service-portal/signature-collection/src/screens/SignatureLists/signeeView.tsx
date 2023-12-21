@@ -1,14 +1,27 @@
 import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { mockLists } from '../../lib/utils'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
+import { useGetListsForUser, useGetSignedList } from '../hooks'
+import format from 'date-fns/format'
+import { Skeleton } from '../Skeletons'
 
 const SigneeView = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
+
+  const { signedList, loadingSignedList, refetchSignedList } =
+    useGetSignedList()
+  const { listsForUser, loadingUserLists, refetchListsForUser } =
+    useGetListsForUser()
+
+  const onUnSignList = () => {
+    setModalIsOpen(false)
+    refetchSignedList()
+    refetchListsForUser()
+  }
 
   const SignedList = () => {
     return (
@@ -20,8 +33,8 @@ const SigneeView = () => {
         disclosure={
           <ActionCard
             backgroundColor="blue"
-            heading={mockLists[0].name}
-            eyebrow="Lokadagur: 15.05.2024"
+            heading={signedList.owner.name + ' - ' + signedList.area.name}
+            eyebrow={format(new Date(signedList.endTime), 'dd.MM.yyyy')}
             text={formatMessage(m.collectionTitle)}
             cta={{
               label: formatMessage(m.unSignList),
@@ -39,52 +52,61 @@ const SigneeView = () => {
           {formatMessage(m.unSignModalMessage)}
         </Text>
         <Box marginTop={10} display="flex" justifyContent="center">
-          <Button onClick={() => setModalIsOpen(false)}>
+          <Button onClick={() => onUnSignList()}>
             {formatMessage(m.unSignModalConfirmButton)}
           </Button>
         </Box>
       </Modal>
     )
   }
-
   return (
-    <Box>
-      <Box marginTop={10}>
-        <Text variant="h4" marginBottom={3}>
-          {formatMessage(m.mySigneeListsHeader)}
-        </Text>
-        <SignedList />
-      </Box>
+    <div>
+      {!loadingSignedList && !loadingUserLists ? (
+        <Box>
+          {!!signedList && (
+            <Box marginTop={10}>
+              <Text variant="h4" marginBottom={3}>
+                {formatMessage(m.mySigneeListsHeader)}
+              </Text>
+              <SignedList />
+            </Box>
+          )}
 
-      <Box marginTop={10}>
-        <Text variant="h4" marginBottom={3}>
-          {formatMessage(m.mySigneeListsHeader)}
-        </Text>
-        <Stack space={5}>
-          {mockLists.map((list) => {
-            return (
-              <ActionCard
-                backgroundColor="white"
-                heading={list.name}
-                eyebrow="Lokadagur: 15.05.2024"
-                text={formatMessage(m.collectionTitle)}
-                cta={{
-                  label: formatMessage(m.signList),
-                  variant: 'text',
-                  icon: 'arrowForward',
-                  disabled: true,
-                  onClick: () => {
-                    window.open(
-                      `${document.location.origin}/umsoknir/maela-med-lista/`,
-                    )
-                  },
-                }}
-              />
-            )
-          })}
-        </Stack>
-      </Box>
-    </Box>
+          <Box marginTop={10}>
+            <Text variant="h4" marginBottom={3}>
+              {formatMessage(m.mySigneeListsByAreaHeader)}
+            </Text>
+
+            <Stack space={5}>
+              {listsForUser?.map((list) => {
+                return (
+                  <ActionCard
+                    key={list.id}
+                    backgroundColor="white"
+                    heading={list.owner.name + ' - ' + list.area.name}
+                    eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
+                    text={formatMessage(m.collectionTitle)}
+                    cta={{
+                      label: formatMessage(m.signList),
+                      variant: 'text',
+                      icon: 'arrowForward',
+                      disabled: signedList !== null,
+                      onClick: () => {
+                        window.open(
+                          `${document.location.origin}/umsoknir/maela-med-lista/`,
+                        )
+                      },
+                    }}
+                  />
+                )
+              })}
+            </Stack>
+          </Box>
+        </Box>
+      ) : (
+        <Skeleton />
+      )}
+    </div>
   )
 }
 

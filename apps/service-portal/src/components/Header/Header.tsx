@@ -10,7 +10,7 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.css'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPaths } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
@@ -22,6 +22,7 @@ import { useWindowSize } from 'react-use'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { useAuth } from '@island.is/auth/react'
 import Sidemenu from '../Sidemenu/Sidemenu'
+import { DocumentsPaths } from '@island.is/service-portal/documents'
 
 interface Props {
   position: number
@@ -61,7 +62,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                   alignItems="center"
                   width="full"
                 >
-                  <Link to={ServicePortalPath.MinarSidurRoot}>
+                  <Link to={ServicePortalPaths.Root}>
                     <FocusableBox component="div">
                       <Hidden above="sm">
                         <Logo
@@ -85,7 +86,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                     >
                       <Hidden below="md">
                         <Box marginRight={[1, 1, 2]} position="relative">
-                          <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
+                          <Link to={DocumentsPaths.ElectronicDocumentsRoot}>
                             <Button
                               variant="utility"
                               colorScheme="white"

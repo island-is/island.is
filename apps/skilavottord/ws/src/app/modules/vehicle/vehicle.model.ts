@@ -61,6 +61,12 @@ export class VehicleModel extends Model<VehicleModel> {
   })
   vinNumber: string
 
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.INTEGER,
+  })
+  mileage?: number
+
   @Field(() => Date, { nullable: true })
   @CreatedAt
   @Column

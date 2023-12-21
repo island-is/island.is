@@ -55,6 +55,28 @@ export const assetsNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: m.intellectualProperties,
+      path: AssetsPaths.AssetsIntellectualProperties,
+      navHide: true,
+      children: [
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesDesign,
+        },
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
+        },
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesPatent,
+        },
+      ],
+    },
+    {
       name: m.workMachines,
       path: AssetsPaths.AssetsWorkMachines,
       children: [

@@ -609,49 +609,51 @@ export class ApplicationService {
     const whereOptions = {
       state: {
         [Op.in]:
-          filters.states.length > 0
-            ? filters.states
-            : [ApplicationState.APPROVED, ApplicationState.REJECTED],
+          filters.states.length > 0 ? filters.states : filters.defaultStates,
       },
       municipalityCode: { [Op.in]: municipalityCodes },
     }
 
-    if (filters.months.length > 0) {
-      const date = new Date()
-      const currentYear = date.getFullYear()
-      const currentMonth = date.getMonth()
-
-      whereOptions[Op.or] = filters.months.map((month) =>
-        Sequelize.and(
-          Sequelize.where(
-            Sequelize.fn(
-              'date_part',
-              'month',
-              Sequelize.col('ApplicationModel.created'),
-            ),
-            (month + 1).toString(),
-          ),
-          Sequelize.where(
-            Sequelize.fn(
-              'date_part',
-              'year',
-              Sequelize.col('ApplicationModel.created'),
-            ),
-            (month > currentMonth ? currentYear - 1 : currentYear).toString(),
-          ),
-        ),
-      )
-    }
+    const staffOptions =
+      filters.staff.length > 0
+        ? {
+            model: StaffModel,
+            as: 'staff',
+            where: {
+              nationalId: { [Op.in]: filters.staff },
+            },
+          }
+        : { model: StaffModel, as: 'staff' }
 
     const results = await this.applicationModel.findAndCountAll({
       where: whereOptions,
       order: [['modified', 'DESC']],
-      include: [{ model: StaffModel, as: 'staff' }],
+      include: [staffOptions],
       offset: (filters.page - 1) * applicationPageSize,
       limit: applicationPageSize,
     })
 
-    return { applications: results.rows, totalCount: results.count }
+    const resultsStaffWithApplications = await this.applicationModel.findAll({
+      where: {
+        state: {
+          [Op.in]: filters.defaultStates,
+        },
+        municipalityCode: { [Op.in]: municipalityCodes },
+      },
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+    })
+
+    await Promise.all([resultsStaffWithApplications, results])
+
+    const staffList = resultsStaffWithApplications.map((row) => row.staff)
+    const staffListUniq = [...new Map(staffList.map((v) => [v.id, v])).values()]
+
+    return {
+      applications: results.rows,
+      totalCount: results.count,
+      staffList: staffListUniq,
+    }
   }
 
   private async sendApplicationUpdateEmail(

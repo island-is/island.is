@@ -3,12 +3,14 @@ import { IntlShape, useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'
 import {
-  CaseState,
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { tagCaseState as m } from './TagCaseState.strings'
 
@@ -16,16 +18,16 @@ interface Props {
   caseState: CaseState
   caseType: CaseType
   isCourtRole?: boolean
-  isValidToDateInThePast?: boolean
-  courtDate?: string
+  isValidToDateInThePast?: boolean | null
+  courtDate?: string | null
 }
 
 export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   state: CaseState,
   caseType: CaseType,
-  isValidToDateInThePast?: boolean,
-  courtDate?: string,
+  isValidToDateInThePast?: boolean | null,
+  courtDate?: string | null,
   isCourtRole?: boolean,
 ): { color: TagVariant; text: string } => {
   switch (state) {

@@ -18,3 +18,9 @@ export * from './AccessControlCompany'
 export { Overview as RecyclingFundOverview } from './RecyclingFund'
 export * from './AccessControl'
 export * from './RecyclingCompanies'
+
+export {
+  Overview as DeregisterOverviewKm,
+  Select as DeregisterSelectKm,
+  ConfirmKM as DeregisterConfirmKm,
+} from './DeregisterVehicleKm'

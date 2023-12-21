@@ -9,9 +9,9 @@ import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
-import { CaseState } from '@island.is/judicial-system/types'
 import {
   CaseOrigin,
+  CaseState,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -154,7 +154,10 @@ const FormProvider = ({ children }: Props) => {
   })
 
   useEffect(() => {
-    if (state === 'fetch' || state === 'refresh') {
+    if (
+      limitedAccess !== undefined && // Wait until limitedAccess is defined
+      (state === 'fetch' || state === 'refresh')
+    ) {
       if (limitedAccess) {
         getLimitedAccessCase({ variables: { input: { id } } })
       } else {

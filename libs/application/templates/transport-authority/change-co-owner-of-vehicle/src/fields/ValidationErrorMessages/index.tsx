@@ -28,6 +28,9 @@ export const ValidationErrorMessages: FC<
           pickVehicle: {
             plate: answers?.pickVehicle?.plate,
           },
+          vehicleMileage: {
+            value: answers?.vehicleMileage?.value,
+          },
           owner: {
             email: answers?.owner?.email,
             nationalId: answers?.owner?.nationalId,
