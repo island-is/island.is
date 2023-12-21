@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from 'react'
+import { FC, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
@@ -69,9 +69,18 @@ export const EstateMembersRepeater: FC<
       ) {
         setError(heirAgeValidation, {
           type: 'custom',
-          message: 'custom villa',
         })
-        return [false, 'villa']
+        return [false, 'invalid advocate age']
+      }
+
+      if (
+        hasEstateMemberUnder18 &&
+        selectedEstate === EstateTypes.divisionOfEstateByHeirs
+      ) {
+        setError(heirAgeValidation, {
+          type: 'custom',
+        })
+        return [false, 'invalid member age']
       }
 
       if (
@@ -117,12 +126,12 @@ export const EstateMembersRepeater: FC<
   useEffect(() => {
     if (
       !hasEstateMemberUnder18 &&
-      selectedEstate === !EstateTypes.divisionOfEstateByHeirs
+      selectedEstate !== EstateTypes.divisionOfEstateByHeirs
     ) {
       clearErrors(heirAgeValidation)
     }
     if (!hasEstateMemberUnder18withoutRep) {
-      clearErrors(heirAdvocateAgeValidation)
+      clearErrors(heirAgeValidation)
     }
   }, [
     fields,
@@ -376,7 +385,7 @@ export const EstateMembersRepeater: FC<
         </Button>
       </Box>
       {errors && errors[heirAgeValidation] ? (
-        <Box marginTop={3}>
+        <Box marginTop={4}>
           <InputError
             errorMessage={
               selectedEstate === EstateTypes.divisionOfEstateByHeirs

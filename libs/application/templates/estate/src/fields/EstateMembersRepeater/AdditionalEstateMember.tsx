@@ -67,7 +67,7 @@ export const AdditionalEstateMember = ({
 
   const values = getValues()
 
-  const currentEstateMember = values?.estate.estateMembers?.[index]
+  const currentEstateMember = values?.estate?.estateMembers?.[index]
 
   useEffect(() => {
     clearErrors(nameField)
@@ -145,6 +145,7 @@ export const AdditionalEstateMember = ({
             field={{
               id: `${fieldIndex}`,
               props: {
+                alertWhenUnder18: selectedEstate === EstateTypes.divisionOfEstateByHeirs,
                 requiredNationalId:
                   selectedEstate === EstateTypes.estateWithoutAssets,
               },

@@ -49,4 +49,3 @@ export const relationWithApplicant = [
 ]
 
 export const heirAgeValidation = 'heirAgeValidation'
-export const heirAdvocateAgeValidation = 'heirAgeValidation'
