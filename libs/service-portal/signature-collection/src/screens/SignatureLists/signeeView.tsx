@@ -33,7 +33,6 @@ const SigneeView = () => {
 
       if (res.data?.signatureCollectionUnsign.success) {
         toast.success(formatMessage(m.unSignSuccess))
-        setModalIsOpen(false)
       } else {
         toast.error(formatMessage(m.unSignError))
       }
