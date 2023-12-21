@@ -14,6 +14,8 @@
     "beta": "yarn fastlane:ios beta && yarn fastlane:android beta",
     "alpha:upload": "yarn fastlane:ios beta apps:dev && yarn fastlane:android beta apps:dev",
     "alpha:release": "yarn fastlane:ios promote to:alpha apps:dev && yarn fastlane:android promote to:alpha apps:dev",
+    "codepush:ios": "appcenter codepush release-react -a Stafraent-Island/Island-ios -x -d production  --plist-file ios/IslandApp/Info.plist",
+    "codepush:android": "appcenter codepush release-react -a Stafraent-Island/Island-android -x -d production",
     "test": "jest",
     "test-mock": "echo FIXME",
     "storybook": "start-storybook -p 7007",

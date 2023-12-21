@@ -96,7 +96,7 @@ const getAndRefreshToken = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const isTokenAboutToExpire =
-    new Date(authorizeResult!.accessTokenExpirationDate!).getTime() <
+    new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() <
     Date.now() - 60 * 5 * 1000
   if (isTokenAboutToExpire) {
     // expires in less than 5 minutes, so refresh

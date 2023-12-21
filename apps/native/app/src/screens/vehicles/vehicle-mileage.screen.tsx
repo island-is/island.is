@@ -1,8 +1,18 @@
-import { Button, Divider, TextField, Typography } from '@ui'
+import {
+  Button,
+  Divider,
+  NavigationBarSheet,
+  TextField,
+  Typography,
+  useDynamicColor,
+} from '@ui'
 import { useCallback, useMemo, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Alert, FlatList, View } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import {
   GetVehicleDocument,
@@ -16,6 +26,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { openBrowser } from '../../lib/rn-island'
 import { MileageCell } from './components/mileage-cell'
+import { useTheme } from 'styled-components'
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -49,7 +60,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     variables: {
       input: {
         regno: '',
-        permno: '', // id,
+        permno: id,
         vin: '',
       },
     },
@@ -223,112 +234,120 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   }, [data, highestMileage, id, parseMileage, updateMileage, intl])
 
   return (
-    <FlatList
-      data={data}
-      renderItem={({ item, index }) =>
-        item.__typename === 'Skeleton' ? (
-          <MileageCell skeleton />
-        ) : (
-          <MileageCell
-            title={
-              originCodes[item.originCode as keyof typeof originCodes] ??
-              item.originCode
-            }
-            subtitle={<FormattedDate value={item.readDate} />}
-            accessory={
-              item.mileage
-                ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
-                : '-'
-            }
-            editable={isFormEditable && index === 0}
-            onPress={onEdit}
-          />
-        )
-      }
-      keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="on-drag"
-      keyExtractor={(item, index) => String(item.internalId ?? index)}
-      ListHeaderComponent={
-        <View
-          style={{ backgroundColor: 'white', marginTop: 40 }}
-          key="list-header"
-        >
-          <View style={{ marginBottom: 24 }}>
+    <>
+      <NavigationBarSheet
+        componentId={componentId}
+        title={
+          <View
+            style={{ flexDirection: 'column', marginTop: 8, marginBottom: 16 }}
+          >
             <Typography variant="heading4">{vehicle.type}</Typography>
             <Typography variant="body">
               {vehicle.color} - {id}
             </Typography>
           </View>
-          <View style={{ flexDirection: 'column', gap: 16 }}>
-            <TextField
-              editable={canRegisterMileage}
-              key="mileage-input"
-              placeholder={intl.formatMessage({
-                id: 'vehicle.mileage.inputPlaceholder',
-              })}
-              label={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
-              value={input}
-              maxLength={9}
-              keyboardType="decimal-pad"
-              onChange={(value) =>
-                setInput(
-                  value.length
-                    ? Intl.NumberFormat('is-IS').format(
-                        Math.max(
-                          0,
-                          Math.min(9999999, Number(value.replace(/\D/g, ''))),
-                        ),
-                      )
-                    : value,
-                )
+        }
+        onClosePress={() => Navigation.dismissModal(componentId)}
+        style={{ marginHorizontal: 16 }}
+      />
+      <FlatList
+        data={data}
+        renderItem={({ item, index }) =>
+          item.__typename === 'Skeleton' ? (
+            <MileageCell skeleton />
+          ) : (
+            <MileageCell
+              title={
+                originCodes[item.originCode as keyof typeof originCodes] ??
+                item.originCode
               }
+              subtitle={<FormattedDate value={item.readDate} />}
+              accessory={
+                item.mileage
+                  ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
+                  : '-'
+              }
+              editable={isFormEditable && index === 0}
+              onPress={onEdit}
             />
-            <Button
-              title={intl.formatMessage({
-                id: 'vehicle.mileage.inputSubmitButton',
-              })}
-              onPress={onSubmit}
-              disabled={!canRegisterMileage}
-            />
-          </View>
-          <View>
-            {!canRegisterMileage && (
-              <Typography
-                variant="body3"
-                textAlign="center"
-                style={{ marginTop: 16 }}
-              >
-                {intl.formatMessage({
-                  id: 'vehicle.mileage.registerIntervalCopy',
+          )
+        }
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        keyExtractor={(item, index) => String(item.internalId ?? index)}
+        ListHeaderComponent={
+          <View key="list-header">
+            <View style={{ flexDirection: 'column', gap: 16 }}>
+              <TextField
+                editable={canRegisterMileage}
+                key="mileage-input"
+                placeholder={intl.formatMessage({
+                  id: 'vehicle.mileage.inputPlaceholder',
                 })}
-              </Typography>
-            )}
-            <Button
-              icon={externalLinkIcon}
-              title={intl.formatMessage({
-                id: 'vehicle.mileage.moreInformationCopy',
-              })}
-              onPress={() =>
-                openBrowser(
-                  'https://island.is/flokkur/akstur-og-bifreidar',
-                  componentId,
-                )
-              }
-              isTransparent
-              textStyle={{ fontSize: 12, lineHeight: 16 }}
-            />
+                label={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
+                value={input}
+                maxLength={9}
+                keyboardType="decimal-pad"
+                onChange={(value) =>
+                  setInput(
+                    value.length
+                      ? Intl.NumberFormat('is-IS').format(
+                          Math.max(
+                            0,
+                            Math.min(9999999, Number(value.replace(/\D/g, ''))),
+                          ),
+                        )
+                      : value,
+                  )
+                }
+              />
+              <Button
+                title={intl.formatMessage({
+                  id: 'vehicle.mileage.inputSubmitButton',
+                })}
+                onPress={onSubmit}
+                disabled={!canRegisterMileage}
+              />
+            </View>
+            <View>
+              {!canRegisterMileage && (
+                <Typography
+                  variant="body3"
+                  textAlign="center"
+                  style={{ marginTop: 16 }}
+                >
+                  {intl.formatMessage({
+                    id: 'vehicle.mileage.registerIntervalCopy',
+                  })}
+                </Typography>
+              )}
+              <Button
+                icon={externalLinkIcon}
+                title={intl.formatMessage({
+                  id: 'vehicle.mileage.moreInformationCopy',
+                })}
+                onPress={() =>
+                  openBrowser(
+                    'https://island.is/flokkur/akstur-og-bifreidar',
+                    componentId,
+                  )
+                }
+                isTransparent
+                textStyle={{ fontSize: 12, lineHeight: 16 }}
+              />
+            </View>
+            <Divider style={{ marginLeft: 0, marginRight: 0 }} />
+            <Typography
+              variant="heading4"
+              style={{ marginTop: 16, marginBottom: 16 }}
+            >
+              {intl.formatMessage({ id: 'vehicle.mileage.historyTitle' })}
+            </Typography>
           </View>
-          <Divider style={{ marginLeft: 0, marginRight: 0 }} />
-          <Typography
-            variant="heading4"
-            style={{ marginTop: 16, marginBottom: 16 }}
-          >
-            {intl.formatMessage({ id: 'vehicle.mileage.historyTitle' })}
-          </Typography>
-        </View>
-      }
-      style={{ flex: 1, margin: 16, marginTop: 0 }}
-    />
+        }
+        style={{ flex: 1, margin: 16, marginTop: 0 }}
+      />
+    </>
   )
 }
 

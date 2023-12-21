@@ -301,7 +301,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     const { authorizeResult, refresh } = authStore.getState()
     const isExpired =
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      new Date(authorizeResult!.accessTokenExpirationDate!).getTime() <
+      new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() <
       Date.now()
     if (isExpired) {
       refresh().then(() => {

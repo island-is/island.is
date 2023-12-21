@@ -1,3 +1,5 @@
+import { setupGlobals } from './utils/lifecycle/setup-globals'
+// rest
 import { Navigation } from 'react-native-navigation'
 import { readAuthorizeResult } from './stores/auth-store'
 import { showAppLockOverlay } from './utils/app-lock'
@@ -6,7 +8,6 @@ import { getAppRoot } from './utils/lifecycle/get-app-root'
 import { registerAllComponents } from './utils/lifecycle/setup-components'
 import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
 import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
-import { setupGlobals } from './utils/lifecycle/setup-globals'
 import {
   openInitialNotification,
   setupNotifications,

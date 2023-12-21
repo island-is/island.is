@@ -1,48 +1,54 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import messaging from '@react-native-firebase/messaging'
-import perf from '@react-native-firebase/perf'
 import {
   DynamicColorIOS,
   ImageStyle,
   LogBox,
-  Platform,
   Settings,
   TextStyle,
   ViewStyle,
 } from 'react-native'
-import DeviceInfo from 'react-native-device-info'
+import { Platform } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
+import messaging from '@react-native-firebase/messaging'
+import perf from '@react-native-firebase/perf'
 import { performanceMetrics } from '../performance-metrics'
+import DeviceInfo from 'react-native-device-info'
 
 // uncomment polyfills that are needed.
 // make sure to add locales that are needed as well
-import {
-  DdRum,
-  DdSdkReactNative,
-  DdSdkReactNativeConfiguration,
-} from '@datadog/mobile-react-native'
-import '@formatjs/intl-datetimeformat/add-golden-tz'
-import '@formatjs/intl-datetimeformat/locale-data/en'
-import '@formatjs/intl-datetimeformat/locale-data/is'
-import '@formatjs/intl-datetimeformat/polyfill'
-import '@formatjs/intl-getcanonicallocales/polyfill'
-import '@formatjs/intl-locale/polyfill'
-import '@formatjs/intl-numberformat/locale-data/en'
-import '@formatjs/intl-numberformat/locale-data/is'
-import '@formatjs/intl-numberformat/polyfill'
-import '@formatjs/intl-pluralrules/locale-data/en'
-import '@formatjs/intl-pluralrules/locale-data/is'
-import '@formatjs/intl-pluralrules/polyfill'
-import '@formatjs/intl-relativetimeformat/locale-data/en'
-import '@formatjs/intl-relativetimeformat/locale-data/is'
-import '@formatjs/intl-relativetimeformat/polyfill'
 import 'intl'
 import 'intl/locale-data/jsonp/en'
 import 'intl/locale-data/jsonp/is'
-import { StyleSheet } from 'react-native'
-import { Navigation } from 'react-native-navigation'
-import { getConfig } from '../../config'
+import '@formatjs/intl-locale/polyfill'
+import '@formatjs/intl-getcanonicallocales/polyfill'
+import '@formatjs/intl-pluralrules/polyfill'
+import '@formatjs/intl-pluralrules/locale-data/en'
+import '@formatjs/intl-pluralrules/locale-data/is'
+import '@formatjs/intl-numberformat/polyfill'
+import '@formatjs/intl-numberformat/locale-data/en'
+import '@formatjs/intl-numberformat/locale-data/is'
+import '@formatjs/intl-datetimeformat/polyfill'
+import '@formatjs/intl-datetimeformat/locale-data/en'
+import '@formatjs/intl-datetimeformat/locale-data/is'
+import '@formatjs/intl-datetimeformat/add-golden-tz'
+// import '@formatjs/intl-listformat/polyfill'
+// import '@formatjs/intl-listformat/locale-data/en'
+// import '@formatjs/intl-listformat/locale-data/is'
+// import '@formatjs/intl-displaynames/polyfill'
+// import '@formatjs/intl-displaynames/locale-data/en'
+// import '@formatjs/intl-displaynames/locale-data/is'
+import '@formatjs/intl-relativetimeformat/polyfill'
+import '@formatjs/intl-relativetimeformat/locale-data/en'
+import '@formatjs/intl-relativetimeformat/locale-data/is'
 import { setupQuickActions } from '../quick-actions'
+import { Navigation } from 'react-native-navigation'
+import {
+  DdSdkReactNative,
+  DdSdkReactNativeConfiguration,
+  DdRum,
+} from '@datadog/mobile-react-native'
+import { StyleSheet } from 'react-native'
+import { getConfig } from '../../config'
 
 type PatchedStyleSheet = typeof StyleSheet & {
   _create: typeof StyleSheet.create

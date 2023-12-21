@@ -333,7 +333,7 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.inputSubmitButton': 'Submit',
   'vehicle.mileage.registerIntervalCopy':
     'Mileage can only be recorded once every 30 days',
-  'vehicle.mileage.moreInformationCopy': 'See more information at island.is',
+  'vehicle.mileage.moreInformationCopy': 'See more information at Ísland.is',
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
 

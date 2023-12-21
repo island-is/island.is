@@ -50,6 +50,8 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
   const isError = !!error
   const noInfo = data?.vehiclesDetail === null
+  const isMileageRequired =
+    mainInfo?.requiresMileageRegistration && isMileageEnabled
 
   if (noInfo && !loading) {
     return (
@@ -137,7 +139,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             )}
           </InputRow>
 
-          {isMileageEnabled && (
+          {isMileageRequired && (
             <Button
               title={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
               onPress={() => {

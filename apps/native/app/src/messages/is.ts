@@ -242,7 +242,7 @@ export const is = {
   'vehicle.mileage.inputSubmitButton': 'Skrá',
   'vehicle.mileage.registerIntervalCopy':
     'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',
-  'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á island.is',
+  'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á Ísland.is',
   'vehicle.mileage.historyTitle': 'Skráningar',
   'vehicle.mileage.editRecordButton': 'Breyta færslu',
 

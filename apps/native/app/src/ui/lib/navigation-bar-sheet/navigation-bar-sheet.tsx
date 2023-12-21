@@ -63,7 +63,7 @@ export function NavigationBarSheet({
   onClosePress,
   style,
 }: {
-  title: string
+  title?: React.ReactNode
   componentId: string
   onClosePress(): void
   style?: ViewStyle
@@ -81,7 +81,11 @@ export function NavigationBarSheet({
       {isHandle && <Handle />}
       <SafeAreaView>
         <Header style={style}>
-          <HeaderTitle>{title}</HeaderTitle>
+          {typeof title === 'string' ? (
+            <HeaderTitle>{title}</HeaderTitle>
+          ) : (
+            title
+          )}
           <CloseButton
             onPress={onClosePress}
             testID="NAVBAR_SHEET_CLOSE_BUTTON"

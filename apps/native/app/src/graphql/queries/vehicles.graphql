@@ -26,6 +26,9 @@ query GetVehicle($input: GetVehicleDetailInput!) {
       cubicCapacity
       trailerWithBrakesWeight
       trailerWithoutBrakesWeight
+      nextAvailableMileageReadDate
+      requiresMileageRegistration
+      canRegisterMileage
     }
     basicInfo {
       model
