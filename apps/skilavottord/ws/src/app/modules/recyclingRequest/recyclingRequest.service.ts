@@ -34,17 +34,21 @@ export class RecyclingRequestService {
     private vehicleService: VehicleService,
   ) {}
 
-  async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
+  async deRegisterVehicle(
+    vehiclePermno: string,
+    disposalStation: string,
+    mileage = 0,
+  ) {
+    console.log('-----------> deRegisterVehicle--->')
+    console.log('-----------> mileage:' + mileage)
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
-
       const jsonObj = {
         username: restUsername,
         password: restPassword,
       }
       const jsonAuthBody = JSON.stringify(jsonObj)
-
       const headerAuthRequest = {
         'Content-Type': 'application/json',
       }
@@ -54,27 +58,24 @@ export class RecyclingRequestService {
           headers: headerAuthRequest,
         }),
       )
-
       if (authRes.status > 299 || authRes.status < 200) {
-        throw new Error(
-          `Failed on authenticated on deRegisterVehicle with status: ${authRes.statusText}`,
-        )
+        const errorMessage = `Authentication failed for deRegisterService: ${authRes.statusText}`
+        this.logger.error(errorMessage)
+        throw new Error(errorMessage)
       }
       // DeRegisterd vehicle
       const jToken = authRes.data['jwtToken']
-
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
         deRegisterDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
         disposalstation: disposalStation,
         explanation: 'Rafrænt afskráning',
+        mileage: mileage,
       })
-
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
       }
-
       const deRegRes = await lastValueFrom(
         this.httpService.post(restDeRegUrl, jsonDeRegBody, {
           headers: headerDeRegRequest,
@@ -238,10 +239,9 @@ export class RecyclingRequestService {
       }
 
       // Checking if 'permno' is already in the database
-      const isVehicle = await this.vehicleService.findByVehicleId(permno)
-      if (!isVehicle) {
+      const vehicle = await this.vehicleService.findByVehicleId(permno)
+      if (!vehicle) {
         this.logger.error(`Citizen has not accepted to recycle the vehicle`)
-
         errors.operation = 'Checking vehicle'
         errors.message = `Citizen has not accepted to recycle the vehicle.`
         return errors
@@ -307,7 +307,8 @@ export class RecyclingRequestService {
         try {
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
-          await this.deRegisterVehicle(permno, partnerId)
+          // await this.deRegisterVehicle(permno, partnerId)
+          await this.deRegisterVehicle(permno, partnerId, vehicle?.mileage)
         } catch (err) {
           // Saved requestType back to 'pendingRecycle'
           const req = new RecyclingRequestModel()
@@ -316,7 +317,7 @@ export class RecyclingRequestService {
           req.requestType = RecyclingRequestTypes.pendingRecycle
           req.recyclingPartnerId = newRecyclingRequest.recyclingPartnerId
           await req.save()
-
+          this.logger.error(err)
           this.logger.error(`Deregistered process failed.`, {
             permno: newRecyclingRequest.vehicleId,
             newRecyclingRequest,

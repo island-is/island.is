@@ -72,10 +72,15 @@ export class RecyclingRequestResolver {
   })
   @Query(() => Boolean)
   async skilavottordDeRegisterVehicle(
-    @Args('vehiclePermno') nid: string,
+    @Args('vehiclePermno') permno: string,
     @Args('recyclingPartner') station: string,
+    @Args('mileage') mileage: number,
   ): Promise<boolean> {
-    return this.recyclingRequestService.deRegisterVehicle(nid, station)
+    return this.recyclingRequestService.deRegisterVehicle(
+      permno,
+      station,
+      mileage,
+    )
   }
 
   @Authorize({
