@@ -69,19 +69,16 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
       setValue(`${id}.name`, '')
     }
   }, [personName, personNationalId, getIdentity, setValue, clearErrors, id])
-  
+
   return (
     <Box>
       <GridRow>
         {props?.alertWhenUnder18 && nationalId.info(personNationalId).age < 18 && (
           <GridColumn span={['1/1']} paddingBottom={3}>
-            <AlertMessage
-              type="warning"
-              message={message}
-            />
+            <AlertMessage type="warning" message={message} />
           </GridColumn>
         )}
-        <GridColumn span={nested ? ['1/1', '1/2'] : "6/12"}>
+        <GridColumn span={nested ? ['1/1', '1/2'] : '6/12'}>
           <InputController
             id={`${id}.nationalId`}
             name={`${id}.nationalId`}
@@ -94,7 +91,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
             error={error?.nationalId || error?.name}
           />
         </GridColumn>
-        <GridColumn span={nested ? ['1/1', '1/2'] : "6/12"}>
+        <GridColumn span={nested ? ['1/1', '1/2'] : '6/12'}>
           <InputController
             id={`${id}.name`}
             name={`${id}.name`}

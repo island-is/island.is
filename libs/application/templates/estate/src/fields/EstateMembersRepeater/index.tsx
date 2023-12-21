@@ -63,7 +63,6 @@ export const EstateMembersRepeater: FC<
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
-
       if (
         hasEstateMemberUnder18withoutRep &&
         selectedEstate !== EstateTypes.divisionOfEstateByHeirs
@@ -116,13 +115,21 @@ export const EstateMembersRepeater: FC<
     })
 
   useEffect(() => {
-    if(!hasEstateMemberUnder18 && selectedEstate === !EstateTypes.divisionOfEstateByHeirs) {
+    if (
+      !hasEstateMemberUnder18 &&
+      selectedEstate === !EstateTypes.divisionOfEstateByHeirs
+    ) {
       clearErrors(heirAgeValidation)
     }
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAdvocateAgeValidation)
     }
-  }, [fields, hasEstateMemberUnder18withoutRep, hasEstateMemberUnder18, clearErrors])
+  }, [
+    fields,
+    hasEstateMemberUnder18withoutRep,
+    hasEstateMemberUnder18,
+    clearErrors,
+  ])
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
@@ -371,7 +378,11 @@ export const EstateMembersRepeater: FC<
       {errors && errors[heirAgeValidation] ? (
         <Box marginTop={3}>
           <InputError
-            errorMessage={selectedEstate === EstateTypes.divisionOfEstateByHeirs ? formatMessage(m.inheritanceAgeValidation) : formatMessage(m.heirAdvocateAgeValidation)}
+            errorMessage={
+              selectedEstate === EstateTypes.divisionOfEstateByHeirs
+                ? formatMessage(m.inheritanceAgeValidation)
+                : formatMessage(m.heirAdvocateAgeValidation)
+            }
           />
         </Box>
       ) : null}

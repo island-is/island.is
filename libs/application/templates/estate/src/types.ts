@@ -23,7 +23,7 @@ export type Asset = Partial<EstateAsset & { initial: boolean }>
 
 export type AssetFormField = Asset & { id: string }
 
-export type ErrorValue = { [key: string]: any };
+export type ErrorValue = { [key: string]: any }
 
 export type Answers = {
   additionalInfo: string
