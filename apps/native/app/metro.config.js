@@ -4,24 +4,21 @@
  *
  * @format
  */
-const path = require('path');
-const {mergeConfig} = require('metro-config');
+const path = require('path')
+const { mergeConfig } = require('metro-config')
 
-const libs = ['application/types'];
+const libs = ['application/types']
 
 const extraNodeModules = libs.reduce((acc, lib) => {
-  acc[`@island.is/${lib}`] = path.resolve(
-    __dirname,
-    `../../../libs/${lib}/src`,
-  );
-  return acc;
-}, {});
+  acc[`@island.is/${lib}`] = path.resolve(__dirname, `../../../libs/${lib}/src`)
+  return acc
+}, {})
 
 const watchFolders = [
-  ...libs.map(lib => path.resolve(__dirname, `../../../libs/${lib}/src`)),
-];
+  ...libs.map((lib) => path.resolve(__dirname, `../../../libs/${lib}/src`)),
+]
 
-const nodeModulesPaths = [path.resolve(path.join(__dirname, './node_modules'))];
+const nodeModulesPaths = [path.resolve(path.join(__dirname, './node_modules'))]
 
 const config = {
   transformer: {
@@ -40,6 +37,6 @@ const config = {
     nodeModulesPaths,
   },
   watchFolders,
-};
+}
 
-module.exports = mergeConfig(config);
+module.exports = mergeConfig(config)
