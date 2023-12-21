@@ -1,6 +1,7 @@
 import {
   buildDescriptionField,
   buildMultiField,
+  buildPhoneField,
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
@@ -60,15 +61,14 @@ export const PersonalSection = buildSection({
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'userInformation.phone',
           title: personal.labels.userInformation.phone,
           width: 'half',
-          variant: 'tel',
-          format: '###-####',
+          backgroundColor: 'blue',
           required: true,
           defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.phone,
+            application.externalData?.userProfile?.data?.mobilePhoneNumber,
         }),
       ],
     }),

@@ -13,7 +13,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
@@ -43,7 +42,10 @@ import {
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseLegalProvisions,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'

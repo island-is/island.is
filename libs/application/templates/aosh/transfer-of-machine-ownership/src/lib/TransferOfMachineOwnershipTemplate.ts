@@ -36,6 +36,7 @@ import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { isPaymentRequired } from '../utils/isPaymentRequired'
+import { getBuyerNationalId } from '../utils/getBuyerNationalid'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -84,7 +85,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  //featureFlag: Features.transferOfMachineOwnership,
+  featureFlag: Features.transferOfMachineOwnership,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfMachineOwnership.translation,
   ],
@@ -262,7 +263,6 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: { target: States.REVIEW },
           [DefaultEvents.REJECT]: { target: States.REJECTED },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
@@ -384,17 +384,3 @@ const template: ApplicationTemplate<
 }
 
 export default template
-
-const getBuyerNationalId = (application: Application) => {
-  try {
-    const buyerNationalId = getValueViaPath(
-      application.answers,
-      'buyer.nationalId',
-      '',
-    ) as string
-    return buyerNationalId
-  } catch (error) {
-    console.error(error)
-    return ''
-  }
-}

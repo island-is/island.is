@@ -47,28 +47,27 @@ export const Overview: FC<
       buyerOperator || {},
     )
 
-    const resApprove = await submitApplication({
+    // const resApprove = await submitApplication({
+    //   variables: {
+    //     input: {
+    //       id: application.id,
+    //       event: DefaultEvents.APPROVE,
+    //       answers: approveAnswers,
+    //     },
+    //   },
+    // })
+    //if (resApprove?.data) {
+    await submitApplication({
       variables: {
         input: {
           id: application.id,
-          event: DefaultEvents.APPROVE,
+          event: DefaultEvents.SUBMIT,
           answers: approveAnswers,
         },
       },
     })
-    if (resApprove?.data) {
-      await submitApplication({
-        variables: {
-          input: {
-            id: application.id,
-            event: DefaultEvents.SUBMIT,
-            answers: approveAnswers,
-          },
-        },
-      })
-    }
+    //}
     setLoading(false)
-    setStep && setStep('conclusion')
   }
 
   const onBackButtonClick = () => {

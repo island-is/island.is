@@ -70,7 +70,7 @@ export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
               `<ul><li><p>${rejectedByStr}</p></li></ul>` +
               `<span>Til þess að skrá eigendaskiptin rafrænt verður að byrja ferlið að upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</span><br/>` +
               `<span>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um eigendaskipti sem skilað hefur verið inn til Vinnueftirlitsins á pappír.</span><br/>` +
-              `<span>Vinsamlegast hafið samband við Vinnueftirlitið (emailhjavinnueftirlitinu@vinnueftirlitid.is) ef nánari upplýsinga er þörf.</span>`,
+              `<span>Vinsamlegast hafið samband við Vinnueftirlitið vinnueftirlit@ver.is ef nánari upplýsinga er þörf.</span>`,
           },
         },
         {

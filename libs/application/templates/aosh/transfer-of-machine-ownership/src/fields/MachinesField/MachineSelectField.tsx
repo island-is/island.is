@@ -99,7 +99,7 @@ export const MachineSelectField: FC<
 
   useEffect(() => {
     setFieldLoadingState?.(isLoading)
-  }, [isLoading])
+  }, [isLoading, setFieldLoadingState])
 
   return (
     <Box>
