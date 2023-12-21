@@ -32,6 +32,7 @@ export const Icon = ({
   icon,
   type = 'filled',
   color = 'currentColor',
+  useStroke,
   size = 'medium',
   className,
   title,
@@ -89,6 +90,7 @@ export const Icon = ({
         aria-hidden={ariaHidden}
         fill={colors[color]}
         color={colors[color]}
+        stroke={useStroke && colors[color]}
         {...optionalProps}
       />
     </Suspense>
