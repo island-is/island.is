@@ -20,6 +20,11 @@ export const overview = {
       defaultMessage: 'Meðeigandi',
       description: 'Owners co owner label',
     },
+    mileage: {
+      id: 'ta.cov.application:overview.labels.mileage',
+      defaultMessage: 'Kílómetrar:',
+      description: 'Mileage label',
+    },
   }),
   confirmationModal: defineMessages({
     title: {
