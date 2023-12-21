@@ -145,7 +145,8 @@ export const AdditionalEstateMember = ({
             field={{
               id: `${fieldIndex}`,
               props: {
-                alertWhenUnder18: selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+                alertWhenUnder18:
+                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
                 requiredNationalId:
                   selectedEstate === EstateTypes.estateWithoutAssets,
               },
