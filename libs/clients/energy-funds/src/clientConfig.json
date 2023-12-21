@@ -3,19 +3,34 @@
   "info": {
     "title": "Electric Car Subsidy service v1",
     "description": "Service for Electric car subsidy",
-    "version": "1.0"
+    "version": "1.1"
   },
   "servers": [{ "url": "/rad/TbrOkutaeki.api.v1:electricCarSubsidyServiceV1" }],
   "paths": {
     "/catalog": {
       "get": {
-        "description": "Athuga skilagjald  ökutækis",
+        "description": "Get  itemcode and amount for subsidy",
         "operationId": "catalog_GET_1",
         "parameters": [
           {
+            "name": "vehicleGroup",
+            "in": "query",
+            "description": "M1/N1",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
             "name": "registrationDate",
             "in": "query",
-            "description": "Day of registration",
+            "description": "new day of registration",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "firstRegDate",
+            "in": "query",
+            "description": "first date registration format (yyyy-mm-dd)",
+            "required": true,
             "schema": { "type": "string" }
           }
         ],
@@ -36,7 +51,7 @@
     },
     "/gotElectricCarSubsidy/{vinNumber}": {
       "get": {
-        "description": "Athuga skilagjald  ökutækis",
+        "description": "check if car got subsidy",
         "operationId": "gotElectricCarSubsidyvinNumber_GET_2",
         "parameters": [
           {
@@ -63,7 +78,7 @@
     },
     "/electricCarSubsidy": {
       "post": {
-        "description": "Athuga skilagjald  ökutækis",
+        "description": "Create electric car subsidy",
         "operationId": "electricCarSubsidy_POST_3",
         "requestBody": {
           "content": {
@@ -99,11 +114,13 @@
           "VIN",
           "carNumber",
           "carType",
+          "firstRegDate",
           "itemcode",
           "nationalId",
           "purchasePrice",
           "registrationDate",
-          "subsidyAmount"
+          "subsidyAmount",
+          "vehicleGroup"
         ],
         "type": "object",
         "properties": {
@@ -124,6 +141,11 @@
             "type": "string",
             "description": "date of registration format (yyyy-mm-dd)"
           },
+          "firstRegDate": {
+            "type": "string",
+            "description": "date of first registration format (yyyy-mm-dd)"
+          },
+          "vehicleGroup": { "type": "string", "description": "M1/N1" },
           "subsidyAmount": { "type": "integer", "format": "int64" }
         }
       },
