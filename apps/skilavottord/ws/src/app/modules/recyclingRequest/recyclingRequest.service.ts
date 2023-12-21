@@ -305,7 +305,6 @@ export class RecyclingRequestService {
         try {
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
-          // await this.deRegisterVehicle(permno, partnerId)
           await this.deRegisterVehicle(permno, partnerId, vehicle?.mileage)
         } catch (err) {
           // Saved requestType back to 'pendingRecycle'
