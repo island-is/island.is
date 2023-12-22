@@ -1,39 +1,38 @@
 import {
-  json,
   ref,
   service,
-  ServiceBuilder,
+  ServiceBuilder
 } from '../../../../infra/src/dsl/dsl'
 import {
-  PostgresInfo,
-  RedisInfo,
+  PostgresInfo
 } from '../../../../infra/src/dsl/types/input-types'
 import {
   Base,
   ChargeFjsV2,
-  EnergyFunds,
   Client,
   CriminalRecord,
   DataProtectionComplaint,
+  DirectorateOfImmigration,
   DrivingLicense,
   EHIC,
+  EnergyFunds,
   Finance,
   FishingLicense,
   HealthInsurance,
   Labor,
   MunicipalitiesFinancialAid,
   NationalRegistry,
+  OccupationalLicenses,
   Passports,
   Payment,
   PaymentSchedule,
   Properties,
   RskCompanyInfo,
+  SocialInsuranceAdministration,
   TransportAuthority,
   Vehicles,
   VehicleServiceFjsV1,
-  DirectorateOfImmigration,
-  SocialInsuranceAdministration,
-  OccupationalLicenses,
+  WorkMachines
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -87,7 +86,7 @@ export const workerSetup =
           local: 'http://localhost:4200/umsoknir',
         },
       })
-      .xroad(Base, Client, Payment, EHIC)
+      .xroad(Base, Client, Payment, EHIC, WorkMachines)
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
