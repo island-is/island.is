@@ -6,7 +6,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { CaseState, isRestrictionCase } from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages/Core'
 import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
@@ -22,6 +22,7 @@ import {
 import {
   CaseDecision,
   CaseListEntry,
+  CaseState,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {

@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseDecision,
   CaseTransition,
   completedCaseStates,
   isAcceptingCaseDecision,
@@ -28,6 +27,7 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { confirmation as strings } from './Confirmation.strings'

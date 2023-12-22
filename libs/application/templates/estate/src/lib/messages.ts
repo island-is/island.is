@@ -462,6 +462,21 @@ export const m = defineMessages({
     defaultMessage: 'Fasteign',
     description: '',
   },
+  vehicleRepeaterHeader: {
+    id: 'es.application:vehicleRepeaterHeader',
+    defaultMessage: 'Farartæki',
+    description: '',
+  },
+  vehicleMarketLabel: {
+    id: 'es.application:vehicleMarketLabel',
+    defaultMessage: 'Markaðsverð á dánardegi',
+    description: '',
+  },
+  vehicleNameLabel: {
+    id: 'es.application:vehicleNameLabel',
+    defaultMessage: 'Heiti',
+    description: '',
+  },
   realEstateDescription: {
     id: 'es.application:realEstateDescription',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
