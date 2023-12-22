@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Form, useActionData, useLoaderData } from 'react-router-dom'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
@@ -22,7 +22,6 @@ import { useSubmitting } from '@island.is/react-spa/shared'
 
 import { RestrictionsIntent, RestrictionsResponse } from './Restrictions.action'
 import { m } from '../../lib/messages'
-import { formatDate } from '../../utils/formatDate'
 import { RestrictionsLoaderResponse } from './Restrictions.loader'
 
 import * as styles from './Restrictions.css'
@@ -55,6 +54,10 @@ export default function Restrictions() {
   const loaderData = useLoaderData() as RestrictionsLoaderResponse
   const actionData = useActionData() as RestrictionsResponse
   const { isLoading, isSubmitting } = useSubmitting()
+  const { formatDate } = useIntl()
+
+  const formatDateWithFormat = (date: Date) =>
+    formatDate(date, { dateStyle: 'short' })
 
   const isSimIdp = idp === IDP_SIM
   const { restricted, until } =
@@ -99,7 +102,9 @@ export default function Restrictions() {
                 <div className={styles.whiteSpacePreWrap}>
                   <FormattedMessage
                     {...m.messageEnabledRestriction}
-                    values={{ date: <b>{formatDate(new Date(until))}</b> }}
+                    values={{
+                      date: <b>{formatDateWithFormat(new Date(until))}</b>,
+                    }}
                   />
                 </div>
               }
@@ -159,7 +164,11 @@ export default function Restrictions() {
                     {...m.modalConfirmText}
                     values={{
                       date: (
-                        <b>{formatDate(startOfDay(addDays(new Date(), 8)))}</b>
+                        <b>
+                          {formatDateWithFormat(
+                            startOfDay(addDays(new Date(), 8)),
+                          )}
+                        </b>
                       ),
                     }}
                   />

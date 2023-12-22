@@ -1,5 +1,5 @@
 import { PortalModule } from '@island.is/portals/core'
-import { restrictionsModule } from '@island.is/restrictions'
+import { restrictionsModule } from '@island.is/service-portal/restrictions'
 import { sessionsModule } from '@island.is/service-portal/sessions'
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { assetsModule } from '@island.is/service-portal/assets'

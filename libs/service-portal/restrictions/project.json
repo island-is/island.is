@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/restrictions/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["lib:portals-mypages"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
