@@ -1,6 +1,6 @@
-# restrictions
+# Service portal restrictions
 
-This library was generated with [Nx](https://nx.dev).
+This module enables user to activate and deactivate restrictions on logins with electronic IDs on the phone in login and delegation system.
 
 ## Running unit tests
 

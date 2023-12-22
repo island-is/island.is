@@ -98,29 +98,31 @@ export const restrictionsAction: WrappedActionFn = ({
           data: createAuthLoginRestriction,
         }
       }
-    } else if (data.intent === RestrictionsIntent.Disable) {
-      // Remove restriction
-      const removeRes = await client.mutate<
-        RemoveLoginRestrictionMutation,
-        RemoveLoginRestrictionMutationVariables
-      >({
-        mutation: RemoveLoginRestrictionDocument,
-      })
 
-      if (removeRes.errors) {
-        throw new Error(removeRes.errors[0].message)
-      }
+      throw new Error('Failed to create restriction')
+    }
 
-      const removeAuthLoginRestriction =
-        removeRes.data?.removeAuthLoginRestriction
+    // Remove restriction
+    const removeRes = await client.mutate<
+      RemoveLoginRestrictionMutation,
+      RemoveLoginRestrictionMutationVariables
+    >({
+      mutation: RemoveLoginRestrictionDocument,
+    })
 
-      if (removeAuthLoginRestriction) {
-        return {
-          data: removeAuthLoginRestriction,
-        }
+    if (removeRes.errors) {
+      throw new Error(removeRes.errors[0].message)
+    }
+
+    const removeAuthLoginRestriction =
+      removeRes.data?.removeAuthLoginRestriction
+
+    if (removeAuthLoginRestriction) {
+      return {
+        data: removeAuthLoginRestriction,
       }
     }
 
-    throw new Error('Failed to create or remove restriction')
+    throw new Error('Failed to remove restriction')
   }
 }

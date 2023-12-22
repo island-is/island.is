@@ -13,7 +13,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
+import {
+  APPLICATION_SERVICE_PROVIDER_SLUG,
+  IntroHeader,
+} from '@island.is/service-portal/core'
 import { Modal } from '@island.is/react/components'
 import { useSubmitting } from '@island.is/react-spa/shared'
 
@@ -25,8 +28,6 @@ import { RestrictionsLoaderResponse } from './Restrictions.loader'
 import * as styles from './Restrictions.css'
 
 const IDP_SIM = 'audkenni_sim'
-
-const createFutureRestrictionDate = () => startOfDay(addDays(new Date(), 8))
 
 type FormWrapperProps = {
   children: ReactNode
@@ -52,23 +53,20 @@ export default function Restrictions() {
   const { idp } = useUserDecodedIdToken()
 
   const loaderData = useLoaderData() as RestrictionsLoaderResponse
-  const { isLoading, isSubmitting } = useSubmitting()
   const actionData = useActionData() as RestrictionsResponse
+  const { isLoading, isSubmitting } = useSubmitting()
 
   const isSimIdp = idp === IDP_SIM
   const { restricted, until } =
     actionData?.data === true ? loaderData : actionData?.data ?? loaderData
 
-  const dateUntil = until ? new Date(until) : null
-  const futureDate = createFutureRestrictionDate()
-
-  const formattedDate = dateUntil ? formatDate(futureDate) : null
+  const futureDate = startOfDay(addDays(new Date(), 8))
   const intent = !restricted
     ? RestrictionsIntent.Enable
     : RestrictionsIntent.Disable
 
   useEffect(() => {
-    if (!isLoading && !isSubmitting) {
+    if (!isLoading && !isSubmitting && showModal) {
       setShowModal(false)
     }
   }, [isLoading, isSubmitting])
@@ -78,8 +76,7 @@ export default function Restrictions() {
       <IntroHeader
         title={formatMessage(m.restrictions)}
         intro={formatMessage(m.restrictionsIntro)}
-        imgPosition="right"
-        img="./assets/images/skjaldarmerki.svg"
+        serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
       />
       <FormWrapper intent={intent}>
         <Box
@@ -95,14 +92,14 @@ export default function Restrictions() {
             </Text>
             <Text>{formatMessage(m.restrictionsDevicesDescription)}</Text>
           </Box>
-          {restricted && formattedDate && isSimIdp && (
+          {restricted && until && isSimIdp && (
             <AlertMessage
               type="info"
               message={
                 <div className={styles.whiteSpacePreWrap}>
                   <FormattedMessage
                     {...m.messageEnabledRestriction}
-                    values={{ date: <b>{formattedDate}</b> }}
+                    values={{ date: <b>{formatDate(new Date(until))}</b> }}
                   />
                 </div>
               }
@@ -143,7 +140,6 @@ export default function Restrictions() {
           isVisible={showModal}
           onClose={() => setShowModal(false)}
           closeButtonLabel={formatMessage(m.closeModal)}
-          scrollType="inside"
         >
           <FormWrapper intent={intent} date={futureDate}>
             <Box

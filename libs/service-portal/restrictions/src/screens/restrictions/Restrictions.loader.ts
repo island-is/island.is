@@ -7,8 +7,9 @@ import {
 export type RestrictionsLoaderResponse =
   GetLoginRestrictionQuery['authLoginRestriction']
 
-export const restrictionsLoader: WrappedLoaderFn = ({ client }) => {
-  return async (): Promise<RestrictionsLoaderResponse> => {
+export const restrictionsLoader: WrappedLoaderFn =
+  ({ client }) =>
+  async (): Promise<RestrictionsLoaderResponse> => {
     try {
       const res = await client.query<GetLoginRestrictionQuery>({
         query: GetLoginRestrictionDocument,
@@ -20,4 +21,3 @@ export const restrictionsLoader: WrappedLoaderFn = ({ client }) => {
       throw new Error(e)
     }
   }
-}
