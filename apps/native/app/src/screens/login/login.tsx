@@ -1,5 +1,6 @@
-import {Button, dynamicColor, font, Illustration} from '@ui';
-import React, {useEffect, useState} from 'react';
+import { Button, dynamicColor, font, Illustration } from '@ui'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Alert,
   Image,
@@ -11,95 +12,94 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import styled from 'styled-components/native';
-import logo from '../../assets/logo/logo-64w.png';
-import {FormattedMessage, useIntl} from 'react-intl';
-import {openBrowser} from '../../lib/rn-island';
-import {useAuthStore} from '../../stores/auth-store';
-import {preferencesStore} from '../../stores/preferences-store';
-import {nextOnboardingStep} from '../../utils/onboarding';
-import {testIDs} from '../../utils/test-ids';
+} from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import styled from 'styled-components/native'
+import logo from '../../assets/logo/logo-64w.png'
+import { openBrowser } from '../../lib/rn-island'
+import { useAuthStore } from '../../stores/auth-store'
+import { preferencesStore } from '../../stores/preferences-store'
+import { nextOnboardingStep } from '../../utils/onboarding'
+import { testIDs } from '../../utils/test-ids'
 
 const Host = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
-`;
+`
 
 const Title = styled.Text`
   ${font({
     fontWeight: '600',
     fontSize: 26,
-    color: props => ({light: props.theme.color.dark400, dark: 'white'}),
+    color: (props) => ({ light: props.theme.color.dark400, dark: 'white' }),
   })}
   text-align: center;
   margin-top: 32px;
-`;
+`
 
 const BottomRow = styled.View`
   width: 100%;
   justify-content: space-between;
   flex-direction: row;
   padding: 32px;
-`;
+`
 
 const LightButtonText = styled.Text`
   ${font({
     fontWeight: '600',
-    color: props => props.theme.color.blue400,
+    color: (props) => props.theme.color.blue400,
   })}
-`;
+`
 
 function getChromeVersion(): Promise<number> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     NativeModules.IslandModule.getAppVersion(
       'com.android.chrome',
       (version: string) => {
         if (version) {
-          resolve(Number(version?.split('.')?.[0] || 0));
+          resolve(Number(version?.split('.')?.[0] || 0))
         } else {
-          resolve(0);
+          resolve(0)
         }
       },
-    );
-  });
+    )
+  })
 }
 
-export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
-  const authStore = useAuthStore();
-  const intl = useIntl();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
+  const authStore = useAuthStore()
+  const intl = useIntl()
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [authState, setAuthState] = useState<{
-    nonce: string;
-    codeChallenge: string;
-    state: string;
-  } | null>(null);
+    nonce: string
+    codeChallenge: string
+    state: string
+  } | null>(null)
 
   useEffect(() => {
     try {
-      const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth);
-      const onAuthRequestInitiated = (event: any) => setAuthState(event);
+      const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth)
+      const onAuthRequestInitiated = (event: any) => setAuthState(event)
       const subscription = eventEmitter.addListener(
         'onAuthRequestInitiated',
         onAuthRequestInitiated,
-      );
+      )
       return () => {
-        subscription.remove();
-      };
+        subscription.remove()
+      }
     } catch (err) {
       // noop
     }
-  }, []);
+  }, [])
 
   const onLoginPress = async () => {
     if (Platform.OS === 'android') {
-      const chromeVersion = await getChromeVersion();
+      const chromeVersion = await getChromeVersion()
       if (chromeVersion < 55) {
         // Show dialog on how to update.
         Alert.alert(
-          intl.formatMessage({id: 'login.outdatedBrowserTitle'}),
-          intl.formatMessage({id: 'login.outdatedBrowserMessage'}),
+          intl.formatMessage({ id: 'login.outdatedBrowserTitle' }),
+          intl.formatMessage({ id: 'login.outdatedBrowserMessage' }),
           [
             {
               text: intl.formatMessage({
@@ -107,7 +107,7 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
               }),
               style: 'default',
               onPress() {
-                Linking.openURL('market://details?id=com.android.chrome');
+                Linking.openURL('market://details?id=com.android.chrome')
               },
             },
             {
@@ -117,50 +117,50 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
               }),
             },
           ],
-        );
-        return;
+        )
+        return
       }
     }
 
     if (isLoggingIn) {
-      return;
+      return
     }
 
-    setIsLoggingIn(true);
+    setIsLoggingIn(true)
     try {
-      const isAuth = await authStore.login();
+      const isAuth = await authStore.login()
       if (isAuth) {
-        const userInfo = await authStore.fetchUserInfo();
+        const userInfo = await authStore.fetchUserInfo()
         if (userInfo) {
-          await nextOnboardingStep();
+          await nextOnboardingStep()
         }
       }
     } catch (err) {
       if ((err as Error).message.indexOf('Connection error') >= 0) {
         Alert.alert(
-          intl.formatMessage({id: 'login.networkErrorTitle'}),
-          intl.formatMessage({id: 'login.networkErrorMessage'}),
-        );
+          intl.formatMessage({ id: 'login.networkErrorTitle' }),
+          intl.formatMessage({ id: 'login.networkErrorMessage' }),
+        )
       } else {
-        console.warn(err);
+        console.warn(err)
       }
     }
-    setIsLoggingIn(false);
-  };
+    setIsLoggingIn(false)
+  }
 
   const onLanguagePress = () => {
-    const {locale, setLocale} = preferencesStore.getState();
-    setLocale(locale === 'en-US' ? 'is-IS' : 'en-US');
-  };
+    const { locale, setLocale } = preferencesStore.getState()
+    setLocale(locale === 'en-US' ? 'is-IS' : 'en-US')
+  }
 
   const onNeedHelpPress = () => {
-    const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is';
-    openBrowser(helpDeskUrl, componentId);
-  };
+    const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is'
+    openBrowser(helpDeskUrl, componentId)
+  }
 
   return (
     <Host testID={testIDs.SCREEN_LOGIN}>
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
             flex: 1,
@@ -168,18 +168,19 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
             justifyContent: 'center',
             paddingTop: 32,
             zIndex: 3,
-          }}>
+          }}
+        >
           <Image
             source={logo}
             resizeMode="contain"
-            style={{width: 48, height: 48}}
+            style={{ width: 48, height: 48 }}
           />
-          <View style={{maxWidth: 300, minHeight: 170}}>
+          <View style={{ maxWidth: 300, minHeight: 170 }}>
             <Title>
               <FormattedMessage id="login.welcomeMessage" />
             </Title>
           </View>
-          <View style={{position: 'absolute', opacity: 0, top: 0, left: 0}}>
+          <View style={{ position: 'absolute', opacity: 0, top: 0, left: 0 }}>
             <Text testID="auth_nonce">{authState?.nonce ?? 'noop1'}</Text>
             <Text testID="auth_code">
               {authState?.codeChallenge ?? 'noop2'}
@@ -187,10 +188,10 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
             <Text testID="auth_state">{authState?.state ?? 'noop3'}</Text>
           </View>
           <Button
-            title={intl.formatMessage({id: 'login.loginButtonText'})}
+            title={intl.formatMessage({ id: 'login.loginButtonText' })}
             testID={testIDs.LOGIN_BUTTON_AUTHENTICATE}
             onPress={onLoginPress}
-            style={{width: 213}}
+            style={{ width: 213 }}
           />
         </View>
         <BottomRow>
@@ -208,8 +209,8 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
       </SafeAreaView>
       <Illustration isBottomAligned />
     </Host>
-  );
-};
+  )
+}
 
 LoginScreen.options = {
   popGesture: false,
@@ -219,4 +220,4 @@ LoginScreen.options = {
   layout: {
     orientation: ['portrait'],
   },
-};
+}

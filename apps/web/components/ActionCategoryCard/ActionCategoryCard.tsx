@@ -1,10 +1,9 @@
-import React, { ReactElement, ReactNode, forwardRef, ElementType } from 'react'
-import cn from 'classnames'
-import { ObjectFitProperty } from 'csstype'
+import React, { ElementType, forwardRef, ReactElement, ReactNode } from 'react'
 import { useMeasure } from 'react-use'
 import { UseMeasureRef } from 'react-use/lib/useMeasure'
+import cn from 'classnames'
+import { ObjectFitProperty } from 'csstype'
 
-import * as styles from './ActionCategoryCard.css'
 import {
   Box,
   Button,
@@ -19,6 +18,8 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
+
+import * as styles from './ActionCategoryCard.css'
 
 export const STACK_WIDTH = 280
 
@@ -68,7 +69,7 @@ export type ActionCategoryCardProps = {
   colorScheme?: 'blue' | 'purple' | 'red'
   /** The heading above is truncated instead of overflowing */
   truncateHeading?: TextProps['truncate']
-  /** Use event listener to check wether or not to place the image below the text content */
+  /** Use event listener to check whether or not to place the image below the text content */
   autoStack?: boolean
   /** The card width breakpoint that the image should stack below content when autoStack = true */
   stackWidth?: number

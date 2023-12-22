@@ -1,21 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
-import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
-import {
-  CaseListEntry,
-  completedCaseStates,
-} from '@island.is/judicial-system/types'
+import { completedCaseStates } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
-import { PageHeader } from '@island.is/judicial-system-web/src/components'
-import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import {
+  PageHeader,
+  SharedPageLayout,
+} from '@island.is/judicial-system-web/src/components'
 
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
+import { useDefenderCasesQuery } from './defenderCases.generated'
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -34,23 +32,20 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     window.localStorage.setItem('CASE_ACTIVE_TAB', activeTab)
   }, [activeTab])
 
-  const { data, error, loading } = useQuery<{
-    cases?: CaseListEntry[]
-  }>(CasesQuery, {
+  const { data, error, loading } = useDefenderCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
   const cases = data?.cases
 
-  const [activeCases, completedCases]: [CaseListEntry[], CaseListEntry[]] =
-    useMemo(() => {
-      if (!cases) {
-        return [[], []]
-      }
+  const [activeCases, completedCases] = useMemo(() => {
+    if (!cases) {
+      return [[], []]
+    }
 
-      return partition(cases, (c) => !completedCaseStates.includes(c.state))
-    }, [cases])
+    return partition(cases, (c) => !completedCaseStates.includes(c.state))
+  }, [cases])
 
   const {
     filteredCases: activeFilteredCases,

@@ -42,6 +42,7 @@ import {
   courtOfAppealsAssistantNotificationRule,
   courtOfAppealsJudgeNotificationRule,
   courtOfAppealsRegistrarNotificationRule,
+  defenderNotificationRule,
   districtCourtAssistantNotificationRule,
   districtCourtJudgeNotificationRule,
   districtCourtRegistrarNotificationRule,
@@ -69,6 +70,7 @@ export class NotificationController {
     courtOfAppealsJudgeNotificationRule,
     courtOfAppealsRegistrarNotificationRule,
     courtOfAppealsAssistantNotificationRule,
+    defenderNotificationRule,
   )
   @Post('notification')
   @ApiCreatedResponse({

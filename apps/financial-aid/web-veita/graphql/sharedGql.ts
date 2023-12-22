@@ -117,6 +117,7 @@ export const ApplicationFilterQuery = gql`
         }
       }
       totalCount
+      minDateCreated
       staffList {
         name
         nationalId
