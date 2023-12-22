@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import ReactHtmlParser from 'react-html-parser'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import parse from 'html-react-parser'
 import getConfig from 'next/config'
 
 import {
@@ -16,8 +16,11 @@ import {
   Icon,
   LinkV2,
   Stack,
+  Tabs,
+  TabType,
   Text,
 } from '@island.is/island-ui/core'
+import { Requirement } from '@island.is/university-gateway'
 import { IconTitleCard } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
@@ -90,6 +93,95 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     )
   }, [data, sortedCourses])
 
+  function mapArrayToDictionary(array: Array<unknown>, mapByKey: string) {
+    const dictionary: { [key: string]: Array<UniversityGatewayProgramCourse> } =
+      {}
+
+    array.forEach((arrayItem: any) => {
+      const keyValue = arrayItem[mapByKey]
+
+      if (keyValue === undefined) {
+        return
+      }
+      if (dictionary[keyValue] === undefined) {
+        // If the key doesn't exist in the dictionary, create a new array
+        dictionary[keyValue] = [arrayItem]
+      } else {
+        // If the key already exists, push the value to the existing array
+        dictionary[keyValue].push(arrayItem)
+      }
+    })
+
+    return dictionary
+  }
+
+  const createTabContent = () => {
+    if (sortedCourses.length === 0) {
+      return
+    }
+    const tabList: Array<TabType> = []
+    const mappedDictionary = mapArrayToDictionary(
+      sortedCourses,
+      'semesterYearNumber',
+    )
+    let index = 0
+    for (const key in mappedDictionary) {
+      const value = mappedDictionary[key]
+      const mappedBySemester = mapArrayToDictionary(value, 'semesterSeason')
+
+      const contentItems: Array<React.ReactElement> = []
+      for (const x in mappedBySemester) {
+        contentItems.push(
+          <Box className={[styles.courseTypeIcon, styles.capitalizeText]}>
+            <Text variant="h4" color="blue400" paddingBottom={2} paddingTop={2}>
+              {n(x, TranslationDefaults[x])}
+            </Text>
+            {mappedBySemester[x].map((item) => {
+              return (
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="spaceBetween"
+                >
+                  <Text variant="h4" as="p" paddingBottom={1} paddingTop={1}>
+                    {locale === 'en' ? item.nameEn : item.nameIs}
+                  </Text>
+                  <Box className={styles.courseTypeIcon}>
+                    <Text
+                      fontWeight="semiBold"
+                      color={
+                        item.requirement === Requirement.MANDATORY
+                          ? 'red600'
+                          : item.requirement === Requirement.FREE_ELECTIVE
+                          ? 'blue600'
+                          : 'purple600'
+                      }
+                    >
+                      {item.requirement === Requirement.MANDATORY
+                        ? 'S'
+                        : item.requirement === Requirement.FREE_ELECTIVE
+                        ? 'V'
+                        : 'B'}
+                    </Text>
+                  </Box>
+                </Box>
+              )
+            })}
+          </Box>,
+        )
+      }
+
+      tabList.push({
+        id: index.toString(),
+        label: `${parseInt(key) + 1}. ${n('year', 'ár')}`,
+        content: contentItems,
+      })
+      index++
+    }
+
+    return tabList
+  }
+
   return (
     <SidebarLayout
       sidebarContent={
@@ -109,14 +201,14 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
           <IconTitleCard
             heading={
               universities.filter((x) => x.id === data.universityId)[0]
-                .contentfulTitle
+                .contentfulTitle || ''
             }
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             href="/"
             imgSrc={
               universities.filter((x) => x.id === data.universityId)[0]
-                .contentfulLogoUrl
+                .contentfulLogoUrl || ''
             }
             alt="University infomation"
           />
@@ -125,7 +217,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     >
       <Stack space={3}>
         <Hidden above="sm">
-          <LinkV2 href="/haskolanam" skipTab>
+          <LinkV2 href={linkResolver('universitysearch').href} skipTab>
             <Button
               preTextIcon="arrowBack"
               preTextIconType="filled"
@@ -150,8 +242,8 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
           )}
           <Text marginTop={3} marginBottom={3} variant="default">
             {locale === 'en'
-              ? parse(data.descriptionEn ? data.descriptionEn : '')
-              : parse(data.descriptionIs ? data.descriptionIs : '')}
+              ? ReactHtmlParser(data.descriptionEn ? data.descriptionEn : '')
+              : ReactHtmlParser(data.descriptionIs ? data.descriptionIs : '')}
           </Text>
           {data.externalUrlIs && (
             <LinkV2
@@ -286,12 +378,12 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             >
               <Text as="p">
                 {locale === 'en'
-                  ? parse(
+                  ? ReactHtmlParser(
                       data.admissionRequirementsEn
                         ? data.admissionRequirementsEn
                         : '',
                     )
-                  : parse(
+                  : ReactHtmlParser(
                       data.admissionRequirementsIs
                         ? data.admissionRequirementsIs
                         : '',
@@ -309,10 +401,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             >
               <Text as="p">
                 {locale === 'en'
-                  ? parse(
+                  ? ReactHtmlParser(
                       data.studyRequirementsEn ? data.studyRequirementsEn : '',
                     )
-                  : parse(
+                  : ReactHtmlParser(
                       data.studyRequirementsIs ? data.studyRequirementsIs : '',
                     )}
               </Text>
@@ -326,33 +418,83 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               expanded={isOpen[2]}
               onToggle={() => toggleIsOpen(2)}
             >
-              <Text as="p">
-                {sortedCourses &&
-                  sortedCourses.map((i, index) => {
-                    if (
-                      (index > 0 &&
-                        sortedCourses[index - 1].semesterSeason +
-                          sortedCourses[index - 1].semesterYear !==
-                          sortedCourses[index].semesterSeason +
-                            sortedCourses[index].semesterYear) ||
-                      index === 0
-                    ) {
-                      return (
-                        <Box marginTop={1}>
-                          <p className={styles.capitalizeText}>
-                            {n(
-                              i.semesterSeason,
-                              TranslationDefaults[i.semesterSeason],
-                            )}{' '}
-                            - {i.semesterYear}
-                          </p>
-                          <p>{i.nameIs}</p>
-                        </Box>
-                      )
-                    }
-                    return <p>{i.nameIs}</p>
-                  })}
-              </Text>
+              <Tabs
+                tabs={createTabContent() || []}
+                label="PRUFA"
+                onlyRenderSelectedTab
+                contentBackground="white"
+              />
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="flexStart"
+                alignItems="center"
+                paddingTop={2}
+              >
+                <Box display="flex" paddingRight={1} alignItems="center">
+                  <Box
+                    marginRight={1}
+                    className={[
+                      styles.courseTypeIcon,
+                      styles.capitalizeText,
+                      'small',
+                      'red',
+                    ]}
+                  >
+                    <Text
+                      fontWeight="semiBold"
+                      color="red600"
+                      variant="eyebrow"
+                    >
+                      S
+                    </Text>
+                  </Box>
+                  <Box className={styles.capitalizeText}>
+                    <Text variant="eyebrow">
+                      {n(Requirement.MANDATORY, 'Skylda')}
+                    </Text>
+                  </Box>
+                </Box>
+
+                <Box display="flex" paddingRight={1} alignItems="center">
+                  <Box
+                    marginRight={1}
+                    className={[styles.courseTypeIcon, styles.capitalizeText]}
+                  >
+                    <Text
+                      fontWeight="semiBold"
+                      color="purple600"
+                      variant="eyebrow"
+                    >
+                      B
+                    </Text>
+                  </Box>
+                  <Box className={styles.capitalizeText}>
+                    <Text variant="eyebrow">
+                      {n(Requirement.FREE_ELECTIVE, 'Bundið val')}
+                    </Text>
+                  </Box>
+                </Box>
+                <Box display="flex" paddingRight={1} alignItems="center">
+                  <Box
+                    marginRight={1}
+                    className={[styles.courseTypeIcon, styles.capitalizeText]}
+                  >
+                    <Text
+                      fontWeight="semiBold"
+                      color="blue600"
+                      variant="eyebrow"
+                    >
+                      V
+                    </Text>
+                  </Box>
+                  <Box className={styles.capitalizeText}>
+                    <Text variant="eyebrow">
+                      {n(Requirement.RESTRICTED_ELECTIVE, 'Valfag')}
+                    </Text>
+                  </Box>
+                </Box>
+              </Box>
             </AccordionItem>
             <AccordionItem
               id="annual-cost"
@@ -409,7 +551,7 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
   }
 
   if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Síða er ekki opin')
+    throw new CustomNextError(404, 'Page not found')
   }
 
   const newResponse = await apolloClient.query<

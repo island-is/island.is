@@ -82,11 +82,6 @@ interface FilterProps {
   universityId: Array<string>
   durationInYears: Array<string>
   startingSemesterSeason: Array<string>
-  // applications: Array<string>
-  // fieldOfStudy: Array<string>
-  // location: Array<string>
-  // tuition: Array<string>
-  // tags: Array<string>
 }
 
 const initialFilters: FilterProps = {
@@ -95,11 +90,6 @@ const initialFilters: FilterProps = {
   durationInYears: [],
   universityId: [],
   startingSemesterSeason: [],
-  // applications: [],
-  // fieldOfStudy: [],
-  // location: [],
-  // tuition: [],
-  // tags: [],
 }
 
 const stripHtml = (html: string) => {
@@ -127,8 +117,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const n = useNamespace(namespace)
 
-  const isMobileScreenWidth = width < theme.breakpoints.md
-  const isTabletScreenWidth = width < theme.breakpoints.lg
+  const isMobileScreenWidth = width < theme.breakpoints.lg
+  const isTabletScreenWidth = width < theme.breakpoints.xl
 
   const [selectedPage, setSelectedPage] = useState(1)
   const [selectedComparison, setSelectedComparison] = useState<
@@ -136,12 +126,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   >([])
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
-  const [filteredResults, setFilteredResults] = useState<
-    Array<Fuse.FuseResult<UniversityGatewayProgram>>
-  >(
-    data.map((item: UniversityGatewayProgram, index: number) => {
-      return { item, refIndex: index, score: 1 }
-    }),
+  const [filteredResults, setFilteredResults] = useState<Array<any>>(
+    data &&
+      [...data]
+        .sort((x, y) => {
+          if (x.nameIs > y.nameIs) return 1
+          return -1
+        })
+        .map((item: UniversityGatewayProgram, index: number) => {
+          return { item, refIndex: index, score: 1 }
+        }),
   )
   const { linkResolver } = useLinkResolver()
 
@@ -227,10 +221,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [filters, query])
 
   const resetFilteredList = () => {
-    const resultProducts: Array<Fuse.FuseResult<UniversityGatewayProgram>> =
-      data.map((item: UniversityGatewayProgram, index: number) => {
+    const resultProducts: Array<any> = data.map(
+      (item: UniversityGatewayProgram, index: number) => {
         return { item, refIndex: index, score: 1 }
-      })
+      },
+    )
     setFilteredResults(resultProducts)
   }
 
@@ -424,9 +419,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             const str = filter.field as keyof typeof filters
 
                             if (str === 'universityId') {
-                              keyField = universities.filter(
-                                (x) => x.id === option,
-                              )[0].contentfulTitle
+                              keyField =
+                                universities.filter((x) => x.id === option)[0]
+                                  .contentfulTitle || ''
                             }
                             if (keyField !== 'OTHER') {
                               return (
@@ -550,7 +545,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               {n(
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle
+                                      .contentfulTitle || ''
                                   : item,
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
@@ -610,9 +605,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   let keyField = option
 
                                   if (str === 'universityId') {
-                                    keyField = universities.filter(
-                                      (x) => x.id === option,
-                                    )[0].contentfulTitle
+                                    keyField =
+                                      universities.filter(
+                                        (x) => x.id === option,
+                                      )[0].contentfulTitle || ''
                                   }
                                   return {
                                     label: `${n(keyField, keyField)}${
@@ -673,6 +669,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       icon={'listView'}
                       type="outline"
                       color={gridView ? 'dark200' : 'blue400'}
+                      useStroke
                     />
                   </button>
                 </Box>
@@ -713,7 +710,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 src={
                                   universities.filter(
                                     (x) => x.id === dataItem.universityId,
-                                  )[0].contentfulLogoUrl
+                                  )[0].contentfulLogoUrl || ''
                                 }
                                 alt={`Logo fyrir ${
                                   locale === 'en'
@@ -733,9 +730,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       locale === 'en'
                                         ? dataItem.nameEn
                                         : dataItem.nameIs,
-                                    iconSrc: universities.filter(
-                                      (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl,
+                                    iconSrc:
+                                      universities.filter(
+                                        (x) => x.id === dataItem.universityId,
+                                      )[0].contentfulLogoUrl || '',
                                   })
                                 }
                                 checked={
@@ -870,7 +868,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   src={
                                     universities.filter(
                                       (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl
+                                    )[0].contentfulLogoUrl || ''
                                   }
                                   alt={`Logo fyrir ${
                                     locale === 'en'
@@ -886,9 +884,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     locale === 'en'
                                       ? dataItem.nameEn
                                       : dataItem.nameIs,
-                                  iconSrc: universities.filter(
-                                    (x) => x.id === dataItem.universityId,
-                                  )[0].contentfulLogoUrl,
+                                  iconSrc:
+                                    universities.filter(
+                                      (x) => x.id === dataItem.universityId,
+                                    )[0].contentfulLogoUrl || '',
                                 })
                               }
                               checked={
@@ -1199,7 +1198,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
   }
 
   if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Síða er ekki opin')
+    throw new CustomNextError(404, 'Page not found')
   }
 
   const newResponse =

@@ -58,37 +58,15 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
   query GetUniversityGateway($input: UniversityGatewayGetPogramInput!) {
     universityGatewayProgram(input: $input) {
       active
-      nameIs
-      nameEn
-      descriptionIs
-      descriptionEn
-      departmentNameIs
-      departmentNameEn
-      degreeType
-      universityId
-      applicationStartDate
-      applicationEndDate
-      credits
-      degreeAbbreviation
-      durationInYears
-      externalId
-      id
-      schoolAnswerDate
-      iscedCode
-      studentAnswerDate
-      startingSemesterSeason
-      startingSemesterYear
       admissionRequirementsEn
       admissionRequirementsIs
+      allowException
+      allowThirdLevelQualification
+      applicationEndDate
+      applicationStartDate
       costInformationEn
       costInformationIs
       costPerYear
-      externalUrlEn
-      externalUrlIs
-      modeOfDelivery
-      studyRequirementsEn
-      studyRequirementsIs
-      universityContentfulKey
       courses {
         credits
         descriptionEn
@@ -104,6 +82,44 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
         semesterYear
         semesterYearNumber
       }
+      credits
+      degreeAbbreviation
+      degreeType
+      departmentNameEn
+      departmentNameIs
+      descriptionEn
+      descriptionIs
+      durationInYears
+      externalId
+      externalUrlEn
+      externalUrlIs
+      extraApplicationFields {
+        descriptionEn
+        descriptionIs
+        externalId
+        fieldType
+        nameEn
+        nameIs
+        options
+        required
+        uploadAcceptedFileType
+      }
+      id
+      iscedCode
+      modeOfDelivery
+      nameEn
+      nameIs
+      schoolAnswerDate
+      specializationExternalId
+      specializationNameEn
+      specializationNameIs
+      startingSemesterSeason
+      startingSemesterYear
+      studentAnswerDate
+      studyRequirementsEn
+      studyRequirementsIs
+      universityContentfulKey
+      universityId
     }
   }
 `

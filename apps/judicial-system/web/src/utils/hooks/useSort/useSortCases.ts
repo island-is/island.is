@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 
-import { CaseListEntry } from '@island.is/judicial-system/types'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import { sortableTableColumn } from '@island.is/judicial-system-web/src/types'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 

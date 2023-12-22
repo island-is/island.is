@@ -124,5 +124,38 @@ export const filterInput = style({
 })
 
 export const capitalizeText = style({
-  textTransform: 'capitalize',
+  display: 'block',
+  selectors: {
+    '&:first-letter': {
+      textTransform: 'uppercase',
+    },
+  },
+})
+
+export const courseTypeIcon = style({
+  borderRadius: 50,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 5,
+  selectors: {
+    '&.large': {
+      height: '27px',
+      width: '27px',
+    },
+    '&.small': {
+      height: '21px',
+      width: '21px',
+    },
+    '&.blue': {
+      backgroundColor: `${theme.color.blue100}`,
+    },
+    '&.red': {
+      backgroundColor: `${theme.color.red100}`,
+    },
+    '&.purple': {
+      backgroundColor: `${theme.color.purple100}`,
+    },
+  },
 })

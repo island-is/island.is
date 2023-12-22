@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
@@ -24,7 +23,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  Institution,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   stepValidationsType,

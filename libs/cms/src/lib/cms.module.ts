@@ -16,7 +16,8 @@ import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
 import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
-import { OrganizationShortTitleLoader } from './loaders/organizationShortTitle.loader'
+import { OrganizationLogoByReferenceIdLoader } from './loaders/organizationLogoByKey.loader'
+import { OrganizationTitleByReferenceIdLoader } from './loaders/organizationTitleByKey.loader'
 import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
 
@@ -34,7 +35,8 @@ import { PowerBiConfig } from './powerbi.config'
     FeaturedArticlesResolver,
     FeaturedSupportQNAsResolver,
     OrganizationLogoLoader,
-    OrganizationShortTitleLoader,
+    OrganizationLogoByReferenceIdLoader,
+    OrganizationTitleByReferenceIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
@@ -44,7 +46,8 @@ import { PowerBiConfig } from './powerbi.config'
     CmsHealthIndicator,
     CmsContentfulService,
     OrganizationLogoLoader,
-    OrganizationShortTitleLoader,
+    OrganizationLogoByReferenceIdLoader,
+    OrganizationTitleByReferenceIdLoader,
     CmsElasticsearchService,
   ],
 })

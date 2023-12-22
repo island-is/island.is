@@ -29,17 +29,13 @@ import * as styles from './UniversitySearch.css'
 interface LandingPageProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
   locale: string
 }
 const LandingPage: Screen<LandingPageProps> = ({
   organizationPage,
-  organization,
-  locale,
   namespace,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
@@ -95,7 +91,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                 marginBottom={
                   index === organizationPage.slices.length - 1 ? 5 : 0
                 }
-                paddingTop={
+                paddingBottom={
                   !organizationPage.description && index === 0 ? 0 : 6
                 }
               />
@@ -201,7 +197,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
   ])
 
   if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
-    throw new CustomNextError(404, 'Organization page not found')
+    throw new CustomNextError(404, 'Page not found')
   }
 
   return {
