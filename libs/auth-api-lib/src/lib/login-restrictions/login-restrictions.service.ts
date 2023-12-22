@@ -4,7 +4,6 @@ import startOfDay from 'date-fns/startOfDay'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { User } from '@island.is/auth-nest-tools'
-import { NoContentException } from '@island.is/nest/problem'
 
 import { CreateLoginRestrictionDto } from './dto/create-login-restriction.dto'
 import { LoginRestrictionDto } from './dto/login-restriction.dto'
@@ -85,10 +84,7 @@ export class LoginRestrictionsService {
    * @returns The national number of the phone number
    */
   private validatePhoneNumber(phoneNumber: string): string {
-    const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber, {
-      defaultCountry: 'IS',
-      extract: false,
-    })
+    const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber, 'IS')
 
     if (
       !phoneNumber ||
