@@ -109,6 +109,21 @@ export class EnergyFundsService extends BaseTemplateApiService {
     )
   }
 
+  async validateApplication({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps): Promise<boolean> {
+    const applicationAnswers = application.answers as EnergyFundsAnswers
+
+    const currentVehicleList = application.externalData?.currentVehicles
+      ?.data as Array<VehiclesCurrentVehicle>
+    const currentvehicleDetails = currentVehicleList.find(
+      (x) => x.permno === applicationAnswers.selectVehicle.plate,
+    )
+
+    return !!currentvehicleDetails
+  }
+
   async submitApplication({
     auth,
     application,
