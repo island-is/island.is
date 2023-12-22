@@ -1,5 +1,5 @@
 import { Inject, NotFoundException, forwardRef } from '@nestjs/common'
-import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
+import { Query, Resolver, Args, Mutation, Int } from '@nestjs/graphql'
 
 import { Authorize, Role, CurrentUser, User } from '../auth'
 import { VehicleModel } from '../vehicle'
@@ -72,10 +72,15 @@ export class RecyclingRequestResolver {
   })
   @Query(() => Boolean)
   async skilavottordDeRegisterVehicle(
-    @Args('vehiclePermno') nid: string,
+    @Args('vehiclePermno') permno: string,
     @Args('recyclingPartner') station: string,
+    @Args('mileage', { type: () => Int, nullable: true }) mileage: number,
   ): Promise<boolean> {
-    return this.recyclingRequestService.deRegisterVehicle(nid, station)
+    return this.recyclingRequestService.deRegisterVehicle(
+      permno,
+      station,
+      mileage,
+    )
   }
 
   @Authorize({
