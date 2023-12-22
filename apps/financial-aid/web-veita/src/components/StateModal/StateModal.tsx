@@ -204,7 +204,7 @@ const StateModal = ({
           defaultErrorMessage="Þú þarft að greina frá ástæðu synjunar"
           prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
             new Date(applicationCreated).getMonth(),
-          )} hefur verið synjað`}
+          )} hefur verið synjað.`}
           postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
           municipalityEmail={applicationMunicipality?.email}
         />

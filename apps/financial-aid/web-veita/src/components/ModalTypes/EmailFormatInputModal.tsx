@@ -51,7 +51,7 @@ const EmailFormatInputModal = ({
   useEffect(() => {
     if (ref.current) {
       if (state === ApplicationState.REJECTED) {
-        ref.current.innerHTML = `${prefixText}<br/><br/><b>[SKRIFA ÁSTÆÐU HÉR]</b><br/><br/>${postfixText}         <br />
+        ref.current.innerHTML = `${prefixText}<br/><br/><b>[SKRIFA ÁSTÆÐU HÉR]</b><br/>${postfixText}         <br />
               <br /> 
               <b>Málskot</b>
               Bent skal á að unnt er að skjóta ákvörðun þessari til
@@ -70,7 +70,7 @@ const EmailFormatInputModal = ({
               <br />
               <br />`
       } else {
-        ref.current.innerHTML = `${prefixText}<br/><br/><b>[SKRIFA ÁSTÆÐU HÉR]</b><br/><br/>${postfixText}`
+        ref.current.innerHTML = `${prefixText}<br/><br/><b>[SKRIFA ÁSTÆÐU HÉR]</b><br/>${postfixText}`
       }
     }
   }, [isModalVisable])
