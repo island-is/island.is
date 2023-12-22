@@ -215,25 +215,6 @@ export const AdditionalEstateMember = ({
             required
           />
         </GridColumn>
-        <GridColumn span="1/1" paddingBottom={2}>
-          <Box width="half">
-            <CheckboxController
-              key={foreignCitizenshipField}
-              id={foreignCitizenshipField}
-              name={foreignCitizenshipField}
-              defaultValue={field?.foreignCitizenship || []}
-              options={[
-                {
-                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                  value: YES,
-                },
-              ]}
-              onSelect={(val) => {
-                setValue(foreignCitizenshipField, val)
-              }}
-            />
-          </Box>
-        </GridColumn>
       </GridRow>
       {/* ADVOCATE */}
       {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
@@ -242,6 +223,7 @@ export const AdditionalEstateMember = ({
         memberAge < 18 && (
           <Box
             marginTop={2}
+            marginBottom={2}
             paddingY={5}
             paddingX={7}
             borderRadius="large"
@@ -300,6 +282,25 @@ export const AdditionalEstateMember = ({
             </GridRow>
           </Box>
         )}
+      <GridColumn span="1/1" paddingBottom={2}>
+        <Box width="half">
+          <CheckboxController
+            key={foreignCitizenshipField}
+            id={foreignCitizenshipField}
+            name={foreignCitizenshipField}
+            defaultValue={field?.foreignCitizenship || []}
+            options={[
+              {
+                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                value: YES,
+              },
+            ]}
+            onSelect={(val) => {
+              setValue(foreignCitizenshipField, val)
+            }}
+          />
+        </Box>
+      </GridColumn>
     </Box>
   )
 }
