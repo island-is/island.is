@@ -151,7 +151,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     setSelectedVehiclesList(filteredSelectedVehiclesList)
 
     // Add selected vehicle back to the non selected list
-    //vehicle.selectedForRecycling = false
     setCurrentVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
   }
 
