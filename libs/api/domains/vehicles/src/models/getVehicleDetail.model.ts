@@ -303,6 +303,12 @@ export class VehiclesOperator {
   serial?: number | null
 
   @Field(() => Boolean, { nullable: true })
+  mainOperator?: boolean | null
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description: 'Deprecated. Keeping in for now for backward compatibility.',
+  })
   mainoperator?: boolean | null
 }
 
