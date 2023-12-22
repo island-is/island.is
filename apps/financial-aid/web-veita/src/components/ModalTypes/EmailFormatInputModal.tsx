@@ -57,7 +57,7 @@ const EmailFormatInputModal = ({
     event?.preventDefault()
   }
 
-  const errorCheckOnTextContent = (textContent?: string | null) => {
+  const errorCheckOnTextcontent = (textContent?: string | null) => {
     if (!textContent) {
       setErrorMessage(defaultErrorMessage)
       return true
@@ -89,7 +89,7 @@ const EmailFormatInputModal = ({
       onSubmit={() => {
         if (
           !ref?.current?.innerText ||
-          errorCheckOnTextContent(ref?.current?.innerText)
+          errorCheckOnTextcontent(ref?.current?.innerText)
         ) {
           setHasError(true)
           return

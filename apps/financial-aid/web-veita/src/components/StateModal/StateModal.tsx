@@ -163,7 +163,7 @@ const StateModal = ({
           }}
           headline="Skrifaðu hvaða upplýsingar og/eða gögn vantar"
           submitButtonText="Senda á umsækjanda"
-          defaultErrorMessage="Þú þarft að gera grein fyrir hvaða upplýsingar og/eða gögn vanti í umsóknina"
+          defaultErrorMessage="Þú þarft að gera grein fyrir hvaða upplýsingar og/eða gögn vantar í umsóknina"
           prefixText="Til þess að hægt sé að ljúka afgreiðslu umsóknarinnar þurfa eftirfarandi upplýsingar að liggja fyrir."
           postfixText="Upplýsingarnar sendir þú inn á stöðusíðu umsóknarinnar."
           municipalityEmail={applicationMunicipality?.email}
