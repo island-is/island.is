@@ -22,12 +22,18 @@ const normalizesAndMatch = (value1: string, value2: string) => {
 
 interface AdministrationOfOccupationalSafetyAndHealthCoursesProps {
   slice: ConnectedComponent
+  title: string | null
+  headingLevel: 'h2' | 'h3' | 'h4'
+  hasBorderAbove: boolean
 }
 
 type ListState = 'loading' | 'loaded' | 'error'
 
 const AdministrationOfOccupationalSafetyAndHealthCourses = ({
   slice,
+  title = slice.json?.title ?? null,
+  headingLevel = slice.configJson?.headingLevel ?? 'h2',
+  hasBorderAbove = slice.configJson?.hasBorderAbove ?? true,
 }: AdministrationOfOccupationalSafetyAndHealthCoursesProps) => {
   const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
@@ -74,7 +80,20 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
   })
 
   return (
-    <Box>
+    <Box id={slice.id}>
+      {hasBorderAbove && (
+        <Box
+          borderTopWidth="standard"
+          borderColor="standard"
+          paddingBottom={4}
+        />
+      )}
+
+      {title && (
+        <Text variant={headingLevel} as={headingLevel}>
+          {title}
+        </Text>
+      )}
       {listState === 'loading' && (
         <Box
           display="flex"
