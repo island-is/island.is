@@ -2,7 +2,6 @@ import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -23,23 +22,20 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  ReactSelectOption,
-  UserData,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import {
   hasSentNotification,
   isReopenedCOACase,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
@@ -64,18 +60,18 @@ const AppealCase = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  const { data: userData } = useQuery<UserData>(UsersQuery, {
+  const { data: usersData } = useAppealCaseUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const assistants = (userData?.users ?? [])
+  const assistants = (usersData?.users ?? [])
     .filter((user: User) => user.role === UserRole.COURT_OF_APPEALS_ASSISTANT)
     .map((assistant: User) => {
       return { label: assistant.name, value: assistant.id, assistant }
     })
 
-  const judges = (userData?.users ?? [])
+  const judges = (usersData?.users ?? [])
     .filter(
       (user: User) =>
         user.role === UserRole.COURT_OF_APPEALS_JUDGE &&

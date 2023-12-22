@@ -119,7 +119,7 @@ export type ServiceErrorCode =
 export interface LicenseClient<ResultType> {
   clientSupportsPkPass: boolean
 
-  getLicense: (user: User) => Promise<Result<ResultType | null>>
+  getLicenses: (user: User) => Promise<Result<Array<ResultType>>>
 
   licenseIsValidForPkPass?: (payload: unknown) => LicensePkPassAvailability
 

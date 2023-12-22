@@ -98,8 +98,16 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     return this.checkLicenseValidityForPkPass(payload as VinnuvelaDto)
   }
 
-  async getLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
+  async getLicenses(user: User): Promise<Result<Array<VinnuvelaDto>>> {
     const licenseData = await this.fetchLicense(user)
+
+    if (licenseData.ok) {
+      return {
+        ok: true,
+        data: licenseData.data ? [licenseData.data] : [],
+      }
+    }
+
     return licenseData
   }
 

@@ -1,8 +1,14 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m, formatDate, amountFormat } from '@island.is/service-portal/core'
+import {
+  m,
+  formatDate,
+  amountFormat,
+  DownloadFileButtons,
+} from '@island.is/service-portal/core'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { RightsPortalDentistBill } from '@island.is/api/schema'
+import { exportDentistFile } from '../../utils/FileBreakdown'
 
 interface Props {
   bills: Array<RightsPortalDentistBill>
@@ -115,6 +121,24 @@ const BillsTable = ({ bills }: Props) => {
           </T.Row>
         </T.Body>
       </T.Table>
+      <DownloadFileButtons
+        BoxProps={{
+          paddingTop: 2,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'flexEnd',
+        }}
+        buttons={[
+          {
+            text: formatMessage(m.getAsExcel),
+            onClick: () =>
+              exportDentistFile(bills ?? [], 'xlsx', {
+                charge: totalBills.totalCharge,
+                covered: totalBills.totalCovered,
+              }),
+          },
+        ]}
+      />
     </Box>
   )
 }

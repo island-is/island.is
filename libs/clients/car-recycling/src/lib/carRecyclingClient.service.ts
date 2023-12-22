@@ -90,8 +90,8 @@ export class CarRecyclingClientService {
 
   async recycleVehicle(
     user: User,
+    fullName: string,
     permno: string,
-
     requestType: RecyclingRequestTypes,
   ) {
     const response = await this.gqlRequestWithAuth(user, {
@@ -100,6 +100,7 @@ export class CarRecyclingClientService {
         input: {
           permno,
           requestType,
+          fullName,
         },
       } as SkilavottordRecyclingRequestMutationVariables,
     })
