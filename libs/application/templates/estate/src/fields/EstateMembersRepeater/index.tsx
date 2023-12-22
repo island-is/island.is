@@ -12,8 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
-import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
-import { Answers } from '../../types'
+import { EstateRegistrant } from '@island.is/clients/syslumenn'
+import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -26,7 +26,7 @@ import {
   heirAgeValidation,
   relationWithApplicant,
 } from '../../lib/constants'
-import { intervalToDuration } from 'date-fns'
+import intervalToDuration from 'date-fns/intervalToDuration'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>

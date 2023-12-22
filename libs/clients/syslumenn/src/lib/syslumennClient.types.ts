@@ -217,7 +217,6 @@ export type EstateMember = {
   enabled?: boolean
   phone?: string
   email?: string
-  foreignCitizenship?: ('yes' | 'no')[]
   advocate?: Advocate
 }
 
