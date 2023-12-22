@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-
 import {
   Application,
   ApplicationTypes,
@@ -8,10 +7,8 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
-
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-
 import {
   ApplicationType,
   Employment,
@@ -22,6 +19,9 @@ import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import {
+  getApplicationAnswers as getPSApplicationAnswers,
+} from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import {
   Attachment,
@@ -86,6 +86,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
     if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
       additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (application.typeId === ApplicationTypes.PENSION_SUPPLEMENT) {
+      additionalAttachmentsRequired = getPSApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
