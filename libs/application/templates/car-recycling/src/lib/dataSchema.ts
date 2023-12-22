@@ -20,9 +20,17 @@ const Vehicles = z
 
 export const DataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  vehicles: z.object({
-    selectedVehicles: z.array(Vehicles).refine((s) => s.length !== 0),
-  }),
+  vehicles: z
+    .object({
+      selectedVehicles: z.array(Vehicles),
+      canceledVehicles: z.array(Vehicles),
+    })
+    .refine(({ selectedVehicles, canceledVehicles }) => {
+      return (
+        selectedVehicles.length > 0 ||
+        (canceledVehicles.length > 0 && selectedVehicles.length === 0)
+      )
+    }),
 })
 
 export type SchemaFormValues = z.infer<typeof DataSchema>
