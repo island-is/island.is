@@ -16,13 +16,17 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
-import { FeatureFlag, FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal)
 @ApiTags('me/login-restrictions')
-//@FeatureFlag()
+@FeatureFlag(Features.disableNewDeviceLogins)
 @Controller({
   path: 'me/login-restrictions',
   version: ['1'],

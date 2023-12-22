@@ -18,8 +18,6 @@ import { LoginRestrictionService } from '../services/loginRestriction.service'
 @Scopes(ApiScope.internal)
 @Resolver(() => LoginRestriction)
 export class LoginRestrictionResolver {
-  private loginRestriction: Record<string, LoginRestriction> = {}
-
   constructor(
     private readonly loginRestrictionsService: LoginRestrictionService,
   ) {}

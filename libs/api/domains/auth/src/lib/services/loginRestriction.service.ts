@@ -38,9 +38,9 @@ export class LoginRestrictionService {
     })
 
     return {
-      // If the rest request fails it will throw and not reach this point.
+      // If the REST request fails it will throw and not reach this point.
       restricted: true,
-      until: response.restrictedUntil,
+      until: response.until,
     }
   }
 
@@ -49,7 +49,7 @@ export class LoginRestrictionService {
       user,
     ).meLoginRestrictionsControllerDelete()
 
-    // If the rest request fails it will throw and not reach this point.
+    // If the REST request fails it will throw and not reach this point.
     return true
   }
 }

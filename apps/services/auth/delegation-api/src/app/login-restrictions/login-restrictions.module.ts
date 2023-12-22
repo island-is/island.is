@@ -8,6 +8,5 @@ import { MeLoginRestrictionsController } from './me-login-restrictions.controlle
 @Module({
   imports: [AuthLoginRestrictionsModule, FeatureFlagModule],
   controllers: [MeLoginRestrictionsController],
-  providers: [],
 })
 export class LoginRestrictionsModule {}

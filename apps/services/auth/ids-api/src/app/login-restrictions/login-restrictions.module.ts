@@ -7,6 +7,5 @@ import { LoginRestrictionsController } from './login-restrictions.controller'
 @Module({
   imports: [AuthLoginRestrictionsModule],
   controllers: [LoginRestrictionsController],
-  providers: [],
 })
 export class LoginRestrictionsModule {}
