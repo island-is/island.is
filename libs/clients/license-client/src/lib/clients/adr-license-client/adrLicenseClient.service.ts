@@ -102,7 +102,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     return this.checkLicenseValidityForPkPass(payload as AdrDto)
   }
 
-  async getLicense(user: User): Promise<Result<FlattenedAdrDto | null>> {
+  async getLicenses(user: User): Promise<Result<Array<FlattenedAdrDto>>> {
     const licenseData = await this.fetchLicense(user)
 
     if (!licenseData.ok) {
@@ -113,7 +113,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
       //user doesn't have a license
       return {
         ok: true,
-        data: null,
+        data: [],
       }
     }
 
@@ -121,7 +121,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
 
     return {
       ok: true,
-      data: parsedData,
+      data: [parsedData],
     }
   }
 
