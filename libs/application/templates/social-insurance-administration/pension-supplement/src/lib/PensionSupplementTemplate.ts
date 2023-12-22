@@ -36,6 +36,7 @@ import {
   States,
   Actions,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { Features } from '@island.is/feature-flags'
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -45,6 +46,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
   type: ApplicationTypes.PENSION_SUPPLEMENT,
   name: pensionSupplementFormMessage.shared.applicationTitle,
   institution: pensionSupplementFormMessage.shared.institution,
+  featureFlag: Features.pensionSupplementApplication,
   translationNamespaces: [
     ApplicationConfigurations.PensionSupplement.translation,
   ],
