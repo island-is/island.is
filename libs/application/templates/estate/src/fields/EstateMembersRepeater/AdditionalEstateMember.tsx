@@ -68,9 +68,14 @@ export const AdditionalEstateMember = ({
 
   const values = getValues()
   const currentEstateMember = values?.estate?.estateMembers?.[index]
-  const hasForeignCitizenship = currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
+  const hasForeignCitizenship =
+    currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
   const birthDate = currentEstateMember?.dateOfBirth
-  const memberAge = hasForeignCitizenship && birthDate ? intervalToDuration({ start: new Date(birthDate), end: new Date()})?.years : kennitala.info(currentEstateMember.nationalId)?.age
+  const memberAge =
+    hasForeignCitizenship && birthDate
+      ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
+          ?.years
+      : kennitala.info(currentEstateMember.nationalId)?.age
 
   useEffect(() => {
     clearErrors(nameField)
@@ -232,7 +237,8 @@ export const AdditionalEstateMember = ({
       </GridRow>
       {/* ADVOCATE */}
       {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
-        (currentEstateMember?.nationalId || hasForeignCitizenship) && memberAge !== undefined &&
+        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        memberAge !== undefined &&
         memberAge < 18 && (
           <Box
             marginTop={2}
@@ -261,7 +267,8 @@ export const AdditionalEstateMember = ({
                       alertWhenUnder18:
                         selectedEstate !==
                           EstateTypes.divisionOfEstateByHeirs &&
-                          memberAge !== undefined && memberAge < 18,
+                        memberAge !== undefined &&
+                        memberAge < 18,
                     },
                   }}
                   error={error}

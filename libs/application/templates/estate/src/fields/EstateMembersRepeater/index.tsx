@@ -44,8 +44,16 @@ export const EstateMembersRepeater: FC<
     (member: EstateMember) => {
       const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
       const birthDate = member?.dateOfBirth
-      const memberAge = hasForeignCitizenship && birthDate ? intervalToDuration({ start: new Date(birthDate), end: new Date()})?.years : kennitala.info(member.nationalId)?.age
-      return (memberAge ?? 0) < 18 && (member?.nationalId || birthDate) && member.enabled
+      const memberAge =
+        hasForeignCitizenship && birthDate
+          ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
+              ?.years
+          : kennitala.info(member.nationalId)?.age
+      return (
+        (memberAge ?? 0) < 18 &&
+        (member?.nationalId || birthDate) &&
+        member.enabled
+      )
     },
   )
 
