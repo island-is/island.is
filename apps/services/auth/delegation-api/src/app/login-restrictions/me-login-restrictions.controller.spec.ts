@@ -14,6 +14,8 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { TestApp, setupApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../app.module'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { FeatureFlagServiceMock } from '../../../test/mocks/featureFlagService.mock'
 
 const currentUserPhoneNumber = '765-4321'
 const cleanCurrentUserPhoneNumber = currentUserPhoneNumber.replace('-', '')
@@ -32,6 +34,10 @@ describe('MeLoginRestrictionsController', () => {
       AppModule,
       SequelizeConfigService,
       user: currentUser,
+      override: (builder) =>
+        builder
+          .overrideProvider(FeatureFlagService)
+          .useValue(FeatureFlagServiceMock),
     })
     server = request(app.getHttpServer())
 
@@ -49,11 +55,11 @@ describe('MeLoginRestrictionsController', () => {
   describe('GET /me/login-restrictions', () => {
     it('should return 200 with data when user has restriction set', async () => {
       // Arrange
-      const restrictedUntil = startOfDay(addDays(new Date(), 8))
+      const until = startOfDay(addDays(new Date(), 8))
       await loginRestrictionModel.create({
         nationalId: currentUser.nationalId,
         phoneNumber: cleanCurrentUserPhoneNumber,
-        restrictedUntil,
+        until,
       })
 
       // Act
@@ -70,7 +76,7 @@ describe('MeLoginRestrictionsController', () => {
           {
             nationalId: currentUser.nationalId,
             phoneNumber: cleanCurrentUserPhoneNumber,
-            restrictedUntil: restrictedUntil.toISOString(),
+            until: until.toISOString(),
           },
         ],
       })
@@ -95,11 +101,11 @@ describe('MeLoginRestrictionsController', () => {
   describe('PUT /me/login-restrictions', () => {
     it('should return 200 with data when user creates restriction', async () => {
       // Arrange
-      const restrictedUntil = startOfDay(addDays(new Date(), 8))
+      const until = startOfDay(addDays(new Date(), 8))
 
       // Act
       const response = await server.put('/v1/me/login-restrictions').send({
-        until: restrictedUntil,
+        until: until,
       } as CreateLoginRestrictionDto)
 
       // Assert - response
@@ -107,7 +113,7 @@ describe('MeLoginRestrictionsController', () => {
       expect(response.body).toEqual({
         nationalId: currentUser.nationalId,
         phoneNumber: cleanCurrentUserPhoneNumber,
-        restrictedUntil: restrictedUntil.toISOString(),
+        until: until.toISOString(),
       })
 
       // Assert - database
@@ -116,19 +122,19 @@ describe('MeLoginRestrictionsController', () => {
       expect(loginRestrictions[0]).toMatchObject({
         nationalId: currentUser.nationalId,
         phoneNumber: cleanCurrentUserPhoneNumber,
-        restrictedUntil,
+        until,
       })
     })
 
     it('should return 200 with data when user updates restriction', async () => {
       // Arrange
-      const currentRestrictedUntil = startOfDay(addDays(new Date(), 8))
+      const currentUntil = startOfDay(addDays(new Date(), 8))
       const currentRestriction = await loginRestrictionModel.create({
         nationalId: currentUser.nationalId,
         phoneNumber: cleanCurrentUserPhoneNumber,
-        restrictedUntil: currentRestrictedUntil,
+        until: currentUntil,
       })
-      const newRestrictedUntil = startOfDay(addDays(currentRestrictedUntil, 8))
+      const newRestrictedUntil = startOfDay(addDays(currentUntil, 8))
       assert(currentRestriction)
 
       // Act
@@ -141,7 +147,7 @@ describe('MeLoginRestrictionsController', () => {
       expect(response.body).toEqual({
         nationalId: currentUser.nationalId,
         phoneNumber: cleanCurrentUserPhoneNumber,
-        restrictedUntil: newRestrictedUntil.toISOString(),
+        until: newRestrictedUntil.toISOString(),
       })
 
       // Assert - database
@@ -150,25 +156,29 @@ describe('MeLoginRestrictionsController', () => {
       expect(loginRestrictions[0]).toMatchObject({
         nationalId: currentUser.nationalId,
         phoneNumber: cleanCurrentUserPhoneNumber,
-        restrictedUntil: newRestrictedUntil,
+        until: newRestrictedUntil,
       })
     })
 
     it('should return 400 bad request when user access token does not include audkenniSimNumber claim', async () => {
       // Arrange
-      const restrictedUntil = startOfDay(addDays(new Date(), 8))
+      const until = startOfDay(addDays(new Date(), 8))
       const app = await setupApp({
         AppModule,
         SequelizeConfigService,
         user: createCurrentUser({
           scope: [ApiScope.internal],
         }),
+        override: (builder) =>
+          builder
+            .overrideProvider(FeatureFlagService)
+            .useValue(FeatureFlagServiceMock),
       })
       const server = request(app.getHttpServer())
 
       // Act
       const response = await server.put('/v1/me/login-restrictions').send({
-        until: restrictedUntil,
+        until: until,
       } as CreateLoginRestrictionDto)
 
       // Assert - response
@@ -183,11 +193,11 @@ describe('MeLoginRestrictionsController', () => {
 
     it('should return 400 bad request when user sets restriction in the past', async () => {
       // Arrange
-      const restrictedUntil = startOfDay(new Date())
+      const until = startOfDay(new Date())
 
       // Act
       const response = await server.put('/v1/me/login-restrictions').send({
-        until: restrictedUntil,
+        until: until,
       } as CreateLoginRestrictionDto)
 
       // Assert - response
@@ -204,11 +214,11 @@ describe('MeLoginRestrictionsController', () => {
   describe('DELETE /me/login-restrictions', () => {
     it('should return 204 when user deletes restriction that exists and is successfully deleted', async () => {
       // Arrange
-      const currentRestrictedUntil = startOfDay(addDays(new Date(), 8))
+      const currentUntil = startOfDay(addDays(new Date(), 8))
       await loginRestrictionModel.create({
         nationalId: currentUser.nationalId,
         phoneNumber: cleanCurrentUserPhoneNumber,
-        restrictedUntil: currentRestrictedUntil,
+        until: currentUntil,
       })
 
       // Act

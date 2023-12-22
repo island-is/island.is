@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsDate, IsString } from 'class-validator'
 import {
-  CreationOptional,
+  type CreationOptional,
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
