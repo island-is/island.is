@@ -115,7 +115,7 @@ const EmailFormatInputModal = ({
       onCancel={onCancel}
       onSubmit={() => {
         if (
-          !ref.current?.innerText ||
+          !ref?.current?.innerText ||
           errorCheckOnTextContent(ref?.current?.innerText)
         ) {
           setHasError(true)
