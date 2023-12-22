@@ -1,13 +1,13 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName:
     'application-templates-social-insurance-administration-additional-support-for-the-elderly',
-  preset: '../../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../../..',
+  roots: [__dirname],
   transform: {
-    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../../coverage/libs/application/templates/social-insurance-administration/additional-support-for-the-elderly',
+    '<rootDir>/coverage/libs/application/templates/social-insurance-administration/additional-support-for-the-elderly',
 }

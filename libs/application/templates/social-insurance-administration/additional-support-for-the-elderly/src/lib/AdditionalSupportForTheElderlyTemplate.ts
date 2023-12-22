@@ -48,6 +48,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from './additionalSupportForTheElderlyUtils'
+import { Features } from '@island.is/feature-flags'
 
 function isEligible(context: ApplicationContext) {
   const { application } = context
@@ -68,6 +69,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,
   dataSchema,
+  featureFlag: Features.additionalSupportForTheElderly,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
