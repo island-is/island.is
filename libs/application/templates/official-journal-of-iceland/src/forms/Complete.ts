@@ -1,5 +1,10 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildForm,
+  buildSection,
+} from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { Routes } from '../lib/constants'
 import {
   additionsAndDocuments,
   newCase,
@@ -7,8 +12,8 @@ import {
   prerequisites,
   preview,
   publishingPrefrences,
+  summary,
 } from '../lib/messages'
-import { CompleteSection } from './sections'
 export const Complete: Form = buildForm({
   id: 'OfficalJournalOfIcelandPreRequsitesForm',
   title: 'Skilyrði',
@@ -17,35 +22,50 @@ export const Complete: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'ExternalData',
+      id: Routes.PREREQUISITES,
       title: prerequisites.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'NewCase',
+      id: Routes.NEW_CASE,
       title: newCase.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'AdditionsAndDocuments',
+      id: Routes.ADDITIONS_AND_DOCUMENTS,
       title: additionsAndDocuments.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'Preview',
+      id: Routes.PREVIEW,
       title: preview.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'OriginalData',
+      id: Routes.ORIGINAL_DATA,
       title: originalData.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'PublicationPreferences',
+      id: Routes.PUBLISHING_PREFRENCES,
       title: publishingPrefrences.general.sectionTitle,
       children: [],
     }),
-    CompleteSection,
+    buildSection({
+      id: Routes.SUMMARY,
+      title: summary.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.SUMMARY,
+          title: '',
+          component: 'Summary',
+        }),
+        buildCustomField({
+          id: Routes.COMPLETE,
+          title: '',
+          component: 'Complete',
+        }),
+      ],
+    }),
   ],
 })
