@@ -72,7 +72,4 @@ export class AuthGuard implements CanActivate {
 export const Authorize = (
   { roles = [] }: AuthorizeOptions = { roles: [] },
 ): MethodDecorator & ClassDecorator =>
-  applyDecorators(
-    SetMetadata('roles', roles),
-    UseGuards(IdsUserGuard, AuthGuard, RolesGuard),
-  )
+  applyDecorators(SetMetadata('roles', roles), UseGuards(AuthGuard, RolesGuard))

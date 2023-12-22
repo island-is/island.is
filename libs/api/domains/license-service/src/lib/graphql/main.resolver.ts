@@ -57,6 +57,9 @@ export class GetGenericLicensesInput {
 export class GetGenericLicenseInput {
   @Field(() => String)
   licenseType!: GenericLicenseType
+
+  @Field(() => String, { nullable: true })
+  licenseId?: string
 }
 
 @InputType()
@@ -111,6 +114,7 @@ export class MainResolver {
       user,
       locale,
       input.licenseType,
+      input.licenseId,
     )
     return license
   }

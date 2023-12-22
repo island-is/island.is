@@ -603,6 +603,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með skráðan bankareikning',
     description: 'No bank account error',
   },
+  machinesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein tæki',
+    description: 'Did not find any machines',
+  },
   nationalRegistryName: {
     id: 'application.system:core.fetch.data.nationalRegistryName',
     defaultMessage: 'Nafn',
