@@ -60,7 +60,9 @@ export class LoginRestrictionsService {
     return currentRestriction ? [currentRestriction.toDto()] : []
   }
 
-  async findByPhoneNumber(phoneNumber: string): Promise<LoginRestrictionDto> {
+  async findByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<LoginRestrictionDto | null> {
     const validPhoneNumber = this.validatePhoneNumber(phoneNumber)
 
     const loginRestriction = await this.loginRestrictionModel.findOne({
@@ -69,11 +71,7 @@ export class LoginRestrictionsService {
       },
     })
 
-    if (!loginRestriction) {
-      throw new NoContentException()
-    }
-
-    return loginRestriction.toDto()
+    return loginRestriction ? loginRestriction.toDto() : null
   }
 
   async delete({ nationalId }: User): Promise<void> {

@@ -57,14 +57,14 @@ describe('LoginRestrictionsController', () => {
     describe('GET /login-restrictions', () => {
       const path = '/v1/login-restrictions/.phone-number'
 
-      it('should return 200 and empty array if user has no restrictions', async () => {
+      it('should return 200 and empty object if user has no restrictions', async () => {
         // Act
         const response = await server
           .get(path)
           .set('X-Param-Phone-Number', userPhoneNumber)
 
         // Assert
-        expect(response.status).toBe(204)
+        expect(response.status).toBe(200)
         expect(response.body).toEqual({})
       })
 

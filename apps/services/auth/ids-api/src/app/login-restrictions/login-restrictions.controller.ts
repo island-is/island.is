@@ -36,11 +36,10 @@ export class LoginRestrictionsController {
       status: 200,
       type: LoginRestrictionDto,
     },
-    includeNoContentResponse: true,
   })
   async findByPhoneNumber(
     @Headers('X-Param-Phone-Number') phoneNumber: string,
-  ): Promise<LoginRestrictionDto> {
+  ): Promise<LoginRestrictionDto | null> {
     return this.loginRestrictionService.findByPhoneNumber(phoneNumber)
   }
 }
