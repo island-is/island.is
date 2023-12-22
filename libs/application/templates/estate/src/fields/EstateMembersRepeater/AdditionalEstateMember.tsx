@@ -147,7 +147,7 @@ export const AdditionalEstateMember = ({
               props: {
                 alertWhenUnder18:
                   selectedEstate === EstateTypes.divisionOfEstateByHeirs,
-                  requiredNationalId: true
+                requiredNationalId: true,
               },
             }}
             error={error}
