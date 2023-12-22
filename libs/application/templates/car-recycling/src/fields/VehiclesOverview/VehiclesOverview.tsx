@@ -126,8 +126,10 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
 
     setCanceledVehiclesList(filteredCanceledVehiclesList)
 
-    // Set the mileage
-    setValue(vehicle.permno + 'input', vehicle.mileage)
+    // Fix to add km into the input field
+    if (!vehicle.mileage) {
+      setValue(vehicle.permno + 'input', '')
+    }
   }
 
   function onCancel(vehicle: VehicleDto): void {
