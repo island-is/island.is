@@ -56,9 +56,8 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
       : 0
 
   useEffect(() => {
-    const { selectedVehicles, allVehicles } = getApplicationAnswers(
-      application.answers,
-    )
+    const { selectedVehicles, allVehicles, canceledVehicles } =
+      getApplicationAnswers(application.answers)
     const { vehiclesList } = getApplicationExternalData(
       application.externalData,
     )
@@ -74,6 +73,8 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     } else {
       setCurrentVehiclesList(vehiclesList)
     }
+
+    setCanceledVehiclesList(canceledVehicles)
   }, [])
 
   useEffect(() => {
@@ -124,9 +125,22 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     )
 
     setCanceledVehiclesList(filteredCanceledVehiclesList)
+
+    // Set the mileage
+    setValue(vehicle.permno + 'input', vehicle.mileage)
   }
 
   function onCancel(vehicle: VehicleDto): void {
+    // Check if the vehicle has been selcted and submitted
+    if (vehicle.selectedForRecycling) {
+      // Keep bookeeping about canceled recycling
+      setCanceledVehiclesList((vehicles: VehicleDto[]) => [
+        vehicle,
+        ...vehicles,
+      ])
+    }
+
+    // Remove the vehicle from the selected list
     const filteredSelectedVehiclesList = filterVehiclesList(
       vehicle,
       selectedVehiclesList,
@@ -135,10 +149,8 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     setSelectedVehiclesList(filteredSelectedVehiclesList)
 
     // Add selected vehicle back to the non selected list
+    //vehicle.selectedForRecycling = false
     setCurrentVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
-
-    // Keep bookeeping about canceled recycling
-    setCanceledVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
   }
 
   return (

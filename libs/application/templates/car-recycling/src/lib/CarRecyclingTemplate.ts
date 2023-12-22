@@ -24,8 +24,6 @@ import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 
 import { Features } from '@island.is/feature-flags'
-import unset from 'lodash/unset'
-import { assign } from 'xstate'
 import { VehicleSearchApi } from '../dataProviders'
 
 const enum States {
@@ -97,7 +95,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['clearCanceledVehicles'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -169,15 +166,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearCanceledVehicles: assign((context) => {
-        const { application } = context
-        unset(application.answers, 'vehicles.canceledVehicles')
-        return context
-      }),
-    },
-  },
+
   mapUserToRole(
     id: string,
     application: Application,

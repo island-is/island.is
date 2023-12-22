@@ -82,7 +82,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
       let mileage = 0
 
       if (vehicle.mileage) {
-        mileage = +vehicle.mileage.trim().replace('.', '')
+        mileage = +vehicle.mileage.trim().replace(/\./g, '')
       }
 
       return await this.carRecyclingService.createVehicle(
