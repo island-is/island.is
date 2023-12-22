@@ -13,7 +13,7 @@ module.exports = {
         unique: true,
         allowNull: false,
       },
-      restricted_until: {
+      until: {
         type: Sequelize.DATE,
         allowNull: false,
       },

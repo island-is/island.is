@@ -1,12 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import startOfDay from 'date-fns/startOfDay'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { User } from '@island.is/auth-nest-tools'
+import { NoContentException } from '@island.is/nest/problem'
 
 import { CreateLoginRestrictionDto } from './dto/create-login-restriction.dto'
-import { LoginRestriction } from './login-restriction.model'
 import { LoginRestrictionDto } from './dto/login-restriction.dto'
+import { LoginRestriction } from './login-restriction.model'
 
 @Injectable()
 export class LoginRestrictionsService {
@@ -28,6 +30,8 @@ export class LoginRestrictionsService {
       )
     }
 
+    const phoneNumber = this.validatePhoneNumber(user.audkenniSimNumber)
+
     const currentDate = startOfDay(new Date())
     const inputUntilDate = startOfDay(input.until)
 
@@ -40,8 +44,8 @@ export class LoginRestrictionsService {
 
     const [loginRestriction] = await this.loginRestrictionModel.upsert({
       nationalId: user.nationalId,
-      phoneNumber: user.audkenniSimNumber.replace('-', ''),
-      restrictedUntil: inputUntilDate,
+      phoneNumber: phoneNumber,
+      until: inputUntilDate,
     })
 
     return loginRestriction
@@ -56,7 +60,48 @@ export class LoginRestrictionsService {
     return currentRestriction ? [currentRestriction.toDto()] : []
   }
 
+  async findByPhoneNumber(phoneNumber: string): Promise<LoginRestrictionDto> {
+    const validPhoneNumber = this.validatePhoneNumber(phoneNumber)
+
+    const loginRestriction = await this.loginRestrictionModel.findOne({
+      where: {
+        phoneNumber: validPhoneNumber,
+      },
+    })
+
+    if (!loginRestriction) {
+      throw new NoContentException()
+    }
+
+    return loginRestriction.toDto()
+  }
+
   async delete({ nationalId }: User): Promise<void> {
     await this.loginRestrictionModel.destroy({ where: { nationalId } })
+  }
+
+  /**
+   * Validates that the phone number is valid and Icelandic.
+   * @param phoneNumber
+   * @private
+   * @returns The national number of the phone number
+   */
+  private validatePhoneNumber(phoneNumber: string): string {
+    const parsedPhoneNumber = parsePhoneNumberFromString(phoneNumber, {
+      defaultCountry: 'IS',
+      extract: false,
+    })
+
+    if (
+      !phoneNumber ||
+      !parsedPhoneNumber?.isValid() ||
+      parsedPhoneNumber?.countryCallingCode !== '354'
+    ) {
+      throw new BadRequestException(
+        'Phone number must be provided and valid Icelandic',
+      )
+    }
+
+    return parsedPhoneNumber.nationalNumber as string
   }
 }

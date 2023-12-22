@@ -48,7 +48,7 @@ export class LoginRestriction extends Model<
   })
   @ApiProperty()
   @IsDate()
-  restrictedUntil!: Date
+  until!: Date
 
   // Internal only, not exposed in API
   @CreatedAt
@@ -62,7 +62,7 @@ export class LoginRestriction extends Model<
     return {
       nationalId: this.nationalId,
       phoneNumber: this.phoneNumber,
-      restrictedUntil: this.restrictedUntil,
+      until: this.until,
     }
   }
 }

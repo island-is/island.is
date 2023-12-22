@@ -33956,7 +33956,7 @@ __metadata:
     jwt-decode: 4.0.0
     kennitala: 2.0.0-beta.2
     keyv: 4.5.2
-    libphonenumber-js: 1.7.53
+    libphonenumber-js: 1.10.52
     license-checker: 25.0.1
     lodash: 4.17.21
     lottie-web: 5.7.13
@@ -36598,15 +36598,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libphonenumber-js@npm:1.7.53":
-  version: 1.7.53
-  resolution: "libphonenumber-js@npm:1.7.53"
-  dependencies:
-    minimist: ^1.2.5
-    xml2js: ^0.4.17
-  bin:
-    libphonenumber-generate-metadata: ./bin/update-metadata.js
-  checksum: e71e8ede400370cbfc7434de1d99b82d54cb8ebe30059fb60178ea285f59e63ca6cc5dce8fc1b957030ab283415b0c398d6d0c6438a07534783d527dfb60434d
+"libphonenumber-js@npm:1.10.52":
+  version: 1.10.52
+  resolution: "libphonenumber-js@npm:1.10.52"
+  checksum: 4e3fddbdbb17694e86a02ef662e8ab030f14f56a494fd2c928089483bfc663d990dda7dcdab98467e42510a8d92bad890cc1d31b9651f452f8b9e8cb8b0800f9
   languageName: node
   linkType: hard
 
@@ -53448,7 +53443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml2js@npm:0.4.23, xml2js@npm:^0.4.17, xml2js@npm:^0.4.23":
+"xml2js@npm:0.4.23, xml2js@npm:^0.4.23":
   version: 0.4.23
   resolution: "xml2js@npm:0.4.23"
   dependencies:
