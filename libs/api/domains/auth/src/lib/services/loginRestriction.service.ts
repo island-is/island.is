@@ -21,7 +21,7 @@ export class LoginRestrictionService {
     ).meLoginRestrictionsControllerFindAll()
     return {
       restricted: response.data.length > 0,
-      until: response.data[0]?.restrictedUntil,
+      until: response.data[0]?.until,
     }
   }
 
