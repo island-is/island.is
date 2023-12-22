@@ -1,9 +1,9 @@
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
   Scopes,
-  User,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'

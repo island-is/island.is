@@ -2,7 +2,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { OfficalJournalOfIcelandSchema } from './dataSchema'
+import { OfficialJournalOfIcelandSchema } from './dataSchema'
 
 import {
   Application,
@@ -49,7 +49,7 @@ const OJOITemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.OfficialJournalOfIceland.translation,
   ],
-  dataSchema: OfficalJournalOfIcelandSchema,
+  dataSchema: OfficialJournalOfIcelandSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITS,

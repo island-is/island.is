@@ -15,7 +15,7 @@ import {
   summary,
 } from '../lib/messages'
 export const Complete: Form = buildForm({
-  id: 'OfficalJournalOfIcelandPreRequsitesForm',
+  id: 'OfficialJournalOfIcelandApplication',
   title: 'Skilyrði',
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,

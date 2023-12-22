@@ -16,7 +16,7 @@ import {
   summary,
 } from '../lib/messages'
 export const Prerequsites: Form = buildForm({
-  id: 'OfficalJournalOfIcelandApplication',
+  id: 'OfficialJournalOfIcelandApplication',
   title: general.applicationName,
   mode: FormModes.DRAFT,
   children: [
