@@ -43,6 +43,7 @@ export class LoginRestrictionsController {
       status: 200,
       type: LoginRestrictionDto,
     },
+    includeNoContentResponse: true,
   })
   async findByPhoneNumber(
     @CurrentUser() user: User,
