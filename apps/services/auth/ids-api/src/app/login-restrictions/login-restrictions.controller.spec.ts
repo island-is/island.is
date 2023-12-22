@@ -29,6 +29,8 @@ describe('LoginRestrictionsController', () => {
     const user = createCurrentUser({
       scope: [defaultScopes.testUserHasAccess.name],
     })
+    // As the IDS doesn't know the user nationalId when calling the login-restrictions endpoint we set empty nationalId
+    user.nationalId = ''
 
     beforeAll(async () => {
       app = await setupWithAuth({

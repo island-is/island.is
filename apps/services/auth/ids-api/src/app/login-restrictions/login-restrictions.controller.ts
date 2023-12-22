@@ -5,14 +5,7 @@ import {
   LoginRestrictionDto,
   LoginRestrictionsService,
 } from '@island.is/auth-api-lib'
-import {
-  CurrentUser,
-  IdsAuthGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-
-import type { User } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
@@ -46,7 +39,6 @@ export class LoginRestrictionsController {
     includeNoContentResponse: true,
   })
   async findByPhoneNumber(
-    @CurrentUser() user: User,
     @Headers('X-Param-Phone-Number') phoneNumber: string,
   ): Promise<LoginRestrictionDto> {
     return this.loginRestrictionService.findByPhoneNumber(phoneNumber)
