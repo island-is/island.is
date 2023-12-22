@@ -40,7 +40,9 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.fuelCode && parseInt(x.fuelCode) === 3,
     )
 
-    if (onlyElectricVehicles.length < 5) {
+    let onlyElectricVehiclesWithGrant = onlyElectricVehicles
+
+    if (onlyElectricVehicles.length < 6) {
       onlyElectricVehicles = await Promise.all(
         onlyElectricVehicles.map(async (vehicle: VehicleMiniDto) => {
           const vehicleGrant =
@@ -50,16 +52,15 @@ export class EnergyFundsService extends BaseTemplateApiService {
             )
           return {
             ...vehicle,
-            vehicleGrant: vehicleGrant?.priceAmount,
-            vehicleGrantItemCode: vehicleGrant?.itemCode,
+            vehicleGrant: vehicleGrant[0]?.priceAmount,
+            vehicleGrantItemCode: vehicleGrant[0]?.itemCode,
           }
         }),
       )
+      onlyElectricVehiclesWithGrant = onlyElectricVehicles.filter(
+        (x) => x.vehicleGrant !== undefined,
+      )
     }
-
-    const onlyElectricVehiclesWithGrant = onlyElectricVehicles.filter(
-      (x) => x.vehicleGrant !== undefined,
-    )
 
     // Validate that user has at least 1 vehicle that fulfills requirements
     if (
@@ -121,17 +122,24 @@ export class EnergyFundsService extends BaseTemplateApiService {
 
     const answers = {
       nationalId: auth.nationalId,
-      vIN: applicationAnswers?.selectVehicle.vin,
+      vIN: currentvehicleDetails?.vin || '',
       carNumber: applicationAnswers?.selectVehicle.plate,
       carType: (currentvehicleDetails && currentvehicleDetails.make) || '',
       itemcode:
         (currentvehicleDetails && currentvehicleDetails.vehicleGrantItemCode) ||
         '',
+      vehicleGroup: currentvehicleDetails?.vehicleRegistrationCode || '',
       purchasePrice:
         (applicationAnswers?.vehicleDetails.price &&
           parseInt(applicationAnswers?.vehicleDetails.price)) ||
         0,
       registrationDate: currentvehicleDetails
+        ? format(
+            new Date(currentvehicleDetails.newRegistrationDate || ''),
+            'yyyy-MM-dd',
+          )
+        : '',
+      firstRegDate: currentvehicleDetails
         ? format(
             new Date(currentvehicleDetails.firstRegistrationDate || ''),
             'yyyy-MM-dd',
