@@ -33,6 +33,7 @@ import {
   ZenterSignupConfig,
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
+import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
@@ -85,6 +86,7 @@ import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-lic
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
+import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
@@ -99,6 +101,7 @@ import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { InnaClientConfig } from '@island.is/clients/inna'
+import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import {
   AdrDigitalLicenseClientConfig,
@@ -118,6 +121,7 @@ import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-adm
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
+import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
@@ -136,6 +140,7 @@ import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
+import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
@@ -258,6 +263,7 @@ const environment = getConfig
     IcelandicGovernmentInstitutionVacanciesModule,
     AircraftRegistryModule,
     ShipRegistryModule,
+    IntellectualPropertiesModule,
     StatisticsModule,
     MinistryOfJusticeModule,
     CompanyRegistryModule,
@@ -292,6 +298,7 @@ const environment = getConfig
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
+    EnergyFundsServiceModule,
     UniversityOfIcelandModule,
     WorkMachinesModule,
     AdministrationOfOccupationalSafetyAndHealthModule,
@@ -318,6 +325,7 @@ const environment = getConfig
         DisabilityDigitalLicenseClientConfig,
         MachineDigitalLicenseClientConfig,
         DrivingDigitalLicenseClientConfig,
+        IntellectualPropertiesClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,
@@ -347,6 +355,7 @@ const environment = getConfig
         FileStorageConfig,
         FiskistofaClientConfig,
         ChargeFjsV2ClientConfig,
+        EnergyFundsClientConfig,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
@@ -366,6 +375,7 @@ const environment = getConfig
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
         StatisticsClientConfig,
+        SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
       ],
     }),

@@ -1,20 +1,21 @@
+import AsyncStorage from '@react-native-community/async-storage'
+import * as configcat from 'configcat-js'
 import React, {
   FC,
+  ReactNode,
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
-  useEffect,
-  ReactNode,
-} from 'react';
-import {useAuthStore} from '../stores/auth-store';
-import * as configcat from 'configcat-js';
-import AsyncStorage from '@react-native-community/async-storage';
-import {getConfig} from '../config';
+} from 'react'
+import { environments } from '../config'
+import { useAuthStore } from '../stores/auth-store'
+import { useEnvironmentStore } from '../stores/environment-store'
 
 interface FeatureFlagUser {
-  identifier: string;
-  attributes?: {[key: string]: string};
+  identifier: string
+  attributes?: { [key: string]: string }
 }
 
 export interface FeatureFlagClient {
@@ -22,64 +23,65 @@ export interface FeatureFlagClient {
     key: string,
     defaultValue: boolean | string,
     user?: FeatureFlagUser,
-  ): Promise<boolean | string>;
+  ): Promise<boolean | string>
 
-  dispose(): void;
+  dispose(): void
 }
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: (_, defaultValue) => Promise.resolve(defaultValue),
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   dispose() {},
-});
+})
 
 export interface FeatureFlagContextProviderProps {
-  children: ReactNode;
-  defaultUser?: FeatureFlagUser;
+  children: ReactNode
+  defaultUser?: FeatureFlagUser
 }
 
 class ConfigCatAsyncStorageCache {
   set(key: string, config: configcat.ProjectConfig) {
-    return AsyncStorage.setItem(key, JSON.stringify(config));
+    return AsyncStorage.setItem(key, JSON.stringify(config))
   }
   async get(key: string) {
-    const item = await AsyncStorage.getItem(key);
+    const item = await AsyncStorage.getItem(key)
     if (item) {
       try {
-        return JSON.parse(item) as configcat.ProjectConfig;
+        return JSON.parse(item) as configcat.ProjectConfig
       } catch (err) {
         // noop
       }
     }
-    return null;
+    return null
   }
 }
 
-// const logger = configcat.createConsoleLogger(configcat.LogLevel.Info);
-const featureFlagClient = configcat.getClient(
-  getConfig().configCat ?? '',
-  configcat.PollingMode.AutoPoll,
-  {
-    dataGovernance: configcat.DataGovernance.EuOnly,
-    // logger: logger,
-    cache: new ConfigCatAsyncStorageCache(),
-  },
-);
-
 export const FeatureFlagProvider: FC<
   React.PropsWithChildren<FeatureFlagContextProviderProps>
-> = ({children}) => {
-  const {userInfo} = useAuthStore();
-  const [time, setTime] = useState(Date.now());
+> = ({ children }) => {
+  const { userInfo } = useAuthStore()
+  const [time, setTime] = useState(Date.now())
+  const { environment = environments.prod } = useEnvironmentStore()
+
+  const featureFlagClient = useMemo(() => {
+    return configcat.getClient(
+      environment.configCat ?? '',
+      configcat.PollingMode.AutoPoll,
+      {
+        dataGovernance: configcat.DataGovernance.EuOnly,
+        cache: new ConfigCatAsyncStorageCache(),
+      },
+    )
+  }, [environment])
 
   useEffect(() => {
-    const listener = () => setTime(Date.now());
-    featureFlagClient.addListener('configChanged', listener);
+    const listener = () => setTime(Date.now())
+    featureFlagClient.addListener('configChanged', listener)
 
     return () => {
-      featureFlagClient.removeListener('configChanged', listener);
-    };
-  }, []);
+      featureFlagClient.removeListener('configChanged', listener)
+    }
+  }, [featureFlagClient])
 
   const context = useMemo<FeatureFlagClient>(() => {
     const userAuth =
@@ -91,39 +93,46 @@ export const FeatureFlagProvider: FC<
               name: userInfo.name,
             },
           }
-        : undefined;
+        : undefined
     return {
       getValue(
         key: string,
         defaultValue: boolean | string,
         user: FeatureFlagUser | undefined = userAuth,
       ) {
-        return featureFlagClient.getValueAsync(key, defaultValue, user);
+        return featureFlagClient.getValueAsync(key, defaultValue, user)
       },
       dispose: () => featureFlagClient.dispose(),
-    };
-  }, [featureFlagClient, userInfo, time]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [featureFlagClient, userInfo, time])
 
   return (
     <FeatureFlagContext.Provider value={context}>
       {children}
     </FeatureFlagContext.Provider>
-  );
-};
+  )
+}
 
 export const useFeatureFlagClient = () => {
-  return useContext(FeatureFlagContext);
-};
+  return useContext(FeatureFlagContext)
+}
 
-export const useFeatureFlag = (key: string, defaultValue: boolean | string) => {
-  const featureFlagClient = useFeatureFlagClient();
-  const [flag, setFlag] = useState(defaultValue);
+export function useFeatureFlag(key: string, defaultValue: string): string
+export function useFeatureFlag(key: string, defaultValue: boolean): boolean
+
+export function useFeatureFlag<T extends string | boolean>(
+  key: string,
+  defaultValue: T,
+) {
+  const featureFlagClient = useFeatureFlagClient()
+  const [flag, setFlag] = useState<T>(defaultValue)
 
   useEffect(() => {
-    featureFlagClient.getValue(key, defaultValue).then(result => {
-      setFlag(result);
-    });
-  }, [featureFlagClient]);
+    featureFlagClient.getValue(key, defaultValue).then((result) => {
+      setFlag(result as T)
+    })
+  }, [defaultValue, featureFlagClient, key])
 
-  return flag;
-};
+  return flag
+}

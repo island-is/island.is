@@ -2,6 +2,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AlertBanner, Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
+import { m as messages } from '../../lib/messages'
 import FinanceIntro from '../../components/FinanceIntro'
 import { useGetHmsLoansHistoryQuery } from './FinanceLoans.generated'
 import { FinanceLoansTable } from '../../components/FinanceLoans/FinanceLoansTable'
@@ -42,7 +43,7 @@ const FinanceLoans = () => {
           !loanOverviewLoading &&
           !loanOverviewError && (
             <AlertBanner
-              description={formatMessage(m.noResultsTryAgain)}
+              description={formatMessage(messages.noResultMessage)}
               variant="warning"
             />
           )}

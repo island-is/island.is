@@ -211,6 +211,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           code: cohabitionCodeValue?.code,
           description: cohabitionCodeValue?.description,
         },
+        birthDate: person.birthdate,
       }
     )
   }

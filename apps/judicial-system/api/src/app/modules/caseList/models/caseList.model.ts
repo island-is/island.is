@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import {
   CaseAppealDecision,
@@ -11,11 +11,6 @@ import {
 
 import { Defendant } from '../../defendant'
 import { User } from '../../user'
-
-registerEnumType(CaseDecision, { name: 'CaseDecision' })
-registerEnumType(CaseAppealDecision, {
-  name: 'CaseAppealDecision',
-})
 
 @ObjectType()
 export class CaseListEntry {
@@ -31,7 +26,7 @@ export class CaseListEntry {
   @Field(() => [String])
   readonly policeCaseNumbers!: string[]
 
-  @Field(() => String)
+  @Field(() => CaseState)
   readonly state!: CaseState
 
   @Field(() => CaseType)

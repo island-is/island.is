@@ -77,8 +77,13 @@ export const m = defineMessages({
     description: '',
   },
   cancelCollectionModalConfirmButton: {
-    id: 'sp.signatureCollection:modelConfirmButton',
+    id: 'sp.signatureCollection:modalConfirmButton',
     defaultMessage: 'Já, hætta við söfnun meðmæla',
+    description: '',
+  },
+  cancelCollectionModalToastError: {
+    id: 'sp.signatureCollection:modalToastError',
+    defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
     description: '',
   },
 
@@ -121,6 +126,11 @@ export const m = defineMessages({
   noSignees: {
     id: 'sp.signatureCollection:noSignees',
     defaultMessage: 'Engin meðmæli',
+    description: '',
+  },
+  noSigneesFoundBySearch: {
+    id: 'sp.signatureCollection:noSigneesFoundBySearch',
+    defaultMessage: 'Engin meðmæli fundust þegar leitað var að',
     description: '',
   },
   signeeDate: {
