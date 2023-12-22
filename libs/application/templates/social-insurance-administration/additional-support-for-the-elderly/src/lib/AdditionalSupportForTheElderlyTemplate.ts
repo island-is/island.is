@@ -69,7 +69,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,
   dataSchema,
-  featureFlag: Features.additionalSupportForTheElderly,
+  featureFlag: Features.additionalSupportForTheElderlyApplication,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
