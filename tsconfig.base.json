@@ -847,9 +847,6 @@
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
-      "@island.is/service-portal/restrictions": [
-        "libs/service-portal/restrictions/src/index.ts"
-      ],
       "@island.is/service-portal/air-discount": [
         "libs/service-portal/air-discount/src/index.ts"
       ],
@@ -930,6 +927,9 @@
       ],
       "@island.is/service-portal/petitions": [
         "libs/service-portal/petitions/src/index.ts"
+      ],
+      "@island.is/service-portal/restrictions": [
+        "libs/service-portal/restrictions/src/index.ts"
       ],
       "@island.is/service-portal/sessions": [
         "libs/service-portal/sessions/src/index.ts"
