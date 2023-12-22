@@ -39,6 +39,7 @@ export class RecyclingRequestService {
     disposalStation: string,
     mileage = 0,
   ) {
+    console.log('---->deRegisterVehicle.......mileage:' + mileage)
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
@@ -59,6 +60,7 @@ export class RecyclingRequestService {
       if (authRes.status > 299 || authRes.status < 200) {
         const errorMessage = `Authentication failed for deRegisterService: ${authRes.statusText}`
         this.logger.error(errorMessage)
+        console.log('XXX-------->ERROREORROR')
         throw new Error(errorMessage)
       }
       // DeRegisterd vehicle
@@ -70,6 +72,7 @@ export class RecyclingRequestService {
         explanation: 'Rafrænt afskráning',
         mileage: mileage,
       })
+      console.log('---->jsonBody:' + jsonDeRegBody)
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
@@ -82,11 +85,13 @@ export class RecyclingRequestService {
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         return true
       } else {
+        console.log('-------->ERROREORROR')
         throw new Error(
           `Failed on deregisterd on deRegisterVehicle with status: ${deRegRes.statusText}`,
         )
       }
     } catch (err) {
+      console.log('oooo-------->ERROREORROR')
       throw new Error(
         `Failed on deregistered vehicle ${vehiclePermno} because: ${err}`,
       )
@@ -305,7 +310,7 @@ export class RecyclingRequestService {
         try {
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
-          await this.deRegisterVehicle(permno, partnerId, vehicle?.mileage)
+          await this.deRegisterVehicle(permno, partnerId, vehicle.mileage ?? 0)
         } catch (err) {
           // Saved requestType back to 'pendingRecycle'
           const req = new RecyclingRequestModel()
