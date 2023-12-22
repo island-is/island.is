@@ -16,6 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
+import { intervalToDuration } from 'date-fns'
 import { GenericFormField, Application } from '@island.is/application/types'
 import { ErrorValue, EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
@@ -66,8 +67,10 @@ export const AdditionalEstateMember = ({
   const { control, setValue, clearErrors, getValues } = useFormContext()
 
   const values = getValues()
-
   const currentEstateMember = values?.estate?.estateMembers?.[index]
+  const hasForeignCitizenship = currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
+  const birthDate = currentEstateMember?.dateOfBirth
+  const memberAge = hasForeignCitizenship && birthDate ? intervalToDuration({ start: new Date(birthDate), end: new Date()})?.years : kennitala.info(currentEstateMember.nationalId)?.age
 
   useEffect(() => {
     clearErrors(nameField)
@@ -229,8 +232,8 @@ export const AdditionalEstateMember = ({
       </GridRow>
       {/* ADVOCATE */}
       {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
-        currentEstateMember?.nationalId &&
-        kennitala.info(currentEstateMember.nationalId).age < 18 && (
+        (currentEstateMember?.nationalId || hasForeignCitizenship) && memberAge !== undefined &&
+        memberAge < 18 && (
           <Box
             marginTop={2}
             paddingY={5}
@@ -258,7 +261,7 @@ export const AdditionalEstateMember = ({
                       alertWhenUnder18:
                         selectedEstate !==
                           EstateTypes.divisionOfEstateByHeirs &&
-                        kennitala.info(currentEstateMember.nationalId).age < 18,
+                          memberAge !== undefined && memberAge < 18,
                     },
                   }}
                   error={error}

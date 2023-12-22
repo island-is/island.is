@@ -26,6 +26,7 @@ import {
   heirAgeValidation,
   relationWithApplicant,
 } from '../../lib/constants'
+import { intervalToDuration } from 'date-fns'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
@@ -37,13 +38,14 @@ export const EstateMembersRepeater: FC<
     name: id,
   })
   const values = getValues()
-
   const selectedEstate = application.answers.selectedEstate
 
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
-      const memberAge = kennitala.info(member.nationalId)?.age
-      return memberAge < 18 && member?.nationalId && member.enabled
+      const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
+      const birthDate = member?.dateOfBirth
+      const memberAge = hasForeignCitizenship && birthDate ? intervalToDuration({ start: new Date(birthDate), end: new Date()})?.years : kennitala.info(member.nationalId)?.age
+      return (memberAge ?? 0) < 18 && (member?.nationalId || birthDate) && member.enabled
     },
   )
 
