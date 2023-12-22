@@ -1,5 +1,5 @@
 {
-  "name": "restrictions",
+  "name": "service-portal-restrictions",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/restrictions/src",
   "projectType": "library",

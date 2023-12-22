@@ -67,6 +67,10 @@ export const routesTemplate = {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
   },
+  articlegroup: {
+    is: '/flokkur/[slug]#[subgroupSlug]',
+    en: '/en/category/[slug]#[subgroupSlug]',
+  },
   news: {
     is: '/frett/[slug]',
     en: '/en/news/[slug]',
@@ -82,6 +86,10 @@ export const routesTemplate = {
   manualchangelog: {
     is: '/handbaekur/[slug]/breytingasaga',
     en: '/en/manuals/[slug]/changelog',
+  },
+  manualchapteritem: {
+    is: '/handbaekur/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
+    en: '/en/manuals/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
   },
   manualchapter: {
     is: '/handbaekur/[slug]/[chapterSlug]',
@@ -238,6 +246,22 @@ export const routesTemplate = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
+  },
+  universitysearchdetails: {
+    is: '/haskolanam/[id]',
+    en: '/en/university-studies/[id]',
+  },
+  universitysearchcomparison: {
+    is: '/haskolanam/samanburdur',
+    en: '/en/university-studies/comparison',
+  },
+  universitysearch: {
+    is: '/haskolanam/leit',
+    en: '/en/university-studies/search',
+  },
+  universitylandingpage: {
+    is: '/haskolanam',
+    en: '/en/university-studies',
   },
   homepage: {
     is: '/',

@@ -4,4 +4,4 @@ This module enables user to activate and deactivate restrictions on logins with 
 
 ## Running unit tests
 
-Run `nx test restrictions` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test service-portal-restrictions` to execute the unit tests via [Jest](https://jestjs.io).
