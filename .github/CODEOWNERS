@@ -99,6 +99,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/portals/shared-modules/delegations                                                                 @island-is/aranja
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
 /libs/service-portal/consent                                                                             @island-is/aranja
+/libs/service-portal/restrictions                                                                        @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
 /apps/native/app/                                                                                        @island-is/aranja-enum-app
 
