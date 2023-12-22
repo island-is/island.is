@@ -36,19 +36,6 @@ export const buyerSubSection = buildSubSection({
           width: 'half',
           required: true,
         }),
-        // buildSubmitField({
-        //   id: 'submit',
-        //   placement: 'footer',
-        //   title: conclusion.general.title,
-        //   refetchApplicationAfterSubmit: true,
-        //   actions: [
-        //     {
-        //       event: DefaultEvents.SUBMIT,
-        //       name: conclusion.general.title,
-        //       type: 'primary',
-        //     },
-        //   ],
-        // }),
       ],
     }),
   ],

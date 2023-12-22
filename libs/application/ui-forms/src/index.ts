@@ -5,4 +5,7 @@ export {
 } from './lib/applicantInformationMultiField'
 export { buildFormConclusionSection } from './lib/formConclusionSection/formConclusionSection'
 export { conclusion as conclusionMessages } from './lib/formConclusionSection/messages'
-export { buildFormPaymentChargeOverviewSection } from './lib/formPaymentChargeOverview/formPaymentChargeOverview'
+export {
+  buildFormPaymentChargeOverviewSection,
+  buildFormPaymentChargeOverviewSubSection,
+} from './lib/formPaymentChargeOverview/formPaymentChargeOverview'

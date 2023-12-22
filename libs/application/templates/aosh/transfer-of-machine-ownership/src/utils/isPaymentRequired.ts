@@ -7,7 +7,7 @@ export const isPaymentRequired = ({ application }: ApplicationContext) => {
   console.log('application', application)
   console.log(
     'is it',
-    getSelectedMachine(application.externalData, application.answers)
+    !getSelectedMachine(application.externalData, application.answers)
       ?.paymentRequiredForOwnerChange,
   )
   // return (

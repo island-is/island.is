@@ -22,7 +22,7 @@ export const informationSection = buildSection({
     buildSubSection({
       id: 'confirmation',
       condition: (_, externalData) =>
-        isPaymentRequiredSubSection(_, externalData),
+        !isPaymentRequiredSubSection(_, externalData),
       title: 'confirmation',
       children: [
         buildSubmitField({

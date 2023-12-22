@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildSubmitField,
   buildPaymentChargeOverviewField,
+  buildSubSection,
 } from '@island.is/application/core'
 import {
   Application,
@@ -33,6 +34,46 @@ type props = {
  */
 export const buildFormPaymentChargeOverviewSection = (props: props) =>
   buildSection({
+    id: 'uiForms.paymentChargeOverviewSection',
+    title: props.sectionTitle
+      ? props.sectionTitle
+      : paymentChargeOverview.information.sectionTitle,
+    children: [
+      buildMultiField({
+        id: 'uiForms.paymentChargeOverviewMultifield',
+        title: paymentChargeOverview.information.formTitle,
+        children: [
+          buildPaymentChargeOverviewField({
+            id: 'uiForms.paymentChargeOverviewMultifield',
+            title: '',
+            forPaymentLabel: props.forPaymentLabel
+              ? props.forPaymentLabel
+              : paymentChargeOverview.payment.forPayment,
+            totalLabel: props.totalLabel
+              ? props.totalLabel
+              : paymentChargeOverview.payment.total,
+            getSelectedChargeItems: props.getSelectedChargeItems,
+          }),
+          buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: paymentChargeOverview.information.continueButton,
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: paymentChargeOverview.information.continueButton,
+                type: 'primary',
+              },
+            ],
+          }),
+        ],
+      }),
+    ],
+  })
+
+export const buildFormPaymentChargeOverviewSubSection = (props: props) =>
+  buildSubSection({
     id: 'uiForms.paymentChargeOverviewSection',
     title: props.sectionTitle
       ? props.sectionTitle

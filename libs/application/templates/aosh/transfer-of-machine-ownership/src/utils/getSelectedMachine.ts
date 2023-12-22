@@ -12,5 +12,6 @@ export const getSelectedMachine = (
     'machinesList.data',
     [],
   ) as Machine[]
+  console.log('machineId', machineId)
   return machines.find((machine) => machine.id === machineId)
 }
