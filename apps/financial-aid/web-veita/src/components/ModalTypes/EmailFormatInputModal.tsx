@@ -48,33 +48,6 @@ const EmailFormatInputModal = ({
     }
   }, [hasError])
 
-  useEffect(() => {
-    if (ref.current) {
-      if (state === ApplicationState.REJECTED) {
-        ref.current.innerHTML = `${prefixText}<br/><br/><b>[SKRIFA ÁSTÆÐU HÉR]</b><br/>${postfixText}         <br />
-              <br /> 
-              <b>Málskot</b>
-              Bent skal á að unnt er að skjóta ákvörðun þessari til
-              áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
-              innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
-              samband með tölvupósti á netfangið
-         
-              <a href={"mailto:${municipalityEmail}"} rel="noreferrer noopener">
-                <span className="linkInText">${municipalityEmail}.</span>
-              </a>
-       
-              <br />
-              <br />
-              Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar
-              velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.
-              <br />
-              <br />`
-      } else {
-        ref.current.innerHTML = `${prefixText}<br/><br/><b>[SKRIFA ÁSTÆÐU HÉR]</b><br/>${postfixText}`
-      }
-    }
-  }, [isModalVisable])
-
   const onPaste = (event: any) => {
     document.execCommand(
       'insertText',
@@ -134,7 +107,35 @@ const EmailFormatInputModal = ({
           contentEditable={true}
           onPaste={onPaste}
           className={styles.textAreaEditable}
-        />
+          suppressContentEditableWarning={true}
+        >
+          {prefixText}
+          <br />
+          <br />
+          <strong>[SKRIFA ÁSTÆÐU HÉR]</strong>
+          <br />
+          {postfixText}
+
+          {state === ApplicationState.REJECTED && (
+            <>
+              <br />
+              <br />
+              <b>Málskot</b>
+              <br />
+              Bent skal á að unnt er að skjóta ákvörðun þessari til
+              áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
+              innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
+              samband með tölvupósti á netfangið
+              <a href={'mailto:${municipalityEmail}'} rel="noreferrer noopener">
+                <span className="linkInText">{municipalityEmail}.</span>
+              </a>
+              <br />
+              <br />
+              Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar
+              velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.
+            </>
+          )}
+        </div>
       </Box>
     </InputModal>
   )
