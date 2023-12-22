@@ -145,6 +145,11 @@ export const m = defineMessages({
     defaultMessage: 'Framlengja lokadag',
     description: '',
   },
+  updateListEndTimeSuccess: {
+    id: 'admin-portal.signature-collection:updateListEndTimeSuccess',
+    defaultMessage: 'Tókst að framlengja lokadag',
+    description: '',
+  },
   confirmListReviewed: {
     id: 'admin-portal.signature-collection:confirmListReviewed',
     defaultMessage: 'Úrvinnslu lokið',
@@ -172,6 +177,11 @@ export const m = defineMessages({
     defaultMessage: 'Tekið er við skjölum með endingu: .xlsx, .xls',
     description: '',
   },
+  downloadTemplate: {
+    id: 'admin-portal.signature-collection:downloadTemplate',
+    defaultMessage: 'Sækja template',
+    description: '',
+  },
   uploadButton: {
     id: 'admin-portal.signature-collection:uploadButton',
     defaultMessage: 'Velja skjöl',
@@ -180,6 +190,12 @@ export const m = defineMessages({
   uploadResultsHeader: {
     id: 'admin-portal.signature-collection:uploadResultsHeader',
     defaultMessage: 'Niðurstöður',
+    description: '',
+  },
+  noUploadResults: {
+    id: 'admin-portal.signature-collection:uploadResultsHeader',
+    defaultMessage:
+      'Engar niðurstöður komu upp úr skjalinu sem hlaðið var upp.',
     description: '',
   },
   totalListResults: {
@@ -201,7 +217,7 @@ export const m = defineMessages({
   // Compare lists
   compareLists: {
     id: 'admin-portal.signature-collection:compareLists',
-    defaultMessage: 'Bera saman',
+    defaultMessage: 'Bera saman lista',
     description: '',
   },
   compareListsDescription: {
@@ -219,6 +235,12 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:compareListsResultsDescription',
     defaultMessage:
       'Eftirfarandi aðilar eru í yfirkjörstjórn eða landskjörstjórn og ættu ekki að vera skráðir á lista.',
+    description: '',
+  },
+  compareListsNoResultsDescription: {
+    id: 'admin-portal.signature-collection:compareListsNoResultsDescription',
+    defaultMessage:
+      'Enginn fannst í yfirkjörstjórn eða landskjörstjórn sem er skráður á lista.',
     description: '',
   },
   deleteFromList: {

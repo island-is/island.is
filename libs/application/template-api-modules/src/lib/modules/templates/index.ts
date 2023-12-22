@@ -99,6 +99,8 @@ import { EnergyFundsService } from './energy-funds/energy-funds.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
+import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
+import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 import { CarRecyclingModule } from './car-recycling/car-recycling.module'
@@ -158,6 +160,7 @@ export const modules = [
   CitizenshipModule,
   EnergyFundsModule,
   HealthcareLicenseCertificateModule,
+  TransferOfMachineOwnershipTemplateModule,
 ]
 
 export const services = [
@@ -214,4 +217,5 @@ export const services = [
   CitizenshipService,
   EnergyFundsService,
   HealthcareLicenseCertificateService,
+  TransferOfMachineOwnershipTemplateService,
 ]

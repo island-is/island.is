@@ -72,6 +72,12 @@ export class GenericUserLicenseMetadata {
   @Field(() => String)
   licenseNumber?: string
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'Unique license identifier',
+  })
+  licenseId?: string
+
   @Field(() => Boolean, { nullable: true })
   expired?: boolean | null
 
