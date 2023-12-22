@@ -51,6 +51,7 @@
       "@island.is/api/domains/aircraft-registry": [
         "libs/api/domains/aircraft-registry/src/index.ts"
       ],
+      "@island.is/api/domains/aosh": ["libs/api/domains/aosh/src/index.ts"],
       "@island.is/api/domains/api-catalogue": [
         "libs/api/domains/api-catalogue/src/index.ts"
       ],
@@ -272,6 +273,9 @@
       ],
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
+      ],
+      "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
+        "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
       ],
       "@island.is/application/templates/car-recycling": [
         "libs/application/templates/car-recycling/src/index.ts"
@@ -506,6 +510,9 @@
       "@island.is/clients/althingi-ombudsman": [
         "libs/clients/althingi-ombudsman/src/index.ts"
       ],
+      "@island.is/clients/aosh/transfer-of-machine-ownership": [
+        "libs/clients/aosh/transfer-of-machine-ownership/src/index.ts"
+      ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth/admin-api": [
         "libs/clients/auth/admin-api/src/index.ts"
@@ -635,6 +642,9 @@
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
+      ],
+      "@island.is/clients/signature-collection": [
+        "libs/clients/signature-collection/src/index.ts"
       ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"

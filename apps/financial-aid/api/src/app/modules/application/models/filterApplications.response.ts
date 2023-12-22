@@ -13,4 +13,7 @@ export class FilterApplicationsResponse implements ApplicationPagination {
 
   @Field(() => [StaffModel])
   readonly staffList!: [StaffModel]
+
+  @Field({ nullable: true })
+  readonly minDateCreated?: string
 }

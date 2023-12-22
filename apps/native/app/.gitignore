@@ -22,6 +22,10 @@ DerivedData
 *.dSYM.zip
 *.xcuserstate
 ios/.xcode.env.local
+ios/*.cer
+ios/*.certSigningRequest
+ios/*.mobileprovision
+ios/*.p12
 
 # Android/IntelliJ
 #
