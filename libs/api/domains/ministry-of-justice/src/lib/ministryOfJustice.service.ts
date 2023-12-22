@@ -3,7 +3,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import { Case } from './models/Case.model'
 import { CaseCategoryType } from './models/CaseCategory'
 import { CaseDepartmentType } from './models/CaseDepartment.model'
 import { CaseSignatureType } from './models/CaseSignatureType'
@@ -96,7 +95,7 @@ const MOCK_CASE_TEMPLATES = [
     preferedPublicationDate: '2020-12-01T00:00:00.000Z',
     fastTrack: false,
   },
-] satisfies Case[]
+]
 
 @Injectable()
 export class MinistryOfJusticeService {
@@ -127,7 +126,12 @@ export class MinistryOfJusticeService {
     const templates = MOCK_CASE_TEMPLATES.filter((template) => {
       if (!template.title) return false
       return template.title?.toLowerCase().indexOf(q.toLowerCase()) > -1
-    }).filter(isDefined).map((template) => ({...template, signatureType: CaseSignatureType.MINISTER}))
+    })
+      .filter(isDefined)
+      .map((template) => ({
+        ...template,
+        signatureType: CaseSignatureType.MINISTER,
+      }))
 
     return {
       items: templates,
