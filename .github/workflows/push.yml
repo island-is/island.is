@@ -227,7 +227,7 @@ jobs:
           git checkout $GITHUB_SHA
 
       - name: Keep PR run event
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
         with:
           name: pr-event
