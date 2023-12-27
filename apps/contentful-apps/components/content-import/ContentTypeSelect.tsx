@@ -1,12 +1,8 @@
+import capitalize from 'lodash/capitalize'
 import { FormControl, Select } from '@contentful/f36-components'
 
 const CONTENT_TYPES = ['price', 'supportQNA'] as const
 export type ContentType = typeof CONTENT_TYPES[number]
-
-const capitalize = (value: string) => {
-  if (value?.length < 1) return ''
-  return value[0].toUpperCase() + value.slice(1)
-}
 
 interface ContentTypeSelectProps {
   selectedContentType: string | null

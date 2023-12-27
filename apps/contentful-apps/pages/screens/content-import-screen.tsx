@@ -1,106 +1,29 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
-import { ContentTypeProps } from 'contentful-management'
-import { PageExtensionSDK } from '@contentful/app-sdk'
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  Grid,
-  Select,
-  Stack,
-  Text,
-} from '@contentful/f36-components'
+import { useMemo, useState } from 'react'
+import { Box, Button, Flex, Stack } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { GridContainer } from '@island.is/island-ui/core'
 
 import {
   ContentTypeSelect,
+  FieldMapping,
+  FieldMappingProps,
   FileDataTable,
   FileInput,
   getTableData,
   ReferenceFieldMapping,
+  ReferenceFieldMappingProps,
   TagSelect,
 } from '../..//components/content-import'
-import {
-  FileData,
-  isReferenceField,
-} from '../../components/content-import/utils'
+import { FileData } from '../../components/content-import/utils'
+import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
 import { useContentTypeData } from '../../hooks/useContentTypeData'
 
-interface FieldMappingProps {
-  headCells: string[]
-  contentTypeData: ContentTypeProps
-  fieldMapping: { from: string; to: string }[]
-  setFieldMapping: Dispatch<SetStateAction<FieldMappingProps['fieldMapping']>>
-}
-
-const FieldMapping = ({
-  headCells,
-  contentTypeData,
-  fieldMapping,
-  setFieldMapping,
-}: FieldMappingProps) => {
-  useEffect(() => {
-    if (!contentTypeData) return
-    setFieldMapping(
-      contentTypeData.fields
-        .filter((field) => !isReferenceField(field))
-        .map((field) => {
-          return {
-            from: field.name,
-            to: '',
-          }
-        }),
-    )
-  }, [contentTypeData, setFieldMapping])
-  return (
-    <FormControl>
-      <FormControl.Label>Fields</FormControl.Label>
-      <Stack flexDirection="column" spacing="spacingL">
-        {fieldMapping.map(({ from, to }, index) => {
-          const key = `${from}-${to}`
-          return (
-            <Grid key={key} columns="1fr 1fr">
-              <Text>{from}</Text>
-              <Select
-                id={key}
-                name={key}
-                value={to}
-                onChange={(ev) => {
-                  setFieldMapping((prev) => {
-                    const alreadyPresentIndex = prev.findIndex(
-                      (e) => e.to === ev.target.value,
-                    )
-                    if (alreadyPresentIndex >= 0) {
-                      prev[alreadyPresentIndex].to = undefined
-                    }
-                    prev[index].to = ev.target.value
-                    return [...prev]
-                  })
-                }}
-              >
-                <Select.Option value={null}>-</Select.Option>
-                {headCells.map((text) => (
-                  <Select.Option key={text} value={text}>
-                    {text}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Grid>
-          )
-        })}
-      </Stack>
-    </FormControl>
-  )
-}
-
 const ContentImportScreen = () => {
-  const sdk = useSDK<PageExtensionSDK>()
-  const cma = useCMA()
   const [data, setData] = useState<FileData>([])
-  const { headCells } = useMemo(() => getTableData(data), [data])
+  const { headCells, bodyRows } = useMemo(() => getTableData(data), [data])
+  const cma = useCMA()
+  const sdk = useSDK()
 
   const [selectedContentType, setSelectedContentType] = useState<
     'price' | 'supportQNA'
@@ -108,14 +31,65 @@ const ContentImportScreen = () => {
   const contentTypeData = useContentTypeData(selectedContentType)
   const [selectedTag, setSelectedTag] = useState('')
   const [fieldMapping, setFieldMapping] = useState<
-    { from: string; to: string | null }[]
+    FieldMappingProps['fieldMapping']
   >([])
   const [referenceFieldMapping, setReferenceFieldMapping] = useState<
-    { from: string; to: string | null }[]
+    ReferenceFieldMappingProps['referenceFieldMapping']
   >([])
 
+  const importContent = async () => {
+    for (const row of bodyRows) {
+      const fields = {}
+      for (let i = 0; i < row.length; i += 1) {
+        const field = fieldMapping.find(
+          (field) => field.importFieldName === headCells[i],
+        )?.contentfulField
+        if (!field?.data?.id) continue
+
+        if (field.data.localized) {
+          for (const locale of Object.keys(sdk.locales.names)) {
+            // fields[field.id] = {
+            // }
+            console.log(locale)
+          }
+        }
+      }
+
+      const createdEntry = await cma.entry.create(
+        {
+          contentTypeId: selectedContentType,
+          environmentId: CONTENTFUL_ENVIRONMENT,
+          spaceId: CONTENTFUL_SPACE,
+        },
+        {
+          fields,
+          metadata: {
+            tags: [
+              {
+                sys: {
+                  type: 'Link',
+                  linkType: 'Tag',
+                  id: selectedTag,
+                },
+              },
+            ],
+          },
+        },
+      )
+
+      await cma.entry.publish(
+        {
+          entryId: createdEntry.sys.id,
+          environmentId: CONTENTFUL_ENVIRONMENT,
+          spaceId: CONTENTFUL_SPACE,
+        },
+        createdEntry,
+      )
+    }
+  }
+
   return (
-    <Box padding="spacingXl">
+    <Box padding="spacingXl" id="content-import-screen-container">
       <Stack
         spacing="spacing2Xl"
         flexDirection="column"
@@ -129,7 +103,9 @@ const ContentImportScreen = () => {
           >
             <Flex fullWidth justifyContent="space-between">
               <FileInput setFileData={setData} />
-              <Button variant="primary">Import</Button>
+              <Button variant="primary" onClick={importContent}>
+                Import
+              </Button>
             </Flex>
 
             <Flex gap="16px">
@@ -159,10 +135,10 @@ const ContentImportScreen = () => {
                 setReferenceFieldMapping={setReferenceFieldMapping}
               />
             )}
-
-            <FileDataTable data={data} />
           </Stack>
         </GridContainer>
+
+        <FileDataTable data={data} />
       </Stack>
     </Box>
   )

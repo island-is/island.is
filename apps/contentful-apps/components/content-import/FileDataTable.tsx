@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Button, Flex, Stack, Table } from '@contentful/f36-components'
+import { Box, Button, Flex, Table } from '@contentful/f36-components'
 
 import { FileData } from './utils'
 
@@ -37,14 +37,17 @@ export const FileDataTable = ({ data }: FileDataTableProps) => {
   const [displayedRowCount, setDisplayedRowCount] =
     useState(ROW_COUNT_INCREMENT)
 
+  if (headCells.length === 0) return null
+
   return (
-    <Stack flexDirection="column" spacing="spacingM">
-      <Table
-        style={{
-          overflowX: 'scroll',
-          display: 'block',
-        }}
-      >
+    <Box
+      style={{
+        width: '100%',
+        display: 'block',
+        overflowX: 'scroll',
+      }}
+    >
+      <Table>
         <Table.Head>
           <Table.Row>
             {headCells.map((text, index) => (
@@ -71,10 +74,10 @@ export const FileDataTable = ({ data }: FileDataTableProps) => {
             }}
           >
             Show {ROW_COUNT_INCREMENT} more (
-            {bodyRows.length - displayedRowCount} unseen)
+            {bodyRows.length - displayedRowCount})
           </Button>
         </Flex>
       )}
-    </Stack>
+    </Box>
   )
 }

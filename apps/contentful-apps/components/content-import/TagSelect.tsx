@@ -11,7 +11,9 @@ interface TagSelectProps {
 
 export const TagSelect = ({ selectedTag, setSelectedTag }: TagSelectProps) => {
   const cma = useCMA()
-  const [tagOptions, setTagOptions] = useState([])
+  const [tagOptions, setTagOptions] = useState<
+    { value: string; label: string }[]
+  >([])
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -24,7 +26,12 @@ export const TagSelect = ({ selectedTag, setSelectedTag }: TagSelectProps) => {
         },
       })
 
-      setTagOptions(response.items.map((item) => item.name))
+      setTagOptions(
+        response.items.map((item) => ({
+          label: item.name,
+          value: item.sys.id,
+        })),
+      )
     }
     fetchTags()
   }, [cma.tag])
@@ -42,8 +49,8 @@ export const TagSelect = ({ selectedTag, setSelectedTag }: TagSelectProps) => {
       >
         <Select.Option value={null}>-</Select.Option>
         {tagOptions.map((tag) => (
-          <Select.Option key={tag} value={tag}>
-            {tag}
+          <Select.Option key={tag.value} value={tag.value}>
+            {tag.label}
           </Select.Option>
         ))}
       </Select>
