@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
-  ApplicationsTable,
+  Text,
+  Box,
+  Pagination,
+  SkeletonLoader,
+  Button,
+} from '@island.is/island-ui/core'
+import {
+  ApplicationsFilterTable,
+  FilterDates,
   FilterPopover,
+  LoadingContainer,
+  TableSkeleton,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   ApplicationPagination,
@@ -29,14 +38,18 @@ export const ApplicationsOverviewProcessed = () => {
   const [filterApplications, setFilterApplications] =
     useState<ApplicationPagination>()
 
-  const { applications, staffList, totalCount } = filterApplications || {}
+  const { applications, staffList, totalCount, minDateCreated } =
+    filterApplications || {}
+
   const {
     currentPage,
     setCurrentPage,
     activeFilters,
     onChecked,
     onFilterClear,
-    ClearFilterOrFillFromRoute,
+    onClearFilterOrFillFromRoute,
+    handleDateChange,
+    onFilterClearAll,
   } = useFilter(router)
 
   const { filterTable, error, loading } = useApplicationFilter(
@@ -50,7 +63,7 @@ export const ApplicationsOverviewProcessed = () => {
   }, [activeFilters])
 
   useEffect(() => {
-    ClearFilterOrFillFromRoute()
+    onClearFilterOrFillFromRoute()
   }, [router.pathname])
 
   const onPageChange = (page: number) => {
@@ -71,25 +84,66 @@ export const ApplicationsOverviewProcessed = () => {
             {label}
           </Text>
         </Box>
-        {staffList && (
-          <FilterPopover
-            stateOptions={statesOnRoute}
-            staffOptions={staffList}
-            activeFilters={activeFilters}
-            onChecked={onChecked}
-            onFilterClear={onFilterClear}
-            results={totalCount ?? 0}
-          />
-        )}
 
-        {applications && !loading && (
-          <ApplicationsTable
-            headers={headers}
-            applications={applications}
-            emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
-            defaultHeaderSort={defaultHeaderSort}
-          />
-        )}
+        <LoadingContainer
+          isLoading={staffList === undefined}
+          loader={<SkeletonLoader height={64} />}
+        >
+          <Box
+            display="flex"
+            alignItems="flexEnd"
+            rowGap={1}
+            columnGap={2}
+            flexWrap="wrap"
+            marginBottom={4}
+          >
+            {staffList && (
+              <FilterPopover
+                stateOptions={statesOnRoute}
+                staffOptions={staffList}
+                activeFilters={activeFilters}
+                onChecked={onChecked}
+                onFilterClear={onFilterClear}
+              />
+            )}
+
+            <FilterDates
+              onDateChange={handleDateChange}
+              periodFrom={activeFilters.period.from}
+              periodTo={activeFilters.period.to}
+              minDateCreated={minDateCreated}
+            />
+
+            <Box>
+              <Text fontWeight="semiBold" whiteSpace="nowrap">
+                {`${totalCount} ${
+                  totalCount === 1 ? 'niðurstaða' : 'niðurstöður'
+                }`}
+              </Text>
+              <Button
+                icon="reload"
+                onClick={onFilterClearAll}
+                variant="text"
+                size="small"
+              >
+                Hreinsa síu
+              </Button>
+            </Box>
+          </Box>
+        </LoadingContainer>
+
+        <LoadingContainer isLoading={loading} loader={<TableSkeleton />}>
+          {applications && applications.length > 0 ? (
+            <ApplicationsFilterTable
+              headers={headers}
+              applications={applications}
+              defaultHeaderSort={defaultHeaderSort}
+            />
+          ) : (
+            <Text marginTop={2}>Engar umsóknir bíða þín, vel gert 👏</Text>
+          )}
+        </LoadingContainer>
+
         {error && (
           <div>
             Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að
@@ -99,21 +153,26 @@ export const ApplicationsOverviewProcessed = () => {
       </Box>
 
       <Box marginBottom={[3, 3, 7]}>
-        <Pagination
-          page={currentPage}
-          totalPages={
-            totalCount ? Math.ceil(totalCount / applicationPageSize) : 0
-          }
-          renderLink={(page, className, children) => (
-            <Box
-              cursor="pointer"
-              className={className}
-              onClick={() => onPageChange(page)}
-            >
-              {children}
-            </Box>
-          )}
-        />
+        <LoadingContainer
+          isLoading={totalCount === undefined}
+          loader={<SkeletonLoader height={32} />}
+        >
+          <Pagination
+            page={currentPage}
+            totalPages={
+              totalCount ? Math.ceil(totalCount / applicationPageSize) : 0
+            }
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => onPageChange(page)}
+              >
+                {children}
+              </Box>
+            )}
+          />
+        </LoadingContainer>
       </Box>
     </Box>
   )

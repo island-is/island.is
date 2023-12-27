@@ -15,6 +15,10 @@ export class FilterApplicationsDto {
   @ApiProperty()
   readonly staff: string[]
 
+  @IsNumber()
+  @ApiProperty()
+  readonly page: number
+
   @IsOptional()
   @IsString()
   @ApiProperty()
@@ -24,8 +28,4 @@ export class FilterApplicationsDto {
   @IsString()
   @ApiProperty()
   readonly endDate?: string
-
-  @IsNumber()
-  @ApiProperty()
-  readonly page: number
 }

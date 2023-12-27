@@ -18,6 +18,7 @@ import { information } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { CountryOfResidenceViewModel } from '@island.is/clients/directorate-of-immigration'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 interface ExtendedCountryProps extends CountryOfResidence {
   readOnly?: boolean
