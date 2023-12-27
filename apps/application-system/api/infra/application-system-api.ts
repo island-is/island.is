@@ -263,6 +263,7 @@ export const serviceSetup = (services: {
       DirectorateOfImmigration,
       SocialInsuranceAdministration,
       OccupationalLicenses,
+      WorkMachines,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
