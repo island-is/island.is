@@ -775,6 +775,7 @@ application-system-api-worker:
     XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+    XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'

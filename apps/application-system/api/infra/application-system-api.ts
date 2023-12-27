@@ -1,11 +1,5 @@
-import {
-  ref,
-  service,
-  ServiceBuilder
-} from '../../../../infra/src/dsl/dsl'
-import {
-  PostgresInfo
-} from '../../../../infra/src/dsl/types/input-types'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
 import {
   Base,
   ChargeFjsV2,
@@ -32,7 +26,7 @@ import {
   TransportAuthority,
   Vehicles,
   VehicleServiceFjsV1,
-  WorkMachines
+  WorkMachines,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
