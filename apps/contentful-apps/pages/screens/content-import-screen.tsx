@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Box, Button, Flex, Stack } from '@contentful/f36-components'
-import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
+import { useCMA } from '@contentful/react-apps-toolkit'
 
 import { GridContainer } from '@island.is/island-ui/core'
 
@@ -23,7 +23,6 @@ const ContentImportScreen = () => {
   const [data, setData] = useState<FileData>([])
   const { headCells, bodyRows } = useMemo(() => getTableData(data), [data])
   const cma = useCMA()
-  const sdk = useSDK()
 
   const [selectedContentType, setSelectedContentType] = useState<
     'price' | 'supportQNA'
@@ -45,13 +44,22 @@ const ContentImportScreen = () => {
           (field) => field.importFieldName === headCells[i],
         )?.contentfulField
         if (!field?.data?.id) continue
+        fields[field.data.id] = {
+          ...fields[field.data.id],
+          [field.locale]: row[i], // TODO: handle richtext and so forth
+        }
+      }
 
-        if (field.data.localized) {
-          for (const locale of Object.keys(sdk.locales.names)) {
-            // fields[field.id] = {
-            // }
-            console.log(locale)
-          }
+      for (const referenceField of referenceFieldMapping) {
+        if (!referenceField?.contentfulField?.data?.id) continue
+        fields[referenceField.contentfulField.data.id] = {
+          ...fields[referenceField.contentfulField.data.id],
+          [referenceField.contentfulField.locale]: {
+            sys: {
+              id: referenceField.selectedId,
+              linkType: 'Entry',
+            },
+          },
         }
       }
 
@@ -64,18 +72,22 @@ const ContentImportScreen = () => {
         {
           fields,
           metadata: {
-            tags: [
-              {
-                sys: {
-                  type: 'Link',
-                  linkType: 'Tag',
-                  id: selectedTag,
-                },
-              },
-            ],
+            tags: selectedTag
+              ? [
+                  {
+                    sys: {
+                      type: 'Link',
+                      linkType: 'Tag',
+                      id: selectedTag,
+                    },
+                  },
+                ]
+              : [],
           },
         },
       )
+
+      // TODO: display progress
 
       await cma.entry.publish(
         {

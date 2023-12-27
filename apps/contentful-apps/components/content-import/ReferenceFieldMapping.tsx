@@ -70,19 +70,19 @@ const extractContentType = (
 
 const ReferenceField = ({
   field,
+  setReferenceFieldMapping,
 }: {
   field: ReferenceFieldMappingProps['referenceFieldMapping'][number]
+  setReferenceFieldMapping: ReferenceFieldMappingProps['setReferenceFieldMapping']
 }) => {
   const cma = useCMA()
   const [options, setOptions] = useState<{ label: string; value: string }[]>([])
-  const [selectedOption, setSelectedOption] = useState('')
 
   const contentType = extractContentType(field)
 
   useEffect(() => {
     const fetchEntries = async () => {
       const items = await getContentfulEntries(cma, contentType)
-      console.log(items)
       setOptions(
         items
           .filter((item) => item.fields.title?.['is-IS'])
@@ -105,9 +105,21 @@ const ReferenceField = ({
       )}
       <Select
         isDisabled={options.length === 0}
-        value={selectedOption}
+        value={field.selectedId}
         onChange={(ev) => {
-          setSelectedOption(ev.target.value)
+          setReferenceFieldMapping((prev) => {
+            const index = prev.findIndex(
+              (item) =>
+                item.contentfulField.data.id ===
+                  field.contentfulField.data.id &&
+                item.contentfulField.locale === field.contentfulField.locale,
+            )
+            if (index < 0) {
+              return prev
+            }
+            prev[index].selectedId = ev.target.value
+            return [...prev]
+          })
         }}
       >
         <Select.Option value="">-</Select.Option>
@@ -128,7 +140,7 @@ export interface ReferenceFieldMappingProps {
       data: ContentFields<KeyValueMap>
       locale: string
     }
-    importFieldName: string
+    selectedId: string
   }[]
   setReferenceFieldMapping: Dispatch<
     SetStateAction<ReferenceFieldMappingProps['referenceFieldMapping']>
@@ -155,8 +167,10 @@ export const ReferenceFieldMapping = ({
           data: field,
           locale: 'is-IS',
         },
-        importFieldName: '',
+        selectedId: '',
       })
+
+      if (!field.localized) continue
 
       for (const locale of Object.keys(sdk.locales.names).filter(
         (locale) => locale !== 'is-IS',
@@ -166,7 +180,7 @@ export const ReferenceFieldMapping = ({
             data: field,
             locale: locale,
           },
-          importFieldName: '',
+          selectedId: '',
         })
       }
     }
@@ -178,7 +192,13 @@ export const ReferenceFieldMapping = ({
     <FormControl>
       <Stack flexDirection="column" spacing="spacingXs" alignItems="flex-start">
         {referenceFieldMapping.map((field, index) => {
-          return <ReferenceField key={index} field={field} />
+          return (
+            <ReferenceField
+              key={index}
+              field={field}
+              setReferenceFieldMapping={setReferenceFieldMapping}
+            />
+          )
         })}
       </Stack>
     </FormControl>

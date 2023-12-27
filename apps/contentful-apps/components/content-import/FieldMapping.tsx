@@ -43,6 +43,8 @@ export const FieldMapping = ({
         importFieldName: '',
       })
 
+      if (!field.localized) continue
+
       for (const locale of Object.keys(sdk.locales.names).filter(
         (locale) => locale !== 'is-IS',
       )) {
