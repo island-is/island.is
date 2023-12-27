@@ -87,7 +87,7 @@ export class ReykjavikUniversityApplicationClient {
         })
       } catch (e) {
         logger.error(
-          `Failed to map program with externalId ${program.externalId} (Reykjavik University), reason:`,
+          `Failed to map program with externalId ${program.externalId} (reykjavik-university), reason:`,
           e,
         )
       }
@@ -140,7 +140,7 @@ export class ReykjavikUniversityApplicationClient {
         })
       } catch (e) {
         logger.error(
-          `Failed to map course with externalId ${course.externalId} for program with externalId ${externalId} (Reykjavik University), reason:`,
+          `Failed to map course with externalId ${course.externalId} for program with externalId ${externalId} (reykjavik-university), reason:`,
           e,
         )
       }

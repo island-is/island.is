@@ -3,6 +3,11 @@ import {
   Base,
   Client,
   UniversityGatewayUniversityOfIceland,
+  UniversityGatewayUniversityOfAkureyri,
+  UniversityGatewayBifrostUniversity,
+  UniversityGatewayIcelandUniversityOfTheArts,
+  UniversityGatewayAgriculturalUniversityOfIceland,
+  UniversityGatewayHolarUniversity,
 } from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-university-gateway'
@@ -40,7 +45,16 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/IDENTITY_SERVER_CLIENT_SECRET`,
     })
-    .xroad(Base, Client, UniversityGatewayUniversityOfIceland)
+    .xroad(
+      Base,
+      Client,
+      UniversityGatewayUniversityOfIceland,
+      UniversityGatewayUniversityOfAkureyri,
+      UniversityGatewayBifrostUniversity,
+      UniversityGatewayIcelandUniversityOfTheArts,
+      UniversityGatewayAgriculturalUniversityOfIceland,
+      UniversityGatewayHolarUniversity,
+    )
     .postgres(postgresInfo)
     .initContainer({
       containers: [
@@ -101,7 +115,16 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/IDENTITY_SERVER_CLIENT_SECRET`,
     })
-    .xroad(Base, Client, UniversityGatewayUniversityOfIceland)
+    .xroad(
+      Base,
+      Client,
+      UniversityGatewayUniversityOfIceland,
+      UniversityGatewayUniversityOfAkureyri,
+      UniversityGatewayBifrostUniversity,
+      UniversityGatewayIcelandUniversityOfTheArts,
+      UniversityGatewayAgriculturalUniversityOfIceland,
+      UniversityGatewayHolarUniversity,
+    )
     .postgres(postgresInfo)
     .extraAttributes({
       // Schedule to run hourly at minute :00 (while testing)
