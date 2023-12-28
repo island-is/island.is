@@ -94,6 +94,23 @@ export const FieldMapping = ({
                     {text}
                   </Select.Option>
                 ))}
+                {fieldMapping
+                  .filter(
+                    (field) =>
+                      field.contentfulField.data.type === 'Symbol' &&
+                      contentfulField.data.id !==
+                        field.contentfulField.data.id &&
+                      contentfulField.locale === field.contentfulField.locale &&
+                      field.importFieldName,
+                  )
+                  .map((field, i) => (
+                    <Select.Option
+                      key={i}
+                      value={`${field.importFieldName}--slugified`}
+                    >
+                      Slugified {'"' + field.importFieldName + '"'}
+                    </Select.Option>
+                  ))}
               </Select>
             </FormControl>
           )

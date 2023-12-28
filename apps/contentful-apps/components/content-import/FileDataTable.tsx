@@ -30,9 +30,17 @@ export const getTableData = (data: FileData) => {
 
 interface FileDataTableProps {
   data: FileData
+  successfulRowIndexes: number[]
+  publishFailedRowIndexes: number[]
+  failedRowIndexes: number[]
 }
 
-export const FileDataTable = ({ data }: FileDataTableProps) => {
+export const FileDataTable = ({
+  data,
+  failedRowIndexes,
+  publishFailedRowIndexes,
+  successfulRowIndexes,
+}: FileDataTableProps) => {
   const { headCells, bodyRows } = useMemo(() => getTableData(data), [data])
   const [displayedRowCount, setDisplayedRowCount] =
     useState(ROW_COUNT_INCREMENT)
@@ -56,13 +64,32 @@ export const FileDataTable = ({ data }: FileDataTableProps) => {
           </Table.Row>
         </Table.Head>
         <Table.Body>
-          {bodyRows.slice(0, displayedRowCount).map((row, index) => (
-            <Table.Row key={index}>
-              {(row ?? []).map((text, index) => (
-                <Table.Cell key={index}>{text}</Table.Cell>
-              ))}
-            </Table.Row>
-          ))}
+          {bodyRows.slice(0, displayedRowCount).map((row, index) => {
+            let backgroundColor = undefined
+            if (successfulRowIndexes.includes(index)) {
+              backgroundColor = 'rgba(0, 255, 0, 0.2)'
+            } else if (publishFailedRowIndexes.includes(index)) {
+              backgroundColor = 'rgba(255, 255, 120, 0.2)'
+            } else if (failedRowIndexes.includes(index)) {
+              backgroundColor = 'rgba(255, 0, 0, 0.2)'
+            }
+            return (
+              <Table.Row key={index}>
+                {(row ?? []).map((text, index) => {
+                  return (
+                    <Table.Cell
+                      key={index}
+                      style={{
+                        backgroundColor,
+                      }}
+                    >
+                      {text}
+                    </Table.Cell>
+                  )
+                })}
+              </Table.Row>
+            )
+          })}
         </Table.Body>
       </Table>
 
