@@ -35,9 +35,7 @@ const DirectTaxPaymentCell = ({
         </Box>
 
         {directTaxPayments.length === 0 ? (
-          <Text marginTop={3}>
-            Engar upplýsingar um staðgreiðslu fundust hjá Skattinum
-          </Text>
+          <Text marginTop={3}>Engin staðgreiðsla</Text>
         ) : (
           <Button
             onClick={() => setIsModalOpen(true)}
