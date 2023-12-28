@@ -291,7 +291,7 @@ export interface Case {
   appealValidToDate?: string
   isAppealCustodyIsolation?: boolean
   appealIsolationToDate?: string
-  requestAppealRulingNotToBePublished?: boolean
+  requestAppealRulingNotToBePublished?: UserRole[]
 }
 
 export interface CaseListEntry

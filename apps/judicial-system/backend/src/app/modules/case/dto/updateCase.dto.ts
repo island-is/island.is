@@ -11,9 +11,10 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import type {
+import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
@@ -421,7 +422,7 @@ export class UpdateCaseDto {
   readonly appealIsolationToDate?: Date
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly requestAppealRulingNotToBePublished?: boolean
+  @IsEnum(UserRole, { each: true })
+  @ApiPropertyOptional({ enum: UserRole, isArray: true })
+  readonly requestAppealRulingNotToBePublished?: UserRole[]
 }

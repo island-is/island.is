@@ -1,12 +1,11 @@
 import React from 'react'
 import faker from 'faker'
 import { MockedProvider } from '@apollo/client/testing'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 
-import { CaseState } from '@island.is/judicial-system/types'
 import {
-  CaseOrigin,
   CaseType,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
@@ -42,7 +41,7 @@ describe('Overview', () => {
           <FormContextWrapper
             theCase={{
               ...mockCase(CaseType.CUSTODY),
-              requestAppealRulingNotToBePublished: true,
+              requestAppealRulingNotToBePublished: [UserRole.PROSECUTOR],
             }}
           >
             <Overview />

@@ -251,6 +251,7 @@ export interface TempCase
     | 'requestSharedWithDefender'
     | 'eventLogs'
     | 'decision'
+    | 'requestAppealRulingNotToBePublished'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -272,6 +273,7 @@ export interface TempCase
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
   decision?: CaseDecision
+  requestAppealRulingNotToBePublished?: UserRole[]
 }
 
 export interface TempUpdateCase

@@ -2,13 +2,7 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  Box,
-  Button,
-  Checkbox,
-  InputFileUpload,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseFileCategory,
@@ -18,7 +12,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -39,7 +32,7 @@ import {
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
 
 const AppealToCourtOfAppeals = () => {
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -55,7 +48,7 @@ const AppealToCourtOfAppeals = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
-  const { transitionCase, setAndSendCaseToServer } = useCase()
+  const { transitionCase } = useCase()
 
   const appealBriefType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF

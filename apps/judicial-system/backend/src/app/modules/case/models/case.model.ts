@@ -30,6 +30,7 @@ import {
   CourtDocument,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -1174,9 +1175,10 @@ export class Case extends Model {
    * be published immediately.
    **********/
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.ARRAY(DataType.ENUM),
     allowNull: true,
+    values: Object.values(UserRole),
   })
-  @ApiPropertyOptional()
-  requestAppealRulingNotToBePublished?: boolean
+  @ApiPropertyOptional({ enum: UserRole, isArray: true })
+  requestAppealRulingNotToBePublished?: UserRole[]
 }

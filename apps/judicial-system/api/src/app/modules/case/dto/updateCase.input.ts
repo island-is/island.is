@@ -3,19 +3,20 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import type {
-  CaseAppealDecision,
-  CaseAppealRulingDecision,
-  CaseCustodyRestrictions,
-  CaseDecision,
-  CaseLegalProvisions,
-  CaseType,
-  CourtDocument,
-  CrimeSceneMap,
-  IndictmentSubtypeMap,
-  RequestSharedWithDefender,
-  SessionArrangements,
-  UpdateCase,
+import {
+  type CaseAppealDecision,
+  type CaseAppealRulingDecision,
+  type CaseCustodyRestrictions,
+  type CaseDecision,
+  type CaseLegalProvisions,
+  type CaseType,
+  type CourtDocument,
+  type CrimeSceneMap,
+  type IndictmentSubtypeMap,
+  type RequestSharedWithDefender,
+  type SessionArrangements,
+  type UpdateCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -337,6 +338,6 @@ export class UpdateCaseInput implements UpdateCase {
   readonly appealIsolationToDate?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly requestAppealRulingNotToBePublished?: boolean
+  @Field(() => [String], { nullable: true })
+  readonly requestAppealRulingNotToBePublished?: UserRole[]
 }
