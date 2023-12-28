@@ -10,10 +10,12 @@ import { GridContainer } from '@island.is/island-ui/core'
 
 import {
   ContentTypeSelect,
+  extractContentType,
   FieldMapping,
   FieldMappingProps,
   FileDataTable,
   FileInput,
+  getContentfulEntries,
   getTableData,
   ReferenceFieldMapping,
   ReferenceFieldMappingProps,
@@ -90,14 +92,42 @@ const ContentImportScreen = () => {
         ) {
           continue
         }
-        fields[referenceField.contentfulField.data.id] = {
-          ...fields[referenceField.contentfulField.data.id],
-          [referenceField.contentfulField.locale]: {
-            sys: {
-              id: referenceField.selectedId,
-              linkType: 'Entry',
+
+        if (referenceField.selectedId.includes('--title-search')) {
+          const headCellName =
+            referenceField.selectedId.split('--title-search')[0]
+          const index = headCells.findIndex((name) => name === headCellName)
+
+          if (index >= 0) {
+            const entries = await getContentfulEntries(
+              cma,
+              extractContentType(referenceField),
+              {
+                'fields.title': row[index],
+              },
+            )
+            if (entries.length > 0) {
+              fields[referenceField.contentfulField.data.id] = {
+                ...fields[referenceField.contentfulField.data.id],
+                [referenceField.contentfulField.locale]: {
+                  sys: {
+                    id: entries[0].sys.id,
+                    linkType: 'Entry',
+                  },
+                },
+              }
+            }
+          }
+        } else {
+          fields[referenceField.contentfulField.data.id] = {
+            ...fields[referenceField.contentfulField.data.id],
+            [referenceField.contentfulField.locale]: {
+              sys: {
+                id: referenceField.selectedId,
+                linkType: 'Entry',
+              },
             },
-          },
+          }
         }
       }
 
@@ -210,6 +240,7 @@ const ContentImportScreen = () => {
                 contentTypeData={contentTypeData}
                 referenceFieldMapping={referenceFieldMapping}
                 setReferenceFieldMapping={setReferenceFieldMapping}
+                headCells={headCells}
               />
             )}
           </Stack>
@@ -218,6 +249,19 @@ const ContentImportScreen = () => {
         {successfulImports.length > 0 && (
           <Text>
             {successfulImports.length}/{bodyRows.length} successful imports
+          </Text>
+        )}
+        {publishFailedImports.length > 0 && (
+          <Text>
+            {publishFailedImports.length}/{bodyRows.length} entries could not be
+            published
+          </Text>
+        )}
+
+        {failedImports.length > 0 && (
+          <Text>
+            {failedImports.length}/{bodyRows.length} entries could not be
+            imported
           </Text>
         )}
 

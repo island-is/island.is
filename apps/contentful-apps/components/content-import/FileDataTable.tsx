@@ -94,7 +94,7 @@ export const FileDataTable = ({
       </Table>
 
       {displayedRowCount < bodyRows.length && (
-        <Flex fullWidth justifyContent="center">
+        <Flex fullWidth justifyContent="center" paddingTop="spacingM">
           <Button
             onClick={() => {
               setDisplayedRowCount((prev) => prev + ROW_COUNT_INCREMENT)

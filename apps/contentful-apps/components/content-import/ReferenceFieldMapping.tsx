@@ -17,7 +17,11 @@ import { sortAlpha } from '@island.is/shared/utils'
 import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
 import { isReferenceField } from './utils'
 
-const getContentfulEntries = async (cma: CMAClient, contentType: string) => {
+export const getContentfulEntries = async (
+  cma: CMAClient,
+  contentType: string,
+  query?: Record<string, string>,
+) => {
   const items: EntryProps<KeyValueMap>[] = []
   let response: CollectionProp<EntryProps<KeyValueMap>> | null = null
 
@@ -35,6 +39,7 @@ const getContentfulEntries = async (cma: CMAClient, contentType: string) => {
           content_type: contentType,
           limit: chunkSize,
           skip: items.length,
+          ...query,
         },
       })
       for (const item of response.items) {
@@ -56,7 +61,7 @@ const getContentfulEntries = async (cma: CMAClient, contentType: string) => {
   return items
 }
 
-const extractContentType = (
+export const extractContentType = (
   field: ReferenceFieldMappingProps['referenceFieldMapping'][number],
 ) => {
   let validations = field.contentfulField.data.validations ?? []
@@ -70,9 +75,11 @@ const extractContentType = (
 
 const ReferenceField = ({
   field,
+  headCells,
   setReferenceFieldMapping,
 }: {
   field: ReferenceFieldMappingProps['referenceFieldMapping'][number]
+  headCells: string[]
   setReferenceFieldMapping: ReferenceFieldMappingProps['setReferenceFieldMapping']
 }) => {
   const cma = useCMA()
@@ -95,7 +102,6 @@ const ReferenceField = ({
     }
     fetchEntries()
   }, [cma, cma.entry, contentType])
-
   return (
     <FormControl>
       {contentType && (
@@ -123,6 +129,11 @@ const ReferenceField = ({
         }}
       >
         <Select.Option value="">-</Select.Option>
+        {headCells?.map((text, i) => (
+          <Select.Option key={i} value={`${text}--title-search`}>
+            Title search for {'"' + text + '"'}
+          </Select.Option>
+        ))}
         {options.map((option) => (
           <Select.Option key={option.value} value={option.value}>
             {option.label}
@@ -135,6 +146,7 @@ const ReferenceField = ({
 
 export interface ReferenceFieldMappingProps {
   contentTypeData: ContentTypeProps
+  headCells: string[]
   referenceFieldMapping: {
     contentfulField: {
       data: ContentFields<KeyValueMap>
@@ -150,6 +162,7 @@ export interface ReferenceFieldMappingProps {
 export const ReferenceFieldMapping = ({
   contentTypeData,
   referenceFieldMapping,
+  headCells,
   setReferenceFieldMapping,
 }: ReferenceFieldMappingProps) => {
   const sdk = useSDK<PageExtensionSDK>()
@@ -197,6 +210,7 @@ export const ReferenceFieldMapping = ({
               key={index}
               field={field}
               setReferenceFieldMapping={setReferenceFieldMapping}
+              headCells={headCells}
             />
           )
         })}
