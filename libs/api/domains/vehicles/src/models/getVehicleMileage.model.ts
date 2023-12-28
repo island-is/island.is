@@ -38,6 +38,9 @@ export class VehicleMileageOverview {
 
   @Field(() => Boolean, { nullable: true })
   requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canUserRegisterVehicleMileage?: boolean | null
 }
 
 @ObjectType()

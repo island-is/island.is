@@ -20,6 +20,7 @@ import {
   CreateSuperExplicitDiscountCodeMutation,
   useCreateSuperExplicitDiscountCodeMutation,
 } from './SuperDiscount.generated'
+import { Problem, ProblemTypes } from '@island.is/react-spa/shared'
 
 const AdminCreateDiscount = () => {
   const options = [
@@ -50,7 +51,7 @@ const AdminCreateDiscount = () => {
   const [needsConnecting, setNeedsConnecting] = useState(typeOptions[0])
   const [discountCode, setDiscountCode] = useState<
     CreateSuperExplicitDiscountCodeMutation | undefined | null
-  >(null)
+  >(undefined)
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -68,7 +69,7 @@ const AdminCreateDiscount = () => {
           >
             <Stack space={3}>
               <Text variant="h1" as="h1">
-                Handvirkir kóðar
+                Handvirkir kóðar án skilyrða
               </Text>
 
               {discountCode ? (
@@ -111,10 +112,17 @@ const AdminCreateDiscount = () => {
                     Búa til nýjan kóða
                   </Button>
                 </>
+              ) : discountCode === null ? (
+                <Problem
+                  type={ProblemTypes.notFound}
+                  title="Villa"
+                  message="Kennitala gæti verið röng eða þessi notandi er búinn með sína leggi"
+                />
               ) : (
                 <>
                   <Text variant="intro">
-                    Hér getur þú handvirkt búið til kóða fyrir einstaklinga.
+                    Hér getur þú handvirkt búið til kóða án skilyrða fyrir
+                    einstaklinga.
                   </Text>
                   <Input
                     name="nationalid"
@@ -188,8 +196,9 @@ const AdminCreateDiscount = () => {
         show={showModal}
         onCancel={() => setShowModal(false)}
         onContinue={() => {
-          setDiscountCode(null)
+          setDiscountCode(undefined)
           setShowModal(false)
+
           createSuperExplicitDiscountCode({
             variables: {
               input: {
@@ -201,9 +210,11 @@ const AdminCreateDiscount = () => {
                 needsConnectionFlight: needsConnecting.value,
               },
             },
-          }).then((data) => {
-            setDiscountCode(data.data ?? undefined)
           })
+            .then((data) => {
+              setDiscountCode(data.data ?? null)
+            })
+            .catch(() => setDiscountCode(null))
         }}
         t={{
           title: 'Búa til kóða handvirkt',
