@@ -51,7 +51,7 @@ const ContentImportScreen = () => {
       }
 
       for (const referenceField of referenceFieldMapping) {
-        if (!referenceField?.contentfulField?.data?.id) continue
+        if (!referenceField?.contentfulField?.data?.id || !referenceField?.selectedId) continue
         fields[referenceField.contentfulField.data.id] = {
           ...fields[referenceField.contentfulField.data.id],
           [referenceField.contentfulField.locale]: {
