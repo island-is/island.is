@@ -102,10 +102,12 @@ export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 export const DEFENDER_ROUTE = '/verjandi/krafa'
 export const DEFENDER_INDICTMENT_ROUTE = '/verjandi/akaera'
 export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
+export const DEFENDER_APPEAL_FILES_ROUTE = '/verjandi/kaera/gogn'
 export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
 export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
 
 export const APPEAL_ROUTE = '/kaera'
+export const APPEAL_FILES_ROUTE = '/kaera/gogn'
 export const STATEMENT_ROUTE = '/greinargerd'
 
 /* PROSECUTOR ROUTES START */
