@@ -50,7 +50,7 @@ const ContentImportScreen = () => {
   const [failedImports, setFailedImports] = useState([])
 
   const importContent = async () => {
-    for (let rowIndex = 0; rowIndex < 1; rowIndex += 1) {
+    for (let rowIndex = 0; rowIndex < bodyRows.length; rowIndex += 1) {
       const row = bodyRows[rowIndex]
       const fields = {}
       for (let i = 0; i < row.length; i += 1) {
