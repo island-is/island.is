@@ -1,7 +1,16 @@
 import { useMemo, useState } from 'react'
+import { EntryProps } from 'contentful-management'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { PageExtensionSDK } from '@contentful/app-sdk'
-import { Accordion, Box, Button, Flex, Stack } from '@contentful/f36-components'
+import {
+  Accordion,
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  Select,
+  Stack,
+} from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import slugify from '@sindresorhus/slugify'
@@ -61,6 +70,7 @@ const ContentImportScreen = () => {
   const [referenceFieldMapping, setReferenceFieldMapping] = useState<
     ReferenceFieldMappingProps['referenceFieldMapping']
   >([])
+  const [uniqueFieldId, setUniqueFieldId] = useState('')
   const [successfulImports, setSuccessfulImports] = useState([])
   const [publishFailedImports, setPublishFailedImports] = useState([])
   const [failedImports, setFailedImports] = useState([])
@@ -150,29 +160,102 @@ const ContentImportScreen = () => {
       }
 
       try {
-        const createdEntry = await cma.entry.create(
-          {
-            contentTypeId: selectedContentType,
+        let createdEntry: EntryProps
+
+        const fa = fieldMapping.find(
+          (f) => uniqueFieldId && f.contentfulField.data.id === uniqueFieldId,
+        )?.importFieldName
+
+        const a = headCells.findIndex((b) => b === fa)
+
+        if (uniqueFieldId && a >= 0 && row[a]) {
+          const matchedEntries = await cma.entry.getMany({
             environmentId: CONTENTFUL_ENVIRONMENT,
             spaceId: CONTENTFUL_SPACE,
-          },
-          {
-            fields,
-            metadata: {
-              tags: selectedTag
-                ? [
-                    {
-                      sys: {
-                        type: 'Link',
-                        linkType: 'Tag',
-                        id: selectedTag,
-                      },
-                    },
-                  ]
-                : [],
+            query: {
+              content_type: selectedContentType,
+              [`fields.${uniqueFieldId}`]: row[a],
             },
-          },
-        )
+          })
+
+          if (matchedEntries.items.length > 0) {
+            createdEntry = await cma.entry.update(
+              {
+                environmentId: CONTENTFUL_ENVIRONMENT,
+                spaceId: CONTENTFUL_SPACE,
+                entryId: matchedEntries.items[0].sys.id,
+              },
+              {
+                sys: {
+                  ...matchedEntries.items[0].sys,
+                },
+                fields,
+                metadata: {
+                  tags: selectedTag
+                    ? [
+                        {
+                          sys: {
+                            type: 'Link',
+                            linkType: 'Tag',
+                            id: selectedTag,
+                          },
+                        },
+                      ]
+                    : [],
+                },
+              },
+            )
+          } else {
+            createdEntry = await cma.entry.create(
+              {
+                contentTypeId: selectedContentType,
+                environmentId: CONTENTFUL_ENVIRONMENT,
+                spaceId: CONTENTFUL_SPACE,
+              },
+              {
+                fields,
+                metadata: {
+                  tags: selectedTag
+                    ? [
+                        {
+                          sys: {
+                            type: 'Link',
+                            linkType: 'Tag',
+                            id: selectedTag,
+                          },
+                        },
+                      ]
+                    : [],
+                },
+              },
+            )
+          }
+        } else {
+          createdEntry = await cma.entry.create(
+            {
+              contentTypeId: selectedContentType,
+              environmentId: CONTENTFUL_ENVIRONMENT,
+              spaceId: CONTENTFUL_SPACE,
+            },
+            {
+              fields,
+              metadata: {
+                tags: selectedTag
+                  ? [
+                      {
+                        sys: {
+                          type: 'Link',
+                          linkType: 'Tag',
+                          id: selectedTag,
+                        },
+                      },
+                    ]
+                  : [],
+              },
+            },
+          )
+        }
+
         try {
           await cma.entry.publish(
             {
@@ -246,7 +329,7 @@ const ContentImportScreen = () => {
               </Button>
             </Flex>
 
-            <Flex gap="16px">
+            <Flex gap="16px" flexWrap="wrap">
               <ContentTypeSelect
                 selectedContentType={selectedContentType}
                 setSelectedContentType={setSelectedContentType}
@@ -255,6 +338,28 @@ const ContentImportScreen = () => {
                 selectedTag={selectedTag}
                 setSelectedTag={setSelectedTag}
               />
+              {contentTypeData?.fields?.length > 0 && (
+                <FormControl>
+                  <FormControl.Label>Unique field mapping</FormControl.Label>
+                  <Select
+                    value={uniqueFieldId}
+                    onChange={(ev) => {
+                      setUniqueFieldId(ev.target.value)
+                    }}
+                  >
+                    <Select.Option value="">-</Select.Option>
+                    {contentTypeData.fields.map((f, i) => (
+                      <Select.Option key={i} value={f.id}>
+                        {f.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                  <FormControl.HelpText>
+                    If selected then matching entries will be edited instead of
+                    created
+                  </FormControl.HelpText>
+                </FormControl>
+              )}
             </Flex>
 
             {data?.length > 0 && (
@@ -281,7 +386,7 @@ const ContentImportScreen = () => {
           {successfulImports.length > 0 && (
             <Accordion>
               <Accordion.Item
-                title={`${successfulImports.length}/${bodyRows.length} were created and published successfully`}
+                title={`${successfulImports.length}/${bodyRows.length} were imported and published successfully`}
               >
                 <FileDataTable
                   bodyRows={successfulImports}
@@ -293,7 +398,7 @@ const ContentImportScreen = () => {
           {publishFailedImports.length > 0 && (
             <Accordion>
               <Accordion.Item
-                title={`${publishFailedImports.length}/${bodyRows.length} entries were created but could not
+                title={`${publishFailedImports.length}/${bodyRows.length} entries were imported but could not
               be published`}
               >
                 <FileDataTable
@@ -307,7 +412,7 @@ const ContentImportScreen = () => {
             <Accordion>
               <Accordion.Item
                 title={`${failedImports.length}/${bodyRows.length} entries could not
-               be created`}
+               be imported`}
               >
                 <FileDataTable bodyRows={failedImports} headCells={headCells} />
               </Accordion.Item>
