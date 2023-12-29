@@ -1,12 +1,12 @@
-import React from 'react';
-import styled from 'styled-components/native';
+import React from 'react'
+import styled from 'styled-components/native'
 
-const Host = styled.View``;
+const Host = styled.View``
 
 interface AccordionProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
-export function Accordion({children}: AccordionProps) {
-  return <Host>{children}</Host>;
+export function Accordion({ children }: AccordionProps) {
+  return <Host>{children}</Host>
 }

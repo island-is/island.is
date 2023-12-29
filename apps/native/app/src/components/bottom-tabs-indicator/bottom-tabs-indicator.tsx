@@ -1,9 +1,9 @@
-import {dynamicColor} from '@ui';
-import React, {useEffect, useRef, useState} from 'react';
-import {Animated, SafeAreaView, useWindowDimensions, View} from 'react-native';
-import {useTheme} from 'styled-components';
-import styled from 'styled-components/native';
-import {useUiStore} from '../../stores/ui-store';
+import { dynamicColor } from '@ui'
+import React, { useEffect, useRef, useState } from 'react'
+import { Animated, SafeAreaView, View, useWindowDimensions } from 'react-native'
+import { useTheme } from 'styled-components'
+import styled from 'styled-components/native'
+import { useUiStore } from '../../stores/ui-store'
 
 const Host = styled.View`
   position: absolute;
@@ -13,42 +13,42 @@ const Host = styled.View`
   height: 30px;
   z-index: 101;
   background-color: ${dynamicColor('background')};
-`;
+`
 
 const Active = styled(Animated.View)`
-  background-color: ${props => props.theme.color.blue400};
-`;
+  background-color: ${(props) => props.theme.color.blue400};
+`
 
 export function BottomTabsIndicator({
   index,
   total,
 }: {
-  index: number;
-  total: number;
+  index: number
+  total: number
 }) {
-  const theme = useTheme();
-  const win = useWindowDimensions();
-  const {selectedTab, unselectedTab} = useUiStore();
-  const [width, setWidth] = useState(win.width);
+  const theme = useTheme()
+  const win = useWindowDimensions()
+  const { selectedTab, unselectedTab } = useUiStore()
+  const [width, setWidth] = useState(win.width)
 
-  const p = 1.0;
-  const h = (1.0 - p) / 2;
-  const av = useRef(new Animated.Value(index)).current;
-  const tabWidth = width / total;
-  const anim = useRef<Animated.CompositeAnimation>();
+  const p = 1.0
+  const h = (1.0 - p) / 2
+  const av = useRef(new Animated.Value(index)).current
+  const tabWidth = width / total
+  const anim = useRef<Animated.CompositeAnimation>()
 
   useEffect(() => {
     if (anim.current) {
-      anim.current.stop();
+      anim.current.stop()
     }
-    av.setValue(unselectedTab);
+    av.setValue(unselectedTab)
     anim.current = Animated.spring(av, {
       overshootClamping: true,
       toValue: selectedTab,
       useNativeDriver: true,
-    });
-    anim.current.start();
-  }, [selectedTab, unselectedTab]);
+    })
+    anim.current.start()
+  }, [selectedTab, unselectedTab])
 
   return (
     <Host
@@ -61,13 +61,15 @@ export function BottomTabsIndicator({
         shadowOpacity: 0.08,
         shadowRadius: 12.0,
         elevation: 1,
-      }}>
+      }}
+    >
       <SafeAreaView>
         <View
           style={{}}
-          onLayout={e => {
-            setWidth(e.nativeEvent.layout.width);
-          }}>
+          onLayout={(e) => {
+            setWidth(e.nativeEvent.layout.width)
+          }}
+        >
           <Active
             style={{
               zIndex: 102,
@@ -90,5 +92,5 @@ export function BottomTabsIndicator({
         </View>
       </SafeAreaView>
     </Host>
-  );
+  )
 }

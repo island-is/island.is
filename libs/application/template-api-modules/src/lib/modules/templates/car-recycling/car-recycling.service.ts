@@ -14,18 +14,46 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '@island.is/application/templates/car-recycling'
-import { User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private carRecyclingService: CarRecyclingClientService,
+    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.CAR_RECYCLING)
+  }
+
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getCurrentVehicles({ auth }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: true,
+      showOperated: true,
+    })
+
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: 'coreErrorMessages.vehiclesEmptyListOwner',
+          summary: 'coreErrorMessages.vehiclesEmptyListOwner',
+        },
+        400,
+      )
+    }
+
+    return result
   }
 
   async createOwner({ application, auth }: TemplateApiModuleActionProps) {
@@ -51,10 +79,16 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
   async createVehicle(auth: User, vehicle: VehicleDto) {
     if (vehicle && vehicle.permno) {
+      let mileage = 0
+
+      if (vehicle.mileage) {
+        mileage = +vehicle.mileage.trim().replace(/\./g, '')
+      }
+
       return await this.carRecyclingService.createVehicle(
         auth,
         vehicle.permno,
-        +vehicle.mileage.trim().replace('.', ''),
+        mileage,
       )
     }
   }
