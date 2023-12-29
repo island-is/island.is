@@ -16,4 +16,7 @@ export enum Roles {
 export enum Routes {
   USERINFORMATION = 'userInformation',
   PROGRAMINFORMATION = 'programInformation',
+  EDUCATIONDETAILS = 'educationDetails',
+  EDUCATIONOPTIONS = 'educationOptions',
+  OTHERDOCUMENTS = 'otherDocuments',
 }

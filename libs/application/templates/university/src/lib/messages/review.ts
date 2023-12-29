@@ -9,7 +9,7 @@ export const review = {
     },
     pageTitle: {
       id: 'uni.application:review.general.pageTitle',
-      defaultMessage: 'Yfirlit umsóknar um háskólanám',
+      defaultMessage: 'Yfirlit umsóknar',
       description: 'Review page title',
     },
     description: {
@@ -22,13 +22,33 @@ export const review = {
   labels: defineMessages({
     changeButtonText: {
       id: 'uni.application:review.labels.changeButtonText',
-      defaultMessage: 'Breyta',
+      defaultMessage: 'Breyta upplýsingum',
       description: 'change button label',
     },
     applicant: {
       id: 'uni.application:review.labels.applicant#markdown',
       defaultMessage: '**Umsækjandi**',
       description: 'Applicant review label',
+    },
+    chosenProgram: {
+      id: 'uni.application:review.labels.chosenProgram',
+      defaultMessage: 'Valið háskólanám til umsóknar',
+      description: 'Chosen program review label',
+    },
+    schoolCareer: {
+      id: 'uni.application:review.labels.schoolCareer',
+      defaultMessage: 'Námsferill',
+      description: 'School career review label',
+    },
+    otherDocuments: {
+      id: 'uni.application:review.labels.otherDocuments',
+      defaultMessage: 'Önnur fylgigögn',
+      description: 'Other documents review label',
+    },
+    phoneLabel: {
+      id: 'uni.application:review.labels.phoneLabel',
+      defaultMessage: 'Sími',
+      description: 'phone label',
     },
   }),
 }

@@ -23,17 +23,21 @@ export class UniversityService extends BaseTemplateApiService {
     super(ApplicationTypes.CITIZENSHIP)
   }
 
+  async getUniversities({ application, auth }: TemplateApiModuleActionProps) {
+    return
+  }
+
   async validateApplication({
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    
+    return
   }
 
   async submitApplication({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    
+    return
   }
 }

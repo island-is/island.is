@@ -9,13 +9,8 @@ export const confirmation = {
     },
     alertTitle: {
       id: 'uni.application:confirmation.general.alertTitle',
-      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      defaultMessage: 'Umsókn þín um háskólavist hefur verið móttekin',
       description: 'Confirmation alert title',
-    },
-    alertMessage: {
-      id: 'uni.application:confirmation.general.alertMessage',
-      defaultMessage: 'Umsókn þín um háskólanám hefur verið móttekin',
-      description: 'Confirmation alert message',
     },
     accordionTitle: {
       id: 'uni.application:confirmation.general.accordionTitle',

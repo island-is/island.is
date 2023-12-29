@@ -4,7 +4,7 @@ import { UniversityApplication } from './lib/dataSchema'
 export const getFields = () => import('./fields/')
 export const getDataProviders = () => import('./dataProviders/')
 
-export type universityAnswers = UniversityApplication
+export type UniversityAnswers = UniversityApplication
 
 // export * from './utils'
 // export * from './shared/types'
