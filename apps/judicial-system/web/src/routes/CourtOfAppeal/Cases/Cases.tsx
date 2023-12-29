@@ -4,12 +4,12 @@ import { useIntl } from 'react-intl'
 import { Box } from '@island.is/island-ui/core'
 import { tables, titles } from '@island.is/judicial-system-web/messages'
 import {
-  AppealCasesTable,
   Logo,
   PageHeader,
   SectionHeading,
+  SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
+import { AppealCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useAppealedCasesQuery } from './appealdCases.generated'
@@ -19,7 +19,9 @@ import { logoContainer } from '../../Shared/Cases/Cases.css'
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
 
-  const input = { appealState: ['RECEIVED', 'COMPLETED'] }
+  const input = {
+    appealState: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+  }
 
   const { data: appealedCases, loading } = useAppealedCasesQuery({
     variables: { input },

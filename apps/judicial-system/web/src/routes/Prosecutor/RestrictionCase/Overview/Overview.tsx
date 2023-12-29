@@ -13,10 +13,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import {
   core,
   errors,
   laws,
@@ -45,6 +41,8 @@ import {
 import {
   CaseLegalProvisions,
   CaseState,
+  CaseTransition,
+  NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
@@ -161,7 +159,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },

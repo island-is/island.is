@@ -143,7 +143,7 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
           <UserMenu
             language="is"
             authenticated={isAuthenticated}
-            username={user.name}
+            username={user.name ?? undefined}
             dropdownItems={
               <>
                 <div className={styles.dropdownItem}>

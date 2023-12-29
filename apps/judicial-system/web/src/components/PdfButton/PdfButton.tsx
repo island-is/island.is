@@ -8,7 +8,7 @@ import * as styles from './PdfButton.css'
 
 interface Props {
   caseId: string
-  title: string
+  title?: string | null
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'

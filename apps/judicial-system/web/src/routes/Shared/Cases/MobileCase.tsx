@@ -10,9 +10,9 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import { TagCaseState } from '@island.is/judicial-system-web/src/components'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
-import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
+import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
@@ -81,7 +81,7 @@ const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
       ]}
       isLoading={isLoading}
     >
-      <Text title={theCase.policeCaseNumbers.join(', ')}>
+      <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
       {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}

@@ -19,7 +19,7 @@ import { CreateUserInput } from './dto/createUser.input'
 import { UpdateUserInput } from './dto/updateUser.input'
 import { UserQueryInput } from './dto/user.input'
 import { UsersQueryInput } from './dto/users.input'
-import { User } from './user.model'
+import { User } from './models/user.model'
 
 @Resolver(() => User)
 export class UserResolver {
@@ -49,7 +49,7 @@ export class UserResolver {
 
         return users.filter((user) => input.role?.includes(user.role))
       }),
-      (users: TUser[]) => users.map((user) => user.id),
+      (users: User[]) => users.map((user) => user.id),
     )
   }
 
@@ -67,7 +67,7 @@ export class UserResolver {
       user.id,
       AuditedAction.GET_USER,
       backendApi.getUser(input.id),
-      (user: TUser) => user.id,
+      (user: User) => user.id,
     )
   }
 
