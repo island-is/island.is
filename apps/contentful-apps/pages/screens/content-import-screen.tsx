@@ -92,7 +92,7 @@ const ContentImportScreen = () => {
         const field = fieldMapping.find((field) => {
           return field.importFieldName === headCells[i] + '--slugified'
         })
-        if (!field?.contentfulField?.data?.id) continue
+        if (!field?.contentfulField?.data?.id || !row[i]) continue
 
         fields[field.contentfulField.data.id] = {
           ...fields[field.contentfulField.data.id],
