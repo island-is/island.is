@@ -26,7 +26,7 @@ import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
 import { useContentTypeData } from '../../hooks/useContentTypeData'
 
 const convertHtmlToContentfulRichText = (html: string) => {
-  const markdown = NodeHtmlMarkdown.translate(html)
+  const markdown = NodeHtmlMarkdown.translate(html || '')
   return richTextFromMarkdown(markdown)
 }
 
