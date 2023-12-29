@@ -10,7 +10,6 @@ import {
   confirmation,
   externalData,
   information,
-  payment,
   personal,
   review,
 } from '../../lib/messages'
@@ -18,6 +17,7 @@ import {
   NationalRegistryIndividualApi,
   UserProfileApi,
 } from '../../dataProviders'
+import { formerEducation } from '../../lib/messages/formerEducation'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -75,13 +75,13 @@ export const Prerequisites: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'review',
-      title: review.general.sectionTitle,
+      id: 'formerEducation',
+      title: formerEducation.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'payment',
-      title: payment.general.sectionTitle,
+      id: 'review',
+      title: review.general.sectionTitle,
       children: [],
     }),
     buildSection({

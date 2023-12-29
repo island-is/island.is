@@ -3,12 +3,13 @@ import { Form, FormModes } from '@island.is/application/types'
 import {
   information,
   externalData,
-  payment,
   confirmation,
   personal,
+  review,
 } from '../../lib/messages'
 // import { Logo } from '../../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { formerEducation } from '../../lib/messages/formerEducation'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
@@ -27,18 +28,23 @@ export const Confirmation: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'informationSection',
+      id: 'information',
       title: information.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'payment',
-      title: payment.general.sectionTitle,
+      id: 'formerEducation',
+      title: formerEducation.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'review',
+      title: review.general.sectionTitle,
       children: [],
     }),
     buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
-      alertMessage: confirmation.general.alertMessage,
+      alertMessage: '',
       expandableHeader: confirmation.general.accordionTitle,
       expandableDescription: confirmation.general.accordionText,
     }),
