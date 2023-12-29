@@ -280,7 +280,7 @@ const ContentImportScreen = () => {
           {successfulImports.length > 0 && (
             <Accordion>
               <Accordion.Item
-                title={`${successfulImports.length}/${bodyRows.length} successful imports`}
+                title={`${successfulImports.length}/${bodyRows.length} were created and published successfully`}
               >
                 <FileDataTable
                   bodyRows={successfulImports}
@@ -292,7 +292,7 @@ const ContentImportScreen = () => {
           {publishFailedImports.length > 0 && (
             <Accordion>
               <Accordion.Item
-                title={`${publishFailedImports.length}/${bodyRows.length} entries could not
+                title={`${publishFailedImports.length}/${bodyRows.length} entries were created but could not
               be published`}
               >
                 <FileDataTable
@@ -306,7 +306,7 @@ const ContentImportScreen = () => {
             <Accordion>
               <Accordion.Item
                 title={`${failedImports.length}/${bodyRows.length} entries could not
-               be imported`}
+               be created`}
               >
                 <FileDataTable bodyRows={failedImports} headCells={headCells} />
               </Accordion.Item>
