@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { PageExtensionSDK } from '@contentful/app-sdk'
-import { Box, Button, Flex, Stack, Text } from '@contentful/f36-components'
+import { Accordion, Box, Button, Flex, Stack } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import slugify from '@sindresorhus/slugify'
@@ -30,6 +30,20 @@ const convertHtmlToContentfulRichText = (html: string) => {
   return richTextFromMarkdown(markdown)
 }
 
+const parseErrorMessage = (error: unknown) => {
+  let errorMessage = ''
+  try {
+    const errorObject = JSON.parse((error as { message: string })?.message)
+      ?.details?.errors?.[0]
+    errorMessage = `${errorObject?.details ?? ''}${
+      errorObject?.value ? ' - value: ' + errorObject.value : ''
+    }`
+  } catch (_) {
+    // Do nothing in case an error occurs during JSON.parse
+  }
+  return errorMessage
+}
+
 const ContentImportScreen = () => {
   const [data, setData] = useState<FileData>([])
   const { headCells, bodyRows } = useMemo(() => getTableData(data), [data])
@@ -52,8 +66,11 @@ const ContentImportScreen = () => {
   const [failedImports, setFailedImports] = useState([])
 
   const importContent = async () => {
+    setSuccessfulImports([])
+    setFailedImports([])
+    setPublishFailedImports([])
     for (let rowIndex = 0; rowIndex < bodyRows.length; rowIndex += 1) {
-      const row = bodyRows[rowIndex]
+      const { row } = bodyRows[rowIndex]
       const fields = {}
       for (let i = 0; i < row.length; i += 1) {
         const field = fieldMapping.find((field) => {
@@ -164,13 +181,26 @@ const ContentImportScreen = () => {
             },
             createdEntry,
           )
-        } catch (err) {
-          setPublishFailedImports((prev) => prev.concat(rowIndex))
+        } catch (error) {
+          const errorMessage = parseErrorMessage(error)
+
+          setPublishFailedImports((prev) => [
+            ...prev,
+            {
+              row,
+              id: createdEntry.sys.id,
+              errorMessage,
+            },
+          ])
           continue
         }
-        setSuccessfulImports((prev) => prev.concat(rowIndex))
-      } catch (err) {
-        setFailedImports((prev) => prev.concat(rowIndex))
+        setSuccessfulImports((prev) => [
+          ...prev,
+          { row, id: createdEntry.sys.id },
+        ])
+      } catch (error) {
+        const errorMessage = parseErrorMessage(error)
+        setFailedImports((prev) => [...prev, { row, errorMessage }])
         continue
       }
     }
@@ -246,31 +276,44 @@ const ContentImportScreen = () => {
           </Stack>
         </GridContainer>
 
-        {successfulImports.length > 0 && (
-          <Text>
-            {successfulImports.length}/{bodyRows.length} successful imports
-          </Text>
-        )}
-        {publishFailedImports.length > 0 && (
-          <Text>
-            {publishFailedImports.length}/{bodyRows.length} entries could not be
-            published
-          </Text>
-        )}
-
-        {failedImports.length > 0 && (
-          <Text>
-            {failedImports.length}/{bodyRows.length} entries could not be
-            imported
-          </Text>
-        )}
-
-        <FileDataTable
-          data={data}
-          failedRowIndexes={failedImports}
-          publishFailedRowIndexes={publishFailedImports}
-          successfulRowIndexes={successfulImports}
-        />
+        <GridContainer>
+          {successfulImports.length > 0 && (
+            <Accordion>
+              <Accordion.Item
+                title={`${successfulImports.length}/${bodyRows.length} successful imports`}
+              >
+                <FileDataTable
+                  bodyRows={successfulImports}
+                  headCells={headCells}
+                />
+              </Accordion.Item>
+            </Accordion>
+          )}
+          {publishFailedImports.length > 0 && (
+            <Accordion>
+              <Accordion.Item
+                title={`${publishFailedImports.length}/${bodyRows.length} entries could not
+              be published`}
+              >
+                <FileDataTable
+                  bodyRows={publishFailedImports}
+                  headCells={headCells}
+                />
+              </Accordion.Item>
+            </Accordion>
+          )}
+          {failedImports.length > 0 && (
+            <Accordion>
+              <Accordion.Item
+                title={`${failedImports.length}/${bodyRows.length} entries could not
+               be imported`}
+              >
+                <FileDataTable bodyRows={failedImports} headCells={headCells} />
+              </Accordion.Item>
+            </Accordion>
+          )}
+        </GridContainer>
+        <FileDataTable bodyRows={bodyRows} headCells={headCells} />
       </Stack>
     </Box>
   )

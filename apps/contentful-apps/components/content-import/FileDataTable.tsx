@@ -1,17 +1,20 @@
-import { useMemo, useState } from 'react'
-import { Box, Button, Flex, Table } from '@contentful/f36-components'
+import { useState } from 'react'
+import { Box, Button, Flex, Table, Tooltip } from '@contentful/f36-components'
+import { InfoCircleIcon } from '@contentful/f36-icons'
 
+import { CONTENTFUL_ENVIRONMENT } from '../../constants'
 import { FileData } from './utils'
 
 const ROW_COUNT_INCREMENT = 100
 
 export const getTableData = (data: FileData) => {
   const headCells = data?.[0] ?? []
-  const bodyRows =
+  const bodyRows = (
     data?.slice(1).filter((row) => row?.some((text) => text)) ?? []
+  ).map((row) => ({ row }))
 
   let longestRowLength = 0
-  for (const row of bodyRows) {
+  for (const { row } of bodyRows) {
     if (row.length > longestRowLength) {
       longestRowLength = row.length
     }
@@ -29,19 +32,11 @@ export const getTableData = (data: FileData) => {
 }
 
 interface FileDataTableProps {
-  data: FileData
-  successfulRowIndexes: number[]
-  publishFailedRowIndexes: number[]
-  failedRowIndexes: number[]
+  headCells: string[]
+  bodyRows: { row: string[]; id?: string; errorMessage?: string }[]
 }
 
-export const FileDataTable = ({
-  data,
-  failedRowIndexes,
-  publishFailedRowIndexes,
-  successfulRowIndexes,
-}: FileDataTableProps) => {
-  const { headCells, bodyRows } = useMemo(() => getTableData(data), [data])
+export const FileDataTable = ({ headCells, bodyRows }: FileDataTableProps) => {
   const [displayedRowCount, setDisplayedRowCount] =
     useState(ROW_COUNT_INCREMENT)
 
@@ -61,32 +56,28 @@ export const FileDataTable = ({
             {headCells.map((text, index) => (
               <Table.Cell key={index}>{text}</Table.Cell>
             ))}
+            {bodyRows.some(({ errorMessage }) => Boolean(errorMessage)) && (
+              <Table.Cell>Error message</Table.Cell>
+            )}
           </Table.Row>
         </Table.Head>
         <Table.Body>
-          {bodyRows.slice(0, displayedRowCount).map((row, index) => {
-            let backgroundColor = undefined
-            if (successfulRowIndexes.includes(index)) {
-              backgroundColor = 'rgba(0, 255, 0, 0.2)'
-            } else if (publishFailedRowIndexes.includes(index)) {
-              backgroundColor = 'rgba(255, 255, 120, 0.2)'
-            } else if (failedRowIndexes.includes(index)) {
-              backgroundColor = 'rgba(255, 0, 0, 0.2)'
-            }
+          {bodyRows.slice(0, displayedRowCount).map((item, index) => {
+            const href = item?.id
+              ? `https://app.contentful.com/spaces/8k0h54kbe6bj/environments/${CONTENTFUL_ENVIRONMENT}/entries/${item.id}`
+              : undefined
             return (
               <Table.Row key={index}>
-                {(row ?? []).map((text, index) => {
+                {(item?.row ?? []).map((text, index) => {
                   return (
-                    <Table.Cell
-                      key={index}
-                      style={{
-                        backgroundColor,
-                      }}
-                    >
-                      {text}
+                    <Table.Cell key={index}>
+                      <a rel="noreferrer" target="_blank" href={href}>
+                        {text}
+                      </a>
                     </Table.Cell>
                   )
                 })}
+                <Table.Cell>{item.errorMessage}</Table.Cell>
               </Table.Row>
             )
           })}
