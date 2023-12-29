@@ -10,7 +10,7 @@ export const EducationOptionsSubSection = buildSubSection({
   title: formerEducation.labels.educationDetails.pageTitle,
   children: [
     buildCheckboxField({
-      id: `${Routes.EDUCATIONOPTIONS}.chosenOption`,
+      id: `${Routes.EDUCATIONOPTIONS}`,
       title: 'TODO',
       options: [
         {

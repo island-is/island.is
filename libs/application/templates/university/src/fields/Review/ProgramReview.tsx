@@ -8,7 +8,7 @@ import { UniversityApplication } from '../../lib/dataSchema'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
-  route: Routes
+  route?: Routes
 }
 
 export const ProgramReview: FC<Props> = ({
