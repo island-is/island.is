@@ -25,11 +25,13 @@ const RequestAppealRulingNotToBePublishedCheckbox: React.FC = () => {
           name="requestAppealRulingNotToBePublished"
           checked={
             user &&
+            user.role !== undefined &&
+            user.role !== null &&
             workingCase.requestAppealRulingNotToBePublished?.includes(user.role)
           }
           disabled={workingCase.appealState === CaseAppealState.COMPLETED}
           onChange={() => {
-            if (!user) return
+            if (!user || user.role === undefined || user.role === null) return
 
             setCheckboxAndSendToServer(
               'requestAppealRulingNotToBePublished',

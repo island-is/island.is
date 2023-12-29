@@ -20,10 +20,7 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
-import type {
-  Notification as TNotification,
-  User,
-} from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
 import { CaseQueryInput } from './dto/case.input'
@@ -265,8 +262,6 @@ export class CaseResolver {
 
     this.logger.debug(`Resolving notifications for case ${id}`)
 
-    return backendApi
-      .getCaseNotifications(id)
-      .catch(() => [] as TNotification[])
+    return backendApi.getCaseNotifications(id).catch(() => [] as Notification[])
   }
 }

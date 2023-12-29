@@ -5,8 +5,6 @@ import { useRouter } from 'next/router'
 import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseFileCategory,
-  CaseTransition,
   isDefenceUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -18,11 +16,15 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
+import {
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useS3Upload,

@@ -27,7 +27,7 @@ export const useGetLawyers = (): Lawyer[] => {
 }
 
 export const useGetLawyer = (
-  nationalId?: string,
+  nationalId?: string | null,
   shouldFetch?: boolean,
 ): Lawyer | undefined => {
   const fetchWithNationalId = (url: string, nationalId: string) =>
