@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Box, Button, Flex, Table, Tooltip } from '@contentful/f36-components'
-import { InfoCircleIcon } from '@contentful/f36-icons'
+import { Box, Button, Flex, Table } from '@contentful/f36-components'
 
 import { CONTENTFUL_ENVIRONMENT } from '../../constants'
 import { FileData } from './utils'

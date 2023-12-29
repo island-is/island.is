@@ -39,7 +39,7 @@ const parseErrorMessage = (error: unknown) => {
       errorObject?.value ? ' - value: ' + errorObject.value : ''
     }`
   } catch (_) {
-    // Do nothing in case an error occurs during JSON.parse
+    // Do nothing in case an error occurs during JSON.parse()
   }
   return errorMessage
 }
@@ -110,6 +110,7 @@ const ContentImportScreen = () => {
           continue
         }
 
+        // Handle title searches
         if (referenceField.selectedId.includes('--title-search')) {
           const headCellName =
             referenceField.selectedId.split('--title-search')[0]
