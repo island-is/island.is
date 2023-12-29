@@ -40,7 +40,7 @@ export const TemplateModal = ({
   onSave,
 }: Props) => {
   const { formatMessage: f } = useLocale()
-  const [templates, setTemplates] = useState<MinistryOfJusticeCase[]>([])
+  const [templates, setTemplates] = useState([])
   const [filter, setFilter] = useState('')
   const [lazyFilter, setLazyFilter] = useState('')
   const [loading, setLoading] = useState(false)

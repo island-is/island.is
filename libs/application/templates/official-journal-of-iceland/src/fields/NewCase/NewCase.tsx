@@ -1,102 +1,59 @@
-import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
-
 import { useMutation } from '@apollo/client'
-import { MinistryOfJusticeCase } from '@island.is/api/schema'
+import { getErrorViaPath } from '@island.is/application/core'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { SelectController } from '@island.is/shared/form-fields'
-import { isDefined } from '@island.is/shared/utils'
-import { useEffect, useState } from 'react'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
+import { useState } from 'react'
 import { FormWrap } from '../../components/FormWrap/FormWrap'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
-import { newCase as m } from '../../lib/messages'
-import { OJOIFieldBaseProps } from '../../lib/types'
-import { TemplateModal } from './TemplateModal'
-export const NewCase = ({ application }: OJOIFieldBaseProps) => {
+import { error, newCase } from '../../lib/messages'
+import { InputFields, OJOIFieldBaseProps } from '../../lib/types'
+export const NewCase = ({
+  application,
+  errors,
+  setBeforeSubmitCallback,
+}: OJOIFieldBaseProps) => {
+  const { answers } = application
   const { f, locale } = useFormatMessage(application)
-  const [toggle, setToggle] = useState(false)
+  const [modalToggle, setModalToggle] = useState(false)
+  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
 
-  const [selectedTemplateId, setSelectedTemplateId] =
-    useState<MinistryOfJusticeCase['applicationId']>()
-
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const { departments, categories, subCategories, signatureTypes, templates } =
-    application.externalData.options.data
-
-  const catOptions = categories
-    .map((category) => ({
-      label: category as string,
-      value: category as string,
-    }))
-    .filter(isDefined)
-
-  const subCatOptions = subCategories
-    .map((subCategory) => ({
-      label: subCategory as string,
-      value: subCategory as string,
-    }))
-    .filter(isDefined)
-
-  const departmentOptions = departments
-    .map((department) => ({
-      label: department as string,
-      value: department as string,
-    }))
-    .filter(isDefined)
-
-  const signatureTypeOptions = signatureTypes
-    .map((signatureType) => ({
-      label: signatureType as string,
-      value: signatureType as string,
-    }))
-    .filter(isDefined)
-
-  const templateOptions = templates
-    .map((template) => ({
-      label: template as string,
-      value: template as string,
-    }))
-    .filter(isDefined)
-
-  const [newCase, setNewCase] = useState<MinistryOfJusticeCase>({
-    applicationId: application.id,
-    department: departments?.[0],
-    category: categories?.[0],
-    subCategory: subCategories?.[0],
-    title: '',
-    template: undefined,
-    documentContents: '',
-    signatureType: undefined,
-    signatureContents: '',
-    signatureDate: '',
-    ministry: '',
-    preferedPublicationDate: '',
-    fastTrack: false,
+  const [state, setState] = useState({
+    department: answers?.case?.department ?? '',
+    category: answers?.case?.category ?? '',
+    title: answers?.case?.title ?? '',
+    template: answers?.case?.template ?? '',
+    documentContents: answers?.case?.documentContents ?? '',
+    signatureType: answers?.case?.signatureType ?? '',
+    signatureContents: answers?.case?.signatureContents ?? '',
   })
 
-  useEffect(() => {
-    const updateAnswers = async () => {
-      const res = await updateApplication({
+  const { data: options } = application.externalData.options
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      await updateApplication({
         variables: {
+          locale,
           input: {
             id: application.id,
             answers: {
               ...application.answers,
-              case: newCase,
+              case: {
+                ...state,
+              },
             },
           },
-          locale,
         },
+      }).catch(() => {
+        return [false, f(error.dataSubmissionErrorTitle)]
       })
-
-      if (!res) {
-        return [false, 'Could not update application']
-      }
-
       return [true, null]
-    }
-    updateAnswers()
-  }, [newCase])
+    })
 
   return (
     <>
@@ -104,7 +61,7 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
         header={{
           children: (
             <Text variant="h2" as="h1">
-              {f(m.general.formTitle)}
+              {f(newCase.general.formTitle)}
             </Text>
           ),
           button: (
@@ -112,103 +69,99 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
               variant="utility"
               iconType="outline"
               icon="copy"
-              onClick={() => setToggle((prev) => !prev)}
+              onClick={() => setModalToggle((prev) => !prev)}
             >
-              {f(m.buttons.copyOldCase.label)}
+              {f(newCase.buttons.copyOldCase.label)}
             </Button>
           ),
         }}
       >
-        <Text marginBottom={4}>{f(m.general.formIntro)}</Text>
+        <Text marginBottom={4}>{f(newCase.general.formIntro)}</Text>
         <FormGroup>
           <Box width="half">
             <SelectController
+              id={InputFields.case.department}
+              name={InputFields.case.department}
+              label={f(newCase.inputs.department.label)}
+              placeholder={f(newCase.inputs.department.placeholder)}
+              defaultValue={state.department}
+              options={options.departments}
+              onSelect={(opt) => setState({ ...state, department: opt.value })}
               size="sm"
-              id="department"
-              name="department"
-              disabled={departments?.length === 1}
-              placeholder={f(m.inputs.department.placeholder)}
-              label={f(m.inputs.department.label)}
-              options={departmentOptions}
-              defaultValue={newCase.department}
-              onSelect={(value) =>
-                setNewCase({
-                  ...newCase,
-                  department:
-                    value.value as MinistryOfJusticeCase['department'],
-                })
+              error={
+                errors && getErrorViaPath(errors, InputFields.case.department)
               }
             />
           </Box>
           <Box width="half">
             <SelectController
-              size="sm"
+              id={InputFields.case.category}
+              name={InputFields.case.category}
+              label={f(newCase.inputs.publishingType.label)}
+              placeholder={f(newCase.inputs.publishingType.placeholder)}
+              defaultValue={state.department}
               backgroundColor="blue"
-              id="category"
-              name="category"
-              label={f(m.inputs.publishingType.label)}
-              defaultValue={newCase.department}
-              placeholder={f(m.inputs.publishingType.placeholder)}
-              options={catOptions}
-              onSelect={(value) => {
-                if (value.value)
-                  setNewCase({
-                    ...newCase,
-                    category: value.value as MinistryOfJusticeCase['category'],
-                  })
-              }}
+              options={options.categories}
+              onSelect={(opt) => setState({ ...state, category: opt.value })}
+              size="sm"
+              error={
+                errors && getErrorViaPath(errors, InputFields.case.category)
+              }
             />
           </Box>
           <Box width="full">
-            <Input
+            <InputController
+              id={InputFields.case.title}
+              name={InputFields.case.title}
+              label={f(newCase.inputs.nameOfCase.label)}
+              placeholder={f(newCase.inputs.nameOfCase.placeholder)}
+              defaultValue={state.title}
               backgroundColor="blue"
-              label={f(m.inputs.nameOfCase.label)}
               textarea
               rows={4}
-              placeholder={f(m.inputs.nameOfCase.placeholder)}
-              onChange={(e) =>
-                setNewCase({ ...newCase, title: e.target.value })
-              }
-              name="case-title"
-              value={newCase.title ?? ''}
+              onChange={(e) => setState({ ...state, title: e.target.value })}
+              error={errors && getErrorViaPath(errors, InputFields.case.title)}
             />
           </Box>
         </FormGroup>
-        <FormGroup title={f(m.materialForPublicationChapter.title)}>
+        <FormGroup title={f(newCase.materialForPublicationChapter.title)}>
           <Box width="half">
             <SelectController
-              size="sm"
+              id={InputFields.case.template}
+              name={InputFields.case.template}
+              label={f(newCase.inputs.template.label)}
+              placeholder={f(newCase.inputs.template.placeholder)}
+              defaultValue={state.template}
               backgroundColor="blue"
-              id="category"
-              name="category"
-              label={f(m.inputs.template.label)}
-              defaultValue={newCase.template}
-              placeholder={f(m.inputs.template.placeholder)}
-              options={templateOptions}
-              onSelect={(value) => {
-                if (value.value)
-                  setNewCase({
-                    ...newCase,
-                    template: value.value as MinistryOfJusticeCase['template'],
-                  })
-              }}
+              options={options.templates}
+              onSelect={(opt) => setState({ ...state, template: opt.value })}
+              size="sm"
+              error={
+                errors && getErrorViaPath(errors, InputFields.case.template)
+              }
             />
           </Box>
           <Box width="full">
-            <Input
+            <InputController
+              id={InputFields.case.documentContents}
+              name={InputFields.case.documentContents}
+              defaultValue={state.documentContents}
+              backgroundColor="blue"
               textarea
               rows={4}
-              name="case-content"
-              value={newCase.documentContents ?? ''}
               onChange={(e) =>
-                setNewCase({ ...newCase, documentContents: e.target.value })
+                setState({ ...state, documentContents: e.target.value })
+              }
+              error={
+                errors &&
+                getErrorViaPath(errors, InputFields.case.documentContents)
               }
             />
           </Box>
         </FormGroup>
         <FormGroup
-          title={f(m.signatureChapter.title)}
-          description={f(m.signatureChapter.intro)}
+          title={f(newCase.signatureChapter.title)}
+          description={f(newCase.signatureChapter.intro)}
         >
           <Box
             display="flex"
@@ -217,25 +170,21 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
             width="full"
           >
             <Box width="half">
-              <Select
+              <SelectController
+                id={InputFields.case.signatureType}
+                name={InputFields.case.signatureType}
+                label={f(newCase.inputs.signatureType.label)}
+                placeholder={f(newCase.inputs.signatureType.placeholder)}
+                defaultValue={state.signatureType}
+                options={options.signatureTypes}
+                onSelect={(opt) =>
+                  setState({ ...state, signatureType: opt.value })
+                }
                 size="sm"
-                backgroundColor="blue"
-                id="category"
-                name="category"
-                label={f(m.inputs.signatureType.label)}
-                placeholder={f(m.inputs.signatureType.placeholder)}
-                options={signatureTypeOptions}
-                value={{
-                  label: newCase.signatureType as string,
-                  value: newCase.signatureType as string,
-                }}
-                onChange={(value) => {
-                  setNewCase({
-                    ...newCase,
-                    signatureType:
-                      value?.value as MinistryOfJusticeCase['signatureType'],
-                  })
-                }}
+                error={
+                  errors &&
+                  getErrorViaPath(errors, InputFields.case.signatureType)
+                }
               />
             </Box>
             <Box>
@@ -246,34 +195,40 @@ export const NewCase = ({ application }: OJOIFieldBaseProps) => {
                 icon="reload"
                 iconType="outline"
               >
-                {f(m.buttons.copyLastSignature.label)}
+                {f(newCase.buttons.copyLastSignature.label)}
               </Button>
             </Box>
           </Box>
           <Box width="full">
-            <Input
+            <InputController
+              id={InputFields.case.signatureContents}
+              name={InputFields.case.signatureContents}
+              defaultValue={state.signatureContents}
+              backgroundColor="blue"
               textarea
               rows={4}
-              name="signature-content"
-              value={newCase.signatureContents ?? ''}
               onChange={(e) =>
-                setNewCase({ ...newCase, signatureContents: e.target.value })
+                setState({ ...state, signatureContents: e.target.value })
+              }
+              error={
+                errors &&
+                getErrorViaPath(errors, InputFields.case.signatureContents)
               }
             />
           </Box>
         </FormGroup>
       </FormWrap>
-      <TemplateModal
-        visible={toggle}
-        onVisibilityChange={(visible) => setToggle(visible)}
-        onClose={() => setToggle(false)}
+      {/* <TemplateModal
+        visible={modalToggle}
+        onVisibilityChange={(visible) => setModalToggle(visible)}
+        onClose={() => setModalToggle(false)}
         selectedTemplateId={selectedTemplateId}
         onSelectChange={(id) => setSelectedTemplateId(id)}
         onSave={(template) => {
-          setNewCase({ ...newCase, ...template })
-          setToggle(false)
+          setState({ ...state, ...template })
+          setModalToggle(false)
         }}
-      />
+      /> */}
     </>
   )
 }

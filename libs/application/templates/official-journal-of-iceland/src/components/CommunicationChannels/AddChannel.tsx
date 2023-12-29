@@ -1,6 +1,6 @@
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useId } from 'react'
+import { useId, useRef } from 'react'
 import { general } from '../../lib/messages'
 import * as styles from './AddChannel.css'
 type Props = {
@@ -33,6 +33,8 @@ export const AddChannel = ({
 
   const { formatMessage } = useLocale()
 
+  const phoneRef = useRef<HTMLInputElement>(null)
+
   return (
     <Box
       className={styles.addChannel({
@@ -53,10 +55,20 @@ export const AddChannel = ({
             onChange={(e) =>
               onEmailChange(e as React.ChangeEvent<HTMLInputElement>)
             }
+            onKeyDown={(e) => {
+              if (
+                e.key === 'Enter' &&
+                phoneRef.current &&
+                e.currentTarget.value
+              ) {
+                phoneRef.current.focus()
+              }
+            }}
           />
         </Box>
         <Box className={styles.phoneWrap}>
           <Input
+            ref={phoneRef}
             size="xs"
             id={localPhoneId}
             name="tel"
@@ -66,6 +78,11 @@ export const AddChannel = ({
             onChange={(e) =>
               onPhoneChange(e as React.ChangeEvent<HTMLInputElement>)
             }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                onSave()
+              }
+            }}
           />
         </Box>
       </Box>

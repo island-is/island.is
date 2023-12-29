@@ -39,8 +39,9 @@ import {
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
-import { SpanType } from '@island.is/island-ui/core/types'
+import { ResponsiveProp, SpanType } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
+import { Space } from '@island.is/island-ui/core'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -378,6 +379,9 @@ export function buildKeyValueField(data: {
   colSpan?: SpanType
   condition?: Condition
   display?: 'block' | 'flex'
+  divider?: boolean
+  paddingX?: ResponsiveProp<Space>
+  paddingY?: ResponsiveProp<Space>
 }): KeyValueField {
   const {
     label,
@@ -386,6 +390,9 @@ export function buildKeyValueField(data: {
     width = 'full',
     colSpan,
     display = 'block',
+    divider = false,
+    paddingX,
+    paddingY,
   } = data
 
   return {
@@ -398,9 +405,12 @@ export function buildKeyValueField(data: {
     colSpan,
     label,
     value,
+    divider,
     type: FieldTypes.KEY_VALUE,
     component: FieldComponents.KEY_VALUE,
     display,
+    paddingX,
+    paddingY,
   }
 }
 

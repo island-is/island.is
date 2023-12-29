@@ -13,7 +13,7 @@ export enum Routes {
   ADDITIONS_AND_DOCUMENTS = 'additionsAndDocuments',
   PREVIEW = 'preview',
   ORIGINAL_DATA = 'originalData',
-  PUBLISHING_PREFRENCES = 'publishingPreferences',
+  PUBLISHING_PREFERENCES = 'publishingPreferences',
   SUMMARY = 'summary',
   COMPLETE = '/complete',
 }

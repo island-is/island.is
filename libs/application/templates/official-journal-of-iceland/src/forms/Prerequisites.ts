@@ -1,9 +1,11 @@
 import {
   buildCustomField,
   buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
 import {
   additionsAndDocuments,
@@ -12,7 +14,7 @@ import {
   originalData,
   prerequisites,
   preview,
-  publishingPrefrences,
+  publishingPreferences,
   summary,
 } from '../lib/messages'
 export const Prerequsites: Form = buildForm({
@@ -24,10 +26,34 @@ export const Prerequsites: Form = buildForm({
       id: Routes.PREREQUISITES,
       title: prerequisites.general.sectionTitle,
       children: [
-        buildCustomField({
-          id: 'prerequisites',
+        buildMultiField({
+          id: Routes.PREREQUISITES,
           title: '',
-          component: 'Prerequisites',
+          children: [
+            buildCustomField({
+              id: Routes.PREREQUISITES,
+              title: '',
+              component: 'Prerequisites',
+            }),
+            buildSubmitField({
+              id: 'toDraft',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: general.continue,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+        // This is here to be able to show submit button on former screen :( :( :(
+        buildMultiField({
+          id: '',
+          title: '',
+          children: [],
         }),
       ],
     }),
@@ -52,8 +78,8 @@ export const Prerequsites: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: Routes.PUBLISHING_PREFRENCES,
-      title: publishingPrefrences.general.sectionTitle,
+      id: Routes.PUBLISHING_PREFERENCES,
+      title: publishingPreferences.general.sectionTitle,
       children: [],
     }),
     buildSection({

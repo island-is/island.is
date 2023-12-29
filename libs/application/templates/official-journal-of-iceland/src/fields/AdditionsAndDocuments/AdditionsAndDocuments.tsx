@@ -22,7 +22,7 @@ export const AdditionsAndDocuments = ({ application }: OJOIFieldBaseProps) => {
     <Box>
       <FormIntro
         title={f(additionsAndDocuments.general.formTitle)}
-        description={f(additionsAndDocuments.general.formIntro)}
+        intro={f(additionsAndDocuments.general.formIntro)}
       />
       <Box>
         <FormGroup>

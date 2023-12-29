@@ -1,23 +1,26 @@
 import {
   buildCustomField,
   buildForm,
+  buildMultiField,
+  buildRedirectToServicePortalField,
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
 import {
   additionsAndDocuments,
+  general,
   newCase,
   originalData,
   prerequisites,
   preview,
-  publishingPrefrences,
+  publishingPreferences,
   summary,
 } from '../lib/messages'
 export const Complete: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
   title: 'Skilyrði',
-  mode: FormModes.DRAFT,
+  mode: FormModes.COMPLETED,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
@@ -47,23 +50,24 @@ export const Complete: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: Routes.PUBLISHING_PREFRENCES,
-      title: publishingPrefrences.general.sectionTitle,
+      id: Routes.PUBLISHING_PREFERENCES,
+      title: publishingPreferences.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: Routes.SUMMARY,
+      id: Routes.COMPLETE,
       title: summary.general.sectionTitle,
       children: [
-        buildCustomField({
-          id: Routes.SUMMARY,
+        buildMultiField({
+          id: 'summary',
           title: '',
-          component: 'Summary',
-        }),
-        buildCustomField({
-          id: Routes.COMPLETE,
-          title: '',
-          component: 'Complete',
+          children: [
+            buildCustomField({
+              id: Routes.COMPLETE,
+              title: '',
+              component: 'Complete',
+            }),
+          ],
         }),
       ],
     }),

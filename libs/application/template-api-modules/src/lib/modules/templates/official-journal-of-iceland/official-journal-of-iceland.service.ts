@@ -7,31 +7,36 @@ import { SharedTemplateApiService } from '../../shared'
 
 const MOCK_RESPONSE = {
   data: {
-    departments: ['B-Deild'], // 'A-Deild', 'C-Deild', 'D-Deild'
+    departments: [
+      { label: 'A-Deild', value: 'A-Deild' },
+      { label: 'B-Deild', value: 'B-Deild' },
+      { label: 'C-Deild', value: 'C-Deild' },
+      { label: 'D-Deild', value: 'D-Deild' },
+    ],
     categories: [
-      'Gjaldskrá',
-      'Auglýsing',
-      'Reglugerð',
-      'Skipulagsskrá',
-      'Fjallskilasamþykkt',
-      'Reglur',
-      'Samþykkt',
+      { label: 'Gjaldskrá', value: 'Gjaldskrá' },
+      { label: 'Auglýsing', value: 'Auglýsing' },
+      { label: 'Reglugerð', value: 'Reglugerð' },
+      { label: 'Skipulagsskrá', value: 'Skipulagsskrá' },
+      { label: 'Fjallskilasamþykkt', value: 'Fjallskilasamþykkt' },
+      { label: 'Reglur', value: 'Reglur' },
+      { label: 'Samþykkt', value: 'Samþykkt' },
     ],
     subCategories: [
-      'Skipulagsreglugerð',
-      'Byggingarreglugerð',
-      'Hafnarreglugerð',
+      { label: 'Skipulagsreglugerð', value: 'Skipulagsreglugerð' },
+      { label: 'Byggingarreglugerð', value: 'Byggingarreglugerð' },
+      { label: 'Hafnarreglugerð', value: 'Hafnarreglugerð' },
     ],
     templates: [
-      'Skipulagsmál',
-      'Auglýsing með töflu',
-      'Breytingar á gjaldskrá',
+      { label: 'Skipulagsmál', value: 'Skipulagsmál' },
+      { label: 'Auglýsing með töflu', value: 'Auglýsing með töflu' },
+      { label: 'Breytingar á gjaldskrá', value: 'Breytingar á gjaldskrá' },
     ],
     signatureTypes: [
-      'Einföld undirritun',
-      'Tvöföld undirritun',
-      'Undirritun ráðherra',
-      'Undirritun nefndar',
+      { label: 'Einföld undirritun', value: 'Einföld undirritun' },
+      { label: 'Tvöföld undirritun', value: 'Tvöföld undirritun' },
+      { label: 'Undirritun ráðherra', value: 'Undirritun ráðherra' },
+      { label: 'Undirritun nefndar', value: 'Undirritun nefndar' },
     ],
   },
 }

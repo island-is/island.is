@@ -15,7 +15,7 @@ export const OriginalData = ({ application }: OJOIFieldBaseProps) => {
     <Box>
       <FormIntro
         title={f(originalData.general.formTitle)}
-        description={f(originalData.general.formIntro)}
+        intro={f(originalData.general.formIntro)}
       />
       <Box>
         <FormGroup>

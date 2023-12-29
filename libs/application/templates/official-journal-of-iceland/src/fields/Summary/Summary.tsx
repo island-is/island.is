@@ -28,7 +28,7 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
     <Box>
       <FormIntro
         title={f(summary.general.formTitle)}
-        description={f(summary.general.formIntro)}
+        intro={f(summary.general.formIntro)}
       />
       <Stack space={0} dividers>
         <Property

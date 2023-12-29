@@ -73,4 +73,20 @@ export const general = defineMessages({
     id: 'ojoi.application:general.continue',
     defaultMessage: 'Halda áfram',
   },
+  submitApplication: {
+    id: 'ojoi.application:general.submitApplication',
+    defaultMessage: 'Senda til birtingar',
+  },
+  redirectToServicePortal: {
+    id: 'ojoi.application:general.redirectToServicePortal',
+    defaultMessage: 'Til baka á mínar síður',
+  },
+  yes: {
+    id: 'ojoi.application:general.yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'ojoi.application:general.no',
+    defaultMessage: 'Nei',
+  },
 })

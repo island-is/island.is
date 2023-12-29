@@ -19,7 +19,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
     <Box>
       <FormIntro
         title={f(preview.general.formTitle)}
-        description={f(preview.general.formIntro, {
+        intro={f(preview.general.formIntro, {
           br: (
             <>
               <br />

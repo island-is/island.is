@@ -7,4 +7,10 @@ export const formGroup = style({
   alignItems: 'flex-start',
   rowGap: theme.spacing[3],
   marginBottom: theme.spacing[6],
+
+  selectors: {
+    '&:only-child': {
+      marginBottom: 0,
+    },
+  },
 })

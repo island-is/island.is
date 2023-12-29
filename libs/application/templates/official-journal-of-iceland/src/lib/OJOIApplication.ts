@@ -2,7 +2,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { OfficialJournalOfIcelandSchema } from './dataSchema'
 
 import {
   Application,
@@ -16,9 +15,9 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
+import { dataSchema } from './dataSchema'
 import { general } from './messages'
 import { TemplateApiActions } from './types'
-import { hasApprovedExternalData } from './utils'
 
 export enum ApplicationStates {
   PREREQUISITS = 'prerequisites',
@@ -49,7 +48,7 @@ const OJOITemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.OfficialJournalOfIceland.translation,
   ],
-  dataSchema: OfficialJournalOfIcelandSchema,
+  dataSchema: dataSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITS,
@@ -70,13 +69,6 @@ const OJOITemplate: ApplicationTemplate<
                 import('../forms/Prerequisites').then((val) =>
                   Promise.resolve(val.Prerequsites),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
             },
           ],
         },
@@ -84,10 +76,6 @@ const OJOITemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               target: ApplicationStates.DRAFT,
-              cond: hasApprovedExternalData,
-            },
-            {
-              target: ApplicationStates.PREREQUISITS,
             },
           ],
         },
