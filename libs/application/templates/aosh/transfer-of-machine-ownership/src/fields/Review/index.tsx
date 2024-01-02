@@ -9,7 +9,6 @@ import { Operator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 import { useFormContext } from 'react-hook-form'
-import { ReviewConclusion } from '../ReviewConclusion'
 
 export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
@@ -49,15 +48,6 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
             location={location}
-            buyerOperator={filteredBuyerOperator}
-            {...props}
-          />
-        )
-      case 'conclusion':
-        return (
-          <ReviewConclusion
-            setStep={setStep}
-            reviewerNationalId={reviewerNationalId}
             buyerOperator={filteredBuyerOperator}
             {...props}
           />

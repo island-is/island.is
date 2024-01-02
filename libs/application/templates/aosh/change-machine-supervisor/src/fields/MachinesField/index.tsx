@@ -2,7 +2,6 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { MachineSelectField } from './MachineSelectField'
-import { MachineRadioField } from './MachineRadioField'
 import { MachineDto } from '@island.is/clients/work-machines'
 
 export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (

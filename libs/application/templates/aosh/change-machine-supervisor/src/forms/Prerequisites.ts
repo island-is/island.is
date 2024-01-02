@@ -19,11 +19,6 @@ export const PrerequisitesForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'payment',
-      title: payment.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
       id: 'conclusion',
       title: conclusion.general.sectionTitle,
       children: [],

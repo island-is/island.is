@@ -1,9 +1,4 @@
-import {
-  buildForm,
-  buildCustomField,
-  buildSection,
-  buildMultiField,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   information,
@@ -13,6 +8,7 @@ import {
   review,
 } from '../lib/messages'
 import { Logo } from '../assets/Logo'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Rejected: Form = buildForm({
   id: 'RejectedApplicationForm',
@@ -40,23 +36,13 @@ export const Rejected: Form = buildForm({
       title: review.general.sectionTitle,
       children: [],
     }),
-    buildSection({
-      id: 'conclusion',
-      title: conclusion.general.rejectedTitle,
-      children: [
-        buildMultiField({
-          id: 'conclusion.multifield',
-          title: conclusion.general.rejectedTitle,
-          children: [
-            buildCustomField({
-              component: 'RejectedConclusion',
-              id: 'RejectedConclusion',
-              title: '',
-              description: '',
-            }),
-          ],
-        }),
-      ],
+    buildFormConclusionSection({
+      sectionTitle: conclusion.general.rejectedTitle,
+      multiFieldTitle: conclusion.general.title,
+      alertTitle: conclusion.rejected.alertMessage,
+      alertMessage: conclusion.rejected.thirdText,
+      expandableHeader: conclusion.rejected.firstText,
+      expandableDescription: conclusion.rejected.secondText,
     }),
   ],
 })

@@ -612,6 +612,9 @@ export class ApplicationService {
           filters.states.length > 0 ? filters.states : filters.defaultStates,
       },
       municipalityCode: { [Op.in]: municipalityCodes },
+      ...(filters?.endDate && {
+        created: { [Op.gte]: filters.endDate, [Op.lte]: filters.startDate },
+      }),
     }
 
     const staffOptions =
@@ -625,12 +628,25 @@ export class ApplicationService {
           }
         : { model: StaffModel, as: 'staff' }
 
-    const results = await this.applicationModel.findAndCountAll({
+    const resultsApplications = await this.applicationModel.findAndCountAll({
       where: whereOptions,
       order: [['modified', 'DESC']],
       include: [staffOptions],
       offset: (filters.page - 1) * applicationPageSize,
       limit: applicationPageSize,
+    })
+
+    const resultsMinDate = await this.applicationModel.findOne({
+      where: {
+        state: {
+          [Op.in]:
+            filters.states.length > 0 ? filters.states : filters.defaultStates,
+        },
+        municipalityCode: { [Op.in]: municipalityCodes },
+      },
+      attributes: ['created'],
+      include: [staffOptions],
+      order: [['created', 'ASC']],
     })
 
     const resultsStaffWithApplications = await this.applicationModel.findAll({
@@ -644,14 +660,19 @@ export class ApplicationService {
       include: [{ model: StaffModel, as: 'staff' }],
     })
 
-    await Promise.all([resultsStaffWithApplications, results])
+    await Promise.all([
+      resultsStaffWithApplications,
+      resultsApplications,
+      resultsMinDate,
+    ])
 
     const staffList = resultsStaffWithApplications.map((row) => row.staff)
     const staffListUniq = [...new Map(staffList.map((v) => [v.id, v])).values()]
 
     return {
-      applications: results.rows,
-      totalCount: results.count,
+      applications: resultsApplications.rows,
+      totalCount: resultsApplications.count,
+      minDateCreated: resultsMinDate?.created,
       staffList: staffListUniq,
     }
   }

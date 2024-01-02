@@ -1,17 +1,12 @@
 import {
-  buildAlertMessageField,
-  buildAsyncSelectField,
   buildCustomField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { MachineDto } from '@island.is/clients/work-machines'
-import { Application } from '@island.is/api/schema'
-import { FormValue } from '@island.is/application/types'
 
 export const pickMachineSubSection = buildSubSection({
   id: 'pickMachine',
@@ -26,7 +21,6 @@ export const pickMachineSubSection = buildSubSection({
           id: 'pickMachine.id',
           title: information.labels.pickMachine.title,
           condition: (_, externalData) => {
-            console.log('formValue', externalData)
             const machines = getValueViaPath(
               externalData,
               'machinesList.data',
@@ -61,7 +55,6 @@ export const pickMachineSubSection = buildSubSection({
         buildCustomField({
           id: 'pickMachine',
           condition: (_, externalData) => {
-            console.log('formValue', externalData)
             const machines = getValueViaPath(
               externalData,
               'machinesList.data',

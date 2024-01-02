@@ -7,7 +7,10 @@ import {
   MachineCategoryApi,
   MachineHateoasDto,
   MachineOwnerChangeApi,
+<<<<<<< HEAD
   MachineSupervisorChangeApi,
+=======
+>>>>>>> main
   MachinesApi,
   MachinesDocumentApi,
   MachinesFriendlyHateaosDto,
@@ -16,11 +19,17 @@ import {
   MachineDto,
   ChangeMachineOwner,
   ConfirmOwnerChange,
+<<<<<<< HEAD
   ChangeMachineSupervisor,
 } from './workMachines.types'
 import {
   apiChangeMachineOwnerToApiRequest,
   apiChangeMachineSupervisorToApiRequest,
+=======
+} from './workMachines.types'
+import {
+  apiChangeMachineOwnerToApiRequest,
+>>>>>>> main
   confirmChangeToApiRequest,
 } from './workMachines.utils'
 import { CustomMachineApi } from './providers'
@@ -33,7 +42,10 @@ export class WorkMachinesClientService {
     private readonly docApi: MachinesDocumentApi,
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
     private readonly machineCategoryApi: MachineCategoryApi,
+<<<<<<< HEAD
     private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
+=======
+>>>>>>> main
   ) {}
 
   private machinesApiWithAuth = (user: User) =>

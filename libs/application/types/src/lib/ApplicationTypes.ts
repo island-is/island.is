@@ -288,8 +288,11 @@ export const ApplicationConfigurations = {
     slug: 'eigendaskipti-taekis',
     translation: 'aosh.tmo.application',
   },
+<<<<<<< HEAD
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     slug: 'umradaskipti-taekja',
     translation: 'aosh-u.application',
   },
+=======
+>>>>>>> main
 }

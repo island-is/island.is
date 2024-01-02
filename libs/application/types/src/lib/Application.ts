@@ -23,8 +23,8 @@ export type Answer =
   | FormValue
 
 export interface FormValue {
-  [key: string]: Answer
 }
+[key: string]: Answer
 
 export type ActionCardTag = 'red' | 'blueberry' | 'blue' | 'purple' | 'mint'
 

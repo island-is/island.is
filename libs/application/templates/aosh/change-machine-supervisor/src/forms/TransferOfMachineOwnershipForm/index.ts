@@ -2,12 +2,8 @@ import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
 import { Logo } from '../../assets/Logo'
-import {
-  buildFormConclusionSection,
-  buildFormPaymentChargeOverviewSection,
-} from '@island.is/application/ui-forms'
-import { conclusion, externalData, payment } from '../../lib/messages'
-import { getChargeItemCodes } from '../../utils'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { conclusion, externalData } from '../../lib/messages'
 
 export const TransferOfMachineOwnershipForm: Form = buildForm({
   id: 'TransferOfMachineOwnershipFormDraft',
@@ -23,13 +19,6 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
       children: [],
     }),
     informationSection,
-    buildFormPaymentChargeOverviewSection({
-      sectionTitle: payment.general.sectionTitle,
-      getSelectedChargeItems: (_) =>
-        getChargeItemCodes().map((x) => ({
-          chargeItemCode: x,
-        })),
-    }),
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,

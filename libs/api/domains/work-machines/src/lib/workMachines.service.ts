@@ -136,11 +136,4 @@ export class WorkMachinesService {
       (await this.machineService.isPaymentRequired(auth, regNumber)) || false
     )
   }
-
-  async changeMachineSupervisor(
-    auth: User,
-    changeSupervisor: ChangeMachineSupervisor,
-  ): Promise<void> {
-    await this.machineService.changeMachineSupervisor(auth, changeSupervisor)
-  }
 }

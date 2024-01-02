@@ -1,14 +1,12 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  CaseListEntry,
-  isDistrictCourtUser,
-} from '@island.is/judicial-system/types'
+import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
@@ -26,7 +24,9 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  useCaseList,
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -36,15 +36,16 @@ import * as styles from '../Table.css'
 
 interface Props {
   cases: CaseListEntry[]
-  onRowClick: (id: string) => void
   loading?: boolean
   testid?: string
 }
 
 const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, onRowClick, loading = false, testid } = props
+  const { cases, loading = false, testid } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
+    useCaseList()
 
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
@@ -52,7 +53,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        b['created'].localeCompare(a['created']),
+        (b['created'] ?? '').localeCompare(a['created'] ?? ''),
       ),
     [cases],
   )
@@ -65,8 +66,9 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <Box marginTop={2} key={theCase.id}>
           <MobilePastCase
             theCase={theCase}
-            onClick={() => onRowClick(theCase.id)}
+            onClick={() => handleOpenCase(theCase.id)}
             isCourtRole={false}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             <DurationDate
               key={`${theCase.id}-duration-date`}
@@ -109,6 +111,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
           </th>
           <TableHeaderText title={formatMessage(tables.state)} />
           <TableHeaderText title={formatMessage(tables.duration)} />
+          <th></th>
         </>
       }
     >
@@ -116,7 +119,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
         return (
           <tr
             className={styles.row}
-            onClick={() => onRowClick(column.id)}
+            onClick={() => handleOpenCase(column.id)}
             key={column.id}
           >
             <td>
@@ -164,6 +167,13 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   column.rulingDate,
                 )}
               </Text>
+            </td>
+            <td className={styles.loadingContainer}>
+              <AnimatePresence>
+                {isOpeningCaseId === column.id && showLoading && (
+                  <LoadingIndicator />
+                )}
+              </AnimatePresence>
             </td>
           </tr>
         )

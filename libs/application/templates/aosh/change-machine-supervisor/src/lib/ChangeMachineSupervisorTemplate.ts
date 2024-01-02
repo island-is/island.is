@@ -8,8 +8,6 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
-  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -31,20 +29,10 @@ import {
   VinnueftirlitidPaymentCatalogApi,
   MachinesApi,
 } from '../dataProviders'
-import { getChargeItemCodes, hasReviewerApproved } from '../utils'
-import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 
-const pruneInDaysAtMidnight = (application: Application, days: number) => {
-  const date = new Date(application.created)
-  date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date.toUTCString())
-  pruneDate.setHours(23, 59, 59)
-  return pruneDate
-}
-
-const determineMessageFromApplicationAnswers = (application: Application) => {
+const determineMessageFromApplicationAnswers = (application: ) => {
   const regNumber = getValueViaPath(
     application.answers,
     'machine.regNumber',
@@ -56,25 +44,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
 }
 
-const reviewStatePendingAction = (
-  application: Application,
-  role: string,
-  nationalId: string,
-): PendingAction => {
-  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
-  }
-}
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -182,116 +151,6 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
-        chargeItemCodes: getChargeItemCodes,
-        submitTarget: States.REVIEW,
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.initReview,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
-      }),
-      [States.REVIEW]: {
-        entry: 'assignUsers',
-        meta: {
-          name: 'Tilkynning um eigendaskipti að ökutæki',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardDraft,
-              variant: 'blue',
-            },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
-              },
-              {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
-              },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationApproved,
-              },
-            ],
-            pendingAction: reviewStatePendingAction,
-          },
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: (application: Application) =>
-              pruneInDaysAtMidnight(application, 7),
-            shouldDeleteChargeIfPaymentFulfilled: true,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/ReviewSeller').then((module) =>
-                  Promise.resolve(module.ReviewSellerForm),
-                ),
-              write: {
-                answers: ['location', 'rejecter'],
-              },
-              read: 'all',
-              delete: true,
-            },
-            {
-              id: Roles.BUYER,
-              formLoader: () =>
-                import('../forms/Review').then((module) =>
-                  Promise.resolve(module.ReviewForm),
-                ),
-              write: {
-                answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
-              },
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.APPROVE]: { target: States.REVIEW },
-          [DefaultEvents.REJECT]: { target: States.REJECTED },
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-        },
-      },
-      [States.REJECTED]: {
-        meta: {
-          name: 'Rejected',
-          status: 'rejected',
-          lifecycle: pruneAfterDays(3 * 30),
-          onEntry: defineTemplateApi({
-            action: ApiActions.rejectApplication,
-          }),
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardRejected,
-              variant: 'red',
-            },
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Rejected').then((val) =>
-                  Promise.resolve(val.Rejected),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.BUYER,
-              formLoader: () =>
-                import('../forms/Rejected').then((module) =>
-                  Promise.resolve(module.Rejected),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-      },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
@@ -313,22 +172,6 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Approved').then((module) =>
-                  Promise.resolve(module.Approved),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.BUYER,
-              formLoader: () =>
-                import('../forms/Approved').then((module) =>
-                  Promise.resolve(module.Approved),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.BUYEROPERATOR,
               formLoader: () =>
                 import('../forms/Approved').then((module) =>
                   Promise.resolve(module.Approved),
