@@ -15,16 +15,16 @@ export class PassportsClient implements LicenseClient<Passport> {
 
   clientSupportsPkPass = false
 
-  async getLicense(user: User): Promise<Result<Passport | null>> {
+  async getLicenses(user: User): Promise<Result<Array<Passport>>> {
     try {
       const licenseInfo = await this.passportService.getCurrentPassport(user)
-      return { ok: true, data: licenseInfo }
+      return { ok: true, data: [licenseInfo] }
     } catch (e) {
       let error
       if (e instanceof FetchError) {
         //404 - no license for user, still ok!
         if (e.status === 404) {
-          return { ok: true, data: null }
+          return { ok: true, data: [] }
         } else {
           error = {
             code: 13,

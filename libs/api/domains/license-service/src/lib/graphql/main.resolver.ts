@@ -23,6 +23,7 @@ import {
   GenericPkPassQrCode,
   GenericPkPassVerification,
   GenericUserLicense,
+  UserLicenseResponse,
 } from './genericLicense.model'
 import {
   GenericLicenseType,
@@ -105,6 +106,23 @@ export class MainResolver {
   @Query(() => GenericUserLicense)
   @Audit()
   async genericLicense(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: GetGenericLicenseInput,
+  ) {
+    const license = await this.licenseServiceService.getLicenses(
+      user,
+      locale,
+      input.licenseType,
+      input.licenseId,
+    )
+    return license
+  }
+
+  @Query(() => UserLicenseResponse)
+  @Audit()
+  async userLicenses(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',

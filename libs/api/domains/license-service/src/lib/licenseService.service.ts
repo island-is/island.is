@@ -9,7 +9,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
 import {
-  GenericUserLicense,
   GenericLicenseTypeType,
   GenericLicenseType,
   GenericUserLicenseFetchStatus,
@@ -30,6 +29,10 @@ import {
   LicenseType,
 } from '@island.is/clients/license-client'
 import { AVAILABLE_LICENSES } from './licenseService.module'
+import {
+  UserLicenseResponse,
+  GenericUserLicense,
+} from './graphql/genericLicense.model'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -113,6 +116,41 @@ export class LicenseServiceService {
     }
   }
 
+  async getUserLicense(
+    user: User,
+    locale: Locale,
+    { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
+  ): Promise<UserLicenseResponse> {
+    const licenses: GenericUserLicense[] = []
+
+    for await (const license of AVAILABLE_LICENSES) {
+      if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
+        continue
+      }
+
+      if (includedTypes && includedTypes.indexOf(license.type) < 0) {
+        continue
+      }
+
+      if (!onlyList) {
+        const genericLicenses = await this.getLicensesOfType(
+          user,
+          locale,
+          license.type,
+        )
+
+        genericLicenses
+          ?.filter(
+            (gl) => gl.license.status === GenericUserLicenseStatus.HasLicense,
+          )
+          .forEach((gl) => licenses.push(gl))
+      }
+    }
+    return {
+      nationalId: user.nationalId,
+      licenses: licenses ?? [],
+    }
+  }
   async getAllLicenses(
     user: User,
     locale: Locale,
