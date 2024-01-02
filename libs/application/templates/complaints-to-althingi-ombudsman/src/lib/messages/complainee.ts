@@ -10,20 +10,20 @@ export const complainee = {
     sectionDescription: {
       id: 'ctao.application:complainee.sectionDescription',
       defaultMessage:
-        'Hlutverk umboðsmanns Alþingis er að hafa eftirlit með stjórnsýslu ríkis og sveitarfélaga. Þess vegna er ekki hægt að kvarta til umboðsmanns yfir Alþingi, dómstólum og einkaaðilum nema í afmörkuðum tilvikum þegar einkaaðilum hefur verið falið opinbert vald til að taka svokallaðar stjórnvaldsákvarðanir. Eitt af skilyrðunum fyrir því að umboðsmaður Alþingis geti tekið kvörtun til meðferðar er æðra stjórnvald hafi fellt úrskurð sinn í málinu eða að kæruleiðir innan stjórnsýslunnar séu að öðru leyti tæmdar.',
+        'Umboðsmaður Alþingis hefur eftirlit með stjórnsýslu ríkis og sveitarfélaga. Það þýðir að hann hefur fyrst og fremst eftirlit með ráðuneytum og ríkisstofnunum, opinberum nefndum, sveitarfélögum, stofnunum sveitarfélaga o.þ.h. Það er hins vegar ekki hægt að kvarta til umboðsmanns yfir störfum Alþingis og stofnana þess eða dómstóla. Það er ekki heldur hægt að kvarta yfir einkaaðilum nema í afmörkuðum tilvikum þegar þeim hefur verið falið opinbert vald til að taka svokallaðar stjórnvaldsákvarðanir. Ef þú telur þig þurfa frekari upplýsingar um starfssvið umboðsmanns er hægt að nálgast þær á www.umbodsmadur.is eða með því að hafa samband við skrifstofu umboðsmanns í síma +354 510 6700.',
       description: 'Complainee section description',
     },
   }),
   labels: defineMessages({
     governmentComplaint: {
       id: `ctao.application:complainee.governmentComplaint`,
-      defaultMessage: 'Kvörtunin beinist að stjórnvaldi',
+      defaultMessage:
+        'Kvörtunin beinist að stjórnvaldi eða starfsmanni stjórnsýslunnar',
       description: 'Government complaint radio label',
     },
     otherComplaint: {
       id: `ctao.application:complainee.otherComplaint`,
-      defaultMessage:
-        'Kvörtunin beinist að öðrum aðila eða starfsmanni stjórnsýslunnar',
+      defaultMessage: 'Kvörtunin beinist að öðrum aðila',
       description: 'Other complaint radio label',
     },
     complaineeNameGovernmentTitle: {
