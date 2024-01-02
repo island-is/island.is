@@ -10,14 +10,14 @@ export function parseDateIfValid(
   }
 
   const placeholderDateSubstring = '0001-01-01T'
-  let isValidDate: boolean
+  let isPlaceholderDate: boolean
   if (date instanceof Date) {
-    isValidDate = !date.toISOString().includes(placeholderDateSubstring)
+    isPlaceholderDate = !date.toISOString().includes(placeholderDateSubstring)
   } else {
-    isValidDate = !date.includes(placeholderDateSubstring)
+    isPlaceholderDate = !date.includes(placeholderDateSubstring)
   }
 
-  if (!isValidDate) {
+  if (!isPlaceholderDate) {
     return undefined
   }
 

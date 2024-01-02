@@ -12,6 +12,11 @@ import { mapTrademarkType, mapTrademarkSubtype, mapFullAddress } from './mapper'
 import { parseDateIfValid } from './models/utils'
 import { Image } from './models/image.model'
 
+const DATE_FORMAT = 'dd.MM.yyyy HH:mm:SS'
+
+const parseTrademarkDate = (date: Date | string | undefined | null) =>
+  parseDateIfValid(date, DATE_FORMAT)
+
 @Injectable()
 export class IntellectualPropertiesService {
   constructor(
@@ -36,7 +41,7 @@ export class IntellectualPropertiesService {
           typeReadable: t.type ?? '',
           subType: mapTrademarkSubtype(t) ?? undefined,
           vmId: t.vmid,
-          applicationDate: parseDateIfValid(t.applicationDate),
+          applicationDate: parseTrademarkDate(t.applicationDate),
         }
       })
       .filter(isDefined)
@@ -49,7 +54,7 @@ export class IntellectualPropertiesService {
     const trademark = await this.ipService.getTrademarkByVmId(user, trademarkId)
 
     const objectionDate = trademark.datePublished
-      ? parseDateIfValid(trademark?.datePublished)
+      ? parseTrademarkDate(trademark?.datePublished)
       : undefined
 
     if (!trademark.vmid) {
@@ -61,6 +66,10 @@ export class IntellectualPropertiesService {
       type === TrademarkType.IMAGE || type === TrademarkType.TEXT_AND_IMAGE
         ? trademark.orginalImagePath
         : trademark.media?.mediaPath
+
+    this.logger.debug(trademark.applicationDate)
+    const l = parseTrademarkDate(trademark.applicationDate)
+    this.logger.debug(l)
 
     return {
       ...trademark,
@@ -111,16 +120,16 @@ export class IntellectualPropertiesService {
           }
         : undefined,
       lifecycle: {
-        applicationDate: parseDateIfValid(trademark.applicationDate),
-        registrationDate: parseDateIfValid(trademark.dateRegistration),
-        unregistrationDate: parseDateIfValid(trademark.dateUnRegistered),
-        internationalRegistrationDate: parseDateIfValid(
+        applicationDate: parseTrademarkDate(trademark.applicationDate),
+        registrationDate: parseTrademarkDate(trademark.dateRegistration),
+        unregistrationDate: parseTrademarkDate(trademark.dateUnRegistered),
+        internationalRegistrationDate: parseTrademarkDate(
           trademark.dateInternationalRegistration,
         ),
-        expiryDate: parseDateIfValid(trademark.dateExpires),
-        renewalDate: parseDateIfValid(trademark.dateRenewed),
-        lastModified: parseDateIfValid(trademark.dateModified),
-        publishDate: parseDateIfValid(trademark.datePublished),
+        expiryDate: parseTrademarkDate(trademark.dateExpires),
+        renewalDate: parseTrademarkDate(trademark.dateRenewed),
+        lastModified: parseTrademarkDate(trademark.dateModified),
+        publishDate: parseTrademarkDate(trademark.datePublished),
         maxValidObjectionDate: objectionDate
           ? addMonths(objectionDate, 2)
           : undefined,
@@ -142,7 +151,7 @@ export class IntellectualPropertiesService {
           applicationNumber: patent.applicationNumber,
           name,
           lifecycle: {
-            applicationDate: parseDateIfValid(patent.applicationDate),
+            applicationDate: parseTrademarkDate(patent.applicationDate),
           },
           statusText: patent.statusText ?? '',
         }
@@ -174,22 +183,22 @@ export class IntellectualPropertiesService {
       classifications: patent.internalClassifications?.map((ic) => ({
         category: ic.category ?? '',
         sequence: ic.sequence ? parseInt(ic.sequence) : undefined,
-        creationDate: parseDateIfValid(ic.createDate),
-        publicationDate: parseDateIfValid(ic.datePublised),
+        creationDate: parseTrademarkDate(ic.createDate),
+        publicationDate: parseTrademarkDate(ic.datePublised),
         type: ic.type ?? '',
       })),
       priorites: patent.priorities?.map((p) => ({
-        applicationDate: parseDateIfValid(p.dateApplication),
+        applicationDate: parseTrademarkDate(p.dateApplication),
         country: {
           code: p.country?.code ?? '',
           name: p.country?.name ?? '',
         },
         number: p.number ?? '',
-        creationDate: parseDateIfValid(p.createDate),
+        creationDate: parseTrademarkDate(p.createDate),
       })),
       pct: {
         number: patent.pct?.pctNumber ?? '',
-        date: parseDateIfValid(patent.pct?.pctDate),
+        date: parseTrademarkDate(patent.pct?.pctDate),
       },
       owner: {
         name: patent.ownerName ?? '',
@@ -240,23 +249,23 @@ export class IntellectualPropertiesService {
         }))
         .filter(isDefined),
       lifecycle: {
-        applicationDate: parseDateIfValid(patent.appDate),
-        registrationDate: parseDateIfValid(patent.regDate),
-        expiryDate: parseDateIfValid(patent.expires),
-        publishDate: parseDateIfValid(
+        applicationDate: parseTrademarkDate(patent.appDate),
+        registrationDate: parseTrademarkDate(patent.regDate),
+        expiryDate: parseTrademarkDate(patent.expires),
+        publishDate: parseTrademarkDate(
           patent.applicationDatePublishedAsAvailable,
         ),
-        maxValidDate: parseDateIfValid(patent.maxValidDate),
-        lastModified: parseDateIfValid(patent.lastModified),
+        maxValidDate: parseTrademarkDate(patent.maxValidDate),
+        lastModified: parseTrademarkDate(patent.lastModified),
       },
-      epApplicationDate: parseDateIfValid(patent.epApplicationDate),
-      epProvisionPublishedInGazette: parseDateIfValid(
+      epApplicationDate: parseTrademarkDate(patent.epApplicationDate),
+      epProvisionPublishedInGazette: parseTrademarkDate(
         patent.epDateProvisionPublishedInGazette,
       ),
-      epTranslationSubmittedDate: parseDateIfValid(
+      epTranslationSubmittedDate: parseTrademarkDate(
         patent.epDateTranslationSubmitted,
       ),
-      epPublishDate: parseDateIfValid(patent.epDatePublication),
+      epPublishDate: parseTrademarkDate(patent.epDatePublication),
       status: patent.status ?? '',
       statusText: patent.statusText ?? '',
     }
@@ -289,25 +298,25 @@ export class IntellectualPropertiesService {
       hId: designId,
       applicationNumber: response.applicationNumber ?? '',
       lifecycle: {
-        applicationDate: parseDateIfValid(response.applicationDate),
-        applicationDateAvailable: parseDateIfValid(
+        applicationDate: parseTrademarkDate(response.applicationDate),
+        applicationDateAvailable: parseTrademarkDate(
           response.applicationDateAvailable,
         ),
-        applicationDatePublishedAsAvailable: parseDateIfValid(
+        applicationDatePublishedAsAvailable: parseTrademarkDate(
           response.applicationDatePublishedAsAvailable,
         ),
-        applicationDeadlineDate: parseDateIfValid(
+        applicationDeadlineDate: parseTrademarkDate(
           response.applicationDeadlineDate,
         ),
-        internationalRegistrationDate: parseDateIfValid(
+        internationalRegistrationDate: parseTrademarkDate(
           response.internationalRegistrationDate,
         ),
-        announcementDate: parseDateIfValid(response.announcementDate),
-        registrationDate: parseDateIfValid(response.registrationDate),
-        publishDate: parseDateIfValid(response.publishDate),
-        createDate: parseDateIfValid(response.createDate),
-        lastModified: parseDateIfValid(response.lastModified),
-        expiryDate: parseDateIfValid(response.validTo),
+        announcementDate: parseTrademarkDate(response.announcementDate),
+        registrationDate: parseTrademarkDate(response.registrationDate),
+        publishDate: parseTrademarkDate(response.publishDate),
+        createDate: parseTrademarkDate(response.createDate),
+        lastModified: parseTrademarkDate(response.lastModified),
+        expiryDate: parseTrademarkDate(response.validTo),
       },
       status: response.status ?? '',
       specification: {
