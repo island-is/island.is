@@ -2,6 +2,7 @@ import { Locale } from 'locale'
 import {
   ApolloClient,
   ApolloQueryResult,
+  DocumentNode,
   NormalizedCacheObject,
 } from '@apollo/client'
 
@@ -62,6 +63,45 @@ export const getBackgroundStyle = (
       ${background.gradientEndColor} 123.07%),
       linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
   return background.backgroundColor ?? ''
+}
+
+export const retriedQueryIfOrganizationSlugRedirect = async (
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+  slug: string | string[] | undefined | null,
+  query: DocumentNode,
+  responseDataKey: keyof Query,
+  input: Record<string, string>,
+) => {
+  const response = await apolloClient.query<
+    Query,
+    { input: Record<string, unknown> }
+  >({
+    query,
+    variables: {
+      input,
+    },
+  })
+
+  if (response?.data?.[responseDataKey]) {
+    return response.data[responseDataKey]
+  }
+
+  if (slug !== 'iceland-health' && slug !== 'icelandic-health-insurance') {
+    return null
+  }
+
+  const retrySlug =
+    slug === 'iceland-health' ? 'icelandic-health-insurance' : 'iceland-health'
+
+  return apolloClient.query({
+    query,
+    variables: {
+      input: {
+        ...input,
+        slug: retrySlug,
+      },
+    },
+  })
 }
 
 /** Since "/en/o/icelandic-health-insurance" should now redirect to "/en/o/iceland-health" we make sure that if the cms is still referencing the old slug we fallback to fetching that data instead */
