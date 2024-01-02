@@ -142,7 +142,7 @@ const Statement = () => {
             </Box>
             <Box
               component="section"
-              marginBottom={isProsecutionUser(user) ? 6 : 10}
+              marginBottom={isProsecutionUser(user) ? 5 : 10}
             >
               <SectionHeading
                 title={formatMessage(strings.uploadStatementCaseFilesTitle)}
@@ -172,7 +172,9 @@ const Statement = () => {
               />
             </Box>
             {isProsecutionUser(user) && (
-              <RequestAppealRulingNotToBePublishedCheckbox />
+              <Box component="section" marginBottom={10}>
+                <RequestAppealRulingNotToBePublishedCheckbox />
+              </Box>
             )}
           </>
         )}

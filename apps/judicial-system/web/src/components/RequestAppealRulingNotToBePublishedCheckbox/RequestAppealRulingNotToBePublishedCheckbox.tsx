@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Checkbox } from '@island.is/island-ui/core'
+import { Checkbox } from '@island.is/island-ui/core'
 
 import { CaseAppealState } from '../../graphql/schema'
 import { setCheckboxAndSendToServer } from '../../utils/formHelper'
@@ -18,34 +18,32 @@ const RequestAppealRulingNotToBePublishedCheckbox: React.FC = () => {
   const { user } = useContext(UserContext)
 
   return (
-    <Box component="section" marginBottom={10}>
-      <BlueBox>
-        <Checkbox
-          label={formatMessage(strings.requestAppealRulingNotToBePublished)}
-          name="requestAppealRulingNotToBePublished"
-          checked={
-            user &&
-            user.role !== undefined &&
-            user.role !== null &&
-            workingCase.requestAppealRulingNotToBePublished?.includes(user.role)
-          }
-          disabled={workingCase.appealState === CaseAppealState.COMPLETED}
-          onChange={() => {
-            if (!user || user.role === undefined || user.role === null) return
+    <BlueBox>
+      <Checkbox
+        label={formatMessage(strings.requestAppealRulingNotToBePublished)}
+        name="requestAppealRulingNotToBePublished"
+        checked={
+          user &&
+          user.role !== undefined &&
+          user.role !== null &&
+          workingCase.requestAppealRulingNotToBePublished?.includes(user.role)
+        }
+        disabled={workingCase.appealState === CaseAppealState.COMPLETED}
+        onChange={() => {
+          if (!user || user.role === undefined || user.role === null) return
 
-            setCheckboxAndSendToServer(
-              'requestAppealRulingNotToBePublished',
-              user.role,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
-          }}
-          large
-          filled
-        />
-      </BlueBox>
-    </Box>
+          setCheckboxAndSendToServer(
+            'requestAppealRulingNotToBePublished',
+            user.role,
+            workingCase,
+            setWorkingCase,
+            updateCase,
+          )
+        }}
+        large
+        filled
+      />
+    </BlueBox>
   )
 }
 

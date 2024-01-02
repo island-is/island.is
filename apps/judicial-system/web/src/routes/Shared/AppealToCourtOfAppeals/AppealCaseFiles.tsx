@@ -111,7 +111,10 @@ const AppealFiles = () => {
             </Text>
           )}
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box
+          component="section"
+          marginBottom={isProsecutionUser(user) ? 5 : 10}
+        >
           <SectionHeading
             title={formatMessage(strings.appealCaseFilesTitle)}
             marginBottom={1}
@@ -142,7 +145,9 @@ const AppealFiles = () => {
           />
         </Box>
         {isProsecutionUser(user) && (
-          <RequestAppealRulingNotToBePublishedCheckbox />
+          <Box component="section" marginBottom={10}>
+            <RequestAppealRulingNotToBePublishedCheckbox />
+          </Box>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>

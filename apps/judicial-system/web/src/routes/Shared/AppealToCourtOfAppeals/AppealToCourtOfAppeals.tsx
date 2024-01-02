@@ -119,7 +119,7 @@ const AppealToCourtOfAppeals = () => {
         </Box>
         <Box
           component="section"
-          marginBottom={isProsecutionUser(user) ? 6 : 10}
+          marginBottom={isProsecutionUser(user) ? 5 : 10}
         >
           <SectionHeading
             title={formatMessage(strings.appealCaseFilesTitle)}
@@ -149,7 +149,9 @@ const AppealToCourtOfAppeals = () => {
           />
         </Box>
         {isProsecutionUser(user) && (
-          <RequestAppealRulingNotToBePublishedCheckbox />
+          <Box component="section" marginBottom={10}>
+            <RequestAppealRulingNotToBePublishedCheckbox />
+          </Box>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>
