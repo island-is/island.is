@@ -138,7 +138,7 @@ export class GenericLicenseFetch {
   updated!: string
 }
 
-@Object('UserLicenseResponse')
+@ObjectType()
 export class UserLicenseResponse {
   @Field({ description: 'National ID of licenses owner' })
   nationalId!: string

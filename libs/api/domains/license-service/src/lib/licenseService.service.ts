@@ -116,7 +116,7 @@ export class LicenseServiceService {
     }
   }
 
-  async getUserLicense(
+  async getUserLicenses(
     user: User,
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
@@ -249,8 +249,15 @@ export class LicenseServiceService {
           title: orgData?.title,
           logo: orgData?.logo?.url,
         },
-        fetch: licenseRes.fetch,
-        payload: lp ?? undefined,
+        fetch: {
+          ...licenseRes.fetch,
+          updated: licenseRes.fetch.updated.toISOString(),
+        },
+        payload:
+          {
+            ...lp,
+            rawData: lp.rawData ?? undefined,
+          } ?? undefined,
       }
     })
 
@@ -265,7 +272,11 @@ export class LicenseServiceService {
             title: orgData?.title,
             logo: orgData?.logo?.url,
           },
-          fetch: licenseRes.fetch,
+          fetch: {
+            ...licenseRes.fetch,
+            updated: licenseRes.fetch.updated.toISOString(),
+          },
+          payload: undefined,
         },
       ]
     )

@@ -82,7 +82,9 @@ export class VerifyPkPassInput {
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
-  @Query(() => [GenericUserLicense])
+  @Query(() => [GenericUserLicense], {
+    deprecationReason: 'Use genericUserLicenses instead',
+  })
   @Audit()
   async genericLicenses(
     @CurrentUser() user: User,
@@ -103,26 +105,9 @@ export class MainResolver {
     return licenses
   }
 
-  @Query(() => GenericUserLicense)
+  @Query(() => GenericUserLicense, { name: 'genericLicense' })
   @Audit()
-  async genericLicense(
-    @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-    @Args('input') input: GetGenericLicenseInput,
-  ) {
-    const license = await this.licenseServiceService.getLicenses(
-      user,
-      locale,
-      input.licenseType,
-      input.licenseId,
-    )
-    return license
-  }
-
-  @Query(() => UserLicenseResponse)
-  @Audit()
-  async userLicenses(
+  async genericUserLicense(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -133,6 +118,25 @@ export class MainResolver {
       locale,
       input.licenseType,
       input.licenseId,
+    )
+    return license
+  }
+
+  @Query(() => UserLicenseResponse)
+  @Audit()
+  async genericUserLicenses(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: GetGenericLicensesInput,
+  ) {
+    const license = await this.licenseServiceService.getUserLicenses(
+      user,
+      locale,
+      {
+        ...input,
+        includedTypes: input?.includedTypes ?? ['DriversLicense'],
+      },
     )
     return license
   }
