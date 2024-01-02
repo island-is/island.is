@@ -24,11 +24,18 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
       children: [],
     }),
     informationSection,
+    // buildFormPaymentChargeOverviewSection({
+    //   sectionTitle: payment.general.sectionTitle,
+    //   getSelectedChargeItems: (_) =>
+    //     getChargeItemCodes().map((x) => ({
+    //       chargeItemCode: x,
+    //     })),
+    // }),
     buildSection({
       id: 'payment',
       title: payment.general.sectionTitle,
       condition: (answers: FormValue, externalData) =>
-        !isPaymentRequiredSubSection(answers, externalData),
+        isPaymentRequiredSubSection(answers, externalData),
       children: [
         buildFormPaymentChargeOverviewSubSection({
           sectionTitle: payment.general.sectionTitle,

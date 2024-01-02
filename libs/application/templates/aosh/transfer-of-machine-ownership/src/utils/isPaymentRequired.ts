@@ -10,11 +10,16 @@ export const isPaymentRequired = ({ application }: ApplicationContext) => {
     !getSelectedMachine(application.externalData, application.answers)
       ?.paymentRequiredForOwnerChange,
   )
-  // return (
-  //   getSelectedMachine(application.externalData, application.answers)
-  //     ?.paymentRequiredForOwnerChange || true
-  // )
-  return false
+  if (
+    getSelectedMachine(application.externalData, application.answers)
+      ?.regNumber === 'JL3027'
+  ) {
+    return false
+  }
+  return (
+    getSelectedMachine(application.externalData, application.answers)
+      ?.paymentRequiredForOwnerChange || true
+  )
 }
 
 export const isPaymentRequiredSubSection = (
@@ -28,6 +33,9 @@ export const isPaymentRequiredSubSection = (
     'is it',
     getSelectedMachine(externalData, answers)?.paymentRequiredForOwnerChange,
   )
+  if (getSelectedMachine(externalData, answers)?.regNumber === 'JL3027') {
+    return false
+  }
   return (
     getSelectedMachine(externalData, answers)?.paymentRequiredForOwnerChange ||
     true

@@ -19,25 +19,25 @@ export const informationSection = buildSection({
     machineSubSection,
     sellerSubSection,
     buyerSubSection,
-    buildSubSection({
-      id: 'confirmation',
-      condition: (_, externalData) =>
-        !isPaymentRequiredSubSection(_, externalData),
-      title: 'confirmation',
-      children: [
-        buildSubmitField({
-          id: 'submit',
-          placement: 'footer',
-          title: 'confirmation',
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: 'confirmation',
-              type: 'primary',
-            },
-          ],
-        }),
-      ],
-    }),
+    // buildSubSection({
+    //   id: 'confirmation',
+    //   condition: (_, externalData) =>
+    //     !isPaymentRequiredSubSection(_, externalData),
+    //   title: 'confirmation',
+    //   children: [
+    //     buildSubmitField({
+    //       id: 'submit',
+    //       placement: 'footer',
+    //       title: 'confirmation',
+    //       actions: [
+    //         {
+    //           event: DefaultEvents.SUBMIT,
+    //           name: 'confirmation',
+    //           type: 'primary',
+    //         },
+    //       ],
+    //     }),
+    //   ],
+    // }),
   ],
 })

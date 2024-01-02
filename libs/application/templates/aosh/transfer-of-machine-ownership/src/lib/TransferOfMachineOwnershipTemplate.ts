@@ -179,6 +179,12 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.initReview,
+              triggerEvent: DefaultEvents.SUBMIT,
+            }),
+          ],
         },
         on: {
           [DefaultEvents.SUBMIT]: [
@@ -188,7 +194,6 @@ const template: ApplicationTemplate<
             },
             {
               target: States.REVIEW,
-              actions: [ApiActions.initReview],
             },
           ],
         },

@@ -1,9 +1,12 @@
 import { join } from 'path'
-import { EmailRecipient, EmailRole } from './types'
+import { EmailRecipient, EmailRole, PaymentData } from './types'
 import { TransferOfMachineOwnershipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments } from '@island.is/application/types'
-import { MachineDto } from '@island.is/clients/work-machines'
+import {
+  ChangeMachineOwner,
+  MachineDto,
+} from '@island.is/clients/work-machines'
 export const getApplicationPruneDateStr = (
   applicationCreated: Date,
 ): string => {
@@ -114,4 +117,29 @@ export const isPaymentRequiredForOwnerChange = (
     machines.find((machine) => machine.id === machineId)
       ?.paymentRequiredForOwnerChange || true
   )
+}
+
+export const createOwnerChangeObject = (
+  application: ApplicationWithAttachments,
+  delegateNationalId: string,
+  answers: TransferOfMachineOwnershipAnswers,
+  isPaymentRequired: boolean,
+  paymentData?: PaymentData,
+): ChangeMachineOwner => {
+  const machineId = answers.machine.id || answers.pickMachine.id
+  if (!machineId) {
+    throw new Error('Ekki er búið að velja vél')
+  }
+
+  return {
+    applicationId: application.id,
+    machineId: machineId,
+    buyerNationalId: answers.buyer.nationalId,
+    sellerNationalId: answers.seller.nationalId,
+    delegateNationalId: delegateNationalId,
+    dateOfOwnerChange: new Date(),
+    paymentId: isPaymentRequired ? paymentData?.id || '' : '',
+    phoneNumber: answers.buyer.phone?.replace(/\+\d{3}/, ''),
+    email: answers.buyer.email,
+  }
 }

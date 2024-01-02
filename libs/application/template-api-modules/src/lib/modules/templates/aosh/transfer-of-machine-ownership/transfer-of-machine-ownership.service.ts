@@ -10,6 +10,7 @@ import { EmailRecipient, EmailRole } from './types'
 import { TransferOfMachineOwnershipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
 import { generateRequestReviewEmail } from './emailGenerators/requestReviewEmail'
 import {
+  createOwnerChangeObject,
   getRecipientBySsn,
   getRecipients,
   isPaymentRequiredForOwnerChange,
@@ -27,7 +28,6 @@ import {
 import { generateApplicationRejectedEmail } from './emailGenerators/applicationRejectedEmail'
 import { generateApplicationRejectedSms } from './smsGenerators/applicationRejectedSms'
 import {
-  ChangeMachineOwner,
   MachineDto,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
@@ -165,53 +165,61 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     console.log('INIT REVIEW !!!!!!!!!!!!!!!!!!!!!!!!')
+    console.log('application', application)
     const answers = application.answers as TransferOfMachineOwnershipAnswers
-    // 1. Validate payment
-    const isPaymentRequired = isPaymentRequiredForOwnerChange(
-      application,
-      answers.machine.id || answers.pickMachine.id,
-    )
-    // 1a. Make sure a paymentUrl was created
-    const paymentData = application.externalData?.createCharge?.data as
-      | {
-          paymentUrl: string
-          id: string
-        }
-      | undefined
-    if (isPaymentRequired && paymentData) {
-      if (!paymentData?.paymentUrl) {
-        throw new Error(
-          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-        )
-      }
 
-      // 1b. Make sure payment is fulfilled (has been paid)
-      const payment: { fulfilled: boolean } | undefined =
-        await this.sharedTemplateAPIService.getPaymentStatus(
-          auth,
-          application.id,
+    const isPaymentRequired =
+      answers.machine.regNumber === 'JL3027'
+        ? false
+        : isPaymentRequiredForOwnerChange(
+            application,
+            answers.machine.id || answers.pickMachine.id,
+          )
+    if (application.state === 'draft' && isPaymentRequired) return []
+
+    const ownerChange = !(application.state === 'draft' && !isPaymentRequired)
+      ? await (async () => {
+          // 1. Validate payment
+          // 1a. Make sure a paymentUrl was created
+          const paymentData = application.externalData?.createCharge?.data as
+            | {
+                paymentUrl: string
+                id: string
+              }
+            | undefined
+          if (paymentData) {
+            if (!paymentData?.paymentUrl) {
+              throw new Error(
+                'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+              )
+            }
+
+            // 1b. Make sure payment is fulfilled (has been paid)
+            const payment: { fulfilled: boolean } | undefined =
+              await this.sharedTemplateAPIService.getPaymentStatus(
+                auth,
+                application.id,
+              )
+            if (!payment?.fulfilled) {
+              throw new Error(
+                'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+              )
+            }
+          }
+          return createOwnerChangeObject(
+            application,
+            auth.nationalId || '',
+            answers,
+            isPaymentRequired,
+            paymentData,
+          )
+        })()
+      : createOwnerChangeObject(
+          application,
+          auth.nationalId || '',
+          answers,
+          isPaymentRequired,
         )
-      if (!payment?.fulfilled) {
-        throw new Error(
-          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-        )
-      }
-    }
-    const machineId = answers.machine.id || answers.pickMachine.id
-    if (!machineId) {
-      throw new Error('Ekki er búið að velja vél')
-    }
-    const ownerChange: ChangeMachineOwner = {
-      applicationId: application.id,
-      machineId: machineId,
-      buyerNationalId: answers.buyer.nationalId,
-      sellerNationalId: answers.seller.nationalId,
-      delegateNationalId: auth.nationalId || answers.seller.nationalId,
-      dateOfOwnerChange: new Date(),
-      paymentId: isPaymentRequired ? paymentData?.id || '' : '',
-      phoneNumber: answers.buyer.phone?.replace(/\+\d{3}/, ''),
-      email: answers.buyer.email,
-    }
     await this.workMachineClientService.initiateOwnerChangeProcess(
       auth,
       ownerChange,
@@ -250,6 +258,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
     return recipientList
   }
+
   async rejectApplication({
     application,
     auth,

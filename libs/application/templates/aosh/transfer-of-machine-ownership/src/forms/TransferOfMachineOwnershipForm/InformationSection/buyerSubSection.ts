@@ -36,6 +36,18 @@ export const buyerSubSection = buildSubSection({
           width: 'half',
           required: true,
         }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: 'confirmation',
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: 'confirmation',
+              type: 'primary',
+            },
+          ],
+        }),
       ],
     }),
   ],
