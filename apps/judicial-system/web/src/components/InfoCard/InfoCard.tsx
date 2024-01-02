@@ -10,11 +10,11 @@ import {
 import * as styles from './InfoCard.css'
 
 interface Defender {
-  name: string
-  defenderNationalId?: string
-  sessionArrangement?: SessionArrangements
-  email?: string
-  phoneNumber?: string
+  name?: string | null
+  defenderNationalId?: string | null
+  sessionArrangement?: SessionArrangements | null
+  email?: string | null
+  phoneNumber?: string | null
 }
 
 interface UniqueDefendersProps {

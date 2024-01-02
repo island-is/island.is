@@ -32,9 +32,9 @@ import {
 import { RequestCourtRecordSignatureMutation } from '../../requestCourtRecordSignature.generated'
 
 function showCustodyNotice(
-  type: CaseType,
-  state: CaseState,
-  decision?: CaseDecision,
+  type?: CaseType | null,
+  state?: CaseState | null,
+  decision?: CaseDecision | null,
 ) {
   return (
     (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
