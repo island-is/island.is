@@ -293,16 +293,10 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   const { organizationPage, organization } =
     await handleOrganizationSlugRedirect(
       apolloClient,
-      query.slug,
+      query,
       locale,
-      {
-        data: responses[0].data.getOrganizationPage,
-        fetchIfMissing: true,
-      },
-      {
-        data: responses[1].data.getOrganization,
-        fetchIfMissing: true,
-      },
+      responses[0].data.getOrganizationPage,
+      responses[1].data.getOrganization,
     )
 
   if (!organizationPage && !organization?.hasALandingPage) {
