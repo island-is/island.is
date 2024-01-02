@@ -35,8 +35,8 @@ import {
 import {
   CONTENTFUL_ENVIRONMENT,
   CONTENTFUL_SPACE,
-  SLUGIFIED,
-  TITLE_SEARCH,
+  SLUGIFIED_POSTFIX,
+  TITLE_SEARCH_POSTFIX,
 } from '../../constants'
 import { useContentTypeData } from '../../hooks/useContentTypeData'
 import { getContentfulEntries, parseContentfulErrorMessage } from '../../utils'
@@ -107,7 +107,7 @@ const ContentImportScreen = () => {
       // There's an option to use a slugified version of a value so we handle that here
       for (let i = 0; i < row.length; i += 1) {
         const field = primitiveFieldMappingState.find((field) => {
-          return field.importFieldName === headCells[i] + SLUGIFIED
+          return field.importFieldName === headCells[i] + SLUGIFIED_POSTFIX
         })
         if (!field?.contentfulField?.data?.id || !row[i]) continue
 
@@ -129,8 +129,9 @@ const ContentImportScreen = () => {
         }
 
         // The file can contain a title of the entry we want to reference
-        if (referenceField.selectedId.includes(TITLE_SEARCH)) {
-          const headCellName = referenceField.selectedId.split(TITLE_SEARCH)[0]
+        if (referenceField.selectedId.includes(TITLE_SEARCH_POSTFIX)) {
+          const headCellName =
+            referenceField.selectedId.split(TITLE_SEARCH_POSTFIX)[0]
           const index = headCells.findIndex((name) => name === headCellName)
 
           if (index >= 0) {

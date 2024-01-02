@@ -12,7 +12,7 @@ import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { sortAlpha } from '@island.is/shared/utils'
 
-import { TITLE_SEARCH } from '../../constants'
+import { TITLE_SEARCH_POSTFIX } from '../../constants'
 import { getContentfulEntries } from '../../utils'
 import { extractContentType, isPrimitiveField } from './utils'
 
@@ -73,7 +73,7 @@ const ReferenceField = ({
       >
         <Select.Option value="">-</Select.Option>
         {headCells?.map((text, i) => (
-          <Select.Option key={i} value={`${text}${TITLE_SEARCH}`}>
+          <Select.Option key={i} value={`${text}${TITLE_SEARCH_POSTFIX}`}>
             Title search for {'"' + text + '"'}
           </Select.Option>
         ))}

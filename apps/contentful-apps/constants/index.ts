@@ -5,5 +5,5 @@ export const MIDEIND_TRANSLATION_API_BASE_URL =
 export const DEFAULT_LOCALE = 'is-IS'
 export const DEV_WEB_BASE_URL = 'https://beta.dev01.devland.is'
 
-export const TITLE_SEARCH = '--title-search'
-export const SLUGIFIED = '--slugified'
+export const TITLE_SEARCH_POSTFIX = '--title-search'
+export const SLUGIFIED_POSTFIX = '--slugified'
