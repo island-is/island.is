@@ -38,14 +38,10 @@ export const mapTrademarkSubtype = (
 }
 
 export const mapFullAddress = (
-  streetAddress?: string | undefined | null,
-  postalCode?: string | undefined | null,
-  city?: string | undefined | null,
+  streetAddress?: string | undefined,
+  postalCode?: string | undefined,
+  city?: string | undefined,
 ) => {
-  if (!postalCode && !streetAddress && !city) {
-    return
-  }
-
   if (!streetAddress && (postalCode || city)) {
     return `${postalCode + ' '}${city}`
   }

@@ -77,7 +77,11 @@ export class IntellectualPropertiesService {
       },
       markOwners: trademark.markOwners?.map((o) => ({
         name: o.name ?? '',
-        addressFull: mapFullAddress(o.address, o.postalCode, o.county),
+        addressFull: mapFullAddress(
+          o.address ?? undefined,
+          o.postalCode ?? undefined,
+          o.county ?? undefined,
+        ),
         address: o.address ?? '',
         postalCode: o.postalCode ?? '',
         county: o.county ?? '',
@@ -96,9 +100,9 @@ export class IntellectualPropertiesService {
         ? {
             name: trademark?.markAgent?.name ?? '',
             addressFull: mapFullAddress(
-              trademark.markAgent.address,
-              trademark.markAgent.postalCode,
-              trademark.markAgent.county,
+              trademark.markAgent.address ?? undefined,
+              trademark.markAgent.postalCode ?? undefined,
+              trademark.markAgent.county ?? undefined,
             ),
             address: trademark.markAgent.address ?? '',
             postalCode: trademark.markAgent.postalCode ?? '',
@@ -190,7 +194,7 @@ export class IntellectualPropertiesService {
       owner: {
         name: patent.ownerName ?? '',
         address: patent.ownerHome ?? '',
-        addressFull: mapFullAddress(patent.ownerHome),
+        addressFull: mapFullAddress(patent.ownerHome ?? undefined),
         country: {
           name: patent.ownerCountry?.name ?? '',
           code: patent.ownerCountry?.code ?? '',
@@ -202,9 +206,9 @@ export class IntellectualPropertiesService {
         name: patent.patentAgent?.name ?? '',
         address: patent.patentAgent?.address ?? '',
         addressFull: mapFullAddress(
-          patent.patentAgent?.address,
-          patent.patentAgent?.postalCode,
-          patent.patentAgent?.city,
+          patent.patentAgent?.address ?? undefined,
+          patent.patentAgent?.postalCode ?? undefined,
+          patent.patentAgent?.city ?? undefined,
         ),
         postalCode: patent.patentAgent?.postalCode ?? '',
         city: patent.patentAgent?.city ?? '',
@@ -220,7 +224,11 @@ export class IntellectualPropertiesService {
         ?.map((i) => ({
           ...i,
           name: i.name ?? '',
-          addressFull: mapFullAddress(i.address, i.postalCode, i.city),
+          addressFull: mapFullAddress(
+            i.address ?? undefined,
+            i.postalCode ?? undefined,
+            i.city ?? undefined,
+          ),
           address: i.address ?? '',
           postalCode: i.postalCode ?? '',
           city: i.city ?? '',
@@ -316,7 +324,11 @@ export class IntellectualPropertiesService {
       })),
       owners: response.owners?.map((o) => ({
         name: o.name ?? '',
-        addressFull: mapFullAddress(o.address, o.postalcode, o.city),
+        addressFull: mapFullAddress(
+          o.address ?? undefined,
+          o.postalcode ?? undefined,
+          o.city ?? undefined,
+        ),
         address: o.address ?? '',
         postalCode: o.postalcode ?? '',
         city: o.city ?? '',
@@ -331,7 +343,11 @@ export class IntellectualPropertiesService {
       })),
       designers: response.designers?.map((d) => ({
         name: d.name ?? '',
-        addressFull: mapFullAddress(d.address, d.postalcode, d.city),
+        addressFull: mapFullAddress(
+          d.address ?? undefined,
+          d.postalcode ?? undefined,
+          d.city ?? undefined,
+        ),
         address: d.address ?? '',
         postalCode: d.postalcode ?? '',
         city: d.city ?? '',
@@ -348,9 +364,9 @@ export class IntellectualPropertiesService {
         name: response?.agent?.name ?? '',
         address: response?.agent?.address ?? '',
         addressFull: mapFullAddress(
-          response?.agent?.address,
-          response?.agent?.postalcode,
-          response?.agent?.city,
+          response?.agent?.address ?? undefined,
+          response?.agent?.postalcode ?? undefined,
+          response?.agent?.city ?? undefined,
         ),
         postalCode: response?.agent?.postalcode ?? '',
         city: response?.agent?.city ?? '',
