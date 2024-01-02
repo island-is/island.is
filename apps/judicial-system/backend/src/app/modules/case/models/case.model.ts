@@ -1171,7 +1171,7 @@ export class Case extends Model {
   appealIsolationToDate?: Date
 
   /**********
-   * Indicates whether the prosecutor requested that the appeals court's ruling should not
+   * Indicates whether someone requested that the appeals court's ruling should not
    * be published immediately.
    **********/
   @Column({
