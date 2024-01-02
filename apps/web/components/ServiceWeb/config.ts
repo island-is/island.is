@@ -27,9 +27,6 @@ export const options: Record<BackgroundVariations, Options> = {
   'icelandic-health-insurance': {
     textMode: 'blueberry',
   },
-  'iceland-health': {
-    textMode: 'blueberry',
-  },
 
   utlendingastofnun: {
     textMode: 'light',

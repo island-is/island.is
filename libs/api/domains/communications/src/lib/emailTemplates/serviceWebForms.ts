@@ -355,8 +355,7 @@ export const getTemplate = (
     }
   } else if (
     input.institutionSlug === 'sjukratryggingar' ||
-    input.institutionSlug === 'icelandic-health-insurance' ||
-    input.institutionSlug === 'iceland-health'
+    input.institutionSlug === 'icelandic-health-insurance'
   ) {
     toAddress =
       sjukratryggingarEmails[categoryId as SjukratryggingarCategories] ??
