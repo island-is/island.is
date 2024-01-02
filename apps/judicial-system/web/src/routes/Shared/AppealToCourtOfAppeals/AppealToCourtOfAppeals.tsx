@@ -117,7 +117,10 @@ const AppealToCourtOfAppeals = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box
+          component="section"
+          marginBottom={isProsecutionUser(user) ? 6 : 10}
+        >
           <SectionHeading
             title={formatMessage(strings.appealCaseFilesTitle)}
             marginBottom={1}
