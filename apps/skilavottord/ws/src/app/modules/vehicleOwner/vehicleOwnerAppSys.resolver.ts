@@ -5,6 +5,7 @@ import { UseGuards } from '@nestjs/common'
 import { CreateOwnerInput } from './dto/createOwner.input'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
+import { logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleOwnerModel)
@@ -16,6 +17,8 @@ export class VehicleOwnerAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateOwnerInput,
   ): Promise<boolean> {
+    logger.debug(`Creating Vehicle Owner ${user.nationalId}`)
+
     const vm = new VehicleOwnerModel()
     vm.nationalId = user.nationalId
     vm.personname = input.name

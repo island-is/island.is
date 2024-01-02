@@ -33,6 +33,8 @@ export class RecyclingRequestAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateRecyclingRequestInput,
   ): Promise<typeof RecyclingRequestResponse> {
+    logger.debug(`Recycling request ${input.permno}`, { permno: input.permno })
+
     if (
       input.requestType === 'pendingRecycle' ||
       input.requestType === 'cancelled'
