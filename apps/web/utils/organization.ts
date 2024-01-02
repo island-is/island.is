@@ -17,6 +17,7 @@ import { linkResolver } from '../hooks'
 import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
 } from '../screens/queries'
 
 // TODO: Perhaps add this functionality to the linkResolver
@@ -75,6 +76,7 @@ export const handleOrganizationSlugRedirect = async (
   organization: {
     data: ApolloQueryResult<Query>['data']['getOrganization']
     fetchIfMissing: boolean
+    fetchServiceWebFields?: boolean
   },
 ) => {
   const icelandicHealthInsuranceSlug = 'icelandic-health-insurance'
@@ -101,7 +103,9 @@ export const handleOrganizationSlugRedirect = async (
         : { data: { getOrganizationPage: organizationPageData } },
       organization.fetchIfMissing
         ? apolloClient.query<Query, QueryGetOrganizationArgs>({
-            query: GET_ORGANIZATION_QUERY,
+            query: organization.fetchServiceWebFields
+              ? GET_SERVICE_WEB_ORGANIZATION
+              : GET_ORGANIZATION_QUERY,
             variables: {
               input: {
                 slug: icelandicHealthInsuranceSlug,

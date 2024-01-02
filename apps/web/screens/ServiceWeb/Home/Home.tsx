@@ -390,6 +390,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     {
       data: responses[0] !== false ? responses[0]?.data?.getOrganization : null,
       fetchIfMissing: true,
+      fetchServiceWebFields: true,
     },
   )
 
