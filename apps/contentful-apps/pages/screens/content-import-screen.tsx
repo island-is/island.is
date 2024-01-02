@@ -19,71 +19,78 @@ import { GridContainer } from '@island.is/island-ui/core'
 
 import {
   ContentTypeSelect,
-  extractContentType,
-  FieldMapping,
-  FieldMappingProps,
   FileDataTable,
   FileInput,
-  getContentfulEntries,
   getTableData,
+  PrimitiveFieldMapping,
+  PrimitiveFieldMappingProps,
   ReferenceFieldMapping,
   ReferenceFieldMappingProps,
   TagSelect,
 } from '../..//components/content-import'
-import { FileData } from '../../components/content-import/utils'
-import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
+import {
+  extractContentType,
+  FileData,
+} from '../../components/content-import/utils'
+import {
+  CONTENTFUL_ENVIRONMENT,
+  CONTENTFUL_SPACE,
+  SLUGIFIED,
+  TITLE_SEARCH,
+} from '../../constants'
 import { useContentTypeData } from '../../hooks/useContentTypeData'
+import { getContentfulEntries, parseContentfulErrorMessage } from '../../utils'
 
 const convertHtmlToContentfulRichText = (html: string) => {
   const markdown = NodeHtmlMarkdown.translate(html || '')
   return richTextFromMarkdown(markdown)
 }
 
-const parseErrorMessage = (error: unknown) => {
-  let errorMessage = ''
-  try {
-    const errorObject = JSON.parse((error as { message: string })?.message)
-      ?.details?.errors?.[0]
-    errorMessage = `${errorObject?.details ?? ''}${
-      errorObject?.value ? ' - value: ' + errorObject.value : ''
-    }`
-  } catch (_) {
-    // Do nothing in case an error occurs during JSON.parse()
-  }
-  return errorMessage
-}
-
 const ContentImportScreen = () => {
-  const [data, setData] = useState<FileData>([])
-  const { headCells, bodyRows } = useMemo(() => getTableData(data), [data])
   const cma = useCMA()
   const sdk = useSDK<PageExtensionSDK>()
+
+  // Rows and columns of the excel file
+  const [fileData, setFileData] = useState<FileData>([])
+  const { headCells, bodyRows } = useMemo(
+    () => getTableData(fileData),
+    [fileData],
+  )
 
   const [selectedContentType, setSelectedContentType] = useState<
     'price' | 'supportQNA'
   >('price')
   const contentTypeData = useContentTypeData(selectedContentType)
   const [selectedTag, setSelectedTag] = useState('')
-  const [fieldMapping, setFieldMapping] = useState<
-    FieldMappingProps['fieldMapping']
+
+  const [primitiveFieldMappingState, setPrimitiveFieldMappingState] = useState<
+    PrimitiveFieldMappingProps['primitiveFieldMappingState']
   >([])
   const [referenceFieldMapping, setReferenceFieldMapping] = useState<
     ReferenceFieldMappingProps['referenceFieldMapping']
   >([])
+
   const [uniqueFieldId, setUniqueFieldId] = useState('')
+
+  // Import progress state
   const [successfulImports, setSuccessfulImports] = useState([])
   const [publishFailedImports, setPublishFailedImports] = useState([])
   const [failedImports, setFailedImports] = useState([])
 
   const importContent = async () => {
+    // Reset progress state
     setSuccessfulImports([])
     setFailedImports([])
     setPublishFailedImports([])
+
+    // Go through each row in the file
     for (let rowIndex = 0; rowIndex < bodyRows.length; rowIndex += 1) {
       const { row } = bodyRows[rowIndex]
       const fields = {}
+
+      // Handle primitive fields
       for (let i = 0; i < row.length; i += 1) {
-        const field = fieldMapping.find((field) => {
+        const field = primitiveFieldMappingState.find((field) => {
           return field.importFieldName === headCells[i]
         })
         if (!field?.contentfulField?.data?.id) continue
@@ -97,10 +104,10 @@ const ContentImportScreen = () => {
         }
       }
 
-      // Handle slugified values
+      // There's an option to use a slugified version of a value so we handle that here
       for (let i = 0; i < row.length; i += 1) {
-        const field = fieldMapping.find((field) => {
-          return field.importFieldName === headCells[i] + '--slugified'
+        const field = primitiveFieldMappingState.find((field) => {
+          return field.importFieldName === headCells[i] + SLUGIFIED
         })
         if (!field?.contentfulField?.data?.id || !row[i]) continue
 
@@ -112,6 +119,7 @@ const ContentImportScreen = () => {
         }
       }
 
+      // Handle reference fields
       for (const referenceField of referenceFieldMapping) {
         if (
           !referenceField?.contentfulField?.data?.id ||
@@ -120,10 +128,9 @@ const ContentImportScreen = () => {
           continue
         }
 
-        // Handle title searches
-        if (referenceField.selectedId.includes('--title-search')) {
-          const headCellName =
-            referenceField.selectedId.split('--title-search')[0]
+        // The file can contain a title of the entry we want to reference
+        if (referenceField.selectedId.includes(TITLE_SEARCH)) {
+          const headCellName = referenceField.selectedId.split(TITLE_SEARCH)[0]
           const index = headCells.findIndex((name) => name === headCellName)
 
           if (index >= 0) {
@@ -160,26 +167,35 @@ const ContentImportScreen = () => {
       }
 
       try {
-        let createdEntry: EntryProps
+        let entry: EntryProps
+        let shouldCreateEntry = true
 
-        const fa = fieldMapping.find(
+        const uniqueFieldImportFieldName = primitiveFieldMappingState.find(
           (f) => uniqueFieldId && f.contentfulField.data.id === uniqueFieldId,
         )?.importFieldName
+        const uniqueFieldRowIndex = headCells.findIndex(
+          (cellName) => cellName === uniqueFieldImportFieldName,
+        )
 
-        const a = headCells.findIndex((b) => b === fa)
-
-        if (uniqueFieldId && a >= 0 && row[a]) {
+        // In case there's a unique field we can match on we'll look to see if an entry already exists
+        // and if so we'll edit that instead of creating a new one
+        if (
+          uniqueFieldId &&
+          uniqueFieldRowIndex >= 0 &&
+          row[uniqueFieldRowIndex]
+        ) {
           const matchedEntries = await cma.entry.getMany({
             environmentId: CONTENTFUL_ENVIRONMENT,
             spaceId: CONTENTFUL_SPACE,
             query: {
               content_type: selectedContentType,
-              [`fields.${uniqueFieldId}`]: row[a],
+              [`fields.${uniqueFieldId}`]: row[uniqueFieldRowIndex],
             },
           })
 
           if (matchedEntries.items.length > 0) {
-            createdEntry = await cma.entry.update(
+            shouldCreateEntry = false // We don't want to create the entry since we found it already exists
+            entry = await cma.entry.update(
               {
                 environmentId: CONTENTFUL_ENVIRONMENT,
                 spaceId: CONTENTFUL_SPACE,
@@ -205,33 +221,11 @@ const ContentImportScreen = () => {
                 },
               },
             )
-          } else {
-            createdEntry = await cma.entry.create(
-              {
-                contentTypeId: selectedContentType,
-                environmentId: CONTENTFUL_ENVIRONMENT,
-                spaceId: CONTENTFUL_SPACE,
-              },
-              {
-                fields,
-                metadata: {
-                  tags: selectedTag
-                    ? [
-                        {
-                          sys: {
-                            type: 'Link',
-                            linkType: 'Tag',
-                            id: selectedTag,
-                          },
-                        },
-                      ]
-                    : [],
-                },
-              },
-            )
           }
-        } else {
-          createdEntry = await cma.entry.create(
+        }
+
+        if (shouldCreateEntry) {
+          entry = await cma.entry.create(
             {
               contentTypeId: selectedContentType,
               environmentId: CONTENTFUL_ENVIRONMENT,
@@ -259,31 +253,27 @@ const ContentImportScreen = () => {
         try {
           await cma.entry.publish(
             {
-              entryId: createdEntry.sys.id,
+              entryId: entry.sys.id,
               environmentId: CONTENTFUL_ENVIRONMENT,
               spaceId: CONTENTFUL_SPACE,
             },
-            createdEntry,
+            entry,
           )
         } catch (error) {
-          const errorMessage = parseErrorMessage(error)
-
+          const errorMessage = parseContentfulErrorMessage(error)
           setPublishFailedImports((prev) => [
             ...prev,
             {
               row,
-              id: createdEntry.sys.id,
+              id: entry.sys.id,
               errorMessage,
             },
           ])
           continue
         }
-        setSuccessfulImports((prev) => [
-          ...prev,
-          { row, id: createdEntry.sys.id },
-        ])
+        setSuccessfulImports((prev) => [...prev, { row, id: entry.sys.id }])
       } catch (error) {
-        const errorMessage = parseErrorMessage(error)
+        const errorMessage = parseContentfulErrorMessage(error)
         setFailedImports((prev) => [...prev, { row, errorMessage }])
         continue
       }
@@ -294,7 +284,7 @@ const ContentImportScreen = () => {
 
   const canImport =
     Boolean(bodyRows?.length) &&
-    fieldMapping.every(
+    primitiveFieldMappingState.every(
       (field) =>
         (field.contentfulField.data.required && field.importFieldName) ||
         !field.contentfulField.data.required,
@@ -319,7 +309,7 @@ const ContentImportScreen = () => {
             alignItems="flex-start"
           >
             <Flex fullWidth justifyContent="space-between">
-              <FileInput setFileData={setData} />
+              <FileInput setFileData={setFileData} />
               <Button
                 variant="primary"
                 onClick={importContent}
@@ -362,16 +352,16 @@ const ContentImportScreen = () => {
               )}
             </Flex>
 
-            {data?.length > 0 && (
-              <FieldMapping
+            {fileData?.length > 0 && (
+              <PrimitiveFieldMapping
                 contentTypeData={contentTypeData}
-                fieldMapping={fieldMapping}
+                primitiveFieldMappingState={primitiveFieldMappingState}
                 headCells={headCells}
-                setFieldMapping={setFieldMapping}
+                setPrimitiveFieldMappingState={setPrimitiveFieldMappingState}
               />
             )}
 
-            {data?.length > 0 && (
+            {fileData?.length > 0 && (
               <ReferenceFieldMapping
                 contentTypeData={contentTypeData}
                 referenceFieldMapping={referenceFieldMapping}
@@ -386,7 +376,7 @@ const ContentImportScreen = () => {
           {successfulImports.length > 0 && (
             <Accordion>
               <Accordion.Item
-                title={`${successfulImports.length}/${bodyRows.length} were imported and published successfully`}
+                title={`✅ ${successfulImports.length}/${bodyRows.length} were imported and published successfully`}
               >
                 <FileDataTable
                   bodyRows={successfulImports}
@@ -398,7 +388,7 @@ const ContentImportScreen = () => {
           {publishFailedImports.length > 0 && (
             <Accordion>
               <Accordion.Item
-                title={`${publishFailedImports.length}/${bodyRows.length} entries were imported but could not
+                title={`⚠️ ${publishFailedImports.length}/${bodyRows.length} entries were imported but could not
               be published`}
               >
                 <FileDataTable
@@ -411,7 +401,7 @@ const ContentImportScreen = () => {
           {failedImports.length > 0 && (
             <Accordion>
               <Accordion.Item
-                title={`${failedImports.length}/${bodyRows.length} entries could not
+                title={`❌ ${failedImports.length}/${bodyRows.length} entries could not
                be imported`}
               >
                 <FileDataTable bodyRows={failedImports} headCells={headCells} />

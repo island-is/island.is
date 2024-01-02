@@ -1,77 +1,20 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
-  CollectionProp,
   ContentFields,
   ContentTypeProps,
-  EntryProps,
   KeyValueMap,
 } from 'contentful-management'
 import capitalize from 'lodash/capitalize'
-import { CMAClient, PageExtensionSDK } from '@contentful/app-sdk'
+import { PageExtensionSDK } from '@contentful/app-sdk'
 import { FormControl, Select } from '@contentful/f36-components'
 import { Stack } from '@contentful/f36-core'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { sortAlpha } from '@island.is/shared/utils'
 
-import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
-import { isReferenceField } from './utils'
-
-export const getContentfulEntries = async (
-  cma: CMAClient,
-  contentType: string,
-  query?: Record<string, string>,
-) => {
-  const items: EntryProps<KeyValueMap>[] = []
-  let response: CollectionProp<EntryProps<KeyValueMap>> | null = null
-
-  let chunkSize = 1000
-
-  while (
-    chunkSize > 0 &&
-    (response === null || items.length < response.total)
-  ) {
-    try {
-      response = await cma.entry.getMany({
-        environmentId: CONTENTFUL_ENVIRONMENT,
-        spaceId: CONTENTFUL_SPACE,
-        query: {
-          content_type: contentType,
-          limit: chunkSize,
-          skip: items.length,
-          ...query,
-        },
-      })
-      for (const item of response.items) {
-        items.push(item)
-      }
-    } catch (error: unknown) {
-      if (
-        ((error as { message?: string })?.message as string)
-          ?.toLowerCase()
-          ?.includes('response size too big')
-      ) {
-        chunkSize = Math.floor(chunkSize / 2)
-      } else {
-        return items
-      }
-    }
-  }
-
-  return items
-}
-
-export const extractContentType = (
-  field: ReferenceFieldMappingProps['referenceFieldMapping'][number],
-) => {
-  let validations = field.contentfulField.data.validations ?? []
-
-  if (validations.length === 0) {
-    validations = field.contentfulField.data.items.validations ?? []
-  }
-
-  return validations.find((v) => v?.linkContentType)?.linkContentType?.[0] ?? ''
-}
+import { TITLE_SEARCH } from '../../constants'
+import { getContentfulEntries } from '../../utils'
+import { extractContentType, isPrimitiveField } from './utils'
 
 const ReferenceField = ({
   field,
@@ -130,7 +73,7 @@ const ReferenceField = ({
       >
         <Select.Option value="">-</Select.Option>
         {headCells?.map((text, i) => (
-          <Select.Option key={i} value={`${text}--title-search`}>
+          <Select.Option key={i} value={`${text}${TITLE_SEARCH}`}>
             Title search for {'"' + text + '"'}
           </Select.Option>
         ))}
@@ -173,7 +116,7 @@ export const ReferenceFieldMapping = ({
     const updatedReferenceFieldMapping = []
 
     for (const field of contentTypeData.fields) {
-      if (!isReferenceField(field)) continue
+      if (isPrimitiveField(field)) continue
 
       updatedReferenceFieldMapping.push({
         contentfulField: {
