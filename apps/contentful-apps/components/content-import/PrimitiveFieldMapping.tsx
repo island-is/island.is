@@ -7,7 +7,7 @@ import {
 import { FormControl, Select, Stack } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
-import { SLUGIFIED } from '../../constants'
+import { SLUGIFIED_POSTFIX } from '../../constants'
 import { isPrimitiveField } from './utils'
 
 export interface PrimitiveFieldMappingProps {
@@ -111,7 +111,7 @@ export const PrimitiveFieldMapping = ({
                     .map((field, i) => (
                       <Select.Option
                         key={i}
-                        value={`${field.importFieldName}${SLUGIFIED}`}
+                        value={`${field.importFieldName}${SLUGIFIED_POSTFIX}`}
                       >
                         Slugified {'"' + field.importFieldName + '"'}
                       </Select.Option>
