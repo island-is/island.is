@@ -5,10 +5,6 @@ import { useRouter } from 'next/router'
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import {
   errors,
   icRequestedHearingArrangements as m,
   titles,
@@ -18,14 +14,16 @@ import {
   FormContext,
   FormFooter,
   Modal,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseState,
+  CaseTransition,
   Institution,
+  NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
@@ -33,10 +31,10 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {

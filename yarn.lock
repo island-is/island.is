@@ -39794,14 +39794,14 @@ __metadata:
   linkType: hard
 
 "msgpackr@npm:^1.5.2":
-  version: 1.9.5
-  resolution: "msgpackr@npm:1.9.5"
+  version: 1.10.1
+  resolution: "msgpackr@npm:1.10.1"
   dependencies:
     msgpackr-extract: ^3.0.2
   dependenciesMeta:
     msgpackr-extract:
       optional: true
-  checksum: 4a9ebbdd61b985aeb47072f65b242e21a65fba90372dc45927d1a9aba2d0f7fbdb84fbe7c2ea224444c58040e2a81f6778582c16ecaf883a471613c3e9aa4bc3
+  checksum: e422d18b01051598b23701eebeb4b9e2c686b9c7826b20f564724837ba2b5cd4af74c91a549eaeaf8186645cc95e8196274a4a19442aa3286ac611b98069c194
   languageName: node
   linkType: hard
 

@@ -4,7 +4,6 @@ import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react'
 
-import { Case, User } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealRulingDecision,
@@ -13,8 +12,10 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
+  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import useSections from './index'
 

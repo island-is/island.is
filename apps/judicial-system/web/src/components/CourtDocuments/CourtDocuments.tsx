@@ -12,15 +12,15 @@ import Select, {
 import { Box, IconDeprecated, Tag, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
+import { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CourtDocument,
   ReactSelectOption,
   TempCase as Case,
 } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useCase } from '../../utils/hooks'
 import Trash from '../Icons/Trash'
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import * as styles from './CourtDocuments.css'

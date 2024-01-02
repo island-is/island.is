@@ -4,22 +4,22 @@ import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { CaseTransition } from '@island.is/judicial-system/types'
 import {
   processing as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CommentsInput,
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseState,
+  CaseTransition,
   Institution,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
