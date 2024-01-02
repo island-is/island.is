@@ -9,7 +9,7 @@ import { IntellectualPropertiesClientService } from '@island.is/clients/intellec
 import { Patent } from './models/patent.model'
 import { Trademark, TrademarkType } from './models/trademark.model'
 import { mapTrademarkType, mapTrademarkSubtype, mapFullAddress } from './mapper'
-import { parseDateIfValid } from './models/utils'
+import { parseDateIfValid } from './utils'
 import { Image } from './models/image.model'
 
 const DATE_FORMAT = 'dd.MM.yyyy HH:mm:SS'
@@ -66,11 +66,6 @@ export class IntellectualPropertiesService {
       type === TrademarkType.IMAGE || type === TrademarkType.TEXT_AND_IMAGE
         ? trademark.orginalImagePath
         : trademark.media?.mediaPath
-
-    this.logger.debug(trademark.applicationDate)
-    const l = parseTrademarkDate(trademark.applicationDate)
-    this.logger.debug(l)
-
     return {
       ...trademark,
       vmId: trademark.vmid,
@@ -87,7 +82,7 @@ export class IntellectualPropertiesService {
       markOwners: trademark.markOwners?.map((o) => ({
         name: o.name ?? '',
         addressFull: mapFullAddress(
-          o.address ?? undefined,
+          undefined,
           o.postalCode ?? undefined,
           o.county ?? undefined,
         ),

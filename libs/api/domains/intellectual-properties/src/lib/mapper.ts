@@ -42,13 +42,26 @@ export const mapFullAddress = (
   postalCode?: string | undefined,
   city?: string | undefined,
 ) => {
-  if (!streetAddress && (postalCode || city)) {
-    return `${postalCode + ' '}${city}`
+  if (!streetAddress && !postalCode && !city) {
+    return undefined
   }
 
-  if (!postalCode && !city) {
-    return streetAddress
+  let address = ''
+
+  if (streetAddress) {
+    address += streetAddress
+
+    if (postalCode || city) {
+      address += ','
+    }
   }
 
-  return `${streetAddress}, ${postalCode + ' '}${city}`
+  if (postalCode) {
+    address += ` ${postalCode}`
+  }
+  if (city) {
+    address += ` ${city}`
+  }
+
+  return address
 }
