@@ -168,3 +168,26 @@ export const mockCase = (caseType: CaseType): Case => {
     defendantWaivesRightToCounsel: false,
   }
 }
+
+export const mockUser = (): User => {
+  return {
+    active: true,
+    created: '',
+    email: '',
+    id: '',
+    mobileNumber: '',
+    modified: '',
+    name: '',
+    nationalId: '',
+    title: '',
+    role: UserRole.PROSECUTOR,
+    institution: {
+      id: '',
+      created: '',
+      modified: '',
+      type: InstitutionType.PROSECUTORS_OFFICE,
+      name: '',
+      active: true,
+    },
+  }
+}

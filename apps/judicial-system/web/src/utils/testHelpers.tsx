@@ -1,8 +1,9 @@
 import React, { ReactNode } from 'react'
 import { IntlProvider } from 'react-intl'
 
-import { FormContext } from '../components'
+import { FormContext, UserContext } from '../components'
 import { TempCase } from '../types'
+import { mockUser } from './mocks'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const IntlProviderWrapper = ({ children }: any) => {
@@ -42,5 +43,17 @@ export const FormContextWrapper = ({
     >
       {children}
     </FormContext.Provider>
+  )
+}
+
+export const UserContextWrapper = ({ children }: { children: ReactNode }) => {
+  return (
+    <UserContext.Provider
+      value={{
+        user: mockUser(),
+      }}
+    >
+      {children}
+    </UserContext.Provider>
   )
 }

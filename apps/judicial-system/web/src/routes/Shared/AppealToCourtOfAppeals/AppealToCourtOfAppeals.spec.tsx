@@ -9,10 +9,14 @@ import {
   CaseType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCase,
+  mockUser,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
+  UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import AppealToCourtOfAppeals from './AppealToCourtOfAppeals'
@@ -35,32 +39,7 @@ describe('AppealToCourtOfAppeals', () => {
         <ApolloProvider
           client={new ApolloClient({ cache: new InMemoryCache() })}
         >
-          <UserContext.Provider
-            value={{
-              user: {
-                // TODO: Create a mockUser, like moclCase
-                // TODO: Move into testHelpers
-                active: true,
-                created: '',
-                email: '',
-                id: '',
-                mobileNumber: '',
-                modified: '',
-                name: '',
-                nationalId: '',
-                title: '',
-                role: UserRole.PROSECUTOR,
-                institution: {
-                  id: '',
-                  created: '',
-                  modified: '',
-                  type: InstitutionType.PROSECUTORS_OFFICE,
-                  name: '',
-                  active: true,
-                },
-              },
-            }}
-          >
+          <UserContextWrapper>
             <FormContextWrapper
               theCase={{
                 ...mockCase(CaseType.CUSTODY),
@@ -71,7 +50,7 @@ describe('AppealToCourtOfAppeals', () => {
             >
               <AppealToCourtOfAppeals />
             </FormContextWrapper>
-          </UserContext.Provider>
+          </UserContextWrapper>
         </ApolloProvider>
       </IntlProviderWrapper>,
     )
