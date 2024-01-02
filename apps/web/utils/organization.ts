@@ -66,28 +66,40 @@ export const getBackgroundStyle = (
 /** Since "/en/o/icelandic-health-insurance" should now redirect to "/en/o/iceland-health" we make sure that if the cms is still referencing the old slug we fallback to fetching that data instead */
 export const handleOrganizationSlugRedirect = async (
   apolloClient: ApolloClient<NormalizedCacheObject>,
-  query: { slug?: string },
+  slug: string | string[] | undefined | null,
   locale: string,
-  organizationPage: ApolloQueryResult<Query>['data']['getOrganizationPage'],
-  organization:
-    | ApolloQueryResult<Query>['data']['getOrganization']
-    | false = false,
+  organizationPage: {
+    data: ApolloQueryResult<Query>['data']['getOrganizationPage']
+    fetchIfMissing: boolean
+  },
+  organization: {
+    data: ApolloQueryResult<Query>['data']['getOrganization']
+    fetchIfMissing: boolean
+  },
 ) => {
   const icelandicHealthInsuranceSlug = 'icelandic-health-insurance'
 
+  let organizationPageData = organizationPage.data
+  let organizationData = organization.data
+
   // Refetch data in case the "iceland-health" slug didn't get a match
-  if (query.slug === 'iceland-health' && !organizationPage && !organization) {
+  if (
+    slug === 'iceland-health' &&
+    (!organizationPage.data || !organization.data)
+  ) {
     const responses = await Promise.all([
-      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-        query: GET_ORGANIZATION_PAGE_QUERY,
-        variables: {
-          input: {
-            slug: icelandicHealthInsuranceSlug,
-            lang: locale as ContentLanguage,
-          },
-        },
-      }),
-      organization !== false
+      organizationPage.fetchIfMissing
+        ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+            query: GET_ORGANIZATION_PAGE_QUERY,
+            variables: {
+              input: {
+                slug: icelandicHealthInsuranceSlug,
+                lang: locale as ContentLanguage,
+              },
+            },
+          })
+        : { data: { getOrganizationPage: organizationPageData } },
+      organization.fetchIfMissing
         ? apolloClient.query<Query, QueryGetOrganizationArgs>({
             query: GET_ORGANIZATION_QUERY,
             variables: {
@@ -97,14 +109,14 @@ export const handleOrganizationSlugRedirect = async (
               },
             },
           })
-        : { data: { getOrganization: null } },
+        : { data: { getOrganization: organizationData } },
     ])
-    organizationPage = responses[0].data.getOrganizationPage
-    organization = responses[1].data.getOrganization
+    organizationPageData = responses[0].data.getOrganizationPage
+    organizationData = responses[1].data.getOrganization
   }
 
   return {
-    organizationPage,
-    organization: organization === false ? null : organization,
+    organizationPage: organizationPageData,
+    organization: organizationData,
   }
 }

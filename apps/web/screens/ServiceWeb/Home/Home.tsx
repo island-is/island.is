@@ -1,26 +1,6 @@
+import { Locale } from 'locale'
 import { useRouter } from 'next/router'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  ContentLanguage,
-  Organization,
-  Query,
-  QueryGetFeaturedSupportQnAsArgs,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationArgs,
-  QueryGetSupportCategoriesInOrganizationArgs,
-  QueryGetSupportQnAsArgs,
-  SupportCategory,
-  QueryGetServiceWebPageArgs,
-} from '@island.is/web/graphql/schema'
-import {
-  GET_FEATURED_SUPPORT_QNAS,
-  GET_NAMESPACE_QUERY,
-  GET_SERVICE_WEB_ORGANIZATION,
-  GET_SERVICE_WEB_PAGE_QUERY,
-  GET_SUPPORT_CATEGORIES,
-  GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
-} from '../../queries'
-import { Screen } from '../../../types'
+
 import {
   Box,
   GridColumn,
@@ -30,29 +10,49 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 import { sortAlpha } from '@island.is/shared/utils'
-
-import { CustomNextError } from '@island.is/web/units/errors'
 import {
   Card,
-  SimpleStackedSlider,
-  ServiceWebWrapper,
   ServiceWebContext,
+  ServiceWebWrapper,
+  SimpleStackedSlider,
   SliceMachine,
 } from '@island.is/web/components'
 import {
-  useNamespace,
+  ContentLanguage,
+  Organization,
+  Query,
+  QueryGetFeaturedSupportQnAsArgs,
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
+  QueryGetServiceWebPageArgs,
+  QueryGetSupportCategoriesInOrganizationArgs,
+  QueryGetSupportQnAsArgs,
+  SupportCategory,
+} from '@island.is/web/graphql/schema'
+import {
   LinkResolverResponse,
   useLinkResolver,
-  LinkType,
+  useNamespace,
 } from '@island.is/web/hooks'
-import ContactBanner from '../ContactBanner/ContactBanner'
-import { getSlugPart } from '../utils'
-import { Locale } from 'locale'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Colors } from '@island.is/island-ui/theme'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { handleOrganizationSlugRedirect } from '@island.is/web/utils/organization'
 
+import { Screen } from '../../../types'
+import {
+  GET_FEATURED_SUPPORT_QNAS,
+  GET_NAMESPACE_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
+  GET_SUPPORT_CATEGORIES,
+  GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
+} from '../../queries'
+import ContactBanner from '../ContactBanner/ContactBanner'
+import { getSlugPart } from '../utils'
 import * as styles from './Home.css'
 
 interface HomeProps {
@@ -315,14 +315,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'en' ? 'digital-iceland' : 'stafraent-island'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 
-  const [
-    organization,
-    namespace,
-    supportCategories,
-    {
-      data: { getServiceWebPage },
-    },
-  ] = await Promise.all([
+  const responses = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_SERVICE_WEB_ORGANIZATION,
@@ -377,10 +370,37 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
-  const popularQuestionCount =
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
-    organization?.data?.getOrganization?.serviceWebPopularQuestionCount
+  const [
+    _,
+    namespace,
+    supportCategories,
+    {
+      data: { getServiceWebPage },
+    },
+  ] = responses
+
+  const { organization } = await handleOrganizationSlugRedirect(
+    apolloClient,
+    slug,
+    locale,
+    {
+      data: null,
+      fetchIfMissing: false,
+    },
+    {
+      data: responses[0] !== false ? responses[0]?.data?.getOrganization : null,
+      fetchIfMissing: true,
+    },
+  )
+
+  if (!organization || !organization?.serviceWebEnabled) {
+    throw new CustomNextError(
+      404,
+      'Service web not active for this organization',
+    )
+  }
+
+  const popularQuestionCount = organization?.serviceWebPopularQuestionCount
   const featuredQNAs = popularQuestionCount
     ? await apolloClient.query<Query, QueryGetFeaturedSupportQnAsArgs>({
         query: GET_FEATURED_SUPPORT_QNAS,
@@ -402,22 +422,13 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   processedCategories = processedCategories.filter(
     (item) => !!item.organization,
   )
-  if (
-    !organization ||
-    !organization?.data?.getOrganization?.serviceWebEnabled
-  ) {
-    throw new CustomNextError(
-      404,
-      'Service web not active for this organization',
-    )
-  }
 
   const organizationNamespace = JSON.parse(
-    organization?.data?.getOrganization?.namespace?.fields ?? '{}',
+    organization?.namespace?.fields ?? '{}',
   )
 
   return {
-    organization: organization?.data?.getOrganization,
+    organization,
     namespace,
     organizationNamespace,
     supportCategories: processedCategories,
