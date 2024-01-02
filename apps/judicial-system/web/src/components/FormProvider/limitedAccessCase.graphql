@@ -118,7 +118,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealRulingDecision
     appealCaseNumber
     appealRulingModifiedHistory
-    requestAppealRulingNotToBePublished
     appealAssistant {
       id
       name
