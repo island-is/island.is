@@ -10,11 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  CaseFileCategory,
-  CaseState,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import {
@@ -24,24 +20,26 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  RestrictionLength,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import RestrictionLength from '@island.is/judicial-system-web/src/components/RestrictionLength/RestrictionLength'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
+  CaseFileCategory,
+  CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useOnceOn,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'

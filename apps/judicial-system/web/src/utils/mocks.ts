@@ -1,9 +1,9 @@
-import { CaseTransition } from '@island.is/judicial-system/types'
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
   CaseAppealState,
   CaseOrigin,
   CaseState,
+  CaseTransition,
   CaseType,
   Gender,
   InstitutionType,

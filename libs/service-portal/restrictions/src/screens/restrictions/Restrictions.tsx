@@ -95,7 +95,7 @@ export default function Restrictions() {
             </Text>
             <Text>{formatMessage(m.restrictionsDevicesDescription)}</Text>
           </Box>
-          {restricted && until && isSimIdp && (
+          {restricted && until && (
             <AlertMessage
               type="info"
               message={
@@ -111,7 +111,7 @@ export default function Restrictions() {
             />
           )}
           {/* if developer wants to try out this feature he has to use real phone number and login with two factor */}
-          {!isSimIdp ? (
+          {!isSimIdp && !restricted ? (
             <AlertMessage
               type="warning"
               message={formatMessage(m.warningElectronicId)}

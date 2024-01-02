@@ -60,7 +60,7 @@ const SelectCourtOfficials = () => {
         user.institution?.id === workingCase.court?.id,
     )
     .map((judge: User) => {
-      return { label: judge.name, value: judge.id, judge }
+      return { label: judge.name ?? '', value: judge.id, judge }
     })
 
   const registrars = (usersData?.users ?? [])
@@ -70,7 +70,7 @@ const SelectCourtOfficials = () => {
         user.institution?.id === workingCase.court?.id,
     )
     .map((registrar: User) => {
-      return { label: registrar.name, value: registrar.id, registrar }
+      return { label: registrar.name ?? '', value: registrar.id, registrar }
     })
 
   const defaultJudge = judges?.find(
