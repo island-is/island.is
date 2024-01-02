@@ -22,17 +22,9 @@ export class SignatureCollectionService {
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
 
-  // async canCreate(nationalId: string): Promise<SignatureCollectionSuccess> {
-  //   return await this.signatureCollectionClientService.canCreate(nationalId)
-  // }
-
   async isOwner(nationalId: string): Promise<SignatureCollectionSuccess> {
     return await this.signatureCollectionClientService.isOwner(nationalId)
   }
-
-  // async canSign(nationalId: string): Promise<SignatureCollectionSuccess> {
-  //   return this.signatureCollectionClientService.canSign(nationalId)
-  // }
 
   async current(): Promise<SignatureCollection> {
     return await this.signatureCollectionClientService.getCurrentCollection()

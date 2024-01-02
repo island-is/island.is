@@ -25,7 +25,6 @@ export const mapReasons = (
         case Requirement.notSigned:
           return ReasonKey.AlreadySigned
         default:
-          console.log('DEFAULT REASON', key)
           return ReasonKey.DeniedByService
       }
     })

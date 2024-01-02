@@ -38,22 +38,6 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.isOwner(user.nationalId)
   }
 
-  // @Query(() => SignatureCollectionSuccess)
-  // @Audit()
-  // async signatureCollectionCanCreate(
-  //   @CurrentUser() user: User,
-  // ): Promise<SignatureCollectionSuccess> {
-  //   return this.signatureCollectionService.canCreate(user.nationalId)
-  // }
-
-  // @Query(() => SignatureCollectionSuccess)
-  // @Audit()
-  // async signatureCollectionCanSign(
-  //   @CurrentUser() user: User,
-  // ): Promise<SignatureCollectionSuccess> {
-  //   return this.signatureCollectionService.canSign(user.nationalId)
-  // }
-
   @Query(() => SignatureCollection)
   @Audit()
   async signatureCollectionCurrent(): Promise<SignatureCollection> {

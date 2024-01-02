@@ -163,7 +163,6 @@ export class SignatureCollectionClientService {
       kennitala: nationalId,
       iD: parseInt(listId),
     })
-    console.log(signature)
     return mapSignature(signature)
   }
 
@@ -291,7 +290,6 @@ export class SignatureCollectionClientService {
       },
     )
     const activeSignature = user.medmaeli?.find((signature) => signature.valid)
-    console.log(activeSignature)
     const ownedLists = user.medmaelalistar
       ? user.medmaelalistar?.map((list) => mapList(list))
       : []
