@@ -37,18 +37,19 @@ export class SignatureListCreationService extends BaseTemplateApiService {
       nationalId: answers.applicant.nationalId.replace('-', ''),
     }
     // Pretend to be doing stuff for a short while
-    const lists = await this.signatureCollectionClientService.createLists({
+    const link = await this.signatureCollectionClientService.createLists({
       collectionId,
       owner,
     })
 
+    // TODO: when template ready connect mail service
     // Use the shared service to send an email using a custom email generator
     // await this.sharedTemplateAPIService.sendEmail(
     //   generateApplicationApprovedEmail,
     //   application,
     // )
 
-    return lists
+    return link
   }
 
   async ownerRequirements({ auth }: TemplateApiModuleActionProps) {

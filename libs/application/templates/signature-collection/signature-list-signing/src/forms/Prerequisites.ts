@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDataProviderItem,
   buildDescriptionField,
   buildExternalDataProvider,
@@ -38,11 +37,6 @@ export const Prerequisites: Form = buildForm({
             buildDescriptionField({
               id: 'introText',
               title: '',
-            }),
-            buildCustomField({
-              id: 'initialQuery',
-              title: '',
-              component: 'InitialQuery',
             }),
           ],
         }),

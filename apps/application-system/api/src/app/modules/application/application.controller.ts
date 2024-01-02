@@ -342,9 +342,8 @@ export class ApplicationController {
     user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const { typeId } = application
+    const { typeId, initialQuery } = application
     const template = await getApplicationTemplateByTypeId(typeId)
-
     if (template === null) {
       throw new BadRequestException(
         `No application template exists for type: ${typeId}`,
@@ -373,7 +372,8 @@ export class ApplicationController {
       | 'status'
       | 'typeId'
     > = {
-      answers: {},
+      answers:
+        template.allowQueryParameters && initialQuery ? { initialQuery } : {},
       applicant: user.nationalId,
       assignees: [],
       applicantActors: user.actor ? [user.actor.nationalId] : [],

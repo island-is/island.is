@@ -18,7 +18,7 @@ export interface List {
 
 export function getLink(id: string): string {
   // TODO: create hash function
-  return `https://island.is/umsoknir/maela-med-lista/?collector=${id}`
+  return `https://island.is/umsoknir/maela-med-lista/?q=${id}`
 }
 
 export function mapList(list: MedmaelalistiDTO): List {

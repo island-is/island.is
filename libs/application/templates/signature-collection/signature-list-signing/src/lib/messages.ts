@@ -98,6 +98,11 @@ export const m = defineMessages({
     defaultMessage: 'TBD: Nafn frambjóðanda',
     description: '',
   },
+  listDateTil: {
+    id: 'slc.application:listDateTil',
+    defaultMessage: 'Lokadagur',
+    description: '',
+  },
   listDescription: {
     id: 'sls.application:listDescritpion',
     defaultMessage:

@@ -61,6 +61,18 @@ export const errorMessages = {
       description: '',
     },
   }),
+  owner: defineMessages({
+    title: {
+      id: 'slc.application:error.owner.title',
+      defaultMessage: 'Þú átt núþegar lista í öllum söfnunarsvæðum',
+      description: '',
+    },
+    summary: {
+      id: 'slc.application:error.owner.title',
+      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      description: '',
+    },
+  }),
   deniedByService: defineMessages({
     title: {
       id: 'slc.application:error.deniedByService.title',

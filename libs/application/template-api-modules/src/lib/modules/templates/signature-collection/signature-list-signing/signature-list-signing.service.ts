@@ -19,7 +19,10 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   }
 
   async signList({ auth, application }: TemplateApiModuleActionProps) {
-    const listId = (application.externalData.getList.data as any).id
+    const listId = application.answers.listId
+      ? (application.answers.listId as string)
+      : (application.externalData.getList.data as any)[0].id
+
     const signature = await this.signatureCollectionClientService.signList(
       listId,
       auth.nationalId,
@@ -31,7 +34,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
     }
   }
 
-  async canSign({ auth, application }: TemplateApiModuleActionProps) {
+  async canSign({ auth }: TemplateApiModuleActionProps) {
     const signee = await this.signatureCollectionClientService.getSignee(
       auth.nationalId,
     )
@@ -56,6 +59,8 @@ export class SignatureListSigningService extends BaseTemplateApiService {
           return errorMessages.active
         case ReasonKey.AlreadySigned:
           return errorMessages.signer
+        case ReasonKey.AlreadyOwner:
+          return errorMessages.owner
         default:
           return errorMessages.deniedByService
       }
@@ -66,12 +71,17 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   async getList({ application }: TemplateApiModuleActionProps) {
     const areaId = (
       (application.externalData.canSign.data as any)?.area as { id: string }
-    ).id
+    )?.id
+    // If canSign failed then area will not be defined but should not thorw an error here since canSign will throw
+    if (!areaId) {
+      return
+    }
     const ownerId = application.answers.initialQuery as string
-    const list = await this.signatureCollectionClientService.getLists({
+    // If initialQuery is notdefined return all list for area
+    const lists = await this.signatureCollectionClientService.getLists({
       nationalId: ownerId,
       areaId,
     })
-    return list[0]
+    return lists
   }
 }

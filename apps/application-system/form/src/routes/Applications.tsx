@@ -62,7 +62,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     | undefined
   >(undefined)
 
-  const queryParam = template?.allowQueryParameters ? query.get('q') : undefined
+  const queryParam = template?.allowQueryParameters ? query.get('q') : null
 
   useApplicationNamespaces(type)
 
@@ -83,9 +83,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        if (slug && queryParam) {
-          navigate(`../${slug}/${createApplication.id}/?q=${queryParam}`)
-        } else if (slug) {
+        if (slug) {
           navigate(`../${slug}/${createApplication.id}`)
         }
       },
@@ -97,6 +95,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       variables: {
         input: {
           typeId: type,
+          initialQuery: queryParam,
         },
       },
     })

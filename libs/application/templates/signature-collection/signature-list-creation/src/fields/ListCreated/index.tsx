@@ -3,20 +3,19 @@ import { useLocale } from '@island.is/localization'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import Illustration from '../../../../assets/Illustration'
+import { FieldBaseProps } from '@island.is/application/types'
+import { FC } from 'react'
 
-export const ListCreated = () => {
+export const ListCreated: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-
+  const link = application.externalData.createLists.data as string
   return (
     <>
       <Box>
         <Text variant="h3" marginBottom={2}>
           {formatMessage(m.shareList)}
         </Text>
-        <CopyLink
-          linkUrl={m.shareListLink.defaultMessage}
-          buttonTitle={formatMessage(m.copyLink)}
-        />
+        <CopyLink linkUrl={link} buttonTitle={formatMessage(m.copyLink)} />
       </Box>
 
       <Box display="flex" justifyContent="center" marginY={5}>
