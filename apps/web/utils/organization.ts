@@ -1,7 +1,6 @@
 import { Locale } from 'locale'
 import {
   ApolloClient,
-  ApolloQueryResult,
   DocumentNode,
   NormalizedCacheObject,
 } from '@apollo/client'
