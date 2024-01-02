@@ -2,17 +2,12 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen } from '@testing-library/react'
 
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
   CaseType,
-  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  mockCase,
-  mockUser,
-} from '@island.is/judicial-system-web/src/utils/mocks'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
@@ -39,7 +34,7 @@ describe('AppealToCourtOfAppeals', () => {
         <ApolloProvider
           client={new ApolloClient({ cache: new InMemoryCache() })}
         >
-          <UserContextWrapper>
+          <UserContextWrapper userRole={UserRole.PROSECUTOR}>
             <FormContextWrapper
               theCase={{
                 ...mockCase(CaseType.CUSTODY),
@@ -56,5 +51,30 @@ describe('AppealToCourtOfAppeals', () => {
     )
 
     expect(screen.getByRole('checkbox')).toBeInTheDocument()
+  })
+
+  it('should not render a checkbox for defenders to request the court of appeal ruling be not published', () => {
+    render(
+      <IntlProviderWrapper>
+        <ApolloProvider
+          client={new ApolloClient({ cache: new InMemoryCache() })}
+        >
+          <UserContextWrapper userRole={UserRole.DEFENDER}>
+            <FormContextWrapper
+              theCase={{
+                ...mockCase(CaseType.CUSTODY),
+                state: CaseState.ACCEPTED,
+                decision: CaseDecision.ACCEPTING,
+                appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+              }}
+            >
+              <AppealToCourtOfAppeals />
+            </FormContextWrapper>
+          </UserContextWrapper>
+        </ApolloProvider>
+      </IntlProviderWrapper>,
+    )
+
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
   })
 })

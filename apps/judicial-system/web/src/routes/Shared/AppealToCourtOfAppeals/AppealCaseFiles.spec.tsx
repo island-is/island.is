@@ -14,7 +14,7 @@ import {
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import Statement from './Statement'
+import AppealCaseFiles from './AppealCaseFiles'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -27,7 +27,7 @@ jest.mock('next/router', () => ({
   },
 }))
 
-describe('Statement', () => {
+describe('AppealCaseFiles', () => {
   it('should render checkbox for prosecutors to request the court of appeal ruling be not published', () => {
     render(
       <IntlProviderWrapper>
@@ -43,7 +43,7 @@ describe('Statement', () => {
                 appealRulingDecision: CaseAppealRulingDecision.CHANGED,
               }}
             >
-              <Statement />
+              <AppealCaseFiles />
             </FormContextWrapper>
           </UserContextWrapper>
         </ApolloProvider>
@@ -68,7 +68,7 @@ describe('Statement', () => {
                 appealRulingDecision: CaseAppealRulingDecision.CHANGED,
               }}
             >
-              <Statement />
+              <AppealCaseFiles />
             </FormContextWrapper>
           </UserContextWrapper>
         </ApolloProvider>

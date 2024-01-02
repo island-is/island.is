@@ -169,7 +169,7 @@ export const mockCase = (caseType: CaseType): Case => {
   }
 }
 
-export const mockUser = (): User => {
+export const mockUser = (userRole: UserRole): User => {
   return {
     active: true,
     created: '',
@@ -180,12 +180,16 @@ export const mockUser = (): User => {
     name: '',
     nationalId: '',
     title: '',
-    role: UserRole.PROSECUTOR,
+    role: userRole,
     institution: {
       id: '',
       created: '',
       modified: '',
-      type: InstitutionType.PROSECUTORS_OFFICE,
+      type:
+        // TODO: Add more institutions if we use more user roles
+        userRole === UserRole.PROSECUTOR
+          ? InstitutionType.PROSECUTORS_OFFICE
+          : InstitutionType.DISTRICT_COURT,
       name: '',
       active: true,
     },

@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import { IntlProvider } from 'react-intl'
 
 import { FormContext, UserContext } from '../components'
+import { UserRole } from '../graphql/schema'
 import { TempCase } from '../types'
 import { mockUser } from './mocks'
 
@@ -46,11 +47,17 @@ export const FormContextWrapper = ({
   )
 }
 
-export const UserContextWrapper = ({ children }: { children: ReactNode }) => {
+export const UserContextWrapper = ({
+  children,
+  userRole,
+}: {
+  children: ReactNode
+  userRole: UserRole
+}) => {
   return (
     <UserContext.Provider
       value={{
-        user: mockUser(),
+        user: mockUser(userRole),
       }}
     >
       {children}
