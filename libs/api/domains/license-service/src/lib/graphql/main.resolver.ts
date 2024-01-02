@@ -105,9 +105,9 @@ export class MainResolver {
     return licenses
   }
 
-  @Query(() => GenericUserLicense, { name: 'genericLicense' })
+  @Query(() => GenericUserLicense)
   @Audit()
-  async genericUserLicense(
+  async genericLicense(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
