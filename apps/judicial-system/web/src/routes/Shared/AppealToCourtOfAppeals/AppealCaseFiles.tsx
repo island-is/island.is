@@ -9,6 +9,7 @@ import {
   CaseAppealDecision,
   CaseFileCategory,
   isDefenceUser,
+  isProsecutionUser,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -140,7 +141,9 @@ const AppealFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        <RequestAppealRulingNotToBePublishedCheckbox />
+        {isProsecutionUser(user) && (
+          <RequestAppealRulingNotToBePublishedCheckbox />
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
