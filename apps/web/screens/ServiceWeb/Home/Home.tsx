@@ -1,26 +1,6 @@
+import { Locale } from 'locale'
 import { useRouter } from 'next/router'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  ContentLanguage,
-  Organization,
-  Query,
-  QueryGetFeaturedSupportQnAsArgs,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationArgs,
-  QueryGetSupportCategoriesInOrganizationArgs,
-  QueryGetSupportQnAsArgs,
-  SupportCategory,
-  QueryGetServiceWebPageArgs,
-} from '@island.is/web/graphql/schema'
-import {
-  GET_FEATURED_SUPPORT_QNAS,
-  GET_NAMESPACE_QUERY,
-  GET_SERVICE_WEB_ORGANIZATION,
-  GET_SERVICE_WEB_PAGE_QUERY,
-  GET_SUPPORT_CATEGORIES,
-  GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
-} from '../../queries'
-import { Screen } from '../../../types'
+
 import {
   Box,
   GridColumn,
@@ -30,29 +10,46 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 import { sortAlpha } from '@island.is/shared/utils'
-
-import { CustomNextError } from '@island.is/web/units/errors'
 import {
   Card,
-  SimpleStackedSlider,
-  ServiceWebWrapper,
   ServiceWebContext,
+  ServiceWebWrapper,
+  SimpleStackedSlider,
   SliceMachine,
 } from '@island.is/web/components'
 import {
-  useNamespace,
+  ContentLanguage,
+  Organization,
+  Query,
+  QueryGetFeaturedSupportQnAsArgs,
+  QueryGetNamespaceArgs,
+  QueryGetSupportQnAsArgs,
+  SupportCategory,
+} from '@island.is/web/graphql/schema'
+import {
   LinkResolverResponse,
   useLinkResolver,
-  LinkType,
+  useNamespace,
 } from '@island.is/web/hooks'
-import ContactBanner from '../ContactBanner/ContactBanner'
-import { getSlugPart } from '../utils'
-import { Locale } from 'locale'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Colors } from '@island.is/island-ui/theme'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { retriedQueryIfOrganizationSlugRedirect } from '@island.is/web/utils/organization'
 
+import { Screen } from '../../../types'
+import {
+  GET_FEATURED_SUPPORT_QNAS,
+  GET_NAMESPACE_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
+  GET_SUPPORT_CATEGORIES,
+  GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
+} from '../../queries'
+import ContactBanner from '../ContactBanner/ContactBanner'
+import { getSlugPart } from '../utils'
 import * as styles from './Home.css'
 
 interface HomeProps {
@@ -324,15 +321,15 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     },
   ] = await Promise.all([
     !!slug &&
-      apolloClient.query<Query, QueryGetOrganizationArgs>({
-        query: GET_SERVICE_WEB_ORGANIZATION,
-        variables: {
-          input: {
-            slug,
-            lang: locale as ContentLanguage,
-          },
+      retriedQueryIfOrganizationSlugRedirect(
+        apolloClient,
+        GET_SERVICE_WEB_ORGANIZATION,
+        'getOrganization',
+        {
+          slug,
+          lang: locale as ContentLanguage,
         },
-      }),
+      ),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -349,15 +346,15 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
           : {},
       ),
     slug
-      ? apolloClient.query<Query, QueryGetSupportCategoriesInOrganizationArgs>({
-          query: GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
-          variables: {
-            input: {
-              lang: locale,
-              slug: slug,
-            },
+      ? retriedQueryIfOrganizationSlugRedirect(
+          apolloClient,
+          GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
+          'getSupportCategoriesInOrganization',
+          {
+            slug,
+            lang: locale as ContentLanguage,
           },
-        })
+        )
       : apolloClient.query<Query, QueryGetSupportQnAsArgs>({
           query: GET_SUPPORT_CATEGORIES,
           variables: {
@@ -366,15 +363,15 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
             },
           },
         }),
-    apolloClient.query<Query, QueryGetServiceWebPageArgs>({
-      query: GET_SERVICE_WEB_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: slug,
-          lang: locale as ContentLanguage,
-        },
+    retriedQueryIfOrganizationSlugRedirect(
+      apolloClient,
+      GET_SERVICE_WEB_PAGE_QUERY,
+      'getServiceWebPage',
+      {
+        slug,
+        lang: locale as ContentLanguage,
       },
-    }),
+    ),
   ])
 
   const popularQuestionCount =

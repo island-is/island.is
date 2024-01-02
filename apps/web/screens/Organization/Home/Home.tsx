@@ -20,12 +20,12 @@ import {
   ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { retriedQueryIfOrganizationSlugRedirect } from '@island.is/web/utils/organization'
 
 import { Screen } from '../../../types'
 import {
@@ -260,24 +260,24 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
+    retriedQueryIfOrganizationSlugRedirect(
+      apolloClient,
+      GET_ORGANIZATION_PAGE_QUERY,
+      'getOrganizationPage',
+      {
+        slug: query.slug as string,
+        lang: locale as ContentLanguage,
       },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
+    ),
+    retriedQueryIfOrganizationSlugRedirect(
+      apolloClient,
+      GET_ORGANIZATION_QUERY,
+      'getOrganization',
+      {
+        slug: query.slug as string,
+        lang: locale as ContentLanguage,
       },
-    }),
+    ),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,

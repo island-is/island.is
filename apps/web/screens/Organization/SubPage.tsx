@@ -29,7 +29,6 @@ import {
   ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
   QueryGetOrganizationSubpageArgs,
   Slice,
 } from '@island.is/web/graphql/schema'
@@ -40,6 +39,7 @@ import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { retriedQueryIfOrganizationSlugRedirect } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
@@ -357,15 +357,15 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: slug as string,
-          lang: locale as ContentLanguage,
-        },
+    retriedQueryIfOrganizationSlugRedirect(
+      apolloClient,
+      GET_ORGANIZATION_PAGE_QUERY,
+      'getOrganizationPage',
+      {
+        slug: slug as string,
+        lang: locale as ContentLanguage,
       },
-    }),
+    ),
     apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {

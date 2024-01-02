@@ -1,6 +1,8 @@
 import { Locale } from 'locale'
+import isEmpty from 'lodash/isEmpty'
 import {
   ApolloClient,
+  ApolloQueryResult,
   DocumentNode,
   NormalizedCacheObject,
 } from '@apollo/client'
@@ -55,11 +57,10 @@ export const getBackgroundStyle = (
 /** Since "/en/o/icelandic-health-insurance" should now redirect to "/en/o/iceland-health" we make sure that if the cms is still referencing the old slug we fallback to fetching that data instead */
 export const retriedQueryIfOrganizationSlugRedirect = async (
   apolloClient: ApolloClient<NormalizedCacheObject>,
-  slug: string | string[] | undefined | null,
   query: DocumentNode,
   responseDataKey: keyof Query,
   input: Record<string, string>,
-) => {
+): Promise<ApolloQueryResult<Query>> => {
   const response = await apolloClient.query<
     Query,
     { input: Record<string, unknown> }
@@ -70,16 +71,18 @@ export const retriedQueryIfOrganizationSlugRedirect = async (
     },
   })
 
-  if (response?.data?.[responseDataKey]) {
-    return response.data[responseDataKey]
-  }
-
-  if (slug !== 'iceland-health' && slug !== 'icelandic-health-insurance') {
-    return null
+  if (
+    !isEmpty(response?.data?.[responseDataKey]) ||
+    (input?.slug !== 'iceland-health' &&
+      input?.slug !== 'icelandic-health-insurance')
+  ) {
+    return response
   }
 
   const retrySlug =
-    slug === 'iceland-health' ? 'icelandic-health-insurance' : 'iceland-health'
+    input.slug === 'iceland-health'
+      ? 'icelandic-health-insurance'
+      : 'iceland-health'
 
   return apolloClient.query({
     query,
