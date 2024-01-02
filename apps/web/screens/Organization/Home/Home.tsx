@@ -26,6 +26,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { handleOrganizationSlugRedirect } from '@island.is/web/utils/organization'
 
 import { Screen } from '../../../types'
 import {
@@ -251,15 +252,7 @@ const Home: Screen<HomeProps> = ({
 }
 
 Home.getProps = async ({ apolloClient, locale, query }) => {
-  const [
-    {
-      data: { getOrganizationPage },
-    },
-    {
-      data: { getOrganization },
-    },
-    namespace,
-  ] = await Promise.all([
+  const responses = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -295,18 +288,29 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
       ),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  const namespace = responses[2]
+
+  const { organizationPage, organization } =
+    await handleOrganizationSlugRedirect(
+      apolloClient,
+      query,
+      locale,
+      responses[0].data.getOrganizationPage,
+      responses[1].data.getOrganization,
+    )
+
+  if (!organizationPage && !organization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
   return {
-    organizationPage: getOrganizationPage,
-    organization: getOrganization,
+    organizationPage,
+    organization,
     namespace,
     showSearchInHeader: false,
     ...getThemeConfig(
-      getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
+      organizationPage?.theme ?? 'landing_page',
+      organization ?? organizationPage?.organization,
     ),
   }
 }

@@ -1,48 +1,51 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
+
 import {
-  Text,
-  NavigationItem,
-  LinkCard,
-  FocusableBox,
-  Stack,
   Box,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
-  Select,
-  Input,
   Inline,
+  Input,
+  LinkCard,
+  NavigationItem,
+  Select,
+  Stack,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
+  getThemeConfig,
+  OrganizationWrapper,
+  Webreader,
+} from '@island.is/web/components'
+import {
+  Article,
   ContentLanguage,
   Query,
   QueryGetArticlesArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   SortField,
-  Article,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { hasProcessEntries } from '@island.is/web/utils/article'
+import { handleOrganizationSlugRedirect } from '@island.is/web/utils/organization'
+
+import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SERVICES_QUERY,
 } from '../queries'
-import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import {
-  getThemeConfig,
-  OrganizationWrapper,
-  Webreader,
-} from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { hasProcessEntries } from '@island.is/web/utils/article'
 
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -288,12 +291,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 }
 
 ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
-  const [
-    {
-      data: { getOrganizationPage },
-    },
-    namespace,
-  ] = await Promise.all([
+  const responses = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -319,6 +317,16 @@ ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
           : {},
       ),
   ])
+
+  const namespace = responses[1]
+
+  const { organizationPage: getOrganizationPage } =
+    await handleOrganizationSlugRedirect(
+      apolloClient,
+      query,
+      locale,
+      responses[0].data.getOrganizationPage,
+    )
 
   const {
     data: { getArticles },

@@ -40,6 +40,7 @@ import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { handleOrganizationSlugRedirect } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
@@ -348,15 +349,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
   const pathname = safelyExtractPathnameFromUrl(req.url)
 
   const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
-  const [
-    {
-      data: { getOrganizationPage },
-    },
-    {
-      data: { getOrganizationSubpage },
-    },
-    namespace,
-  ] = await Promise.all([
+  const responses = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -393,9 +386,22 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
       ),
   ])
 
+  const {
+    data: { getOrganizationSubpage },
+  } = responses[1]
+  const namespace = responses[2]
+
   if (!getOrganizationSubpage) {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
+
+  const { organizationPage: getOrganizationPage } =
+    await handleOrganizationSlugRedirect(
+      apolloClient,
+      query,
+      locale,
+      responses[0].data.getOrganizationPage,
+    )
 
   if (!getOrganizationPage) {
     throw new CustomNextError(
