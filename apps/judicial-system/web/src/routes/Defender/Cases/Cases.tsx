@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
-import { completedCaseStates } from '@island.is/judicial-system/types'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   PageHeader,
@@ -44,7 +44,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       return [[], []]
     }
 
-    return partition(cases, (c) => !completedCaseStates.includes(c.state))
+    return partition(cases, (c) => !isCompletedCase(c.state))
   }, [cases])
 
   const {

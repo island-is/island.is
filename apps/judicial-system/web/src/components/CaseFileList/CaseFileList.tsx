@@ -9,24 +9,23 @@ import {
   UploadedFile,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import { FileNotFoundModal } from '@island.is/judicial-system-web/src/components'
 import type {
-  CaseFile,
   CaseFileStatus,
+  CaseFileWithStatus,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   caseId: string
-  files: TCaseFile[]
+  files: CaseFileWithStatus[]
   hideIcons?: boolean
   canOpenFiles?: boolean
   handleRetryClick?: (id: string) => void
 }
 
-const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
+const getBackgroundColor = (status?: CaseFileStatus): StatusColor => {
   if (status === 'broken') {
     return { background: 'dark100', border: 'dark200' }
   }
@@ -48,18 +47,16 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
   })
   const { formatMessage } = useIntl()
 
-  const xFiles = [...files] as CaseFile[]
-
-  if (xFiles.length <= 0) {
+  if (files.length === 0) {
     return <Text>{formatMessage(m.noFilesFound)}</Text>
   }
 
   return (
     <>
-      {xFiles.map((file, index) => (
+      {files.map((file, index) => (
         <Box
           marginBottom={
-            index === xFiles.length - 1 ||
+            index === files.length - 1 ||
             file.status === 'case-not-found' ||
             file.status === 'unsupported'
               ? 0
@@ -78,7 +75,7 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     : file.status === 'done-broken'
                     ? 'done'
                     : file.status,
-              } as TCaseFile
+              } as UploadFile
             }
             showFileSize={true}
             defaultBackgroundColor={getBackgroundColor(file.status)}

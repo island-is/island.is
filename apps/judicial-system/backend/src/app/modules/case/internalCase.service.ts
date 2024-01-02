@@ -17,7 +17,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { caseTypes } from '@island.is/judicial-system/formatters'
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -25,7 +25,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  completedCaseStates,
+  isCompletedCase,
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
@@ -249,7 +249,7 @@ export class InternalCaseService {
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.request, {
-          caseType: caseTypes[theCase.type],
+          caseType: formatCaseType(theCase.type),
           date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
         })
 
@@ -283,7 +283,7 @@ export class InternalCaseService {
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
-    if (completedCaseStates.includes(theCase.state)) {
+    if (isCompletedCase(theCase.state)) {
       try {
         return await this.awsS3Service.getObject(
           `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
@@ -345,9 +345,9 @@ export class InternalCaseService {
 
     await this.awsS3Service
       .putObject(
-        `indictments/${
-          completedCaseStates.includes(theCase.state) ? 'completed/' : ''
-        }${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        `indictments/${isCompletedCase(theCase.state) ? 'completed/' : ''}${
+          theCase.id
+        }/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString('binary'),
       )
       .catch((reason) => {

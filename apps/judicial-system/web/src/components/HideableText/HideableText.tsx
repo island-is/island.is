@@ -8,7 +8,7 @@ import * as styles from './HideableText.css'
 interface Props {
   text: string
   onToggleVisibility: (isVisible: boolean) => void
-  isHidden?: boolean
+  isHidden?: boolean | null
   tooltip?: string
 }
 
@@ -42,7 +42,10 @@ const HideableText: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   return (
     <div className={styles.hideableTextContainer}>
-      <Text strikethrough={isHidden} color={isHidden ? 'dark300' : 'dark400'}>
+      <Text
+        strikethrough={Boolean(isHidden)}
+        color={isHidden ? 'dark300' : 'dark400'}
+      >
         {text}
       </Text>
       {tooltip ? (

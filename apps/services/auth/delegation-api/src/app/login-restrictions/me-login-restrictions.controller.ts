@@ -16,12 +16,15 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
+
+const namespace = '@island.is/auth/delegation-api/me/login-restrictions'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal)
@@ -31,9 +34,11 @@ import { Documentation } from '@island.is/nest/swagger'
   path: 'me/login-restrictions',
   version: ['1'],
 })
+@Audit({ namespace })
 export class MeLoginRestrictionsController {
   constructor(
     private readonly loginRestrictionsService: LoginRestrictionsService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Get()
@@ -43,6 +48,9 @@ export class MeLoginRestrictionsController {
       status: 200,
       type: LoginRestrictionsPaginatedDto,
     },
+  })
+  @Audit<LoginRestrictionsPaginatedDto>({
+    resources: (result) => result.data.map((r) => r.phoneNumber),
   })
   async findAll(
     @CurrentUser() user: User,
@@ -69,7 +77,18 @@ export class MeLoginRestrictionsController {
     @CurrentUser() user: User,
     @Body() input: CreateLoginRestrictionDto,
   ): Promise<LoginRestrictionDto> {
-    return this.loginRestrictionsService.create(user, input)
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'create',
+        resources: user.audkenniSimNumber,
+        meta: {
+          until: input.until,
+        },
+      },
+      this.loginRestrictionsService.create(user, input),
+    )
   }
 
   @Delete()
@@ -80,6 +99,14 @@ export class MeLoginRestrictionsController {
     },
   })
   delete(@CurrentUser() user: User): Promise<void> {
-    return this.loginRestrictionsService.delete(user)
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'delete',
+        resources: user.audkenniSimNumber,
+      },
+      this.loginRestrictionsService.delete(user),
+    )
   }
 }
