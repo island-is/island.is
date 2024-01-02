@@ -835,6 +835,9 @@ export interface IEmbeddedVideoFields {
 
   /** url */
   url: string
+
+  /** Thumbnail Image */
+  thumbnailImage: Asset
 }
 
 /** YouTube or Vimeo */
@@ -2126,6 +2129,18 @@ export interface IManualFields {
 
   /** Chapters */
   chapters: IManualChapter[]
+
+  /** Category */
+  category?: IArticleCategory | undefined
+
+  /** Group */
+  group?: IArticleGroup | undefined
+
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface IManual extends Entry<IManualFields> {
@@ -2817,6 +2832,7 @@ export interface IOrganizationPageFields {
     | 'hms'
     | 'rikissaksoknari'
     | 'vinnueftirlitid'
+    | 'hljodbokasafn-islands'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2877,6 +2893,8 @@ export interface IOrganizationSubpageFields {
         | ITellUsAStory
         | ITwoColumnText
         | IAnchorPageList
+        | ISectionWithVideo
+        | ISectionHeading
       )[]
     | undefined
 
@@ -3130,6 +3148,7 @@ export interface IProjectPageFields {
     | 'gagnasidur-fiskistofu'
     | 'directorate-of-health'
     | 'grindavik'
+    | 'default-v2'
 
   /** Sidebar */
   sidebar: boolean
@@ -3526,6 +3545,9 @@ export interface ISliceConnectedComponentFields {
     | 'HousingBenefitCalculator'
     | 'PublicShipSearch'
     | 'Meistaraleyfi/MasterLicences'
+    | 'Vinnueftirlitid/Namskeid'
+    | 'Meðmælalistar/SignatureLists'
+    | 'KilometerFee'
     | undefined
 
   /** Localized JSON */

@@ -649,6 +649,11 @@ const Auctions: Screen<AuctionsProps> = ({
       // @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageFeaturedImage={
+        subpage?.featuredImage ?? organizationPage?.featuredImage
+      }
       breadcrumbItems={[
         {
           title: 'Ísland.is',

@@ -52,6 +52,8 @@ export const AdditionalEstateMember = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
+  const selectedEstate = application.answers.selectedEstate
+
   const foreignCitizenship = useWatch({
     name: foreignCitizenshipField,
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
@@ -131,7 +133,13 @@ export const AdditionalEstateMember = ({
       ) : (
         <Box paddingY={2}>
           <LookupPerson
-            field={{ id: fieldIndex, props: { alertWhenUnder18: true } }}
+            field={{
+              id: fieldIndex,
+              props: {
+                alertWhenUnder18:
+                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+              },
+            }}
             error={error}
           />
         </Box>

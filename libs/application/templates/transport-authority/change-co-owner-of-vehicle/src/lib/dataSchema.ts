@@ -93,6 +93,31 @@ export const ChangeCoOwnerOfVehicleSchema = z.object({
     type: z.string().optional(),
     color: z.string().optional(),
   }),
+  vehicleMileage: z
+    .object({
+      isRequired: z.boolean().optional(),
+      value: z.string().optional(),
+    })
+    .refine(
+      (x) => {
+        if (x.isRequired) {
+          return (
+            x.value !== undefined &&
+            x.value !== '' &&
+            parseInt(x.value?.split(' ')[0]) > 0
+          )
+        } else {
+          return (
+            x.value === undefined ||
+            x.value === '' ||
+            parseInt(x.value?.split(' ')[0]) >= 0
+          )
+        }
+      },
+      {
+        path: ['value'],
+      },
+    ),
   owner: UserInformationSchema,
   ownerCoOwners: z.array(OwnerCoOwnersSchema),
   coOwners: z.array(CoOwnersSchema),

@@ -14,6 +14,60 @@ export const m = defineMessages({
     defaultMessage: 'Í gildi',
   },
 
+  transactionsLabel: {
+    id: 'sp.finance:finance-transactions-label',
+    defaultMessage: 'Veldu gjaldflokk',
+  },
+
+  transactionsYear: {
+    id: 'sp.finance:finance-transactions-year',
+    defaultMessage: 'Ár',
+  },
+
+  feeCategory: {
+    id: 'sp.finance:fee-category',
+    defaultMessage: 'Gjaldflokkur / stofnun',
+  },
+
+  chargeType: {
+    id: 'sp.finance:charge-type',
+    defaultMessage: 'Gjaldflokkur',
+  },
+
+  feeBase: {
+    id: 'sp.finance:fee-base',
+    defaultMessage: 'Gjaldgrunnur',
+  },
+  feeBasePlural: {
+    id: 'sp.finance:fee-base-plural',
+    defaultMessage: 'Gjaldgrunnar',
+  },
+  feeBasePlaceholder: {
+    id: 'sp.finance:fee-base-placeholder',
+    defaultMessage: 'Veldu gjaldgrunna',
+  },
+  feeBaseDescription: {
+    id: 'sp.finance:fee-category-description',
+    defaultMessage: 'Skýring á gjaldgrunni',
+  },
+  combinedStatus: {
+    id: 'sp.finance:fee-combined-status',
+    defaultMessage: 'Uppsöfnuð staða',
+  },
+
+  selectedPeriods: {
+    id: 'sp.finance:selected-periods',
+    defaultMessage: 'Valin tímabil',
+  },
+  displaySelectedPeriods: {
+    id: 'sp.finance:display-selected-periods',
+    defaultMessage: 'Birta valin tímabil',
+  },
+  lastMovement: {
+    id: 'sp.finance:last-movement',
+    defaultMessage: 'Síðasta hreyfing',
+  },
+
   download: {
     id: 'sp.finance-loans:download',
     defaultMessage: 'Hlaða niður',
@@ -104,7 +158,7 @@ export const m = defineMessages({
     defaultMessage: 'Fjöldi gjalddaga eftir',
   },
   loanOwner: {
-    id: 'sp.finance-loans:number-of-payment-dates-remaining',
+    id: 'sp.finance-loans:loan-owner',
     defaultMessage: 'Lántakandi',
   },
 
@@ -184,5 +238,9 @@ export const m = defineMessages({
   propertyId: {
     id: 'sp.finance-loans:property-id',
     defaultMessage: 'Fastanúmer',
+  },
+  noResultMessage: {
+    id: 'sp.finance-loans:no-result-message',
+    defaultMessage: 'Engar lánafærslur fundust innan þessa skilyrða',
   },
 })
