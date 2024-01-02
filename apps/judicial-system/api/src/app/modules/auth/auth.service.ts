@@ -182,8 +182,4 @@ export class AuthService {
       }),
     })
   }
-
-  validateUser(user: User): boolean {
-    return user.active
-  }
 }

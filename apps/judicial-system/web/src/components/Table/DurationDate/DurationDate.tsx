@@ -7,13 +7,13 @@ import { tables } from '@island.is/judicial-system-web/messages'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export function getDurationDate(
-  state: CaseState,
+  state?: CaseState | null,
   validToDate?: string | null,
   initialRulingDate?: string | null,
   rulingDate?: string | null,
 ): string | null {
   if (
-    [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
+    (state && [CaseState.REJECTED, CaseState.DISMISSED].includes(state)) ||
     !validToDate
   ) {
     return null

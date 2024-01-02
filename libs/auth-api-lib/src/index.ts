@@ -17,6 +17,14 @@ export * from './lib/idp-provider/idp-provider.service'
 export * from './lib/idp-provider/models/idp-provider.model'
 export * from './lib/idp-provider/dto/idp-provider.dto'
 
+// Login Restrictions module
+export * from './lib/login-restrictions/login-restrictions.module'
+export * from './lib/login-restrictions/login-restrictions.service'
+export * from './lib/login-restrictions/login-restriction.model'
+export * from './lib/login-restrictions/dto/create-login-restriction.dto'
+export * from './lib/login-restrictions/dto/login-restriction.dto'
+export * from './lib/login-restrictions/dto/login-restrictions-paginated.dto'
+
 // Delegation module
 export * from './lib/delegations/delegations.module'
 export * from './lib/delegations/delegations.service'

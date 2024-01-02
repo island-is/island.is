@@ -10,7 +10,7 @@ import {
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {
-  type: CaseType
+  type?: CaseType | null
   decision?: CaseDecision | null
   parentCaseId?: string | null
 }
