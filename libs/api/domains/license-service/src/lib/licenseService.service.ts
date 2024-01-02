@@ -30,7 +30,7 @@ import {
 } from '@island.is/clients/license-client'
 import { AVAILABLE_LICENSES } from './licenseService.module'
 import {
-  UserLicenseResponse,
+  UserLicensesResponse,
   GenericUserLicense,
 } from './graphql/genericLicense.model'
 
@@ -120,7 +120,7 @@ export class LicenseServiceService {
     user: User,
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
-  ): Promise<UserLicenseResponse> {
+  ): Promise<UserLicensesResponse> {
     const licenses: GenericUserLicense[] = []
 
     for await (const license of AVAILABLE_LICENSES) {

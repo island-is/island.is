@@ -139,7 +139,7 @@ export class GenericLicenseFetch {
 }
 
 @ObjectType()
-export class UserLicenseResponse {
+export class UserLicensesResponse {
   @Field({ description: 'National ID of licenses owner' })
   nationalId!: string
 

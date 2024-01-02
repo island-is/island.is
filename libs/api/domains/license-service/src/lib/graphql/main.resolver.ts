@@ -23,7 +23,7 @@ import {
   GenericPkPassQrCode,
   GenericPkPassVerification,
   GenericUserLicense,
-  UserLicenseResponse,
+  UserLicensesResponse,
 } from './genericLicense.model'
 import {
   GenericLicenseType,
@@ -122,7 +122,7 @@ export class MainResolver {
     return license
   }
 
-  @Query(() => UserLicenseResponse)
+  @Query(() => UserLicensesResponse)
   @Audit()
   async genericUserLicenses(
     @CurrentUser() user: User,
