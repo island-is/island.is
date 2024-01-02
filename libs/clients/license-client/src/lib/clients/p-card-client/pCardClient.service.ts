@@ -13,16 +13,17 @@ export class PCardClient implements LicenseClient<Staediskortamal> {
     private pCardService: PCardService,
   ) {}
   clientSupportsPkPass = false
-  async getLicense(user: User): Promise<Result<Staediskortamal | null>> {
+
+  async getLicenses(user: User): Promise<Result<Array<Staediskortamal>>> {
     try {
       const licenseInfo = await this.pCardService.getPCard(user)
-      return { ok: true, data: licenseInfo }
+      return { ok: true, data: [licenseInfo] }
     } catch (e) {
       let error
       if (e instanceof FetchError) {
         //404 - no license for user, still ok!
         if (e.status === 404) {
-          return { ok: true, data: null }
+          return { ok: true, data: [] }
         } else {
           error = {
             code: 13,

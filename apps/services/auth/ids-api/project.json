@@ -112,7 +112,7 @@
     "migrate/generate": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "sequelize-cli migration:generate --name $(whoami)",
+        "command": "sequelize-cli migration:generate",
         "cwd": "libs/auth-api-lib"
       }
     },
