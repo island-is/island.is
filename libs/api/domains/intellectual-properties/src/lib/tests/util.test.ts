@@ -1,4 +1,4 @@
-import { parseDateIfValid } from './utils'
+import { parseDateIfValid } from '../utils'
 
 describe('IP Utils', () => {
   describe('parseDateIfValid', () => {
