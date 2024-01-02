@@ -102,10 +102,7 @@ const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
   'appealIsolationToDate',
 ]
 
-const limitedAccessFields: (keyof UpdateCaseDto)[] = [
-  'defendantStatementDate',
-  'requestAppealRulingNotToBePublished',
-]
+const limitedAccessFields: (keyof UpdateCaseDto)[] = ['defendantStatementDate']
 
 // Allows prosecutors to update a specific set of fields
 export const prosecutorUpdateRule: RolesRule = {
