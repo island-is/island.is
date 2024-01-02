@@ -35,6 +35,13 @@ export const options: Record<BackgroundVariations, Options> = {
     textMode: 'light',
   },
 
+  samgongustofa: {
+    textMode: 'light',
+  },
+  'transport-authority': {
+    textMode: 'light',
+  },
+
   default: {
     textMode: 'dark',
   },

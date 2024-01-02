@@ -5,18 +5,18 @@ import router from 'next/router'
 import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   PdfButton,
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useS3Upload,
   useUploadFiles,

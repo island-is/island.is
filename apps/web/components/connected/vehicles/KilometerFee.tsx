@@ -177,6 +177,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
               id="kilometers"
               name="kilometers"
               type="number"
+              inputMode="numeric"
               size="xs"
               value={inputState.kilometers}
               placeholder={n('kilometerInputPlaceholder', 'km')}

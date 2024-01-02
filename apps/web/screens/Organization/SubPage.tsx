@@ -68,7 +68,7 @@ const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
           id: slice.id,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
-          text: slice['title'] ?? slice['leftTitle'] ?? '',
+          text: slice.json?.title ?? slice.title ?? slice.leftTitle ?? '',
         }))
         .filter((item) => !!item.text),
     [slices],

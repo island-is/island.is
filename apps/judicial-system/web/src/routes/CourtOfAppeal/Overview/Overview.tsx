@@ -10,6 +10,7 @@ import {
   AlertBanner,
   CaseFilesAccordionItem,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -18,12 +19,11 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
-import CaseOverviewHeader from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/CaseOverviewHeader/CaseOverviewHeader'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
+import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -85,7 +85,7 @@ const CourtOfAppealOverview: React.FC<
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
