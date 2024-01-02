@@ -8,8 +8,8 @@ import {
   CaseAppealState,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useStringHelpers } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import useStringHelpers from '../../utils/hooks/useStringHelpers/useStringHelpers'
 import { UserContext } from '../UserProvider/UserProvider'
 
 interface Props {

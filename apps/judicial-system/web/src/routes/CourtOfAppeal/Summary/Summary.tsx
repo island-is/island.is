@@ -4,16 +4,12 @@ import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  CaseAppealState,
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
   AppealCaseFilesOverview,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -23,9 +19,15 @@ import {
   PageTitle,
   RulingModifiedModal,
 } from '@island.is/judicial-system-web/src/components'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getAppealDecision } from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
+import {
+  CaseAppealState,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  getAppealDecision,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
