@@ -6,19 +6,8 @@ import {
   NormalizedCacheObject,
 } from '@apollo/client'
 
-import {
-  ContentLanguage,
-  OrganizationPage,
-  OrganizationTheme,
-  Query,
-  QueryGetOrganizationArgs,
-  QueryGetOrganizationPageArgs,
-} from '../graphql/schema'
+import { OrganizationPage, OrganizationTheme, Query } from '../graphql/schema'
 import { linkResolver } from '../hooks'
-import {
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../screens/queries'
 
 // TODO: Perhaps add this functionality to the linkResolver
 export const getOrganizationLink = (
@@ -64,6 +53,7 @@ export const getBackgroundStyle = (
   return background.backgroundColor ?? ''
 }
 
+/** Since "/en/o/icelandic-health-insurance" should now redirect to "/en/o/iceland-health" we make sure that if the cms is still referencing the old slug we fallback to fetching that data instead */
 export const retriedQueryIfOrganizationSlugRedirect = async (
   apolloClient: ApolloClient<NormalizedCacheObject>,
   slug: string | string[] | undefined | null,
@@ -101,50 +91,4 @@ export const retriedQueryIfOrganizationSlugRedirect = async (
       },
     },
   })
-}
-
-/** Since "/en/o/icelandic-health-insurance" should now redirect to "/en/o/iceland-health" we make sure that if the cms is still referencing the old slug we fallback to fetching that data instead */
-export const handleOrganizationSlugRedirect = async (
-  apolloClient: ApolloClient<NormalizedCacheObject>,
-  query: { slug?: string },
-  locale: string,
-  organizationPage: ApolloQueryResult<Query>['data']['getOrganizationPage'],
-  organization:
-    | ApolloQueryResult<Query>['data']['getOrganization']
-    | false = false,
-) => {
-  const icelandicHealthInsuranceSlug = 'icelandic-health-insurance'
-
-  // Refetch data in case the "iceland-health" slug didn't get a match
-  if (query.slug === 'iceland-health' && !organizationPage && !organization) {
-    const responses = await Promise.all([
-      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-        query: GET_ORGANIZATION_PAGE_QUERY,
-        variables: {
-          input: {
-            slug: icelandicHealthInsuranceSlug,
-            lang: locale as ContentLanguage,
-          },
-        },
-      }),
-      organization !== false
-        ? apolloClient.query<Query, QueryGetOrganizationArgs>({
-            query: GET_ORGANIZATION_QUERY,
-            variables: {
-              input: {
-                slug: icelandicHealthInsuranceSlug,
-                lang: locale as ContentLanguage,
-              },
-            },
-          })
-        : { data: { getOrganization: null } },
-    ])
-    organizationPage = responses[0].data.getOrganizationPage
-    organization = responses[1].data.getOrganization
-  }
-
-  return {
-    organizationPage,
-    organization: organization === false ? null : organization,
-  }
 }
