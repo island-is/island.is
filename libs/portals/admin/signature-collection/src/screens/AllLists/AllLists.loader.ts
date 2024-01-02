@@ -3,9 +3,10 @@ import {
   AllListsDocument,
   AllListsQuery,
 } from './getAllSignatureLists.generated'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
 export const listsLoader: WrappedLoaderFn = ({ client }) => {
-  return async (): Promise<any> => {
+  return async (): Promise<SignatureCollectionList[]> => {
     const { data } = await client.query<AllListsQuery>({
       query: AllListsDocument,
       fetchPolicy: 'network-only',

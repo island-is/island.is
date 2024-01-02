@@ -844,11 +844,16 @@ export const vehicleMessage = defineMessages({
   },
   mileageTagText: {
     id: 'sp.vehicles:mileage-tag-text',
-    defaultMessage: 'Skrá kílómetrastöðu',
+    defaultMessage: 'Kílómetragjald',
   },
   mileageAlreadyRegistered: {
     id: 'sp.vehicles:mileage-already-registered',
     defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð.',
+  },
+  mileageYouAreNotAllowed: {
+    id: 'sp.vehicles:mileage-you-are-not-allowed',
+    defaultMessage:
+      'Eingöngu aðaleigandi eða umráðamaður yfir bifreið lánastofnunnar geta skráð kílómetrastöðu.',
   },
   mileageExtLink: {
     id: 'sp.vehicles:mileage-external-link',

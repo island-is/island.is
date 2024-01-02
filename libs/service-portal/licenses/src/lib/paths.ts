@@ -11,5 +11,5 @@ export enum LicensePaths {
   EhicDetail = '/skirteini/sjukratryggingar/ehic',
 
   LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
-  LicensesDetail = '/skirteini/:provider/:type',
+  LicensesDetail = '/skirteini/:provider/:type/:id',
 }

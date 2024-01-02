@@ -49,7 +49,7 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
 
-  const handleRowClick = (id: string, type: CaseType) => {
+  const handleRowClick = (id: string, type?: CaseType | null) => {
     isIndictmentCase(type)
       ? router.push(`${DEFENDER_INDICTMENT_ROUTE}/${id}`)
       : router.push(`${DEFENDER_ROUTE}/${id}`)
