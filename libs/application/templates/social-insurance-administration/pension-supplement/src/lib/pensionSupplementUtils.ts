@@ -14,7 +14,7 @@ import {
   BankInfo,
   FileType,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { PensionSupplementAttachments } from '../types'
 
 export function getApplicationAnswers(answers: Application['answers']) {

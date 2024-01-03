@@ -9,11 +9,11 @@ import { useLocale } from '@island.is/localization'
 import { pensionSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/pensionSupplementUtils'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 
 export const Payment = ({
   application,

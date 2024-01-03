@@ -34,14 +34,14 @@ import isEmpty from 'lodash/isEmpty'
 import {
   BankAccountType,
   FILE_SIZE_LIMIT,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getBankIsk,
   getCurrencies,
   typeOfBankInfo,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const PensionSupplementForm: Form = buildForm({

@@ -35,7 +35,7 @@ import {
   Roles,
   States,
   Actions,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { Features } from '@island.is/feature-flags'
 
 const PensionSupplementTemplate: ApplicationTemplate<

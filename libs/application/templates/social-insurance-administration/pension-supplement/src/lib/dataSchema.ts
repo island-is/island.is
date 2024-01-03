@@ -8,9 +8,9 @@ import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { NO, YES } from '@island.is/application/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
