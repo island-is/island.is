@@ -98,6 +98,7 @@ export const SelectLicenseField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     <Box paddingTop={2}>
       <CheckboxController
         id={`${props.field.id}.professionIds`}
+        error={(props.error as any)?.professionIds}
         large
         backgroundColor="blue"
         defaultValue={[]}

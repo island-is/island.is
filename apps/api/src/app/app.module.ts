@@ -100,6 +100,7 @@ import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-registry'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
+import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -374,6 +375,7 @@ const environment = getConfig
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
         StatisticsClientConfig,
+        SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
       ],
     }),

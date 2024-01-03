@@ -5,17 +5,18 @@ import { useRouter } from 'next/router'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseState, isRestrictionCase } from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
   CaseDates,
+  CaseTitleInfoAndTags,
   FormContext,
   MarkdownWrapper,
 } from '@island.is/judicial-system-web/src/components'
-import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import {
   CaseDecision,
+  CaseState,
   EventLog,
   EventType,
   UserRole,
@@ -45,7 +46,9 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
 
       if (existingEventIndex === -1) {
         acc.push(event)
-      } else if (event.created < acc[existingEventIndex].created) {
+      } else if (
+        (event.created ?? '') < (acc[existingEventIndex].created ?? '')
+      ) {
         acc[existingEventIndex] = event
       }
 

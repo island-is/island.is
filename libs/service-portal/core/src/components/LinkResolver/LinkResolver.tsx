@@ -4,6 +4,7 @@ import { formatPlausiblePathToParams, isExternalLink } from '../..'
 import * as styles from './LinkResolver.css'
 import cn from 'classnames'
 import { servicePortalOutboundLink } from '@island.is/plausible'
+import { useRoutes } from '@island.is/portals/core'
 interface Props {
   children?: ReactNode
   className?: string
@@ -18,6 +19,9 @@ export const LinkResolver = ({
   skipOutboundTrack,
 }: Props) => {
   const { pathname } = useLocation()
+  const routes = useRoutes()
+  const routePaths = routes.map((item) => item.path)
+
   if (isExternalLink(href)) {
     return (
       <a
@@ -32,7 +36,7 @@ export const LinkResolver = ({
             ? undefined
             : () =>
                 servicePortalOutboundLink({
-                  url: formatPlausiblePathToParams(pathname).url,
+                  url: formatPlausiblePathToParams(pathname, routePaths).url,
                   outboundUrl: href,
                 })
         }

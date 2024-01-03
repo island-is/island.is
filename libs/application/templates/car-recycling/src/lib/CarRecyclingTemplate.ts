@@ -1,5 +1,6 @@
 import {
   DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -10,7 +11,6 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  CurrentVehiclesApi,
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -24,8 +24,7 @@ import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 
 import { Features } from '@island.is/feature-flags'
-import unset from 'lodash/unset'
-import { assign } from 'xstate'
+import { VehicleSearchApi } from '../dataProviders'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -64,7 +63,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: pruneAfterDays(1),
+          lifecycle: EphemeralStateLifeCycle,
           actionCard: {
             pendingAction: {
               title: '',
@@ -87,17 +86,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                UserProfileApi,
-                NationalRegistryUserApi,
-                CurrentVehiclesApi.configure({
-                  params: {
-                    showOwned: true,
-                    showCoOwned: true,
-                    showOperated: true,
-                  },
-                }),
-              ],
+              api: [UserProfileApi, NationalRegistryUserApi, VehicleSearchApi],
             },
           ],
         },
@@ -106,7 +95,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['clearCanceledVehicles'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -169,7 +157,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               write: 'all',
-              delete: true,
             },
           ],
         },
@@ -179,15 +166,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearCanceledVehicles: assign((context) => {
-        const { application } = context
-        unset(application.answers, 'vehicles.canceledVehicles')
-        return context
-      }),
-    },
-  },
+
   mapUserToRole(
     id: string,
     application: Application,

@@ -87,6 +87,7 @@
 /libs/portals/admin/signature-collection                                                                 @island-is/juni
 /libs/portals/admin/icelandic-names-registry                                                             @island-is/juni
 /libs/api/domains/signature-collection                                                                   @island-is/juni
+/libs/clients/signature-collection                                                                       @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -98,6 +99,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/portals/shared-modules/delegations                                                                 @island-is/aranja
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
 /libs/service-portal/consent                                                                             @island-is/aranja
+/libs/service-portal/restrictions                                                                        @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
 /apps/native/app/                                                                                        @island-is/aranja-enum-app
 
@@ -128,7 +130,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/assets/                                                                                @island-is/hugsmidjan
 /libs/api/domains/hms-loans/                                                                             @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
-/libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
+/libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan @island-is/origo
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
@@ -143,7 +145,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
-/libs/clients/work-machines/                                                                             @island-is/hugsmidjan
+/libs/clients/work-machines/                                                                             @island-is/hugsmidjan @island-is/origo
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
 /libs/clients/insurance-payments/                                                                        @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
@@ -304,10 +306,15 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/university-gateway-api/                                                                    @island-is/origo
 /libs/api/domains/university-gateway/                                                                    @island-is/origo
 /libs/university-gateway/                                                                                @island-is/origo
+/apps/web/screens/UniversitySearch/                                                                      @island-is/origo
+/apps/web/components/ListViewCard/                                                                       @island-is/origo
 
 /libs/application/templates/directorate-of-immigration/                                                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/             @island-is/origo
 /libs/clients/directorate-of-immigration/                                                                @island-is/origo
+
+/libs/application/templates/aosh/                                                                        @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/aosh                                    @island-is/origo
 
 /libs/application/templates/healthcare-license-certificate/                                              @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/         @island-is/origo

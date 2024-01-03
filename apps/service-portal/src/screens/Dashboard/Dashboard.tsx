@@ -21,7 +21,7 @@ import {
   EmptyImageSmall,
   LinkResolver,
   PlausiblePageviewDetail,
-  ServicePortalPath,
+  ServicePortalPaths,
   m,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
@@ -53,7 +53,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
 
   useEffect(() => {
     PlausiblePageviewDetail(
-      ServicePortalPath.MinarSidurRoot,
+      ServicePortalPaths.Root,
       IS_COMPANY ? 'company' : 'person',
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,7 +75,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
         ?.filter((item) => !item.navHide)
         .map(
           (navRoot, index) =>
-            navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+            navRoot.path !== ServicePortalPaths.Root &&
             navRoot.path && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}

@@ -103,6 +103,10 @@ export const serviceSetup = (services: {
       FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       ContentfulSettings__AccessToken:
         '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
+      Redaction__UserIdentifiers__KeyId:
+        '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID',
+      Redaction__UserIdentifiers__Key:
+        '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY',
     })
     .ingress({
       primary: {

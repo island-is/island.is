@@ -170,7 +170,6 @@ export const heirs = buildSection({
                   },
                 ],
                 repeaterButtonText: m.addHeir.defaultMessage,
-                repeaterHeaderText: m.heir.defaultMessage,
                 sumField: 'heirsPercentage',
               },
             ),
