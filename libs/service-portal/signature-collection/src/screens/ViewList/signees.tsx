@@ -3,8 +3,6 @@ import {
   Text,
   Table as T,
   Pagination,
-  Input,
-  Button,
   FilterInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -16,6 +14,7 @@ import { useGetListSignees } from '../hooks'
 import { useLocation } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { SkeletonTable } from '../Skeletons'
+import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
@@ -32,21 +31,17 @@ const Signees = () => {
 
   // list search
   useEffect(() => {
-    if (searchTerm.length > 0) {
-      let filteredSignees = []
+    let filteredSignees: Signature[] = listSignees
 
-      filteredSignees = signees.filter((s) => {
-        return (
-          s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          s.signee.nationalId.includes(searchTerm)
-        )
-      })
+    filteredSignees = filteredSignees.filter((s) => {
+      return (
+        s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        formatNationalId(s.signee.nationalId).includes(searchTerm)
+      )
+    })
 
-      setPage(1)
-      setSignees(filteredSignees)
-    } else {
-      setSignees(listSignees)
-    }
+    setPage(1)
+    setSignees(filteredSignees)
   }, [searchTerm])
 
   useEffect(() => {
@@ -72,9 +67,6 @@ const Signees = () => {
             backgroundColor="white"
           />
         </Box>
-        <Button variant="utility" icon="download">
-          {formatMessage(m.downloadList)}
-        </Button>
       </Box>
       {!loadingSignees ? (
         signees.length > 0 ? (
@@ -156,7 +148,7 @@ const Signees = () => {
             </Box>
           </Box>
         ) : (
-          <Text>{formatMessage(m.noSignees)}</Text>
+          <Text marginTop={3}>{formatMessage(m.noSignees)}</Text>
         )
       ) : (
         <SkeletonTable />

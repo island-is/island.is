@@ -9,6 +9,7 @@ export interface Props {
   height?: string
   width?: string
   isAnimation?: boolean
+  isRemoteUrl?: boolean
 }
 
 const useImageLoader = (url: string): boolean => {
@@ -34,6 +35,7 @@ export const Image: FC<Props> = ({
   height,
   width,
   isAnimation,
+  isRemoteUrl,
 }) => {
   const imageLoaded = useImageLoader(url)
 
@@ -51,7 +53,9 @@ export const Image: FC<Props> = ({
         </Box>
       ) : (
         <img
-          src={isAnimation ? url : `data:image/png;base64,${url}`}
+          src={
+            isAnimation || isRemoteUrl ? url : `data:image/png;base64,${url}`
+          }
           alt={title}
           className={styles.image}
         />
