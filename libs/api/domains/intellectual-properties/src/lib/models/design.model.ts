@@ -2,6 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql'
 import { Person } from './person.model'
 import { Specification } from './specification.model'
 import { ApplicationLifecycle } from './applicationLifecycle.model'
+import { Classification } from './classification.model'
 
 @ObjectType('IntellectualPropertiesDesign')
 export class Design {
@@ -23,8 +24,8 @@ export class Design {
   @Field(() => Specification, { nullable: true })
   specification?: Specification
 
-  @Field(() => [String], { nullable: true })
-  classification?: Array<string>
+  @Field(() => [Classification], { nullable: true })
+  classification?: Array<Classification>
 
   @Field(() => [Person], { nullable: true })
   owners?: Array<Person>
