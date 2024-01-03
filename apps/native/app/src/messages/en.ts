@@ -289,7 +289,7 @@ export const en: TranslatedMessages = {
   'vehicles.emptyListDescription':
     'Vehicles registered to you will appear here.',
   'vehicles.nextInspectionLabel': 'Next inspection {date}',
-  'vehicles.mileageRequired': 'Mileage required',
+  'vehicles.mileageRequired': 'Mileage',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
