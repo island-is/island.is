@@ -305,7 +305,7 @@ export class RecyclingRequestService {
         try {
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
-          this.logger.debug(
+          this.logger.info(
             `Degregistering vehicle ${permno} from Samgongustofa`,
             {
               permno,
@@ -378,7 +378,7 @@ export class RecyclingRequestService {
             guid = getGuId.id
           }
 
-          this.logger.debug(`Payment for vehicle ${permno} from Fjarsyslan`, {
+          this.logger.info(`Payment for vehicle ${permno} from Fjarsyslan`, {
             permno,
             guid,
           })
