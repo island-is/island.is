@@ -57,8 +57,8 @@ export const EstateMembersRepeater: FC<
     },
   )
 
-  const hasEstateMemberUnder18withoutAdvocate = values.estate?.estateMembers?.some(
-    (member: EstateMember) => {
+  const hasEstateMemberUnder18withoutAdvocate =
+    values.estate?.estateMembers?.some((member: EstateMember) => {
       const advocateAge =
         member.advocate && kennitala.info(member.advocate.nationalId)?.age
       return (
@@ -67,8 +67,7 @@ export const EstateMembersRepeater: FC<
         advocateAge &&
         advocateAge < 18
       )
-    },
-  )
+    })
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -287,7 +286,10 @@ export const EstateMembersRepeater: FC<
               >
                 <GridRow>
                   <GridColumn span={['1/1']} paddingBottom={2}>
-                    <Text variant="h4" color={member.enabled ? 'dark400' : 'dark300'}>
+                    <Text
+                      variant="h4"
+                      color={member.enabled ? 'dark400' : 'dark300'}
+                    >
                       {formatMessage(m.inheritanceAdvocateLabel)}
                     </Text>
                   </GridColumn>
