@@ -165,7 +165,7 @@ export class AdminClientsService {
     }
 
     // If user is not super admin, we remove the super admin fields from the input to default to the client base attributes
-    if (!this.isUserSuperAdmin(user)) {
+    if (!this.isSuperAdmin(user)) {
       clientDto = {
         clientId: clientDto.clientId,
         clientType: clientDto.clientType,
@@ -604,7 +604,7 @@ export class AdminClientsService {
     input: AdminPatchClientDto,
     tenantId: string,
   ) {
-    const isSuperUser = this.isUserSuperAdmin(user)
+    const isSuperUser = this.isSuperAdmin(user)
 
     const updatedFields = Object.keys(input)
     const superUserUpdatedFields = updatedFields.filter((field) =>
@@ -780,7 +780,7 @@ export class AdminClientsService {
     )
   }
 
-  private isUserSuperAdmin = (user: User) => {
+  private isSuperAdmin = (user: User) => {
     return user.scope.includes(AdminPortalScope.idsAdminSuperUser)
   }
 }
