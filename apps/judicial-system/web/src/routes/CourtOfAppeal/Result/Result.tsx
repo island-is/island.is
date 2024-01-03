@@ -8,6 +8,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseFilesAccordionItem,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -18,7 +19,6 @@ import {
   ReopenModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
@@ -99,7 +99,7 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },

@@ -330,6 +330,11 @@ const grindavikEmails = {
   [GrindavikCategories.TJON_OG_TRYGGINGAR]: 'nti@nti.is',
 }
 
+const transportAuthorityEmails = {
+  umferd: 'adstod@samgongustofa.is',
+  siglingar: 'sigling@samgongustofa.is',
+}
+
 export const getTemplate = (
   input: ServiceWebFormsInputWithInstitutionEmail,
 ): SendMailOptions => {
@@ -370,6 +375,14 @@ export const getTemplate = (
     toAddress =
       grindavikEmails[categoryId as keyof typeof grindavikEmails] ??
       institutionEmail
+  } else if (
+    input.institutionSlug === 'samgongustofa' ||
+    input.institutionSlug === 'transport-authority'
+  ) {
+    toAddress =
+      transportAuthorityEmails[
+        categoryId as keyof typeof transportAuthorityEmails
+      ] ?? institutionEmail
   }
 
   const name = 'Ísland.is aðstoð'

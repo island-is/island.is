@@ -98,6 +98,7 @@ export const GET_CATEGORY_PAGES_QUERY = gql`
           title
           slug
           importance
+          description
         }
       }
       ... on Manual {
@@ -117,6 +118,20 @@ export const GET_CATEGORY_PAGES_QUERY = gql`
         subgroup {
           title
           importance
+        }
+        otherCategories {
+          title
+        }
+        otherSubgroups {
+          title
+          slug
+          importance
+        }
+        otherGroups {
+          title
+          slug
+          importance
+          description
         }
       }
     }

@@ -32,35 +32,33 @@ export const deductionFactor = style({
   marginBottom: theme.spacing[2],
 })
 
-export const rejectionEditable = style({
-  display: 'inline-block',
+export const textAreaEditable = style({
+  display: 'flex',
+  flexDirection: 'column',
   position: 'relative',
-  minWidth: '269px',
-  textDecoration: 'underline',
-  textDecorationColor: theme.color.blue300,
-  textUnderlineOffset: '4px',
-  textDecorationThickness: '2px',
-  fontSize: '20px',
+  width: '100%',
+  padding: theme.spacing[2],
+  paddingTop: theme.spacing[5],
+  borderRadius: theme.spacing[1],
+  minHeight: '225px',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: theme.color.blue200,
+  fontSize: '18px',
+  fontWeight: 300,
   lineHeight: 1.5,
-  fontWeight: 600,
   ':focus': {
     outline: 'none',
   },
   '::before': {
-    content: '',
+    content: 'Skilaboð til umsækjanda',
     display: 'block',
-    width: 'calc(100% - 8px)',
     position: 'absolute',
-    bottom: '0.5px',
-    backgroundColor: theme.color.blue300,
-    height: '2px',
-  },
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      fontSize: theme.spacing[3],
-      '::before': {
-        bottom: '2px',
-      },
-    },
+    color: theme.color.blue400,
+    fontSize: '14px',
+    marginTop: -theme.spacing[4],
+    marginLeft: -theme.spacing[1],
+    fontWeight: 600,
+    lineHeight: 1.5,
   },
 })

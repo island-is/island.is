@@ -24,6 +24,7 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import header from '../../../assets/headerImage.svg'
 import { Filters, countryAreas, pageSize } from '../../lib/utils'
 import CompareLists from './components/compareLists'
+import { format as formatNationalId } from 'kennitala'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
@@ -50,14 +51,19 @@ const Lists = () => {
     filteredList = filteredList.filter((list) => {
       return (
         // Filter by area
-        (filters.area.length === 0 || filters.area.includes(list.area.name)) &&
-        // Filter by candidate
-        (filters.candidate.length === 0 ||
-          filters.candidate.includes(list.owner.name)) &&
-        // Filter by input
-        (filters.input.length === 0 ||
-          list.owner.name.toLowerCase().includes(filters.input.toLowerCase()) ||
-          list.area.name.toLowerCase().includes(filters.input.toLowerCase()))
+        ((filters.area.length === 0 || filters.area.includes(list.area.name)) &&
+          // Filter by candidate
+          (filters.candidate.length === 0 ||
+            filters.candidate.includes(list.owner.name)) &&
+          // Filter by input
+          (filters.input.length === 0 ||
+            list.owner.name
+              .toLowerCase()
+              .includes(filters.input.toLowerCase()) ||
+            list.area.name
+              .toLowerCase()
+              .includes(filters.input.toLowerCase()))) ||
+        formatNationalId(list.owner.nationalId).includes(filters.input)
       )
     })
 

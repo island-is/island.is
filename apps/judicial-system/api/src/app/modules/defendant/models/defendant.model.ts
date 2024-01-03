@@ -1,25 +1,24 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import type { Defendant as TDefendant } from '@island.is/judicial-system/types'
 import { Gender } from '@island.is/judicial-system/types'
 
 registerEnumType(Gender, { name: 'Gender' })
 
 @ObjectType()
-export class Defendant implements TDefendant {
+export class Defendant {
   @Field(() => ID)
   readonly id!: string
 
-  @Field()
-  readonly created!: string
-
-  @Field()
-  readonly modified!: string
-
-  @Field()
-  readonly caseId!: string
+  @Field({ nullable: true })
+  readonly created?: string
 
   @Field({ nullable: true })
+  readonly modified?: string
+
+  @Field({ nullable: true })
+  readonly caseId?: string
+
+  @Field(() => Boolean, { nullable: true })
   readonly noNationalId?: boolean
 
   @Field({ nullable: true })
@@ -49,6 +48,6 @@ export class Defendant implements TDefendant {
   @Field({ nullable: true })
   readonly defenderPhoneNumber?: string
 
-  @Field(() => Boolean)
-  readonly defendantWaivesRightToCounsel!: boolean
+  @Field(() => Boolean, { nullable: true })
+  readonly defendantWaivesRightToCounsel?: boolean
 }

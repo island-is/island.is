@@ -56,6 +56,7 @@ export enum ApplicationTypes {
   ENERGY_FUNDS = 'EnergyFunds',
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
   PENSION_SUPPLEMENT = 'PensionSupplement',
+  TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
 }
 
 export const ApplicationConfigurations = {
@@ -253,11 +254,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
-    translation: 'oap.application',
+    translation: ['oap.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
-    translation: 'hs.application',
+    translation: ['hs.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.CAR_RECYCLING]: {
     slug: 'skilavottord',
@@ -286,5 +287,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PENSION_SUPPLEMENT]: {
     slug: 'uppbot-a-lifeyri',
     translation: 'tr.ps.application',
+  },
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
+    slug: 'eigendaskipti-taekis',
+    translation: 'aosh.tmo.application',
   },
 }

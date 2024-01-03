@@ -24,6 +24,7 @@ import { carRecyclingMessages, errorMessages } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
 
 import { VehicleDto } from '../../shared/types'
+import { FuelCodes } from '../../shared'
 
 const VehiclesOverview: FC<FieldBaseProps> = ({
   application,
@@ -55,9 +56,8 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
       : 0
 
   useEffect(() => {
-    const { selectedVehicles, allVehicles } = getApplicationAnswers(
-      application.answers,
-    )
+    const { selectedVehicles, allVehicles, canceledVehicles } =
+      getApplicationAnswers(application.answers)
     const { vehiclesList } = getApplicationExternalData(
       application.externalData,
     )
@@ -73,6 +73,8 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     } else {
       setCurrentVehiclesList(vehiclesList)
     }
+
+    setCanceledVehiclesList(canceledVehicles)
   }, [])
 
   useEffect(() => {
@@ -123,9 +125,24 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     )
 
     setCanceledVehiclesList(filteredCanceledVehiclesList)
+
+    // Fix to add km into the input field
+    if (!vehicle.mileage) {
+      setValue(vehicle.permno + 'input', '')
+    }
   }
 
   function onCancel(vehicle: VehicleDto): void {
+    // Check if the vehicle has been selcted and submitted
+    if (vehicle.selectedForRecycling) {
+      // Keep bookeeping about canceled recycling
+      setCanceledVehiclesList((vehicles: VehicleDto[]) => [
+        vehicle,
+        ...vehicles,
+      ])
+    }
+
+    // Remove the vehicle from the selected list
     const filteredSelectedVehiclesList = filterVehiclesList(
       vehicle,
       selectedVehiclesList,
@@ -135,9 +152,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
 
     // Add selected vehicle back to the non selected list
     setCurrentVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
-
-    // Keep bookeeping about canceled recycling
-    setCanceledVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
   }
 
   return (
@@ -208,7 +222,9 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                 </Text>
 
                 <InputController
-                  required={true}
+                  required={Object.values(FuelCodes).includes(
+                    vehicle.fuelCode as FuelCodes,
+                  )}
                   id={vehicle.permno + 'input'}
                   label={formatText(
                     carRecyclingMessages.cars.mileage,

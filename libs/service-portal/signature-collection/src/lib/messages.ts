@@ -51,7 +51,7 @@ export const m = defineMessages({
   },
   unSignList: {
     id: 'sp.signatureCollection:unSignList',
-    defaultMessage: 'Draga meðmæli mitt til baka',
+    defaultMessage: 'Draga til baka',
     description: '',
   },
   unSignModalMessage: {
@@ -62,6 +62,16 @@ export const m = defineMessages({
   unSignModalConfirmButton: {
     id: 'sp.signatureCollection:unSignModalButton',
     defaultMessage: 'Já, draga meðmæli tilbaka',
+    description: '',
+  },
+  unSignSuccess: {
+    id: 'sp.signatureCollection:unSignSuccess',
+    defaultMessage: 'Tókst að draga meðmæli til baka',
+    description: '',
+  },
+  unSignError: {
+    id: 'sp.signatureCollection:unSignError',
+    defaultMessage: 'Tókst ekki að draga meðmæli til baka',
     description: '',
   },
 
