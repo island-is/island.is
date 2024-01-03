@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react'
 import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
 
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
@@ -15,11 +14,11 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { TempCase as Case } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
-import CaseQuery from './caseGql'
-import LimitedAccessCaseQuery from './limitedAccessCaseGql'
+import { useCaseLazyQuery } from './case.generated'
+import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
 
 type ProviderState =
   | 'fetch'
@@ -77,7 +76,7 @@ const MaybeFormProvider = ({ children }: Props) => {
 const FormProvider = ({ children }: Props) => {
   const { limitedAccess } = useContext(UserContext)
   const router = useRouter()
-  const id = router.query.id
+  const id = typeof router.query.id === 'string' ? router.query.id : undefined
 
   const caseType = router.pathname.includes('farbann')
     ? CaseType.TRAVEL_BAN
@@ -119,7 +118,7 @@ const FormProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
-  const [getCase] = useLazyQuery(CaseQuery, {
+  const [getCase] = useCaseLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (caseData) => {
@@ -136,7 +135,7 @@ const FormProvider = ({ children }: Props) => {
     },
   })
 
-  const [getLimitedAccessCase] = useLazyQuery(LimitedAccessCaseQuery, {
+  const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (caseData) => {
@@ -156,6 +155,7 @@ const FormProvider = ({ children }: Props) => {
   useEffect(() => {
     if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
+      id &&
       (state === 'fetch' || state === 'refresh')
     ) {
       if (limitedAccess) {

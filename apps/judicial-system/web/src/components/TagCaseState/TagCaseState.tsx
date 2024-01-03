@@ -15,8 +15,8 @@ import {
 import { tagCaseState as m } from './TagCaseState.strings'
 
 interface Props {
-  caseState: CaseState
-  caseType: CaseType
+  caseState?: CaseState | null
+  caseType?: CaseType | null
   isCourtRole?: boolean
   isValidToDateInThePast?: boolean | null
   courtDate?: string | null
@@ -24,8 +24,8 @@ interface Props {
 
 export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
-  state: CaseState,
-  caseType: CaseType,
+  state?: CaseState | null,
+  caseType?: CaseType | null,
   isValidToDateInThePast?: boolean | null,
   courtDate?: string | null,
   isCourtRole?: boolean,
