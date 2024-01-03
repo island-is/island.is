@@ -1,6 +1,5 @@
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
-  getVehicles = 'getVehicles',
 }
 
 export enum AnswerValidationConstants {
