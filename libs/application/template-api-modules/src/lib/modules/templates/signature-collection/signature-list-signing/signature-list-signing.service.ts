@@ -77,7 +77,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
       return
     }
     const ownerId = application.answers.initialQuery as string
-    // If initialQuery is notdefined return all list for area
+    // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
       nationalId: ownerId,
       areaId,

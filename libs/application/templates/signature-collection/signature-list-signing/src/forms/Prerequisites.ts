@@ -77,13 +77,13 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CanSignApi,
-              title: m.userProfileProviderTitle,
-              subTitle: m.userProfileProviderSubtitle,
+              title: m.canSignProviderTitle,
+              subTitle: m.canSignProviderSubtitle,
             }),
             buildDataProviderItem({
               provider: GetListApi,
-              title: m.userProfileProviderTitle,
-              subTitle: m.userProfileProviderSubtitle,
+              title: m.canSignProviderTitle,
+              subTitle: m.canSignProviderSubtitle,
             }),
           ],
         }),
