@@ -305,11 +305,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             buildMultiField({
               id: 'complaintDescription',
               title: complaintDescription.general.pageTitle,
-              description: (application: Application) =>
-                getComplaintType(application.answers) ===
-                OmbudsmanComplaintTypeEnum.DECISION
-                  ? complaintDescription.general.decisionInfo
-                  : '',
+              description: complaintDescription.general.decisionInfo,
               children: [
                 buildTextField({
                   id: 'complaintDescription.complaineeName',
@@ -337,15 +333,16 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 }),
                 buildDateField({
                   id: 'complaintDescription.decisionDate',
-                  title: complaintDescription.labels.decisionDateTitle,
+                  title: (application: Application) =>
+                    getComplaintType(application.answers) ===
+                    OmbudsmanComplaintTypeEnum.DECISION
+                      ? complaintDescription.labels.decisionDateTitle
+                      : complaintDescription.labels.proceedingsDateTitle,
                   placeholder:
                     complaintDescription.labels.decisionDatePlaceholder,
                   backgroundColor: 'blue',
                   width: 'half',
                   maxDate: new Date(),
-                  condition: (answers: FormValue) =>
-                    getComplaintType(answers) ===
-                    OmbudsmanComplaintTypeEnum.DECISION,
                 }),
                 buildAlertMessageField({
                   id: 'complaintDescriptionAlert',
