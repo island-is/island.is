@@ -120,6 +120,33 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.permno === applicationAnswers.selectVehicle.plate,
     )
 
+    try {
+      const vehicleApiDetails = await this.vehiclesApiWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
+        vin: currentvehicleDetails?.vin || '',
+      })
+      if (
+        !vehicleApiDetails.owners?.find((x) => x.persidno === auth.nationalId)
+      ) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.vehicleNotOwner,
+            summary: coreErrorMessages.vehicleNotOwner,
+          },
+          400,
+        )
+      }
+    } catch (error) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.applicationSubmitFailed,
+          summary: coreErrorMessages.applicationSubmitFailed,
+        },
+        400,
+      )
+    }
+
     const answers = {
       nationalId: auth.nationalId,
       vIN: currentvehicleDetails?.vin || '',
