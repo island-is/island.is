@@ -138,6 +138,7 @@ export const PaymentPartication = () => {
                   placeholderText={formatMessage(m.chooseDate)}
                   handleChange={(date) => setStartDate(date)}
                   selected={startDate}
+                  backgroundColor="blue"
                 />
                 <DatePicker
                   size="xs"
@@ -145,6 +146,7 @@ export const PaymentPartication = () => {
                   placeholderText={formatMessage(m.chooseDate)}
                   handleChange={(date) => setEndDate(date)}
                   selected={endDate}
+                  backgroundColor="blue"
                 />
               </Box>
             </Box>
