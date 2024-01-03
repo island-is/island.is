@@ -47,7 +47,11 @@ const IntellectualPropertiesOverview = () => {
   )
 
   if (error && !loading) {
-    return <Problem type="not_found" />
+    return <Problem error={error} />
+  }
+
+  if (!data?.intellectualProperties?.totalCount && !loading) {
+    return <Problem type="no_data" />
   }
 
   return (

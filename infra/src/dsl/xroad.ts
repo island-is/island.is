@@ -695,6 +695,46 @@ export const UniversityGatewayUniversityOfIceland = new XroadConf({
   },
 })
 
+export const UniversityGatewayUniversityOfAkureyri = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: {
+      dev: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5206871229/UNAK-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayIcelandUniversityOfTheArts = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: {
+      dev: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/4210984099/LHI-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayAgriculturalUniversityOfIceland = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/4112043590/LBHI-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayHolarUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5001694359/Holar-Protected/umsoknir-v1',
+    },
+  },
+})
+
 export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {
