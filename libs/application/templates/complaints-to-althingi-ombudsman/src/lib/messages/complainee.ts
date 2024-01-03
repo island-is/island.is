@@ -8,9 +8,9 @@ export const complainee = {
       description: 'Complainee section title',
     },
     sectionDescription: {
-      id: 'ctao.application:complainee.sectionDescription',
+      id: 'ctao.application:complainee.sectionDescription#markdown',
       defaultMessage:
-        'Umboðsmaður Alþingis hefur eftirlit með stjórnsýslu ríkis og sveitarfélaga. Það þýðir að hann hefur fyrst og fremst eftirlit með ráðuneytum og ríkisstofnunum, opinberum nefndum, sveitarfélögum, stofnunum sveitarfélaga o.þ.h. Það er hins vegar ekki hægt að kvarta til umboðsmanns yfir störfum Alþingis og stofnana þess eða dómstóla. Það er ekki heldur hægt að kvarta yfir einkaaðilum nema í afmörkuðum tilvikum þegar þeim hefur verið falið opinbert vald til að taka svokallaðar stjórnvaldsákvarðanir. Ef þú telur þig þurfa frekari upplýsingar um starfssvið umboðsmanns er hægt að nálgast þær á www.umbodsmadur.is eða með því að hafa samband við skrifstofu umboðsmanns í síma +354 510 6700.',
+        'Umboðsmaður Alþingis hefur eftirlit með stjórnsýslu ríkis og sveitarfélaga. Það þýðir að hann hefur fyrst og fremst eftirlit með ráðuneytum og ríkisstofnunum, opinberum nefndum, sveitarfélögum, stofnunum sveitarfélaga o.þ.h. Það er hins vegar ekki hægt að kvarta til umboðsmanns yfir störfum Alþingis og stofnana þess eða dómstóla. Það er ekki heldur hægt að kvarta yfir einkaaðilum nema í afmörkuðum tilvikum þegar þeim hefur verið falið opinbert vald til að taka svokallaðar stjórnvaldsákvarðanir. Ef þú telur þig þurfa frekari upplýsingar um starfssvið umboðsmanns er hægt að nálgast þær á [umbodsmadur.is](https://www.umbodsmadur.is) eða með því að hafa samband við skrifstofu umboðsmanns í síma [+354 510 6700](tel:+3545106700).',
       description: 'Complainee section description',
     },
   }),
