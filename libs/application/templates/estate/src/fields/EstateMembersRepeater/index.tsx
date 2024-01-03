@@ -3,11 +3,11 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
-  AlertMessage,
   Box,
   Button,
   GridColumn,
   GridRow,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -57,7 +57,7 @@ export const EstateMembersRepeater: FC<
     },
   )
 
-  const hasEstateMemberUnder18withoutAdvocate = values.estate?.estateMembers?.some(
+  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const advocateAge =
         member.advocate && kennitala.info(member.advocate.nationalId)?.age
@@ -73,7 +73,7 @@ export const EstateMembersRepeater: FC<
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       if (
-        hasEstateMemberUnder18withoutAdvocate &&
+        hasEstateMemberUnder18withoutRep &&
         selectedEstate !== EstateTypes.divisionOfEstateByHeirs
       ) {
         setError(heirAgeValidation, {
@@ -129,12 +129,12 @@ export const EstateMembersRepeater: FC<
     ) {
       clearErrors(heirAgeValidation)
     }
-    if (!hasEstateMemberUnder18withoutAdvocate) {
+    if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
   }, [
     fields,
-    hasEstateMemberUnder18withoutAdvocate,
+    hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
     clearErrors,
   ])
@@ -287,7 +287,7 @@ export const EstateMembersRepeater: FC<
               >
                 <GridRow>
                   <GridColumn span={['1/1']} paddingBottom={2}>
-                    <Text variant="h4" color={member.enabled ? 'dark400' : 'dark300'}>
+                    <Text variant="h4">
                       {formatMessage(m.inheritanceAdvocateLabel)}
                     </Text>
                   </GridColumn>
@@ -384,10 +384,9 @@ export const EstateMembersRepeater: FC<
         </Button>
       </Box>
       {errors && errors[heirAgeValidation] ? (
-        <Box marginTop={5}>
-          <AlertMessage
-            type="error"
-            message={
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={
               selectedEstate === EstateTypes.divisionOfEstateByHeirs
                 ? formatMessage(m.inheritanceAgeValidation)
                 : formatMessage(m.heirAdvocateAgeValidation)

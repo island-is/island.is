@@ -98,7 +98,7 @@ export const AdditionalEstateMember = ({
         defaultValue={field.enabled || false}
         render={() => <input type="hidden" />}
       />
-      <Box display={'flex'} justifyContent="spaceBetween" marginBottom={3}>
+      <Box display={'flex'} justifyContent="spaceBetween">
         <Text variant="h4">{formatMessage(m.estateMember)}</Text>
         <Box>
           <Button
@@ -115,7 +115,7 @@ export const AdditionalEstateMember = ({
       </Box>
       {foreignCitizenship?.length ? (
         <GridRow>
-          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
             <InputController
               key={nameField}
               id={nameField}
@@ -127,7 +127,7 @@ export const AdditionalEstateMember = ({
               required
             />
           </GridColumn>
-          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
             <DatePickerController
               label={formatMessage(m.inheritanceDayOfBirthLabel)}
               placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
@@ -147,7 +147,7 @@ export const AdditionalEstateMember = ({
           </GridColumn>
         </GridRow>
       ) : (
-        <Box paddingBottom={2}>
+        <Box paddingY={2}>
           <LookupPerson
             message={formatMessage(m.inheritanceUnder18Error)}
             field={{
@@ -223,6 +223,7 @@ export const AdditionalEstateMember = ({
         memberAge < 18 && (
           <Box
             marginTop={2}
+            marginBottom={2}
             paddingY={5}
             paddingX={7}
             borderRadius="large"
@@ -252,7 +253,7 @@ export const AdditionalEstateMember = ({
                         memberAge < 18,
                     },
                   }}
-                  error={error?.advocate}
+                  error={error}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -281,27 +282,25 @@ export const AdditionalEstateMember = ({
             </GridRow>
           </Box>
         )}
-      <GridRow>
-        <GridColumn span="1/1">
-          <Box width="half" marginTop={2}>
-            <CheckboxController
-              key={foreignCitizenshipField}
-              id={foreignCitizenshipField}
-              name={foreignCitizenshipField}
-              defaultValue={field?.foreignCitizenship || []}
-              options={[
-                {
-                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                  value: YES,
-                },
-              ]}
-              onSelect={(val) => {
-                setValue(foreignCitizenshipField, val)
-              }}
-            />
-          </Box>
-        </GridColumn>
-      </GridRow>
+      <GridColumn span="1/1" paddingBottom={2}>
+        <Box width="half">
+          <CheckboxController
+            key={foreignCitizenshipField}
+            id={foreignCitizenshipField}
+            name={foreignCitizenshipField}
+            defaultValue={field?.foreignCitizenship || []}
+            options={[
+              {
+                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                value: YES,
+              },
+            ]}
+            onSelect={(val) => {
+              setValue(foreignCitizenshipField, val)
+            }}
+          />
+        </Box>
+      </GridColumn>
     </Box>
   )
 }
