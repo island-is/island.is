@@ -1293,7 +1293,8 @@ const useSections = (
   ) => {
     return {
       ...getRestrictionCaseCourtSections(workingCase, user),
-      isActive: !workingCase.state && isDistrictCourtUser(user),
+      isActive:
+        !isCompletedCase(workingCase.state) && isDistrictCourtUser(user),
     }
   }
 
