@@ -5,7 +5,8 @@ import {
   getApplicationAnswers,
   getStartDateAndEndDate,
 } from '../oldAgePensionUtils'
-import { AnswerValidationConstants, MONTHS } from '../constants'
+import { AnswerValidationConstants } from '../constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { buildError } from './utils'
 
 export const period = (newAnswer: unknown, application: Application) => {
