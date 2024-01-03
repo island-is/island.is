@@ -16,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
-import { intervalToDuration } from 'date-fns'
+import intervalToDuration from 'date-fns/intervalToDuration'
 import { GenericFormField, Application } from '@island.is/application/types'
 import { ErrorValue, EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
