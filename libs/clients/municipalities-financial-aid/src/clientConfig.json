@@ -57,7 +57,7 @@
   },
   "components": {
     "schemas": {
-      "ShipModel": {
+      "ApplicationModel": {
         "type": "array",
         "items": {
           "type": "object",
