@@ -1,5 +1,4 @@
 export enum Actions {
-  CREATE_OWNER = 'createOwner',
   SEND_APPLICATION = 'sendApplication',
   getVehicles = 'getVehicles',
 }
