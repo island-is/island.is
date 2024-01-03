@@ -59,9 +59,9 @@ export const commonOverviewFields = [
             member.advocate
               ? [
                   [
-                    m.inheritanceAdvocateLabel.defaultMessage +
-                      ': ' +
-                      member.advocate?.name,
+                    '-',
+                    m.inheritanceAdvocateShortLabel.defaultMessage + ': ',
+                    member.advocate?.name,
                     formatPhoneNumber(member.advocate.phone || ''),
                     member.advocate.email,
                   ],

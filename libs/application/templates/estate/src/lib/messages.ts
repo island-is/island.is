@@ -1034,6 +1034,11 @@ export const m = defineMessages({
     defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
+  inheritanceAdvocateShortLabel: {
+    id: 'es.application:inheritanceAdvocateLabel',
+    defaultMessage: 'Lögráðamaður',
+    description: 'Custody label',
+  },
   inheritanceUnder18Error: {
     id: 'es.application:inheritanceUnder18Error',
     defaultMessage:
@@ -1043,19 +1048,19 @@ export const m = defineMessages({
   inheritanceUnder18ErrorAdvocate: {
     id: 'es.application:inheritanceUnder18ErrorAdvocate',
     defaultMessage:
-      'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+      'Eftirfarandi málsvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: '',
   },
   inheritanceAgeValidation: {
     id: 'es.application:inheritanceAgeValidation',
     defaultMessage:
-      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður.',
     description: '',
   },
   heirAdvocateAgeValidation: {
     id: 'es.application:inheritanceAgeValidation',
     defaultMessage:
-      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
+      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir lögaldri er skráður með málsvara einnig undir lögaldri.',
     description: '',
   },
 
