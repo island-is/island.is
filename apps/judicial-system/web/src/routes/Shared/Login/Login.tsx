@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { login, titles } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { PageHeader } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 

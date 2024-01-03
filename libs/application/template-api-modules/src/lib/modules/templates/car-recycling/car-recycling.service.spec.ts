@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { CarRecyclingService } from './car-recycling.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 
 describe('CarRecyclingService', () => {
   let carRecyclingService: CarRecyclingService
@@ -25,6 +26,7 @@ describe('CarRecyclingService', () => {
               }),
           })),
         },
+        VehicleSearchApi,
       ],
     }).compile()
 

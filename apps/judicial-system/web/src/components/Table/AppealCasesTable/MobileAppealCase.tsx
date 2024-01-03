@@ -44,7 +44,7 @@ const MobileAppealCase: React.FC<Props> = ({
       isLoading={isLoading}
     >
       {theCase.appealCaseNumber && <Text>{theCase.appealCaseNumber}</Text>}
-      <Text title={theCase.policeCaseNumbers.join(', ')}>
+      <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
       {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}

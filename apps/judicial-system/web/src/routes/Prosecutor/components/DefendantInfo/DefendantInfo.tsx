@@ -29,7 +29,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as strings from './DefendantInfo.strings'
