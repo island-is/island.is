@@ -3,7 +3,7 @@ import { Application, Answer } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import isEmpty from 'lodash/isEmpty'
 
-import { validatorErrorMessages } from '../messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   getAgeBetweenTwoDates,
   getApplicationAnswers,
@@ -13,8 +13,8 @@ import {
   ApplicationType,
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
-  MONTHS,
 } from '../constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { buildError } from './utils'
 
 export const fileUpload = (newAnswer: unknown, application: Application) => {
@@ -40,7 +40,7 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
   if (obj.pension) {
     if (isEmpty((obj as { pension: unknown[] }).pension)) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.pension`,
       )
     }
@@ -53,7 +53,7 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
   ) {
     if (isEmpty((obj as { earlyRetirement: unknown[] }).earlyRetirement)) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.earlyRetirement`,
       )
     }
@@ -62,7 +62,7 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
   if (applicationType === ApplicationType.SAILOR_PENSION && obj.fishermen) {
     if (isEmpty((obj as { fishermen: unknown[] }).fishermen)) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.fishermen`,
       )
     }

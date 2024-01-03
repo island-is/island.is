@@ -15,7 +15,7 @@ import { useMutation } from '@apollo/client'
 import { EmployersTable } from '../components/EmployersTable'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
 import { Employer } from '../../types'
-import { States } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const EmployersOverview: FC<RepeaterProps> = ({
   error,
