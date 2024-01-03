@@ -1,7 +1,8 @@
 import { buildSubSection } from '@island.is/application/core'
+import { information } from '../../../lib/messages'
 
 export const ExtraPermissionSubSection = buildSubSection({
   id: 'ExtraPermission',
-  title: 'TODO',
+  title: information.labels.extraPermission.sectionTitle,
   children: [],
 })

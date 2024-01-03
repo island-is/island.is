@@ -41,8 +41,7 @@ export const externalData = {
     },
     subTitle: {
       id: 'uni.application:externalData.nationalRegistry.subTitle',
-      defaultMessage:
-        'Lorem ipsum',
+      defaultMessage: 'Lorem ipsum',
       description: 'National Registry sub title',
     },
   }),

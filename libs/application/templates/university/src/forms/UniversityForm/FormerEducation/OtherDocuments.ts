@@ -11,7 +11,7 @@ import { UniversityApplication } from '../../../lib/dataSchema'
 
 export const OtherDocumentsSubSection = buildSubSection({
   id: Routes.OTHERDOCUMENTS,
-  title: formerEducation.labels.otherDocuments.pageTitle,
+  title: formerEducation.general.sectionTitle,
   children: [
     buildMultiField({
       id: 'otherDocumentsMultiField',

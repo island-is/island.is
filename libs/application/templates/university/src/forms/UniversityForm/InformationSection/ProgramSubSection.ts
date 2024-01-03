@@ -4,6 +4,7 @@ import {
   buildDescriptionField,
   buildSelectField,
   buildCheckboxField,
+  buildRadioField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
@@ -73,7 +74,7 @@ export const ProgramSubSection = buildSubSection({
             })
           },
         }),
-        buildCheckboxField({
+        buildRadioField({
           id: `${Routes.PROGRAMINFORMATION}.modeOfDelivery`,
           title:
             information.labels.programSelection.checkboxModeOfDeliveryLabel,

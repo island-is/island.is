@@ -1,8 +1,8 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
-import { PersonalSection } from './PersonalSection'
-import { ProgramSection } from './ProgramSection'
+import { InformationSection } from './InformationSection'
+import { FormerEducationSection } from './FormerEducation'
 // import { Logo } from '../../assets/Logo'
 
 export const UniversityForm: Form = buildForm({
@@ -18,7 +18,7 @@ export const UniversityForm: Form = buildForm({
       title: externalData.dataProvider.sectionTitle,
       children: [],
     }),
-    PersonalSection,
-    ProgramSection,
+    InformationSection,
+    FormerEducationSection,
   ],
 })

@@ -12,7 +12,7 @@ export const personal = {
     userInformation: defineMessages({
       subSectionTitle: {
         id: 'uni.application:personal.labels.userInformation.subSectionTitle',
-        defaultMessage: 'Notendaupplýsingar',
+        defaultMessage: 'Persónuupplýsingar',
         description: 'User information sub section title',
       },
       pageTitle: {

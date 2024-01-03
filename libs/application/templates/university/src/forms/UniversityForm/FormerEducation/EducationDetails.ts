@@ -16,7 +16,7 @@ import { useLocale } from '@island.is/localization'
 
 export const EducationDetailsSubSection = buildSubSection({
   id: Routes.EDUCATIONDETAILS,
-  title: formerEducation.labels.educationDetails.pageTitle,
+  title: formerEducation.general.sectionTitle,
   children: [
     buildMultiField({
       id: 'EducationDetailsMultiField',

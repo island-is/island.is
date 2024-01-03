@@ -44,7 +44,6 @@ export const Confirmation: Form = buildForm({
     }),
     buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
-      alertMessage: '',
       expandableHeader: confirmation.general.accordionTitle,
       expandableDescription: confirmation.general.accordionText,
     }),

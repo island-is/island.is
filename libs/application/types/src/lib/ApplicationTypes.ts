@@ -287,6 +287,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'eigendaskipti-taekis',
     translation: 'aosh.tmo.application',
+  },
   [ApplicationTypes.UNIVERSITY]: {
     slug: 'haskolanam',
     translation: 'uni.application',

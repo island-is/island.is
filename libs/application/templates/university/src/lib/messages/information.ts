@@ -77,5 +77,24 @@ export const information = {
         description: 'select exam location label',
       },
     }),
+    extraPermission: defineMessages({
+      sectionTitle: {
+        id: 'uni.application:information.labels.extraPermission.sectionTitle',
+        defaultMessage: 'Samþykki',
+        description: 'Agreenement section title',
+      },
+    }),
+    extraDataProvider: defineMessages({
+      sectionTitle: {
+        id: 'uni.application:information.labels.extraDataProvider.sectionTitle',
+        defaultMessage: 'Nánari upplýsingaöflun',
+        description: 'Extra DataProvider section title',
+      },
+      submitButton: {
+        id: 'uni.application:information.labels.extraDataProvider.submitButton',
+        defaultMessage: 'Staðfesta og halda áfram',
+        description: 'Extra DataProvider button submit text',
+      },
+    }),
   },
 }

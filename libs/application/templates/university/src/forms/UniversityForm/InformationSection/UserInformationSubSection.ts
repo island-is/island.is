@@ -12,7 +12,7 @@ import { Routes } from '../../../lib/constants'
 
 export const UserInformationSubSection = buildSubSection({
   id: Routes.USERINFORMATION,
-  title: personal.labels.userInformation.subSectionTitle,
+  title: personal.general.sectionTitle,
   children: [
     buildMultiField({
       id: Routes.USERINFORMATION,
