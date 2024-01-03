@@ -107,6 +107,8 @@ import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
+// Since "icelandic-health-insurance" is now "iceland-health", these constants
+// are used to fallback to older slug to prevent "downtime" during 27.1.0 deployment and will be removed afterwards
 const ICELAND_HEALTH = 'iceland-health'
 const ICELANDIC_HEALTH_INSURANCE = 'icelandic-health-insurance'
 
