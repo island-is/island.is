@@ -20,10 +20,37 @@ export class LoginRestrictionsController {
     private readonly loginRestrictionService: LoginRestrictionsService,
   ) {}
 
+  @Get()
+  @Documentation({
+    description: 'Gets all login restrictions for a user.',
+    request: {
+      header: {
+        'X-Query-Phone-Number': {
+          required: true,
+          description: 'Phone number of the user',
+        },
+      },
+    },
+    response: {
+      status: 200,
+      type: [LoginRestrictionDto],
+    },
+  })
+  async findAll(
+    @Headers('X-Query-Phone-Number') phoneNumber: string,
+  ): Promise<LoginRestrictionDto[]> {
+    const restriction = await this.loginRestrictionService.findByPhoneNumber(
+      phoneNumber,
+    )
+
+    return restriction ? [restriction] : []
+  }
+
   @Get('.phone-number')
   @Documentation({
+    deprecated: true,
     description:
-      'Gets all login restrictions for a user. Currently alawys returns a single item if user has restriction enabled.',
+      'Deprecated. IDS should use the collection endpoint. This endpoint will be removed when IDS has switched over.',
     request: {
       header: {
         'X-Param-Phone-Number': {

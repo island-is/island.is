@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { NotificationType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -19,6 +18,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  NotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -68,7 +68,7 @@ const AppealCase = () => {
   const assistants = (usersData?.users ?? [])
     .filter((user: User) => user.role === UserRole.COURT_OF_APPEALS_ASSISTANT)
     .map((assistant: User) => {
-      return { label: assistant.name, value: assistant.id, assistant }
+      return { label: assistant.name ?? '', value: assistant.id, assistant }
     })
 
   const judges = (usersData?.users ?? [])
@@ -80,7 +80,7 @@ const AppealCase = () => {
         workingCase.appealJudge3?.id !== user.id,
     )
     .map((judge: User) => {
-      return { label: judge.name, value: judge.id, judge }
+      return { label: judge.name ?? '', value: judge.id, judge }
     })
 
   const defaultJudges = [
@@ -213,7 +213,7 @@ const AppealCase = () => {
                       )}
                       value={
                         judge?.id
-                          ? { label: judge.name, value: judge.id }
+                          ? { label: judge.name ?? '', value: judge.id }
                           : undefined
                       }
                       options={judges}

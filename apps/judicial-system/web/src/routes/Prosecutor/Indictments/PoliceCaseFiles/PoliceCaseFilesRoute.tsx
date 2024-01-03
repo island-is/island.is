@@ -13,8 +13,6 @@ import router from 'next/router'
 import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseFile,
-  CaseFileCategory,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -28,14 +26,18 @@ import {
   FormFooter,
   IndictmentInfo,
   InfoBox,
+  Item,
   PageHeader,
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFile,
+  CaseFileCategory,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useS3Upload,
@@ -57,7 +59,7 @@ const UploadFilesToPoliceCase: React.FC<
     policeCaseNumber: string
     setAllUploaded: (allUploaded: boolean) => void
     caseFiles: CaseFile[]
-    caseOrigin: CaseOrigin
+    caseOrigin?: CaseOrigin | null
   }>
 > = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
@@ -270,12 +272,12 @@ type AllUploadedState = {
 const PoliceUploadListMemo: React.FC<
   React.PropsWithChildren<{
     caseId: string
-    policeCaseNumbers: string[]
+    policeCaseNumbers?: string[] | null
     subtypes?: IndictmentSubtypeMap
     crimeScenes?: CrimeSceneMap
-    caseFiles?: CaseFile[]
+    caseFiles?: CaseFile[] | null
     setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-    caseOrigin: CaseOrigin
+    caseOrigin?: CaseOrigin | null
   }>
 > = memo(
   ({
@@ -290,7 +292,7 @@ const PoliceUploadListMemo: React.FC<
     const { formatMessage } = useIntl()
     return (
       <Box paddingBottom={4}>
-        {policeCaseNumbers.map((policeCaseNumber, index) => (
+        {policeCaseNumbers?.map((policeCaseNumber, index) => (
           <Box key={index} marginBottom={6}>
             <SectionHeading
               title={formatMessage(strings.policeCaseNumberSectionHeading, {
@@ -329,16 +331,16 @@ const PoliceCaseFilesRoute = () => {
     useContext(FormContext)
 
   const [allUploaded, setAllUploaded] = useState<AllUploadedState>(
-    workingCase.policeCaseNumbers.reduce(
+    workingCase.policeCaseNumbers?.reduce(
       (acc, policeCaseNumber) => ({ ...acc, [policeCaseNumber]: true }),
       {},
-    ),
+    ) ?? {},
   )
 
   useEffect(() => {
     if (!_isEqual(workingCase.policeCaseNumbers, Object.keys(allUploaded))) {
       setAllUploaded(
-        workingCase.policeCaseNumbers.reduce(
+        workingCase.policeCaseNumbers?.reduce(
           (acc, policeCaseNumber) => ({
             ...acc,
             [policeCaseNumber]:
@@ -347,7 +349,7 @@ const PoliceCaseFilesRoute = () => {
                 : allUploaded[policeCaseNumber],
           }),
           {},
-        ),
+        ) ?? {},
       )
     }
   }, [allUploaded, workingCase.policeCaseNumbers])

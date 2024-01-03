@@ -205,5 +205,56 @@ export const filterSupportCategories = (
       ])
   }
 
+  if (slug === 'samgongustofa' || slug === 'transport-authority') {
+    return [
+      {
+        id: 'umferd',
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: 'umferd',
+        title:
+          namespace?.['transportAuthorityTraffic'] ||
+          (locale === 'is' ? 'Umferð' : 'Traffic'),
+      },
+      {
+        id: 'flug',
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: 'flug',
+        title:
+          namespace?.['transportAuthorityFlight'] ||
+          (locale === 'is' ? 'Flug' : 'Flight'),
+      },
+      {
+        id: 'siglingar',
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: 'siglingar',
+        title:
+          namespace?.['transportAuthoritySailing'] ||
+          (locale === 'is' ? 'Siglingar' : 'Sailing'),
+      },
+      {
+        id: 'annad',
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: 'annad',
+        title:
+          namespace?.['transportAuthorityOther'] ||
+          (locale === 'is'
+            ? 'Önnur þjónusta Samgöngustofu'
+            : 'Other services of Transport Authority'),
+      },
+    ]
+  }
+
   return supportCategories
 }
