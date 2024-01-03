@@ -1,5 +1,5 @@
-import { CaseState } from '@island.is/judicial-system/types'
 import { getDurationDate } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const date1 = '2022-08-04T19:50:08.033Z'
 const date2 = '2022-09-04T19:30:08.033Z'

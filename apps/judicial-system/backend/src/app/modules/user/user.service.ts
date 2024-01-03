@@ -80,7 +80,7 @@ export class UserService {
     }
 
     const user = await this.userModel.findOne({
-      where: { nationalId },
+      where: { nationalId, active: true },
       include: [{ model: Institution, as: 'institution' }],
     })
 

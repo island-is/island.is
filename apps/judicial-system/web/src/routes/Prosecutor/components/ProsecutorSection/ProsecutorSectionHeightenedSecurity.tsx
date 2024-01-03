@@ -79,7 +79,7 @@ const ProsecutorSectionHeightenedSecurity: React.FC<
             user?.id !== workingCase.creatingProsecutor?.id &&
             user?.id !== workingCase.prosecutor?.id
           }
-          checked={workingCase.isHeightenedSecurityLevel}
+          checked={Boolean(workingCase.isHeightenedSecurityLevel)}
           onChange={(event) =>
             setAndSendCaseToServer(
               [

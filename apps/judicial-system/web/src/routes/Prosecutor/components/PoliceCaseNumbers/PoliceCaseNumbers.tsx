@@ -17,15 +17,17 @@ import { policeCaseNumber as m } from './PoliceCaseNumbers.strings'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  clientPoliceNumbers: string[]
-  setClientPoliceNumbers: React.Dispatch<React.SetStateAction<string[]>>
+  clientPoliceNumbers?: string[] | null
+  setClientPoliceNumbers: React.Dispatch<
+    React.SetStateAction<string[] | undefined | null>
+  >
 }
 
 // Needed so that users can remove all loke numbers in client without syncing to server
 export const usePoliceCaseNumbers = (workingCase: Case) => {
-  const [clientPoliceNumbers, setClientPoliceNumbers] = useState<string[]>(
-    workingCase.policeCaseNumbers,
-  )
+  const [clientPoliceNumbers, setClientPoliceNumbers] = useState<
+    string[] | undefined | null
+  >(workingCase.policeCaseNumbers)
   useEffect(() => {
     if (workingCase.id) {
       setClientPoliceNumbers(workingCase.policeCaseNumbers)
@@ -75,7 +77,7 @@ export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
   const onAdd = useCallback(
     (value: string) => {
       if (validate([[value, ['empty', 'police-casenumber-format']]]).isValid) {
-        updatePoliceNumbers([...clientPoliceNumbers, value])
+        updatePoliceNumbers([...(clientPoliceNumbers ?? []), value])
         setHasError(false)
       }
     },
@@ -84,10 +86,10 @@ export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
 
   const onRemove = useCallback(
     (value: string) => () => {
-      const newPoliceCaseNumbers = clientPoliceNumbers.filter(
+      const newPoliceCaseNumbers = clientPoliceNumbers?.filter(
         (number) => number !== value,
       )
-      if (newPoliceCaseNumbers.length > 0) {
+      if (newPoliceCaseNumbers && newPoliceCaseNumbers.length > 0) {
         updatePoliceNumbers(newPoliceCaseNumbers)
       } else {
         setHasError(true)
@@ -114,12 +116,18 @@ export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
           !validate([[value, ['empty', 'police-casenumber-format']]]).isValid
         }
         onBlur={(event) => {
-          setHasError(clientPoliceNumbers.length === 0 && !event.target.value)
+          setHasError(
+            Boolean(
+              clientPoliceNumbers &&
+                clientPoliceNumbers.length === 0 &&
+                !event.target.value,
+            ),
+          )
         }}
         hasError={hasError}
         errorMessage={validate([[undefined, ['empty']]]).errorMessage}
       >
-        {clientPoliceNumbers.length === 0 ? (
+        {clientPoliceNumbers && clientPoliceNumbers.length === 0 ? (
           <Text color="dark400" dataTestId="noPoliceCaseNumbersAssignedMessage">
             {formatMessage(m.noPoliceCaseNumbersAssignedMessage)}
           </Text>
@@ -129,7 +137,7 @@ export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
             flexWrap="wrap"
             data-testid="policeCaseNumbers-list"
           >
-            {clientPoliceNumbers.map((policeCaseNumber, index) => (
+            {clientPoliceNumbers?.map((policeCaseNumber, index) => (
               <Box
                 key={`${policeCaseNumber}-${index}`}
                 paddingRight={1}
