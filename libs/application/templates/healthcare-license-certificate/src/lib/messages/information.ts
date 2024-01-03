@@ -18,7 +18,7 @@ export const information = {
       description: {
         id: 'hlc.application:information.labels.selectLicense.description',
         defaultMessage:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam dictum consequat justo in sagittis.',
+          'Hér má sjá lista yfir þau starfsleyfi sem eru skráð á þig í starfsleyfaskrá embættis landlæknis sem uppfærð er daglega.',
         description: 'Select license description',
       },
       licenseOptionSubLabelSpeciality: {
@@ -38,7 +38,8 @@ export const information = {
       },
       restrictionAlertMessage: {
         id: 'hlc.application:information.labels.selectLicense.restrictionAlertMessage',
-        defaultMessage: 'Vinsamlegast hafið samband við Landækni',
+        defaultMessage:
+          'Vinsamlega sendið póst á starfsleyfi@landlaeknir.is ef frekari upplýsingar óskast',
         description: 'Select license restriction alert message',
       },
     }),

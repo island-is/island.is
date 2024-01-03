@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -34,7 +34,7 @@ const InfoCardClosedIndictment: React.FC<
       data={[
         {
           title: formatMessage(core.policeCaseNumber),
-          value: workingCase.policeCaseNumbers.map((n) => (
+          value: workingCase.policeCaseNumbers?.map((n) => (
             <Text key={n}>{n}</Text>
           )),
         },
@@ -70,7 +70,7 @@ const InfoCardClosedIndictment: React.FC<
               ))}
             </>
           ) : (
-            caseTypes[workingCase.type]
+            formatCaseType(workingCase.type)
           ),
         },
       ]}

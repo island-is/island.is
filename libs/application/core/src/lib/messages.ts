@@ -603,6 +603,32 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með skráðan bankareikning',
     description: 'No bank account error',
   },
+  machinesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein tæki',
+    description: 'Did not find any machines',
+  },
+  nationalRegistryName: {
+    id: 'application.system:core.fetch.data.nationalRegistryName',
+    defaultMessage: 'Nafn',
+    description: 'Name',
+  },
+  nationalRegistryNationalId: {
+    id: 'application.system:core.fetch.data.nationalRegistryNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'National ID',
+  },
+  nationalRegistryNameNotFoundForNationalId: {
+    id: 'application.system:core.fetch.data.nationalRegistryNameNotFoundForNationalId',
+    defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
+    description:
+      'Error message if there was no name associated with given national id',
+  },
+  nationalRegistryMinAgeNotFulfilled: {
+    id: 'application.system:core.fetch.data.nationalRegistryMinAgeNotFulfilled',
+    defaultMessage: 'Lágmarksaldur er {minAge} ára',
+    description: 'Min age not fulfilled error',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

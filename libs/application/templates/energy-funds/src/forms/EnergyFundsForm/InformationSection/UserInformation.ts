@@ -26,7 +26,7 @@ export const userInformationSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'vehicleDetails.plate',
+          id: 'selectVehicle.plate',
           title: information.labels.vehicle.plate,
           backgroundColor: 'white',
           width: 'half',
@@ -36,12 +36,11 @@ export const userInformationSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-
             return vehicle?.permno
           },
         }),
         buildTextField({
-          id: 'vehicleDetails.type',
+          id: 'selectVehicle.type',
           title: information.labels.vehicle.type,
           backgroundColor: 'white',
           width: 'half',
@@ -63,7 +62,7 @@ export const userInformationSubSection = buildSubSection({
           required: true,
         }),
         buildTextField({
-          id: 'vehicleDetails.firstRegistrationDate',
+          id: 'selectVehicle.newRegistrationDate',
           title: information.labels.vehicle.registrationDate,
           width: 'half',
           readOnly: true,
@@ -73,8 +72,8 @@ export const userInformationSubSection = buildSubSection({
               application.answers,
             ) as VehiclesCurrentVehicle
             return (
-              vehicle.firstRegistrationDate &&
-              format(new Date(vehicle.firstRegistrationDate), 'dd.MM.yyyy')
+              vehicle.newRegistrationDate &&
+              format(new Date(vehicle.newRegistrationDate), 'dd.MM.yyyy')
             )
           },
         }),

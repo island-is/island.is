@@ -2,10 +2,10 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import type { UpdateUser, UserRole } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
 
 @InputType()
-export class UpdateUserInput implements UpdateUser {
+export class UpdateUserInput {
   @Allow()
   @Field()
   readonly id!: string
@@ -27,7 +27,7 @@ export class UpdateUserInput implements UpdateUser {
   readonly email!: string
 
   @Allow()
-  @Field(() => String)
+  @Field(() => UserRole)
   readonly role!: UserRole
 
   @Allow()
@@ -35,6 +35,6 @@ export class UpdateUserInput implements UpdateUser {
   readonly institutionId!: string
 
   @Allow()
-  @Field()
+  @Field(() => Boolean)
   readonly active!: boolean
 }
