@@ -7,10 +7,15 @@ import addMonths from 'date-fns/addMonths'
 import { isDefined } from '@island.is/shared/utils'
 import { IntellectualPropertiesClientService } from '@island.is/clients/intellectual-properties'
 import { Patent } from './models/patent.model'
-import { Trademark } from './models/trademark.model'
-import { mapTrademarkType, mapTrademarkSubtype } from './mapper'
-import { parseDateIfValid } from './models/utils'
+import { Trademark, TrademarkType } from './models/trademark.model'
+import { mapTrademarkType, mapTrademarkSubtype, mapFullAddress } from './mapper'
+import { parseDateIfValid } from './utils'
 import { Image } from './models/image.model'
+
+const DATE_FORMAT = 'dd.MM.yyyy HH:mm:SS'
+
+const parseTrademarkDate = (date: Date | string | undefined | null) =>
+  parseDateIfValid(date, DATE_FORMAT)
 
 @Injectable()
 export class IntellectualPropertiesService {
@@ -36,7 +41,7 @@ export class IntellectualPropertiesService {
           typeReadable: t.type ?? '',
           subType: mapTrademarkSubtype(t) ?? undefined,
           vmId: t.vmid,
-          applicationDate: parseDateIfValid(t.applicationDate),
+          applicationDate: parseTrademarkDate(t.applicationDate),
         }
       })
       .filter(isDefined)
@@ -48,17 +53,19 @@ export class IntellectualPropertiesService {
   ): Promise<Trademark | null> {
     const trademark = await this.ipService.getTrademarkByVmId(user, trademarkId)
 
-    const formatDate = (date: string | undefined | null) =>
-      parseDateIfValid(date, 'dd.MM.yyyy HH:mm:ss')
-
     const objectionDate = trademark.datePublished
-      ? formatDate(trademark?.datePublished)
+      ? parseTrademarkDate(trademark?.datePublished)
       : undefined
 
     if (!trademark.vmid) {
       return null
     }
 
+    const type = mapTrademarkType(trademark.type) ?? undefined
+    const mediaPath =
+      type === TrademarkType.IMAGE || type === TrademarkType.TEXT_AND_IMAGE
+        ? trademark.orginalImagePath
+        : trademark.media?.mediaPath
     return {
       ...trademark,
       vmId: trademark.vmid,
@@ -68,8 +75,17 @@ export class IntellectualPropertiesService {
       applicationNumber: trademark.applicationNumber ?? undefined,
       registrationNumber: trademark.registrationNumber ?? undefined,
       status: trademark.status ?? undefined,
+      media: {
+        mediaPath: mediaPath ?? undefined,
+        mediaType: trademark.media?.mediaType ?? undefined,
+      },
       markOwners: trademark.markOwners?.map((o) => ({
         name: o.name ?? '',
+        addressFull: mapFullAddress(
+          undefined,
+          o.postalCode ?? undefined,
+          o.county ?? undefined,
+        ),
         address: o.address ?? '',
         postalCode: o.postalCode ?? '',
         county: o.county ?? '',
@@ -78,28 +94,37 @@ export class IntellectualPropertiesService {
         },
         nationalId: o.ssn ?? '',
       })),
-      markCategories: trademark.markCategories ?? [],
+      markCategories: (trademark.markCategories ?? []).map((mc) => {
+        return {
+          categoryNumber: mc.categoryNumber ?? undefined,
+          categoryDescription: mc.categoryDescription ?? undefined,
+        }
+      }),
       markAgent: trademark.markAgent
         ? {
             name: trademark?.markAgent?.name ?? '',
+            addressFull: mapFullAddress(
+              trademark.markAgent.address ?? undefined,
+              trademark.markAgent.postalCode ?? undefined,
+              trademark.markAgent.county ?? undefined,
+            ),
             address: trademark.markAgent.address ?? '',
             postalCode: trademark.markAgent.postalCode ?? '',
             county: trademark.markAgent.county ?? '',
             nationalId: trademark.markAgent.ssn ?? '',
           }
         : undefined,
-      imagePath: trademark.imagePath ?? '',
       lifecycle: {
-        applicationDate: formatDate(trademark.applicationDate),
-        registrationDate: formatDate(trademark.dateRegistration),
-        unregistrationDate: formatDate(trademark.dateUnRegistered),
-        internationalRegistrationDate: formatDate(
+        applicationDate: parseTrademarkDate(trademark.applicationDate),
+        registrationDate: parseTrademarkDate(trademark.dateRegistration),
+        unregistrationDate: parseTrademarkDate(trademark.dateUnRegistered),
+        internationalRegistrationDate: parseTrademarkDate(
           trademark.dateInternationalRegistration,
         ),
-        expiryDate: formatDate(trademark.dateExpires),
-        renewalDate: formatDate(trademark.dateRenewed),
-        lastModified: formatDate(trademark.dateModified),
-        publishDate: formatDate(trademark.datePublished),
+        expiryDate: parseTrademarkDate(trademark.dateExpires),
+        renewalDate: parseTrademarkDate(trademark.dateRenewed),
+        lastModified: parseTrademarkDate(trademark.dateModified),
+        publishDate: parseTrademarkDate(trademark.datePublished),
         maxValidObjectionDate: objectionDate
           ? addMonths(objectionDate, 2)
           : undefined,
@@ -112,15 +137,16 @@ export class IntellectualPropertiesService {
     const patents = await this.ipService.getPatents(user)
     return patents
       .map((patent) => {
-        if (!patent.applicationNumber || !patent.patentName) {
+        const name = patent.patentName || patent.patentNameInOrgLanguage
+        if (!patent.applicationNumber || !name) {
           return null
         }
         const mappedPatent: Patent = {
           ...patent,
           applicationNumber: patent.applicationNumber,
-          name: patent.patentName,
+          name,
           lifecycle: {
-            applicationDate: parseDateIfValid(patent.applicationDate),
+            applicationDate: parseTrademarkDate(patent.applicationDate),
           },
           statusText: patent.statusText ?? '',
         }
@@ -137,18 +163,42 @@ export class IntellectualPropertiesService {
     )
 
     const patent = response[0]
+    const name = patent.patentName || patent.patentNameInOrgLanguage
 
-    if (!patent.applicationNumber || !patent.patentName) {
+    if (!patent.applicationNumber || !name) {
       return null
     }
 
     return {
       ...patent,
       applicationNumber: patent.applicationNumber,
-      name: patent.patentName,
+      epApplicationNumber: patent.epApplicationNumber ?? undefined,
+      name,
+      nameInOrgLanguage: patent.patentNameInOrgLanguage ?? undefined,
+      classifications: patent.internalClassifications?.map((ic) => ({
+        category: ic.category ?? '',
+        sequence: ic.sequence ? parseInt(ic.sequence) : undefined,
+        creationDate: parseTrademarkDate(ic.createDate),
+        publicationDate: parseTrademarkDate(ic.datePublised),
+        type: ic.type ?? '',
+      })),
+      priorites: patent.priorities?.map((p) => ({
+        applicationDate: parseTrademarkDate(p.dateApplication),
+        country: {
+          code: p.country?.code ?? '',
+          name: p.country?.name ?? '',
+        },
+        number: p.number ?? '',
+        creationDate: parseTrademarkDate(p.createDate),
+      })),
+      pct: {
+        number: patent.pct?.pctNumber ?? '',
+        date: parseTrademarkDate(patent.pct?.pctDate),
+      },
       owner: {
         name: patent.ownerName ?? '',
         address: patent.ownerHome ?? '',
+        addressFull: mapFullAddress(patent.ownerHome ?? undefined),
         country: {
           name: patent.ownerCountry?.name ?? '',
           code: patent.ownerCountry?.code ?? '',
@@ -159,6 +209,11 @@ export class IntellectualPropertiesService {
         nationalId: patent.patentAgent?.ssn ?? '',
         name: patent.patentAgent?.name ?? '',
         address: patent.patentAgent?.address ?? '',
+        addressFull: mapFullAddress(
+          patent.patentAgent?.address ?? undefined,
+          patent.patentAgent?.postalCode ?? undefined,
+          patent.patentAgent?.city ?? undefined,
+        ),
         postalCode: patent.patentAgent?.postalCode ?? '',
         city: patent.patentAgent?.city ?? '',
         mobilePhone: patent.patentAgent?.mobile ?? '',
@@ -173,6 +228,11 @@ export class IntellectualPropertiesService {
         ?.map((i) => ({
           ...i,
           name: i.name ?? '',
+          addressFull: mapFullAddress(
+            i.address ?? undefined,
+            i.postalCode ?? undefined,
+            i.city ?? undefined,
+          ),
           address: i.address ?? '',
           postalCode: i.postalCode ?? '',
           city: i.city ?? '',
@@ -184,9 +244,23 @@ export class IntellectualPropertiesService {
         }))
         .filter(isDefined),
       lifecycle: {
-        ...patent,
-        registrationDate: parseDateIfValid(patent.registeredDate),
+        applicationDate: parseTrademarkDate(patent.appDate),
+        registrationDate: parseTrademarkDate(patent.regDate),
+        expiryDate: parseTrademarkDate(patent.expires),
+        publishDate: parseTrademarkDate(
+          patent.applicationDatePublishedAsAvailable,
+        ),
+        maxValidDate: parseTrademarkDate(patent.maxValidDate),
+        lastModified: parseTrademarkDate(patent.lastModified),
       },
+      epApplicationDate: parseTrademarkDate(patent.epApplicationDate),
+      epProvisionPublishedInGazette: parseTrademarkDate(
+        patent.epDateProvisionPublishedInGazette,
+      ),
+      epTranslationSubmittedDate: parseTrademarkDate(
+        patent.epDateTranslationSubmitted,
+      ),
+      epPublishDate: parseTrademarkDate(patent.epDatePublication),
       status: patent.status ?? '',
       statusText: patent.statusText ?? '',
     }
@@ -219,25 +293,25 @@ export class IntellectualPropertiesService {
       hId: designId,
       applicationNumber: response.applicationNumber ?? '',
       lifecycle: {
-        applicationDate: parseDateIfValid(response.applicationDate),
-        applicationDateAvailable: parseDateIfValid(
+        applicationDate: parseTrademarkDate(response.applicationDate),
+        applicationDateAvailable: parseTrademarkDate(
           response.applicationDateAvailable,
         ),
-        applicationDatePublishedAsAvailable: parseDateIfValid(
+        applicationDatePublishedAsAvailable: parseTrademarkDate(
           response.applicationDatePublishedAsAvailable,
         ),
-        applicationDeadlineDate: parseDateIfValid(
+        applicationDeadlineDate: parseTrademarkDate(
           response.applicationDeadlineDate,
         ),
-        internationalRegistrationDate: parseDateIfValid(
+        internationalRegistrationDate: parseTrademarkDate(
           response.internationalRegistrationDate,
         ),
-        announcementDate: parseDateIfValid(response.announcementDate),
-        registrationDate: parseDateIfValid(response.registrationDate),
-        publishDate: parseDateIfValid(response.publishDate),
-        createDate: parseDateIfValid(response.createDate),
-        lastModified: parseDateIfValid(response.lastModified),
-        expiryDate: parseDateIfValid(response.validTo),
+        announcementDate: parseTrademarkDate(response.announcementDate),
+        registrationDate: parseTrademarkDate(response.registrationDate),
+        publishDate: parseTrademarkDate(response.publishDate),
+        createDate: parseTrademarkDate(response.createDate),
+        lastModified: parseTrademarkDate(response.lastModified),
+        expiryDate: parseTrademarkDate(response.validTo),
       },
       status: response.status ?? '',
       specification: {
@@ -249,9 +323,16 @@ export class IntellectualPropertiesService {
         specificationText: response.specification?.specificationText ?? '',
         specificationCount: response.specification?.specificationCount ?? '',
       },
-      classification: response.classification?.category ?? [],
+      classification: response.classification?.category?.map((c) => ({
+        category: c,
+      })),
       owners: response.owners?.map((o) => ({
         name: o.name ?? '',
+        addressFull: mapFullAddress(
+          o.address ?? undefined,
+          o.postalcode ?? undefined,
+          o.city ?? undefined,
+        ),
         address: o.address ?? '',
         postalCode: o.postalcode ?? '',
         city: o.city ?? '',
@@ -266,6 +347,11 @@ export class IntellectualPropertiesService {
       })),
       designers: response.designers?.map((d) => ({
         name: d.name ?? '',
+        addressFull: mapFullAddress(
+          d.address ?? undefined,
+          d.postalcode ?? undefined,
+          d.city ?? undefined,
+        ),
         address: d.address ?? '',
         postalCode: d.postalcode ?? '',
         city: d.city ?? '',
@@ -281,6 +367,11 @@ export class IntellectualPropertiesService {
       agent: {
         name: response?.agent?.name ?? '',
         address: response?.agent?.address ?? '',
+        addressFull: mapFullAddress(
+          response?.agent?.address ?? undefined,
+          response?.agent?.postalcode ?? undefined,
+          response?.agent?.city ?? undefined,
+        ),
         postalCode: response?.agent?.postalcode ?? '',
         city: response?.agent?.city ?? '',
         country: {
