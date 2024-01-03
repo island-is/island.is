@@ -80,8 +80,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
       onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
         let hasReceivedSubsidy: boolean | undefined
 
-        // Only validate if fewer than 5 items
-        if (onlyElectricVehiclesWithGrant.length < 5) {
+        // Only validate if fewer than 6 items
+        if (onlyElectricVehiclesWithGrant.length < 6) {
           // Get subsidy status
           hasReceivedSubsidy =
             await this.energyFundsClientService.checkVehicleSubsidyAvilability(
