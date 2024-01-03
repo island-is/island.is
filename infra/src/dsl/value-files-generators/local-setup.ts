@@ -102,6 +102,8 @@ export const getLocalrunValueFile = async (
             .map(
               ([name, value]) =>
                 `export ${name}='${value
+                  // Replace all hostnames with localhost
+                  .replace(/(https?:\/\/)?([^:]+)/g, '$1localhost')
                   .replace(/'/g, "'\\''")
                   .replace(/[\n\r]/g, '')}'`,
             )
