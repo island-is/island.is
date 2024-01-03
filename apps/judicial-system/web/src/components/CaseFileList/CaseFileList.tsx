@@ -87,7 +87,6 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
   return (
     <>
       {files.map((file, index) => {
-        console.log(canOpenFiles, file)
         if (!file.name) return null
         const iconProperties = getIcon(file)
 
@@ -114,40 +113,6 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   : undefined
               }
             />
-            {/* <UploadedFile
-            file={
-              {
-                ...file,
-                status:
-                  file.status === 'case-not-found' ||
-                  file.status === 'unsupported'
-                    ? 'error'
-                    : file.status === 'done-broken'
-                    ? 'done'
-                    : file.status,
-              } as UploadFile
-            }
-            showFileSize={true}
-            defaultBackgroundColor={getBackgroundColor(file.status)}
-            doneIcon="checkmark"
-            hideIcons={
-              hideIcons ||
-              (file.status !== 'done' &&
-                file.status !== 'done-broken' &&
-                file.status !== 'error')
-            }
-            onOpenFile={
-              canOpenFiles && file.key
-                ? (file: UploadFile) => {
-                    if (file.id) {
-                      onOpen(file.id)
-                    }
-                  }
-                : undefined
-            }
-            onRemoveClick={() => (canOpenFiles ? onOpen(file.id) : null)}
-            onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
-          /> */}
             {file.status === 'unsupported' && (
               <Text color="red600" variant="eyebrow" lineHeight="lg">
                 {formatMessage(m.fileUnsupportedInCourt)}
