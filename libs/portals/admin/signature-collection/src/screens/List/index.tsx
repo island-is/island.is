@@ -8,8 +8,8 @@ import { m } from '../../lib/messages'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import header from '../../../assets/headerImage.svg'
 import Signees from './components/signees'
-import ActionExtendDeadline from './components/actionExtendDeadline'
-import ActionReviewComplete from './components/actionReviewComplete'
+import ActionExtendDeadline from './components/extendDeadline'
+import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
 
 export const List = () => {
@@ -47,9 +47,9 @@ export const List = () => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              <ActionExtendDeadline endTime={list.endTime} />
+              <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
               <Signees />
-              <PaperUpload />
+              <PaperUpload listId={list.id} />
               <ActionReviewComplete />
             </>
           )}

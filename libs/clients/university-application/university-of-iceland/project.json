@@ -27,7 +27,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10010/HI-Protected/getOpenAPI?serviceCode=umsoknir-v1 -H 'Accept: application/json' > src/clientConfig.json"
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10010/HI-Protected/getOpenAPI?serviceCode=umsoknir-v1 > src/clientConfig.yaml",
+          "prettier --write src/clientConfig.yaml"
         ],
         "parallel": false,
         "cwd": "libs/clients/university-application/university-of-iceland"
@@ -37,7 +38,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn openapi-generator -o libs/clients/university-application/university-of-iceland/gen/fetch -i libs/clients/university-application/university-of-iceland/src/clientConfig.json --additional-properties=enumPropertyNaming=original"
+          "yarn openapi-generator -o libs/clients/university-application/university-of-iceland/gen/fetch -i libs/clients/university-application/university-of-iceland/src/clientConfig.yaml --additional-properties=enumPropertyNaming=original"
         ]
       },
       "outputs": ["{projectRoot}/gen/fetch"]

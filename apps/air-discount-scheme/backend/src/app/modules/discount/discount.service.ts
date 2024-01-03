@@ -208,17 +208,13 @@ export class DiscountService {
     }
     // overwrite credit since validation may return 0 depending on what the problem is
     if (user.fund.credit === 0 && isExplicit) {
-      const allExplicit = await this.explicitModel.findAll({
-        where: { customerId: nationalId },
-      })
-
-      if (allExplicit === null || allExplicit.length <= 5) {
+      if (user.fund.used === null || user.fund.used <= 5) {
         user.fund.credit = 2 //making sure we can get flight from and to
+        user.fund.total = 2
       } else {
         return null
       }
     }
-
     if (user.fund.credit === 0 && user.fund.total !== undefined) {
       return null
     }
