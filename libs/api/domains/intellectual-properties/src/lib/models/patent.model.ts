@@ -1,6 +1,9 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 import { Person } from './person.model'
 import { ApplicationLifecycle } from './applicationLifecycle.model'
+import { PCT } from './pct.model'
+import { Classification } from './classification.model'
+import { Priority } from './priority.model'
 
 @ObjectType('IntellectualPropertiesPatent')
 export class Patent {
@@ -8,7 +11,13 @@ export class Patent {
   name!: string
 
   @Field({ nullable: true })
+  nameInOrgLanguage?: string
+
+  @Field({ nullable: true })
   applicationNumber!: string
+
+  @Field({ nullable: true })
+  epApplicationNumber?: string
 
   @Field(() => Person, { nullable: true })
   owner?: Person
@@ -19,8 +28,17 @@ export class Patent {
   @Field(() => [Person], { nullable: true })
   inventors?: Array<Person>
 
+  @Field(() => [Priority], { nullable: true })
+  priorites?: Array<Priority>
+
+  @Field(() => [Classification], { nullable: true })
+  classifications?: Array<Classification>
+
   @Field(() => ApplicationLifecycle)
   lifecycle?: ApplicationLifecycle
+
+  @Field(() => PCT, { nullable: true })
+  pct?: PCT
 
   @Field(() => Boolean, { nullable: true })
   canRenew?: boolean
@@ -33,4 +51,16 @@ export class Patent {
 
   @Field(() => Date, { nullable: true })
   statusDate?: Date
+
+  @Field(() => Date, { nullable: true })
+  epPublishDate?: Date
+
+  @Field(() => Date, { nullable: true })
+  epProvisionPublishedInGazette?: Date
+
+  @Field(() => Date, { nullable: true })
+  epApplicationDate?: Date
+
+  @Field(() => Date, { nullable: true })
+  epTranslationSubmittedDate?: Date
 }
