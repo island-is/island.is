@@ -55,7 +55,7 @@ export const getBackgroundStyle = (
 }
 
 /** Since "/en/o/icelandic-health-insurance" should now redirect to "/en/o/iceland-health" we make sure that if the cms is still referencing the old slug we fallback to fetching that data instead */
-export const retriedQueryIfOrganizationSlugRedirect = async (
+export const icelandHealthQueryWrapper = async (
   apolloClient: ApolloClient<NormalizedCacheObject>,
   query: DocumentNode,
   responseDataKey: keyof Query,

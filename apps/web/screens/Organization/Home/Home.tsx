@@ -25,7 +25,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { retriedQueryIfOrganizationSlugRedirect } from '@island.is/web/utils/organization'
+import { icelandHealthQueryWrapper } from '@island.is/web/utils/organization'
 
 import { Screen } from '../../../types'
 import {
@@ -260,7 +260,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    retriedQueryIfOrganizationSlugRedirect(
+    icelandHealthQueryWrapper(
       apolloClient,
       GET_ORGANIZATION_PAGE_QUERY,
       'getOrganizationPage',
@@ -269,7 +269,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
         lang: locale as ContentLanguage,
       },
     ),
-    retriedQueryIfOrganizationSlugRedirect(
+    icelandHealthQueryWrapper(
       apolloClient,
       GET_ORGANIZATION_QUERY,
       'getOrganization',

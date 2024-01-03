@@ -37,7 +37,7 @@ import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeR
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { hasProcessEntries } from '@island.is/web/utils/article'
-import { retriedQueryIfOrganizationSlugRedirect } from '@island.is/web/utils/organization'
+import { icelandHealthQueryWrapper } from '@island.is/web/utils/organization'
 
 import { Screen } from '../../types'
 import {
@@ -296,7 +296,7 @@ ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    retriedQueryIfOrganizationSlugRedirect(
+    icelandHealthQueryWrapper(
       apolloClient,
       GET_ORGANIZATION_PAGE_QUERY,
       'getOrganizationPage',
