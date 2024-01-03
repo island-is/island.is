@@ -126,12 +126,10 @@ export const MedicineCalulator = () => {
   return (
     <MedicineWrapper pathname={HealthPaths.HealthMedicineCalculator}>
       <Box marginBottom={SECTION_GAP}>
-        <IntroHeader
-          isSubheading
-          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
-          title={formatMessage(messages.medicineCalculatorIntroTitle)}
-          intro={formatMessage(messages.medicineCalculatorIntroText)}
-        />
+        <Text variant="h5" marginBottom={1}>
+          {formatMessage(messages.medicineCalculatorIntroTitle)}
+        </Text>
+        <Text>{formatMessage(messages.medicineCalculatorIntroText)}</Text>
       </Box>
       <Box
         display="flex"
