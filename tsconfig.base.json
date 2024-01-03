@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/social-insurance": [
+        "libs/api/domains/social-insurance/src/index.ts"
+      ],
       "@island.is/api/domains/administration-of-occupational-safety-and-health": [
         "libs/api/domains/administration-of-occupational-safety-and-health/src/index.ts"
       ],
