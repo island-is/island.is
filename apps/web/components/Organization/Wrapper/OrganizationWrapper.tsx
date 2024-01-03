@@ -347,7 +347,7 @@ export const OrganizationExternalLinks: React.FC<
             const isSjukratryggingar =
               organizationPage.slug === 'sjukratryggingar' ||
               organizationPage.slug === 'icelandic-health-insurance' ||
-              'iceland-health'
+              organizationPage.slug === 'iceland-health'
 
             let variant = undefined
             if (
