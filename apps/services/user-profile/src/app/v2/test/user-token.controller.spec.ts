@@ -32,7 +32,7 @@ describe('UserTokenController', () => {
 
       // Act
       const res = await server
-        .get('/v2/userTokens/.nationalId')
+        .get('/v2/users/.nationalId/device-tokens')
         .set('X-Param-National-Id', testUserToken.nationalId)
 
       // Assert
@@ -58,7 +58,7 @@ describe('UserTokenController', () => {
 
       // Act
       const res = await server
-        .get('/v2/userTokens/.nationalId')
+        .get('/v2/users/.nationalId/device-tokens')
         .set('X-Param-National-Id', '1234567890')
 
       // Assert
@@ -100,7 +100,7 @@ describe('UserTokenController', () => {
     it('GET /v2/userTokens/.nationalId should return 200 when user is authenticated with one UserDeviceToken', async () => {
       // Act
       const res = await server
-        .get('/v2/userTokens/.nationalId')
+        .get('/v2/users/.nationalId/device-tokens')
         .set('X-Param-National-Id', testUserToken.nationalId)
 
       // Assert
@@ -112,6 +112,18 @@ describe('UserTokenController', () => {
           deviceToken: testUserToken.deviceToken,
         },
       ])
+    })
+
+    it('GET /v2/userTokens/.nationalId should return 200 when user is authenticated with empty UserDeviceToken array', async () => {
+      // Act
+      const res = await server
+        .get('/v2/users/.nationalId/device-tokens')
+        .set('X-Param-National-Id', createNationalId())
+
+      // Assert
+      expect(res.status).toBe(200)
+      expect(res.body.length).toBe(0)
+      expect(res.body).toMatchObject([])
     })
   })
 })
