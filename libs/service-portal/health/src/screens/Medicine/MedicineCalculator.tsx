@@ -123,6 +123,13 @@ export const MedicineCalulator = () => {
     })
   }
 
+  const totalPaginatedPages = SHOW_TABLE
+    ? Math.ceil(
+        (drugs?.rightsPortalDrugs?.totalCount ?? DEFAULT_PAGE_SIZE) /
+          DEFAULT_PAGE_SIZE,
+      )
+    : 0
+
   return (
     <MedicineWrapper pathname={HealthPaths.HealthMedicineCalculator}>
       <Box marginBottom={SECTION_GAP}>
@@ -141,13 +148,16 @@ export const MedicineCalulator = () => {
         <Text color="blue400" variant="eyebrow">
           {formatMessage(messages.medicineFindDrug)}
         </Text>
-        <Box display="flex" alignItems="center" columnGap={2}>
-          <FilterInput
-            name="drugs"
-            placeholder={formatMessage(messages.medicineSearchForDrug)}
-            onChange={(value) => setSearch(value)}
-            value={search}
-          />
+        <Box display="flex" alignItems="center" width="full" columnGap={2}>
+          <Box width="half">
+            <FilterInput
+              name="drugs"
+              backgroundColor="blue"
+              placeholder={formatMessage(messages.medicineSearchForDrug)}
+              onChange={(value) => setSearch(value)}
+              value={search}
+            />
+          </Box>
           {drugsLoading && <LoadingDots />}
         </Box>
       </Box>
@@ -183,12 +193,18 @@ export const MedicineCalulator = () => {
                     onMouseOver={() => setHoveredDrug(i)}
                     key={i}
                   >
-                    <T.Data>{drug.name}</T.Data>
-                    <T.Data>{drug.form}</T.Data>
-                    <T.Data>{drug.strength}</T.Data>
-                    <T.Data>{drug.packaging}</T.Data>
-                    <T.Data>{amountFormat(drug.price ?? 0)}</T.Data>
-                    <T.Data>
+                    <T.Data text={{ variant: 'medium' }}>{drug.name}</T.Data>
+                    <T.Data text={{ variant: 'medium' }}>{drug.form}</T.Data>
+                    <T.Data text={{ variant: 'medium' }}>
+                      {drug.strength}
+                    </T.Data>
+                    <T.Data text={{ variant: 'medium' }}>
+                      {drug.packaging}
+                    </T.Data>
+                    <T.Data text={{ variant: 'medium' }}>
+                      {amountFormat(drug.price ?? 0)}
+                    </T.Data>
+                    <T.Data text={{ variant: 'medium' }}>
                       <Box
                         className={styles.saveButtonWrapperStyle({
                           visible: hoveredDrug === i || isMobile,
@@ -220,12 +236,9 @@ export const MedicineCalulator = () => {
         {!SHOW_TABLE && (
           <EmptyTable message={messages.medicineCalculatorEmptySearch} />
         )}
-        {SHOW_TABLE && (
+        {SHOW_TABLE && totalPaginatedPages > 1 && (
           <Pagination
-            totalPages={Math.ceil(
-              (drugs?.rightsPortalDrugs?.totalCount ?? DEFAULT_PAGE_SIZE) /
-                DEFAULT_PAGE_SIZE,
-            )}
+            totalPages={totalPaginatedPages}
             page={pageNumber}
             renderLink={(page, className, children) => (
               <button
@@ -254,7 +267,7 @@ export const MedicineCalulator = () => {
           <T.Table>
             <T.Head>
               <tr className={styles.tableRowStyles}>
-                <T.HeadData>
+                <T.HeadData text={{ variant: 'h5' }}>
                   {formatMessage(messages.medicineDrugName)}
                 </T.HeadData>
                 <T.HeadData>
@@ -316,16 +329,18 @@ export const MedicineCalulator = () => {
             <T.Foot>
               {calculatorResults && !!selectedDrugList.length && (
                 <tr className={styles.tableRowStyles}>
-                  <T.Data>{formatMessage(m.total)}</T.Data>
-                  <T.Data></T.Data>
-                  <T.Data></T.Data>
-                  <T.Data>
+                  <T.Data text={{ variant: 'medium' }}>
+                    {formatMessage(m.total)}
+                  </T.Data>
+                  <T.Data text={{ variant: 'medium' }}></T.Data>
+                  <T.Data text={{ variant: 'medium' }}></T.Data>
+                  <T.Data text={{ variant: 'medium' }}>
                     {amountFormat(calculatorResults.totalPrice ?? 0)}
                   </T.Data>
-                  <T.Data>
+                  <T.Data text={{ variant: 'medium' }}>
                     {amountFormat(calculatorResults.totalCustomerPrice ?? 0)}
                   </T.Data>
-                  <T.Data></T.Data>
+                  <T.Data text={{ variant: 'medium' }}></T.Data>
                 </tr>
               )}
             </T.Foot>

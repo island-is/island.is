@@ -790,7 +790,7 @@ export const messages = defineMessages({
   },
   medicineSearchForDrug: {
     id: 'sp.health:medicine-search-for-drug',
-    defaultMessage: 'Leita að lyf',
+    defaultMessage: 'Leita að lyfi',
   },
   medicineForm: {
     id: 'sp.health:medicine-form',
