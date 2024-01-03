@@ -57,8 +57,8 @@ export const EstateMembersRepeater: FC<
     },
   )
 
-  const hasEstateMemberUnder18withoutRep =
-    values.estate?.estateMembers?.some((member: EstateMember) => {
+  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
+    (member: EstateMember) => {
       const advocateAge =
         member.advocate && kennitala.info(member.advocate.nationalId)?.age
       return (
@@ -67,7 +67,8 @@ export const EstateMembersRepeater: FC<
         advocateAge &&
         advocateAge < 18
       )
-    })
+    },
+  )
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
