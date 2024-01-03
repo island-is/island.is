@@ -1,8 +1,11 @@
+import { CmsModule } from '@island.is/cms'
 import { Module } from '@nestjs/common'
+import { IcelandicGovernmentInstitutionVacanciesClientModule } from '@island.is/clients/icelandic-government-institution-vacancies'
+import { IcelandicGovernmentInstitutionVacanciesResolver } from './icelandic-government-institution-vacancies-v2.resolver'
 
 @Module({
-  controllers: [],
-  providers: [],
+  imports: [IcelandicGovernmentInstitutionVacanciesClientModule, CmsModule],
+  providers: [IcelandicGovernmentInstitutionVacanciesResolver],
   exports: [],
 })
-export class ApiDomainsIcelandicGovernmentInstitutionVacanciesV2Module {}
+export class IcelandicGovernmentInstitutionVacanciesV2Module {}

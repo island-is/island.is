@@ -12,18 +12,19 @@ export class IcelandicGovernmentInstitutionVacanciesV2Service {
   constructor(private readonly api: DefaultApi) {}
 
   async getVacancies(input: {
-    query: string
     page: number
-    vacancyType: string
-    location: string
-    institution: string
+    location?: string
+    language?: VacanciesGetLanguageEnum
+    query?: string
+    institution?: string
+    vacancyType?: string
   }) {
     const vacancies = await this.api.vacanciesGet({
       accept: VacanciesGetAcceptEnum.Json,
       fetchSize: PAGE_SIZE,
       fetchOffset: (input.page - 1) * PAGE_SIZE,
       jobtype: input.vacancyType,
-      language: VacanciesGetLanguageEnum.IS, // TODO: check other languages
+      language: input.language, // TODO: check other languages
       location: input.location,
       query: input.query,
       stofnun: input.institution,
