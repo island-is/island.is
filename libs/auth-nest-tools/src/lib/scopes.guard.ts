@@ -22,7 +22,6 @@ export class ScopesGuard implements CanActivate {
     )
     const request = getRequest(context)
 
-    console.log('request auth', request?.auth)
     if (scopes && !this.hasScope(scopes, request.auth?.scope)) {
       return false
     }

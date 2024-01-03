@@ -164,7 +164,6 @@ export const withAutoAuth = ({
       const tokenCacheManager = await tokenCacheManagerPromise
       const authorization = await tokenCacheManager.get<string>(TOKEN_CACHE_KEY)
       if (authorization) {
-        console.log('cached auth', { authorization })
         return authorization
       }
     }
@@ -211,8 +210,6 @@ export const withAutoAuth = ({
     })
 
     const result: TokenResponse = await response.json()
-
-    console.log('machine token', { optionsSCope: options.scope, result })
 
     if (result.token_type !== 'Bearer') {
       throw new Error(
