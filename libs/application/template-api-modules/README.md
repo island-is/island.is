@@ -101,7 +101,7 @@ export const services = [/* other services , */ ReferenceTemplateService]
 
 **If connecting to a new client**
 
-If you are connecting to a client that is not being used by any other template apis make sure to register the ClientConfig in `apps/application-system/api/src/app/app.module.ts`. 
+If you are connecting to a client that is not being used by any other template apis make sure to register the ClientConfig in `apps/application-system/api/src/app/app.module.ts`.
 As well as making the necassery secrets and environment variables available for the client module in `apps/application-system/api/infra/application-system-api.ts`.
 
 ### 5. Invoke your new module actions from the template state machine
