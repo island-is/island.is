@@ -66,6 +66,7 @@ export const Background = ({
         break
       case 'sjukratryggingar':
       case 'icelandic-health-insurance':
+      case 'iceland-health':
         setComponent(<Sjukratryggingar namespace={namespace} />)
         break
       case 'utlendingastofnun':

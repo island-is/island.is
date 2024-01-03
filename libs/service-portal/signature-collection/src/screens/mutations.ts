@@ -7,3 +7,12 @@ export const cancelCollectionMutation = gql`
     }
   }
 `
+
+export const unSignList = gql`
+  mutation removeSignature($input: SignatureCollectionIdInput!) {
+    signatureCollectionUnsign(input: $input) {
+      success
+      reasons
+    }
+  }
+`
