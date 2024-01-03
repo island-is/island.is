@@ -1,0 +1,232 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Fjárhagsaðstoð sveitarfélaga",
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/applications": {
+      "get": {
+        "tags": ["application"],
+        "summary": "Gets all applications",
+        "operationId": "findAllApplications",
+        "parameters": [
+          {
+            "name": "DateFrom",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "DateTo",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "applications": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ApplicationModel"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ShipModel": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "created": { "type": "string", "format": "date-time" },
+            "modified": { "type": "string", "format": "date-time" },
+            "nationalId": { "type": "string" },
+            "name": { "type": "string" },
+            "phoneNumber": { "type": "string", "format": "nullable" },
+            "email": { "type": "string" },
+            "homeCircumstances": { "type": "string" },
+            "homeCircumstancesCustom": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "student": { "type": "boolean" },
+            "studentCustom": { "type": "string", "format": "nullable" },
+            "employment": { "type": "string" },
+            "employmentCustom": { "type": "string", "format": "nullable" },
+            "hasIncome": { "type": "boolean" },
+            "usePersonalTaxCredit": { "type": "boolean" },
+            "bankNumber": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "ledger": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "accountNumber": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "interview": {
+              "type": "boolean",
+              "format": "nullable"
+            },
+            "formComment": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "spouseFormComment": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "state": { "type": "string" },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "created": { "type": "string", "format": "date-time" },
+                  "applicationId": { "type": "string" },
+                  "name": { "type": "string" },
+                  "key": { "type": "string" },
+                  "size": { "type": "string" },
+                  "type": { "type": "string" }
+                }
+              }
+            },
+            "rejection": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "applicationEvents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "created": { "type": "string", "format": "date-time" },
+                  "applicationId": { "type": "string" },
+                  "comment": { "type": "string", "format": "nullable" },
+                  "eventType": { "type": "string" },
+                  "staffNationalId": { "type": "string", "format": "nullable" },
+                  "staffName": { "type": "string", "format": "nullable" }
+                }
+              }
+            },
+            "amount": {
+              "type": "array",
+              "format": "nullable",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "applicationId": { "type": "string" },
+                  "aidAmount": { "type": "number" },
+                  "income": { "type": "number" },
+                  "personalTaxCredit": { "type": "number" },
+                  "spousePersonalTaxCredit": {
+                    "type": "number",
+                    "format": "nullable"
+                  },
+                  "tax": { "type": "number" },
+                  "finalAmount": { "type": "number" },
+                  "deductionFactors": {
+                    "type": "array",
+                    "format": "nullable",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "amount": { "type": "number" },
+                        "description": { "type": "string" },
+                        "amountId": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "spouseName": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "spouseNationalId": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "spouseEmail": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "spousePhoneNumber": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "familyStatus": {
+              "type": "string"
+            },
+            "streetName": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "postalCode": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "city": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "municipalityCode": {
+              "type": "string",
+              "format": "nullable"
+            },
+            "directTaxPayments": {
+              "type": "object",
+              "format": "nullable",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "totalSalary": { "type": "number" },
+                  "payerNationalId": { "type": "string" },
+                  "personalAllowance": { "type": "number" },
+                  "withheldAtSource": { "type": "number" },
+                  "month": { "type": "number" },
+                  "year": { "type": "number" }
+                }
+              }
+            },
+            "applicationSystemId": {
+              "type": "string",
+              "format": "nullable"
+            }
+          }
+        }
+      },
+      "ProblemDetails": { "additionalProperties": false },
+      "ValidationProblemDetails": { "additionalProperties": false }
+    }
+  }
+}
