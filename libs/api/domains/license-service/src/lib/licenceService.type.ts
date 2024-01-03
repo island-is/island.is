@@ -10,6 +10,7 @@ export enum GenericLicenseType {
   DisabilityLicense = 'DisabilityLicense',
   PCard = 'PCard',
   Ehic = 'Ehic',
+  Passport = 'Passport',
 }
 
 /**
