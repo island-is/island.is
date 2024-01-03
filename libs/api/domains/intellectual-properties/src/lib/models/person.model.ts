@@ -10,6 +10,9 @@ export class Person {
   name?: string
 
   @Field(() => String, { nullable: true })
+  addressFull?: string
+
+  @Field(() => String, { nullable: true })
   address?: string
 
   @Field(() => String, { nullable: true })

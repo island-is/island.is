@@ -38,15 +38,15 @@ export const Timeline: FC<Props> = ({
   let currentProgress = 0
 
   if (maxDate && minDate) {
-    const dateDifferenceStart = differenceInCalendarDays(
-      today,
-      minDate instanceof Date ? minDate : new Date(minDate),
-    )
     const dateDifferenceEnd = differenceInCalendarDays(
       maxDate instanceof Date ? maxDate : new Date(maxDate),
       today,
     )
-    currentProgress = (dateDifferenceStart + 1) / (dateDifferenceEnd + 1)
+    const dateDifference = differenceInCalendarDays(
+      maxDate instanceof Date ? maxDate : new Date(maxDate),
+      minDate instanceof Date ? minDate : new Date(minDate),
+    )
+    currentProgress = (dateDifference - dateDifferenceEnd) / dateDifference
   }
 
   return (
