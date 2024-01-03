@@ -13,7 +13,6 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles, MCEvents } from './constants'
@@ -31,8 +30,8 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { buildPaymentState } from '@island.is/application/utils'
+import { getChargeItemCodes } from '../util'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -80,7 +79,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           onExit: defineTemplateApi({
             action: ApiActions.validateMortgageCertificate,
@@ -148,7 +146,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitRequestToSyslumenn,
@@ -195,7 +192,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
           onExit: defineTemplateApi({
             action: ApiActions.validateMortgageCertificate,
@@ -241,7 +237,6 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -261,7 +256,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: [ChargeItemCode.MORTGAGE_CERTIFICATE],
+        chargeItemCodes: getChargeItemCodes,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({
@@ -274,7 +269,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {

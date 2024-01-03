@@ -1,6 +1,5 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FC } from 'react'
 import {
   ExpandHeader,
   amountFormat,
@@ -9,6 +8,7 @@ import {
 import { messages } from '../../lib/messages'
 import ExpiringTable from '../../components/ExpiringTable/ExpiringTable'
 import { ExpiringExpandedTableRow } from '../../components/ExpiringTable/ExpiringExpandedTableRow'
+import { exportNutritionFile } from '../../utils/FileBreakdown'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -17,12 +17,7 @@ interface Props {
   linkText: string
 }
 
-const NutritionTable: FC<React.PropsWithChildren<Props>> = ({
-  data,
-  footnote,
-  link,
-  linkText,
-}) => {
+const NutritionTable = ({ data, footnote, link, linkText }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
@@ -47,6 +42,7 @@ const NutritionTable: FC<React.PropsWithChildren<Props>> = ({
       footnote={footnote}
       link={link}
       linkText={linkText}
+      onExport={() => exportNutritionFile(data ?? [], 'xlsx')}
     >
       {data.map((rowItem, idx) => (
         <ExpiringExpandedTableRow
@@ -54,7 +50,7 @@ const NutritionTable: FC<React.PropsWithChildren<Props>> = ({
           expiring={rowItem.expiring}
           visibleValues={[
             rowItem.name ?? '',
-            rowItem.available ?? '',
+            rowItem.maxUnitRefund ?? '',
             rowItem.refund.type === 'amount'
               ? rowItem.refund.value
                 ? amountFormat(rowItem.refund.value)

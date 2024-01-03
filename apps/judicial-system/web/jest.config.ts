@@ -3,6 +3,7 @@ export default {
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
+  testEnvironment: 'jest-environment-jsdom',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': [

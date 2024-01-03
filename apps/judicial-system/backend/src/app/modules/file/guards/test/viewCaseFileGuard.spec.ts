@@ -5,9 +5,12 @@ import {
 } from '@nestjs/common'
 
 import {
+  CaseAppealState,
   CaseState,
   completedCaseStates,
-  extendedCourtRoles,
+  courtOfAppealsRoles,
+  districtCourtRoles,
+  InstitutionType,
   prosecutionRoles,
   User,
   UserRole,
@@ -51,7 +54,10 @@ describe('View Case File Guard', () => {
 
         beforeEach(() => {
           mockRequest.mockImplementationOnce(() => ({
-            user: { role },
+            user: {
+              role,
+              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+            },
             case: { state },
           }))
 
@@ -65,7 +71,7 @@ describe('View Case File Guard', () => {
     )
   })
 
-  describe.each(extendedCourtRoles)('role %s', (role) => {
+  describe.each(districtCourtRoles)('role %s', (role) => {
     describe.each([
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
@@ -75,7 +81,7 @@ describe('View Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role },
+          user: { role, institution: { type: InstitutionType.DISTRICT_COURT } },
           case: { state },
         }))
 
@@ -96,14 +102,13 @@ describe('View Case File Guard', () => {
             ...completedCaseStates,
           ].includes(state as CaseState),
       ),
-    )('can view case files for %s cases', (state) => {
+    )('can not view case files for %s cases', (state) => {
       let then: Then
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role },
+          user: { role, institution: { type: InstitutionType.DISTRICT_COURT } },
           case: { state },
-          caseFile: {},
         }))
 
         then = givenWhenThen()
@@ -116,13 +121,103 @@ describe('View Case File Guard', () => {
     })
   })
 
+  describe.each(courtOfAppealsRoles)('role %s', (role) => {
+    describe.each(completedCaseStates)('%s cases', (state) => {
+      const accessibleCaseAppealStates = [
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+      ]
+
+      describe.each(accessibleCaseAppealStates)(
+        'can view case files for %s cases',
+        (appealState) => {
+          let then: Then
+
+          beforeEach(() => {
+            mockRequest.mockImplementationOnce(() => ({
+              user: {
+                role,
+                institution: { type: InstitutionType.COURT_OF_APPEALS },
+              },
+              case: { state, appealState },
+            }))
+
+            then = givenWhenThen()
+          })
+
+          it('should activate', () => {
+            expect(then.result).toBe(true)
+          })
+        },
+      )
+
+      describe.each([
+        undefined,
+        ...Object.values(CaseAppealState).filter(
+          (state) => !accessibleCaseAppealStates.includes(state),
+        ),
+      ])('can not view case files for %s cases', (appealState) => {
+        let then: Then
+
+        beforeEach(() => {
+          mockRequest.mockImplementationOnce(() => ({
+            user: {
+              role,
+              institution: { type: InstitutionType.COURT_OF_APPEALS },
+            },
+            case: { state, appealState },
+          }))
+
+          then = givenWhenThen()
+        })
+
+        it('should throw ForbiddenException', () => {
+          expect(then.error).toBeInstanceOf(ForbiddenException)
+          expect(then.error.message).toBe(`Forbidden for ${role}`)
+        })
+      })
+    })
+
+    describe.each(
+      Object.keys(CaseState).filter(
+        (state) => !completedCaseStates.includes(state as CaseState),
+      ),
+    )('%s cases', (state) => {
+      describe.each([undefined, ...Object.values(CaseAppealState)])(
+        'can not view case files for %s cases',
+        (appealState) => {
+          let then: Then
+
+          beforeEach(() => {
+            mockRequest.mockImplementationOnce(() => ({
+              user: {
+                role,
+                institution: { type: InstitutionType.COURT_OF_APPEALS },
+              },
+              case: { state, appealState },
+            }))
+
+            then = givenWhenThen()
+          })
+
+          it('should throw ForbiddenException', () => {
+            expect(then.error).toBeInstanceOf(ForbiddenException)
+            expect(then.error.message).toBe(`Forbidden for ${role}`)
+          })
+        },
+      )
+    })
+  })
+
   describe.each(Object.keys(CaseState))('in state %s', (state) => {
     describe.each(
       Object.keys(UserRole).filter(
         (role) =>
-          ![...prosecutionRoles, ...extendedCourtRoles].includes(
-            role as UserRole,
-          ),
+          ![
+            ...prosecutionRoles,
+            ...districtCourtRoles,
+            ...courtOfAppealsRoles,
+          ].includes(role as UserRole),
       ),
     )('role %s', (role) => {
       let then: Then

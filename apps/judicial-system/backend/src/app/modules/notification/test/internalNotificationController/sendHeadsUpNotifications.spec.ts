@@ -63,7 +63,7 @@ describe('InternalNotificationController - Send heads up notifications', () => {
     it('should send notification', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
         [mobileNumber],
-        'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Ekki skráður.',
+        'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Ekki skráður. Sjá nánar á rettarvorslugatt.island.is.',
       )
       expect(then.result).toEqual({ delivered: true })
     })

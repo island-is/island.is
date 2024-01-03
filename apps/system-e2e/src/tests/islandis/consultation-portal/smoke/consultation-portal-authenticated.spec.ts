@@ -46,7 +46,6 @@ test.describe('Consultation portal authenticated', () => {
     await page.getByTestId('subscriptions-btn').click()
     await expect(page.getByTestId('subscriptions-title')).toBeVisible()
     await expect(page.getByTestId('action-card')).toBeVisible()
-    await expect(page.getByTestId('tab-content')).toBeVisible()
     await expect(
       page.getByRole('button', {
         name: 'Skrá mig inn',
@@ -61,7 +60,6 @@ test.describe('Consultation portal authenticated', () => {
     await page.goto(icelandicAndNoPopupUrl('/samradsgatt/minaraskriftir'))
     await expect(page.getByTestId('subscriptions-title')).toBeVisible()
     await expect(page.getByTestId('action-card')).not.toBeVisible()
-    await expect(page.getByTestId('tab-content')).toBeVisible()
 
     await page.close()
   })

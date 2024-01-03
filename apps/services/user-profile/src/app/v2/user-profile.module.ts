@@ -13,6 +13,7 @@ import { EmailVerification } from '../user-profile/emailVerification.model'
 import { SmsVerification } from '../user-profile/smsVerification.model'
 import { VerificationService } from '../user-profile/verification.service'
 import { IslykillService } from './islykill.service'
+import { UserProfileController } from './user-profile.controller'
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { IslykillService } from './islykill.service'
       passphrase: environment.islykillConfig.passphrase,
     }),
   ],
-  controllers: [MeUserProfileController],
+  controllers: [MeUserProfileController, UserProfileController],
   providers: [UserProfileService, VerificationService, IslykillService],
 })
 export class UserProfileModule {}

@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import { parsePhoneNumber } from 'libphonenumber-js'
 import { join } from 'path'
 import { Transaction } from 'sequelize'
 
@@ -11,7 +12,6 @@ import type { Logger } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 
 import environment from '../../environments/environment'
-import { formatPhoneNumber } from '../utils/format-phone-number'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
@@ -24,6 +24,7 @@ const LOG_CATEGORY = 'verification-service'
 
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
+export const EMAIL_VERIFICATION_MAX_TRIES = 5
 
 /**
   *- email verification procedure
@@ -71,7 +72,7 @@ export class VerificationService {
     const emailCode = this.generateVerificationCode(codeLength)
 
     const [record] = await this.emailVerificationModel.upsert(
-      { nationalId, email, hash: emailCode, created: new Date() },
+      { nationalId, email, hash: emailCode, created: new Date(), tries: 0 },
       {
         returning: true,
       },
@@ -90,10 +91,7 @@ export class VerificationService {
   ): Promise<SmsVerification | null> {
     const code = this.generateVerificationCode(codeLength)
     const verification = {
-      nationalId: createSmsVerification.nationalId,
-      mobilePhoneNumber: formatPhoneNumber(
-        createSmsVerification.mobilePhoneNumber,
-      ),
+      ...createSmsVerification,
       tries: 0,
       smsCode: code,
       created: new Date(),
@@ -112,9 +110,12 @@ export class VerificationService {
   async confirmEmail(
     confirmEmailDto: ConfirmEmailDto,
     nationalId: string,
-    transaction?: Transaction,
+    options?: { transaction?: Transaction; maxTries?: number },
   ): Promise<ConfirmationDtoResponse> {
-    const verification = await this.emailVerificationModel.findOne({
+    const { transaction, maxTries = EMAIL_VERIFICATION_MAX_TRIES } =
+      options ?? {}
+
+    let verification = await this.emailVerificationModel.findOne({
       ...(transaction && { transaction }),
       where: { nationalId, email: confirmEmailDto.email },
       order: [['created', 'DESC']],
@@ -138,11 +139,22 @@ export class VerificationService {
       }
     }
 
+    if (verification.tries >= maxTries) {
+      return {
+        message:
+          'Too many failed email verifications. Please restart verification.',
+        confirmed: false,
+        remainingAttempts: -1,
+      }
+    }
+
     if (confirmEmailDto.hash !== verification.hash) {
-      // TODO: Add tries?
+      verification = await verification.increment('tries')
+      const remaining = maxTries - verification.tries
       return {
         message: 'Email verification code does not match.',
         confirmed: false,
+        remainingAttempts: remaining,
       }
     }
 
@@ -183,14 +195,18 @@ export class VerificationService {
   async confirmSms(
     confirmSmsDto: ConfirmSmsDto,
     nationalId: string,
-    transaction?: Transaction,
+    options?: { transaction?: Transaction; maxTries?: number },
   ): Promise<ConfirmationDtoResponse> {
-    const formattedPhoneNumber = formatPhoneNumber(
-      confirmSmsDto.mobilePhoneNumber,
-    )
+    const { transaction, maxTries = SMS_VERIFICATION_MAX_TRIES } = options ?? {}
 
-    const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId, mobilePhoneNumber: formattedPhoneNumber },
+    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
+    const mobilePhoneNumber =
+      phoneNumber.country === 'IS'
+        ? (phoneNumber.nationalNumber as string)
+        : confirmSmsDto.mobilePhoneNumber
+
+    let verification = await this.smsVerificationModel.findOne({
+      where: { nationalId, mobilePhoneNumber },
       order: [['created', 'DESC']],
       ...(transaction && { transaction }),
     })
@@ -213,20 +229,22 @@ export class VerificationService {
       }
     }
 
-    if (verification.tries >= SMS_VERIFICATION_MAX_TRIES) {
+    if (verification.tries >= maxTries) {
       return {
         message:
           'Too many failed SMS verifications. Please restart verification.',
         confirmed: false,
+        remainingAttempts: -1,
       }
     }
 
     if (confirmSmsDto.code !== verification.smsCode) {
-      await verification.increment({ tries: 1 })
-      const remaining = SMS_VERIFICATION_MAX_TRIES - verification.tries
+      verification = await verification.increment('tries')
+      const remaining = maxTries - verification.tries
       return {
         message: `SMS code is not a match. ${remaining} tries remaining.`,
         confirmed: false,
+        remainingAttempts: remaining,
       }
     }
 

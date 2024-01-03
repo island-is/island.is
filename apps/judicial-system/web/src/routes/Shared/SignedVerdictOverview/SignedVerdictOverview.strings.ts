@@ -31,4 +31,10 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í Hætta við takka í modal glugga hjá sækjanda þegar frestur til greinargerðar er liðinn.',
   },
+  rulingModifiedTitle: {
+    id: 'judicial.system.core:signed_verdict_overview.ruling_modified_title',
+    defaultMessage: 'Úrskurður leiðréttur',
+    description:
+      'Notaður sem titill í leiðréttingu úrskurðar landsréttar í yfirliti lokins máls.',
+  },
 })

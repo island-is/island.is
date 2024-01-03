@@ -22,7 +22,7 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
 }
 
 export function formatDate(
-  date: Date | string | undefined,
+  date: Date | string | undefined | null,
   formatPattern: string,
   shortenDayName?: boolean,
 ): string | undefined {
@@ -44,7 +44,7 @@ export function formatDate(
 }
 
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
-export const capitalize = (text?: string): string => {
+export const capitalize = (text?: string | null): string => {
   if (!text) {
     return ''
   }
@@ -60,8 +60,13 @@ export const lowercase = (text?: string): string => {
   return text.charAt(0).toLowerCase() + text.slice(1)
 }
 
-export const formatNationalId = (nationalId: string): string => {
+export const formatNationalId = (nationalId?: string | null): string => {
+  if (!nationalId) {
+    return ''
+  }
+
   const regex = new RegExp(/^\d{10}$/)
+
   if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
   } else {
@@ -69,7 +74,7 @@ export const formatNationalId = (nationalId: string): string => {
   }
 }
 
-export const formatPhoneNumber = (phoneNumber?: string) => {
+export const formatPhoneNumber = (phoneNumber?: string | null) => {
   if (!phoneNumber) {
     return
   }
@@ -93,7 +98,7 @@ export const laws = {
 }
 
 type CaseTypes = { [c in CaseType]: string }
-export const caseTypes: CaseTypes = {
+const caseTypes: CaseTypes = {
   // Indicitment cases
   INDICTMENT: 'ákæra',
   // Restriction cases
@@ -119,6 +124,14 @@ export const caseTypes: CaseTypes = {
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
   OTHER: 'annað',
+}
+
+export const formatCaseType = (type?: CaseType | null): string => {
+  if (!type) {
+    return 'óþekkt'
+  }
+
+  return caseTypes[type]
 }
 
 type IndictmentSubtypes = { [c in IndictmentSubtype]: string }
@@ -207,7 +220,7 @@ const supportedCaseCustodyRestrictions: SupportedCaseCustodyRestriction[] = [
 ]
 
 export function getSupportedCaseCustodyRestrictions(
-  requestedRestrictions?: CaseCustodyRestrictions[],
+  requestedRestrictions?: CaseCustodyRestrictions[] | null,
 ): SupportedCaseCustodyRestriction[] {
   const restrictions = supportedCaseCustodyRestrictions.filter((restriction) =>
     requestedRestrictions?.includes(restriction.type),
@@ -233,7 +246,7 @@ export function formatGender(gender?: Gender): string {
 }
 
 export function formatAppeal(
-  appealDecision: CaseAppealDecision | undefined,
+  appealDecision: CaseAppealDecision | undefined | null,
   stakeholder: string,
 ): string {
   const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
@@ -260,7 +273,11 @@ export function formatAppeal(
   }
 }
 
-export function formatRequestCaseType(type: string): string {
+export function formatRequestCaseType(type?: string | null): string {
+  if (!type) {
+    return 'óþekkt'
+  }
+
   const caseType = type as CaseType
 
   return isRestrictionCase(caseType) ||
@@ -268,7 +285,7 @@ export function formatRequestCaseType(type: string): string {
     caseType === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
     caseType === CaseType.EXPULSION_FROM_HOME ||
     caseType === CaseType.PSYCHIATRIC_EXAMINATION
-    ? caseTypes[caseType]
+    ? formatCaseType(caseType)
     : 'rannsóknarheimild'
 }
 
@@ -309,10 +326,10 @@ export const splitStringByComma = (str?: string): string[] => {
 }
 
 export const readableIndictmentSubtypes = (
-  policeCaseNumbers: string[],
+  policeCaseNumbers?: string[] | null,
   rawIndictmentSubtypes?: IndictmentSubtypeMap,
 ): string[] => {
-  if (!rawIndictmentSubtypes) {
+  if (!policeCaseNumbers || !rawIndictmentSubtypes) {
     return []
   }
 
@@ -337,5 +354,5 @@ export const readableIndictmentSubtypes = (
 }
 
 export const sanitize = (str: string) => {
-  return str.replace('"', '')
+  return str.replace(/"/g, '')
 }

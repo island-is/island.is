@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { processEntryFields } from './fragments'
 
 export const GET_SEARCH_RESULTS_QUERY = gql`
@@ -10,6 +11,12 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
+        }
+        ... on AnchorPage {
+          id
+          title
+          slug
+          pageType
         }
         ... on LifeEventPage {
           id
@@ -44,6 +51,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           organizationPage {
             slug
           }
+        }
+        ... on Manual {
+          id
+          title
+          slug
         }
       }
     }
@@ -135,6 +147,35 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           processEntry {
             ...ProcessEntryFields
           }
+        }
+
+        ... on AnchorPage {
+          id
+          title
+          slug
+          intro
+          category {
+            id
+            slug
+            title
+          }
+          image {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+          thumbnail {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+          pageType
         }
 
         ... on LifeEventPage {
@@ -246,8 +287,29 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         }
 
         ... on Manual {
+          id
           title
           slug
+          category {
+            id
+            title
+            slug
+          }
+          group {
+            title
+          }
+        }
+        ... on ManualChapterItem {
+          id
+          title
+          manual {
+            title
+            slug
+          }
+          manualChapter {
+            title
+            slug
+          }
         }
       }
       tagCounts {
@@ -263,4 +325,12 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
     }
   }
   ${processEntryFields}
+`
+
+export const GET_SINGLE_ENTRY_TITLE_BY_ID_QUERY = gql`
+  query GetSingleEntryTitleById($input: GetSingleEntryTitleByIdInput!) {
+    getSingleEntryTitleById(input: $input) {
+      title
+    }
+  }
 `

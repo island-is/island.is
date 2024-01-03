@@ -716,6 +716,19 @@ export const m = defineMessages({
     description:
       'Alert message for health remarks on temporary driving license',
   },
+
+  phoneNumberTitle: {
+    id: 'dl.application:phoneNumberTitle',
+    defaultMessage: 'Símanúmer',
+    description: 'Phone number',
+  },
+
+  phoneNumberDescription: {
+    id: 'dl.application:phoneNumberDescription',
+    defaultMessage:
+      'Vinsamlegast gefðu upp símanúmerið þitt eða þá staðfestu að símanúmerið þitt sé rétt',
+    description: 'Your phone number',
+  },
 })
 
 export const requirementsMessages = defineMessages({

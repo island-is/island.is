@@ -27,10 +27,10 @@ import {
   FormContext,
   FormFooter,
   HideableText,
+  PageHeader,
   PageLayout,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseType,
   SessionArrangements,
@@ -41,11 +41,11 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   isCourtRecordStepValidIC,
   Validation,
@@ -161,7 +161,7 @@ const CourtRecord = () => {
       [
         {
           courtStartDate: workingCase.courtDate,
-          courtLocation: workingCase.court
+          courtLocation: workingCase.court?.name
             ? `í ${
                 workingCase.court.name.indexOf('dómur') > -1
                   ? workingCase.court.name.replace('dómur', 'dómi')

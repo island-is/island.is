@@ -52,6 +52,8 @@ export const AdditionalEstateMember = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
+  const selectedEstate = application.answers.selectedEstate
+
   const foreignCitizenship = useWatch({
     name: foreignCitizenshipField,
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
@@ -118,6 +120,8 @@ export const AdditionalEstateMember = ({
               name={dateOfBirthField}
               locale="is"
               maxDate={new Date()}
+              minYear={1900}
+              maxYear={new Date().getFullYear()}
               backgroundColor="blue"
               onChange={(d) => {
                 setValue(dateOfBirthField, d)
@@ -129,7 +133,13 @@ export const AdditionalEstateMember = ({
       ) : (
         <Box paddingY={2}>
           <LookupPerson
-            field={{ id: fieldIndex, props: { alertWhenUnder18: true } }}
+            field={{
+              id: fieldIndex,
+              props: {
+                alertWhenUnder18:
+                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+              },
+            }}
             error={error}
           />
         </Box>
@@ -168,7 +178,7 @@ export const AdditionalEstateMember = ({
           <InputController
             id={emailField}
             name={emailField}
-            label={m.email.defaultMessage}
+            label={formatMessage(m.email)}
             defaultValue={field.email || ''}
             backgroundColor="blue"
             error={error?.email}
@@ -179,7 +189,7 @@ export const AdditionalEstateMember = ({
           <InputController
             id={phoneField}
             name={phoneField}
-            label={m.phone.defaultMessage}
+            label={formatMessage(m.phone)}
             defaultValue={field.phone || ''}
             backgroundColor="blue"
             format={'###-####'}

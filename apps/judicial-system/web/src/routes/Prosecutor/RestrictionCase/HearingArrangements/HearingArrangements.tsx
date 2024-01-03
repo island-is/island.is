@@ -5,11 +5,6 @@ import { useRouter } from 'next/router'
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseState,
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import {
   errors,
   rcRequestedHearingArrangements,
   titles,
@@ -19,21 +14,26 @@ import {
   FormContext,
   FormFooter,
   Modal,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  CaseTransition,
+  Institution,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
@@ -62,7 +62,7 @@ export const HearingArrangements: React.FC<
     setAndSendCaseToServer,
   } = useCase()
 
-  const { courts, loading: institutionLoading } = useInstitution()
+  const { districtCourts, loading: institutionLoading } = useInstitution()
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -147,7 +147,7 @@ export const HearingArrangements: React.FC<
             <Box component="section" marginBottom={5}>
               <SelectCourt
                 workingCase={workingCase}
-                courts={courts}
+                courts={districtCourts}
                 onChange={handleCourtChange}
               />
             </Box>

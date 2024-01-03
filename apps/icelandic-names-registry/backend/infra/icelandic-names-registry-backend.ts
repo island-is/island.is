@@ -23,9 +23,6 @@ export const serviceSetup =
           },
         ],
         postgres: postgresInfo,
-        envs: {
-          NO_UPDATE_NOTIFIER: 'true',
-        },
       })
       .env({
         IDENTITY_SERVER_ISSUER_URL: {
@@ -33,7 +30,6 @@ export const serviceSetup =
           staging: 'https://identity-server.staging01.devland.is',
           prod: 'https://innskra.island.is',
         },
-        NO_UPDATE_NOTIFIER: 'true',
       })
       .grantNamespaces('islandis')
       .liveness('/liveness')

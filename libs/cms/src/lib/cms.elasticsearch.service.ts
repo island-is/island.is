@@ -28,6 +28,11 @@ import { SupportQNA } from './models/supportQNA.model'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Vacancy } from './models/vacancy.model'
 import { ResponseError } from '@elastic/elasticsearch/lib/errors'
+import { GetEventsInput } from './dto/getEvents.input'
+import { Event as EventModel } from './models/event.model'
+import { Manual } from './models/manual.model'
+import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
+import { CategoryPage } from './models/categoryPage.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -50,6 +55,49 @@ export class CmsElasticsearchService {
     return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
       JSON.parse(response._source.response ?? '[]'),
     )
+  }
+
+  async getCategoryPages(
+    index: string,
+    input: GetCategoryPagesInput,
+  ): Promise<typeof CategoryPage[]> {
+    const query = {
+      types: ['webArticle', 'webManual'],
+      tags: [] as elasticTagField[],
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
+      size: input.size,
+    }
+
+    if (input.sort === SortField.POPULAR) {
+      query.sort = [
+        { popularityScore: { order: SortDirection.DESC } },
+        ...query.sort,
+      ]
+    }
+
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+    if (input.group) {
+      query.tags.push({ type: 'group', key: input.group })
+    }
+    if (input.subgroup) {
+      query.tags.push({ type: 'subgroup', key: input.subgroup })
+    }
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
+    }
+
+    const pagesResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    return pagesResponse.hits.hits
+      .filter((page) => Boolean(page?._source?.response))
+      .map<Article | Manual>((page) =>
+        JSON.parse(page._source.response as string),
+      )
   }
 
   async getArticles(
@@ -93,6 +141,52 @@ export class CmsElasticsearchService {
     return articlesResponse.hits.hits.map<Article>((response) =>
       JSON.parse(response._source.response ?? '[]'),
     )
+  }
+
+  async getEvents(
+    index: string,
+    { size, page, order, organization }: GetEventsInput,
+  ) {
+    const tagList: {
+      key: string
+      type: string
+    }[] = []
+
+    let tagQuery
+
+    if (organization) {
+      tagList.push({ key: organization, type: 'organization' })
+    }
+
+    if (tagList.length > 0) {
+      tagQuery = { tags: tagList }
+    }
+
+    const query = {
+      types: ['webEvent'],
+      sort: [
+        { dateCreated: { order } },
+        { releaseDate: { order } },
+      ] as sortRule[],
+      ...tagQuery,
+      page,
+      size,
+      releaseDate: {
+        from: 'now',
+      },
+    }
+
+    const eventsResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    return {
+      total: eventsResponse.hits.total.value,
+      items: eventsResponse.hits.hits.map<EventModel>((response) =>
+        JSON.parse(response._source.response ?? '{}'),
+      ),
+    }
   }
 
   async getNews(
@@ -206,13 +300,20 @@ export class CmsElasticsearchService {
     index: string,
     { type, slug }: { type: string; slug: string },
   ): Promise<RequestedType | null> {
-    // return a single news item by slug
+    // return a single item by slug
     const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
-    const newsResponse = await this.elasticService.getSingleDocumentByMetaData(
+    const itemsResponse = await this.elasticService.getSingleDocumentByMetaData(
       index,
       query,
     )
-    const response = newsResponse.hits.hits?.[0]?._source?.response
+    const response = itemsResponse.hits.hits?.[0]?._source?.response
+    return response ? JSON.parse(response) : null
+  }
+
+  async getSingleDocumentById(index: string, id: string) {
+    // return a single document by id
+    const documentResponse = await this.elasticService.findById(index, id)
+    const response = documentResponse.body?._source?.response
     return response ? JSON.parse(response) : null
   }
 

@@ -68,7 +68,7 @@ const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
           id: slice.id,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
-          text: slice['title'] ?? slice['leftTitle'] ?? '',
+          text: slice.json?.title ?? slice.title ?? slice.leftTitle ?? '',
         }))
         .filter((item) => !!item.text),
     [slices],
@@ -243,6 +243,9 @@ const SubPage: Screen<SubPageProps> = ({
                       {subpage?.signLanguageVideo?.url && (
                         <SignLanguageButton
                           videoUrl={subpage.signLanguageVideo.url}
+                          videoThumbnailImageUrl={
+                            subpage.signLanguageVideo.thumbnailImageUrl
+                          }
                           content={
                             <>
                               <Box className="rs_read" marginBottom={2}>
@@ -302,7 +305,10 @@ const renderSlices = (
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
-        if (slice.__typename === 'LifeEventPageListSlice') {
+        if (
+          slice.__typename === 'AnchorPageListSlice' ||
+          slice.__typename === 'LifeEventPageListSlice'
+        ) {
           return (
             <SliceMachine
               key={slice.id}
@@ -311,7 +317,7 @@ const renderSlices = (
               slug={slug}
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
-                renderLifeEventPagesAsProfileCards: true,
+                renderAnchorPagesAsProfileCards: true,
                 latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
@@ -328,7 +334,7 @@ const renderSlices = (
             slug={slug}
             marginBottom={index === slices.length - 1 ? 5 : 0}
             params={{
-              renderLifeEventPagesAsProfileCards: true,
+              renderAnchorPagesAsProfileCards: true,
               latestNewsSliceBackground: 'white',
               forceTitleSectionHorizontalPadding: 'true',
             }}

@@ -5,6 +5,7 @@ import { hasOperationName, Operation } from '../../utils'
 
 describe(CASES_ROUTE, () => {
   beforeEach(() => {
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     cy.intercept('POST', '**/api/graphql', (req) => {
       if (hasOperationName(req, Operation.CaseListQuery)) {
@@ -13,7 +14,6 @@ describe(CASES_ROUTE, () => {
         })
       }
     })
-    cy.login(UserRole.PROSECUTOR)
     cy.visit(CASES_ROUTE)
   })
 

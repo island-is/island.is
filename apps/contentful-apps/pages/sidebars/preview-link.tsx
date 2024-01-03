@@ -47,7 +47,7 @@ const previewLinkHandler = {
     })
     return `${DEV_WEB_BASE_URL}/s/${organizationPage?.fields?.slug?.[DEFAULT_LOCALE]}/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
-  lifeEventPage: (entry: EntryProps<KeyValueMap>) => {
+  anchorPage: (entry: EntryProps<KeyValueMap>) => {
     const middlePart =
       entry.fields.pageType?.[DEFAULT_LOCALE] === 'Digital Iceland Service'
         ? 's/stafraent-island/thjonustur'
@@ -57,6 +57,9 @@ const previewLinkHandler = {
   },
   news: (entry: EntryProps<KeyValueMap>) => {
     return `${DEV_WEB_BASE_URL}/frett/${entry.fields.slug[DEFAULT_LOCALE]}`
+  },
+  manual: (entry: EntryProps<KeyValueMap>) => {
+    return `${DEV_WEB_BASE_URL}/handbaekur/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
 }
 

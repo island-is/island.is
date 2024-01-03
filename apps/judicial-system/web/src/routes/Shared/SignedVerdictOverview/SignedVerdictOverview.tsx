@@ -13,18 +13,16 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealState,
-  CaseDecision,
-  CaseState,
-  CaseTransition,
-  isCourtRole,
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
+import {
+  isDistrictCourtUser,
   isInvestigationCase,
-  isProsecutionRole,
+  isPrisonSystemUser,
+  isProsecutionUser,
   isRestrictionCase,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -37,8 +35,10 @@ import {
   AppealCaseFilesOverview,
   CaseDates,
   CaseFilesAccordionItem,
+  CaseTitleInfoAndTags,
   CommentsAccordionItem,
   Conclusion,
+  conclusion,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormContext,
@@ -49,25 +49,29 @@ import {
   PageHeader,
   PageLayout,
   PoliceRequestAccordionItem,
+  ReopenModal,
   RulingAccordionItem,
   SigningModal,
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
-import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
+  CaseAppealState,
+  CaseDecision,
+  CaseState,
+  CaseTransition,
   InstitutionType,
+  RequestSignatureResponse,
+  SignatureConfirmationResponse,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   ReactSelectOption,
   TempCase as Case,
-  TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 import {
+  UpdateCase,
   useAppealAlertBanner,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -75,9 +79,8 @@ import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/util
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
-import ReopenModal from './Components/ReopenModal/ReopenModal'
 import ShareCase from './Components/ShareCase/ShareCase'
-import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
+import { useCourtRecordSignatureConfirmationLazyQuery } from './courtRecordSignatureConfirmation.generated'
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
 
@@ -94,7 +97,7 @@ export const shouldHideNextButton = (workingCase: Case, user?: User) => {
   }
 
   const shouldShowExtendCaseButton =
-    user.role === UserRole.PROSECUTOR && // the user is a prosecutor
+    isProsecutionUser(user) && // the user is a prosecutor
     workingCase.state !== CaseState.REJECTED && // the case is not rejected
     workingCase.state !== CaseState.DISMISSED && // the case is not dismissed
     workingCase.decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && // the case is not a custody case accepted as alternative travel ban
@@ -113,7 +116,7 @@ const getNextButtonText = (
   workingCase: Case,
   user?: User,
 ) =>
-  user?.role === UserRole.PROSECUTOR
+  isProsecutionUser(user)
     ? formatMessage(m.sections.caseExtension.buttonLabel, {
         caseType: workingCase.type,
       })
@@ -124,7 +127,7 @@ export const getExtensionInfoText = (
   workingCase: Case,
   user?: User,
 ): string | undefined => {
-  if (user?.role !== UserRole.PROSECUTOR) {
+  if (!isProsecutionUser(user)) {
     // Only prosecutors should see the explanation.
     return undefined
   }
@@ -216,12 +219,13 @@ export const SignedVerdictOverview: React.FC = () => {
     isSendingNotification,
     transitionCase,
   } = useCase()
-  const { title, description, child } = useAppealAlertBanner(
-    workingCase,
-    () => setModalVisible('ConfirmAppealAfterDeadline'),
-    () => setModalVisible('ConfirmStatementAfterDeadline'),
-    () => handleReceivedTransition(workingCase),
-  )
+  const { title, description, child, isLoadingAppealBanner } =
+    useAppealAlertBanner(
+      workingCase,
+      () => setModalVisible('ConfirmAppealAfterDeadline'),
+      () => setModalVisible('ConfirmStatementAfterDeadline'),
+      () => handleReceivedTransition(workingCase),
+    )
 
   /**
    * If the case is not rejected it must be accepted because
@@ -236,16 +240,13 @@ export const SignedVerdictOverview: React.FC = () => {
    */
   const canModifyCaseDates = useCallback(() => {
     return (
-      user &&
-      [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
-        user.role,
-      ) &&
+      (isProsecutionUser(user) || isDistrictCourtUser(user)) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
 
   const [getCourtRecordSignatureConfirmation] =
-    useGetCourtRecordSignatureConfirmationLazyQuery({
+    useCourtRecordSignatureConfirmationLazyQuery({
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
       onCompleted: (courtRecordSignatureConfirmationData) => {
@@ -291,7 +292,7 @@ export const SignedVerdictOverview: React.FC = () => {
   })
 
   const handleNextButtonClick = async () => {
-    if (user?.role === UserRole.PROSECUTOR) {
+    if (isProsecutionUser(user)) {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
           router.push(
@@ -360,7 +361,7 @@ export const SignedVerdictOverview: React.FC = () => {
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: null as unknown as string,
+          sharedWithProsecutorsOfficeId: null,
         })
       } else {
         setSharedCaseModal({
@@ -416,14 +417,14 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const shouldDisplayAlertBanner =
     (workingCase.hasBeenAppealed &&
-      (isProsecutionRole(user?.role) || isCourtRole(user?.role))) ||
-    (isProsecutionRole(user?.role) &&
+      (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
+    (isProsecutionUser(user) &&
       workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) ||
     workingCase.appealState === CaseAppealState.COMPLETED
 
   return (
     <>
-      {shouldDisplayAlertBanner && (
+      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
         <AlertBanner variant="warning" title={title} description={description}>
           {child}
         </AlertBanner>
@@ -467,6 +468,20 @@ export const SignedVerdictOverview: React.FC = () => {
                   }
                 />
               )}
+            {workingCase.appealRulingModifiedHistory && (
+              <Box marginBottom={5} marginTop={5}>
+                <AlertMessage
+                  type="info"
+                  title={formatMessage(strings.rulingModifiedTitle)}
+                  message={
+                    <MarkdownWrapper
+                      markdown={workingCase.appealRulingModifiedHistory}
+                      textProps={{ variant: 'small' }}
+                    />
+                  }
+                />
+              </Box>
+            )}
           </Box>
           {workingCase.caseModifiedExplanation && (
             <Box marginBottom={5}>
@@ -503,7 +518,7 @@ export const SignedVerdictOverview: React.FC = () => {
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
@@ -532,7 +547,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   ? [
                       {
                         title: formatMessage(core.caseType),
-                        value: capitalize(caseTypes[workingCase.type]),
+                        value: capitalize(formatCaseType(workingCase.type)),
                       },
                     ]
                   : []),
@@ -597,7 +612,7 @@ export const SignedVerdictOverview: React.FC = () => {
               }
             />
           </Box>
-          {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
+          {!isPrisonSystemUser(user) && (
             <Box marginBottom={5} data-testid="accordionItems">
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -644,8 +659,8 @@ export const SignedVerdictOverview: React.FC = () => {
             requestRulingSignature={requestRulingSignature}
           />
 
-          {user?.role === UserRole.PROSECUTOR &&
-            user.institution?.id ===
+          {isProsecutionUser(user) &&
+            user?.institution?.id ===
               workingCase.creatingProsecutor?.institution?.id &&
             isRestrictionCase(workingCase.type) && (
               <ShareCase

@@ -148,6 +148,7 @@ interface BaseModel {
 type BillingInfo implements BaseModel {
   cancelDate: LocalDate
   id: UUID!
+  issuerDiscounts: [IssuerDiscount!]
   issuerStatus: IssuerStatus
   passTemplatesPrice: [PassTemplatePrice!]!
   trialEndDate: LocalDate!
@@ -415,6 +416,18 @@ input DImageInput {
   width: Int!
 }
 
+input DIssuerDiscountInput {
+  deleted: Boolean!
+  discount: Float!
+  endDate: Instant
+  id: UUID!
+  issuer: DIssuerInput!
+  startDate: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
 input DIssuerInput {
   address: String
   automations: [DAutomationInput!]!
@@ -425,6 +438,7 @@ input DIssuerInput {
   contactPhone: String
   deleted: Boolean!
   demoEmails: [DDemoEmailInput!]
+  discounts: [DIssuerDiscountInput!]
   id: UUID!
   idNumber: String
   images: [DImageInput!]!
@@ -522,10 +536,8 @@ type DKPlusCompanyType {
 input DLocationInput {
   deleted: Boolean!
   id: UUID!
-  issuer: DIssuerInput!
-  name: String!
-  passTemplates: [DPassTemplateInput!]
-  relevantText: String
+  passTemplates: DPassTemplateInput!
+  relevantText: String!
   version: Long!
   whenCreated: Instant!
   whenModified: Instant!
@@ -758,6 +770,7 @@ input DPassTemplateInput {
   expirationDate: Instant
   expirationType: ExpirationType
   externalAPIs: [DExternalAPIInput!]!
+  externalAuthAgeVerification: Int
   externalAuthEnablePOS: Boolean!
   externalAuthIdField: DPassInputFieldInput
   externalAuthNameField: DPassInputFieldInput
@@ -1189,6 +1202,7 @@ input ExpenceDataInput {
 }
 
 type Expense implements BaseModel {
+  discount: Float!
   expenseType: MonthlyFeeType!
   id: UUID!
   monthlyPrice: Float!
@@ -1430,6 +1444,7 @@ type Issuer implements BaseModel {
   contactName: String
   contactPhone: String
   currentPlanSubscription: PlanSubscription
+  discounts: [IssuerDiscount!]
   id: UUID!
   idNumber: String
   invoiceEmail: String
@@ -1468,6 +1483,24 @@ input IssuerDataInput {
   termsAndConditions: Boolean
   town: String
   zipcode: String
+}
+
+type IssuerDiscount implements BaseModel {
+  discount: Float!
+  endDate: Instant
+  id: UUID!
+  startDate: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input IssuerDiscountDataInput {
+  discount: Float!
+  endDate: String
+  id: String
+  issuerId: String!
+  startDate: String
 }
 
 type IssuerPageInfo implements PaginationInfo {
@@ -1569,8 +1602,7 @@ type Location {
   id: UUID!
   latitude: Float!
   longitude: Float!
-  name: String!
-  relevantText: String
+  relevantText: String!
 }
 
 input LocationDataInput {
@@ -1650,6 +1682,7 @@ type Mutation {
   ): PassTemplate!
   deleteFeatureFlag(key: String!): Boolean!
   deleteIssuer(id: String!): Boolean!
+  deleteIssuerDiscount(id: String!): Boolean!
   deleteIssuerSecret(id: String!): Boolean!
   deleteIssuerUserSecret(id: String!): Boolean!
   deleteIssuerUserSecretValue(id: String!): Boolean!
@@ -1787,12 +1820,14 @@ type Mutation {
     integrationType: MonthlyFeeType!
     issuerId: String
   ): Boolean!
+  upsertIssuerDiscount(data: IssuerDiscountDataInput!): IssuerDiscount!
   upsertIssuerSecret(data: IssuerSecretDataInput!): IssuerSecret!
   upsertIssuerUserSecret(data: IssuerUserSecretDataInput!): IssuerUserSecret!
   upsertIssuerUserSecretValue(
     data: IssuerUserSecretValueDataInput!
   ): IssuerUserSecretValue!
   upsertLocation(data: LocationDataInput!): Location
+    @deprecated(reason: "Not used, replace with Use inside pass template")
   upsertNode(data: NodeDataInput!): Node!
   upsertNodes(automationId: String!, data: [NodeDataInput!]!): [Node!]!
   upsertNodesFromEditor(
@@ -2010,6 +2045,7 @@ type Pass implements BaseModel {
   expirationDateWithoutTime: String!
   expirationTime: String!
   externalIdentifier: String
+  hasMissingExternalAuthentication: Boolean!
   hasMissingMemberInputFieldValues: Boolean!
   id: UUID!
   inputFieldValues: [PassInputFieldValue!]!
@@ -2188,6 +2224,7 @@ type PassInputField implements BaseModel {
   format: PassInputFieldFormat!
   id: UUID!
   identifier: String!
+  isExternalAuthField: Boolean!
   label: String!
   mandatory: Boolean!
   type: PassInputFieldType!
@@ -2328,6 +2365,7 @@ type PassTemplate implements BaseModel {
   expirationTime: String!
   expirationType: ExpirationType
   externalAPIs: [ExternalAPI!]!
+  externalAuthAgeVerification: Int
   externalAuthEnablePOS: Boolean!
   externalAuthIdField: PassInputField
   externalAuthNameField: PassInputField
@@ -2347,7 +2385,7 @@ type PassTemplate implements BaseModel {
   isSharingProhibited: Boolean!
   issuer: Issuer
   labelColor: String
-  locations: [Location!]
+  locations: [PassTemplateLocation!]!
   lockInputFields: Boolean!
   logScansOnBack: Boolean!
   logo: Image
@@ -2416,6 +2454,7 @@ input PassTemplateDataInput {
   expirationTime: String
   expirationType: ExpirationType
   externalAPIs: [ExternalAPIDataInput!]
+  externalAuthAgeVerification: Int
   externalAuthEnablePOS: Boolean
   externalAuthIdFieldId: String
   externalAuthNameFieldId: String
@@ -2434,7 +2473,7 @@ input PassTemplateDataInput {
   isNFC: Boolean
   isSharingProhibited: Boolean
   labelColor: String
-  locationIds: [String!]
+  locations: [PassTemplateLocationDataInput!]
   lockInputFields: Boolean
   logScansOnBack: Boolean
   logo: ImageDataInput
@@ -2471,6 +2510,20 @@ input PassTemplateDataInput {
   thumbnail: ImageDataInput
   unstampedImage: ImageDataInput
   useExternalAuth: Boolean
+}
+
+type PassTemplateLocation {
+  id: UUID!
+  latitude: Float!
+  longitude: Float!
+  relevantText: String!
+}
+
+input PassTemplateLocationDataInput {
+  id: String
+  latitude: Float!
+  longitude: Float!
+  relevantText: String!
 }
 
 type PassTemplatePageInfo implements PaginationInfo {
@@ -2857,6 +2910,7 @@ type Query {
   ): IssuerPageInfo!
   issuersOfUser: [Issuer!]!
   locations: [Location!]!
+    @deprecated(reason: "Not used, replace with Use inside pass template")
   me: User
   meScanner: Scanner
   mostRecentlySentMail(passId: String!): Email
@@ -2954,6 +3008,7 @@ type Query {
   user(id: String!): User
   userDistributionContactInfo(token: String!): UserDistributionContactInfo
   userDistributionToken(passTemplateId: String!): UserDistributionToken
+  userOption(option: String!): UserOptionData
   users(
     """
     Single order field is deprecated, please use orderMultiple
@@ -3318,6 +3373,7 @@ type StatisticResponse {
 }
 
 type Subscription implements BaseModel {
+  discount: Float!
   expenses: [Expense!]
   id: UUID!
   month: Int!

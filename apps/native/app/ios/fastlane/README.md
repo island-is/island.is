@@ -22,16 +22,16 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Push a new beta build to TestFlight
 
-### ios increment_build
-
-```sh
-[bundle exec] fastlane ios increment_build
-```
-
 ### ios beta
 
 ```sh
 [bundle exec] fastlane ios beta
+```
+
+### ios promote
+
+```sh
+[bundle exec] fastlane ios promote
 ```
 
 ---

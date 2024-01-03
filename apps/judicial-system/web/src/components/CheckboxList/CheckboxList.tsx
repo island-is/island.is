@@ -19,7 +19,7 @@ export interface CheckboxInfo {
 
 interface Props {
   checkboxes: CheckboxInfo[]
-  selected: string[] | undefined
+  selected: string[] | undefined | null
   onChange: (id: string) => void
   fullWidth?: boolean
 }
@@ -53,7 +53,9 @@ const CheckboxList: React.FC<React.PropsWithChildren<Props>> = ({
                   name={formatMessage(checkbox.title)}
                   label={formatMessage(checkbox.title)}
                   value={checkbox.id}
-                  checked={selected && selected.indexOf(checkbox.id) > -1}
+                  checked={Boolean(
+                    selected && selected.indexOf(checkbox.id) > -1,
+                  )}
                   tooltip={formatMessage(checkbox.info)}
                   onChange={({ target }) => onChange(target.value)}
                   large

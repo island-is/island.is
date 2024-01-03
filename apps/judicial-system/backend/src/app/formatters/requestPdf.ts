@@ -4,7 +4,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
@@ -338,7 +338,7 @@ function constructInvestigationRequestPdf(
     capitalize(
       theCase.type === CaseType.OTHER
         ? formatMessage(core.caseType.investigate)
-        : caseTypes[theCase.type],
+        : formatCaseType(theCase.type),
     ),
     'Times-Roman',
   )

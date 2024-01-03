@@ -1,9 +1,5 @@
-query GetUsersVehicles($nextCursor: String) {
-  vehiclesList(nextCursor: $nextCursor) {
-    persidno
-    name
-    address
-    postStation
+query GetUsersVehicles($input: GetVehiclesForUserInput!) {
+  vehiclesList(input: $input) {
     vehicleList {
       isCurrent
       permno
@@ -39,9 +35,16 @@ query GetUsersVehicles($nextCursor: String) {
       lastInspectionDate
       lastInspectionType
       nextInspectionDate
+      nextAvailableMileageReadDate
+      requiresMileageRegistration
+      canRegisterMileage
+    }
+    paging {
+      pageNumber
+      pageSize
+      totalPages
+      totalRecords
     }
     downloadServiceURL
-    createdTimestamp
-    nextCursor
   }
 }

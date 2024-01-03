@@ -24,18 +24,12 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "curl https://midlun-dev.skra.is/swagger/v1/swagger.json -H \"Authorization:Bearer $(curl -X POST https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token -d grant_type='client_credentials&client_id=${NAT_REG_CLIENT_ID}&client_secret=${NAT_REG_CLIENT_SECRET}&scope=https://skraidentitydev.onmicrosoft.com/midlun/.default' | jq .access_token -r  )\" > src/clientConfig.json",
           "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/national-registry/v3"
-      }
-    },
-    "codegen/frontend-client": {
-      "executor": "nx:run-commands",
-      "options": {
-        "output": "libs/service-portal/sessions/src/**/*.generated.ts",
-        "command": "graphql-codegen --config libs/service-portal/sessions/codegen.yml"
       }
     },
     "codegen/backend-client": {

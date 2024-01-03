@@ -63,6 +63,10 @@ const LatestNewsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
 )
 
+const LatestEventsSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestEventsSlice),
+)
+
 const OverviewLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
 )
@@ -75,8 +79,8 @@ const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
 
-const LifeEventPageListSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
+const AnchorPageListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.AnchorPageListSlice),
 )
 
 const PowerBiSlice = dynamic(() =>
@@ -139,12 +143,9 @@ const renderSlice = (
     case 'LatestNewsSlice':
       return <LatestNewsSlice slice={slice} slug={slug} {...params} />
     case 'LifeEventPageListSlice':
+    case 'AnchorPageListSlice':
       return (
-        <LifeEventPageListSlice
-          slice={slice}
-          namespace={namespace}
-          {...params}
-        />
+        <AnchorPageListSlice slice={slice} namespace={namespace} {...params} />
       )
     case 'EmailSignup':
       return <EmailSignup slice={slice} marginLeft={[0, 0, 0, 6]} />
@@ -156,6 +157,15 @@ const renderSlice = (
       return <PowerBiSlice slice={slice} />
     case 'SectionWithVideo':
       return <SectionWithVideo slice={slice} />
+    case 'LatestEventsSlice':
+      return (
+        <LatestEventsSlice
+          slice={slice}
+          slug={slug}
+          namespace={namespace}
+          {...params}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }

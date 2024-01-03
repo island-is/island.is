@@ -31,4 +31,15 @@ export class VehicleCodetablesClient {
       plateWidth: item.plateWidth,
     }))
   }
+
+  public getElectricFueldCodes(): string[] {
+    return [
+      '3', // Rafmagn
+      '5', // Vetni
+      'D', // Bensín /Raf.tengill
+      'E', // Dísel /Raf.tengill
+      'F', // Vetni /Rafmagn
+      'G', // Vetni/ Raf.tengill
+    ]
+  }
 }

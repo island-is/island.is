@@ -8,6 +8,7 @@ import {
   GenericUserLicenseFetchStatus,
   GenericLicenseProviderId,
   GenericUserLicensePkPassStatus,
+  GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 
 registerEnumType(GenericLicenseType, {
@@ -35,6 +36,11 @@ registerEnumType(GenericUserLicensePkPassStatus, {
   description: 'Possible license pkpass statuses',
 })
 
+registerEnumType(GenericUserLicenseMetaLinksType, {
+  name: 'GenericUserLicenseMetaLinksType',
+  description: 'Exhaustive list meta link type',
+})
+
 @ObjectType()
 export class GenericLicenseProvider {
   @Field(() => GenericLicenseProviderId, {
@@ -48,9 +54,16 @@ export class GenericUserLicenseMetaLinks {
   @Field(() => String, { nullable: true })
   label?: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   value?: string
+
+  @Field(() => String, { nullable: true })
+  name?: string
+
+  @Field(() => GenericUserLicenseMetaLinksType, { nullable: true })
+  type?: GenericUserLicenseMetaLinksType
 }
+
 @ObjectType()
 export class GenericUserLicenseMetadata {
   @Field(() => [GenericUserLicenseMetaLinks], { nullable: true })
@@ -58,6 +71,12 @@ export class GenericUserLicenseMetadata {
 
   @Field(() => String)
   licenseNumber?: string
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Unique license identifier',
+  })
+  licenseId?: string
 
   @Field(() => Boolean, { nullable: true })
   expired?: boolean | null
@@ -120,8 +139,27 @@ export class GenericLicenseFetch {
 }
 
 @ObjectType()
+export class UserLicensesResponse {
+  @Field({ description: 'National ID of licenses owner' })
+  nationalId!: string
+
+  @Field(() => [GenericUserLicense], {
+    description: 'All of the users licenses',
+  })
+  licenses!: Array<GenericUserLicense>
+
+  @Field(() => [GenericUserLicense], {
+    description: 'The users children licenses',
+  })
+  childrenLicenses?: Array<GenericUserLicense>
+}
+
+@ObjectType()
 export class GenericUserLicense {
-  @Field({ description: 'National ID of license owner' })
+  @Field({
+    description: 'National ID of license owner',
+    deprecationReason: 'Moved one level up',
+  })
   nationalId!: string
 
   @Field(() => GenericLicense, { description: 'License info' })
