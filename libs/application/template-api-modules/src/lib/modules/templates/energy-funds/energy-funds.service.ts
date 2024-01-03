@@ -125,9 +125,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
       vIN: currentvehicleDetails?.vin || '',
       carNumber: applicationAnswers?.selectVehicle.plate,
       carType: (currentvehicleDetails && currentvehicleDetails.make) || '',
-      itemcode:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrantItemCode) ||
-        '',
+      itemcode: applicationAnswers?.selectVehicle.grantItemCode || '',
       vehicleGroup: currentvehicleDetails?.vehicleRegistrationCode || '',
       purchasePrice:
         (applicationAnswers?.vehicleDetails.price &&
@@ -145,8 +143,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
             'yyyy-MM-dd',
           )
         : '',
-      subsidyAmount:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrant) || 0,
+      subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
