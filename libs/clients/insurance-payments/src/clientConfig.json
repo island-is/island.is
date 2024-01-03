@@ -244,7 +244,109 @@
               }
             }
           },
-          "200": { "description": "Success" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Applicant/onetimepayment/upload": {
+      "post": {
+        "tags": ["Applicant"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -321,16 +423,118 @@
               }
             }
           },
-          "200": { "description": "Success" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              }
+            }
+          }
         }
       }
     },
-    "/api/protected/v1/Application/{applicationType}": {
+    "/api/protected/v1/Application/withdrawal/upload": {
+      "post": {
+        "tags": ["Application"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Application/{applicationGuid}/documents": {
       "post": {
         "tags": ["Application"],
         "parameters": [
           {
-            "name": "applicationType",
+            "name": "applicationGuid",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -339,9 +543,24 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": { "schema": {} },
-            "text/json": { "schema": {} },
-            "application/*+json": { "schema": {} }
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Document" }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Document" }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Document" }
+              }
+            }
           }
         },
         "responses": {
@@ -401,26 +620,7 @@
               }
             }
           },
-          "201": {
-            "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateApplicationFromPaperReturn"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateApplicationFromPaperReturn"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateApplicationFromPaperReturn"
-                }
-              }
-            }
-          }
+          "204": { "description": "No Content" }
         }
       }
     },
@@ -710,7 +910,14 @@
               }
             }
           },
-          "200": { "description": "Success" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
         }
       }
     },
@@ -774,7 +981,14 @@
               }
             }
           },
-          "200": { "description": "Success" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
         }
       }
     },
@@ -838,7 +1052,26 @@
               }
             }
           },
-          "200": { "description": "Success" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -919,13 +1152,19 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": { "type": "integer", "format": "int32" }
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
               },
               "application/json": {
-                "schema": { "type": "integer", "format": "int32" }
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
               },
               "text/json": {
-                "schema": { "type": "integer", "format": "int32" }
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSet"
+                }
               }
             }
           }
@@ -1056,6 +1295,14 @@
         "type": "integer",
         "format": "int32"
       },
+      "ApplicationResultSet": {
+        "type": "object",
+        "properties": {
+          "status": { "$ref": "#/components/schemas/ExternalResultStatus" },
+          "message": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "AssociatedUser": {
         "type": "object",
         "properties": {
@@ -1083,6 +1330,15 @@
         "type": "integer",
         "format": "int32"
       },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "file": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "Error": {
         "required": ["message"],
         "type": "object",
@@ -1107,6 +1363,11 @@
           "param": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
+      },
+      "ExternalResultStatus": {
+        "enum": [200, 300, 400],
+        "type": "integer",
+        "format": "int32"
       },
       "File": {
         "type": "object",
@@ -1149,7 +1410,10 @@
       },
       "IsEligibleForApplicationReturn": {
         "type": "object",
-        "properties": { "isEligible": { "type": "boolean" } },
+        "properties": {
+          "isEligible": { "type": "boolean" },
+          "reason": { "type": "string", "nullable": true }
+        },
         "additionalProperties": false
       },
       "Payment": {
