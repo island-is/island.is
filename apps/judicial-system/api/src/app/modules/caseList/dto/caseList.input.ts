@@ -7,6 +7,6 @@ import { CaseAppealState } from '@island.is/judicial-system/types'
 @InputType()
 export class CaseListQueryInput {
   @Allow()
-  @Field(() => [String], { nullable: true })
+  @Field(() => [CaseAppealState], { nullable: true })
   readonly appealState?: [CaseAppealState]
 }

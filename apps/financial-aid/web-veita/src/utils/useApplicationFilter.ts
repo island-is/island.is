@@ -6,6 +6,8 @@ import { useLazyQuery } from '@apollo/client'
 import { ApplicationFilterQuery } from '../../graphql'
 import { Filters } from './useFilter'
 import { NextRouter } from 'next/router'
+import isSameDay from 'date-fns/isSameDay'
+import formatISO from 'date-fns/formatISO'
 
 const useApplicationFilter = (
   router: NextRouter,
@@ -21,9 +23,14 @@ const useApplicationFilter = (
     errorPolicy: 'all',
   })
 
-  const filterTable = async (filters: Filters, currentPage: number) => {
-    const { applicationState, staff } = filters
+  const formatDateForQuery = (date: Date) => {
+    return formatISO(date, {
+      representation: 'date',
+    })
+  }
 
+  const filterTable = async (filters: Filters, currentPage: number) => {
+    const { applicationState, staff, period } = filters
     const query = new URLSearchParams()
     query.append('page', currentPage.toString())
 
@@ -35,6 +42,13 @@ const useApplicationFilter = (
       query.append('staff', staff.join(','))
     }
 
+    if (period.from) {
+      query.append('periodFrom', formatDateForQuery(period.from))
+    }
+    if (period.to && !isSameDay(period.to, new Date())) {
+      query.append('periodTo', formatDateForQuery(period.to))
+    }
+
     router.push({ search: query.toString() })
 
     await getApplications({
@@ -44,6 +58,8 @@ const useApplicationFilter = (
           states: applicationState,
           staff: staff,
           page: currentPage,
+          startDate: period.to,
+          endDate: period.from,
         },
       },
     })

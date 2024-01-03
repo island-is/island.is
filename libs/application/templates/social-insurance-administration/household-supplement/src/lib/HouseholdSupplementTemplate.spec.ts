@@ -8,7 +8,7 @@ import {
   ApplicationStatus,
 } from '@island.is/application/types'
 import HouseholdSupplementTemplate from './HouseholdSupplementTemplate'
-import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 function buildApplication(data: {
   answers?: FormValue

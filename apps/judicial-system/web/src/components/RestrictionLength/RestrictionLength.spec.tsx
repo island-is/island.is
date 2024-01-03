@@ -1,10 +1,12 @@
 import { render, screen } from '@testing-library/react'
 
-import { CaseDecision } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import { CaseType } from '../../graphql/schema'
-import { mockCase } from '../../utils/mocks'
-import { IntlProviderWrapper } from '../../utils/testHelpers'
 import RestrictionLength from './RestrictionLength'
 
 describe('RestrictionLength', () => {
