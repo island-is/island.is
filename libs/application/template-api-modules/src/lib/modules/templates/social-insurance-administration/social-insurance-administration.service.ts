@@ -22,7 +22,7 @@ import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   Attachment,
   AttachmentTypeEnum,

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   GetIsOwner,
   GetListById,
@@ -6,7 +6,6 @@ import {
   GetListsForUser,
   GetSignedList,
 } from './queries'
-import { cancelCollectionMutation } from './mutations'
 import {
   SignatureCollectionList,
   SignatureCollectionSignature,
