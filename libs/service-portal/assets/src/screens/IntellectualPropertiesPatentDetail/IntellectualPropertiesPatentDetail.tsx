@@ -9,21 +9,15 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { ipMessages } from '../../lib/messages'
-import {
-  Box,
-  Button,
-  Divider,
-  GridColumn,
-  GridRow,
-  Inline,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
 import { useGetIntellectualPropertiesPatentByIdQuery } from './IntellectualPropertiesPatentDetail.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
+import { useMemo } from 'react'
+import { orderTimelineData } from '../../utils/timelineMapper'
+import { makeArrayEven } from '../../utils/makeArrayEven'
 
 type UseParams = {
   id: string
@@ -42,15 +36,60 @@ const IntellectualPropertiesPatentDetail = () => {
     },
   })
 
+  const ip = data?.intellectualPropertiesPatent
+
+  const orderedDates = useMemo(
+    () =>
+      orderTimelineData([
+        {
+          date: ip?.lifecycle.applicationDate ?? undefined,
+          message: formatMessage(ipMessages.application),
+        },
+        {
+          date: ip?.lifecycle.registrationDate ?? undefined,
+          message: formatMessage(ipMessages.registration),
+        },
+        {
+          date: ip?.lifecycle.applicationDatePublishedAsAvailable ?? undefined,
+          message: formatMessage(ipMessages.publish),
+        },
+        {
+          date: ip?.lifecycle.maxValidObjectionDate ?? undefined,
+          message: formatMessage(ipMessages.maxValidObjectionDate),
+        },
+      ]),
+    [formatMessage, ip?.lifecycle],
+  )
+
+  const extraInfoArray = useMemo(() => {
+    if (ip) {
+      const extraInfoArray = [
+        ip?.applicationNumber
+          ? {
+              title: formatMessage(ipMessages.applicationNumber),
+              value: formatDate(ip?.applicationNumber),
+            }
+          : null,
+        ip?.statusText
+          ? {
+              title: formatMessage(m.status),
+              value: ip.statusText,
+            }
+          : null,
+      ].filter(isDefined)
+
+      return makeArrayEven(extraInfoArray, { title: '', value: '' })
+    }
+  }, [formatMessage, ip])
+
   if (error && !loading) {
-    return <Problem type="not_found" />
+    return <Problem error={error} />
   }
 
   if (!data?.intellectualPropertiesPatent && !loading) {
     return <Problem type="no_data" />
   }
 
-  const ip = data?.intellectualPropertiesPatent
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
@@ -63,38 +102,6 @@ const IntellectualPropertiesPatentDetail = () => {
         />
       </Box>
       <Stack space="containerGutter">
-        <GridRow>
-          <GridColumn span="12/12">
-            <Box marginBottom={3} paddingRight={2}>
-              <Inline space={2}>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {formatMessage(ipMessages.mortgage)}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {formatMessage(ipMessages.usagePermit)}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {formatMessage(ipMessages.revocation)}
-                </Button>
-              </Inline>
-            </Box>
-          </GridColumn>
-        </GridRow>
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
@@ -111,74 +118,24 @@ const IntellectualPropertiesPatentDetail = () => {
           <Divider />
         </Stack>
         {!loading && !error && (
-          <>
-            <Timeline title={formatMessage(ipMessages.timeline)}>
-              {[
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.lifecycle.applicationDate
-                      ? formatDate(ip.lifecycle.applicationDate)
-                      : ''}
-                  </Text>
-                  <Text>{formatMessage(ipMessages.application)}</Text>
-                </Stack>,
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.lifecycle.registrationDate
-                      ? formatDate(ip.lifecycle.registrationDate)
-                      : ''}
-                  </Text>
-                  <Text>{formatMessage(ipMessages.registration)}</Text>
-                </Stack>,
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.lifecycle.applicationDatePublishedAsAvailable
-                      ? formatDate(
-                          ip.lifecycle.applicationDatePublishedAsAvailable,
-                        )
-                      : ''}
-                  </Text>
-                  <Text>{formatMessage(ipMessages.publishDate)}</Text>
-                </Stack>,
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.lifecycle.maxValidObjectionDate
-                      ? formatDate(ip.lifecycle.maxValidObjectionDate)
-                      : ''}
-                  </Text>
-                  <Text>{formatMessage(ipMessages.maxValidObjectionDate)}</Text>
-                </Stack>,
-              ]}
+          <Box>
+            <Timeline
+              title={formatMessage(ipMessages.timeline)}
+              maxDate={orderedDates[orderedDates.length - 1].date}
+              minDate={orderedDates[0].date}
+            >
+              {orderedDates.map((datapoint) => (
+                <Stack key="list-item-application-date" space="smallGutter">
+                  <Text variant="h5">{formatDate(datapoint.date)}</Text>
+                  <Text>{datapoint.message}</Text>
+                </Stack>
+              ))}
             </Timeline>
             <TableGrid
               title={formatMessage(ipMessages.information)}
-              dataArray={chunk(
-                [
-                  {
-                    title: formatMessage(ipMessages.applicationNumber),
-                    value: ip?.applicationNumber
-                      ? formatDate(ip?.applicationNumber)
-                      : '',
-                  },
-                  {
-                    title: formatMessage(m.status),
-                    value: ip?.statusText ?? '',
-                  },
-                  {
-                    title: formatMessage(ipMessages.registrationDate),
-                    value: ip?.lifecycle.registrationDate
-                      ? formatDate(ip.lifecycle.registrationDate)
-                      : '',
-                  },
-                  {
-                    title: '',
-                    value: '',
-                  },
-                ].filter(isDefined),
-                2,
-              )}
+              dataArray={chunk(extraInfoArray, 2)}
             />
-          </>
+          </Box>
         )}
         <Stack space="p2">
           <UserInfoLine
