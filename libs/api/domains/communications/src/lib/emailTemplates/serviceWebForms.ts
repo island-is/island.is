@@ -288,6 +288,11 @@ enum DirectorateOfImmigrationCategories {
   ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
 }
 
+enum GrindavikCategories {
+  AFKOMA_OG_LAUN = '6WpT21uCInUNJWinVBSHbK',
+  TJON_OG_TRYGGINGAR = '1rYQzjeMo3GGmZ32tbJcdf',
+}
+
 const sjukratryggingarEmails = {
   [SjukratryggingarCategories.FERDAKOSTNADUR]: 'ferdakostnadur@sjukra.is',
   [SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK]:
@@ -318,6 +323,16 @@ const directorateOfImmigrationEmails = {
   [DirectorateOfImmigrationCategories.CITIZENSHIP]: 'rikisborgararettur@utl.is',
   [DirectorateOfImmigrationCategories.ASSISTED_VOLUNTARY_RETURN]:
     'return@utl.is',
+}
+
+const grindavikEmails = {
+  [GrindavikCategories.AFKOMA_OG_LAUN]: 'studningur@vmst.is',
+  [GrindavikCategories.TJON_OG_TRYGGINGAR]: 'nti@nti.is',
+}
+
+const transportAuthorityEmails = {
+  umferd: 'adstod@samgongustofa.is',
+  siglingar: 'sigling@samgongustofa.is',
 }
 
 export const getTemplate = (
@@ -352,6 +367,21 @@ export const getTemplate = (
     toAddress =
       directorateOfImmigrationEmails[
         categoryId as keyof typeof directorateOfImmigrationEmails
+      ] ?? institutionEmail
+  } else if (
+    input.institutionSlug === 'fyrir-grindavik' ||
+    input.institutionSlug === 'for-grindavik'
+  ) {
+    toAddress =
+      grindavikEmails[categoryId as keyof typeof grindavikEmails] ??
+      institutionEmail
+  } else if (
+    input.institutionSlug === 'samgongustofa' ||
+    input.institutionSlug === 'transport-authority'
+  ) {
+    toAddress =
+      transportAuthorityEmails[
+        categoryId as keyof typeof transportAuthorityEmails
       ] ?? institutionEmail
   }
 

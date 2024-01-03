@@ -43,12 +43,40 @@ export const dataCollection = buildSection({
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
           title: m.personalInfoProviderTitle,
-          subTitle: m.personalInfoProviderSubtitle,
+          subTitle: (application) =>
+            application.answers.selectedEstate ===
+            EstateTypes.estateWithoutAssets
+              ? /* EIGNALAUST DÁNARBU */
+                m.personalInfoProviderSubtitleEstateWithoutAssets
+              : application.answers.selectedEstate ===
+                EstateTypes.officialDivision
+              ? /* OPINBER SKIPTI */
+                m.personalInfoProviderSubtitleOfficialDivision
+              : application.answers.selectedEstate ===
+                EstateTypes.permitForUndividedEstate
+              ? /* SETA Í ÓSKIPTU BÚI */
+                m.personalInfoProviderSubtitleUndividedEstate
+              : /* EINKASKIPTI */
+                m.personalInfoProviderSubtitleDivisionOfEstateByHeirs,
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
           title: m.settingsInfoProviderTitle,
-          subTitle: m.settingsInfoProviderSubtitle,
+          subTitle: (application) =>
+            application.answers.selectedEstate ===
+            EstateTypes.estateWithoutAssets
+              ? /* EIGNALAUST DÁNARBU */
+                m.settingsInfoProviderSubtitleEstateWithoutAssets
+              : application.answers.selectedEstate ===
+                EstateTypes.officialDivision
+              ? /* OPINBER SKIPTI */
+                m.settingsInfoProviderSubtitleOfficialDivision
+              : application.answers.selectedEstate ===
+                EstateTypes.permitForUndividedEstate
+              ? /* SETA Í ÓSKIPTU BÚI */
+                m.settingsInfoProviderSubtitleUndividedEstate
+              : /* EINKASKIPTI */
+                m.settingsInfoProviderSubtitleDivisionOfEstateByHeirs,
         }),
       ],
     }),

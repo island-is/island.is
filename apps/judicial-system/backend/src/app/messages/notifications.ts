@@ -662,6 +662,20 @@ export const notifications = {
       description: 'Texti í pósti til aðila máls þegar greinargerð er send',
     },
   }),
+  caseAppealCaseFilesUpdated: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_appeal_case_files_updated.subject',
+      defaultMessage:
+        'Ný gögn í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { ({appealCaseNumber})}}',
+      description: 'Fyrirsögn í pósti til aðila máls þegar ný gögn eru send',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_appeal_case_files_updated.body',
+      defaultMessage:
+        'Ný gögn hafa borist vegna kæru í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { (Landsréttarmál nr. {appealCaseNumber})}}. {appealCaseNumber, select, NONE {} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      description: 'Texti í pósti til aðila máls þegar ný gögn eru send',
+    },
+  }),
   caseAppealCompleted: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.case_appeal_completed.subject',
@@ -722,9 +736,9 @@ export const notifications = {
         'Landsréttur hefur skráð þig sem dómsformann í máli nr. {caseNumber}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
     },
     body: {
-      id: 'judicial.system.backend:notifications.coa_judge_assigned.body',
+      id: 'judicial.system.backend:notifications.coa_judge_assigned.body_v2',
       defaultMessage:
-        'Landsréttur hefur skráð þig sem {role, select, JUDGE {dómara} other {aðstoðarmann dómara}} í máli nr. {caseNumber}. Dómsformaður er {foreperson}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
+        'Landsréttur hefur skráð þig sem {role, select, COURT_OF_APPEALS_JUDGE {dómara} other {aðstoðarmann dómara}} í máli nr. {caseNumber}. Dómsformaður er {foreperson}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
       description:
         'Texti í pósti til dómara og aðstoðarmanna dómara þegar máli er úthlutað í landsrétti',
     },

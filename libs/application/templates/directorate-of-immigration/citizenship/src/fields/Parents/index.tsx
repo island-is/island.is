@@ -7,7 +7,12 @@ import { information } from '../../lib/messages'
 import { Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { ParentsToApplicant } from '../../shared'
 import { ParentRepeaterItem } from './ParentRepeaterItem'
 
@@ -19,7 +24,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
   }
 
   const [hasValidParents, setHasValidParents] = useState(
-    getValueViaPath(answers, 'parentInformation.hasValidParents', NO) as string,
+    getValueViaPath(answers, 'parentInformation.hasValidParents', '') as string,
   )
 
   //This is used to determine weather parent information comes from answer or national registry, to determine if the column is read only or not
@@ -54,15 +59,13 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
 
     //if the user has answered YES previously and is returning to the step and has one valid parent from previous answers
     //set the valid parent and set the second as default wasRemoved=true
-    if (hasValidParents === YES && validParents.length === 1) {
-      setParents([...validParents, { ...defaultParents[1] }])
-    }
-
-    if (hasValidParents === NO) {
-      //set two parents with wasRemoved = true to pass validation but also to exist if user toggles to Yes
+    if (hasValidParents === YES) {
+      if (validParents.length === 1)
+        setParents([...validParents, { ...defaultParents[1] }])
+    } else {
       setParents([defaultParents[1], defaultParents[1]])
     }
-  }, [hasValidParents])
+  }, [])
 
   const addParentToApplication = (newIndex: number) => {
     setParents(
@@ -96,7 +99,6 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
 
   const handleValidParentsChange = (value: string) => {
     setHasValidParents(value)
-
     if (value === NO) {
       handleRemoveAll()
     } else {
@@ -112,7 +114,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
         onSelect={(value) => {
           handleValidParentsChange(value)
         }}
-        defaultValue={hasValidParents === YES ? hasValidParents : NO}
+        defaultValue={hasValidParents}
         options={[
           {
             value: YES,
@@ -125,6 +127,9 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
             label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}
+        error={
+          errors && getErrorViaPath(errors, 'parentInformation.hasValidParents')
+        }
       />
 
       {!!parents &&
@@ -149,7 +154,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
                   : false
               }
               addParentToApplication={addParentToApplication}
-              isHidden={hasValidParents === NO}
+              isHidden={hasValidParents !== YES}
             />
           )
         })}

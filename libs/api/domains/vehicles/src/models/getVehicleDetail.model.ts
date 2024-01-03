@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { VehicleMileageDetail } from './getVehicleMileage.model'
 
 @ObjectType()
 export class VehiclesMainInfo {
@@ -34,6 +35,15 @@ export class VehiclesMainInfo {
 
   @Field(() => Number, { nullable: true })
   trailerWithoutBrakesWeight?: number | null
+
+  @Field(() => Date, { nullable: true })
+  nextAvailableMileageReadDate?: Date | null
+
+  @Field(() => Boolean, { nullable: true })
+  requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMileage?: boolean | null
 }
 
 @ObjectType()
@@ -293,6 +303,12 @@ export class VehiclesOperator {
   serial?: number | null
 
   @Field(() => Boolean, { nullable: true })
+  mainOperator?: boolean | null
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description: 'Deprecated. Keeping in for now for backward compatibility.',
+  })
   mainoperator?: boolean | null
 }
 
@@ -333,6 +349,9 @@ export class VehiclesDetail {
 
   @Field(() => Boolean, { nullable: true })
   isOutOfCommission?: boolean
+
+  @Field(() => VehicleMileageDetail, { nullable: true })
+  lastMileage?: VehicleMileageDetail | null
 }
 
 @ObjectType()

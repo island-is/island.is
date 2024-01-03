@@ -10,6 +10,7 @@ import {
   AlertBanner,
   CaseFilesAccordionItem,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -18,12 +19,11 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
-import CaseOverviewHeader from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/CaseOverviewHeader/CaseOverviewHeader'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
+import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -31,7 +31,8 @@ const CourtOfAppealOverview: React.FC<
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { title, description } = useAppealAlertBanner(workingCase)
+  const { title, description, isLoadingAppealBanner } =
+    useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -41,7 +42,7 @@ const CourtOfAppealOverview: React.FC<
 
   return (
     <>
-      {!isLoadingWorkingCase && (
+      {!isLoadingAppealBanner && (
         <AlertBanner
           variant="warning"
           title={title}
@@ -84,7 +85,7 @@ const CourtOfAppealOverview: React.FC<
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
@@ -132,6 +133,7 @@ const CourtOfAppealOverview: React.FC<
             <Conclusion
               title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
+              judgeName={workingCase.judge?.name}
             />
           </Box>
           <CaseFilesOverview />

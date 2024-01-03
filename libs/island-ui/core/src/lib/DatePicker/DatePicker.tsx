@@ -9,7 +9,11 @@ import {
 import getYear from 'date-fns/getYear'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
-import { dateFormat } from '@island.is/shared/constants'
+import {
+  dateFormat,
+  timeFormat,
+  dateFormatWithTime,
+} from '@island.is/shared/constants'
 import { VisuallyHidden } from 'reakit'
 import range from 'lodash/range'
 
@@ -26,10 +30,14 @@ import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
 const languageConfig = {
   is: {
     format: dateFormat.is,
+    formatWithTime: dateFormatWithTime.is,
+    timeFormat: timeFormat.is,
     locale: is,
   },
   en: {
     format: dateFormat.en,
+    formatWithTime: dateFormatWithTime.en,
+    timeFormat: timeFormat.en,
     locale: en,
   },
 }
@@ -59,6 +67,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   icon = { name: 'calendar', type: 'outline' },
   minYear,
   maxYear,
+  showTimeInput = false,
+  timeInputLabel = 'Tími:',
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
@@ -109,7 +119,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           minDate={minDate}
           maxDate={maxDate}
           excludeDates={excludeDates}
-          dateFormat={currentLanguage.format}
+          dateFormat={
+            showTimeInput
+              ? currentLanguage.formatWithTime
+              : currentLanguage.format
+          }
           showPopperArrow={false}
           popperPlacement="bottom-start"
           onCalendarOpen={() => {
@@ -143,6 +157,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               size={size}
             />
           }
+          timeFormat={currentLanguage.timeFormat}
+          timeInputLabel={timeInputLabel}
+          showTimeInput={showTimeInput}
           renderCustomHeader={(props) => (
             <CustomHeader
               locale={currentLanguage.locale}

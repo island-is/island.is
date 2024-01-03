@@ -38,6 +38,11 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:health-directorate-intro',
     defaultMessage: 'Starfsleyfi útgefið af Landlæknisembættinu.',
   },
+  healthDirectorateTooltip: {
+    id: 'sp.occupational-licenses:health-directorate-tooltip',
+    defaultMessage:
+      'Embætti landlæknis hefur umsjón með gögnum um starfsleyfi heilbrigðisstarfsfólks.',
+  },
   validLicense: {
     id: 'sp.occupational-licenses:valid-license',
     defaultMessage: 'Í gildi',

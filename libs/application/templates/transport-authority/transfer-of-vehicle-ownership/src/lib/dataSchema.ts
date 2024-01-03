@@ -85,10 +85,9 @@ export const TransferOfVehicleOwnershipSchema = z.object({
     vehicle: z.string().optional(),
     plate: z.string().min(1),
     color: z.string().optional(),
+    type: z.string().min(1),
   }),
   vehicle: z.object({
-    plate: z.string().min(1),
-    type: z.string().min(1),
     salePrice: z
       .string()
       .optional()
@@ -96,13 +95,32 @@ export const TransferOfVehicleOwnershipSchema = z.object({
         (p) => p === undefined || p === '' || parseInt(p?.split(' ')[0]) >= 0,
       ),
     date: z.string().min(1),
-    mileage: z
-      .string()
-      .optional()
-      .refine(
-        (p) => p === undefined || p === '' || parseInt(p?.split(' ')[0]) >= 0,
-      ),
   }),
+  vehicleMileage: z
+    .object({
+      isRequired: z.boolean().optional(),
+      value: z.string().optional(),
+    })
+    .refine(
+      (x) => {
+        if (x.isRequired) {
+          return (
+            x.value !== undefined &&
+            x.value !== '' &&
+            parseInt(x.value?.split(' ')[0]) > 0
+          )
+        } else {
+          return (
+            x.value === undefined ||
+            x.value === '' ||
+            parseInt(x.value?.split(' ')[0]) >= 0
+          )
+        }
+      },
+      {
+        path: ['value'],
+      },
+    ),
   seller: UserInformationSchema,
   sellerCoOwner: z.array(UserInformationSchema),
   buyer: UserInformationSchema,

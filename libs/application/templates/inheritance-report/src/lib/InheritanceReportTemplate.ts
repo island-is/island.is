@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -30,9 +27,9 @@ const InheritanceReportTemplate: ApplicationTemplate<
   featureFlag: Features.inheritanceReport,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
-    initial: States.prerequisites,
+    initial: States.draft,
     states: {
-      [States.prerequisites]: {
+      [States.draft]: {
         meta: {
           name: '',
           status: 'draft',
@@ -47,8 +44,8 @@ const InheritanceReportTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/prerequisites').then((module) =>
-                  Promise.resolve(module.prerequisites),
+                import('../forms/form').then((module) =>
+                  Promise.resolve(module.form),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -59,35 +56,8 @@ const InheritanceReportTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: States.draft,
+            target: States.done,
           },
-        },
-      },
-      [States.draft]: {
-        meta: {
-          name: '',
-          status: 'draft',
-          progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/form').then((module) =>
-                  Promise.resolve(module.form),
-                ),
-              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          SUBMIT: [
-            {
-              target: States.done,
-            },
-          ],
         },
       },
       [States.done]: {

@@ -117,6 +117,10 @@ export enum FieldTypes {
   EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
+  PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
+  IMAGE = 'IMAGE',
+  PDF_LINK_BUTTON = 'PDF_LINK_BUTTON',
+  NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
 }
 
 export enum FieldComponents {
@@ -139,6 +143,10 @@ export enum FieldComponents {
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
+  PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
+  IMAGE = 'ImageFormField',
+  PDF_LINK_BUTTON = 'PdfLinkButtonFormField',
+  NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -343,6 +351,57 @@ export interface LinkField extends BaseField {
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
+export interface PaymentChargeOverviewField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
+  component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
+  forPaymentLabel: StaticText
+  totalLabel: StaticText
+  getSelectedChargeItems: (
+    application: Application,
+  ) => { chargeItemCode: string; extraLabel?: StaticText }[]
+}
+
+export interface ImageField extends BaseField {
+  readonly type: FieldTypes.IMAGE
+  component: FieldComponents.IMAGE
+  image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
+  alt?: string
+  imageWidth?: 'full' | 'auto'
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
+export interface PdfLinkButtonField extends BaseField {
+  readonly type: FieldTypes.PDF_LINK_BUTTON
+  component: FieldComponents.PDF_LINK_BUTTON
+  verificationDescription: StaticText
+  verificationLinkTitle: StaticText
+  verificationLinkUrl: StaticText
+  getPdfFiles?: (application: Application) => {
+    base64: string
+    buttonText?: StaticText
+    customButtonText?: { is: string; en: string }
+    filename: string
+  }[]
+  setViewPdfFile?: (file: { base64: string; filename: string }) => void
+}
+
+export interface NationalIdWithNameField extends BaseField {
+  readonly type: FieldTypes.NATIONAL_ID_WITH_NAME
+  component: FieldComponents.NATIONAL_ID_WITH_NAME
+  disabled?: boolean
+  required?: boolean
+  customNationalIdLabel?: StaticText
+  customNameLabel?: StaticText
+  onNationalIdChange?: (s: string) => void
+  onNameChange?: (s: string) => void
+  nationalIdDefaultValue?: string
+  nameDefaultValue?: string
+  errorMessage?: string
+  minAgePerson?: number
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -364,3 +423,7 @@ export type Field =
   | ExpandableDescriptionField
   | AlertMessageField
   | LinkField
+  | PaymentChargeOverviewField
+  | ImageField
+  | PdfLinkButtonField
+  | NationalIdWithNameField

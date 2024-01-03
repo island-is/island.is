@@ -13,7 +13,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   m,
-  SAMGONGUSTOFA_ID,
+  SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
 
 import { vehicleMessage as messages } from '../../lib/messages'
@@ -68,7 +68,7 @@ const VehiclesHistory = () => {
       <IntroHeader
         title={messages.historyTitle}
         intro={messages.historyIntro}
-        serviceProviderID={SAMGONGUSTOFA_ID}
+        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
 
@@ -116,6 +116,7 @@ const VehiclesHistory = () => {
               <Checkbox
                 label={formatMessage(messages.showDeregistered)}
                 checked={checkbox}
+                id="showDeregistered"
                 onChange={({ target }) => {
                   setCheckbox(target.checked)
                 }}

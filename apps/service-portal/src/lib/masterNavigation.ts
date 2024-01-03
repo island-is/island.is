@@ -1,5 +1,5 @@
 import { PortalNavigationItem, m } from '@island.is/portals/core'
-import { ServicePortalPaths } from './paths'
+import { restrictionsNavigation } from '@island.is/service-portal/restrictions'
 import { documentsNavigation } from '@island.is/service-portal/documents'
 import { financeNavigation } from '@island.is/service-portal/finance'
 import { applicationsNavigation } from '@island.is/service-portal/applications'
@@ -19,6 +19,7 @@ import {
 } from '@island.is/portals/shared-modules/delegations'
 import { sessionsNavigation } from '@island.is/service-portal/sessions'
 import { consentNavigation } from '@island.is/service-portal/consent'
+import { ServicePortalPaths } from '@island.is/service-portal/core'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -40,16 +41,17 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
         ...delegationsNavigationChildren,
         sessionsNavigation,
         consentNavigation,
+        restrictionsNavigation,
       ],
     },
     companyNavigation,
     informationNavigation,
     assetsNavigation,
-    airDiscountNavigation,
     financeNavigation,
-    healthNavigation,
-    educationNavigation,
     licenseNavigation,
+    healthNavigation,
     occupationalLicensesNavigation,
+    airDiscountNavigation,
+    educationNavigation,
   ],
 }

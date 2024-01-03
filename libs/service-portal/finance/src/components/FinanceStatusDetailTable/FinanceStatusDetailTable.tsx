@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import React, { FC } from 'react'
 
 import {
   Box,
@@ -11,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  DownloadFileButtons,
   amountFormat,
   formSubmit,
   m,
@@ -24,6 +24,7 @@ import {
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import * as styles from './FinanceStatusDetailTable.css'
+import { m as messages } from '../../lib/messages'
 
 interface Props {
   organization: FinanceStatusOrganizationType
@@ -32,16 +33,16 @@ interface Props {
   downloadURL: string
 }
 
-const FinanceStatusDetailTable: FC<React.PropsWithChildren<Props>> = ({
+const FinanceStatusDetailTable = ({
   organization,
   chargeType,
   financeStatusDetails,
   downloadURL,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const headerArray = [
-    { value: formatMessage(m.feeBase) },
+    { value: formatMessage(messages.feeBase) },
     { value: formatMessage(m.yearAndSeason) },
     { value: formatMessage(m.dueDate) },
     { value: formatMessage(m.finalDueDate) },
@@ -187,46 +188,34 @@ const FinanceStatusDetailTable: FC<React.PropsWithChildren<Props>> = ({
           )}
         </Box>
       </Box>
-      <Box paddingX={2} paddingBottom={2} paddingTop={1} background="blue100">
-        <Button
-          colorScheme="default"
-          icon="arrowForward"
-          iconType="filled"
-          onClick={() =>
-            exportGjoldSundurlidunFile(
-              financeStatusDetails,
-              chargeType.name || 'details',
-              'xlsx',
-            )
-          }
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="text"
-        >
-          {formatMessage(m.getAsExcel)}
-        </Button>
-        <div className={styles.btnSpacer}>
-          <Button
-            colorScheme="default"
-            icon="arrowForward"
-            iconType="filled"
-            onClick={() =>
+      <DownloadFileButtons
+        BoxProps={{
+          paddingX: 2,
+          paddingBottom: 2,
+          paddingTop: 1,
+          background: 'blue100',
+        }}
+        buttons={[
+          {
+            text: formatMessage(m.getAsExcel),
+            onClick: () =>
+              exportGjoldSundurlidunFile(
+                financeStatusDetails,
+                chargeType.name || 'details',
+                'xlsx',
+              ),
+          },
+          {
+            text: formatMessage(m.getAsCsv),
+            onClick: () =>
               exportGjoldSundurlidunFile(
                 financeStatusDetails,
                 chargeType.name || 'details',
                 'csv',
-              )
-            }
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            {formatMessage(m.getAsCsv)}
-          </Button>
-        </div>
-      </Box>
+              ),
+          },
+        ]}
+      />
     </Box>
   )
 }

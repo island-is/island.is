@@ -46,6 +46,11 @@ import { serviceSetup as externalContractsTestsSetup } from '../../../apps/exter
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
 
 import {
+  serviceSetup as universityGatewaySetup,
+  workerSetup as universityGatewayWorkerSetup,
+} from '../../../apps/services/university-gateway/infra/university-gateway'
+
+import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
   geoipSetup as sessionsGeoipSetup,
@@ -58,10 +63,14 @@ import { ServiceBuilder } from '../dsl/dsl'
 
 const endorsement = endorsementServiceSetup({})
 
+const skilavottordWs = skilavottordWsSetup()
+const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
+
 const documentsService = serviceDocumentsSetup()
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
+  skilavottordWs,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
@@ -80,6 +89,9 @@ const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
 
+const universityGatewayService = universityGatewaySetup()
+const universityGatewayWorker = universityGatewayWorkerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -90,6 +102,7 @@ const api = apiSetup({
   regulationsAdminBackend: rabBackend,
   sessionsApi: sessionsService,
   authAdminApi,
+  universityGatewayApi: universityGatewayService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -102,9 +115,6 @@ const consultationPortal = consultationPortalSetup({ api: api })
 const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
-
-const skilavottordWs = skilavottordWsSetup()
-const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
@@ -219,6 +229,8 @@ export const Services: EnvironmentServices = {
     sessionsWorker,
     sessionsGeoip,
     contentfulApps,
+    universityGatewayService,
+    universityGatewayWorker,
   ],
 }
 

@@ -1,12 +1,10 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  TempCase as Case,
-  TempUpdateCase as UpdateCase,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { replaceTabs } from './formatters'
+import { UpdateCase } from './hooks'
 import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
@@ -94,7 +92,7 @@ export const validateAndSendToServer = (
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
-export function toggleInArray<T>(values: T[] | undefined, entry: T) {
+export function toggleInArray<T>(values: T[] | undefined | null, entry: T) {
   if (!values) return [entry]
 
   return values.includes(entry)
@@ -200,6 +198,7 @@ export type stepValidationsType = {
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
+  [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
 }
 
@@ -286,7 +285,8 @@ export const stepValidations = (): stepValidationsType => {
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealCaseStepValid(theCase),
     [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
-      validations.isCourtOfAppealRulingStepValid(theCase) &&
+      validations.isCourtOfAppealRulingStepValid(theCase),
+    [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase) =>
       theCase.appealState === 'COMPLETED',
     [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
   }

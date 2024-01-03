@@ -4,28 +4,29 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, InputType } from '@nestjs/graphql'
 
 import type {
+  CourtDocument,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseLegalProvisions,
   CaseType,
-  CourtDocument,
-  CrimeSceneMap,
-  IndictmentSubtypeMap,
   RequestSharedWithDefender,
   SessionArrangements,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
 
 @InputType()
-export class UpdateCaseInput implements UpdateCase {
+export class UpdateCaseInput {
   @Allow()
   @Field()
   readonly id!: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseType, { nullable: true })
   readonly type?: CaseType
 
   @Allow()
@@ -57,11 +58,11 @@ export class UpdateCaseInput implements UpdateCase {
   readonly defenderPhoneNumber?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => RequestSharedWithDefender, { nullable: true })
   readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly isHeightenedSecurityLevel?: boolean
 
   @Allow()
@@ -101,11 +102,11 @@ export class UpdateCaseInput implements UpdateCase {
   readonly legalBasis?: string
 
   @Allow()
-  @Field(() => [String], { nullable: true })
+  @Field(() => [CaseLegalProvisions], { nullable: true })
   readonly legalProvisions?: CaseLegalProvisions[]
 
   @Allow()
-  @Field(() => [String], { nullable: true })
+  @Field(() => [CaseCustodyRestrictions], { nullable: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
   @Allow()
@@ -121,7 +122,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly legalArguments?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly requestProsecutorOnlySession?: boolean
 
   @Allow()
@@ -149,7 +150,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly courtCaseNumber?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => SessionArrangements, { nullable: true })
   readonly sessionArrangements?: SessionArrangements
 
   @Allow()
@@ -209,7 +210,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly ruling?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseDecision, { nullable: true })
   readonly decision?: CaseDecision
 
   @Allow()
@@ -217,7 +218,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly validToDate?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly isCustodyIsolation?: boolean
 
   @Allow()
@@ -233,7 +234,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly endOfSessionBookings?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealDecision, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision
 
   @Allow()
@@ -241,7 +242,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly accusedAppealAnnouncement?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealDecision, { nullable: true })
   readonly prosecutorAppealDecision?: CaseAppealDecision
 
   @Allow()
@@ -269,7 +270,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly caseResentExplanation?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
 
   @Allow()
@@ -281,7 +282,7 @@ export class UpdateCaseInput implements UpdateCase {
   readonly indictmentIntroduction?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly requestDriversLicenseSuspension?: boolean
 
   @Allow()
@@ -317,10 +318,22 @@ export class UpdateCaseInput implements UpdateCase {
   readonly appealConclusion?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealRulingDecision, { nullable: true })
   readonly appealRulingDecision?: CaseAppealRulingDecision
 
   @Allow()
   @Field({ nullable: true })
   readonly appealRulingModifiedHistory?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealValidToDate?: string
+
+  @Allow()
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealCustodyIsolation?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealIsolationToDate?: string
 }

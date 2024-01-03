@@ -23,13 +23,13 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { Modal } from '..'
 import {
-  GetRulingSignatureConfirmationQuery,
-  useGetRulingSignatureConfirmationQuery,
-} from './getRulingSignatureConfirmation.generated'
-import {
   RequestRulingSignatureMutation,
   useRequestRulingSignatureMutation,
 } from './requestRulingSignature.generated'
+import {
+  RulingSignatureConfirmationQuery,
+  useRulingSignatureConfirmationQuery,
+} from './rulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 
 const ControlCode: React.FC<
@@ -102,7 +102,7 @@ type signingProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 export const getSigningProgress = (
   rulingSignatureConfirmation:
-    | GetRulingSignatureConfirmationQuery['rulingSignatureConfirmation']
+    | RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
     | undefined,
   error: ApolloError | undefined,
 ): signingProgress => {
@@ -127,7 +127,7 @@ export const SigningModal: React.FC<
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  const { data, error } = useGetRulingSignatureConfirmationQuery({
+  const { data, error } = useRulingSignatureConfirmationQuery({
     variables: {
       input: {
         documentToken: requestRulingSignatureResponse?.documentToken || '',

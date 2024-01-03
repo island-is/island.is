@@ -33,6 +33,11 @@ const devConfig = {
       'https://identity-server.dev01.devland.is',
     audience: '@island.is',
   },
+  worker: {
+    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
+      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
+      : 3000,
+  },
 }
 
 const prodConfig = {
@@ -68,6 +73,11 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
+  },
+  worker: {
+    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
+      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
+      : 3000,
   },
 }
 

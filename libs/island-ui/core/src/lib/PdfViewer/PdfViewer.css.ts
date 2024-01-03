@@ -23,3 +23,20 @@ export const linkWithoutDecorations = style({
 export const displayNone = style({
   display: 'none',
 })
+
+globalStyle(`${pdfViewer} .annotationLayer`, {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+})
+
+globalStyle(`${pdfViewer} .linkAnnotation`, {
+  position: 'relative',
+  cursor: 'pointer',
+})
+
+globalStyle(`${pdfViewer} .linkAnnotation a`, {
+  width: '100%',
+  height: '100%',
+  display: 'block',
+})

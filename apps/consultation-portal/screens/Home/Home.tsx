@@ -1,12 +1,6 @@
 import dynamic from 'next/dynamic'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
-import {
-  HeroBanner,
-  MobileFilter,
-  Filter,
-  SearchAndFilter,
-} from './components/'
-import localization from './Home.json'
+import { HeroBanner, Filter, SearchAndFilter } from './components/'
 import { ArrOfTypes, CaseFilter } from '../../types/interfaces'
 import { Layout } from '../../components'
 import {
@@ -14,8 +8,13 @@ import {
   useFrontPageFilters,
   useIsMobile,
 } from '../../hooks'
+import localization from './Home.json'
 
 const Cards = dynamic(() => import('./components/Cards/Cards'), { ssr: false })
+const MobileFilter = dynamic(
+  () => import('./components/MobileFilter/MobileFilter'),
+  { ssr: false },
+)
 
 interface HomeProps {
   types: ArrOfTypes
@@ -26,6 +25,7 @@ export const Index = ({ types }: HomeProps) => {
   const loc = localization['home']
   const locSeo = loc['seo']
 
+  const { statistics } = useFetchStatistics()
   const {
     cases,
     total,
@@ -41,8 +41,6 @@ export const Index = ({ types }: HomeProps) => {
   } = useFrontPageFilters({
     types: types,
   })
-
-  const { statistics } = useFetchStatistics()
 
   return (
     <Layout

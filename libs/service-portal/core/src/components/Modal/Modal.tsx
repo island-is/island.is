@@ -9,6 +9,7 @@ interface Props {
   isVisible?: boolean
   initialVisibility?: boolean
   disclosure?: ReactElement
+  label?: string
 }
 
 export const Modal: FC<React.PropsWithChildren<Props>> = ({
@@ -18,6 +19,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
   onCloseModal,
   disclosure,
   isVisible,
+  label,
   initialVisibility = true,
 }) => {
   const handleOnVisibilityChange = (isVisible: boolean) => {
@@ -31,6 +33,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
       toggleClose={toggleClose}
       onVisibilityChange={handleOnVisibilityChange}
       disclosure={disclosure}
+      modalLabel={label}
       isVisible={isVisible}
     >
       {({ closeModal }: { closeModal: () => void }) => (

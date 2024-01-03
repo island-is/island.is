@@ -1,4 +1,3 @@
-export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
 export { SelectChildren } from './SelectChildren'
 export { ChildrenInformationBoxWithLink } from './ChildrenInformationBoxWithLink'
 export { ResidenceCountries } from './ResidenceCountries'

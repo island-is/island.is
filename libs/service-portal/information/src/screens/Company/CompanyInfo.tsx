@@ -10,7 +10,7 @@ import {
   formatNationalId,
   IntroHeader,
   m,
-  SKATTURINN_ID,
+  SKATTURINN_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
@@ -67,7 +67,7 @@ const CompanyInfo = () => {
       <IntroHeader
         title={userInfo.profile.name}
         intro={mCompany.subtitle}
-        serviceProviderID={SKATTURINN_ID}
+        serviceProviderSlug={SKATTURINN_SLUG}
       />
       {emptyData && <EmptyState />}
       {!emptyData && (
@@ -148,7 +148,7 @@ const CompanyInfo = () => {
           <Divider />
         </Stack>
       )}
-      <FootNote serviceProviderID={SKATTURINN_ID} />
+      <FootNote serviceProviderSlug={SKATTURINN_SLUG} />
     </>
   )
 }

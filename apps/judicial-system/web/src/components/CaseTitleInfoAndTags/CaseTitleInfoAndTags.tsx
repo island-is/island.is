@@ -23,7 +23,12 @@ const CaseTitleInfoAndTags: React.FC = () => {
   const { user } = useContext(UserContext)
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      flexDirection={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
+      marginBottom={3}
+    >
       <Box>
         <OverviewHeader />
         {workingCase.rulingDate && (
@@ -73,7 +78,12 @@ const CaseTitleInfoAndTags: React.FC = () => {
           </>
         )}
       </Box>
-      <Box display="flex" flexDirection="column">
+      <Box
+        display="flex"
+        flexDirection="column"
+        marginLeft={[0, 0, 0, 1]}
+        marginBottom={[1, 1, 1, 0]}
+      >
         <RestrictionTags workingCase={workingCase} />
       </Box>
     </Box>

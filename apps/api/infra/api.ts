@@ -4,6 +4,7 @@ import {
   AdrAndMachine,
   Base,
   ChargeFjsV2,
+  EnergyFunds,
   Client,
   CriminalRecord,
   Disability,
@@ -27,6 +28,7 @@ import {
   TransportAuthority,
   UniversityOfIceland,
   Vehicles,
+  VehiclesMileage,
   VehicleServiceFjsV1,
   WorkMachines,
   IcelandicGovernmentInstitutionVacancies,
@@ -37,6 +39,9 @@ import {
   ShipRegistry,
   DistrictCommissioners,
   DirectorateOfImmigration,
+  SignatureCollection,
+  SocialInsuranceAdministration,
+  IntellectualProperties,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -49,6 +54,7 @@ export const serviceSetup = (services: {
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
   sessionsApi: ServiceBuilder<'services-sessions'>
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
+  universityGatewayApi: ServiceBuilder<'services-university-gateway'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -237,6 +243,9 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
+      UNIVERSITY_GATEWAY_API_URL: ref(
+        (h) => `http://${h.svc(services.universityGatewayApi)}`,
+      ),
     })
 
     .secrets({
@@ -300,8 +309,10 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+      VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
       FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
@@ -334,6 +345,9 @@ export const serviceSetup = (services: {
         '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY',
       DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY:
         '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY',
+      CHART_STATISTIC_SOURCE_DATA_PATHS:
+        '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS',
+      CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL',
     })
     .xroad(
       AdrAndMachine,
@@ -344,6 +358,7 @@ export const serviceSetup = (services: {
       Client,
       OccupationalLicenses,
       HealthInsurance,
+      IntellectualProperties,
       Labor,
       DrivingLicense,
       Payment,
@@ -359,10 +374,12 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       Vehicles,
+      VehiclesMileage,
       Passports,
       VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
+      EnergyFunds,
       UniversityOfIceland,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
@@ -372,6 +389,8 @@ export const serviceSetup = (services: {
       HousingBenefitCalculator,
       ShipRegistry,
       DirectorateOfImmigration,
+      SignatureCollection,
+      SocialInsuranceAdministration,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

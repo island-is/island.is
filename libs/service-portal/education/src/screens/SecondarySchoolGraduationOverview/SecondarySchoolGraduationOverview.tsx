@@ -1,11 +1,8 @@
-import React from 'react'
 import {
   ActionCard,
   CardLoader,
   IntroHeader,
-  m,
   NotFound,
-  SortableTable,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
@@ -60,7 +57,7 @@ export const EducationGraduationDetail = () => {
                   url: item.diplomaId
                     ? EducationPaths.EducationFramhskoliGraduationSingle.replace(
                         ':id',
-                        item.diplomaId,
+                        String(item.diplomaId),
                       )
                     : undefined,
                   variant: 'text',

@@ -1,11 +1,6 @@
-import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useUserInfo } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 import {
   formatNationalId,
   NotFound,
@@ -13,8 +8,7 @@ import {
   m,
   ErrorScreen,
   IntroHeader,
-  THJODSKRA_ID,
-  FootNote,
+  THJODSKRA_SLUG,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
@@ -31,40 +25,27 @@ import ChildRegistrationModal from './ChildRegistrationModal'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm } from '../../lib/messages'
-import { useNationalRegistryChildCustodyLazyQuery } from './Child.generated'
+import { useNationalRegistryChildCustodyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { ChildView } from '../../components/ChildView/ChildView'
+import { unmaskString } from '@island.is/shared/utils'
 
 type UseParams = {
-  nationalId: string
+  baseId: string
 }
 
 const Child = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const userInfo = useUserInfo()
-  const { nationalId } = useParams() as UseParams
+  const { baseId } = useParams() as UseParams
 
-  const [getNationalRegistryChildCustodyQuery, { data, loading, error }] =
-    useNationalRegistryChildCustodyLazyQuery()
-
-  /* Should show name breakdown tooltip? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isserviceportalnationalregistryv3enabled`,
-        false,
-      )
-      getNationalRegistryChildCustodyQuery({
-        variables: {
-          api: ffEnabled ? 'v3' : undefined,
-          childNationalId: nationalId,
-        },
-      })
-    }
-    isFlagEnabled()
-  }, [])
+  const { data, loading, error } = useNationalRegistryChildCustodyQuery({
+    variables: {
+      api: 'v3',
+      childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
+    },
+  })
 
   const dataNotFoundMessage = defineMessage({
     id: 'sp.family:data-not-found',
@@ -76,7 +57,8 @@ const Child = () => {
     defaultMessage: 'Breyta hjá Þjóðskrá',
   })
 
-  const child = data?.nationalRegistryPerson?.childCustody?.[0]
+  const child = data?.nationalRegistryPerson?.childCustody?.[0]?.details
+  const nationalId = child?.nationalId
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
   const parent2 = child?.birthParents ? child.birthParents[1] : undefined
@@ -91,7 +73,8 @@ const Child = () => {
   )
 
   const isChildOrChildOfUser = isChild || isChildOfUser
-  if (!nationalId || (!loading && !isChildOrChildOfUser && !error))
+  const noChildFound = !loading && !isChildOrChildOfUser && !error
+  if (!baseId || noChildFound)
     return (
       <NotFound
         title={defineMessage({
@@ -135,7 +118,7 @@ const Child = () => {
               defaultMessage:
                 'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
             }}
-            serviceProviderID={THJODSKRA_ID}
+            serviceProviderSlug={THJODSKRA_SLUG}
             serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
           />
         </Box>
@@ -157,7 +140,7 @@ const Child = () => {
                           data?.nationalRegistryPerson?.fullName || '',
                         parentNationalId: userInfo.profile.nationalId || '',
                         childName: child?.fullName || '',
-                        childNationalId: nationalId,
+                        childNationalId: nationalId || '',
                       }}
                     />
 
@@ -208,7 +191,7 @@ const Child = () => {
           </Box>
           <UserInfoLine
             label={formatMessage(m.natreg)}
-            content={formatNationalId(nationalId)}
+            content={nationalId ? formatNationalId(nationalId) : ''}
             loading={loading}
             printable
           />

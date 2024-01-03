@@ -958,6 +958,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as EmployerRow[]
 
+  const language = getValueViaPath(answers, 'applicant.language') as string
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -1023,6 +1025,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     addPeriods,
     tempPeriods,
     tempEmployers,
+    language,
   }
 }
 
@@ -1345,10 +1348,11 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       const start = parseISO(period.startDate)
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
+      const periodLength = calculatePeriodLength(start, end)
 
       const calculatedLength = period.daysToUse
         ? Number(period.daysToUse)
-        : calculatePeriodLength(start, end, percentage)
+        : Math.round(periodLength * percentage)
 
       return total + calculatedLength
     }, 0),

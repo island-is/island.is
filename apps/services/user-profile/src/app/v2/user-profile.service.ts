@@ -14,6 +14,7 @@ import { formatPhoneNumber } from '../utils/format-phone-number'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
+import { DataStatus } from '../user-profile/types/dataStatusTypes'
 
 export const NUDGE_INTERVAL = 6
 
@@ -47,6 +48,7 @@ export class UserProfileService {
         emailVerified: false,
         documentNotifications: true,
         needsNudge: null,
+        emailNotifications: true,
       }
     }
 
@@ -59,6 +61,7 @@ export class UserProfileService {
       emailVerified: userProfile.emailVerified,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
+      emailNotifications: userProfile.emailNotifications,
     }
   }
 
@@ -153,13 +156,25 @@ export class UserProfileService {
         ...(isEmailDefined && {
           email: userProfile.email || null,
           emailVerified: userProfile.email !== '',
+          emailStatus: userProfile.email
+            ? DataStatus.VERIFIED
+            : DataStatus.EMPTY,
         }),
         ...(isMobilePhoneNumberDefined && {
           mobilePhoneNumber: formattedPhoneNumber || null,
           mobilePhoneNumberVerified: formattedPhoneNumber !== '',
+          mobileStatus: formattedPhoneNumber
+            ? DataStatus.VERIFIED
+            : DataStatus.EMPTY,
         }),
         ...(isDefined(userProfile.locale) && {
           locale: userProfile.locale,
+        }),
+        ...(isDefined(userProfile.emailNotifications) && {
+          emailNotifications: userProfile.emailNotifications,
+        }),
+        ...(isDefined(userProfile.documentNotifications) && {
+          documentNotifications: userProfile.documentNotifications,
         }),
       }
 
@@ -171,11 +186,16 @@ export class UserProfileService {
         { transaction },
       )
 
-      if (isEmailDefined || isMobilePhoneNumberDefined) {
+      if (
+        isEmailDefined ||
+        isMobilePhoneNumberDefined ||
+        isDefined(userProfile.emailNotifications)
+      ) {
         await this.islykillService.upsertIslykillSettings({
           nationalId,
           phoneNumber: formattedPhoneNumber,
           email: userProfile.email,
+          canNudge: userProfile.emailNotifications,
         })
       }
     })
@@ -203,12 +223,10 @@ export class UserProfileService {
     nationalId: string
     mobilePhoneNumber: string
   }) {
-    const formattedPhoneNumber = formatPhoneNumber(mobilePhoneNumber)
-
     await this.verificationService.createSmsVerification(
       {
         nationalId,
-        mobilePhoneNumber: formattedPhoneNumber,
+        mobilePhoneNumber,
       },
       3,
     )
@@ -261,6 +279,9 @@ export class UserProfileService {
      * Remove dashes from mobile phone number and compare last 7 digits of mobilePhoneNumber with the audkenni Phone number
      * Removing the dashes prevents misreading string with format +354-765-4321 as 65-4321
      */
-    return mobilePhoneNumber.replace(/-/g, '').slice(-7) === audkenniSimNumber
+    return (
+      mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
+      audkenniSimNumber.replace(/-/g, '').slice(-7)
+    )
   }
 }

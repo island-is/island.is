@@ -13,6 +13,7 @@ interface InstitutionPanelProps {
   loading?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
   tooltipText?: string
+  tooltipVariant?: 'white' | 'dark' | 'light'
 }
 
 export const InstitutionPanel = ({
@@ -23,6 +24,7 @@ export const InstitutionPanel = ({
   backgroundColor = 'purple100',
   tooltipText,
   title,
+  tooltipVariant = 'light',
 }: InstitutionPanelProps) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -65,7 +67,11 @@ export const InstitutionPanel = ({
             )}
             {tooltipText && (
               <div className={styles.tooltip}>
-                <Tooltip placement="top" text={tooltipText} variant="light" />
+                <Tooltip
+                  placement="top"
+                  text={tooltipText}
+                  variant={tooltipVariant}
+                />
               </div>
             )}
           </Box>

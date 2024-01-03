@@ -19,7 +19,7 @@ import {
 
 export enum Operation {
   CaseQuery = 'Case',
-  CaseListQuery = 'CaseList',
+  CaseListQuery = 'Cases',
   CurrentUserQuery = 'CurrentUser',
   UploadFileToCourtMutation = 'UploadFileToCourt',
   UpdateCaseMutation = 'UpdateCase',
@@ -174,7 +174,7 @@ export const makeJudge = (): User => {
     nationalId: '111111-1111',
     mobileNumber: '111-1111',
     email: faker.internet.email(),
-    role: UserRole.JUDGE,
+    role: UserRole.DISTRICT_COURT_JUDGE,
     active: true,
     title: 'Dómari',
     institution: {
