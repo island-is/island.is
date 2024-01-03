@@ -1,3 +1,3 @@
-export { MunicipalitiesFinancialAidClientModule } from './municipalitiesFinancialAidClient.module'
+export { MunicipalitiesFinancialAidClientModule } from './lib/municipalitiesFinancialAidClient.module'
 export * from '../gen/fetch'
-export * from './municipalitiesFinancialAid.config'
+export * from './lib/municipalitiesFinancialAid.config'

@@ -6,7 +6,7 @@ import {
   MunicipalityApi,
   Configuration,
   PersonalTaxReturnApi,
-} from '../gen/fetch'
+} from '../../gen/fetch'
 import { MunicipalitiesFinancialAidConfig } from './municipalitiesFinancialAid.config'
 
 export const exportedApis = [

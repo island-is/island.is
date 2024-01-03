@@ -1,11 +1,11 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.0.1",
   "info": {
     "title": "Fjárhagsaðstoð sveitarfélaga",
     "version": "1.0"
   },
   "paths": {
-    "/v1/applications": {
+    "/applications": {
       "get": {
         "tags": ["application"],
         "summary": "Gets all applications",
@@ -14,7 +14,8 @@
           {
             "name": "DateFrom",
             "in": "query",
-            "style": "form",
+            "description": "Date from format (yyyy-mm)",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -23,7 +24,7 @@
           {
             "name": "DateTo",
             "in": "query",
-            "style": "form",
+            "description": "Date to format (yyyy-mm)",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -48,7 +49,8 @@
                 }
               }
             }
-          }
+          },
+          "401": { "description": "Access Denied", "content": {} }
         }
       }
     }
