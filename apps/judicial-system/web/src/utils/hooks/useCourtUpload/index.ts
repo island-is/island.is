@@ -51,6 +51,8 @@ export const useCourtUpload = (
           status,
         }
 
+        console.log(files[fileIndexToUpdate])
+
         setWorkingCase({ ...theCase })
       }
     },
@@ -104,6 +106,7 @@ export const useCourtUpload = (
     if (files) {
       const xFiles = files as CaseFileWithStatus[]
       xFiles.forEach(async (file) => {
+        console.log(file)
         try {
           if (file.state === CaseFileState.STORED_IN_RVG && file.key) {
             setFileUploadStatus(workingCase, file, 'uploading')

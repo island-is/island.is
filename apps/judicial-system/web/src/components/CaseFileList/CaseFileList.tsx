@@ -1,20 +1,14 @@
-import React, { useMemo } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import {
-  Box,
-  IconMapIcon,
-  StatusColor,
-  Text,
-  UploadedFile,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import { Box, IconMapIcon, StatusColor, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import {
   CaseFile,
   FileNotFoundModal,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import type {
   CaseFileStatus,
@@ -30,12 +24,19 @@ interface Props {
   handleRetryClick?: (id: string) => void
 }
 
-const getBackgroundColor = (status?: CaseFileStatus): StatusColor => {
-  if (status === 'broken' || status === 'done-broken') {
+const getBackgroundColor = (caseFile: CaseFileWithStatus): StatusColor => {
+  if (
+    caseFile.status === 'broken' ||
+    caseFile.status === 'done-broken' ||
+    !caseFile.id ||
+    !caseFile.key
+  ) {
     return { background: 'dark100', border: 'dark200' }
+  } else if (caseFile.status === 'error') {
+    return { background: 'red100', border: 'red200' }
+  } else {
+    return { background: 'blue100', border: 'blue300' }
   }
-
-  return { background: 'blue100', border: 'blue300' }
 }
 
 const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
@@ -63,7 +64,7 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
       case 'error':
         return {
           icon: 'reload',
-          color: 'dark400',
+          color: 'blue400',
           onClick: handleRetryClick
             ? () => handleRetryClick(file.id)
             : undefined,
@@ -73,7 +74,6 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
         return {
           icon: 'checkmark',
           color: 'blue400',
-          onClick: () => onOpen(file.id),
         }
       default:
         return null
@@ -104,8 +104,12 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <CaseFile
               name={file.name}
               size={file.size}
-              color={getBackgroundColor(file.status)}
-              icon={iconProperties ?? undefined}
+              color={getBackgroundColor(file)}
+              icon={
+                hideIcons === false && iconProperties !== null
+                  ? iconProperties
+                  : undefined
+              }
               id={file.id}
               onClick={
                 canOpenFiles && file.key && file.id

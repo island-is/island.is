@@ -6,6 +6,7 @@ import { Box, Icon, StatusColor, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 
 import { fileSize } from '../../utils/stepHelper'
+import IconButton from '../IconButton/IconButton'
 import * as styles from './CaseFile.css'
 
 interface Props {
@@ -24,6 +25,7 @@ interface Props {
 const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { name, size, color, id, icon, onClick } = props
 
+  console.log(icon)
   return (
     <Box
       className={cn(styles.caseFileWrapper, {
@@ -42,7 +44,16 @@ const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
         </Text>
         {size && <Text as="span">{` (${fileSize(size)})`}</Text>}
       </Box>
-      {icon && <Icon icon={icon.icon} color={icon.color} />}
+      {icon &&
+        (icon.onClick ? (
+          <IconButton
+            icon={icon.icon}
+            color={icon.color}
+            onClick={() => icon.onClick?.(id)}
+          />
+        ) : (
+          <Icon icon={icon.icon} color={icon.color} />
+        ))}
     </Box>
   )
 }
