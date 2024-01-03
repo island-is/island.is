@@ -1,56 +1,49 @@
 import React from 'react'
-import isValid from 'date-fns/isValid'
+import cn from 'classnames'
 
-import { Box, Tag, Text } from '@island.is/island-ui/core'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Icon, StatusColor, Text } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 
-import { kb } from '../../utils/stepHelper'
-import BlueBox from '../BlueBox/BlueBox'
+import { fileSize } from '../../utils/stepHelper'
 import * as styles from './CaseFile.css'
 
 interface Props {
-  fileId: string
   name: string
-  size: number
-  uploadedAt: string
-  onOpen: (id: string) => void
-  canOpenFiles?: boolean
+  color: StatusColor
+  id: string
+  size?: number | null
+  icon?: {
+    icon: IconMapIcon
+    color: Colors
+    onClick?: (fileId: string) => void
+  }
+  onClick?: (fileId: string) => void
 }
 
 const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { fileId, name, size, uploadedAt, canOpenFiles = true, onOpen } = props
-
-  const isValidUpdatedAtDate = isValid(new Date(uploadedAt))
+  const { name, size, color, id, icon, onClick } = props
 
   return (
-    <BlueBox size="small">
-      <div className={styles.CaseFileContainer}>
-        <div className={styles.CaseFileNameContainer}>
-          <div className={styles.CaseFileName}>
-            <Text fontWeight="semiBold" truncate>
-              {name}
-            </Text>
-          </div>
-          <Text>{`(${kb(size)}KB)`}</Text>
-        </div>
-        <Box display="flex" alignItems="center">
-          {isValidUpdatedAtDate && (
-            <div className={styles.CaseFileCreatedContainer}>
-              <Text variant="small">{`${formatDate(
-                uploadedAt,
-                'd.M.y',
-              )} kl. ${formatDate(uploadedAt, TIME_FORMAT)}`}</Text>
-            </div>
-          )}
-          {canOpenFiles && (
-            <Tag variant="darkerBlue" onClick={() => onOpen(fileId)}>
-              Opna
-            </Tag>
-          )}
-        </Box>
-      </div>
-    </BlueBox>
+    <Box
+      className={cn(styles.caseFileWrapper, {
+        [styles.brokenFile]: !onClick,
+      })}
+      background={color?.background}
+      borderColor={color?.border}
+      borderStyle="solid"
+      borderRadius="large"
+      borderWidth="standard"
+      onClick={onClick ? () => onClick(id) : undefined}
+    >
+      <Box>
+        <Text fontWeight="semiBold" as="span">
+          {name}
+        </Text>
+        {size && <Text as="span">{` (${fileSize(size)})`}</Text>}
+      </Box>
+      {icon && <Icon icon={icon.icon} color={icon.color} />}
+    </Box>
   )
 }
 
