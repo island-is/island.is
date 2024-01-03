@@ -31,6 +31,7 @@ import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const PaymentOverview = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -253,11 +254,7 @@ export const PaymentOverview = () => {
                   />
                 </>
               ) : (
-                <AlertMessage
-                  type="warning"
-                  title={formatMessage(m.noData)}
-                  message={formatMessage(m.noDataFound)}
-                />
+                <Problem type="no_data" />
               )}
             </Box>
           </Box>

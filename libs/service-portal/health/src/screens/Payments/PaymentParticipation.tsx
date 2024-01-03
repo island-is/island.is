@@ -30,6 +30,7 @@ import {
 import sub from 'date-fns/sub'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 import { HealthPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const PaymentPartication = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -107,11 +108,7 @@ export const PaymentPartication = () => {
         </Box>
       ) : (
         <Box marginBottom={4}>
-          <AlertMessage
-            title={formatMessage(m.noData)}
-            message={formatMessage(m.noDataFound)}
-            type="warning"
-          />
+          <Problem type="no_data" />
         </Box>
       )}
       <Box marginBottom={SECTION_GAP}>
