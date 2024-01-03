@@ -179,12 +179,15 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     bankAddress,
     currency,
     paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
   } = getASFTEApplicationAnswers(application.answers)
   const { bankInfo, email } = getASFTEApplicationExternalData(
     application.externalData,
   )
 
-  const AdditionalSupportForTheLederlyDTO: ApplicationDTO = {
+  const additionalSupportForTheLederlyDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
       email: email,
@@ -207,6 +210,12 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
         },
       }),
     }),
+    taxInfo: {
+      personalAllowance: YES === personalAllowance,
+      personalAllowanceUsage:
+        YES === personalAllowance ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -215,7 +224,7 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     comment: comment,
   }
 
-  return AdditionalSupportForTheLederlyDTO
+  return additionalSupportForTheLederlyDTO
 }
 
 export const getMonthNumber = (monthName: string): number => {
