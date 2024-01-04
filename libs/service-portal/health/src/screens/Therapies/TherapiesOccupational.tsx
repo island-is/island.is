@@ -31,6 +31,7 @@ const Therapies = () => {
         data={occupationalTherapyData}
         link={formatMessage(messages.occupationalDescriptionLink)}
         linkText={formatMessage(messages.occupationalLink)}
+        loading={loading}
       />
     </TherapiesWrapper>
   )

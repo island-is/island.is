@@ -31,6 +31,7 @@ const Therapies = () => {
         data={speechTherapyData}
         link={formatMessage(messages.speechDescriptionLink)}
         linkText={formatMessage(messages.speechLink)}
+        loading={loading}
       />
     </TherapiesWrapper>
   )

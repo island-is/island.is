@@ -63,9 +63,7 @@ export const TherapiesWrapper = ({
           </Box>
         )}
 
-        {!loading && !error && children && (
-          <Box marginTop={[6]}>{children}</Box>
-        )}
+        {!error && children && <Box>{children}</Box>}
       </Box>
     </Box>
   )

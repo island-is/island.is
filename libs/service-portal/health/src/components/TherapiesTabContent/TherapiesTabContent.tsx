@@ -18,22 +18,30 @@ interface Props {
   data: RightsPortalTherapy[]
   link?: string
   linkText?: string
+  loading: boolean
 }
 
 type OptionType = {
   label: string
   value: string
 }
-export const TherapiesTabContent = ({ data, link, linkText }: Props) => {
+export const TherapiesTabContent = ({
+  data,
+  link,
+  linkText,
+  loading,
+}: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [dropDownValue, setDropDownValue] = useState<OptionType>()
   let displayDropDown = false
   let dropDownOptions
 
-  if (!data || data.length === 0) {
+  if (!loading && !data.length) {
     return <Problem type="no_data" />
   }
+
+  console.log(data)
 
   if (data.length > 1) {
     // Sjúkraþjálfun with more subtherapies, display dropdown
@@ -50,15 +58,15 @@ export const TherapiesTabContent = ({ data, link, linkText }: Props) => {
       : data[0]
 
   // Build time periods in format dd.mm.yyyy - dd.mm.yyyy
-  const from = content.periods?.find((x) => x.from !== null)?.from ?? ''
-  const to = content.periods?.find((x) => x.to !== null)?.to ?? ''
+  const from = content?.periods?.find((x) => x.from !== null)?.from ?? ''
+  const to = content?.periods?.find((x) => x.to !== null)?.to ?? ''
   const timePeriod = [formatDate(from), formatDate(to)]
     .filter(Boolean)
     .join(' - ')
-  const periods = content.periods
+  const periods = content?.periods
 
   return (
-    <Box width="full" marginTop={[1, 1, 4]}>
+    <Box width="full">
       {displayDropDown && dropDownOptions && (
         <Box className={styles.dropdown} marginBottom={4}>
           <Select
@@ -78,6 +86,7 @@ export const TherapiesTabContent = ({ data, link, linkText }: Props) => {
         <UserInfoLine
           title={formatMessage(messages.informationAboutStatus)}
           label={formatMessage(messages.timePeriod)}
+          loading={loading}
           content={
             timePeriod === ''
               ? formatMessage(messages.noValidTimePeriod)
@@ -87,14 +96,16 @@ export const TherapiesTabContent = ({ data, link, linkText }: Props) => {
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.status)}
+          loading={loading}
           content={
-            formatMessage(messages[content.state?.code as TherapyStatus]) ??
+            formatMessage(messages[content?.state?.code as TherapyStatus]) ??
             formatMessage(messages.unknownStatus)
           }
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.usedTherapySessions)}
+          loading={loading}
           content={formatNumberToString(
             periods?.find((x) => x.sessions?.used === 0 || x.sessions?.used)
               ?.sessions?.used,
@@ -103,6 +114,7 @@ export const TherapiesTabContent = ({ data, link, linkText }: Props) => {
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.totalTherapySessions)}
+          loading={loading}
           content={formatNumberToString(
             periods?.find(
               (x) => x.sessions?.available === 0 || x.sessions?.available,
@@ -111,7 +123,7 @@ export const TherapiesTabContent = ({ data, link, linkText }: Props) => {
         />
         <Divider />
       </Stack>
-      <FootNote type={data[0].id.toString()} />
+      <FootNote type={data?.[0]?.id.toString()} />
       {link && linkText && <LinkButton to={link} text={linkText} />}
     </Box>
   )
