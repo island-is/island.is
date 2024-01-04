@@ -54,6 +54,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
 }> = ({ componentId, id, title }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
+  const dynamicColor = useDynamicColor()
   const [input, setInput] = useState('')
   const info = useGetVehicleQuery({
     fetchPolicy: 'cache-first',
@@ -110,6 +111,8 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   const isFormEditable = !!res.data?.vehicleMileageDetails?.editing
   const canRegisterMileage =
     !!res.data?.vehicleMileageDetails?.canRegisterMileage
+  const canUserRegisterVehicleMileage =
+    !!res.data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
 
   const vehicle = useMemo(() => {
     return {
@@ -284,6 +287,10 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 placeholder={intl.formatMessage({
                   id: 'vehicle.mileage.inputPlaceholder',
                 })}
+                placeholderTextColor={dynamicColor({
+                  light: '#999999',
+                  dark: '#999999',
+                })}
                 label={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
                 value={input}
                 maxLength={9}
@@ -316,9 +323,13 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   textAlign="center"
                   style={{ marginTop: 16 }}
                 >
-                  {intl.formatMessage({
-                    id: 'vehicle.mileage.registerIntervalCopy',
-                  })}
+                  {!canUserRegisterVehicleMileage
+                    ? intl.formatMessage({
+                        id: 'vehicle.mileage.youAreNotAllowedCopy',
+                      })
+                    : intl.formatMessage({
+                        id: 'vehicle.mileage.registerIntervalCopy',
+                      })}
                 </Typography>
               )}
               <Button

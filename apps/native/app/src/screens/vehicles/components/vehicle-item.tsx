@@ -66,15 +66,9 @@ export const VehicleItem = React.memo(
                     />
                   </Label>
                 ) : isMileageRequired ? (
-                  canRegisterMileage ? (
-                    <Label color="warning" icon>
-                      <FormattedMessage id="vehicles.mileageRequired" />
-                    </Label>
-                  ) : (
-                    <Label color="primary" icon>
-                      <FormattedMessage id="vehicles.mileageRequired" />
-                    </Label>
-                  )
+                  <Label color="primary" icon>
+                    <FormattedMessage id="vehicles.mileageRequired" />
+                  </Label>
                 ) : null
               }
             />

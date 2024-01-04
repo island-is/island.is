@@ -289,7 +289,7 @@ export const en: TranslatedMessages = {
   'vehicles.emptyListDescription':
     'Vehicles registered to you will appear here.',
   'vehicles.nextInspectionLabel': 'Next inspection {date}',
-  'vehicles.mileageRequired': 'Mileage',
+  'vehicles.mileageRequired': 'Kilometre fee',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -333,6 +333,8 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.inputSubmitButton': 'Submit',
   'vehicle.mileage.registerIntervalCopy':
     'Mileage can only be recorded once every 30 days',
+  'vehicle.mileage.youAreNotAllowedCopy':
+    'Only the main owner or custodian of an credit institution owned vehicle can record the mileage status',
   'vehicle.mileage.moreInformationCopy': 'See more information at Ísland.is',
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
