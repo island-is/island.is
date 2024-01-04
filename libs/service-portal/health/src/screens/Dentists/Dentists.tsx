@@ -1,9 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
-  ErrorScreen,
-  EmptyState,
   UserInfoLine,
   IntroHeader,
   SJUKRATRYGGINGAR_SLUG,
@@ -24,6 +22,7 @@ import BillsTable from './BillsTable'
 import add from 'date-fns/add'
 import sub from 'date-fns/sub'
 import { HealthPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 const Dentists = () => {
   useNamespaces('sp.health')
@@ -36,6 +35,8 @@ const Dentists = () => {
     sub(new Date(), { years: 5 }),
   )
   const [selectedDateTo, setSelectedDateTo] = useState<Date>(new Date())
+  const [dentistName, setDentistName] = useState<string>()
+  const [dentistId, setDentistId] = useState<number>()
 
   const { loading, error, data } = useGetDentistsQuery({
     variables: {
@@ -44,25 +45,23 @@ const Dentists = () => {
         dateTo: selectedDateTo,
       },
     },
-    fetchPolicy: 'no-cache',
   })
 
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
 
   const canRegister = dentist?.status?.canRegister ?? false
 
+  useEffect(() => {
+    if (dentist?.name) {
+      setDentistName(dentist.name)
+    }
+    if (dentist?.id) {
+      setDentistId(dentist.id)
+    }
+  }, [dentist?.name, dentist?.id])
+
   if (error) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.dentists).toLowerCase(),
-        })}
-      />
-    )
+    return <Problem type="internal_service_error" error={error} />
   }
 
   return (
@@ -74,13 +73,7 @@ const Dentists = () => {
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
 
-      {!loading && !dentist && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
-      )}
+      {!loading && !dentist && <Problem type="no_data" />}
 
       {wasSuccessfulTransfer && !loading && (
         <Box width="full" marginTop={4} marginBottom={4}>
@@ -94,12 +87,12 @@ const Dentists = () => {
         </Box>
       )}
 
-      {dentist?.name && dentist?.id && (
+      {dentistName && dentistId && (
         <Stack space={2}>
           <UserInfoLine
             title={formatMessage(messages.yourInformation)}
             label={formatMessage(messages.dentist)}
-            content={dentist.name}
+            content={dentistName}
             editLink={
               canRegister
                 ? {
@@ -112,7 +105,7 @@ const Dentists = () => {
           <Divider />
           <UserInfoLine
             label={formatMessage(messages.dentistNumber)}
-            content={`${dentist.id}`}
+            content={`${dentistId}`}
           />
           <Divider />
           <UserInfoLine
@@ -122,6 +115,7 @@ const Dentists = () => {
           <Inline space={4}>
             <DatePicker
               size="sm"
+              backgroundColor="blue"
               label={formatMessage(m.dateFrom)}
               placeholderText={undefined}
               selected={selectedDateFrom}
@@ -132,6 +126,7 @@ const Dentists = () => {
             />
             <DatePicker
               size="sm"
+              backgroundColor="blue"
               label={formatMessage(m.dateTo)}
               placeholderText={undefined}
               selected={selectedDateTo}
