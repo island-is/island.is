@@ -65,12 +65,11 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
         if (val.Answer && val.Answer === NO) {
           return true
         }
-        return val?.moreInfo && val?.Answer
-          ? val.Answer === YES && val.moreInfo.length > 0
-          : false
+        return val?.moreInfo ? val.moreInfo.length > 0 : false
       },
       {
         params: error.required,
+        path: ['moreInfo'],
       },
     ),
   attachments: z.object({ documents: z.array(FileSchema).optional() }),
