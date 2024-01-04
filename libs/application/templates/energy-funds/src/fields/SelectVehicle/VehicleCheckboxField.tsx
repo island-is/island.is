@@ -46,6 +46,10 @@ export const VehicleCheckboxField: FC<
       setValue('selectVehicle.plate', currentVehicle.permno || '')
       setValue('selectVehicle.grantAmount', currentVehicle.vehicleGrant)
       setValue(
+        'selectVehicle.grantItemCode',
+        currentVehicle.vehicleGrantItemCode,
+      )
+      setValue(
         'selectVehicle.newRegistrationDate',
         currentVehicle.newRegistrationDate
           ? format(new Date(currentVehicle.newRegistrationDate), 'dd.MM.yyyy')
