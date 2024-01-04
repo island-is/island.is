@@ -11,10 +11,9 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import {
+import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
@@ -26,6 +25,7 @@ import {
   CourtDocument,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
