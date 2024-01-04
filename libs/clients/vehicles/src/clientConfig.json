@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Samgöngustofa",
-    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-27 : 20240103.2",
+    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-29 : 20240104.2",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -43,7 +43,7 @@
               "application/pdf": {
                 "schema": {
                   "type": "string",
-                  "format": "byte"
+                  "format": "binary"
                 }
               }
             }
@@ -81,7 +81,7 @@
               "application/pdf": {
                 "schema": {
                   "type": "string",
-                  "format": "byte"
+                  "format": "binary"
                 }
               }
             }
@@ -569,13 +569,6 @@
         "tags": ["VehicleSearch"],
         "parameters": [
           {
-            "name": "persidNo",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "showOwned",
             "in": "query",
             "schema": {
@@ -630,7 +623,7 @@
         "tags": ["VehicleSearch"],
         "parameters": [
           {
-            "name": "personIdNumber",
+            "name": "permno",
             "in": "query",
             "schema": {
               "type": "string"
@@ -680,7 +673,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CurrentVehiclesWithMilageAndNextInspDtoTestResponse"
+                  "$ref": "#/components/schemas/CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse"
                 }
               }
             }
@@ -2750,6 +2743,35 @@
         },
         "additionalProperties": false
       },
+      "CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse": {
+        "type": "object",
+        "properties": {
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrentVehiclesWithMilageAndNextInspDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "OutstandingFees": {
         "type": "object",
         "properties": {
@@ -3155,35 +3177,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/VehicleDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CurrentVehiclesWithMilageAndNextInspDtoTestResponse": {
-        "type": "object",
-        "properties": {
-          "pageNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalRecords": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CurrentVehiclesWithMilageAndNextInspDto"
             },
             "nullable": true
           }

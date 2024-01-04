@@ -55,5 +55,5 @@ export class GetVehiclesListV2Input {
   showOperated?: boolean
 
   @Field({ nullable: true })
-  search?: string
+  permno?: string
 }
