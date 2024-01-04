@@ -80,8 +80,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
       onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
         let hasReceivedSubsidy: boolean | undefined
 
-        // Only validate if fewer than 5 items
-        if (onlyElectricVehiclesWithGrant.length < 5) {
+        // Only validate if fewer than 6 items
+        if (onlyElectricVehiclesWithGrant.length < 6) {
           // Get subsidy status
           hasReceivedSubsidy =
             await this.energyFundsClientService.checkVehicleSubsidyAvilability(
@@ -152,9 +152,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
       vIN: currentvehicleDetails?.vin || '',
       carNumber: applicationAnswers?.selectVehicle.plate,
       carType: (currentvehicleDetails && currentvehicleDetails.make) || '',
-      itemcode:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrantItemCode) ||
-        '',
+      itemcode: applicationAnswers?.selectVehicle.grantItemCode || '',
       vehicleGroup: currentvehicleDetails?.vehicleRegistrationCode || '',
       purchasePrice:
         (applicationAnswers?.vehicleDetails.price &&
@@ -172,8 +170,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
             'yyyy-MM-dd',
           )
         : '',
-      subsidyAmount:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrant) || 0,
+      subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
