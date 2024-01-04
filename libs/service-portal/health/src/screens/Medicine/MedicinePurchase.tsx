@@ -96,12 +96,10 @@ export const MedicinePurchase = () => {
   return (
     <MedicineWrapper pathname={HealthPaths.HealthMedicinePurchase}>
       <Box marginBottom={SECTION_GAP}>
-        <IntroHeader
-          isSubheading
-          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
-          title={messages.medicinePurchaseTitle}
-          intro={messages.medicinePurchaseIntroText}
-        />
+        <Text variant="h5" marginBottom={1}>
+          {formatMessage(messages.medicinePurchaseTitle)}
+        </Text>
+        <Text>{formatMessage(messages.medicinePurchaseIntroText)}</Text>
       </Box>
       {loading && (
         <Box marginBottom={CONTENT_GAP}>
@@ -122,7 +120,7 @@ export const MedicinePurchase = () => {
           </Box>
           <Box
             display="flex"
-            marginBottom={CONTENT_GAP}
+            marginBottom={SECTION_GAP}
             justifyContent="flexStart"
           >
             <Select

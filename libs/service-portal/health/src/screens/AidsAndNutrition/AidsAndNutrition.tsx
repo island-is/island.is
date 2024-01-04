@@ -1,8 +1,6 @@
 import { Box, SkeletonLoader, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
-  ErrorScreen,
   IntroHeader,
   SJUKRATRYGGINGAR_SLUG,
   m,
@@ -12,6 +10,7 @@ import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
 import AidsTable from './AidsTable'
 import NutritionTable from './NutritionTable'
 import { RightsPortalAidOrNutritionType } from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -57,17 +56,7 @@ const AidsAndNutrition = () => {
   ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
   if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.aidsAndNutrition).toLowerCase(),
-        })}
-      />
-    )
+    return <Problem type="internal_service_error" error={error} />
   }
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -80,11 +69,7 @@ const AidsAndNutrition = () => {
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
       {!loading && !aids?.length && !nutrition?.length && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
+        <Problem type="no_data" />
       )}
 
       {!loading && !error && tabs.length > 0 && (

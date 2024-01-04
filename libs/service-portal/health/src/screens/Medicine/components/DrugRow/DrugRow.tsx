@@ -52,7 +52,7 @@ export const DrugRow: React.FC<Props> = ({
       <T.Data text={{ variant: 'medium' }}>
         {amountFormat(drug.totalPaidIndividual ?? 0)}
       </T.Data>
-      <T.Data text={{ variant: 'medium' }}>
+      <T.Data text={{ variant: 'medium' }} align="center">
         <button onClick={handleRemove}>
           <Icon icon="trash" color="blue400" type="outline" size="small" />
         </button>
