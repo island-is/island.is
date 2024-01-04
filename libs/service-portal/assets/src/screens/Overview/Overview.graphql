@@ -54,17 +54,11 @@ query GetUsersVehiclesV2($input: GetVehiclesListV2Input!) {
     vehicleList {
       permno
       regno
-      persidno
-      role
       make
-      colorCode
       colorName
       modelYear
       requiresMileageRegistration
       canRegisterMilage
-      regTypeCode
-      regTypeName
-      regTypeSubName
       nextMainInspection
     }
     paging {
