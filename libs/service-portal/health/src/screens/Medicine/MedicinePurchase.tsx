@@ -299,32 +299,32 @@ export const MedicinePurchase = () => {
                           <T.Table>
                             <T.Head>
                               <T.Row>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineDrugName)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineStrength)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineQuantity)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineAmount)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(messages.medicineSalePrice)}
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     <Hyphen>
                                       {formatMessage(
@@ -333,7 +333,7 @@ export const MedicinePurchase = () => {
                                     </Hyphen>
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     <Hyphen>
                                       {formatMessage(
@@ -342,7 +342,7 @@ export const MedicinePurchase = () => {
                                     </Hyphen>
                                   </span>
                                 </T.HeadData>
-                                <T.HeadData>
+                                <T.HeadData text={{ lineHeight: 'xs' }}>
                                   <span className={styles.subTableHeaderText}>
                                     {formatMessage(
                                       messages.medicinePaidByCustomer,
