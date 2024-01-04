@@ -4,7 +4,7 @@ export const previousOmbudsmanComplaint = {
   general: defineMessages({
     sectionTitle: {
       id: `ctao.application:general.previousOmbudsmanComplaint.sectionTitle`,
-      defaultMessage: 'Fylgiskjöld',
+      defaultMessage: 'Fylgiskjöl',
       description: 'Section title',
     },
     title: {
@@ -23,6 +23,12 @@ export const previousOmbudsmanComplaint = {
       id: `ctao.application:general.previousOmbudsmanComplaint.moreInfo.label`,
       defaultMessage: 'Nánari skýring',
       description: 'Label for the description field',
+    },
+    description: {
+      id: `ctao.application:general.previousOmbudsmanComplaint.moreInfo.description`,
+      defaultMessage:
+        'Ef þú vilt láta nánari rökstuðning fyrir kvörtuninni fylgja er hægt að setja hann fram á sérstöku skjali í lok kvörtunarferlisins. Það er líka hægt að koma með gögn á skrifstofu umboðsmanns Alþingis að Templarasundi 5 í Reykjavík eða senda þau með pósti.',
+      description: 'Description field for textbox',
     },
   }),
 }
