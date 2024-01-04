@@ -37,9 +37,9 @@ function populateError(
         message = formatMessage(element.params as StaticTextObject)
       }
     }
-    console.info(errorObject)
     errorObject = set(errorObject, path, message)
   })
+  console.info(errorObject)
   return errorObject
 }
 
