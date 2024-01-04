@@ -4,9 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
-import * as fs from 'fs'
 import type { Server } from 'http'
-import yaml from 'js-yaml'
 
 import {
   logger,

@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  InternalServerErrorException,
-  Res,
-} from '@nestjs/common'
+import { Controller, Get, Inject, Res } from '@nestjs/common'
 import {
   HealthCheck,
   HealthCheckService,
@@ -28,14 +22,11 @@ export class HealthController {
   @Get('check')
   @HealthCheck()
   async check(@Res() res: Response) {
-    const { timeout, checks } = this.healthCheckOptions
-    console.log('health check endpoint', { timeout, checks })
-
+    const { timeout, database } = this.healthCheckOptions
     const healthChecks = []
 
-    if (checks?.database) {
+    if (database) {
       healthChecks.push(() => {
-        console.log('checking database')
         return this.db.pingCheck('database', { timeout })
       })
     }

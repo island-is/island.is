@@ -9,7 +9,7 @@ import { HealthModule } from './health/health.module'
 import { HealthCheckOptions } from './health/types'
 
 interface InfraModuleOptions {
-  appModule: Type<any>
+  appModule: Type<unknown>
   healthCheck?: boolean | HealthCheckOptions
 }
 
@@ -24,16 +24,15 @@ interface InfraModuleOptions {
   imports: [LoggingModule],
 })
 export class InfraModule {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static forRoot({
     appModule,
     healthCheck,
   }: InfraModuleOptions): DynamicModule {
-    const imports = [appModule]
+    const defaultImports = [appModule]
     return {
       module: InfraModule,
       imports: [
-        ...imports,
+        ...defaultImports,
         ...(healthCheck === false
           ? []
           : [

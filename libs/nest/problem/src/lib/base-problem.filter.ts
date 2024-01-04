@@ -32,8 +32,6 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
   catch(error: Error, host: ArgumentsHost) {
     const problem = (error as ProblemError).problem || this.getProblem(error)
 
-    console.log('catch error', { error, host })
-
     if (problem.status && problem.status >= 500) {
       this.logger.error(error)
     } else if (this.options.logAllErrors) {
@@ -61,10 +59,10 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>()
     const response = ctx.getResponse<Response>()
 
-    console.log('handling exception from request url', { url: request.url })
-
-    if (request.url.includes('/health/check')) {
+    // Check if url is whitelisted to bypass the error filter
+    if (bypassErrorFilterUrls.some((url) => request.url.includes(url))) {
       response.send((error as HttpException).getResponse())
+      return
     }
 
     response.status(problem.status || 500)

@@ -11,8 +11,6 @@ bootstrap({
   port: environment.port,
   enableVersioning: true,
   healthCheck: {
-    checks: {
-      database: true,
-    },
+    database: true,
   },
 })
