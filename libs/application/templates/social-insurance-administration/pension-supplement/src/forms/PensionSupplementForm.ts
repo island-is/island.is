@@ -28,7 +28,8 @@ import {
   getApplicationExternalData,
   getAvailableYears,
 } from '../lib/pensionSupplementUtils'
-import { ApplicationReason, MONTHS } from '../lib/constants'
+import { ApplicationReason } from '../lib/constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import isEmpty from 'lodash/isEmpty'
 import {
@@ -43,35 +44,37 @@ import {
   typeOfBankInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const PensionSupplementForm: Form = buildForm({
   id: 'PensionSupplementDraft',
-  title: pensionSupplementFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'prerequisites',
-      title: pensionSupplementFormMessage.pre.externalDataSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [],
     }),
     buildSection({
       id: 'infoSection',
-      title: pensionSupplementFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
-          title: pensionSupplementFormMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: pensionSupplementFormMessage.info.subSectionTitle,
+              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
               description:
-                pensionSupplementFormMessage.info.subSectionDescription,
+                socialInsuranceAdministrationMessage.info.subSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.email',
-                  title: pensionSupplementFormMessage.info.applicantEmail,
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   disabled: true,
@@ -84,7 +87,9 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
-                  title: pensionSupplementFormMessage.info.applicantPhonenumber,
+                  title:
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const data = application.externalData
@@ -99,16 +104,16 @@ export const PensionSupplementForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'payment',
-          title: pensionSupplementFormMessage.payment.title,
+          title: socialInsuranceAdministrationMessage.payment.title,
           children: [
             buildMultiField({
               id: 'paymentInfo',
-              title: pensionSupplementFormMessage.payment.title,
+              title: socialInsuranceAdministrationMessage.payment.title,
               description: '',
               children: [
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
-                  title: pensionSupplementFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -122,8 +127,10 @@ export const PensionSupplementForm: Form = buildForm({
                       typeOfBankInfo(bankInfo, bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
-                      ? pensionSupplementFormMessage.payment.alertMessage
-                      : pensionSupplementFormMessage.payment.alertMessageForeign
+                      ? socialInsuranceAdministrationMessage.payment
+                          .alertMessage
+                      : socialInsuranceAdministrationMessage.payment
+                          .alertMessageForeign
                   },
                   doesNotRequireAnswer: true,
                   alertType: 'info',
@@ -144,13 +151,14 @@ export const PensionSupplementForm: Form = buildForm({
                   options: [
                     {
                       label:
-                        pensionSupplementFormMessage.payment
+                        socialInsuranceAdministrationMessage.payment
                           .icelandicBankAccount,
                       value: BankAccountType.ICELANDIC,
                     },
                     {
                       label:
-                        pensionSupplementFormMessage.payment.foreignBankAccount,
+                        socialInsuranceAdministrationMessage.payment
+                          .foreignBankAccount,
                       value: BankAccountType.FOREIGN,
                     },
                   ],
@@ -159,7 +167,7 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bank',
-                  title: pensionSupplementFormMessage.payment.bank,
+                  title: socialInsuranceAdministrationMessage.payment.bank,
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
@@ -181,7 +189,7 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.iban',
-                  title: pensionSupplementFormMessage.payment.iban,
+                  title: socialInsuranceAdministrationMessage.payment.iban,
                   placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -202,7 +210,7 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.swift',
-                  title: pensionSupplementFormMessage.payment.swift,
+                  title: socialInsuranceAdministrationMessage.payment.swift,
                   placeholder: 'AAAA BB CC XXX',
                   width: 'half',
                   defaultValue: (application: Application) => {
@@ -224,10 +232,10 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'paymentInfo.currency',
-                  title: pensionSupplementFormMessage.payment.currency,
+                  title: socialInsuranceAdministrationMessage.payment.currency,
                   width: 'half',
                   placeholder:
-                    pensionSupplementFormMessage.payment.selectCurrency,
+                    socialInsuranceAdministrationMessage.payment.selectCurrency,
                   options: ({ externalData }: Application) => {
                     const { currencies } =
                       getApplicationExternalData(externalData)
@@ -252,7 +260,7 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankName',
-                  title: pensionSupplementFormMessage.payment.bankName,
+                  title: socialInsuranceAdministrationMessage.payment.bankName,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -273,7 +281,8 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'paymentInfo.bankAddress',
-                  title: pensionSupplementFormMessage.payment.bankAddress,
+                  title:
+                    socialInsuranceAdministrationMessage.payment.bankAddress,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
@@ -314,27 +323,27 @@ export const PensionSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: pensionSupplementFormMessage.info.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [
         buildMultiField({
           id: 'periodField',
-          title: pensionSupplementFormMessage.info.periodTitle,
+          title: socialInsuranceAdministrationMessage.period.title,
           description: pensionSupplementFormMessage.info.periodDescription,
           children: [
             buildSelectField({
               id: 'period.year',
-              title: pensionSupplementFormMessage.info.periodYear,
+              title: socialInsuranceAdministrationMessage.period.year,
               width: 'half',
               placeholder:
-                pensionSupplementFormMessage.info.periodYearDefaultText,
+                socialInsuranceAdministrationMessage.period.yearDefaultText,
               options: getAvailableYears(),
             }),
             buildSelectField({
               id: 'period.month',
-              title: pensionSupplementFormMessage.info.periodMonth,
+              title: socialInsuranceAdministrationMessage.period.month,
               width: 'half',
               placeholder:
-                pensionSupplementFormMessage.info.periodMonthDefaultText,
+                socialInsuranceAdministrationMessage.period.monthDefaultText,
               options: MONTHS,
             }),
           ],
@@ -343,7 +352,7 @@ export const PensionSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'fileUpload',
-      title: pensionSupplementFormMessage.fileUpload.title,
+      title: socialInsuranceAdministrationMessage.fileUpload.title,
       condition: (answers) => {
         const { applicationReason } = getApplicationAnswers(answers)
 
@@ -386,14 +395,18 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.assistedCareAtHome,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                pensionSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -424,14 +437,18 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.purchaseOfHearingAids,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                pensionSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -458,14 +475,18 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.assistedLiving,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                pensionSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -490,14 +511,18 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.halfwayHouse,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                pensionSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -523,14 +548,18 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.houseRentAgreement,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                pensionSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -556,14 +585,18 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.houseRentAllowance,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                pensionSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
@@ -572,16 +605,18 @@ export const PensionSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'additionalInfo',
-      title: pensionSupplementFormMessage.additionalInfo.section,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
-          title: pensionSupplementFormMessage.fileUpload.additionalFileTitle,
+          title:
+            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFiles.additionalDocuments',
               title:
-                pensionSupplementFormMessage.fileUpload.additionalFileTitle,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileTitle,
               description:
                 pensionSupplementFormMessage.fileUpload
                   .additionalFileDescription,
@@ -590,31 +625,40 @@ export const PensionSupplementForm: Form = buildForm({
                   .additionalFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader:
-                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentHeader,
               uploadDescription:
-                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentDescription,
               uploadButtonLabel:
-                pensionSupplementFormMessage.fileUpload.attachmentButton,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .attachmentButton,
               uploadMultiple: true,
             }),
           ],
         }),
         buildSubSection({
           id: 'commentSection',
-          title: pensionSupplementFormMessage.additionalInfo.commentSection,
+          title:
+            socialInsuranceAdministrationMessage.additionalInfo.commentSection,
           children: [
             buildTextField({
               id: 'comment',
-              title: pensionSupplementFormMessage.additionalInfo.commentSection,
+              title:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentSection,
               variant: 'textarea',
               rows: 10,
               description:
-                pensionSupplementFormMessage.additionalInfo.commentDescription,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentDescription,
               placeholder:
-                pensionSupplementFormMessage.additionalInfo.commentPlaceholder,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentPlaceholder,
             }),
           ],
         }),
@@ -622,17 +666,16 @@ export const PensionSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: pensionSupplementFormMessage.confirm.overviewTitle,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [
         buildMultiField({
           id: 'confirm',
           title: '',
-          description: '',
           children: [
             buildCustomField(
               {
                 id: 'confirmScreen',
-                title: pensionSupplementFormMessage.confirm.title,
+                title: '',
                 component: 'Review',
               },
               {
@@ -642,11 +685,12 @@ export const PensionSupplementForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: pensionSupplementFormMessage.confirm.title,
+              title: socialInsuranceAdministrationMessage.confirm.submitButton,
               actions: [
                 {
                   event: DefaultEvents.ABORT,
-                  name: pensionSupplementFormMessage.confirm.cancelButton,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .cancelButton,
                   type: 'reject',
                   condition: (answers) => {
                     const { tempAnswers } = getApplicationAnswers(answers)
@@ -655,7 +699,8 @@ export const PensionSupplementForm: Form = buildForm({
                 },
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: pensionSupplementFormMessage.confirm.title,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .submitButton,
                   type: 'primary',
                 },
               ],
@@ -665,7 +710,10 @@ export const PensionSupplementForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      alertTitle: pensionSupplementFormMessage.conclusionScreen.title,
+      multiFieldTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle,
+      alertTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
       alertMessage: pensionSupplementFormMessage.conclusionScreen.alertTitle,
       expandableDescription:
         pensionSupplementFormMessage.conclusionScreen.bulletList,

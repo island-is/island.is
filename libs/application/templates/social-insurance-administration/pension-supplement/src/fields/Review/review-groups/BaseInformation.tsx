@@ -6,7 +6,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../lib/pensionSupplementUtils'
-import { pensionSupplementFormMessage } from '../../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import { formatNumber } from 'libphonenumber-js'
 
@@ -33,7 +33,9 @@ export const BaseInformation = ({
             paddingBottom={3}
           >
             <DataValue
-              label={formatMessage(pensionSupplementFormMessage.confirm.name)}
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.confirm.name,
+              )}
               value={applicantName}
             />
           </GridColumn>
@@ -43,7 +45,7 @@ export const BaseInformation = ({
           >
             <DataValue
               label={formatMessage(
-                pensionSupplementFormMessage.confirm.nationalId,
+                socialInsuranceAdministrationMessage.confirm.nationalId,
               )}
               value={formatKennitala(applicantNationalId)}
             />
@@ -57,7 +59,9 @@ export const BaseInformation = ({
           paddingBottom={[3, 3, 3, 0]}
         >
           <DataValue
-            label={formatMessage(pensionSupplementFormMessage.confirm.email)}
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.info.applicantEmail,
+            )}
             value={email}
           />
         </GridColumn>
@@ -65,7 +69,7 @@ export const BaseInformation = ({
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(
-              pensionSupplementFormMessage.confirm.phonenumber,
+              socialInsuranceAdministrationMessage.info.applicantPhonenumber,
             )}
             value={formatNumber(applicantPhonenumber, 'International')}
           />

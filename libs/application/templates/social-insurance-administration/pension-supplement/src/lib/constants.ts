@@ -1,5 +1,6 @@
 import { MessageDescriptor } from 'react-intl'
 import { pensionSupplementFormMessage } from './messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export enum ApplicationReason {
   MEDICINE_COST = 'medicineCost', // Lyfja- eða sjúkrahjálp
@@ -26,26 +27,8 @@ export const AttachmentLabel: {
     pensionSupplementFormMessage.fileUpload.purchaseOfHearingAidsTitle,
   halfwayHouse: pensionSupplementFormMessage.fileUpload.halfwayHouseTitle,
   additionalDocuments:
-    pensionSupplementFormMessage.fileUpload.additionalFileTitle,
+    socialInsuranceAdministrationMessage.confirm.additionalDocumentsAttachment,
 }
-
-export const MONTHS = [
-  { value: 'January', label: pensionSupplementFormMessage.months.january },
-  { value: 'February', label: pensionSupplementFormMessage.months.february },
-  { value: 'March', label: pensionSupplementFormMessage.months.march },
-  { value: 'April', label: pensionSupplementFormMessage.months.april },
-  { value: 'May', label: pensionSupplementFormMessage.months.may },
-  { value: 'June', label: pensionSupplementFormMessage.months.june },
-  { value: 'July', label: pensionSupplementFormMessage.months.july },
-  { value: 'August', label: pensionSupplementFormMessage.months.august },
-  {
-    value: 'September',
-    label: pensionSupplementFormMessage.months.september,
-  },
-  { value: 'October', label: pensionSupplementFormMessage.months.october },
-  { value: 'November', label: pensionSupplementFormMessage.months.november },
-  { value: 'December', label: pensionSupplementFormMessage.months.desember },
-]
 
 export enum AttachmentTypes {
   ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',

@@ -37,6 +37,10 @@ import {
   Actions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { Features } from '@island.is/feature-flags'
+import {
+  socialInsuranceAdministrationMessage,
+  statesMessages as coreSIAStatesMessages,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -45,11 +49,10 @@ const PensionSupplementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PENSION_SUPPLEMENT,
   name: pensionSupplementFormMessage.shared.applicationTitle,
-  institution: pensionSupplementFormMessage.shared.institution,
+  institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.pensionSupplementApplication,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.PensionSupplement.translation,
-  ],
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
@@ -95,10 +98,10 @@ const PensionSupplementTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            description: statesMessages.draftDescription,
+            description: coreSIAStatesMessages.draftDescription,
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
-              logMessage: statesMessages.applicationSent,
+              logMessage: coreSIAStatesMessages.applicationSent,
             },
           },
           onExit: defineTemplateApi({
@@ -139,17 +142,17 @@ const PensionSupplementTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
-              label: statesMessages.pendingTag,
+              label: coreSIAStatesMessages.pendingTag,
             },
             pendingAction: {
-              title: statesMessages.tryggingastofnunSubmittedTitle,
-              content: statesMessages.tryggingastofnunSubmittedContent,
+              title: coreSIAStatesMessages.tryggingastofnunSubmittedTitle,
+              content: coreSIAStatesMessages.tryggingastofnunSubmittedContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.applicationEdited,
+                logMessage: coreSIAStatesMessages.applicationEdited,
               },
             ],
           },
@@ -194,8 +197,8 @@ const PensionSupplementTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
-              title: statesMessages.tryggingastofnunInReviewTitle,
-              content: statesMessages.tryggingastofnunInReviewContent,
+              title: coreSIAStatesMessages.tryggingastofnunInReviewTitle,
+              content: coreSIAStatesMessages.tryggingastofnunInReviewContent,
               displayStatus: 'info',
             },
           },
@@ -237,14 +240,15 @@ const PensionSupplementTemplate: ApplicationTemplate<
               variant: 'red',
             },
             pendingAction: {
-              title: statesMessages.additionalDocumentRequired,
-              content: statesMessages.additionalDocumentRequiredDescription,
+              title: coreSIAStatesMessages.additionalDocumentRequired,
+              content:
+                coreSIAStatesMessages.additionalDocumentRequiredDescription,
               displayStatus: 'warning',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: statesMessages.additionalDocumentsAdded,
+                logMessage: coreSIAStatesMessages.additionalDocumentsAdded,
               },
             ],
           },
@@ -279,7 +283,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
           status: 'approved',
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationApproved,
+              title: coreSIAStatesMessages.applicationApproved,
               content: statesMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
@@ -306,7 +310,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
               {
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
                 onEvent: States.REJECTED,
-                logMessage: statesMessages.applicationRejected,
+                logMessage: coreSIAStatesMessages.applicationRejected,
               },
             ],
           },

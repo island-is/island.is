@@ -1,6 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { errorMessages, validatorErrorMessages } from './messages'
+import { errorMessages } from './messages'
 import { ApplicationReason } from './constants'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
@@ -11,6 +11,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { NO, YES } from '@island.is/application/types'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -35,7 +36,7 @@ export const dataSchema = z.object({
   applicantInfo: z.object({
     email: z.string().email(),
     phonenumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
-      params: errorMessages.phoneNumber,
+      params: coreSIAErrorMessages.phoneNumber,
     }),
   }),
   paymentInfo: z
@@ -60,7 +61,7 @@ export const dataSchema = z.object({
         }
         return true
       },
-      { params: errorMessages.bank, path: ['bank'] },
+      { params: coreSIAErrorMessages.bank, path: ['bank'] },
     )
     .refine(
       ({ iban, bankAccountType }) => {
@@ -70,7 +71,7 @@ export const dataSchema = z.object({
         }
         return true
       },
-      { params: errorMessages.iban, path: ['iban'] },
+      { params: coreSIAErrorMessages.iban, path: ['iban'] },
     )
     .refine(
       ({ swift, bankAccountType }) => {
@@ -80,7 +81,7 @@ export const dataSchema = z.object({
         }
         return true
       },
-      { params: errorMessages.swift, path: ['swift'] },
+      { params: coreSIAErrorMessages.swift, path: ['swift'] },
     )
     .refine(
       ({ bankName, bankAccountType }) =>
@@ -125,13 +126,13 @@ export const dataSchema = z.object({
         const selectedDate = new Date(p.year + p.month)
         return startDate < selectedDate && selectedDate < endDate
       },
-      { params: errorMessages.period, path: ['month'] },
+      { params: coreSIAErrorMessages.period, path: ['month'] },
     ),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)
       .refine((a) => a.length !== 0, {
-        params: validatorErrorMessages.requireAttachment,
+        params: coreSIAErrorMessages.requireAttachment,
       }),
   }),
 })

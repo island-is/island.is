@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty'
 import { AnswerValidationConstants, ApplicationReason } from '../constants'
 import { getApplicationAnswers } from '../pensionSupplementUtils'
 import { buildError } from './utils'
-import { validatorErrorMessages } from '../messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const fileUploadValidationSection = (
   newAnswer: unknown,
@@ -21,7 +21,7 @@ export const fileUploadValidationSection = (
       isEmpty((obj as { assistedCareAtHome: unknown[] }).assistedCareAtHome)
     ) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.assistedCareAtHome`,
       )
     }
@@ -35,7 +35,7 @@ export const fileUploadValidationSection = (
       isEmpty((obj as { houseRentAgreement: unknown[] }).houseRentAgreement)
     ) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.houseRentAgreement`,
       )
     }
@@ -49,7 +49,7 @@ export const fileUploadValidationSection = (
       isEmpty((obj as { houseRentAllowance: unknown[] }).houseRentAllowance)
     ) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.houseRentAllowance`,
       )
     }
@@ -61,7 +61,7 @@ export const fileUploadValidationSection = (
   ) {
     if (isEmpty((obj as { assistedLiving: unknown[] }).assistedLiving)) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.assistedLiving`,
       )
     }
@@ -77,7 +77,7 @@ export const fileUploadValidationSection = (
       )
     ) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.purchaseOfHearingAids`,
       )
     }
@@ -89,7 +89,7 @@ export const fileUploadValidationSection = (
   ) {
     if (isEmpty((obj as { halfwayHouse: unknown[] }).halfwayHouse)) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.halfwayHouse`,
       )
     }

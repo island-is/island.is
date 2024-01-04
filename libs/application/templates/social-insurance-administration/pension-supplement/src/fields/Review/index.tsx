@@ -11,7 +11,7 @@ import { Payment } from './review-groups/Payment'
 import { ApplicationReason } from './review-groups/ApplicationReason'
 import { Attachments } from './review-groups/Attachments'
 
-import { pensionSupplementFormMessage } from '../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Period } from './review-groups/Period'
@@ -86,13 +86,16 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(pensionSupplementFormMessage.confirm.title)}
+                {formatMessage(
+                  socialInsuranceAdministrationMessage.confirm.overviewTitle,
+                )}
               </Text>
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
                 {formatMessage(
-                  pensionSupplementFormMessage.confirm.description,
+                  socialInsuranceAdministrationMessage.confirm
+                    .overviewDescription,
                 )}
               </Text>
             </Box>
@@ -120,7 +123,7 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Text variant="h2">
               {formatMessage(
-                pensionSupplementFormMessage.confirm.overviewTitle,
+                socialInsuranceAdministrationMessage.confirm.overviewTitle,
               )}
             </Text>
           </Box>
@@ -138,7 +141,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 onClick={() => handleSubmit('EDIT')}
               >
                 {formatMessage(
-                  pensionSupplementFormMessage.confirm.buttonsEdit,
+                  socialInsuranceAdministrationMessage.confirm.editButton,
                 )}
               </Button>
             )}

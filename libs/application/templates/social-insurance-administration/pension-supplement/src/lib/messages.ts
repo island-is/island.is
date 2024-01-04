@@ -3,61 +3,14 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const pensionSupplementFormMessage: MessageDir = {
   shared: defineMessages({
-    institution: {
-      id: 'ul.application:institution.name',
-      defaultMessage: 'Tryggingastofnun',
-      description: 'Social Insurance Administration',
-    },
     applicationTitle: {
       id: 'ul.application:applicationTitle',
       defaultMessage: 'Umsókn um uppbót á lífeyri',
       description: 'Application for pension supplement',
     },
-    formTitle: {
-      id: 'ul.application:form.title',
-      defaultMessage: 'Umsókn',
-      description: 'Application',
-    },
-    yes: {
-      id: 'ul.application:yes',
-      defaultMessage: 'Já',
-      description: 'Yes',
-    },
-    no: {
-      id: 'ul.application:no',
-      defaultMessage: 'Nei',
-      description: 'No',
-    },
-    alertTitle: {
-      id: 'ul.application:alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
-    },
   }),
 
   pre: defineMessages({
-    externalDataSection: {
-      id: 'ul.application:external.data.section',
-      defaultMessage: 'Gagnaöflun',
-      description: 'Data collection',
-    },
-    externalDataDescription: {
-      id: 'ul.application:externalData.description',
-      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
-      description: 'The following information will be retrieved electronically',
-    },
-    checkboxProvider: {
-      id: 'ul.application:checkbox.provider',
-      defaultMessage:
-        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
-      description:
-        'I understand that the above information will be collected during the application process',
-    },
-    skraInformationTitle: {
-      id: 'ul.application:skra.info.title',
-      defaultMessage: 'Upplýsingar frá Þjóðskrá',
-      description: 'Information from Registers Iceland',
-    },
     skraInformationSubTitle: {
       id: 'ul.application:skra.info.subtitle',
       defaultMessage: 'Upplýsingar um þig.',
@@ -75,137 +28,14 @@ export const pensionSupplementFormMessage: MessageDir = {
       description:
         'Information about email address, phone number and bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. That information can relate to both your income and other circumstances. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd). \n\nIf your income or other circumstances change, you must notify the Social Insurance Administration as this may affect your payments.',
     },
-    startApplication: {
-      id: 'ul.application:start.application',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Start application',
-    },
   }),
 
   info: defineMessages({
-    section: {
-      id: 'ul.application:info.section',
-      defaultMessage: 'Almennar upplýsingar',
-      description: 'General information',
-    },
-    subSectionTitle: {
-      id: 'ul.application:info.sub.section.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone number',
-    },
-    subSectionDescription: {
-      id: 'ul.application:info.sub.section.description',
-      defaultMessage:
-        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
-      description: 'translation',
-    },
-    applicantEmail: {
-      id: 'ul.application:info.applicant.email',
-      defaultMessage: 'Netfang',
-      description: 'Email address',
-    },
-    applicantPhonenumber: {
-      id: 'ul.application:info.applicant.phonenumber',
-      defaultMessage: 'Símanúmer',
-      description: 'Phone number',
-    },
-    periodTitle: {
-      id: 'ul.application:info.period.title',
-      defaultMessage: 'Tímabil',
-      description: `Period`,
-    },
     periodDescription: {
       id: 'ul.application:info.period.description',
       defaultMessage:
         'Veldu tímabil sem þú vilt byrja að fá greidda uppbót á lífeyri. Hægt er að sækja um fyrir árið í ár og tvö ár aftur í tímann.',
       description: `english translation`,
-    },
-    periodYear: {
-      id: 'ul.application:info.period.year',
-      defaultMessage: 'Ár',
-      description: 'Year',
-    },
-    periodYearDefaultText: {
-      id: 'ul.application:info.period.year.default.text',
-      defaultMessage: 'Veldu ár',
-      description: 'Select year',
-    },
-    periodMonth: {
-      id: 'ul.application:info.period.month',
-      defaultMessage: 'Mánuður',
-      description: 'Month',
-    },
-    periodMonthDefaultText: {
-      id: 'ul.application:info.period.month.default.text',
-      defaultMessage: 'Veldu mánuð',
-      description: 'Select month',
-    },
-  }),
-
-  payment: defineMessages({
-    title: {
-      id: 'ul.application:info.payment.title',
-      defaultMessage: 'Greiðsluupplýsingar',
-      description: 'Payment information',
-    },
-    alertMessage: {
-      id: 'ul.application:payment.alert.message',
-      defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning.',
-      description:
-        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the social Insurance Administration will be paid into that account.',
-    },
-    alertMessageForeign: {
-      id: 'ul.application:payment.alert.message.foreign',
-      defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
-      description:
-        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the social Insurance Administration will be paid into that account. \n\nIt is important to ensure that the bank details are correct. We advise that applicants contact their commercial bank to make sure all bank information is correct as well as receive information about IBAN and SWIFT numbers. \n\nPlease note that payments made to foreign accounts can take 3-4 days. The bank that handles the transaction will charge a service fee.',
-    },
-    icelandicBankAccount: {
-      id: 'ul.application:payment.icelandic.bank.account',
-      defaultMessage: 'Íslenskur reikningur',
-      description: 'Icelandic account',
-    },
-    foreignBankAccount: {
-      id: 'ul.application:payment.foreign.bank.account',
-      defaultMessage: 'Erlendur reikningur',
-      description: 'Foreign account',
-    },
-    iban: {
-      id: 'ul.application:payment.iban',
-      defaultMessage: 'IBAN',
-      description: 'IBAN',
-    },
-    swift: {
-      id: 'ul.application:payment.swift',
-      defaultMessage: 'SWIFT',
-      description: 'SWIFT',
-    },
-    bankName: {
-      id: 'ul.application:payment.bank.name',
-      defaultMessage: 'Heiti banka',
-      description: 'Bank name',
-    },
-    bankAddress: {
-      id: 'ul.application:payment.bank.address',
-      defaultMessage: 'Heimili banka',
-      description: 'Bank address',
-    },
-    currency: {
-      id: 'ul.application:payment.currency',
-      defaultMessage: 'Mynt',
-      description: 'Currency',
-    },
-    selectCurrency: {
-      id: 'ul.application:payment.select.currency',
-      defaultMessage: 'Veldu mynt',
-      description: 'Select currency',
-    },
-    bank: {
-      id: 'ul.application:payment.bank',
-      defaultMessage: 'Banki',
-      description: 'Bank',
     },
   }),
 
@@ -261,36 +91,6 @@ export const pensionSupplementFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    title: {
-      id: 'ul.application:fileUpload.title',
-      defaultMessage: 'Fylgiskjöl',
-      description: 'Attachments',
-    },
-    attachmentButton: {
-      id: 'ul.application:fileUpload.attachment.button',
-      defaultMessage: 'Veldu skjal',
-      description: 'Upload file',
-    },
-    attachmentHeader: {
-      id: 'ul.application:fileUpload.attachment.header',
-      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
-      description: 'Drag files here to upload',
-    },
-    attachmentDescription: {
-      id: 'ul.application:fileUpload.attachment.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'Accepted documents with the following extensions: .pdf',
-    },
-    attachmentMaxSizeError: {
-      id: 'ul.application:fileUpload.attachment.maxSizeError',
-      defaultMessage: 'Hámark 5 MB á skrá',
-      description: 'Max 5 MB per file',
-    },
-    additionalFileTitle: {
-      id: 'ul.application:fileUpload.additionalFile.title',
-      defaultMessage: 'Fylgiskjöl viðbótagögn',
-      description: 'Additional attachments',
-    },
     additionalFileDescription: {
       id: 'ul.application:fileUpload.additionalFile.description',
       defaultMessage:
@@ -373,103 +173,9 @@ export const pensionSupplementFormMessage: MessageDir = {
       description:
         'Here you can upload a confirmation of costs that public entities do not pay. Note that the document must be in .pdf format.',
     },
-    additionalDocumentRequired: {
-      id: 'ul.application:fileUpload.additionalDocumentRequired',
-      defaultMessage:
-        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögnum á næstu síðu',
-      description:
-        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
-    },
-    additionalDocumentsEditSubmit: {
-      id: 'ul.application:fileUpload.additionalDocumentsEditSubmit',
-      defaultMessage: 'Senda inn',
-      description: 'Submit',
-    },
-  }),
-
-  additionalInfo: defineMessages({
-    section: {
-      id: 'ul.application:additional.info.section',
-      defaultMessage: 'Viðbótarupplýsingar',
-      description: 'Additional information',
-    },
-    commentSection: {
-      id: 'ul.application:additional.info.comment.section',
-      defaultMessage: 'Athugasemd',
-      description: 'Comment',
-    },
-    commentDescription: {
-      id: 'ul.application:additional.info.comment.description',
-      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
-      description: 'If you have any comments, leave them here.',
-    },
-    commentPlaceholder: {
-      id: 'ul.application:additional.info.comment.placeholder',
-      defaultMessage: 'Skrifaðu hér athugasemd',
-      description: 'Your comment',
-    },
-  }),
-
-  confirm: defineMessages({
-    title: {
-      id: 'ul.application:confirm.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Submit application',
-    },
-    description: {
-      id: 'ul.application:confirm.description',
-      defaultMessage:
-        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-      description: 'Please review the application before submitting.',
-    },
-    overviewTitle: {
-      id: 'ul.application:confirm.overview.title',
-      defaultMessage: 'Yfirlit',
-      description: 'Overview',
-    },
-    buttonsEdit: {
-      id: 'ul.application:confirm.buttons.edit',
-      defaultMessage: 'Breyta umsókn',
-      description: 'Edit application',
-    },
-    name: {
-      id: 'ul.application:confirm.name',
-      defaultMessage: 'Nafn',
-      description: 'Name',
-    },
-    nationalId: {
-      id: 'ul.application:confirm.nationalId',
-      defaultMessage: 'Kennitala',
-      description: 'National registry ID',
-    },
-    email: {
-      id: 'ul.application:confirm.email',
-      defaultMessage: 'Netfang',
-      description: 'Email',
-    },
-    phonenumber: {
-      id: 'ul.application:confirm.phonenumber',
-      defaultMessage: 'Símanúmer',
-      description: 'phonenumber',
-    },
-    cancelButton: {
-      id: 'ul.application:confirm.cancel.button',
-      defaultMessage: 'Hætta við',
-      description: 'Cancel',
-    },
   }),
 
   conclusionScreen: defineMessages({
-    section: {
-      id: 'ul.application:conclusionScreen.section',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirm',
-    },
-    title: {
-      id: 'ul.application:conclusionScreen.title',
-      defaultMessage: 'Umsókn móttekin',
-      description: 'Application received',
-    },
     alertTitle: {
       id: 'ul.application:conclusionScreen.alertTitle',
       defaultMessage:
@@ -482,127 +188,21 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: `* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til uppbóta á lífeyri.`,
       description: 'BulletList',
     },
-    nextStepsLabel: {
-      id: 'ul.application:conclusionScreen.nextStepsLabel',
-      defaultMessage: 'Hvað gerist næst?',
-      description: 'What happens next?',
-    },
     nextStepsText: {
       id: 'ul.application:conclusionScreen.nextStepsText',
       defaultMessage:
-        'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til uppbóta á lífeyri.',
+        'Tryggingastofnun fer yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til uppbóta á lífeyri.',
       description:
-        'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the pension supplement.',
-    },
-    buttonsViewApplication: {
-      id: 'ul.application:conclusionScreen.buttonsViewApplication',
-      defaultMessage: 'Skoða umsókn',
-      description: 'View application',
-    },
-  }),
-
-  months: defineMessages({
-    january: {
-      id: 'ul.application:month.january',
-      defaultMessage: 'Janúar',
-      description: 'January',
-    },
-    february: {
-      id: 'ul.application:month.february',
-      defaultMessage: 'Febrúar',
-      description: 'February',
-    },
-    march: {
-      id: 'ul.application:month.march',
-      defaultMessage: 'Mars',
-      description: 'March',
-    },
-    april: {
-      id: 'ul.application:month.april',
-      defaultMessage: 'Apríl',
-      description: 'April',
-    },
-    may: {
-      id: 'ul.application:month.may',
-      defaultMessage: 'Maí',
-      description: 'May',
-    },
-    june: {
-      id: 'ul.application:month.june',
-      defaultMessage: 'Júní',
-      description: 'June',
-    },
-    july: {
-      id: 'ul.application:month.july',
-      defaultMessage: 'Júlí',
-      description: 'July',
-    },
-    august: {
-      id: 'ul.application:month.august',
-      defaultMessage: 'Ágúst',
-      description: 'August',
-    },
-    september: {
-      id: 'ul.application:month.september',
-      defaultMessage: 'September',
-      description: 'September',
-    },
-    october: {
-      id: 'ul.application:month.october',
-      defaultMessage: 'Október',
-      description: 'October',
-    },
-    november: {
-      id: 'ul.application:month.november',
-      defaultMessage: 'Nóvember',
-      description: 'November',
-    },
-    desember: {
-      id: 'ul.application:month.desember',
-      defaultMessage: 'Desember',
-      description: 'December',
+        'The application will be reviewed by the Social Insurance Administration. Additional information/documentation will be requested if needed. Once all necessary documents have been received, it will be determined whether a pension supplement will be granted.',
     },
   }),
 }
 
 export const errorMessages = defineMessages({
-  phoneNumber: {
-    id: 'ul.application:error.phonenumber',
-    defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
-  },
-  bank: {
-    id: 'ul.application:error.bank',
-    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
-    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
-  },
   applicationReason: {
     id: 'ul.application:error.application.reason',
     defaultMessage: 'Skylda að velja einhverja ástæðu',
     description: 'Required to choose some reason',
-  },
-  period: {
-    id: 'ul.application:error.period',
-    defaultMessage: 'Tímabil þarf að vera gilt.',
-    description: 'The period must be valid.',
-  },
-  iban: {
-    id: 'ul.application:error.iban',
-    defaultMessage: 'Ógilt IBAN',
-    description: 'Invalid IBAN',
-  },
-  swift: {
-    id: 'ul.application:error.swift',
-    defaultMessage: 'Ógilt SWIFT',
-    description: 'Invalid SWIFT',
-  },
-})
-
-export const validatorErrorMessages = defineMessages({
-  requireAttachment: {
-    id: 'ul.application:fileUpload.required.attachment',
-    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
-    description: 'Error message when the attachment file is not provided.',
   },
 })
 
@@ -615,77 +215,9 @@ export const inReviewFormMessages = defineMessages({
 })
 
 export const statesMessages = defineMessages({
-  draftDescription: {
-    id: 'ul.application:draft.description',
-    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
-    description: 'Description of the state - draft',
-  },
-  applicationSent: {
-    id: 'ul.application:applicationSent',
-    defaultMessage: 'Umsókn send',
-    description: 'History application sent',
-  },
-  tryggingastofnunSubmittedTitle: {
-    id: 'ul.application:tryggingastofnunSubmittedTitle',
-    defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
-    description: 'The application has been sent to Tryggingastofnunnar',
-  },
-  tryggingastofnunSubmittedContent: {
-    id: 'ul.application:tryggingastofnunSubmittedContent',
-    defaultMessage:
-      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
-    description: 'Application waiting for review',
-  },
-  tryggingastofnunInReviewTitle: {
-    id: 'ul.application:tryggingastofnunInReviewTitle',
-    defaultMessage: 'Verið er að fara yfir umsóknina',
-    description: 'The application is being reviewed',
-  },
-  tryggingastofnunInReviewContent: {
-    id: 'ul.application:tryggingastofnunInReviewContent',
-    defaultMessage:
-      'Tryggingastofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
-    description:
-      'Tryggingastofnun is currently reviewing the application, so this may take a few days',
-  },
-  applicationEdited: {
-    id: 'ul.application:applicationEdited',
-    defaultMessage: 'Umsókn breytt',
-    description: 'Application edited',
-  },
-  applicationRejected: {
-    id: 'ul.application:applicationRejected',
-    defaultMessage: 'Umsókn hafnað',
-    description: 'Application rejected',
-  },
-  applicationApproved: {
-    id: 'ul.application:applicationApproved',
-    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
-    description: 'Tryggingastofnun has accepted the application',
-  },
   applicationApprovedDescription: {
     id: 'ul.application:applicationApprovedDescription',
     defaultMessage: 'Umsókn vegna ellilífeyris hefur verið samþykkt',
     description: 'The application for old-age pension has been approved',
-  },
-  additionalDocumentRequired: {
-    id: 'ul.application:additionalDocumentRequired',
-    defaultMessage: 'Viðbótargögn vantar',
-    description: 'Additional documents required',
-  },
-  additionalDocumentsAdded: {
-    id: 'ul.application:additionalDocumentsAdded',
-    defaultMessage: 'Viðbótargögnum bætt við',
-    description: 'Additional documents added',
-  },
-  additionalDocumentRequiredDescription: {
-    id: 'ul.application:additionalDocumentRequired.description',
-    defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
-    description: 'Description of the state - additionalDocumentRequired',
-  },
-  pendingTag: {
-    id: 'ul.application:pending.tag',
-    defaultMessage: 'Í bið',
-    description: 'Pending',
   },
 })

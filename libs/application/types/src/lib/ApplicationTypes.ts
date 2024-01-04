@@ -286,7 +286,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PENSION_SUPPLEMENT]: {
     slug: 'uppbot-a-lifeyri',
-    translation: 'tr.ps.application',
+    translation: ['ul.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'eigendaskipti-taekis',
