@@ -3,6 +3,7 @@ import {
   buildCustomField,
   buildDataProviderItem,
   buildDateField,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildFileUploadField,
   buildForm,
@@ -43,6 +44,7 @@ import {
   preexistingComplaint,
   confirmation,
   complaintOverview,
+  previousOmbudsmanComplaint,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -54,6 +56,7 @@ import {
   getComplaintType,
   isDecisionDateOlderThanYear,
   isGovernmentComplainee,
+  isPreviousOmbudsmanComplaint,
 } from '../utils'
 import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 
@@ -426,6 +429,44 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               doesNotRequireAnswer: true,
               condition: (answers: FormValue) =>
                 answers.courtActionAnswer === YES,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'previousOmbudsmanComplaint',
+      title: previousOmbudsmanComplaint.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'previousOmbudsmanComplaint.question',
+          title: previousOmbudsmanComplaint.general.title,
+          children: [
+            buildRadioField({
+              id: 'previousOmbudsmanComplaint.Answer',
+              title: '',
+              width: 'half',
+              options: [
+                { value: YES, label: shared.general.yes },
+                { value: NO, label: shared.general.no },
+              ],
+            }),
+            buildDescriptionField({
+              id: 'previousOmbudsmanComplaint.description',
+              title: previousOmbudsmanComplaint.moreInfo.title,
+              description: previousOmbudsmanComplaint.moreInfo.description,
+              titleVariant: 'h3',
+              condition: (answers) => isPreviousOmbudsmanComplaint(answers),
+            }),
+            buildTextField({
+              id: 'previousOmbudsmanComplaint.moreInfo',
+              title: previousOmbudsmanComplaint.moreInfo.label,
+              rows: 6,
+              placeholder: '',
+              backgroundColor: 'blue',
+              variant: 'textarea',
+              required: true,
+              condition: (answers) => isPreviousOmbudsmanComplaint(answers),
             }),
           ],
         }),
