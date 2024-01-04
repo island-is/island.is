@@ -108,14 +108,6 @@ export const estateSchema = z.object({
           .optional(),
       })
       .refine(
-        ({ nationalId, advocate }) => {
-          return kennitala.info(nationalId as string).age < 18 ? advocate : true
-        },
-        {
-          path: ['nationalId'],
-        },
-      )
-      .refine(
         ({ foreignCitizenship, nationalId }) => {
           return !foreignCitizenship?.length
             ? nationalId && kennitala.isValid(nationalId)
@@ -145,7 +137,7 @@ export const estateSchema = z.object({
         },
       )
 
-      /* phone and email validation for advocates */
+      /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
           return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true

@@ -11,7 +11,7 @@ import {
   formatBank,
   getCurrencies,
 } from './socialInsuranceAdministrationUtils'
-import { BankInfo, PaymentInfo } from './types'
+import { BankInfo, PaymentInfo } from '../types'
 
 describe('formatBankInfo', () => {
   it('format bank info', () => {

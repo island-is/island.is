@@ -12,7 +12,6 @@ import {
 } from './models'
 
 import { Op } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   CreateApplicationDto,

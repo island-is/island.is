@@ -9,6 +9,7 @@ import {
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { formatNumber } from 'libphonenumber-js'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const BaseInformation = ({
   application,
@@ -40,7 +41,9 @@ export const BaseInformation = ({
             paddingBottom={3}
           >
             <DataValue
-              label={formatMessage(oldAgePensionFormMessage.review.name)}
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.confirm.name,
+              )}
               value={applicantName}
             />
           </GridColumn>
@@ -49,7 +52,9 @@ export const BaseInformation = ({
             paddingBottom={3}
           >
             <DataValue
-              label={formatMessage(oldAgePensionFormMessage.review.nationalId)}
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.confirm.nationalId,
+              )}
               value={formatKennitala(applicantNationalId)}
             />
           </GridColumn>
@@ -72,7 +77,9 @@ export const BaseInformation = ({
           paddingBottom={3}
         >
           <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.municipality)}
+            label={formatMessage(
+              oldAgePensionFormMessage.applicant.applicantInfoMunicipality,
+            )}
             value={applicantMunicipality}
           />
         </GridColumn>
@@ -84,14 +91,18 @@ export const BaseInformation = ({
           paddingBottom={[3, 3, 3, 0]}
         >
           <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.email)}
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.info.applicantEmail,
+            )}
             value={email}
           />
         </GridColumn>
 
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.phonenumber)}
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.info.applicantPhonenumber,
+            )}
             value={formatNumber(applicantPhonenumber, 'International')}
           />
         </GridColumn>
@@ -101,14 +112,18 @@ export const BaseInformation = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={3}>
             <DataValue
-              label={formatMessage(oldAgePensionFormMessage.review.spouseName)}
+              label={formatMessage(
+                oldAgePensionFormMessage.applicant.applicantInfoSpouseName,
+              )}
               value={spouseName}
             />
           </GridColumn>
 
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={3}>
             <DataValue
-              label={formatMessage(oldAgePensionFormMessage.review.nationalId)}
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.confirm.nationalId,
+              )}
               value={formatKennitala(spouseNationalId)}
             />
           </GridColumn>
