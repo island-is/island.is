@@ -25,7 +25,7 @@ const ExpiringTable = ({
 }: Props) => {
   const { formatMessage } = useLocale()
   return (
-    <Box marginTop={[2, 2, 5]}>
+    <Box>
       <Box marginTop={2}>
         <T.Table>
           {header}
