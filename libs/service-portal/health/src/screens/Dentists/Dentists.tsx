@@ -136,12 +136,11 @@ const Dentists = () => {
               })}
             />
           </Inline>
+          <BillsTable bills={history ?? []} />
         </Stack>
       )}
 
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
-
-      {!!history?.length && <BillsTable bills={history} />}
     </Box>
   )
 }

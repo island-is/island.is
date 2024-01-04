@@ -9,6 +9,7 @@ import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { RightsPortalDentistBill } from '@island.is/api/schema'
 import { exportDentistFile } from '../../utils/FileBreakdown'
+import { SECTION_GAP } from '../Medicine/constants'
 
 interface Props {
   bills: Array<RightsPortalDentistBill>
@@ -22,6 +23,22 @@ type TotalBills = {
 const BillsTable = ({ bills }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+
+  if (!bills.length) {
+    return (
+      <Box display="flex" justifyContent="center">
+        <Text>{formatMessage(m.noSearchResults)}</Text>
+      </Box>
+    )
+  }
+
+  if (!bills.length) {
+    return (
+      <Box display="flex" justifyContent="center">
+        <Text>{formatMessage(m.noSearchResults)}</Text>
+      </Box>
+    )
+  }
 
   const totalBills = bills.reduce(
     (total, bill) => ({
