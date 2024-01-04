@@ -164,6 +164,3 @@ export * from './lib/personal-representative/dto/paginated-personal-representati
 export * from './lib/personal-representative/dto/personal-representative-scope-permission.dto'
 export * from './lib/clients/admin/dto/admin-create-client.dto'
 export * from './lib/clients/admin/dto/admin-client.dto'
-
-// Health module
-export * from './lib/health/health.module'

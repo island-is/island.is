@@ -80,9 +80,6 @@ import { UserNotificationsInfraController } from './infra.controller'
                 clientSecret: environment.notificationsClientSecret,
                 scope: ['@island.is/user-profile:admin'],
                 mode: 'auto',
-                tokenExchange: {
-                  useCache: true,
-                },
               },
             }),
           }),
