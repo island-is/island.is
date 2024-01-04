@@ -13,6 +13,7 @@ import * as styles from './TherapiesTabContent.css'
 import { formatNumberToString } from '../../utils/format'
 import { TherapyStatus } from '../../utils/constants'
 import { RightsPortalTherapy } from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
 interface Props {
   data: RightsPortalTherapy[]
   link?: string
@@ -31,13 +32,7 @@ export const TherapiesTabContent = ({ data, link, linkText }: Props) => {
   let dropDownOptions
 
   if (!data || data.length === 0) {
-    return (
-      <Box width="full" marginTop={4} display="flex" justifyContent="center">
-        <Text variant="h5" as="h3">
-          {formatMessage(messages.noData)}
-        </Text>
-      </Box>
-    )
+    return <Problem type="no_data" />
   }
 
   if (data.length > 1) {
