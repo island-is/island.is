@@ -39,7 +39,6 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
           name: States.PREREQUESITES,
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
-          progress: 0.25,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -69,7 +68,6 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30), // how long should application live in draft mode?
-          progress: 0.25,
           roles: [
             {
               id: Roles.APPLICANT,

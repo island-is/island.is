@@ -3,14 +3,19 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
+  buildPhoneField,
   buildSection,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import {
+  Application,
+} from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
-import { FILE_SIZE_LIMIT } from '../lib/constants'
+import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const SurvivorsBenefitsForm: Form = buildForm({
   id: 'SurvivorsBenefitsDraft',
@@ -27,6 +32,46 @@ export const SurvivorsBenefitsForm: Form = buildForm({
       id: 'infoSection',
       title: survivorsBenefitsFormMessage.info.section,
       children: [
+        // buildSubSection({
+        //   id: 'info',
+        //   title: survivorsBenefitsFormMessage.info.subSectionTitle,
+        //   children: [
+        //     buildMultiField({
+        //       id: 'applicantInfo',
+        //       title: survivorsBenefitsFormMessage.info.subSectionTitle,
+        //       description:
+        //       survivorsBenefitsFormMessage.info.subSectionDescription,
+        //       children: [
+        //         buildTextField({
+        //           id: 'applicantInfo.email',
+        //           title: survivorsBenefitsFormMessage.info.applicantEmail,
+        //           width: 'half',
+        //           variant: 'email',
+        //           disabled: true,
+        //           defaultValue: (application: Application) => {
+        //             console.log('application: ', application.externalData.socialInsuranceAdministrationApplicant)
+        //             const data = application.externalData
+        //               .socialInsuranceAdministrationApplicant
+        //               .data as ApplicantInfo
+        //             return data.emailAddress
+        //           },
+        //         }),
+        //         buildPhoneField({
+        //           id: 'applicantInfo.phonenumber',
+        //           title:
+        //           survivorsBenefitsFormMessage.info.applicantPhonenumber,
+        //           width: 'half',
+        //           defaultValue: (application: Application) => {
+        //             const data = application.externalData
+        //               .socialInsuranceAdministrationApplicant
+        //               .data as ApplicantInfo
+        //             return data.phoneNumber
+        //           },
+        //         }),
+        //       ],
+        //     }),
+        //   ],
+        // }),
         buildSubSection({
           id: 'deceasedSpouse',
           title: survivorsBenefitsFormMessage.info.deceasedSpouseSubSection,

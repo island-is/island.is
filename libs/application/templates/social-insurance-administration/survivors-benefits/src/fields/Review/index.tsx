@@ -48,7 +48,6 @@ export const Review: FC<ReviewScreenProps> = ({
   }
   
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {state === `${States.DRAFT}` && (
         <Box display="flex" justifyContent="spaceBetween">
