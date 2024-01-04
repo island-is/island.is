@@ -2,7 +2,7 @@ const devConfig = {
   production: false,
   auth: {
     audience: '@identityserver.api',
-    issuer: 'https://localhost:6001',
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'https://localhost:5001',
   },
   audit: {
     defaultNamespace: '@island.is/auth-api',

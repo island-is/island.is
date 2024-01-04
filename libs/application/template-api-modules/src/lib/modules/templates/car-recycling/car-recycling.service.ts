@@ -1,24 +1,27 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 import {
   CarRecyclingClientService,
   RecyclingRequestTypes,
 } from '@island.is/clients/car-recycling'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { coreErrorMessages } from '@island.is/application/core'
 
 import {
   VehicleDto,
-  errorMessages,
   getApplicationAnswers,
   getApplicationExternalData,
 } from '@island.is/application/templates/car-recycling'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { VehicleSearchApi } from '@island.is/clients/vehicles'
 
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
@@ -46,8 +49,8 @@ export class CarRecyclingService extends BaseTemplateApiService {
     if (!result || !result.length) {
       throw new TemplateApiError(
         {
-          title: 'coreErrorMessages.vehiclesEmptyListOwner',
-          summary: 'coreErrorMessages.vehiclesEmptyListOwner',
+          title: coreErrorMessages.vehiclesEmptyListDefault,
+          summary: coreErrorMessages.vehiclesEmptyListDefault,
         },
         400,
       )
@@ -56,25 +59,12 @@ export class CarRecyclingService extends BaseTemplateApiService {
     return result
   }
 
-  async createOwner({ application, auth }: TemplateApiModuleActionProps) {
+  async createOwner(application: ApplicationWithAttachments, auth: User) {
     const { applicantName } = getApplicationExternalData(
       application.externalData,
     )
 
-    const response = await this.carRecyclingService.createOwner(
-      auth,
-      applicantName,
-    )
-
-    if (response.errors) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.errorTitle,
-          summary: errorMessages.createOwnerDescription,
-        },
-        500,
-      )
-    }
+    return await this.carRecyclingService.createOwner(auth, applicantName)
   }
 
   async createVehicle(auth: User, vehicle: VehicleDto) {
@@ -93,7 +83,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
     }
   }
 
-  async recycleVehicles(
+  async recycleVehicle(
     auth: User,
     fullName: string,
     vehicle: VehicleDto,
@@ -118,14 +108,36 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
     let isError = false
     try {
+      // Create owner
+      const ownerResponse = await this.createOwner(application, auth)
+
+      if (ownerResponse && ownerResponse.errors) {
+        isError = true
+        this.logger.error(`Error create owner ${applicantName}`, {
+          error: ownerResponse.errors,
+        })
+      }
+
       // Canceled recycling
       const canceledResponses = canceledVehicles.map(async (vehicle) => {
-        this.recycleVehicles(
-          auth,
-          applicantName,
-          vehicle,
-          RecyclingRequestTypes.cancelled,
-        )
+        if (!isError) {
+          const cancelResponse = await this.recycleVehicle(
+            auth,
+            applicantName,
+            vehicle,
+            RecyclingRequestTypes.cancelled,
+          )
+
+          if (cancelResponse && cancelResponse.errors) {
+            isError = true
+            this.logger.error(
+              `Error canceling recycling vehicle ${vehicle.permno} `,
+              {
+                error: cancelResponse.errors,
+              },
+            )
+          }
+        }
       })
 
       // Recycle
@@ -136,12 +148,14 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
           if (vechicleResponse && vechicleResponse.errors) {
             isError = true
-            this.logger.error(vechicleResponse.errors)
+            this.logger.error(`Error creating vehicle ${vehicle.permno} `, {
+              error: vechicleResponse.errors,
+            })
           }
 
           if (!isError) {
             // Recycle vehicle
-            const response = await this.recycleVehicles(
+            const response = await this.recycleVehicle(
               auth,
               applicantName,
               vehicle,
@@ -150,7 +164,9 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
             if (response && response.errors) {
               isError = true
-              this.logger.error(response.errors)
+              this.logger.error(`Error recycling vehicle ${vehicle.permno}`, {
+                error: response.errors,
+              })
             }
           }
         }
@@ -161,14 +177,21 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       if (isError) {
         return Promise.reject(
-          new Error('Error occurred when recycling the vehicle'),
+          new Error(
+            `Error occurred when recycling vehicle(s) for ${applicantName}`,
+          ),
         )
       }
 
       return Promise.resolve(true)
     } catch (error) {
       isError = true
-      this.logger.error(error.messages)
+      this.logger.error(
+        `Error occurred when recycling vehicle(s) for ${applicantName}`,
+        {
+          error,
+        },
+      )
     }
   }
 }
