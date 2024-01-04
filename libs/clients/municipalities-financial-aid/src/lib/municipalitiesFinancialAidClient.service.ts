@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { ApplicationApi } from '../../gen/fetch'
 
 @Injectable()
@@ -11,6 +11,12 @@ export class MunicipalitiesFinancialAidClientService {
   }
 
   async getApplications(auth: Auth) {
-    return await this.applicationApiWithAuth(auth).applicationControllerGetAll()
+    console.log('HELLOOOOOOOO')
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGetAllForPeriod({
+      dateFrom: '2021-01-01',
+      dateTo: '2021-12-31',
+    })
   }
 }

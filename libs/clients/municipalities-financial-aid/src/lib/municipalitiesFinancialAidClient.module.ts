@@ -3,7 +3,7 @@ import { exportedApis } from './apis'
 import { MunicipalitiesFinancialAidClientService } from './municipalitiesFinancialAidClient.service'
 
 @Module({
-  providers: exportedApis,
-  exports: exportedApis,
+  providers: [MunicipalitiesFinancialAidClientService, ...exportedApis],
+  exports: [...exportedApis, MunicipalitiesFinancialAidClientService],
 })
 export class MunicipalitiesFinancialAidClientModule {}
