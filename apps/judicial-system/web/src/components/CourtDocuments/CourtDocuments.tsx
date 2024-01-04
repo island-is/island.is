@@ -295,7 +295,7 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
                 <IconButton
                   onClick={() => handleRemoveDocument(index)}
                   icon="trash"
-                  color="blue400"
+                  colorScheme="blue"
                 />
               </div>
             )

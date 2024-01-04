@@ -48,7 +48,7 @@ const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
         (icon.onClick ? (
           <IconButton
             icon={icon.icon}
-            color={icon.color}
+            colorScheme={icon.color.includes('blue') ? 'blue' : 'red'}
             onClick={() => icon.onClick?.(id)}
           />
         ) : (

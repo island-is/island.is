@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -8,12 +8,8 @@ import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import {
   CaseFile,
   FileNotFoundModal,
-  FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  CaseFileStatus,
-  CaseFileWithStatus,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import type { CaseFileWithStatus } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
@@ -39,6 +35,32 @@ const getBackgroundColor = (caseFile: CaseFileWithStatus): StatusColor => {
   }
 }
 
+const getIcon = (
+  file: CaseFileWithStatus,
+  handleRetryClick?: (id: string) => void,
+): {
+  icon: IconMapIcon
+  color: Colors
+  onClick?: (fileId: string) => void
+} | null => {
+  switch (file.status) {
+    case 'error':
+      return {
+        icon: 'reload',
+        color: 'red100',
+        onClick: handleRetryClick ? () => handleRetryClick(file.id) : undefined,
+      }
+    case 'done':
+    case 'done-broken':
+      return {
+        icon: 'checkmark',
+        color: 'blue400',
+      }
+    default:
+      return null
+  }
+}
+
 const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     caseId,
@@ -53,33 +75,6 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
   })
   const { formatMessage } = useIntl()
 
-  const getIcon = (
-    file: CaseFileWithStatus,
-  ): {
-    icon: IconMapIcon
-    color: Colors
-    onClick?: (fileId: string) => void
-  } | null => {
-    switch (file.status) {
-      case 'error':
-        return {
-          icon: 'reload',
-          color: 'blue400',
-          onClick: handleRetryClick
-            ? () => handleRetryClick(file.id)
-            : undefined,
-        }
-      case 'done':
-      case 'done-broken':
-        return {
-          icon: 'checkmark',
-          color: 'blue400',
-        }
-      default:
-        return null
-    }
-  }
-
   if (files.length === 0) {
     return <Text>{formatMessage(m.noFilesFound)}</Text>
   }
@@ -88,7 +83,7 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
     <>
       {files.map((file, index) => {
         if (!file.name) return null
-        const iconProperties = getIcon(file)
+        const iconProperties = getIcon(file, handleRetryClick)
 
         return (
           <Box
