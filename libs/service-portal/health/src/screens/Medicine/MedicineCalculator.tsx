@@ -10,8 +10,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { CONTENT_GAP_LG, SECTION_GAP } from './constants'
-import { IntroHeader, amountFormat, m } from '@island.is/service-portal/core'
-import { useEffect, useState } from 'react'
+import { amountFormat, m } from '@island.is/service-portal/core'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import {
   useGetDrugCalculationMutation,
@@ -40,6 +40,7 @@ export const MedicineCalulator = () => {
   const [selectedDrugList, setSelectedDrugList] = useState<
     RightsPortalCalculatorRequestInput[]
   >([])
+  const ref = useRef<HTMLDivElement>(null)
 
   useDebounce(
     () => {
@@ -108,6 +109,7 @@ export const MedicineCalulator = () => {
   const isMobile = width < 992
 
   const handleAddDrug = (drug: RightsPortalDrug) => {
+    executeScroll()
     setSelectedDrugList((list) => {
       return [
         ...list,
@@ -121,6 +123,15 @@ export const MedicineCalulator = () => {
         },
       ]
     })
+  }
+
+  const executeScroll = () => {
+    if (ref.current) {
+      ref.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }
   }
 
   const totalPaginatedPages = SHOW_TABLE
@@ -166,6 +177,7 @@ export const MedicineCalulator = () => {
         flexDirection="column"
         rowGap={2}
         marginBottom={SECTION_GAP}
+        ref={ref}
       >
         <T.Table>
           <T.Head>
