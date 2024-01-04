@@ -177,6 +177,17 @@ export class ApplicationService {
     })
   }
 
+  async getAllForPeriod(
+    dateFrom: string,
+    dateTo?: string,
+  ): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({
+      where: { created: { [Op.gte]: dateFrom, [Op.lte]: dateTo } },
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+    })
+  }
+
   async findById(
     id: string,
     isEmployee: boolean,

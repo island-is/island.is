@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Inject,
   ForbiddenException,
+  Query,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
@@ -176,6 +177,23 @@ export class ApplicationController {
       staff.id,
       staff.municipalityIds,
     )
+  }
+
+  // @Scopes(MunicipalitiesFinancialAidScope.read)
+  @Get('applicationsForPeriod')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    isArray: true,
+    description: 'Gets all existing applications for certain period',
+  })
+  async getAllForPeriod(
+    @Query('dateFrom') dateFrom: string,
+    @Query('dateTo') dateTo?: string,
+  ): Promise<ApplicationModel[]> {
+    this.logger.debug(
+      'Application controller: Getting all applications for certain period',
+    )
+    return this.applicationService.getAllForPeriod(dateFrom, dateTo)
   }
 
   @Scopes(MunicipalitiesFinancialAidScope.read)

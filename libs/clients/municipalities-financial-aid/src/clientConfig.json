@@ -5,7 +5,7 @@
     "version": "1.0"
   },
   "paths": {
-    "/applications": {
+    "/applicationsForPeriod": {
       "get": {
         "tags": ["application"],
         "summary": "Gets all applications",
