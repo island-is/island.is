@@ -662,6 +662,20 @@ export const notifications = {
       description: 'Texti í pósti til aðila máls þegar greinargerð er send',
     },
   }),
+  caseAppealCaseFilesUpdated: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_appeal_case_files_updated.subject',
+      defaultMessage:
+        'Ný gögn í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { ({appealCaseNumber})}}',
+      description: 'Fyrirsögn í pósti til aðila máls þegar ný gögn eru send',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_appeal_case_files_updated.body',
+      defaultMessage:
+        'Ný gögn hafa borist vegna kæru í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { (Landsréttarmál nr. {appealCaseNumber})}}. {appealCaseNumber, select, NONE {} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      description: 'Texti í pósti til aðila máls þegar ný gögn eru send',
+    },
+  }),
   caseAppealCompleted: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.case_appeal_completed.subject',

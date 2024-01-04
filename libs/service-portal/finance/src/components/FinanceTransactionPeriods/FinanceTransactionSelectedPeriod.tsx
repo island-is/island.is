@@ -4,7 +4,6 @@ import {
   Table as T,
   AlertBanner,
   SkeletonLoader,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -14,20 +13,24 @@ import {
   formatDate,
   m,
   periodFormat,
-  DownloadFileButtons,
 } from '@island.is/service-portal/core'
 import { useGetChargeTypePeriodSubjectQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
 import { m as messages } from '../../lib/messages'
-import { exportPeriodBreakdownFile } from '../../utils/filesPeriodBreakdown'
+import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
 
 export default function FinanceTransactionSelectedPeriod({
   period,
+  index,
 }: {
   period: SelectedPeriod
+  index: number
 }) {
   const { formatMessage } = useLocale()
+
+  const { financeTransactionPeriodsState, setFinanceTransactionPeriodsState } =
+    useFinanceTransactionPeriodsState()
 
   const { data, loading, error, called } = useGetChargeTypePeriodSubjectQuery({
     variables: {
@@ -37,6 +40,14 @@ export default function FinanceTransactionSelectedPeriod({
         subject: period.subject,
         typeId: period.typeId,
       },
+    },
+    onCompleted: (data) => {
+      if (data.getChargeTypePeriodSubject.records) {
+        const sel = financeTransactionPeriodsState.selectedPeriods ?? []
+        const currentState = [...sel]
+        currentState[index].details = data.getChargeTypePeriodSubject.records
+        setFinanceTransactionPeriodsState({ selectedPeriods: currentState })
+      }
     },
   })
 
@@ -62,28 +73,6 @@ export default function FinanceTransactionSelectedPeriod({
           {periodFormat(period.period)}
         </Text>
       </Box>
-
-      {data?.getChargeTypePeriodSubject.records?.length ? (
-        <DownloadFileButtons
-          BoxProps={{
-            paddingBottom: 4,
-            display: 'flex',
-            flexDirection: 'row',
-          }}
-          buttons={[
-            {
-              text: formatMessage(m.getAsExcel),
-              onClick: () =>
-                exportPeriodBreakdownFile(data, period, 'ValinTimabil', 'xlsx'),
-            },
-            {
-              text: formatMessage(m.getAsCsv),
-              onClick: () =>
-                exportPeriodBreakdownFile(data, period, 'ValinTimabil', 'csv'),
-            },
-          ]}
-        />
-      ) : null}
 
       {error && (
         <AlertBanner

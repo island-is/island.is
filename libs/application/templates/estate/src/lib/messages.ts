@@ -462,6 +462,21 @@ export const m = defineMessages({
     defaultMessage: 'Fasteign',
     description: '',
   },
+  vehicleRepeaterHeader: {
+    id: 'es.application:vehicleRepeaterHeader',
+    defaultMessage: 'Farartæki',
+    description: '',
+  },
+  vehicleMarketLabel: {
+    id: 'es.application:vehicleMarketLabel',
+    defaultMessage: 'Markaðsverð á dánardegi',
+    description: '',
+  },
+  vehicleNameLabel: {
+    id: 'es.application:vehicleNameLabel',
+    defaultMessage: 'Heiti',
+    description: '',
+  },
   realEstateDescription: {
     id: 'es.application:realEstateDescription',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
@@ -1016,13 +1031,31 @@ export const m = defineMessages({
   },
   inheritanceAdvocateLabel: {
     id: 'es.application:inheritanceAdvocateLabel',
-    defaultMessage: 'Málsvari',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
   inheritanceUnder18Error: {
     id: 'es.application:inheritanceUnder18Error',
     defaultMessage:
       'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceUnder18ErrorAdvocate: {
+    id: 'es.application:inheritanceUnder18ErrorAdvocate',
+    defaultMessage:
+      'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceAgeValidation: {
+    id: 'es.application:inheritanceAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
+    description: '',
+  },
+  heirAdvocateAgeValidation: {
+    id: 'es.application:inheritanceAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
     description: '',
   },
 
