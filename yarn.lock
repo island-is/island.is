@@ -50402,9 +50402,9 @@ __metadata:
   linkType: hard
 
 "tinymce@npm:^5.10.2, tinymce@npm:^5.5.1":
-  version: 5.10.2
-  resolution: "tinymce@npm:5.10.2"
-  checksum: 6f80abd64f51f558a6135e48fb5061a5fed2badfc742c1560dfc1b56be2f9a30cfe48e48f8aaa14537dc9526ee70ece5408272245109114cdf894e07492497ff
+  version: 5.10.9
+  resolution: "tinymce@npm:5.10.9"
+  checksum: 9927f3132820c183ca1a3ed19b4e650b16276385b4c253e51cf2a399a5981522d4197901b7abd8a7bf7000d783880eda9727b5eee9381b5c4c42c48c48a1d6f5
   languageName: node
   linkType: hard
 

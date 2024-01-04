@@ -109,6 +109,11 @@ export const m = defineMessages({
     defaultMessage: 'Landsfjórðungur',
     description: '',
   },
+  address: {
+    id: 'sls.application:address',
+    defaultMessage: 'Heimilisfang',
+    description: '',
+  },
   signList: {
     id: 'sls.application:signList',
     defaultMessage: 'Mæla með lista',

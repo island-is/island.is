@@ -50,7 +50,6 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const { search } = useLocation()
 
   const query = React.useMemo(() => new URLSearchParams(search), [search])
-
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
