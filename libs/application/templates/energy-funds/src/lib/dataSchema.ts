@@ -20,8 +20,9 @@ export const EnergyFundsSchema = z.object({
   userInformation: UserSchemaBase,
   selectVehicle: z.object({
     plate: z.string().min(1),
-    vin: z.string().min(1),
-    grantAmount: z.string().optional(),
+    grantAmount: z.number().optional(),
+    grantItemCode: z.string().optional(),
+    type: z.string().optional(),
   }),
   vehicleDetails: z.object({
     price: z
@@ -30,7 +31,6 @@ export const EnergyFundsSchema = z.object({
       .refine((x) => {
         return parseInt(x) <= 10000000
       }),
-    firstRegistrationDate: z.string().min(1),
   }),
   grant: z.object({
     bankNumber: z.string().min(1),

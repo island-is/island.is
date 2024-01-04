@@ -37,10 +37,14 @@ export const VehicleRadioField: FC<
 
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
-    setPlate(currentVehicle.permno || '')
+    const permno = currentVehicle.permno || ''
+
+    setPlate(permno)
+    setValue('pickVehicle.plate', permno)
     setValue('pickVehicle.type', currentVehicle.make)
-    setValue('pickVehicle.plate', currentVehicle.permno || '')
     setValue('pickVehicle.color', currentVehicle.color || undefined)
+    if (permno) setValue('vehicleInfo.plate', permno)
+    if (permno) setValue('vehicleInfo.type', currentVehicle.make)
   }
 
   const vehicleOptions = (

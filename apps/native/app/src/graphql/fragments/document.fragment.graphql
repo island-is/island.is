@@ -1,0 +1,15 @@
+directive @client on FIELD
+
+fragment ListDocument on Document {
+  id
+  subject
+  senderName
+  senderNatReg
+  date
+  fileType
+  url
+  opened
+  categoryId
+  bookmarked
+  archived @client
+}

@@ -17,21 +17,22 @@ export const complainedFor = {
   decision: defineMessages({
     title: {
       id: 'ctao.application:complainedFor.decision.title',
-      defaultMessage: 'Fyrir hvern er verið að kvarta?',
+      defaultMessage: 'Hver kvartar?',
       description: 'Title about decision, you or someone else',
     },
     description: {
       id: 'ctao.application:complainedFor.decision.description',
       defaultMessage: `Almennt getur maður ekki kvartað til 
 				umboðsmanns Alþingis yfir því að aðrir hafi verið 
-				beittir rangsleitni af hálfu stjórnvalda. Ef maður 
-				hefur sérstök tengsl við þann sem ákvörðun eða 
-				athöfn stjórnvalds sem kvörtunin lýtur að er hægt 
-				að kvarta fyrir hans hönd. Þá þarf að koma fram 
+				beittir rangsleitni af hálfu stjórnvalda. Ef maður hefur
+        sérstök tengsl við þann sem ákvörðun eða athöfn stjórnvalds 
+        lýtur að er hægt að kvarta fyrir hans hönd. Þá þarf að koma fram 
 				hver séu tengsl milli þess sem kvartar og þess sem 
 				kvörtunin varðar, t.d. ef um er að ræða foreldri. 
 				Eftir atvikum er líka rétt að senda skriflegt umboð, 
-				t.d. ef vinur gætir hagsmuna þess sem kvörtunin varðar.`,
+				t.d. ef vinur gætir hagsmuna þess sem kvörtunin varðar.
+        Ef þú vilt láta nánari rökstuðning fylgja á sérstöku skjali
+        geturðu sent það sem viðhengi í lok kvörtunarferlisins.`,
       description: 'description about decision, you or someone else',
     },
     myselfLabel: {
@@ -53,13 +54,13 @@ export const complainedFor = {
     },
     fieldTitle: {
       id: 'ctao.application:complainedFor.information.fieldTitle',
-      defaultMessage: 'Hver eru tengsl við þann aðila',
+      defaultMessage: 'Hver eru tengsl við þann aðila?',
       description:
         'Title about how the user is connected to the person being complained for',
     },
     textareaTitle: {
       id: 'ctao.application:complainedFor.information.textareaTitle',
-      defaultMessage: 'Tengsl við þriðja aðila',
+      defaultMessage: 'Tengsl við þann sem kvartað er fyrir',
       description: 'Title of textarea in complained for information',
     },
     textareaPlaceholder: {

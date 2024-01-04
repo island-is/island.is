@@ -59,7 +59,6 @@ export const debts = buildSection({
                   },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
                 sumField: 'balance',
               },
             ),
@@ -104,7 +103,6 @@ export const debts = buildSection({
                 ],
                 repeaterButtonText:
                   m.publicChargesRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.publicChargeHeader.defaultMessage,
                 sumField: 'publicChargesAmount',
               },
             ),
