@@ -844,11 +844,16 @@ export const vehicleMessage = defineMessages({
   },
   mileageTagText: {
     id: 'sp.vehicles:mileage-tag-text',
-    defaultMessage: 'Skrá kílómetrastöðu',
+    defaultMessage: 'Kílómetragjald',
   },
   mileageAlreadyRegistered: {
     id: 'sp.vehicles:mileage-already-registered',
     defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð.',
+  },
+  mileageYouAreNotAllowed: {
+    id: 'sp.vehicles:mileage-you-are-not-allowed',
+    defaultMessage:
+      'Eingöngu aðaleigandi eða umráðamaður yfir bifreið lánastofnunnar geta skráð kílómetrastöðu.',
   },
   mileageExtLink: {
     id: 'sp.vehicles:mileage-external-link',
@@ -925,6 +930,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:registration',
     defaultMessage: 'Skráning',
   },
+  registrationNumber: {
+    id: 'sp.intellectual-property:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+  },
   registrationDate: {
     id: 'sp.intellectual-property:registration-date',
     defaultMessage: 'Skráningardagur',
@@ -944,6 +953,10 @@ export const ipMessages = defineMessages({
   maxValidObjectionDate: {
     id: 'sp.intellectual-property:max-valid-objection-date',
     defaultMessage: 'Andmælafrestur',
+  },
+  productsAndServices: {
+    id: 'sp.intellectual-property:products-and-services',
+    defaultMessage: 'Vörur og þjónusta',
   },
   imageCategories: {
     id: 'sp.intellectual-property:image-categories',

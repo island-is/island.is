@@ -320,6 +320,8 @@ components:
       properties:
         isEligible:
           type: boolean
+        reason:
+          type: string
     DomesticBankInfo:
       type: object
       additionalProperties: false

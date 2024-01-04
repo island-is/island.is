@@ -102,4 +102,13 @@ export class VehicleResolver {
     newVehicle.vehicleId = vehicle.permno
     return await this.vehicleService.create(newVehicle)
   }
+
+  @Mutation(() => Boolean)
+  async updateSkilavottordVehicleMileage(
+    @CurrentUser() user: User,
+    @Args('permno') permno: string,
+    @Args('mileage') mileage: number,
+  ) {
+    return await this.vehicleService.updateMileage(permno, mileage)
+  }
 }

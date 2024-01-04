@@ -6,6 +6,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
+import * as kennitala from 'kennitala'
 import {
   Box,
   GridColumn,
@@ -15,8 +16,9 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
+import intervalToDuration from 'date-fns/intervalToDuration'
 import { GenericFormField, Application } from '@island.is/application/types'
-import { EstateMember } from '../../types'
+import { ErrorValue, EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
 import { useEffect } from 'react'
@@ -52,12 +54,28 @@ export const AdditionalEstateMember = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
+  const advocatePhone = `${fieldIndex}.advocate.phone`
+  const advocateEmail = `${fieldIndex}.advocate.email`
+
+  const selectedEstate = application.answers.selectedEstate
+
   const foreignCitizenship = useWatch({
     name: foreignCitizenshipField,
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
-  const { control, setValue, clearErrors } = useFormContext()
+  const { control, setValue, clearErrors, getValues } = useFormContext()
+
+  const values = getValues()
+  const currentEstateMember = values?.estate?.estateMembers?.[index]
+  const hasForeignCitizenship =
+    currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
+  const birthDate = currentEstateMember?.dateOfBirth
+  const memberAge =
+    hasForeignCitizenship && birthDate
+      ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
+          ?.years
+      : kennitala.info(currentEstateMember.nationalId)?.age
 
   useEffect(() => {
     clearErrors(nameField)
@@ -131,7 +149,15 @@ export const AdditionalEstateMember = ({
       ) : (
         <Box paddingY={2}>
           <LookupPerson
-            field={{ id: fieldIndex, props: { alertWhenUnder18: true } }}
+            message={formatMessage(m.inheritanceUnder18Error)}
+            field={{
+              id: `${fieldIndex}`,
+              props: {
+                alertWhenUnder18:
+                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+                requiredNationalId: true,
+              },
+            }}
             error={error}
           />
         </Box>
@@ -189,26 +215,92 @@ export const AdditionalEstateMember = ({
             required
           />
         </GridColumn>
-        <GridColumn span="1/1" paddingBottom={2}>
-          <Box width="half">
-            <CheckboxController
-              key={foreignCitizenshipField}
-              id={foreignCitizenshipField}
-              name={foreignCitizenshipField}
-              defaultValue={field?.foreignCitizenship || []}
-              options={[
-                {
-                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                  value: YES,
-                },
-              ]}
-              onSelect={(val) => {
-                setValue(foreignCitizenshipField, val)
-              }}
-            />
-          </Box>
-        </GridColumn>
       </GridRow>
+      {/* ADVOCATE */}
+      {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
+        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        memberAge !== undefined &&
+        memberAge < 18 && (
+          <Box
+            marginTop={2}
+            marginBottom={2}
+            paddingY={5}
+            paddingX={7}
+            borderRadius="large"
+            border="standard"
+          >
+            <GridRow>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <Text variant="h4">
+                  {formatMessage(m.inheritanceAdvocateLabel)}
+                </Text>
+              </GridColumn>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <LookupPerson
+                  message={
+                    selectedEstate === EstateTypes.divisionOfEstateByHeirs
+                      ? formatMessage(m.inheritanceUnder18Error)
+                      : formatMessage(m.inheritanceUnder18ErrorAdvocate)
+                  }
+                  nested
+                  field={{
+                    id: `${fieldIndex}.advocate`,
+                    props: {
+                      alertWhenUnder18:
+                        selectedEstate !==
+                          EstateTypes.divisionOfEstateByHeirs &&
+                        memberAge !== undefined &&
+                        memberAge < 18,
+                    },
+                  }}
+                  error={error}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocatePhone}
+                  name={advocatePhone}
+                  label={formatMessage(m.phone)}
+                  backgroundColor="blue"
+                  format="###-####"
+                  error={(error?.advocate as unknown as ErrorValue)?.phone}
+                  size="sm"
+                  required
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocateEmail}
+                  name={advocateEmail}
+                  label={formatMessage(m.email)}
+                  backgroundColor="blue"
+                  error={(error?.advocate as unknown as ErrorValue)?.email}
+                  size="sm"
+                  required
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+        )}
+      <GridColumn span="1/1" paddingBottom={2}>
+        <Box width="half">
+          <CheckboxController
+            key={foreignCitizenshipField}
+            id={foreignCitizenshipField}
+            name={foreignCitizenshipField}
+            defaultValue={field?.foreignCitizenship || []}
+            options={[
+              {
+                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                value: YES,
+              },
+            ]}
+            onSelect={(val) => {
+              setValue(foreignCitizenshipField, val)
+            }}
+          />
+        </Box>
+      </GridColumn>
     </Box>
   )
 }

@@ -13,7 +13,10 @@ import { ConfigType } from '@nestjs/config'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
 import { CaseType } from '@island.is/judicial-system/types'
 
 import appModuleConfig from './app.config'
@@ -75,7 +78,7 @@ export class EventInterceptor implements NestInterceptor {
             title: 'Ekki tókst að stofna mál í gegnum Strauminn',
             emoji: ':broken_heart:',
           },
-          `${capitalize(caseTypes[dto.type as CaseType])}: ${
+          `${capitalize(formatCaseType(dto.type as CaseType))}: ${
             dto.policeCaseNumber
           }`,
           error,

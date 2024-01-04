@@ -35,6 +35,7 @@ import {
   SubmitField,
   TextField,
   ImageField,
+  NationalIdWithNameField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -603,5 +604,38 @@ export function buildPdfLinkButtonField(
     children: undefined,
     type: FieldTypes.PDF_LINK_BUTTON,
     component: FieldComponents.PDF_LINK_BUTTON,
+  }
+}
+
+export function buildNationalIdWithNameField(
+  data: Omit<NationalIdWithNameField, 'type' | 'component' | 'children'>,
+): NationalIdWithNameField {
+  const {
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+    children: undefined,
+    type: FieldTypes.NATIONAL_ID_WITH_NAME,
+    component: FieldComponents.NATIONAL_ID_WITH_NAME,
   }
 }

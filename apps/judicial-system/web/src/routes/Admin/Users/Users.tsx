@@ -16,15 +16,17 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
-import { Loading } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  Loading,
+  PageHeader,
+} from '@island.is/judicial-system-web/src/components'
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useUsersQuery } from './getUsers.generated'
+import { useUsersQuery } from './users.generated'
 import * as styles from './Users.css'
 
 export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -37,15 +39,15 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     loaded: institutionsLoaded,
   } = useInstitution()
   const {
-    data: userData,
-    error: userError,
+    data: usersData,
+    error: usersError,
     loading: usersLoading,
   } = useUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const users = userData?.users?.filter((u) => {
+  const users = usersData?.users?.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
       : true
@@ -55,7 +57,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
-  const userRoleToString = (userRole: UserRole) => {
+  const userRoleToString = (userRole?: UserRole | null) => {
     switch (userRole) {
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
@@ -72,6 +74,8 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Aðstoðarmaður dómara'
       case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
+      default:
+        return 'Óþekkt'
     }
   }
 
@@ -103,7 +107,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
             options={
               institutionsLoaded
                 ? allInstitutions.map((i) => {
-                    return { label: i.name, value: i.id }
+                    return { label: i.name ?? '', value: i.id }
                   })
                 : []
             }
@@ -208,7 +212,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <Loading />
         </Box>
       )}
-      {userError && (
+      {usersError && (
         <div data-testid="users-error">
           <AlertMessage
             title={formatMessage(errors.failedToFetchDataFromDbTitle)}

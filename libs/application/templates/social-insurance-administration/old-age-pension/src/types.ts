@@ -53,5 +53,5 @@ export interface FileUpload {
 }
 
 export interface SelfEmployed {
-  SelfEmployedAttachment?: FileType[]
+  selfEmployedAttachment?: FileType[]
 }

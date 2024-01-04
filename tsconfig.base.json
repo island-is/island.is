@@ -51,6 +51,7 @@
       "@island.is/api/domains/aircraft-registry": [
         "libs/api/domains/aircraft-registry/src/index.ts"
       ],
+      "@island.is/api/domains/aosh": ["libs/api/domains/aosh/src/index.ts"],
       "@island.is/api/domains/api-catalogue": [
         "libs/api/domains/api-catalogue/src/index.ts"
       ],
@@ -272,6 +273,9 @@
       ],
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
+      ],
+      "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
+        "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
       ],
       "@island.is/application/templates/car-recycling": [
         "libs/application/templates/car-recycling/src/index.ts"
@@ -506,6 +510,9 @@
       "@island.is/clients/althingi-ombudsman": [
         "libs/clients/althingi-ombudsman/src/index.ts"
       ],
+      "@island.is/clients/aosh/transfer-of-machine-ownership": [
+        "libs/clients/aosh/transfer-of-machine-ownership/src/index.ts"
+      ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth/admin-api": [
         "libs/clients/auth/admin-api/src/index.ts"
@@ -636,6 +643,9 @@
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
       ],
+      "@island.is/clients/signature-collection": [
+        "libs/clients/signature-collection/src/index.ts"
+      ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
@@ -668,8 +678,20 @@
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
+      "@island.is/clients/university-application/agricultural-university-of-iceland": [
+        "libs/clients/university-application/agricultural-university-of-iceland/src/index.ts"
+      ],
+      "@island.is/clients/university-application/holar-university": [
+        "libs/clients/university-application/holar-university/src/index.ts"
+      ],
+      "@island.is/clients/university-application/iceland-university-of-the-arts": [
+        "libs/clients/university-application/iceland-university-of-the-arts/src/index.ts"
+      ],
       "@island.is/clients/university-application/reykjavik-university": [
         "libs/clients/university-application/reykjavik-university/src/index.ts"
+      ],
+      "@island.is/clients/university-application/university-of-akureyri": [
+        "libs/clients/university-application/university-of-akureyri/src/index.ts"
       ],
       "@island.is/clients/university-application/university-of-iceland": [
         "libs/clients/university-application/university-of-iceland/src/index.ts"
@@ -917,6 +939,9 @@
       ],
       "@island.is/service-portal/petitions": [
         "libs/service-portal/petitions/src/index.ts"
+      ],
+      "@island.is/service-portal/restrictions": [
+        "libs/service-portal/restrictions/src/index.ts"
       ],
       "@island.is/service-portal/sessions": [
         "libs/service-portal/sessions/src/index.ts"
