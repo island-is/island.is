@@ -3,12 +3,13 @@ import {
   Box,
   SkeletonLoader,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { useGetDrugCertificatesQuery } from './Medicine.generated'
 import { SECTION_GAP } from './constants'
-import { ActionCard, IntroHeader, m } from '@island.is/service-portal/core'
+import { ActionCard, m } from '@island.is/service-portal/core'
 import { HealthPaths } from '../../lib/paths'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 
@@ -20,12 +21,10 @@ export const MedicineLicense = () => {
   return (
     <MedicineWrapper pathname={HealthPaths.HealthMedicineCertificates}>
       <Box marginBottom={SECTION_GAP}>
-        <IntroHeader
-          title={formatMessage(messages.medicineLicenseIntroTitle)}
-          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
-          intro={formatMessage(messages.medicineLicenseIntroText)}
-          isSubheading
-        />
+        <Text variant="h5" marginBottom={1}>
+          {formatMessage(messages.medicineCalculatorIntroTitle)}
+        </Text>
+        <Text>{formatMessage(messages.medicineCalculatorIntroText)}</Text>
       </Box>
       {error ? (
         <AlertMessage

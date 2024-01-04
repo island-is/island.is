@@ -20,6 +20,7 @@ export const tab = style({
 
 export const tabSelected = style({
   color: theme.color.blue400,
+  fontWeight: theme.typography.semiBold,
   ':after': {
     backgroundColor: theme.color.blue400,
   },
