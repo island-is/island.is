@@ -150,8 +150,6 @@ export class EnergyFundsService extends BaseTemplateApiService {
       subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
-    console.log('answers', answers)
-
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
       subsidyInput: answers,
     })
