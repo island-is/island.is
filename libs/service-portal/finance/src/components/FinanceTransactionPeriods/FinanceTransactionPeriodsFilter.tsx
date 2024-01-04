@@ -12,7 +12,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, Filter } from '@island.is/service-portal/core'
+import { m, Filter, DownloadFileButtons } from '@island.is/service-portal/core'
+import { exportPeriodBreakdownFile } from '../../utils/filesPeriodBreakdown'
 
 import {
   useGetAssessmentYearsQuery,
@@ -271,7 +272,6 @@ const FinanceTransactionPeriodsFilter = () => {
               {formatMessage(messages.displaySelectedPeriods)}
             </Button>
           </Box>
-
           {selectedPeriodsActive && (
             <Box ref={selectedPeriodsRef}>
               <Text
@@ -282,14 +282,47 @@ const FinanceTransactionPeriodsFilter = () => {
               >
                 {formatMessage(messages.selectedPeriods)}
               </Text>
-              {financeTransactionPeriodsState.selectedPeriods?.map((period) => {
-                return (
-                  <FinanceTransactionSelectedPeriod
-                    key={`${period.period}-${period.subject}-${period.typeId}`}
-                    period={period}
-                  />
-                )
-              })}
+              {financeTransactionPeriodsState.selectedPeriods?.map(
+                (period, i) => {
+                  return (
+                    <FinanceTransactionSelectedPeriod
+                      key={`${period.period}-${period.subject}-${period.typeId}`}
+                      period={period}
+                      index={i}
+                    />
+                  )
+                },
+              )}
+              {financeTransactionPeriodsState.selectedPeriods?.length ? (
+                <DownloadFileButtons
+                  BoxProps={{
+                    paddingBottom: 4,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'flexEnd',
+                  }}
+                  buttons={[
+                    {
+                      text: formatMessage(m.getAsExcel),
+                      onClick: () =>
+                        exportPeriodBreakdownFile(
+                          financeTransactionPeriodsState.selectedPeriods ?? [],
+                          'ValinTimabil',
+                          'xlsx',
+                        ),
+                    },
+                    {
+                      text: formatMessage(m.getAsCsv),
+                      onClick: () =>
+                        exportPeriodBreakdownFile(
+                          financeTransactionPeriodsState.selectedPeriods ?? [],
+                          'ValinTimabil',
+                          'csv',
+                        ),
+                    },
+                  ]}
+                />
+              ) : null}
             </Box>
           )}
         </Box>

@@ -99,11 +99,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
-          onEntry: defineTemplateApi({
-            action: Actions.CREATE_OWNER,
-            shouldPersistToExternalData: false,
-            throwOnError: true,
-          }),
           onExit: defineTemplateApi({
             action: Actions.SEND_APPLICATION,
             throwOnError: true,
