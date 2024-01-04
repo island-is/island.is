@@ -24,6 +24,7 @@ export enum Features {
   carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
 
   // Application System Delegations active
@@ -62,6 +63,9 @@ export enum Features {
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
+
+  // Disable new login restrictions
+  disableNewDeviceLogins = 'disableNewDeviceLogins',
 }
 
 export enum ServerSideFeature {

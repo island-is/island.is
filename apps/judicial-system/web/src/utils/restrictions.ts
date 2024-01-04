@@ -5,12 +5,11 @@ import {
   getSupportedCaseCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { restrictionsV2 as m } from '@island.is/judicial-system-web/messages'
+import type { CheckboxInfo } from '@island.is/judicial-system-web/src/components'
 import {
   CaseCustodyRestrictions,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import type { CheckboxInfo } from '../components/CheckboxList/CheckboxList'
 
 const makeCheckboxInfo = (
   restriction: CaseCustodyRestrictions,
@@ -30,9 +29,9 @@ export const restrictionsCheckboxes: CheckboxInfo[] = [
 
 export const formatRequestedCustodyRestrictions = (
   formatMessage: IntlFormatters['formatMessage'],
-  type: CaseType,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  requestedOtherRestrictions?: string,
+  type?: CaseType | null,
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
+  requestedOtherRestrictions?: string | null,
 ) => {
   const hasRequestedCustodyRestrictions =
     requestedCustodyRestrictions && requestedCustodyRestrictions?.length > 0
@@ -74,7 +73,7 @@ export const travelBanRestrictionsCheckboxes = [
 export function formatCustodyRestrictions(
   formatMessage: IntlShape['formatMessage'],
   caseType: CaseType,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
 ) {
   const restrictions = getSupportedCaseCustodyRestrictions(
     requestedCustodyRestrictions,

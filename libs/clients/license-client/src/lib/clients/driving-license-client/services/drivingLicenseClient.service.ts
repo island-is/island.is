@@ -129,21 +129,16 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     return payload
   }
 
-  async getLicense(user: User): Promise<Result<DriversLicense | null>> {
+  async getLicenses(user: User): Promise<Result<Array<DriversLicense>>> {
     const licenseResponse = await this.fetchLicense(user)
     if (!licenseResponse.ok) {
       return licenseResponse
     }
 
-    //the user ain't got no license
-    if (!licenseResponse.data) {
-      return {
-        ok: true,
-        data: null,
-      }
+    return {
+      ok: true,
+      data: licenseResponse.data ? [licenseResponse.data] : [],
     }
-
-    return licenseResponse
   }
 
   async getPkPass(user: User): Promise<Result<Pass>> {

@@ -765,7 +765,7 @@ export const OldAgePensionForm: Form = buildForm({
           children: [
             buildSelectField({
               id: 'period.year',
-              title: socialInsuranceAdministrationMessage.period.title,
+              title: socialInsuranceAdministrationMessage.period.year,
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.yearDefaultText,

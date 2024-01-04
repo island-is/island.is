@@ -1,4 +1,5 @@
 import { useUserInfo } from '@island.is/auth/react'
+import { Problem } from '@island.is/react-spa/shared'
 import * as kennitala from 'kennitala'
 import React, { useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
@@ -7,10 +8,8 @@ import { SessionsSession } from '@island.is/api/schema'
 import {
   Box,
   LoadingDots,
-  Text,
   SkeletonLoader,
   ToastContainer,
-  toast,
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -76,9 +75,6 @@ const Sessions = () => {
       ])
       setNextCursor(data.sessionsList.pageInfo.endCursor ?? '')
       setCustomLoading(false)
-    },
-    onError: () => {
-      toast.error(formatMessage(m.error))
     },
   })
 
@@ -218,9 +214,7 @@ const Sessions = () => {
           )}
         </InfiniteScroll>
       ) : error ? (
-        <Box display={'flex'} justifyContent={'center'}>
-          <Text>{formatMessage(m.error)}</Text>
-        </Box>
+        <Problem error={error} />
       ) : (
         <SkeletonLoader height={40} repeat={6} width={'100%'} />
       )}

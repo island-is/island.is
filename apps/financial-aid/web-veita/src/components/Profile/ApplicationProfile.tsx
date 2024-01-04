@@ -313,11 +313,15 @@ export const getDirectTaxPaymentsContent = (
         />
       )
     case directPaymentsArr.length === 0 && hasFetchedPayments:
-      return <Text marginBottom={4}>Engin staðgreiðsla</Text>
+      return (
+        <Text marginBottom={4}>
+          Engar upplýsingar um staðgreiðslu fundust hjá Skattinum
+        </Text>
+      )
     case directPaymentsArr.length === 0 && !hasFetchedPayments:
       return (
         <Text marginBottom={4} color="red400">
-          Ekki tókst að sækja staðgreiðslu
+          Villa kom upp við að sækja staðgreiðslu frá Skattinum
         </Text>
       )
   }

@@ -28,7 +28,7 @@ export const GrantSection = buildSection({
           defaultValue: (application: Application) => {
             const vehicleGrantAmount = getValueViaPath(
               application.answers,
-              'selectedVehicle.grantAmount',
+              'selectVehicle.grantAmount',
             ) as number | undefined
 
             return vehicleGrantAmount

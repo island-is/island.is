@@ -4,17 +4,18 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, InputType } from '@nestjs/graphql'
 
 import type {
-  CaseType,
-  CreateCase,
   CrimeSceneMap,
   IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import {
+  CaseType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 @InputType()
-export class CreateCaseInput implements CreateCase {
+export class CreateCaseInput {
   @Allow()
-  @Field(() => String)
+  @Field(() => CaseType)
   readonly type!: CaseType
 
   @Allow()
@@ -49,7 +50,7 @@ export class CreateCaseInput implements CreateCase {
   readonly defenderPhoneNumber?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => RequestSharedWithDefender, { nullable: true })
   readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
