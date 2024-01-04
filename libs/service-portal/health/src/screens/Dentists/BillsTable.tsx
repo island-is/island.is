@@ -32,14 +32,6 @@ const BillsTable = ({ bills }: Props) => {
     )
   }
 
-  if (!bills.length) {
-    return (
-      <Box display="flex" justifyContent="center">
-        <Text>{formatMessage(m.noSearchResults)}</Text>
-      </Box>
-    )
-  }
-
   const totalBills = bills.reduce(
     (total, bill) => ({
       totalCharge: total.totalCharge + (bill.amount ?? 0),
