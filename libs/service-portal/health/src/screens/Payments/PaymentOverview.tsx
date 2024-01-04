@@ -163,7 +163,7 @@ export const PaymentOverview = () => {
                     </GridColumn>
                   </GridRow>
                   <GridRow>
-                    <GridColumn span={['5/8', '5/8', '5/8', '5/8', '5/8']}>
+                    <GridColumn span={'5/8'}>
                       <Select
                         value={
                           selectedOptionId
@@ -181,7 +181,7 @@ export const PaymentOverview = () => {
                         }
                       />
                     </GridColumn>
-                    <GridColumn span={['3/8', '3/8', '3/8', '3/8', '3/8']}>
+                    <GridColumn span={'3/8'}>
                       <Button
                         fluid
                         size="medium"
