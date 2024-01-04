@@ -47,13 +47,16 @@ describe('CarRecyclingService', () => {
     })
 
     // Also need to mock the Create vehicles here
+    jest.spyOn(carRecyclingService, 'createOwner').mockImplementation(jest.fn())
+
+    // Also need to mock the Create vehicles here
     jest
       .spyOn(carRecyclingService, 'createVehicle')
       .mockImplementation(jest.fn())
 
     // Also need to mock the recycling vehicles
     jest
-      .spyOn(carRecyclingService, 'recycleVehicles')
+      .spyOn(carRecyclingService, 'recycleVehicle')
       .mockImplementation(jest.fn())
 
     const result = await carRecyclingService.sendApplication({

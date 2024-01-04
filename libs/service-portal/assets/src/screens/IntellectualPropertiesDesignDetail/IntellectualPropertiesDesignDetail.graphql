@@ -14,7 +14,9 @@ query getIntellectualPropertiesDesign($input: IntellectualPropertiesInput!) {
       internationalRegistrationDate
       expiryDate
     }
-    classification
+    classification {
+      category
+    }
     status
     owners {
       name

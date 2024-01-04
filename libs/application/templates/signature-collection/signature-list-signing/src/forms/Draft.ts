@@ -111,7 +111,7 @@ export const Draft: Form = buildForm({
             }),
             buildTextField({
               id: 'signee.address',
-              title: m.countryArea,
+              title: m.address,
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) =>

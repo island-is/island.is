@@ -31,6 +31,7 @@ import {
   TransportAuthority,
   Vehicles,
   VehicleServiceFjsV1,
+  WorkMachines,
   DirectorateOfImmigration,
   SocialInsuranceAdministration,
   OccupationalLicenses,
@@ -272,6 +273,7 @@ export const serviceSetup = (services: {
       SocialInsuranceAdministration,
       OccupationalLicenses,
       SignatureCollection,
+      WorkMachines,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
