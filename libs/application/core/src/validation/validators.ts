@@ -21,22 +21,24 @@ function populateError(
 ) {
   let errorObject = {}
   error.forEach((element) => {
-    const defaultZodError = element.message === 'Invalid input'
+    const isDefaultZodError = element.message === 'Invalid input'
     const path = pathToError || element.path
     let message = formatMessage(coreErrorMessages.defaultError)
+
+    if (!isDefaultZodError) {
+      message = formatMessage(element.message)
+    }
+
     if (element.code === ZodIssueCode.custom) {
       const namespaceRegex = /^\w*\.\w*:.*/g
       const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
 
       if (includeNamespace) {
         message = formatMessage(element.params as StaticTextObject)
-      } else if (!defaultZodError) {
-        message = element.message
       }
     }
     errorObject = set(errorObject, path, message)
   })
-  console.info(errorObject)
   return errorObject
 }
 
