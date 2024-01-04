@@ -7,8 +7,7 @@ import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseState,
-  InstitutionType,
+  isCourtOfAppealsUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
@@ -16,9 +15,10 @@ import {
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
+import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
-  useCaseLazyQuery,
-  useLimitedAccessCaseLazyQuery,
+  CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -76,7 +76,7 @@ const useCaseList = () => {
     ) {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      } else if (user?.institution?.type === InstitutionType.COURT_OF_APPEALS) {
+      } else if (isCourtOfAppealsUser(user)) {
         if (
           findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen) ===
           constants.courtOfAppealRoutes[1]
@@ -151,7 +151,7 @@ const useCaseList = () => {
         isTransitioningCase ||
         isSendingNotification ||
         clickedCase[0] === id ||
-        !user?.role
+        limitedAccess === undefined
       ) {
         return
       }
@@ -166,7 +166,6 @@ const useCaseList = () => {
       isTransitioningCase,
       limitedAccess,
       timeouts,
-      user?.role,
     ],
   )
 

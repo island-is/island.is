@@ -6,17 +6,14 @@ import isUndefined from 'lodash/isUndefined'
 import omitBy from 'lodash/omitBy'
 
 import { toast } from '@island.is/island-ui/core'
-import {
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
-  TempCase as Case,
-  TempCreateCase as CreateCase,
-  TempUpdateCase as UpdateCase,
-} from '@island.is/judicial-system-web/src/types'
+  CaseTransition,
+  NotificationType,
+  UpdateCaseInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
@@ -40,7 +37,7 @@ import {
 } from './updateCase.generated'
 
 type ChildKeys = Pick<
-  UpdateCase,
+  UpdateCaseInput,
   | 'courtId'
   | 'prosecutorId'
   | 'sharedWithProsecutorsOfficeId'
@@ -52,17 +49,11 @@ type ChildKeys = Pick<
   | 'appealJudge3Id'
 >
 
-export type autofillEntry = Partial<UpdateCase> & {
+export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
   force?: boolean
 }
 
-export type autofillFunc = (
-  entries: Array<autofillEntry>,
-  workingCase: Case,
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-) => void
-
-function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
+function isChildKey(key: keyof UpdateCaseInput): key is keyof ChildKeys {
   return [
     'courtId',
     'prosecutorId',
@@ -96,7 +87,7 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 
 export const fieldHasValue =
   (workingCase: Case) => (value: unknown, key: string) => {
-    const theKey = key as keyof UpdateCase // loadash types are not better than this
+    const theKey = key as keyof UpdateCaseInput // loadash types are not better than this
 
     if (
       isChildKey(theKey) // check if key is f.example `judgeId`
@@ -116,7 +107,7 @@ export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
 }
 
 export const formatUpdates = (
-  updates: Array<autofillEntry>,
+  updates: Array<UpdateCase>,
   workingCase: Case,
 ) => {
   const changes: UpdateCase[] = updates.map((entry) => {
@@ -176,9 +167,13 @@ const useCase = () => {
 
   const createCase = useMemo(
     () =>
-      async (theCase: CreateCase): Promise<Case | undefined> => {
+      async (theCase: Case): Promise<Case | undefined> => {
         try {
           if (isCreatingCase === false) {
+            if (!theCase.type || !theCase.policeCaseNumbers) {
+              throw new Error('Missing required fields')
+            }
+
             const { data } = await createCaseMutation({
               variables: {
                 input: {
@@ -377,12 +372,12 @@ const useCase = () => {
   )
 
   const setAndSendCaseToServer = async (
-    updates: autofillEntry[],
+    updates: UpdateCase[],
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
   ) => {
     try {
-      const updatesToCase: autofillEntry = formatUpdates(updates, workingCase)
+      const updatesToCase: UpdateCase = formatUpdates(updates, workingCase)
       delete updatesToCase.force
 
       if (Object.keys(updatesToCase).length === 0) {

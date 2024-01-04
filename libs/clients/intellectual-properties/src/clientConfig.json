@@ -55,9 +55,17 @@
           },
           { "name": "email", "in": "query", "schema": { "type": "string" } },
           {
+            "name": "addToLibrary",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
             "name": "type",
             "in": "query",
-            "schema": { "enum": ["Renewed", "Registered"], "type": "string" }
+            "schema": {
+              "enum": ["Renewed", "Registered", "Confirmation"],
+              "type": "string"
+            }
           },
           {
             "name": "language",
@@ -76,6 +84,47 @@
                 "schema": { "type": "string", "format": "byte" }
               },
               "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          }
+        }
+      }
+    },
+    "/Certificate/CreateDesignCertificateBatch": {
+      "get": {
+        "tags": ["Certificate"],
+        "parameters": [
+          {
+            "name": "applicationNumber",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "email", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "addToLibrary",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "enum": ["Renewed", "Registered", "Confirmation"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": { "enum": ["Icelandic", "English"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -2744,7 +2793,8 @@
         "type": "object",
         "properties": {
           "name": { "type": "string", "nullable": true },
-          "code": { "type": "string", "nullable": true }
+          "code": { "type": "string", "nullable": true },
+          "nameTGF": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -3731,6 +3781,13 @@
         },
         "additionalProperties": false
       },
+      "HUX.ELS.API.Common.TMApplicationModels.GoodsServicesDescription": {
+        "type": "object",
+        "properties": {
+          "languageCode": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "HUX.ELS.API.Common.TMApplicationModels.Owner": {
         "type": "object",
         "properties": {
@@ -3871,7 +3928,10 @@
           "basedOn1Mgr34GrvmlDetails": {
             "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.BasedOn1mgr34grvmlDetails"
           },
-          "paid": { "type": "boolean" }
+          "paid": { "type": "boolean" },
+          "goodsServicesDescription": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.GoodsServicesDescription"
+          }
         },
         "additionalProperties": false
       },
@@ -4234,7 +4294,10 @@
           "canRenew": { "type": "boolean" },
           "canRenewWithResumption": { "type": "boolean" },
           "inspectorName": { "type": "string", "nullable": true },
-          "inspectorSSN": { "type": "string", "nullable": true }
+          "inspectorSSN": { "type": "string", "nullable": true },
+          "goodServicesDescription": {
+            "$ref": "#/components/schemas/HUX.ELS.API.Common.TMApplicationModels.GoodsServicesDescription"
+          }
         },
         "additionalProperties": false
       },
@@ -4666,7 +4729,8 @@
           "descriptionRequired": { "type": "boolean", "nullable": true },
           "format": { "type": "string", "nullable": true },
           "webAPIValue": { "type": "string", "nullable": true },
-          "termStoreValue": { "type": "string", "nullable": true }
+          "termStoreValue": { "type": "string", "nullable": true },
+          "tmViewValue": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

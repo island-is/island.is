@@ -25,7 +25,7 @@ const SelectCourt: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const [selectedCourt, setSelectedCourt] = useState<CourtSelectOption | null>(
     workingCase.court
       ? {
-          label: workingCase.court.name,
+          label: workingCase.court.name ?? '',
           value: workingCase.court.id,
           court: workingCase.court,
         }
@@ -33,7 +33,7 @@ const SelectCourt: React.FC<React.PropsWithChildren<Props>> = (props) => {
   )
 
   const selectCourts: CourtSelectOption[] = courts.map((court) => ({
-    label: court.name,
+    label: court.name ?? '',
     value: court.id,
     court,
   }))

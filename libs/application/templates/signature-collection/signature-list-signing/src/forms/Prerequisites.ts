@@ -69,11 +69,6 @@ export const Prerequisites: Form = buildForm({
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.userProfileProviderTitle,
-              subTitle: m.userProfileProviderSubtitle,
-            }),
           ],
         }),
       ],
