@@ -101,7 +101,7 @@ export const m = defineMessages({
   },
   address: {
     id: 'sls.application:address',
-    defaultMessage: 'Lögheimili',
+    defaultMessage: 'Heimilisfang',
     description: '',
   },
   signList: {
