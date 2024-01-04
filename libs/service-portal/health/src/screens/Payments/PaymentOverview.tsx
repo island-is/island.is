@@ -154,44 +154,32 @@ export const PaymentOverview = () => {
                 </GridColumn>
               </GridRow>
               {!!options?.length && (
-                <>
-                  <GridRow>
-                    <GridColumn>
-                      <Text variant="eyebrow" color="blue400" marginBottom={1}>
-                        {formatMessage(messages.typeofService)}
-                      </Text>
-                    </GridColumn>
-                  </GridRow>
-                  <GridRow>
-                    <GridColumn span={'5/8'}>
-                      <Select
-                        value={
-                          selectedOptionId
-                            ? options?.find(
-                                (opt) => opt.value === selectedOptionId,
-                              )
-                            : options[0]
-                        }
-                        size="sm"
-                        name="service"
-                        options={options}
-                        backgroundColor="blue"
-                        onChange={(opt) =>
-                          setSelectedOptionId(opt?.value ?? null)
-                        }
-                      />
-                    </GridColumn>
-                    <GridColumn span={'3/8'}>
-                      <Button
-                        fluid
-                        size="medium"
-                        onClick={() => onFetchBills()}
-                      >
-                        {formatMessage(m.get) + ''}
-                      </Button>
-                    </GridColumn>
-                  </GridRow>
-                </>
+                <GridRow alignItems="flexEnd">
+                  <GridColumn span={'5/8'}>
+                    <Select
+                      value={
+                        selectedOptionId
+                          ? options?.find(
+                              (opt) => opt.value === selectedOptionId,
+                            )
+                          : options[0]
+                      }
+                      label={formatMessage(messages.typeofService)}
+                      size="xs"
+                      name="service"
+                      options={options}
+                      backgroundColor="blue"
+                      onChange={(opt) =>
+                        setSelectedOptionId(opt?.value ?? null)
+                      }
+                    />
+                  </GridColumn>
+                  <GridColumn span={'3/8'}>
+                    <Button fluid size="medium" onClick={() => onFetchBills()}>
+                      {formatMessage(m.get)}
+                    </Button>
+                  </GridColumn>
+                </GridRow>
               )}
             </GridContainer>
             <Box>
