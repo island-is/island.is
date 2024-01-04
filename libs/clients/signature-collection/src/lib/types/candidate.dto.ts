@@ -4,9 +4,9 @@ import { logger } from '@island.is/logging'
 
 export interface Candidate extends UserBase {
   id: string
-  phone?: string
-  email?: string
-  collectionId?: string
+  phone: string
+  email: string
+  collectionId: string
 }
 
 export const mapCandidate = (candidate: FrambodBaseDTO): Candidate => {

@@ -1,8 +1,9 @@
 import { Area } from './area.dto'
 import { UserBase } from './user.dto'
-import { MedmaelalistiDTO } from '../../../gen/fetch'
+import { MedmaelalistiBaseDTO, MedmaelalistiDTO } from '../../../gen/fetch'
 import { Candidate, mapCandidate } from './candidate.dto'
 import { logger } from '@island.is/logging'
+import { Collection, CollectionInfo } from './collection.dto'
 
 export interface List {
   id: string
@@ -15,22 +16,47 @@ export interface List {
   collectionId: string
   collectors?: UserBase[]
   numberOfSignatures: number
-  link: string
+  slug: string
 }
 
-export function getLink(id: number): string {
+export function getSlug(id: number | string): string {
   // TODO: create hash function
-  return `https://island.is/umsoknir/maela-med-lista/?q=${id}`
+  return `/umsoknir/maela-med-lista/?q=${id}`
+}
+
+export function mapListBase(
+  list: MedmaelalistiBaseDTO,
+  candidate: Candidate,
+  collection: CollectionInfo,
+): List {
+  return {
+    id: list.id?.toString() ?? '',
+    collectionId: collection.id.toString(),
+    title: list.listiNafn ?? '',
+    startTime: collection.startTime,
+    endTime: collection.endTime,
+    area: {
+      id: list.svaedi?.id?.toString() ?? '',
+      name: list.svaedi?.nafn?.toString() ?? '',
+      min: list.svaedi?.fjoldi ?? 0,
+    },
+    candidate,
+    // TODO: update active functionality
+    active: true,
+    numberOfSignatures: list.fjoldiMedmaela ?? 0,
+    slug: getSlug(candidate.id),
+  }
 }
 
 export function mapList(list: MedmaelalistiDTO): List {
+  console.log(list)
   const { id: id, medmaelasofnun: collection, frambod: candidate } = list
   if (!id || !collection || !candidate || !candidate.id) {
     logger.warn(
       'Received partial collection information from the national registry.',
-      candidate,
+      list,
     )
-    throw new Error('Candidate is missing id or nationalId')
+    throw new Error('List is missing info')
   }
   return {
     id: list.id?.toString() ?? '',
@@ -47,6 +73,6 @@ export function mapList(list: MedmaelalistiDTO): List {
     // TODO: update active functionality
     active: true,
     numberOfSignatures: list.fjoldiMedmaela ?? 0,
-    link: getLink(candidate.id),
+    slug: getSlug(candidate.id),
   }
 }

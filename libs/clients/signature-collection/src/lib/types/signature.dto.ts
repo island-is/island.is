@@ -15,7 +15,7 @@ export const mapSignature = (signature: MedmaeliBaseDTO): Signature => {
     listId: signature.medmaelalistiID?.toString() ?? '',
     signee: {
       nationalId: signature.kennitala ?? '',
-      name: 'Nafn vantar',
+      name: signature.nafn ?? '',
     },
     signatureType: signature.medmaeliTegund?.toString() ?? '',
     created: signature.dagsetning ?? new Date(),

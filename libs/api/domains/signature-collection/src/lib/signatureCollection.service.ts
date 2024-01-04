@@ -73,7 +73,9 @@ export class SignatureCollectionService {
   }
 
   async signee(nationalId: string): Promise<SignatureCollectionSignee> {
-    return await this.signatureCollectionClientService.getSignee(nationalId)
+    const s = await this.signatureCollectionClientService.getSignee(nationalId)
+    console.log('SIGNEEEEEE', s)
+    return s
   }
 
   async create(

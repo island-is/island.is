@@ -33,7 +33,7 @@ export class SignatureCollectionList {
   collectionId!: string
 
   @Field()
-  link!: string
+  slug!: string
 
   @Field({ nullable: true })
   numberOfSignatures?: number

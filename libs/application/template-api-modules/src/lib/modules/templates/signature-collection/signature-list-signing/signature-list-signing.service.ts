@@ -68,7 +68,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
     throw new TemplateApiError(errors, 400)
   }
 
-  async getList({ application }: TemplateApiModuleActionProps) {
+  async getList({ auth, application }: TemplateApiModuleActionProps) {
     const areaId = (
       (application.externalData.canSign.data as any)?.area as { id: string }
     )?.id
@@ -79,7 +79,8 @@ export class SignatureListSigningService extends BaseTemplateApiService {
     const ownerId = application.answers.initialQuery as string
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
-      nationalId: ownerId,
+      nationalId: auth.nationalId,
+      candidateId: ownerId,
       areaId,
     })
     return lists

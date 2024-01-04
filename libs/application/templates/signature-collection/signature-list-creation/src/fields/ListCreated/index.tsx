@@ -8,14 +8,17 @@ import { FC } from 'react'
 
 export const ListCreated: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const link = application.externalData.createLists.data as string
+  const slug = application.externalData.createLists.data as string
   return (
     <>
       <Box>
         <Text variant="h3" marginBottom={2}>
           {formatMessage(m.shareList)}
         </Text>
-        <CopyLink linkUrl={link} buttonTitle={formatMessage(m.copyLink)} />
+        <CopyLink
+          linkUrl={`${document.location.origin}${slug}`}
+          buttonTitle={formatMessage(m.copyLink)}
+        />
       </Box>
 
       <Box display="flex" justifyContent="center" marginY={5}>

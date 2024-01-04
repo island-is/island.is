@@ -17,7 +17,7 @@ export interface Signee extends UserBase {
   canCreateInfo?: ReasonKey[]
   isOwner: boolean
   area?: Omit<Area, 'min' | 'max'>
-  signature: Signature | null
+  signature?: Signature
   ownedLists: List[]
   candidate?: Candidate
 }

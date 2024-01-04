@@ -37,7 +37,7 @@ export class SignatureListCreationService extends BaseTemplateApiService {
       nationalId: answers.applicant.nationalId.replace('-', ''),
     }
     // Pretend to be doing stuff for a short while
-    const link = await this.signatureCollectionClientService.createLists({
+    const slug = await this.signatureCollectionClientService.createLists({
       collectionId,
       owner,
     })
@@ -49,7 +49,7 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     //   application,
     // )
 
-    return link
+    return slug
   }
 
   async ownerRequirements({ auth }: TemplateApiModuleActionProps) {

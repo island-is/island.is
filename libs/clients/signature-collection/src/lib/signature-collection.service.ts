@@ -21,12 +21,11 @@ import {
   CollectionInfo,
   mapCollection,
 } from './types/collection.dto'
-import { List, getLink, mapList } from './types/list.dto'
+import { List, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { BulkUpload } from './types/bulkUpload.dto'
 
-import { User } from '@island.is/auth-nest-tools'
 import { Success, mapReasons } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
 
@@ -65,7 +64,7 @@ export class SignatureCollectionClientService {
     return mapCollection(currentCollection)
   }
 
-  async getListsParams({ areaId, nationalId }: GetListInput) {
+  async getListsParams({ areaId, nationalId, candidateId }: GetListInput) {
     const { id } = await this.currentCollectionInfo()
     if (nationalId) {
       const { isOwner, area, candidate } = await this.getSignee(nationalId)
@@ -79,12 +78,17 @@ export class SignatureCollectionClientService {
             }
           : { sofnunID: id, frambodID: parseInt(candidate.id) }
       } else if (area) {
-        return { sofnunID: id, svaediID: parseInt(area?.id) }
+        return {
+          sofnunID: id,
+          svaediID: parseInt(area?.id),
+          frambodId: candidateId ? parseInt(candidateId) : undefined,
+        }
       }
     }
     return {
       sofnunID: id,
       svaediID: areaId ? parseInt(areaId) : undefined,
+      frambodId: candidateId ? parseInt(candidateId) : undefined,
     }
   }
 
@@ -156,8 +160,8 @@ export class SignatureCollectionClientService {
     if (filteredAreas.length !== lists.length) {
       throw new Error('Not all lists created')
     }
-    const { link } = mapList(lists[0])
-    return link
+    const { slug } = mapList(lists[0])
+    return slug
   }
 
   async signList(listId: string, nationalId: string): Promise<Signature> {
@@ -287,17 +291,23 @@ export class SignatureCollectionClientService {
   }
 
   async getSignee(nationalId: string): Promise<Signee> {
-    const { id, isPresidential, isActive } = await this.currentCollectionInfo()
+    const collection = await this.currentCollectionInfo()
+    const { id, isPresidential, isActive } = collection
     const user = await this.collectionsApi.medmaelasofnunIDEinsInfoKennitalaGet(
       {
         kennitala: nationalId,
         iD: id,
       },
     )
+    const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
+
     const activeSignature = user.medmaeli?.find((signature) => signature.valid)
-    const ownedLists = user.medmaelalistar
-      ? user.medmaelalistar?.map((list) => mapList(list))
-      : []
+    const ownedLists =
+      user.medmaelalistar && candidate
+        ? user.medmaelalistar?.map((list) =>
+            mapListBase(list, candidate, collection),
+          )
+        : []
 
     const { success: canCreate, reasons: canCreateInfo } = await this.canCreate(
       {
@@ -314,7 +324,6 @@ export class SignatureCollectionClientService {
       canSignInfo: user.maKjosaInfo,
       activeSignature,
     })
-    const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
     return {
       nationalId: user.kennitala ?? '',
       name: user.nafn ?? '',
@@ -327,7 +336,7 @@ export class SignatureCollectionClientService {
         id: user.svaedi?.id?.toString() ?? '',
         name: user.svaedi?.nafn?.toString() ?? '',
       },
-      signature: activeSignature ? mapSignature(activeSignature) : null,
+      signature: activeSignature ? mapSignature(activeSignature) : undefined,
       ownedLists,
       isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
       candidate,

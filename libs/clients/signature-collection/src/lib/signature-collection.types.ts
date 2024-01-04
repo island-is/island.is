@@ -4,6 +4,7 @@ import { List } from './types/list.dto'
 export interface GetListInput {
   areaId?: string
   nationalId?: string
+  candidateId?: string
 }
 
 export interface OwnerInput {
