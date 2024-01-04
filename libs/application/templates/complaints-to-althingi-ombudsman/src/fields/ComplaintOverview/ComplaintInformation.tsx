@@ -30,7 +30,7 @@ export const ComplaintInformation: FC<React.PropsWithChildren<Props>> = ({
   return (
     <ReviewGroup
       isEditable={isEditable}
-      editAction={() => onEdit('section.complaintInformation')}
+      editAction={() => onEdit('complainee')}
     >
       <GridRow>
         <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
