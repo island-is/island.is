@@ -40,7 +40,14 @@ const Login = () => {
             message={formatMessage(login.error.unAuthorized.message)}
           />
         )
-
+      case LoginErrorCodes.OLD_LOGIN:
+        return (
+          <AlertMessage
+            type="warning"
+            title={formatMessage(login.error.oldLogin.title)}
+            message={formatMessage(login.error.oldLogin.message)}
+          />
+        )
       default:
         return null
     }
