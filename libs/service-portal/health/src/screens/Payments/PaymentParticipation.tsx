@@ -197,7 +197,7 @@ export const PaymentPartication = () => {
                           >
                             <Button
                               size="small"
-                              icon="pencil"
+                              icon="add"
                               variant="text"
                               onClick={() =>
                                 setSelectedPeriodId(
