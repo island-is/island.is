@@ -36,3 +36,24 @@ export class GetVehiclesForUserInput {
   @Field(() => String, { nullable: true })
   permno?: string
 }
+
+@InputType()
+export class GetVehiclesListV2Input {
+  @Field()
+  pageSize!: number
+
+  @Field()
+  page!: number
+
+  @Field({ defaultValue: true })
+  showOwned?: boolean
+
+  @Field({ defaultValue: true })
+  showCoowned?: boolean
+
+  @Field({ defaultValue: true })
+  showOperated?: boolean
+
+  @Field({ nullable: true })
+  search?: string
+}

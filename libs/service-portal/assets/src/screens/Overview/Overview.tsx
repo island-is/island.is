@@ -29,7 +29,11 @@ import {
 } from '../../lib/messages'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 
-import { useGetUsersVehiclesLazyQuery } from './Overview.generated'
+import {
+  useGetUsersVehiclesLazyQuery,
+  useGetUsersVehiclesV2LazyQuery,
+  useGetUsersVehiclesV2Query,
+} from './Overview.generated'
 import { useGetExcelVehiclesLazyQuery } from '../../utils/VehicleExcel.generated'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import useDebounce from 'react-use/lib/useDebounce'
@@ -61,13 +65,11 @@ const VehiclesOverview = () => {
   const [
     GetUsersVehiclesLazyQuery,
     { loading, error, fetchMore, ...usersVehicleQuery },
-  ] = useGetUsersVehiclesLazyQuery({
+  ] = useGetUsersVehiclesV2LazyQuery({
     variables: {
       input: {
         pageSize: 10,
         page: page,
-        showDeregeristered: false,
-        showHistory: false,
       },
     },
   })
@@ -131,11 +133,16 @@ const VehiclesOverview = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicleData])
-  const vehicles = isSearching
-    ? usersSearchVehicleQuery.data?.vehiclesList
-    : usersVehicleQuery.data?.vehiclesList
+  // const vehicles = isSearching
+  //   ? usersSearchVehicleQuery.data?.vehiclesList
+  //   : usersVehicleQuery.data?.vehiclesListV2
 
-  const ownershipPdf = usersVehicleQuery.data?.vehiclesList?.downloadServiceURL
+  // TODO: ADD BACK SEARCH WHEN READY
+
+  const vehicles = usersVehicleQuery.data?.vehiclesListV2
+
+  const ownershipPdf =
+    usersVehicleQuery.data?.vehiclesListV2?.downloadServiceURL
   const filteredVehicles = vehicles?.vehicleList ?? []
 
   const handleSearchChange = useCallback((value: string) => {

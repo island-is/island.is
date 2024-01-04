@@ -11,6 +11,8 @@ import {
   VehicleDtoListPagedResponse,
   VehicleSearchDto,
   PersidnoLookupResultDto,
+  CurrentVehiclesWithMilageAndNextInspDto,
+  CurrentVehiclesWithMilageAndNextInspDtoTestResponse,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
@@ -29,7 +31,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
-import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
+import {
+  GetVehiclesForUserInput,
+  GetVehiclesListV2Input,
+} from '../dto/getVehiclesForUserInput'
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 
@@ -67,6 +72,21 @@ export class VehiclesService {
 
   private getMileageWithAuth(auth: Auth) {
     return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getVehiclesListV2(
+    auth: User,
+    input: GetVehiclesListV2Input,
+  ): Promise<CurrentVehiclesWithMilageAndNextInspDtoTestResponse> {
+    return await this.getVehiclesWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
+      page: input.page,
+      pageSize: input.pageSize,
+      showOwned: input.showOwned,
+      showCoowned: input.showCoowned,
+      showOperated: input.showOperated,
+    })
   }
 
   async getVehiclesForUser(

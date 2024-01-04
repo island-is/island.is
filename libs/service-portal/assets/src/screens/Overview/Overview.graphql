@@ -48,3 +48,31 @@ query GetUsersVehicles($input: GetVehiclesForUserInput!) {
     downloadServiceURL
   }
 }
+
+query GetUsersVehiclesV2($input: GetVehiclesListV2Input!) {
+  vehiclesListV2(input: $input) {
+    vehicleList {
+      permno
+      regno
+      persidno
+      role
+      make
+      colorCode
+      colorName
+      modelYear
+      requiresMileageRegistration
+      canRegisterMilage
+      regTypeCode
+      regTypeName
+      regTypeSubName
+      nextMainInspection
+    }
+    paging {
+      pageNumber
+      pageSize
+      totalPages
+      totalRecords
+    }
+    downloadServiceURL
+  }
+}
