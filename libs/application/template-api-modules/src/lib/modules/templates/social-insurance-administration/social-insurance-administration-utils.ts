@@ -10,11 +10,11 @@ import {
   getApplicationExternalData as getOAPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath } from '@island.is/application/core'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
   shouldNotUpdateBankAccount,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,

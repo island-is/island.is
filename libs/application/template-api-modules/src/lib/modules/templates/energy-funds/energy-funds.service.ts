@@ -80,8 +80,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
       onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
         let hasReceivedSubsidy: boolean | undefined
 
-        // Only validate if fewer than 5 items
-        if (onlyElectricVehiclesWithGrant.length < 5) {
+        // Only validate if fewer than 6 items
+        if (onlyElectricVehiclesWithGrant.length < 6) {
           // Get subsidy status
           hasReceivedSubsidy =
             await this.energyFundsClientService.checkVehicleSubsidyAvilability(
@@ -120,14 +120,39 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.permno === applicationAnswers.selectVehicle.plate,
     )
 
+    try {
+      const vehicleApiDetails = await this.vehiclesApiWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
+        vin: currentvehicleDetails?.vin || '',
+      })
+      if (
+        !vehicleApiDetails.owners?.find((x) => x.persidno === auth.nationalId)
+      ) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.vehicleNotOwner,
+            summary: coreErrorMessages.vehicleNotOwner,
+          },
+          400,
+        )
+      }
+    } catch (error) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.applicationSubmitFailed,
+          summary: coreErrorMessages.applicationSubmitFailed,
+        },
+        400,
+      )
+    }
+
     const answers = {
       nationalId: auth.nationalId,
       vIN: currentvehicleDetails?.vin || '',
       carNumber: applicationAnswers?.selectVehicle.plate,
       carType: (currentvehicleDetails && currentvehicleDetails.make) || '',
-      itemcode:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrantItemCode) ||
-        '',
+      itemcode: applicationAnswers?.selectVehicle.grantItemCode || '',
       vehicleGroup: currentvehicleDetails?.vehicleRegistrationCode || '',
       purchasePrice:
         (applicationAnswers?.vehicleDetails.price &&
@@ -145,8 +170,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
             'yyyy-MM-dd',
           )
         : '',
-      subsidyAmount:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrant) || 0,
+      subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
