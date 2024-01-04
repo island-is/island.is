@@ -92,7 +92,11 @@ export const filterSupportCategories = (
   locale: string,
   namespace: Record<string, string> | undefined,
 ) => {
-  if (slug === 'sjukratryggingar' || slug === 'icelandic-health-insurance') {
+  if (
+    slug === 'sjukratryggingar' ||
+    slug === 'icelandic-health-insurance' ||
+    slug === 'iceland-health'
+  ) {
     return supportCategories
       ?.filter(
         (c) =>
