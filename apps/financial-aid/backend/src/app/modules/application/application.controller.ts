@@ -179,7 +179,7 @@ export class ApplicationController {
     )
   }
 
-  // @Scopes(MunicipalitiesFinancialAidScope.read)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
   @Get('applicationsForPeriod')
   @ApiOkResponse({
     type: ApplicationModel,

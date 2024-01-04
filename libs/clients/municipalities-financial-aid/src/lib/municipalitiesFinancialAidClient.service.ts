@@ -11,8 +11,6 @@ export class MunicipalitiesFinancialAidClientService {
   }
 
   async getApplications(auth: Auth) {
-    return await this.applicationApiWithAuth(auth).applicationControllerGetById(
-      applicationId,
-    )
+    return await this.applicationApiWithAuth(auth).applicationControllerGetAll()
   }
 }
