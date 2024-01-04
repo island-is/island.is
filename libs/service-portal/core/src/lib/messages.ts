@@ -794,6 +794,10 @@ export const m = defineMessages({
     id: 'service.portal:no-data-found-simple',
     defaultMessage: 'Engin gögn fundust',
   },
+  noSearchResults: {
+    id: 'service.portal:no-search-resulsts',
+    defaultMessage: 'Engar niðurstöður',
+  },
   noDataFoundDetail: {
     id: 'service.portal:no-data-found-detail',
     defaultMessage:
@@ -972,6 +976,10 @@ export const m = defineMessages({
   datepickLabel: {
     id: 'service.portal:datepicker-placeholder',
     defaultMessage: 'Veldu dagsetningu',
+  },
+  pick: {
+    id: 'service.portal:pick',
+    defaultMessage: 'Velja',
   },
   clearFilter: {
     id: 'service.portal:clear-filter',

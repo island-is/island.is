@@ -144,7 +144,7 @@ export const PaymentPartication = () => {
                 />
               </Box>
             </Box>
-            {!!periods?.rightsPortalCopaymentPeriods?.items.length && (
+            {periods?.rightsPortalCopaymentPeriods?.items.length ? (
               <T.Table>
                 <T.Head>
                   <tr className={styles.tableRowStyle}>
@@ -205,7 +205,7 @@ export const PaymentPartication = () => {
                                 )
                               }
                             >
-                              Velja
+                              {formatMessage(m.pick)}
                             </Button>
                           </div>
                         </T.Data>
@@ -214,6 +214,10 @@ export const PaymentPartication = () => {
                   })}
                 </T.Body>
               </T.Table>
+            ) : (
+              <Box display="flex" justifyContent="center">
+                <Text>{formatMessage(m.noSearchResults)}</Text>
+              </Box>
             )}
           </Box>
         )}
