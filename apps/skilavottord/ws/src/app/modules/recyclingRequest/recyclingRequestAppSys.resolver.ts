@@ -33,6 +33,11 @@ export class RecyclingRequestAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateRecyclingRequestInput,
   ): Promise<typeof RecyclingRequestResponse> {
+    logger.info(`Recycling request ${input.permno}`, {
+      permno: input.permno,
+      requestType: input.requestType,
+    })
+
     if (
       input.requestType === 'pendingRecycle' ||
       input.requestType === 'cancelled'
@@ -44,12 +49,11 @@ export class RecyclingRequestAppSysResolver {
       // Check if user owns the vehicle
       if (!vehicle) {
         logger.error(
-          `User ${user.nationalId} does not have the right to deregistered the vehicle`,
+          `User ${user.nationalId} does not own the requested vehicle`,
           { permno: input.permno, user },
         )
-
         throw new NotFoundException(
-          `User doesn't have right to deregistered the vehicle`,
+          `User ${user.nationalId} does not own the requested vehicle`,
         )
       }
     }
@@ -60,6 +64,11 @@ export class RecyclingRequestAppSysResolver {
       Role.recyclingCompanyAdmin,
     ].includes(user.role)
     if (input.requestType === 'deregistered' && !hasPermission) {
+      logger.error(
+        `User ${user.nationalId} does not have the right to deregistered the vehicle`,
+        { permno: input.permno, user },
+      )
+
       throw new NotFoundException(
         `User doesn't have right to deregistered the vehicle`,
       )
@@ -68,7 +77,7 @@ export class RecyclingRequestAppSysResolver {
     // Check in the accesss control if the user is a registered user and get his partnerId
     const userDto = await this.accessControlService.findOne(user.nationalId)
     if (userDto) {
-      logger.debug(`User ${userDto.name} found in the accessControl`, {
+      logger.info(`User ${userDto.name} found in the accessControl`, {
         partnerId: userDto.partnerId,
         userDto,
       })
