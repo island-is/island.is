@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { DefaultApi } from '../../gen/fetch'
+import { ApplicationApi } from '../../gen/fetch'
 
 @Injectable()
 export class MunicipalitiesFinancialAidClientService {
-  constructor(private defaultApi: DefaultApi) {}
+  constructor(private applicationApi: ApplicationApi) {}
 
-  private defaultApiWithAuth(auth: Auth) {
-    return this.defaultApi.withMiddleware(new AuthMiddleware(auth))
+  applicationApiWithAuth(auth: Auth) {
+    return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  getApplications(auth: User) {
-    console.log('getApplications')
-    return
+  async getApplications(auth: Auth) {
+    return await this.applicationApiWithAuth(auth).applicationControllerGetById(
+      applicationId,
+    )
   }
 }

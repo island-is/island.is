@@ -12,7 +12,7 @@
         "operationId": "findAllApplications",
         "parameters": [
           {
-            "name": "DateFrom",
+            "name": "dateFrom",
             "in": "query",
             "description": "Date from format (yyyy-mm)",
             "required": true,
@@ -22,7 +22,7 @@
             }
           },
           {
-            "name": "DateTo",
+            "name": "dateTo",
             "in": "query",
             "description": "Date to format (yyyy-mm)",
             "schema": {
