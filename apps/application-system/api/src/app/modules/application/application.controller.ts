@@ -373,7 +373,9 @@ export class ApplicationController {
       | 'typeId'
     > = {
       answers:
-        template.allowInitialQueryParameter && initialQuery ? { initialQuery } : {},
+        template.allowInitialQueryParameter && initialQuery
+          ? { initialQuery }
+          : {},
       applicant: user.nationalId,
       assignees: [],
       applicantActors: user.actor ? [user.actor.nationalId] : [],

@@ -66,4 +66,5 @@ export enum ReasonKey {
   SignatureNotFound = 'signatureNotFound',
   AlreadyOwner = 'alreadyOwner',
   AlreadySigned = 'alreadySigned',
+  NotOwner = 'notOwner',
 }

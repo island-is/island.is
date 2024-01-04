@@ -1,11 +1,13 @@
 import { Area } from './area.dto'
 import { UserBase } from './user.dto'
 import { MedmaelalistiDTO } from '../../../gen/fetch'
+import { Candidate, mapCandidate } from './candidate.dto'
+import { logger } from '@island.is/logging'
 
 export interface List {
   id: string
   title: string
-  owner: UserBase
+  candidate: Candidate
   area: Area
   active: boolean
   startTime: Date
@@ -13,15 +15,23 @@ export interface List {
   collectionId: string
   collectors?: UserBase[]
   numberOfSignatures: number
-  link?: string
+  link: string
 }
 
-export function getLink(id: string): string {
+export function getLink(id: number): string {
   // TODO: create hash function
   return `https://island.is/umsoknir/maela-med-lista/?q=${id}`
 }
 
 export function mapList(list: MedmaelalistiDTO): List {
+  const { id: id, medmaelasofnun: collection, frambod: candidate } = list
+  if (!id || !collection || !candidate || !candidate.id) {
+    logger.warn(
+      'Received partial collection information from the national registry.',
+      candidate,
+    )
+    throw new Error('Candidate is missing id or nationalId')
+  }
   return {
     id: list.id?.toString() ?? '',
     collectionId: list.medmaelasofnun?.id?.toString() ?? '',
@@ -33,12 +43,10 @@ export function mapList(list: MedmaelalistiDTO): List {
       name: list.svaedi?.nafn?.toString() ?? '',
       min: list.svaedi?.fjoldi ?? 0,
     },
-    owner: {
-      nationalId: list.frambod?.kennitala ?? '',
-      name: list.frambod?.nafn ?? '',
-    },
+    candidate: mapCandidate(candidate),
+    // TODO: update active functionality
     active: true,
     numberOfSignatures: list.fjoldiMedmaela ?? 0,
-    link: getLink(list.frambod?.kennitala ?? ''),
+    link: getLink(candidate.id),
   }
 }

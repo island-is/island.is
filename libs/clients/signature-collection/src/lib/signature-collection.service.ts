@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
   EinstaklingurKosningInfoDTO,
+  FrambodApi,
   MedmaelalistarApi,
   MedmaelasofnunApi,
   MedmaeliApi,
@@ -27,6 +28,7 @@ import { BulkUpload } from './types/bulkUpload.dto'
 
 import { User } from '@island.is/auth-nest-tools'
 import { Success, mapReasons } from './types/success.dto'
+import { mapCandidate } from './types/candidate.dto'
 
 @Injectable()
 export class SignatureCollectionClientService {
@@ -34,6 +36,7 @@ export class SignatureCollectionClientService {
     private listsApi: MedmaelalistarApi,
     private collectionsApi: MedmaelasofnunApi,
     private signatureApi: MedmaeliApi,
+    private candidateApi: FrambodApi,
   ) {}
 
   async currentCollectionInfo(): Promise<CollectionInfo> {
@@ -65,16 +68,16 @@ export class SignatureCollectionClientService {
   async getListsParams({ areaId, nationalId }: GetListInput) {
     const { id } = await this.currentCollectionInfo()
     if (nationalId) {
-      const { isOwner, area } = await this.getSignee(nationalId)
-      if (isOwner) {
+      const { isOwner, area, candidate } = await this.getSignee(nationalId)
+      if (isOwner && candidate) {
         // TODO: check if actor and if type collection not presidentional send in area of actor
         return areaId
           ? {
               sofnunID: id,
-              frambodKennitala: nationalId,
+              frambodID: parseInt(candidate.id),
               svaediID: parseInt(areaId),
             }
-          : { sofnunID: id, frambodKennitala: nationalId }
+          : { sofnunID: id, frambodID: parseInt(candidate.id) }
       } else if (area) {
         return { sofnunID: id, svaediID: parseInt(area?.id) }
       }
@@ -153,8 +156,7 @@ export class SignatureCollectionClientService {
     if (filteredAreas.length !== lists.length) {
       throw new Error('Not all lists created')
     }
-
-    const link = getLink(owner.nationalId)
+    const { link } = mapList(lists[0])
     return link
   }
 
@@ -193,22 +195,25 @@ export class SignatureCollectionClientService {
     listIds?: string[],
   ): Promise<Success> {
     const { id, isPresidential, isActive } = await this.currentCollectionInfo()
+    const { ownedLists, candidate } = await this.getSignee(nationalId)
+    if (candidate?.nationalId !== nationalId) {
+      return { success: false, reasons: [ReasonKey.NotOwner] }
+    }
     // Lists can only be removed from current collection if it is open
     if (id !== parseInt(collectionId) || !isActive) {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
     if (isPresidential) {
-      await this.collectionsApi.medmaelasofnunIDRemoveFrambodKennitalaPost({
-        iD: id,
-        kennitala: nationalId,
+      // TODO: frambod id!
+      await this.candidateApi.frambodIDRemoveFrambodUserPost({
+        iD: parseInt(candidate.id),
       })
       return { success: true }
     }
     if (!listIds || listIds.length === 0) {
       return { success: false, reasons: [ReasonKey.NoListToRemove] }
     }
-    const { ownedLists } = await this.getSignee(nationalId)
     if (!ownedLists || ownedLists.length === 0) {
       return { success: false, reasons: [ReasonKey.NoListToRemove] }
     }
@@ -309,7 +314,7 @@ export class SignatureCollectionClientService {
       canSignInfo: user.maKjosaInfo,
       activeSignature,
     })
-
+    const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
     return {
       nationalId: user.kennitala ?? '',
       name: user.nafn ?? '',
@@ -325,6 +330,7 @@ export class SignatureCollectionClientService {
       signature: activeSignature ? mapSignature(activeSignature) : null,
       ownedLists,
       isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
+      candidate,
     }
   }
 
