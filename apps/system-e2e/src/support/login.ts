@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test'
 import {
+  JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
   JUDICIAL_SYSTEM_HOME_URL,
   JUDICIAL_SYSTEM_JUDGE_HOME_URL,
   urls,
@@ -37,7 +38,8 @@ export const cognitoLogin = async (
   await cognito.locator('input[name="signInSubmitButton"]:visible').click()
   if (
     home === JUDICIAL_SYSTEM_HOME_URL ||
-    home === JUDICIAL_SYSTEM_JUDGE_HOME_URL
+    home === JUDICIAL_SYSTEM_JUDGE_HOME_URL ||
+    home === JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL
   ) {
     return
   }

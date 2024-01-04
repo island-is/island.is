@@ -1,11 +1,14 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 
-import { JUDICIAL_SYSTEM_JUDGE_HOME_URL, urls } from '../../../support/urls'
-import { judicialSystemSession } from '../../../support/session'
-import { verifyRequestCompletion } from '../../../support/api-tools'
-import { verify } from 'crypto'
+import { JUDICIAL_SYSTEM_JUDGE_HOME_URL, urls } from '../../../../support/urls'
+import { judicialSystemSession } from '../../../../support/session'
+import { verifyRequestCompletion } from '../../../../support/api-tools'
 
-export function addTests() {
+export function completeCaseRuling(
+  accusedName: string,
+  policeCaseNumber: string,
+  caseNumber: string,
+) {
   test.use({ baseURL: urls.judicialSystemBaseUrl })
 
   test.describe('Custody Judge', () => {
@@ -26,14 +29,14 @@ export function addTests() {
       // Case list
       page.goto('/krofur')
       await page
-        .getByText('007-2023-000001Jón JónssonGæsluvarðhald')
+        .getByText(`${policeCaseNumber}${accusedName}Gæsluvarðhald`)
         .getByText('Nýtt')
         .first()
         .click()
 
       // Reception and assignment
       await expect(page).toHaveURL(/.*\/domur\/mottaka\/.*/)
-      await page.getByTestId('courtCaseNumber').fill('R-63/2023')
+      await page.getByTestId('courtCaseNumber').fill(caseNumber)
       await Promise.all([
         verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
         page.keyboard.press('Tab'),
@@ -86,7 +89,7 @@ export function addTests() {
       // Court record
       await expect(page).toHaveURL(/.*\/domur\/thingbok\/.*/)
       await page.getByText('Varnaraðili tekur sér lögboðinn frest').click()
-      await page.getByText('Sækjandi unir úrskurðinum').click()
+      await page.getByText('Sækjandi tekur sér lögboðinn frest').click()
       await page.locator('input[id=courtEndTime]').fill(today)
       await page.keyboard.press('Escape')
       await page.locator('input[id=courtEndTime-time]').fill('10:00')
@@ -102,6 +105,45 @@ export function addTests() {
         verifyRequestCompletion(page, '/api/graphql', 'RequestRulingSignature'),
         page.getByTestId('continueButton').click(),
       ])
+    })
+  })
+}
+
+export function receiveAppeal(
+  courtCaseNumber: string,
+  policeCaseNumber: string,
+  accusedName: string,
+) {
+  test.use({ baseURL: urls.judicialSystemBaseUrl })
+
+  test.describe('Custody Judge', () => {
+    let context: BrowserContext
+
+    test.beforeAll(async ({ browser }) => {
+      context = await judicialSystemSession({
+        browser,
+        homeUrl: JUDICIAL_SYSTEM_JUDGE_HOME_URL,
+      })
+    })
+
+    test.afterAll(async () => await context.close())
+
+    test('should receive appealed case', async () => {
+      const page = await context.newPage()
+
+      // Case list
+      page.goto('/krofur')
+      await page
+        .getByText(
+          `${courtCaseNumber}${policeCaseNumber}${accusedName}Gæsluvarðhald`,
+        )
+        .getByText('VirktKært')
+        .first()
+        .click()
+      await page
+        .getByRole('button', { name: 'Senda tilkynningu um móttöku' })
+        .click()
+      await page.getByTestId('modalPrimaryButton').click()
     })
   })
 }
