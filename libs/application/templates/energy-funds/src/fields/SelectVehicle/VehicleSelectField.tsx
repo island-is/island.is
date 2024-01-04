@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import {
   ActionCard,
   AlertMessage,
@@ -15,6 +15,7 @@ import { information } from '../../lib/messages/information'
 import { VehiclesCurrentVehicle } from '../../shared/types'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleQuery'
 import format from 'date-fns/format'
+import { formatIsk } from '../../utils'
 
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
@@ -24,7 +25,6 @@ export const VehicleSelectField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
 > = ({ currentVehicleList, application, field }) => {
   const [isLoading, setIsLoading] = useState(false)
-  const [currentVehicleDisabled, setCurrentVehicleDisabled] = useState(false)
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
@@ -34,24 +34,35 @@ export const VehicleSelectField: FC<
     '',
   ) as string
 
+  const defaultGrantValue = getValueViaPath(
+    application.answers,
+    'selectVehicle.grantAmount',
+  ) as number
+
   const [currentVehicle, setCurrentVehicle] = useState<
     VehiclesCurrentVehicle | undefined
   >(
     vehicleValue
-      ? currentVehicleList.find((z) => z.permno === vehicleValue)
+      ? {
+          ...currentVehicleList.find((z) => z.permno === vehicleValue),
+          vehicleGrant: defaultGrantValue,
+        }
       : undefined,
   )
 
   const resetValues = () => {
-    setValue('selectVehicle.vin', '')
     setValue('selectVehicle.plate', '')
     setValue('selectVehicle.grantAmount', '')
+    setValue('selectVehicle.newRegistrationDate', '')
+    setValue('selectVehicle.type', '')
+    setValue('selectVehicle.grantItemCode', '')
   }
 
   const onChange = (option: Option) => {
     const chosenVehicle = currentVehicleList.find(
       (x) => x.permno === option.value,
     )
+
     setIsLoading(true)
     if (chosenVehicle && chosenVehicle.vin) {
       getVehicleDetailsCallback({
@@ -63,15 +74,10 @@ export const VehicleSelectField: FC<
           setCurrentVehicle({
             ...chosenVehicle,
             vehicleGrant: response.energyFundVehicleGrant.vehicleGrant || 0,
-            hasReceivedSubsidy: hasReceivedSubsidy || true,
-            vehicleGrantItemCode:
-              response.energyFundVehicleGrant.vehicleGrantItemCode || '',
+            hasReceivedSubsidy: hasReceivedSubsidy || false,
           })
 
-          setCurrentVehicleDisabled(hasReceivedSubsidy ?? true)
-
           if (!hasReceivedSubsidy) {
-            setValue('selectVehicle.vin', chosenVehicle.vin || '')
             setValue(
               'selectVehicle.plate',
               hasReceivedSubsidy ? '' : chosenVehicle.permno || '',
@@ -79,6 +85,20 @@ export const VehicleSelectField: FC<
             setValue(
               'selectVehicle.grantAmount',
               response.energyFundVehicleGrant.vehicleGrant,
+            )
+            setValue(
+              'selectVehicle.newRegistrationDate',
+              chosenVehicle.newRegistrationDate
+                ? format(
+                    new Date(chosenVehicle.newRegistrationDate),
+                    'dd.MM.yyyy',
+                  )
+                : '',
+            )
+            setValue('selectVehicle.type', chosenVehicle.make)
+            setValue(
+              'selectVehicle.grantItemCode',
+              response.energyFundVehicleGrant.vehicleGrantItemCode,
             )
           } else {
             resetValues()
@@ -132,24 +152,35 @@ export const VehicleSelectField: FC<
                 text={`${currentVehicle.color} - ${formatMessage(
                   information.labels.pickVehicle.registrationDate,
                 )}: ${
-                  currentVehicle.firstRegistrationDate &&
+                  currentVehicle.newRegistrationDate &&
                   format(
-                    new Date(currentVehicle.firstRegistrationDate),
+                    new Date(currentVehicle.newRegistrationDate),
                     'dd.MM.yyyy',
                   )
                 }`}
+                tag={{
+                  label: !currentVehicle.hasReceivedSubsidy
+                    ? formatMessage(
+                        information.labels.pickVehicle.checkboxCheckableTag,
+                        {
+                          amount: currentVehicle.vehicleGrant
+                            ? `${formatIsk(currentVehicle.vehicleGrant)}`
+                            : formatMessage(
+                                information.labels.pickVehicle.carNotEligable,
+                              ),
+                        },
+                      )
+                    : formatMessage(
+                        information.labels.pickVehicle.checkboxNotCheckable,
+                      ),
+                  outlined: true,
+                  variant:
+                    !currentVehicle.hasReceivedSubsidy &&
+                    currentVehicle.vehicleGrant
+                      ? 'blue'
+                      : 'red',
+                }}
               />
-            )}
-            {currentVehicle && currentVehicleDisabled && (
-              <Box marginTop={2}>
-                <AlertMessage
-                  type="error"
-                  title={formatMessage(
-                    information.labels.pickVehicle.checkboxNotCheckable,
-                  )}
-                  message=""
-                />
-              </Box>
             )}
           </Box>
         )}

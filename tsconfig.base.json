@@ -918,6 +918,9 @@
       "@island.is/service-portal/petitions": [
         "libs/service-portal/petitions/src/index.ts"
       ],
+      "@island.is/service-portal/restrictions": [
+        "libs/service-portal/restrictions/src/index.ts"
+      ],
       "@island.is/service-portal/sessions": [
         "libs/service-portal/sessions/src/index.ts"
       ],
