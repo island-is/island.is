@@ -95,12 +95,7 @@ export const MachineAnswersSchema = z.object({
     index: z.string().optional(),
     id: z.string().min(1),
   }),
-  location: z.object({
-    address: z.string(),
-    postCode: z.number().optional(),
-    moreInfo: z.string(),
-  }),
-  buyerOperator: OperatorSchema.optional(),
+  supervisor: UserSchemaBase,
   approveExternalData: z.boolean(),
   rejecter: RejecterSchema,
 })

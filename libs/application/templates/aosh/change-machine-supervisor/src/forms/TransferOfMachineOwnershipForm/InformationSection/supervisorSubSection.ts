@@ -5,8 +5,10 @@ import {
   buildPhoneField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
+import { MachineDto } from '@island.is/clients/work-machines'
 
 export const supervisorSubSection = buildSubSection({
   id: 'supervisorSection',
@@ -32,10 +34,10 @@ export const supervisorSubSection = buildSubSection({
             const isOwner = getValueViaPath(
               answers,
               'supervisor.isOwner',
-              [],
-            ) as MachineDto[]
-            answers.answers.supervisor.isOwner === 'ownerIsSupervisor'
-            return true
+              false,
+            ) as boolean
+            //answers.answers.supervisor.isOwner === 'ownerIsSupervisor'
+            return isOwner
           },
           width: 'full',
         }),
@@ -44,8 +46,15 @@ export const supervisorSubSection = buildSubSection({
           title: 'phoneNumber',
           description: information.labels.supervisor.phone,
           width: 'half',
-          condition: (answers) =>
-            answers.supervisor.isOwner === 'ownerIsSupervisor',
+          condition: (answers) => {
+            const isOwner = getValueViaPath(
+              answers,
+              'supervisor.isOwner',
+              false,
+            ) as boolean
+            //answers.answers.supervisor.isOwner === 'ownerIsSupervisor'
+            return isOwner
+          },
           required: true,
         }),
         buildTextField({
@@ -54,8 +63,15 @@ export const supervisorSubSection = buildSubSection({
           description: information.labels.supervisor.email,
           width: 'half',
           variant: 'email',
-          condition: (answers) =>
-            answers.supervisor.isOwner === 'ownerIsSupervisor',
+          condition: (answers) => {
+            const isOwner = getValueViaPath(
+              answers,
+              'supervisor.isOwner',
+              false,
+            ) as boolean
+            //answers.answers.supervisor.isOwner === 'ownerIsSupervisor'
+            return isOwner
+          },
           required: true,
         }),
       ],

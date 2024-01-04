@@ -49,7 +49,7 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
+  type: ApplicationTypes.CHANGE_MACHINE_SUPERVISOR,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
   featureFlag: Features.transferOfMachineOwnership,

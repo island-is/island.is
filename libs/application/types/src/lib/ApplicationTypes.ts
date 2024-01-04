@@ -289,7 +289,7 @@ export const ApplicationConfigurations = {
     translation: 'aosh.tmo.application',
   },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
-    slug: 'umradamadur-taekis',
+    slug: 'umradaskipti-taekis',
     translation: 'aosh.cms.application',
   },
 }
