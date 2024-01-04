@@ -177,6 +177,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
               id="kilometers"
               name="kilometers"
               type="number"
+              inputMode="numeric"
               size="xs"
               value={inputState.kilometers}
               placeholder={n('kilometerInputPlaceholder', 'km')}
@@ -214,31 +215,29 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
           </Inline>
         </Stack>
 
-        <Inline space={3} justifyContent="spaceBetween">
-          <Button onClick={updateResult} disabled={!canCalculate}>
-            {n('calculate', activeLocale === 'is' ? 'Reikna' : 'Calculate')}
-          </Button>
+        <Button onClick={updateResult} disabled={!canCalculate}>
+          {n('calculate', activeLocale === 'is' ? 'Reikna' : 'Calculate')}
+        </Button>
 
-          {result > 0 && (
-            <Stack space={1}>
-              <Text variant="medium" fontWeight="light">
-                {n(
-                  'resultPrefix',
-                  activeLocale === 'is'
-                    ? 'Áætlað kílómetragjald'
-                    : 'Estimated kilometer fee',
-                )}
-              </Text>
-              <Text variant="h4" color="blue400" fontWeight="semiBold">
-                {formatCurrency(result)}{' '}
-                {n(
-                  'resultPostfix',
-                  activeLocale === 'is' ? 'krónur á mánuði' : 'isk per month',
-                )}
-              </Text>
-            </Stack>
-          )}
-        </Inline>
+        {result > 0 && (
+          <Stack space={1}>
+            <Text variant="medium" fontWeight="light">
+              {n(
+                'resultPrefix',
+                activeLocale === 'is'
+                  ? 'Áætlað kílómetragjald'
+                  : 'Estimated kilometer fee',
+              )}
+            </Text>
+            <Text variant="h4" color="blue400" fontWeight="semiBold">
+              {formatCurrency(result)}{' '}
+              {n(
+                'resultPostfix',
+                activeLocale === 'is' ? 'krónur á mánuði' : 'isk per month',
+              )}
+            </Text>
+          </Stack>
+        )}
       </Stack>
     </Box>
   )

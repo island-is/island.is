@@ -36,6 +36,11 @@ export const complaintDescription = {
       defaultMessage: 'Veldu dagsetningu',
       description: 'Decision date placeholder',
     },
+    proceedingsDateTitle: {
+      id: 'ctao.application:complaintDescription.proceedingsTitle',
+      defaultMessage: 'Hvenær átti athöfn sér stað?',
+      description: 'Proceeding event date',
+    },
     complaintDescriptionTitle: {
       id: 'ctao.application:complaintDescription.descriptionTitle',
       defaultMessage: 'Lýsing kvörtunar',

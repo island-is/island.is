@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common'
 import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
@@ -28,8 +33,11 @@ import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 
+const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
 const UNAUTHORIZED_LOG = 'Vehicle user authorization failed'
+const UNAUTHORIZED_OWNERSHIP_LOG =
+  'Vehicle user ownership does not allow registration'
 
 const isReadDateToday = (d?: Date) => {
   if (!d) {
@@ -163,6 +171,49 @@ export class VehiclesService {
     }
   }
 
+  // This is a temporary solution until we can get this information from the SGS API.
+  private async isAllowedMileageRegistration(
+    auth: User,
+    permno: string,
+  ): Promise<boolean> {
+    const res = await this.getVehicleDetail(auth, {
+      clientPersidno: auth.nationalId,
+      permno,
+    })
+
+    // String of owners where owner can delegate registration.
+    const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(
+      ',',
+    ).map((i) => i.trim())
+
+    const owner = res?.currentOwnerInfo?.nationalId
+    const operators = res?.operators?.filter((person) => person.mainOperator)
+    const mainOperator = operators?.map((mainOp) => mainOp.nationalId)
+    const isCreditInstitutionOwner = owner
+      ? allowedCoOwners?.includes(owner)
+      : false
+
+    // If owner is authenticated
+    if (owner === auth.nationalId) {
+      // If owner is credit institution and car has operators
+      if (isCreditInstitutionOwner && operators?.length) {
+        return false
+      }
+      return true
+    }
+
+    // If main operator is authenticated and owner is credit institution
+    if (
+      mainOperator &&
+      mainOperator.includes(auth.nationalId) &&
+      isCreditInstitutionOwner
+    ) {
+      return true
+    }
+
+    return false
+  }
+
   async getVehiclesSearch(
     auth: User,
     search: string,
@@ -196,11 +247,14 @@ export class VehiclesService {
     })
 
     const latestDate = res?.[0]?.readDate
+    const isIslandIsReading = res?.[0]?.originCode === ORIGIN_CODE
+    const isEditing =
+      isReadDateToday(latestDate ?? undefined) && isIslandIsReading
 
     return {
       data: res,
       permno: input.permno,
-      editing: isReadDateToday(latestDate ?? undefined),
+      editing: isEditing,
     }
   }
 
@@ -210,7 +264,17 @@ export class VehiclesService {
   ): Promise<PostMileageReadingModel | null> {
     if (!input) return null
 
-    await this.hasVehicleServiceAuth(auth, input.permno)
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'postMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
 
     const res = await this.getMileageWithAuth(auth).rootPost({
       postMileageReadingModel: input,
@@ -225,7 +289,17 @@ export class VehiclesService {
   ): Promise<PutMileageReadingModel | null> {
     if (!input) return null
 
-    await this.hasVehicleServiceAuth(auth, input.permno)
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'putMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
 
     const res = await this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,
@@ -256,6 +330,27 @@ export class VehiclesService {
     if (typeof res === 'string') {
       return res === 'true'
     }
+    return res
+  }
+
+  async canUserRegisterMileage(
+    auth: User,
+    input: CanregistermileagePermnoGetRequest,
+  ): Promise<boolean> {
+    if (!input) return false
+
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return false
+    }
+
+    const res = await this.isAllowedMileageRegistration(auth, input.permno)
+
     return res
   }
 

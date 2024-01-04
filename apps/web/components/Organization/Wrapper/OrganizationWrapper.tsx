@@ -346,7 +346,8 @@ export const OrganizationExternalLinks: React.FC<
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
               organizationPage.slug === 'sjukratryggingar' ||
-              organizationPage.slug === 'icelandic-health-insurance'
+              organizationPage.slug === 'icelandic-health-insurance' ||
+              organizationPage.slug === 'iceland-health'
 
             let variant = undefined
             if (
@@ -420,6 +421,7 @@ export const OrganizationFooter: React.FC<
       break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
+    case 'iceland-health':
       OrganizationFooterComponent = (
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
@@ -775,6 +777,8 @@ export const OrganizationWrapper: React.FC<
 
   const SidebarContainer = stickySidebar ? Sticky : Box
 
+  const sidebarCards = organizationPage.sidebarCards ?? []
+
   return (
     <>
       <HeadWithSocialSharing
@@ -967,6 +971,32 @@ export const OrganizationWrapper: React.FC<
           <Box className="rs_read" paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}
           </Box>
+
+          {isMobile && sidebarCards.length > 0 && (
+            <Box marginY={4}>
+              <Stack space={3}>
+                {sidebarCards.map((card) => {
+                  if (card.__typename === 'SidebarCard') {
+                    return (
+                      <ProfileCard
+                        key={card.id}
+                        title={card.title}
+                        description={card.contentString}
+                        link={card.link ?? undefined}
+                        size="small"
+                      />
+                    )
+                  }
+
+                  if (card.__typename === 'ConnectedComponent') {
+                    return renderConnectedComponent(card)
+                  }
+
+                  return null
+                })}
+              </Stack>
+            </Box>
+          )}
         </SidebarLayout>
       )}
 

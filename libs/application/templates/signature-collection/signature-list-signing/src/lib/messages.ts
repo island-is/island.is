@@ -26,7 +26,7 @@ export const m = defineMessages({
   introDescription: {
     id: 'sls.application:introDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut. Duis commodo, libero ac viverra vestibulum, turpis neque molestie sapien, a dapibus lacus lacus id nunc. Morbi venenatis lectus fringilla aliquet rhoncus. Ut cursus sollicitudin ligula. Vestibulum suscipit laoreet faucibus. Aliquam in odio leo. Donec et urna dignissim, placerat augue ac, pulvinar lorem.',
+      'Hér er hægt að mæla með þeim frambjóðendum sem hyggjast bjóða sig fram til forseta Íslands. ',
     description: '',
   },
 
@@ -61,16 +61,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
     description: '',
   },
-  userProfileProviderTitle: {
-    id: 'sls.application:userProfileProviderTitle',
-    defaultMessage: 'Stillingar frá Ísland.is',
-    description: '',
-  },
-  userProfileProviderSubtitle: {
-    id: 'sls.application:userProfileProviderSubtitle',
-    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
-    description: '',
-  },
 
   /* Signee Information */
   information: {
@@ -89,9 +79,9 @@ export const m = defineMessages({
     description: '',
   },
   listDescription: {
-    id: 'sls.application:listDescritpion',
+    id: 'sls.application:listDescription',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
+      'Með því að mæla með frambjóðanda lýsir þú yfir stuðningi við framboðið.',
     description: '',
   },
   name: {
@@ -107,6 +97,11 @@ export const m = defineMessages({
   countryArea: {
     id: 'sls.application:countryArea',
     defaultMessage: 'Landsfjórðungur',
+    description: '',
+  },
+  address: {
+    id: 'sls.application:address',
+    defaultMessage: 'Heimilisfang',
     description: '',
   },
   signList: {
@@ -135,7 +130,7 @@ export const m = defineMessages({
   linkFieldMessage: {
     id: 'sls.application:linkFieldMessage',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus.',
+      'Á mínum síðum geturðu séð hvaða framboði þú hefur mælt með.',
     description: '',
   },
 

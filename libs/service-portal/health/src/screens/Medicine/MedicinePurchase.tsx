@@ -10,6 +10,7 @@ import {
   Hyphen,
 } from '@island.is/island-ui/core'
 import {
+  DownloadFileButtons,
   ExpandHeader,
   ExpandRow,
   IntroHeader,
@@ -35,6 +36,7 @@ import * as styles from './Medicine.css'
 import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
+import { exportMedicineFile } from '../../utils/FileBreakdown'
 
 export const MedicinePurchase = () => {
   useNamespaces('sp.health')
@@ -419,6 +421,47 @@ export const MedicinePurchase = () => {
                               </T.Row>
                             </T.Foot>
                           </T.Table>
+
+                          <DownloadFileButtons
+                            BoxProps={{
+                              paddingX: 2,
+                              paddingTop: 2,
+                              background: 'blue100',
+                            }}
+                            buttons={[
+                              {
+                                text: formatMessage(m.getAsExcel),
+                                onClick: () =>
+                                  exportMedicineFile(
+                                    [
+                                      formatDateFns(bill.date, DATE_FORMAT),
+                                      bill.description ?? '',
+                                      amountFormat(
+                                        bill.totalCopaymentAmount ?? 0,
+                                      ),
+                                      amountFormat(
+                                        bill.totalCustomerAmount ?? 0,
+                                      ),
+                                    ],
+                                    [...fetchedLineItems].filter(
+                                      (lItem) => lItem[0] === bill.id,
+                                    )?.[0]?.[1] ?? [],
+                                    {
+                                      part: amountFormat(
+                                        bill.totalCopaymentAmount ?? 0,
+                                      ),
+                                      excess: amountFormat(
+                                        bill.totalExcessAmount ?? 0,
+                                      ),
+                                      customer: amountFormat(
+                                        bill.totalCustomerAmount ?? 0,
+                                      ),
+                                    },
+                                    'xlsx',
+                                  ),
+                              },
+                            ]}
+                          />
                         </Box>
                       </ExpandRow>
                     </T.Body>

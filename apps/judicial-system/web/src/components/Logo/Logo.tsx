@@ -9,14 +9,14 @@ import PoliceStar from './PoliceStar'
 import * as styles from './Logo.css'
 
 interface Props {
-  defaultInstitution?: string
+  defaultInstitution?: string | null
 }
 
 const Logo: React.FC<React.PropsWithChildren<Props>> = ({
   defaultInstitution = '',
 }) => {
   const { user } = useContext(UserContext)
-  const institutionName = user?.institution?.name ?? defaultInstitution
+  const institutionName = user?.institution?.name ?? defaultInstitution ?? ''
   const institutionNameArr = institutionName.split(' ')
   const institutionNameFirstHalf = institutionNameArr.slice(
     0,

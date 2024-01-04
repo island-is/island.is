@@ -3,9 +3,12 @@ import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
-import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFile,
+  CaseFileCategory,
+  PresignedPost,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   CreateFileMutation,
@@ -37,20 +40,20 @@ import { strings } from './useS3Upload.strings'
 // - rewrite upload from police
 // - more granual retry
 export interface TUploadFile extends UploadFile {
-  category?: CaseFileCategory
-  policeCaseNumber?: string
-  chapter?: number
-  orderWithinChapter?: number
-  displayDate?: string
-  policeFileId?: string
+  category?: CaseFileCategory | null
+  policeCaseNumber?: string | null
+  chapter?: number | null
+  orderWithinChapter?: number | null
+  displayDate?: string | null
+  policeFileId?: string | null
 }
 
 const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   id: file.id,
-  name: file.name,
-  type: file.type,
-  size: file.size,
-  key: file.key,
+  name: file.name ?? '',
+  type: file.type ?? undefined,
+  size: file.size ?? undefined,
+  key: file.key ?? undefined,
   percent: 100,
   status: 'done',
   category: file.category,
@@ -61,7 +64,7 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   policeFileId: file.policeFileId,
 })
 
-export const useUploadFiles = (files?: CaseFile[]) => {
+export const useUploadFiles = (files?: CaseFile[] | null) => {
   const [uploadFiles, setUploadFiles] = useState<TUploadFile[]>(
     files?.map(mapCaseFileToUploadFile) ?? [],
   )

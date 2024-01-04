@@ -48,6 +48,7 @@ export class UserProfileService {
         emailVerified: false,
         documentNotifications: true,
         needsNudge: null,
+        emailNotifications: true,
       }
     }
 
@@ -60,6 +61,7 @@ export class UserProfileService {
       emailVerified: userProfile.emailVerified,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
+      emailNotifications: userProfile.emailNotifications,
     }
   }
 
@@ -168,6 +170,12 @@ export class UserProfileService {
         ...(isDefined(userProfile.locale) && {
           locale: userProfile.locale,
         }),
+        ...(isDefined(userProfile.emailNotifications) && {
+          emailNotifications: userProfile.emailNotifications,
+        }),
+        ...(isDefined(userProfile.documentNotifications) && {
+          documentNotifications: userProfile.documentNotifications,
+        }),
       }
 
       await this.userProfileModel.upsert(
@@ -178,11 +186,16 @@ export class UserProfileService {
         { transaction },
       )
 
-      if (isEmailDefined || isMobilePhoneNumberDefined) {
+      if (
+        isEmailDefined ||
+        isMobilePhoneNumberDefined ||
+        isDefined(userProfile.emailNotifications)
+      ) {
         await this.islykillService.upsertIslykillSettings({
           nationalId,
           phoneNumber: formattedPhoneNumber,
           email: userProfile.email,
+          canNudge: userProfile.emailNotifications,
         })
       }
     })
