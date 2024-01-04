@@ -17,6 +17,7 @@ import {
   CaseType,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -336,4 +337,8 @@ export class UpdateCaseInput {
   @Allow()
   @Field({ nullable: true })
   readonly appealIsolationToDate?: string
+
+  @Allow()
+  @Field(() => [UserRole], { nullable: true })
+  readonly requestAppealRulingNotToBePublished?: UserRole[]
 }
