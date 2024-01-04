@@ -29,13 +29,13 @@ import {
   getAvailableYears,
 } from '../lib/pensionSupplementUtils'
 import { ApplicationReason } from '../lib/constants'
-import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  MONTHS,
+  fileUploadSharedProps,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import isEmpty from 'lodash/isEmpty'
-import {
-  BankAccountType,
-  FILE_SIZE_LIMIT,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -393,21 +393,7 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.assistedCareAtHome,
               introduction:
                 pensionSupplementFormMessage.fileUpload.assistedCareAtHome,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -435,21 +421,7 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.purchaseOfHearingAids,
               introduction:
                 pensionSupplementFormMessage.fileUpload.purchaseOfHearingAids,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -473,21 +445,7 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.assistedLiving,
               introduction:
                 pensionSupplementFormMessage.fileUpload.assistedLiving,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -509,21 +467,7 @@ export const PensionSupplementForm: Form = buildForm({
               description: pensionSupplementFormMessage.fileUpload.halfwayHouse,
               introduction:
                 pensionSupplementFormMessage.fileUpload.halfwayHouse,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -546,21 +490,7 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.houseRentAgreement,
               introduction:
                 pensionSupplementFormMessage.fileUpload.houseRentAgreement,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -583,21 +513,7 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.houseRentAllowance,
               introduction:
                 pensionSupplementFormMessage.fileUpload.houseRentAllowance,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -623,21 +539,7 @@ export const PensionSupplementForm: Form = buildForm({
               introduction:
                 pensionSupplementFormMessage.fileUpload
                   .additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
