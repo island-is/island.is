@@ -2511,7 +2511,7 @@ user-notification-worker:
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_REGION: 'eu-west-1'
-    IDENTITY_SERVER_PATH: 'https://innskra.island.is'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2581,8 +2581,8 @@ user-notification-worker:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
     DB_PASS: '/k8s/user-notification/DB_PASSWORD'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
-    USER_NOTIFICATION_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
-    USER_NOTIFICATION_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

@@ -95,7 +95,7 @@ export const userNotificationWorkerSetup = (services: {
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
       EMAIL_REGION: 'eu-west-1',
-      IDENTITY_SERVER_PATH: {
+      IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
@@ -116,8 +116,8 @@ export const userNotificationWorkerSetup = (services: {
     })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
-      USER_NOTIFICATION_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
-      USER_NOTIFICATION_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
+      IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
     })
     .liveness('/liveness')

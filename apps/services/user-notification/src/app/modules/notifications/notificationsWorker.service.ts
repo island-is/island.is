@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { UserProfile, UserProfileApi } from '@island.is/clients/user-profile'
+import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
 import { EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -21,7 +21,7 @@ import { Notification } from './notification.model'
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 
 type HandleNotification = {
-  profile: UserProfile
+  profile: UserProfileDto
   messageId: string
   message: CreateHnippNotificationDto
 }
@@ -32,7 +32,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly notificationDispatch: NotificationDispatchService,
     private readonly messageProcessor: MessageProcessorService,
     private readonly notificationsService: NotificationsService,
-    private readonly userProfileApi: UserProfileApi,
+    private readonly userProfileApi: V2UsersApi,
     private readonly nationalRegistryService: NationalRegistryV3ClientService,
     private readonly featureFlagService: FeatureFlagService,
     @InjectWorker('notifications')
@@ -92,11 +92,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     fullName,
   }: {
     isEnglish: boolean
-    profile: UserProfile
+    profile: UserProfileDto
     template: HnippTemplate
     formattedTemplate: HnippTemplate
     fullName: string
   }): Message {
+    if (!profile.email) {
+      throw new Error('User does not have email notifications enabled')
+    }
+
     return {
       from: {
         name: 'Ísland.is',
@@ -185,12 +189,10 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       this.logger.info('Email notification worker is not enabled for user', {
         messageId,
       })
-
       return
     }
 
-    // TODO: Add emailNotification check when ready
-    if (!profile.email) {
+    if (!profile.email && !profile.emailNotifications) {
       this.logger.info('User does not have email notifications enabled', {
         messageId,
       })
@@ -271,8 +273,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         const profile =
-          await this.userProfileApi.userTokenControllerFindOneByNationalId({
-            nationalId: message.recipient,
+          await this.userProfileApi.userProfileControllerFindUserProfile({
+            xParamNationalId: message.recipient,
           })
 
         // can't send message if user has no user profile

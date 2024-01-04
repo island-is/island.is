@@ -22,14 +22,6 @@ const required = (name: string): string => env[name] ?? ''
 const job = processJob()
 
 export const environment = {
-  identityServerPath:
-    required('IDENTITY_SERVER_PATH') ||
-    'https://identity-server.dev01.devland.is',
-  userProfileServiceBasePath:
-    required('SERVICE_USER_PROFILE_BASEPATH') || 'http://localhost:3366',
-  notificationsClientId: required('USER_NOTIFICATION_CLIENT_ID'),
-  notificationsClientSecret: required('USER_NOTIFICATION_CLIENT_SECRET'),
-
   appProtocol: required('USER_NOTIFICATION_APP_PROTOCOL'),
 
   isWorker: job === 'worker',
@@ -52,7 +44,9 @@ export const environment = {
   },
   contentfulAccessToken: env.CONTENTFUL_ACCESS_TOKEN,
   auth: {
-    issuer: env.IDENTITY_SERVER_ISSUER_URL,
+    issuer:
+      env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
   },
 
   emailOptions: isDevelopment
