@@ -74,7 +74,7 @@ export const PaymentPartication = () => {
 
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
-      {error ? (
+      {error || periodsError || billsError ? (
         <AlertMessage
           type="error"
           title={formatMessage(m.errorTitle)}
@@ -112,13 +112,7 @@ export const PaymentPartication = () => {
         </Box>
       )}
       <Box marginBottom={SECTION_GAP}>
-        {periodsError ? (
-          <AlertMessage
-            type="error"
-            title={formatMessage(m.errorTitle)}
-            message={formatMessage(m.errorFetch)}
-          />
-        ) : periodsLoading ? (
+        {periodsError ? undefined : periodsLoading ? (
           <SkeletonLoader space={2} repeat={3} height={24} />
         ) : (
           <Box>
@@ -225,13 +219,7 @@ export const PaymentPartication = () => {
         )}
       </Box>
       <Box>
-        {billsError ? (
-          <AlertMessage
-            type="error"
-            title={formatMessage(m.errorTitle)}
-            message={formatMessage(m.errorFetch)}
-          />
-        ) : billsLoading ? (
+        {billsError ? undefined : billsLoading ? (
           <SkeletonLoader space={2} repeat={3} height={24} />
         ) : bills?.length ? (
           <Box>
