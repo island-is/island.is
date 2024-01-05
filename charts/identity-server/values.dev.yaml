@@ -110,7 +110,7 @@ identity-server:
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     NODE_OPTIONS: '--max-old-space-size=1843'
-    PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     PersistenceSettings__SessionsBaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com'
