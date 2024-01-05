@@ -1,12 +1,11 @@
 import isSameDay from 'date-fns/isSameDay'
+import isValid from 'date-fns/isValid'
 
-export const isReadDateToday = (d?: Date) => {
-  if (!d) {
+export const isReadDateToday = (inputDate: Date) => {
+  if (!isValid(inputDate)) {
     return false
   }
 
   const today = new Date()
-  const inputDate = new Date(d)
-
   return isSameDay(today, inputDate)
 }
