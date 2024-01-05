@@ -1,85 +1,69 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  SendApplicationApi,
-  Response,
-  GetIsApplicantEligibleApi,
-  Eligible,
-  GetApplicantInfoApi,
-  Applicant,
-  GetCurrenciesApi,
-  SendAdditionalDocumentsApi,
-  Attachment,
-  ApplicationDTO,
+  ApplicantApi,
+  ApplicationApi,
+  CreateApplicationFromPaperReturn,
+  GeneralApi,
+  Document,
+  ApplicantInfoReturn,
+  IsEligibleForApplicationReturn,
 } from '../../gen/fetch'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
   constructor(
-    private readonly sendApplicationApi: SendApplicationApi,
-    private readonly getIsApplicantEligibleApi: GetIsApplicantEligibleApi,
-    private readonly getApplicantInfoApi: GetApplicantInfoApi,
-    private readonly getCurrenciesApi: GetCurrenciesApi,
-    private readonly sendAdditionalDocumentsApi: SendAdditionalDocumentsApi,
+    private readonly applicationApi: ApplicationApi,
+    private readonly applicantApi: ApplicantApi,
+    private readonly currencyApi: GeneralApi,
   ) {}
 
-  private sendAPIWithAuth = (user: User) =>
-    this.sendApplicationApi.withMiddleware(new AuthMiddleware(user as Auth))
-  private isEligibleAPIWithAuth = (user: User) =>
-    this.getIsApplicantEligibleApi.withMiddleware(
-      new AuthMiddleware(user as Auth),
-    )
-  private applicantAPIWithAuth = (user: User) =>
-    this.getApplicantInfoApi.withMiddleware(new AuthMiddleware(user as Auth))
-  private currenciesAPIWithAuth = (user: User) =>
-    this.getCurrenciesApi.withMiddleware(new AuthMiddleware(user as Auth))
-  private sendDocumentsAPIWithAuth = (user: User) =>
-    this.sendAdditionalDocumentsApi.withMiddleware(
-      new AuthMiddleware(user as Auth),
-    )
+  private applicationApiWithAuth = (user: User) =>
+    this.applicationApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private applicantApiWithAuth = (user: User) =>
+    this.applicantApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private currencyApiWithAuth = (user: User) =>
+    this.currencyApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   sendApplication(
     user: User,
-    applicationDTO: ApplicationDTO,
+    //applicationDTO: ApplicationDTO,
     applicationType: string,
-  ): Promise<Response> {
-    return this.sendAPIWithAuth(user).sendApplication({
-      applicationDTO,
-      applicationType,
-    })
+  ): Promise<CreateApplicationFromPaperReturn> {
+    return this.applicationApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicationApplicationTypePost({ applicationType })
   }
 
   sendAdditionalDocuments(
     user: User,
     applicationId: string,
-    attachment: Array<Attachment>,
+    document: Array<Document>,
   ): Promise<void> {
-    return this.sendDocumentsAPIWithAuth(user).sendDocuments({
-      applicationId,
-      attachment,
+    return this.applicationApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicationApplicationGuidDocumentsPost({
+      applicationGuid: applicationId,
+      document,
     })
   }
 
-  async getApplicant(user: User): Promise<Applicant> {
-    const applicant = await this.applicantAPIWithAuth(
-      user,
-    ).applicationGetApplicant()
-    return applicant
+  async getApplicant(user: User): Promise<ApplicantInfoReturn> {
+    return this.applicantApiWithAuth(user).apiProtectedV1ApplicantGet()
   }
 
-  async getIsEligible(user: User, applicationType: string): Promise<Eligible> {
-    const isEligible = await this.isEligibleAPIWithAuth(
+  async getIsEligible(
+    user: User,
+    applicationType: string,
+  ): Promise<IsEligibleForApplicationReturn> {
+    return this.applicantApiWithAuth(
       user,
-    ).applicantGetIsEligible({
-      applicationType,
-    })
-    return isEligible
+    ).apiProtectedV1ApplicantApplicationTypeEligibleGet({ applicationType })
   }
 
   async getCurrencies(user: User): Promise<Array<string>> {
-    const currencies = await this.currenciesAPIWithAuth(
-      user,
-    ).generalGetCurrencies()
-    return currencies
+    return this.currencyApiWithAuth(user).apiProtectedV1GeneralCurrenciesGet()
   }
 }

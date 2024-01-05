@@ -32,13 +32,13 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/insurance-payments"
+        "cwd": "libs/clients/social-insurance-administration"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/insurance-payments/gen/fetch -i libs/clients/insurance-payments/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch -i libs/clients/social-insurance-administration/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
