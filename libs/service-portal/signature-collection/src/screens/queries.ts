@@ -43,7 +43,7 @@ export const GetListSignatures = gql`
         nationalId
         address
       }
-      signatureType
+      isDigital
       active
       created
     }
