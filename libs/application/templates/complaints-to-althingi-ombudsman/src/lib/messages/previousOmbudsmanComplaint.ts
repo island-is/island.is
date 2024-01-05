@@ -2,11 +2,6 @@ import { defineMessages } from 'react-intl'
 
 export const previousOmbudsmanComplaint = {
   general: defineMessages({
-    sectionTitle: {
-      id: `ctao.application:general.previousOmbudsmanComplaint.sectionTitle`,
-      defaultMessage: 'Fylgiskjöl',
-      description: 'Section title',
-    },
     title: {
       id: `ctao.application:general.previousOmbudsmanComplaint.title`,
       defaultMessage: 'Hefur þú leitað áður til umboðsmanns vegna málsins?',
