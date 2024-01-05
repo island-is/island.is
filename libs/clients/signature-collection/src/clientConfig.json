@@ -1290,7 +1290,8 @@
           "nafn": { "type": "string" },
           "svaediTegund": { "type": "integer", "format": "int32" },
           "svaediTegundLysing": { "type": "string" },
-          "fjoldi": { "type": "integer", "format": "int32" }
+          "fjoldi": { "type": "integer", "format": "int32" },
+          "fjoldiMax": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       }
