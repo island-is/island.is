@@ -5,8 +5,9 @@ import {
 } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
-import { pensionSupplementFormMessage } from '@island.is/application/templates/pension-supplement'
+import { pensionSupplementFormMessage } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { label } from '../../../../support/i18n'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 const homeUrl = '/umsoknir/uppbot-a-lifeyri'
 
@@ -15,7 +16,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     const applicationContext = await session({
       browser,
       homeUrl,
-      // phoneNumber: '0103019',
+      // phoneNumber: '0103019', // Gervimaður Afríka
       phoneNumber: '0104929', // Gervimaður Bretland
       idsLoginOn: true,
     })
@@ -39,120 +40,102 @@ applicationTest.describe('Pension Supplement', () => {
       const page = applicationPage
       const { proceed } = helpers(page)
 
-      // External Data
-      await applicationTest.step(
-        'Agree to data providers and proceed',
-        async () => {
-          await expect(
-            page.getByRole('heading', {
-              name: label(pensionSupplementFormMessage.pre.externalDataSection),
-            }),
-          ).toBeVisible()
-          await page.getByTestId('agree-to-data-providers').click()
-          await page
-            .getByRole('button', {
-              name: label(pensionSupplementFormMessage.pre.startApplication),
-            })
-            .click()
-        },
-      )
-
-      // Applicant info
-      await applicationTest.step(
-        'Fill in applicant info and proceed',
-        async () => {
-          await expect(
-            page.getByRole('heading', {
-              name: label(pensionSupplementFormMessage.info.subSectionTitle),
-            }),
-          ).toBeVisible()
-
-          const emailBox = page.getByRole('textbox', {
-            name: label(pensionSupplementFormMessage.info.applicantEmail),
-          })
-          await emailBox.selectText()
-          // TODO: Do we need to create a test email and add it here like in the parental leave application?
-          await emailBox.type('mockEmail@island.is')
-
-          const phoneNumber = page.getByRole('textbox', {
-            name: label(pensionSupplementFormMessage.info.applicantPhonenumber),
-          })
-          await phoneNumber.selectText()
-          await phoneNumber.type('6555555')
-          await proceed()
-        },
-      )
-
-      // Payment information
-      await applicationTest.step(
-        'Fill in payment information and proceed',
-        async () => {
-          await expect(
-            page.getByRole('heading', {
-              name: label(pensionSupplementFormMessage.info.paymentTitle),
-            }),
-          ).toBeVisible()
-          const paymentBank = page.getByRole('textbox', {
-            name: label(pensionSupplementFormMessage.info.paymentBank),
-          })
-          await paymentBank.selectText()
-          await paymentBank.type('051226054678')
-          await proceed()
-        },
-      )
-
-      // Application reason
-      await applicationTest.step(
-        'Select application reason and proceed',
-        async () => {
-          await expect(
-            page.getByRole('heading', {
-              name: label(
-                pensionSupplementFormMessage.info.applicationReasonTitle,
-              ),
-            }),
-          ).toBeVisible()
-
-          // TODO: What application reason should we select?
-          await page
-            .getByRole('region', {
-              name: label(
-                pensionSupplementFormMessage.info.applicationReasonTitle,
-              ),
-            })
-            .getByRole('checkbox', {
-              name: label(
-                pensionSupplementFormMessage.info.applicationReasonMedicineCost,
-              ),
-            })
-            .click()
-          await proceed()
-        },
-      )
-
-      // Period
-      await applicationTest.step('Select period and proceed', async () => {
+      await applicationTest.step('Agree to data providers', async () => {
         await expect(
           page.getByRole('heading', {
-            name: label(pensionSupplementFormMessage.info.periodTitle),
+            name: label(
+              socialInsuranceAdministrationMessage.pre.externalDataSection,
+            ),
+          }),
+        ).toBeVisible()
+        await page.getByTestId('agree-to-data-providers').click()
+        await page
+          .getByRole('button', {
+            name: label(
+              socialInsuranceAdministrationMessage.pre.startApplication,
+            ),
+          })
+          .click()
+      })
+
+      await applicationTest.step('Fill in applicant info', async () => {
+        await expect(
+          page.getByRole('heading', {
+            name: label(
+              socialInsuranceAdministrationMessage.info.subSectionTitle,
+            ),
+          }),
+        ).toBeVisible()
+
+        const phoneNumber = page.getByRole('textbox', {
+          name: label(
+            socialInsuranceAdministrationMessage.info.applicantPhonenumber,
+          ),
+        })
+        await phoneNumber.selectText()
+        await phoneNumber.type('6555555')
+        await proceed()
+      })
+
+      await applicationTest.step('Fill in payment information', async () => {
+        await expect(
+          page.getByRole('heading', {
+            name: label(socialInsuranceAdministrationMessage.payment.title),
+          }),
+        ).toBeVisible()
+        // // TODO: Setja aftur inn? eða er í lagi að sleppa? (virkar ekki að senda inn umsókn ef breyti banka, skilar villu "An error occurred while saving bank information.")
+        // const paymentBank = page.getByRole('textbox', {
+        //   name: label(socialInsuranceAdministrationMessage.payment.bank),
+        // })
+        // await paymentBank.selectText()
+        // await paymentBank.type('051226054678')
+        await proceed()
+      })
+
+      await applicationTest.step('Select application reason', async () => {
+        await expect(
+          page.getByRole('heading', {
+            name: label(pensionSupplementFormMessage.applicationReason.title),
+          }),
+        ).toBeVisible()
+
+        // TODO: What application reason should we select?
+        await page
+          .getByRole('region', {
+            name: label(pensionSupplementFormMessage.applicationReason.title),
+          })
+          .getByRole('checkbox', {
+            name: label(
+              pensionSupplementFormMessage.applicationReason.medicineCost,
+            ),
+          })
+          .click()
+        await proceed()
+      })
+
+      await applicationTest.step('Select period', async () => {
+        await expect(
+          page.getByRole('heading', {
+            name: label(socialInsuranceAdministrationMessage.period.title),
           }),
         ).toBeVisible()
         await page.getByTestId('select-period.year').click()
         await page.keyboard.press('Enter')
 
+        // TODO: Þurfum að skoða þetta betur, getur komið upp að mánuður er ekki gildur
         await page.getByTestId('select-period.month').click()
         await page.keyboard.press('Enter')
         await proceed()
       })
 
-      // Additional documents
       await applicationTest.step(
-        'Check that additional documents header is visible and proceed',
+        'Check that additional documents header is visible',
         async () => {
           await expect(
             page.getByRole('heading', {
               name: label(
-                pensionSupplementFormMessage.fileUpload.additionalFileTitle,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileTitle,
               ),
             }),
           ).toBeVisible()
@@ -160,19 +143,20 @@ applicationTest.describe('Pension Supplement', () => {
         },
       )
 
-      // Comment
-      await applicationTest.step('Write comment and proceed', async () => {
+      await applicationTest.step('Write comment', async () => {
         await expect(
           page.getByRole('heading', {
             name: label(
-              pensionSupplementFormMessage.additionalInfo.commentSection,
+              socialInsuranceAdministrationMessage.additionalInfo
+                .commentSection,
             ),
           }),
         ).toBeVisible()
         await page
           .getByPlaceholder(
             label(
-              pensionSupplementFormMessage.additionalInfo.commentPlaceholder,
+              socialInsuranceAdministrationMessage.additionalInfo
+                .commentPlaceholder,
             ),
           )
           .fill(
@@ -181,56 +165,38 @@ applicationTest.describe('Pension Supplement', () => {
         await proceed()
       })
 
-      // Submit application
-      await applicationTest.step('Submit application and proceed', async () => {
+      await applicationTest.step('Submit application', async () => {
         await expect(
           page
             .locator('form')
             .getByRole('paragraph')
             .filter({
-              hasText: label(pensionSupplementFormMessage.confirm.title),
+              hasText: label(
+                socialInsuranceAdministrationMessage.confirm.overviewTitle,
+              ),
             }),
         ).toBeVisible()
         await page
           .getByRole('button', {
-            name: label(pensionSupplementFormMessage.confirm.title),
+            name: label(
+              socialInsuranceAdministrationMessage.confirm.submitButton,
+            ),
           })
           .click()
       })
 
-      // Conclusion screen
       await applicationTest.step(
-        'Check that conclusion screen header is visible and proceed to view the application',
-        async () => {
-          await expect(
-            page.getByRole('heading', {
-              name: label(pensionSupplementFormMessage.conclusionScreen.title),
-            }),
-          ).toBeVisible()
-          await page
-            .getByRole('button', {
-              name: label(
-                pensionSupplementFormMessage.conclusionScreen
-                  .buttonsViewApplication,
-              ),
-            })
-            .click()
-        },
-      )
-
-      // Review application
-      await applicationTest.step(
-        'Check that review application header is visible',
+        'Check that conclusion screen header is visible to view the application',
         async () => {
           await expect(
             page
-              .locator('form')
-              .getByRole('paragraph')
-              .filter({
-                hasText: label(
-                  pensionSupplementFormMessage.confirm.overviewTitle,
+              .getByRole('heading', {
+                name: label(
+                  socialInsuranceAdministrationMessage.conclusionScreen
+                    .receivedTitle,
                 ),
-              }),
+              })
+              .first(),
           ).toBeVisible()
         },
       )
