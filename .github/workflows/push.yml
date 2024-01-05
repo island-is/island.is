@@ -132,7 +132,7 @@ jobs:
 
             PR_LABELS=("${{ github.event.pull_request.labels.*.name }}")
             ALLOWED_LABELS=("deploy-feature" "test everything")
-            for pr_label in "${PR_LABELS[@]}"
+            for pr_label in "${PR_LABELS[@]}"; do
               echo "Searching for '$pr_label' in '${ALLOWED_LABELS[*]}'"
               if [[ " ${ALLOWED_LABELS[*]} " =~ " $pr_label " ]]; then
                 echo "Pull request contains '$pr_label', continuing with build"
