@@ -74,7 +74,6 @@ export class SignatureCollectionService {
 
   async signee(nationalId: string): Promise<SignatureCollectionSignee> {
     const s = await this.signatureCollectionClientService.getSignee(nationalId)
-    console.log('SIGNEEEEEE', s)
     return s
   }
 
@@ -96,11 +95,11 @@ export class SignatureCollectionService {
   }
 
   async unsign(
-    signatureId: string,
+    listId: string,
     nationalId: string,
   ): Promise<SignatureCollectionSuccess> {
     return await this.signatureCollectionClientService.unsignList(
-      signatureId,
+      listId,
       nationalId,
     )
   }

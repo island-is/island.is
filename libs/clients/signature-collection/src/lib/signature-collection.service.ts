@@ -81,14 +81,14 @@ export class SignatureCollectionClientService {
         return {
           sofnunID: id,
           svaediID: parseInt(area?.id),
-          frambodId: candidateId ? parseInt(candidateId) : undefined,
+          frambodID: candidateId ? parseInt(candidateId) : undefined,
         }
       }
     }
     return {
       sofnunID: id,
       svaediID: areaId ? parseInt(areaId) : undefined,
-      frambodId: candidateId ? parseInt(candidateId) : undefined,
+      frambodID: candidateId ? parseInt(candidateId) : undefined,
     }
   }
 
@@ -172,15 +172,18 @@ export class SignatureCollectionClientService {
     return mapSignature(signature)
   }
 
-  async unsignList(signatureId: string, nationalId: string): Promise<Success> {
+  async unsignList(listId: string, nationalId: string): Promise<Success> {
     const { signature } = await this.getSignee(nationalId)
-    if (!signature || signature.id !== signatureId) {
+    console.log(signature)
+    console.log(listId)
+    if (!signature || signature.listId !== listId || !signature.id) {
       return { success: false, reasons: [ReasonKey.SignatureNotFound] }
     }
     const signatureRemoved =
       await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
-        iD: parseInt(signatureId),
+        iD: parseInt(signature.id),
       })
+    console.log(signatureRemoved)
     return { success: !!signatureRemoved }
   }
 

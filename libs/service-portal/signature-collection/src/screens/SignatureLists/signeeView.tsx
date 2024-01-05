@@ -30,8 +30,7 @@ const SigneeView = () => {
   const [unSign] = useMutation(unSignList, {
     onCompleted: (res) => {
       refetchSignedList()
-
-      if (res.data?.signatureCollectionUnsign.success) {
+      if (res?.signatureCollectionUnsign.success) {
         toast.success(formatMessage(m.unSignSuccess))
       } else {
         toast.error(formatMessage(m.unSignError))
@@ -70,7 +69,7 @@ const SigneeView = () => {
                 unSign({
                   variables: {
                     input: {
-                      id: signedList.collectionId,
+                      id: signedList.id,
                     },
                   },
                 })
