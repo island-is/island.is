@@ -23,8 +23,8 @@ export class Kubernetes implements ReferenceResolver {
       const dependecies = this.deps[to.name] ?? new Set<string>()
       this.deps[to.name] = dependecies.add(from.name)
       return from.namespace === to.namespace
-        ? `${this.releaseName}-${to.name}`
-        : `${this.releaseName}-${to.name}.${to.namespace}.svc.cluster.local`
+        ? `${to.name}`
+        : `${to.name}.${to.namespace}.svc.cluster.local`
     } else {
       if (this.withMocks === 'with-mocks') {
         const { name, host } = getMockName(to)
