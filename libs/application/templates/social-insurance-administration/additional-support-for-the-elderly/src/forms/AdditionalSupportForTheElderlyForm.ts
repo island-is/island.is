@@ -34,7 +34,7 @@ import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   BankAccountType,
-  FILE_SIZE_LIMIT,
+  fileUploadSharedProps,
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -409,21 +409,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               introduction:
                 additionalSupportForTheElderyFormMessage.fileUpload
                   .additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
