@@ -262,9 +262,10 @@ test.describe.serial('Custody tests', () => {
     // Appeal case reception
     await expect(page).toHaveURL(/.*\/landsrettur\/kaera\/.*/)
     await page.getByText('Mál nr. *').fill(randomAppealCaseNumber())
+
     await Promise.all([
-      page.getByText('Mál nr. *').press('Tab'),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+      page.getByText('Mál nr. *').press('Tab'),
     ])
     await page
       .getByTestId('select-assistant')
@@ -283,7 +284,7 @@ test.describe.serial('Custody tests', () => {
     // Ruling
     await expect(page).toHaveURL(/.*\/landsrettur\/urskurdur\/.*/)
     await Promise.all([
-      await page.locator('label').filter({ hasText: 'Staðfesting' }).click(),
+      page.locator('label').filter({ hasText: 'Staðfesting' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
     await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').click()
