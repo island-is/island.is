@@ -9,7 +9,7 @@ import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { inReviewFormMessages } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'HouseholdSupplementInReviewUpload',
@@ -37,35 +37,21 @@ export const AdditionalDocumentsRequired: Form = buildForm({
             buildFileUploadField({
               id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
               title: '',
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
             buildSubmitField({
               id: 'additionalDocumentsSubmit',
+              placement: 'footer',
               title:
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalDocumentsEditSubmit,
-              placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
+                  event: DefaultEvents.SUBMIT,
                   name: socialInsuranceAdministrationMessage.fileUpload
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
-                  event: DefaultEvents.SUBMIT,
                 },
               ],
             }),

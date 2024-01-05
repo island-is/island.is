@@ -1,4 +1,4 @@
-import { Area } from './area.dto'
+import { Area, mapArea } from './area.dto'
 import {
   MedmaelasofnunDTO,
   MedmaelasofnunExtendedDTO,
@@ -43,8 +43,13 @@ export function mapCollectionInfo(
 export function mapCollection(
   collection: MedmaelasofnunExtendedDTO,
 ): Collection {
-  const { id: id, sofnunStart: startTime, sofnunEnd: endTime } = collection
-  if (id == null || startTime == null || endTime == null) {
+  const {
+    id: id,
+    sofnunStart: startTime,
+    sofnunEnd: endTime,
+    svaedi: areas,
+  } = collection
+  if (id == null || startTime == null || endTime == null || areas == null) {
     logger.warn(
       'Received partial collection information from the national registry.',
       collection,
@@ -58,13 +63,9 @@ export function mapCollection(
     name: collection.kosningNafn ?? '',
     startTime,
     endTime,
-    areas:
-      collection.svaedi?.map(({ id, nafn, fjoldi }) => ({
-        id: id?.toString() ?? '',
-        name: nafn ?? '',
-        min: fjoldi ?? 0,
-      })) ?? [],
     isActive: startTime < new Date() && endTime > new Date(),
     isPresidential: collection.kosningTegund == 'Forsetakosning',
+
+    areas: areas.map((area) => mapArea(area)),
   }
 }

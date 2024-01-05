@@ -1,10 +1,13 @@
 import { UserBase } from './user.dto'
 import { MedmaeliBaseDTO } from '../../../gen/fetch'
 
+export interface Signee extends UserBase {
+  address?: string
+}
 export interface Signature {
   id: string
   listId: string
-  signee: UserBase
+  signee: Signee
   signatureType: string
   created: Date
 }
@@ -16,6 +19,7 @@ export const mapSignature = (signature: MedmaeliBaseDTO): Signature => {
     signee: {
       nationalId: signature.kennitala ?? '',
       name: signature.nafn ?? '',
+      address: signature.heimilisfang ?? '',
     },
     signatureType: signature.medmaeliTegund?.toString() ?? '',
     created: signature.dagsetning ?? new Date(),

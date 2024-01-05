@@ -11,6 +11,23 @@ export const m = defineMessages({
     defaultMessage: 'Þjóðskrá',
     description: '',
   },
+  /* Intro */
+  intro: {
+    id: 'slc.application:intro',
+    defaultMessage: 'Um söfnunina',
+    description: '',
+  },
+  introTitle: {
+    id: 'slc.application:introTitle',
+    defaultMessage: 'Forsetakostningar 2024',
+    description: '',
+  },
+  introDescription: {
+    id: 'slc.application:introDescription#markdown',
+    defaultMessage:
+      'Aðeins frambjóðandi getur stofnað meðmælasöfnun. Kannað er hvort hann megi fara í framboð, það er sé orðinn 35 ára á kjördag og íslenskur ríkisborgari.',
+    description: '',
+  },
 
   /* Gagnaöflun */
   dataCollection: {
@@ -71,9 +88,9 @@ export const m = defineMessages({
     description: '',
   },
   listInformationDescription: {
-    id: 'slc.application:listInformationDescription',
+    id: 'slc.application:listInformationDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vitae mattis neque. Sed nec nulla efficitur massa molestie rutrum id ac sem. Donec eu volutpat ante.',
+      'Upplýsingar um frambjóðanda og meðmælalista sem verða stofnaðir.',
     description: '',
   },
   information: {
@@ -129,9 +146,9 @@ export const m = defineMessages({
     description: '',
   },
   overviewDescription: {
-    id: 'slc.application:overviewDescription',
+    id: 'slc.application:overviewDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vitae mattis neque. Sed nec nulla efficitur massa molestie rutrum id ac sem. Donec eu volutpat ante.',
+      'Stofnaðir verða fjórir meðmælalistar, einn fyrir hvern landsfjórðung. Safna þarf meðmælum kjósenda í hverjum landsfjórðungi.',
     description: '',
   },
   applicantOverviewHeader: {
@@ -206,7 +223,7 @@ export const m = defineMessages({
   linkFieldMessage: {
     id: 'slc.application:linkFieldMessage',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus.',
+      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverjum landsfjórðungi.',
     description: '',
   },
 

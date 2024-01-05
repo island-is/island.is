@@ -4,6 +4,8 @@ import {
   buildForm,
   buildSubmitField,
   buildSection,
+  buildMultiField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -23,6 +25,23 @@ export const Prerequisites: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
+    buildSection({
+      id: 'intro',
+      title: m.intro,
+      children: [
+        buildMultiField({
+          id: 'intro',
+          title: m.introTitle,
+          description: m.introDescription,
+          children: [
+            buildDescriptionField({
+              id: 'introText',
+              title: '',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'approveExternalData',
       title: m.dataCollection,
