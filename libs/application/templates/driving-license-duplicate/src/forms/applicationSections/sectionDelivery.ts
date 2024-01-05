@@ -5,7 +5,7 @@ import {
   buildSelectField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { Juristiction } from '@island.is/api/schema'
+import { Jurisdiction } from '@island.is/clients/driving-license'
 
 export const sectionDelivery = buildSection({
   id: 'delivery',
@@ -28,10 +28,10 @@ export const sectionDelivery = buildSection({
           placeholder: m.deliveryMethodOfficeSelectPlaceholder,
           options: ({
             externalData: {
-              juristictions: { data },
+              jurisdictions: { data },
             },
           }) => {
-            return (data as Juristiction[])
+            return (data as Jurisdiction[])
               .map(({ id, zip, name }) => ({
                 value: id.toString(),
                 label: `${zip} ${name}`,

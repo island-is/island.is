@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "GraphQL" -->
-
 # Nest GraphQL Utilities
 
 This library exports the following utilities:

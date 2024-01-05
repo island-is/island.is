@@ -10,6 +10,7 @@ import {
   safelyMapSliceUnion,
   SliceUnion,
 } from '../unions/slice.union'
+import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 
 @ObjectType()
 export class OrganizationSubpage {
@@ -26,7 +27,7 @@ export class OrganizationSubpage {
   url!: Array<string>
 
   @Field({ nullable: true })
-  intro!: string
+  intro?: string
 
   @CacheField(() => [SliceUnion], { nullable: true })
   description?: Array<typeof SliceUnion>
@@ -51,6 +52,9 @@ export class OrganizationSubpage {
 
   @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
+
+  @CacheField(() => EmbeddedVideo, { nullable: true })
+  signLanguageVideo?: EmbeddedVideo | null
 }
 
 export const mapOrganizationSubpage = ({
@@ -74,4 +78,7 @@ export const mapOrganizationSubpage = ({
     ? mapOrganizationPage(fields.organizationPage)
     : null,
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+  signLanguageVideo: fields.signLanguageVideo
+    ? mapEmbeddedVideo(fields.signLanguageVideo)
+    : null,
 })

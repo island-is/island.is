@@ -26,7 +26,7 @@ export type Bullet = {
   linkText: string
 }
 
-export const ComplaintOverview: FC<FieldBaseProps> = ({
+export const ComplaintOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
 }) => {

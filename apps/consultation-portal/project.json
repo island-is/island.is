@@ -1,84 +1,105 @@
 {
-  "root": "apps/consultation-portal",
+  "name": "consultation-portal",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/consultation-portal",
   "projectType": "application",
   "prefix": "consultation-portal",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/consultation-portal",
-        "assets": ["apps/consultation-portal/public/favicon.ico"],
-        "commands": [
-          "yarn nx build-next consultation-portal",
-          "yarn nx build-server consultation-portal"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      }
-    },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "graphql-codegen --config apps/consultation-portal/codegen.yml"
-      }
-    },
-    "build-next": {
-      "executor": "@nrwl/next:build",
-      "options": {
-        "root": "apps/consultation-portal",
         "outputPath": "dist/apps/consultation-portal"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/consultation-portal"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": ["build-custom-server"]
     },
-    "build-server": {
-      "executor": "@nrwl/node:webpack",
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/consultation-portal",
         "main": "apps/consultation-portal/server.ts",
-        "tsConfig": "apps/consultation-portal/tsconfig.json",
+        "tsConfig": "apps/consultation-portal/tsconfig.server.json",
         "maxWorkers": 2,
-        "assets": []
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "consultation-portal:build-server"
+        "buildTarget": "consultation-portal:build",
+        "dev": true,
+        "customServerTarget": "consultation-portal:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "consultation-portal:build:development",
+          "dev": true,
+          "customServerTarget": "consultation-portal:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "consultation-portal:build:production",
+          "dev": false,
+          "customServerTarget": "consultation-portal:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "consultation-portal:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "consultation-portal:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "consultation-portal:build-custom-server:production"
+        }
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/consultation-portal/codegen.yml"
       }
     },
     "export": {
-      "executor": "@nrwl/next:export",
+      "executor": "@nx/next:export",
       "options": {
         "buildTarget": "consultation-portal:build:production"
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/consultation-portal"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/consultation-portal"],
       "options": {
-        "jestConfig": "apps/consultation-portal/jest.config.js",
+        "jestConfig": "apps/consultation-portal/jest.config.ts",
         "passWithNoTests": true
       }
     },
-
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/consultation-portal/**/*.{ts,tsx,js,jsx}"]
       }

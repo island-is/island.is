@@ -129,6 +129,30 @@ export const blueberry = style({
   },
 })
 
+export const dark = style({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${theme.color.dark400}`,
+  border: 'none',
+  color: theme.color.dark400,
+  transition: 'box-shadow .25s',
+  ':focus': {
+    boxShadow: 'none',
+    border: 'none',
+  },
+  ':hover': {
+    boxShadow: `inset 0 0 0 ${2}px ${theme.color.dark400}`,
+  },
+  '::placeholder': {
+    color: theme.color.dark400,
+  },
+  selectors: {
+    [`&:focus:hover`]: {
+      boxShadow: 'none',
+      border: 'none',
+    },
+  },
+})
+
 export const hasError = style({
   borderColor: `${theme.color.red600}`,
   background: `${theme.color.red100}`,

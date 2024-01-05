@@ -20,7 +20,10 @@ import {
 import { YES } from '../../constants'
 import { useEffectOnce } from 'react-use'
 
-const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
+const RequestDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const maxDays = maxDaysToGiveOrReceive
   const alreadySelectedMonths = getMaxMultipleBirthsAndDefaultMonths(
     application.answers,

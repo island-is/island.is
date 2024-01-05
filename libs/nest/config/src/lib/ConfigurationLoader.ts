@@ -126,7 +126,7 @@ export class ConfigurationLoader<T> implements EnvLoader {
       return devFallback
     }
     this.issues.add(envVariable, IssueType.MISSING)
-    return (undefined as unknown) as string
+    return undefined as unknown as string
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,14 +137,14 @@ export class ConfigurationLoader<T> implements EnvLoader {
         return JSON.parse(value)
       } catch {
         this.issues.add(envVariable, IssueType.JSON_ERROR)
-        return (undefined as unknown) as T
+        return undefined as unknown as T
       }
     }
     if (this.allowDevFallback && devFallback !== undefined) {
       return devFallback
     }
     this.issues.add(envVariable, IssueType.MISSING)
-    return (undefined as unknown) as T
+    return undefined as unknown as T
   }
 
   optional(envVariable: string, devFallback?: string): string | undefined {
@@ -165,7 +165,7 @@ export class ConfigurationLoader<T> implements EnvLoader {
         return JSON.parse(value)
       } catch {
         this.issues.add(envVariable, IssueType.JSON_ERROR)
-        return (undefined as unknown) as T
+        return undefined as unknown as T
       }
     }
 

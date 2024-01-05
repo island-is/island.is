@@ -1,19 +1,22 @@
 import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
-  IsBoolean,
-  IsArray,
   ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
   IsObject,
+  IsOptional,
+  IsString,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseType } from '@island.is/judicial-system/types'
 import type {
-  IndictmentSubtypeMap,
   CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 export class CreateCaseDto {
@@ -60,9 +63,9 @@ export class CreateCaseDto {
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly sendRequestToDefender?: boolean
+  @IsEnum(RequestSharedWithDefender)
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
   @IsString()

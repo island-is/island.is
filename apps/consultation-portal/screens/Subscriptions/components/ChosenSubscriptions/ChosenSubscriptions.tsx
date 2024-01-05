@@ -4,6 +4,7 @@ import { Area, SubscriptionDescriptionKey } from '../../../../types/enums'
 import { SubscriptionArray } from '../../../../types/interfaces'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Subscriptions.json'
+import { sortLocale } from '../../../../utils/helpers'
 
 interface Props {
   subscriptionArray: SubscriptionArray
@@ -33,8 +34,20 @@ const ChosenSubscriptions = ({
     subscribedToAllChangesObj,
   } = subscriptionArray
   const chosenCases = cases.filter((item) => item.checked)
+  const sortedChosenCases = sortLocale({
+    list: chosenCases,
+    sortOption: 'name',
+  })
   const chosenInstitutions = institutions.filter((item) => item.checked)
+  const sortedChosenInstitutions = sortLocale({
+    list: chosenInstitutions,
+    sortOption: 'name',
+  })
   const chosenPolicyAreas = policyAreas.filter((item) => item.checked)
+  const sortedChosenPolicyAreas = sortLocale({
+    list: chosenPolicyAreas,
+    sortOption: 'name',
+  })
   const { isMobile } = useIsMobile()
   const subscribeToAllChecked = subscribedToAllNewObj.checked
     ? subscribedToAllNewObj
@@ -53,9 +66,9 @@ const ChosenSubscriptions = ({
   return (
     <Stack space={0}>
       {!(
-        chosenCases.length === 0 &&
-        chosenInstitutions.length === 0 &&
-        chosenPolicyAreas.length === 0 &&
+        sortedChosenCases.length === 0 &&
+        sortedChosenInstitutions.length === 0 &&
+        sortedChosenPolicyAreas.length === 0 &&
         !subscribeToAllChecked
       ) && (
         <>
@@ -78,8 +91,8 @@ const ChosenSubscriptions = ({
             </SubscriptionCard>
           )}
 
-          {chosenCases.length !== 0 &&
-            chosenCases.map((item) => {
+          {sortedChosenCases.length !== 0 &&
+            sortedChosenCases.map((item) => {
               return (
                 <SubscriptionCard
                   key={item.key}
@@ -102,8 +115,8 @@ const ChosenSubscriptions = ({
                 </SubscriptionCard>
               )
             })}
-          {chosenInstitutions.length !== 0 &&
-            chosenInstitutions.map((item) => {
+          {sortedChosenInstitutions.length !== 0 &&
+            sortedChosenInstitutions.map((item) => {
               return (
                 <SubscriptionCard
                   key={item.key}
@@ -132,8 +145,8 @@ const ChosenSubscriptions = ({
                 </SubscriptionCard>
               )
             })}
-          {chosenPolicyAreas.length !== 0 &&
-            chosenPolicyAreas.map((item) => {
+          {sortedChosenPolicyAreas.length !== 0 &&
+            sortedChosenPolicyAreas.map((item) => {
               return (
                 <SubscriptionCard
                   key={item.key}

@@ -5,9 +5,8 @@ export interface ApplicationHistoryParameters {
   contentId: StaticText
 }
 
-export const ApplicationHistoryApi = defineTemplateApi<ApplicationHistoryParameters>(
-  {
+export const ApplicationHistoryApi =
+  defineTemplateApi<ApplicationHistoryParameters>({
     action: 'createHistoryEntry',
     namespace: 'Application',
-  },
-)
+  })

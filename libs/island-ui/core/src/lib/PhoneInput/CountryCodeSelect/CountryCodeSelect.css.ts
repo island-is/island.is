@@ -1,5 +1,6 @@
 import { style, globalStyle, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { recipe } from '@vanilla-extract/recipes'
 import * as inputMixins from '../../Input/Input.mixins'
 import { wrapMedia } from '../../../utils/wrapMedia'
 
@@ -8,19 +9,40 @@ export const wrapperColor = styleVariants(
   { blue: {}, white: {} },
   'wrapperColor',
 )
-export const valueContainer = style(
+export const valueContainer = recipe(
   {
-    selectors: {
-      [`${wrapper} &`]: {
-        paddingTop: theme.spacing[4],
-        paddingBottom: theme.spacing[2],
-        paddingLeft: 0,
-        marginLeft: 0,
+    base: {
+      paddingTop: theme.spacing[4],
+      paddingBottom: theme.spacing[2],
+      paddingLeft: 0,
+      marginLeft: 0,
+    },
+    variants: {
+      size: {
+        xs: {
+          paddingTop: 28,
+          ...themeUtils.responsiveStyle({
+            md: {
+              paddingTop: theme.spacing[4],
+            },
+          }),
+        },
+        sm: {},
+        md: {},
       },
     },
   },
   'valueContainer',
 )
+
+export const valueContainerSmall = style({
+  paddingTop: theme.spacing[3],
+  ...themeUtils.responsiveStyle({
+    md: {
+      paddingTop: theme.spacing[3] + theme.spacing[1] / 2,
+    },
+  }),
+})
 
 export const optionFlag = style(
   {
@@ -29,11 +51,6 @@ export const optionFlag = style(
   },
   'option-flag',
 )
-
-globalStyle(`${wrapper} ${valueContainer} .css-b8ldur-Input`, {
-  margin: 0,
-  padding: 0,
-})
 
 export const placeholder = style({
   whiteSpace: 'nowrap',
@@ -53,21 +70,23 @@ export const placeholderPadding = style({
 })
 export const placeholderSizes = styleVariants(inputMixins.inputSizes)
 
-export const input = style(inputMixins.input, 'input')
-export const inputSize = styleVariants(
+export const inputContainer = style(
   {
-    xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
-    sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
-    md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+    ...inputMixins.input,
+    margin: 0,
+    padding: 0,
   },
-  'inputSizes',
+  'input-container',
 )
 
-globalStyle(`${wrapper} ${input} input`, inputMixins.input)
-globalStyle(`${wrapper} ${inputSize.sm} input`, inputMixins.inputSizes.sm)
-globalStyle(`${wrapper} ${inputSize.md} input`, inputMixins.inputSizes.md)
-
-globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
+export const input = style(
+  {
+    ...inputMixins.input,
+    ':focus': inputMixins.inputFocus,
+    ...themeUtils.responsiveStyle(inputMixins.inputSizes),
+  },
+  'input',
+)
 
 export const errorMessage = style(inputMixins.errorMessage)
 export const hasError = style({})
@@ -101,14 +120,6 @@ export const containerXS = style(
 )
 
 export const containerSizes = styleVariants(inputMixins.containerSizes)
-
-globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
-  color: theme.color.dark400,
-})
-globalStyle(`${wrapper} .css-1g6gooi`, {
-  padding: 0,
-  margin: 0,
-})
 
 globalStyle(`${wrapper} .country-code-select__control${container}`, {
   ...inputMixins.container,
@@ -203,15 +214,11 @@ export const singleValue = style(
     marginRight: 0,
     paddingRight: 0,
     ...inputMixins.input,
+    color: theme.color.dark400,
   },
   'singleValue',
 )
-export const singleValuePushTop = style(
-  {
-    marginTop: theme.spacing[1],
-  },
-  'singleValue',
-)
+
 export const singleValueSizes = styleVariants(
   {
     xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
@@ -285,21 +292,18 @@ export const dropdownIndicator = style(
 )
 export const menu = style(
   {
-    selectors: {
-      [`${wrapper} &`]: {
-        marginTop: -3,
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-        boxShadow: 'none',
-        borderTop: `1px solid ${theme.color.blue200}`,
-        borderRight: `3px solid ${theme.color.mint400}`,
-        borderLeft: `3px solid ${theme.color.mint400}`,
-        borderBottom: `3px solid ${theme.color.mint400}`,
-        borderBottomLeftRadius: 8,
-        borderBottomRightRadius: 8,
-        boxSizing: 'border-box',
-      },
-    },
+    marginTop: -3,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    boxShadow: 'none',
+    borderTop: `1px solid ${theme.color.blue200}`,
+    borderRight: `3px solid ${theme.color.mint400}`,
+    borderLeft: `3px solid ${theme.color.mint400}`,
+    borderBottom: `3px solid ${theme.color.mint400}`,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    boxSizing: 'border-box',
+    backgroundColor: theme.color.white,
   },
   'menu',
 )

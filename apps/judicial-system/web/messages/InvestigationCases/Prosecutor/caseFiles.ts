@@ -9,23 +9,6 @@ export const icCaseFiles = {
       'Notaður sem titill á rannsóknargagna skrefi í rannsóknarheimildum.',
   }),
   sections: {
-    description: defineMessages({
-      heading: {
-        id:
-          'judicial.system.investigation_cases:case_files.description.heading',
-        defaultMessage: 'Meðferð gagna',
-        description:
-          'Notaður sem titill fyrir "meðferð gagna" hlutann á rannsóknargagna skrefi í rannsóknarheimildum.',
-      },
-      list: {
-        id:
-          'judicial.system.investigation_cases:case_files.description.list#markdown',
-        defaultMessage:
-          '- Hér er hægt að hlaða upp rannsóknargögnum til að sýna dómara.\\n\\n- Gögnin eru eingöngu aðgengileg dómara í málinu og aðgengi að þeim lokast þegar dómari hefur úrskurðað.\\n\\n- Gögnin verða ekki lögð fyrir eða flutt í málakerfi dómstóls nema annar hvor aðilinn kæri úrskurðinn.',
-        description:
-          'Listi yfir það hvernig rannsóknargögn eru geymd og hver hefur aðgang að þeim.',
-      },
-    }),
     files: defineMessages({
       heading: {
         id: 'judicial.system.investigation_cases:case_files.files.heading',
@@ -74,8 +57,7 @@ export const icCaseFiles = {
           'Notaður sem titill í "skilaboð" textaboxi á rannsóknargagna skrefi í rannsóknarheimildum.',
       },
       placeholder: {
-        id:
-          'judicial.system.investigation_cases:case_files.comments.placeholder',
+        id: 'judicial.system.investigation_cases:case_files.comments.placeholder',
         defaultMessage:
           'Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi gögnin?',
         description:

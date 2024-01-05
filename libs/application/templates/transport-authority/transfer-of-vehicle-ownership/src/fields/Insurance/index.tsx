@@ -10,11 +10,9 @@ import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
-export const Insurance: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
-  setStep,
-  setInsurance,
-}) => {
+export const Insurance: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({ application, setStep, setInsurance }) => {
   const { locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)

@@ -28,7 +28,9 @@ export const runEndpointTestsMutation = gql`
   }
 `
 
-const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
+const AutomatedTests: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   interface Response {

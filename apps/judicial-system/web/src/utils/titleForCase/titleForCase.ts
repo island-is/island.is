@@ -1,13 +1,13 @@
 import { IntlShape } from 'react-intl'
 
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
   CaseDecision,
   CaseState,
   CaseType,
-  isInvestigationCase,
-} from '@island.is/judicial-system/types'
-
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
 import { strings } from './titleForCase.strings'
 
 export const titleForCase = (

@@ -124,17 +124,25 @@ export class ClientsService extends MultiEnvironmentService {
     user: User,
     input: CreateClientInput,
   ): Promise<CreateClientResponse[]> {
-    const applicationRequest: MeClientsControllerCreateRequest = {
-      tenantId: input.tenantId,
-      adminCreateClientDto: {
-        clientId: input.clientId,
-        clientType: (input.clientType as string) as CreateClientType,
-        clientName: input.displayName,
-      },
-    }
-
     const settledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
+        const tenant = await this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meTenantsControllerFindById({
+          tenantId: input.tenantId,
+        })
+
+        const applicationRequest: MeClientsControllerCreateRequest = {
+          tenantId: input.tenantId,
+          adminCreateClientDto: {
+            clientId: input.clientId,
+            clientType: input.clientType as string as CreateClientType,
+            clientName: input.displayName,
+            contactEmail: tenant?.contactEmail,
+          },
+        }
+
         return this.adminApiByEnvironmentWithAuth(
           environment,
           user,

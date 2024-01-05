@@ -66,10 +66,11 @@ export class RskCompanyInfoService {
     user: User,
     nationalId: string,
   ): Promise<RskCompanyRelatedParty[] | null> {
-    const legalEntityRelationships = await this.rskRelationshipsClient.getLegalEntityRelationships(
-      user,
-      nationalId,
-    )
+    const legalEntityRelationships =
+      await this.rskRelationshipsClient.getLegalEntityRelationships(
+        user,
+        nationalId,
+      )
 
     if (!legalEntityRelationships?.relationships) return null
 

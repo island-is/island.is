@@ -1,3 +1,4 @@
+import { CacheField } from '@island.is/nest/graphql'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
@@ -29,6 +30,6 @@ class FiskistofaSingleShip {
 
 @ObjectType()
 export class FiskistofaSingleShipResponse {
-  @Field(() => FiskistofaSingleShip, { nullable: true })
+  @CacheField(() => FiskistofaSingleShip, { nullable: true })
   fiskistofaSingleShip?: FiskistofaSingleShip | null
 }

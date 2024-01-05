@@ -1,93 +1,142 @@
-import {useQuery} from '@apollo/client';
-import {dynamicColor, Header, Loader, Typography} from '@ui';
-import React, {useEffect, useRef, useState} from 'react';
-import {FormattedDate, useIntl} from 'react-intl';
-import {Animated, Platform, StyleSheet, View} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
+import { useFragment_experimental } from '@apollo/client'
+import { blue400, dynamicColor, Header, Loader, Typography } from '@ui'
+import React, { useEffect, useRef, useState } from 'react'
+import { FormattedDate, useIntl } from 'react-intl'
+import { Animated, Platform, StyleSheet, View } from 'react-native'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
-} from 'react-native-navigation-hooks/dist';
-import Pdf, {Source} from 'react-native-pdf';
-import Share from 'react-native-share';
-import WebView from 'react-native-webview';
-import styled from 'styled-components/native';
-import {client} from '../../graphql/client';
+} from 'react-native-navigation-hooks/dist'
+import Pdf, { Source } from 'react-native-pdf'
+import Share from 'react-native-share'
+import WebView from 'react-native-webview'
+import styled from 'styled-components/native'
+import { client } from '../../graphql/client'
 import {
-  GetDocumentResponse,
-  GET_DOCUMENT_QUERY,
-} from '../../graphql/queries/get-document.query';
-import {LIST_DOCUMENTS_QUERY} from '../../graphql/queries/list-documents.query';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {authStore} from '../../stores/auth-store';
-import {inboxStore} from '../../stores/inbox-store';
-import {useOrganizationsStore} from '../../stores/organizations-store';
-import {ButtonRegistry} from '../../utils/component-registry';
-import {Query} from 'src/graphql/types/schema';
+  Document,
+  ListDocumentFragmentDoc,
+  ListDocumentsDocument,
+  useGetDocumentQuery,
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { toggleAction } from '../../lib/post-mail-action'
+import { authStore } from '../../stores/auth-store'
+import { useOrganizationsStore } from '../../stores/organizations-store'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
   margin-right: 24px;
-`;
+`
 
 const Border = styled.View`
   height: 1px;
-  background-color: ${dynamicColor(props => ({
+  background-color: ${dynamicColor((props) => ({
     dark: props.theme.shades.dark.shade200,
     light: props.theme.color.blue100,
   }))};
-`;
+`
 
 const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
-`;
+`
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'documentDetail.screenTitle'}),
+function getRightButtons({
+  archived,
+  bookmarked,
+}: {
+  archived?: boolean
+  bookmarked?: boolean
+} = {}) {
+  return [
+    {
+      id: ButtonRegistry.ShareButton,
+      icon: require('../../assets/icons/navbar-share.png'),
+      color: blue400,
+      accessibilityLabel: 'Share',
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 8,
+        width: 32,
+        height: 32,
       },
-      noBorder: true,
     },
-  }),
-  {
-    bottomTabs: {
-      visible: false,
+    {
+      id: ButtonRegistry.DocumentArchiveButton,
+      icon: archived
+        ? require('../../assets/icons/tray-filled.png')
+        : require('../../assets/icons/tray.png'),
+      color: blue400,
+      accessibilityLabel: 'Archive',
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 8,
+        width: 32,
+        height: 32,
+      },
     },
-    topBar: {
-      noBorder: true,
-      rightButtons: [
-        {
-          id: ButtonRegistry.ShareButton,
-          icon: require('../../assets/icons/navbar-share.png'),
-          accessibilityLabel: 'Share',
+    {
+      id: ButtonRegistry.DocumentStarButton,
+      icon: bookmarked
+        ? require('../../assets/icons/star-filled.png')
+        : require('../../assets/icons/star.png'),
+      color: blue400,
+      accessibilityLabel: 'Star',
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 8,
+        width: 32,
+        height: 32,
+      },
+    },
+  ]
+}
+
+const { useNavigationOptions, getNavigationOptions } =
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
         },
-      ],
+        noBorder: true,
+      },
+    }),
+    {
+      bottomTabs: {
+        visible: false,
+      },
+      topBar: {
+        noBorder: true,
+        rightButtons: getRightButtons(),
+      },
     },
-  },
-);
+  )
 
 interface PdfViewerProps {
-  url: string;
-  body: string;
-  onLoaded: (path: string) => void;
-  onError: (err: Error) => void;
+  url: string
+  body: string
+  onLoaded: (path: string) => void
+  onError: (err: Error) => void
 }
 
 const PdfViewer = React.memo(
-  ({url, body, onLoaded, onError}: PdfViewerProps) => {
+  ({ url, body, onLoaded, onError }: PdfViewerProps) => {
     const extraProps = {
       activityIndicatorProps: {
         color: '#0061ff',
         progressTintColor: '#ccdfff',
       },
-    };
+    }
 
     return (
       <Pdf
@@ -102,63 +151,112 @@ const PdfViewer = React.memo(
           } as Source
         }
         onLoadComplete={(_, filePath) => {
-          onLoaded?.(filePath);
+          onLoaded?.(filePath)
         }}
-        onError={err => {
-          onError?.(err as Error);
+        onError={(err) => {
+          onError?.(err as Error)
         }}
-        trustAllCerts={Platform.select({android: false, ios: undefined})}
+        trustAllCerts={Platform.select({ android: false, ios: undefined })}
         style={{
           flex: 1,
           backgroundColor: 'transparent',
         }}
         {...extraProps}
       />
-    );
+    )
   },
   (prevProps, nextProps) => {
     if (prevProps.url === nextProps.url && prevProps.body === nextProps.body) {
-      return true;
+      return true
     }
-    return false;
+    return false
   },
-);
+)
 
 export const DocumentDetailScreen: NavigationFunctionComponent<{
-  docId: string;
-}> = ({componentId, docId}) => {
-  useNavigationOptions(componentId);
-  const intl = useIntl();
-  const {getOrganizationLogoUrl} = useOrganizationsStore();
-  const [accessToken, setAccessToken] = useState<string>();
-  const [error, setError] = useState(false);
+  docId: string
+}> = ({ componentId, docId }) => {
+  useNavigationOptions(componentId)
+  const intl = useIntl()
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const [accessToken, setAccessToken] = useState<string>()
+  const [error, setError] = useState(false)
 
-  const res = useQuery<Query>(LIST_DOCUMENTS_QUERY, {
-    client,
-  });
-  const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
+  const doc = useFragment_experimental<Document>({
+    fragment: ListDocumentFragmentDoc,
+    from: {
+      __typename: 'Document',
+      id: docId,
+    },
+    returnPartialData: true,
+  })
+
+  const docRes = useGetDocumentQuery({
     client,
     variables: {
       input: {
         id: docId,
       },
     },
-  });
+  })
+
   const Document = {
     ...(docRes.data?.getDocument || {}),
-    ...(res.data?.listDocumentsV2?.data?.find(d => d.id === docId) || {}),
-  };
+    ...doc.data,
+  }
 
-  const [visible, setVisible] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState('');
-  const hasPdf = Document.fileType === 'pdf';
-  const isHtml = typeof Document.html === 'string' && Document.html !== '';
+  useEffect(() => {
+    if (doc.missing) {
+      client.query({
+        query: ListDocumentsDocument,
+        variables: {
+          input: {
+            page: 1,
+            pageSize: 50,
+          },
+        },
+      })
+    }
+  }, [doc])
 
-  useNavigationButtonPress(
-    e => {
+  const [visible, setVisible] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState('')
+  const [touched, setTouched] = useState(false)
+  const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf'
+  const isHtml = typeof Document.html === 'string' && Document.html !== ''
+
+  useEffect(() => {
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        rightButtons: getRightButtons({
+          archived: doc.data?.archived ?? false,
+          bookmarked: doc.data?.bookmarked ?? false,
+        }),
+      },
+    })
+  }, [componentId, doc.data])
+
+  useNavigationButtonPress(({ buttonId }) => {
+    if (buttonId === ButtonRegistry.DocumentArchiveButton) {
+      toggleAction(
+        Document.archived ? 'unarchive' : 'archive',
+        Document.id!,
+        // true,
+      )
+      setTouched(true)
+    }
+    if (buttonId === ButtonRegistry.DocumentStarButton) {
+      toggleAction(
+        Document.bookmarked ? 'unbookmark' : 'bookmark',
+        Document.id!,
+        // true,
+      )
+      setTouched(true)
+    }
+    if (buttonId === ButtonRegistry.ShareButton) {
       if (Platform.OS === 'android') {
-        authStore.setState({noLockScreenUntilNextAppStateActive: true});
+        authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
       Share.open({
         title: Document.subject!,
@@ -166,47 +264,57 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         message: `${Document.senderName!} \n ${Document.subject!}`,
         type: hasPdf ? 'application/pdf' : undefined,
         url: hasPdf ? `file://${pdfUrl}` : Document.url!,
-      });
-    },
-    componentId,
-    ButtonRegistry.ShareButton,
-  );
+      })
+    }
+  }, componentId)
 
   useNavigationComponentDidAppear(() => {
-    setVisible(true);
-  });
+    setVisible(true)
+  })
 
   useNavigationComponentDidDisappear(() => {
-    setVisible(false);
+    setVisible(false)
     if (hasPdf) {
-      setLoaded(false);
+      setLoaded(false)
     }
-  });
+    if (touched) {
+      Navigation.updateProps(ComponentRegistry.InboxScreen, {
+        refresh: Math.random(),
+      })
+    }
+  })
 
   useEffect(() => {
-    if (Document.id) {
-      inboxStore.getState().actions.setRead(Document.id);
-    }
-  }, [res.data]);
+    // Lets mark the document as read
+    client.cache.modify({
+      id: client.cache.identify({
+        __typename: 'Document',
+        id: Document.id,
+      }),
+      fields: {
+        opened: () => true,
+      },
+    })
+  }, [Document.id])
 
   useEffect(() => {
-    const {authorizeResult, refresh} = authStore.getState();
+    const { authorizeResult, refresh } = authStore.getState()
     const isExpired =
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      new Date(authorizeResult!.accessTokenExpirationDate!).getTime() <
-      Date.now();
+      new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() <
+      Date.now()
     if (isExpired) {
       refresh().then(() => {
-        setAccessToken(authStore.getState().authorizeResult?.accessToken);
-      });
+        setAccessToken(authStore.getState().authorizeResult?.accessToken)
+      })
     } else {
-      setAccessToken(authorizeResult?.accessToken);
+      setAccessToken(authorizeResult?.accessToken)
     }
-  }, []);
+  }, [])
 
-  const loading = res.loading || !accessToken;
+  const loading = docRes.loading || !accessToken
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current
 
   React.useEffect(() => {
     if (loaded) {
@@ -214,9 +322,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         toValue: 1,
         duration: 500,
         useNativeDriver: true,
-      }).start();
+      }).start()
     }
-  }, [loaded]);
+  }, [loaded])
 
   return (
     <>
@@ -244,10 +352,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         >
           {isHtml ? (
             <WebView
-              source={{html: Document.html ?? ''}}
+              source={{ html: Document.html ?? '' }}
               scalesPageToFit
               onLoadEnd={() => {
-                setLoaded(true);
+                setLoaded(true)
               }}
             />
           ) : hasPdf ? (
@@ -257,21 +365,21 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                   url={Document.url ?? ''}
                   body={`documentId=${Document.id}&__accessToken=${accessToken}`}
                   onLoaded={(filePath: any) => {
-                    setPdfUrl(filePath);
-                    setLoaded(true);
+                    setPdfUrl(filePath)
+                    setLoaded(true)
                   }}
                   onError={() => {
-                    setLoaded(true);
-                    setError(true);
+                    setLoaded(true)
+                    setError(true)
                   }}
                 />
               )}
             </PdfWrapper>
           ) : (
             <WebView
-              source={{uri: Document.url!}}
+              source={{ uri: Document.url! }}
               onLoadEnd={() => {
-                setLoaded(true);
+                setLoaded(true)
               }}
             />
           )}
@@ -290,18 +398,18 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           >
             {error ? (
               <Typography>
-                {intl.formatMessage({id: 'licenseScanDetail.errorUnknown'})}
+                {intl.formatMessage({ id: 'licenseScanDetail.errorUnknown' })}
               </Typography>
             ) : (
               <Loader
-                text={intl.formatMessage({id: 'documentDetail.loadingText'})}
+                text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
               />
             )}
           </View>
         )}
       </View>
     </>
-  );
-};
+  )
+}
 
-DocumentDetailScreen.options = getNavigationOptions;
+DocumentDetailScreen.options = getNavigationOptions

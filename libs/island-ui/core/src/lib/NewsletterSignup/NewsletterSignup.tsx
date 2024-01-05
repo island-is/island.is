@@ -41,7 +41,7 @@ interface Props {
   value: string
 }
 
-export const NewsletterSignup: React.FC<Props> = ({
+export const NewsletterSignup: React.FC<React.PropsWithChildren<Props>> = ({
   heading,
   text,
   id = 'newsletter',

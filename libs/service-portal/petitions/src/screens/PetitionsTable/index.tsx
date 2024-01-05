@@ -9,12 +9,13 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
 import { m } from '../../lib/messages'
-import DropdownExport, { getCSV } from './ExportPetition'
+import DropdownExport from './ExportPetition'
 import {
   Endorsement,
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { getCSV } from './ExportPetition/downloadCSV'
 
 const PetitionsTable = (data: {
   canEdit: boolean
@@ -51,7 +52,7 @@ const PetitionsTable = (data: {
               petition={data.petition}
               petitionSigners={data.petitionSigners}
               petitionId={data.listId}
-              onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
+              onGetCSV={() => getCSV(data.petitionSigners, 'Undirskriftalisti')}
             />
           )}
         </Box>

@@ -1,19 +1,19 @@
 import { useIntl } from 'react-intl'
 import parseISO from 'date-fns/parseISO'
-import { tables } from '@island.is/judicial-system-web/messages'
-import { Text } from '@island.is/island-ui/core'
-import { CaseState } from '@island.is/judicial-system/types'
 
+import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { tables } from '@island.is/judicial-system-web/messages'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export function getDurationDate(
-  state: CaseState,
-  validToDate?: string,
-  initialRulingDate?: string,
-  rulingDate?: string,
+  state?: CaseState | null,
+  validToDate?: string | null,
+  initialRulingDate?: string | null,
+  rulingDate?: string | null,
 ): string | null {
   if (
-    [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
+    (state && [CaseState.REJECTED, CaseState.DISMISSED].includes(state)) ||
     !validToDate
   ) {
     return null

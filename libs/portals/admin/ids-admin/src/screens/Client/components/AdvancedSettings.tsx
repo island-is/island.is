@@ -152,7 +152,7 @@ export const AdvancedSettings = ({
             }}
             label={formatMessage(m.accessTokenExpiration)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors?.accessTokenLifetime as unknown) as string,
+              actionData?.errors?.accessTokenLifetime as unknown as string,
             )}
           />
           <Text variant={'small'}>
@@ -180,10 +180,12 @@ export const AdvancedSettings = ({
             value={inputValues.customClaims}
             placeholder={'claim=value'}
             errorMessage={formatErrorMessage(
-              (actionData?.errors?.customClaims as unknown) as string,
+              actionData?.errors?.customClaims as unknown as string,
             )}
           />
-          <Text variant="small">{formatMessage(m.callBackUrlDescription)}</Text>
+          <Text variant="small">
+            {formatMessage(m.customClaimsDescription)}
+          </Text>
         </Stack>
       </Stack>
     </FormCard>

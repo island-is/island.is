@@ -1,33 +1,9 @@
 import React, { useCallback, useContext, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
-import {
-  BlueBox,
-  DefenderInfo,
-  FormContentContainer,
-  FormContext,
-  FormFooter,
-  PageLayout,
-} from '@island.is/judicial-system-web/src/components'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  titles,
-  core,
-  defendant as m,
-  errors,
-} from '@island.is/judicial-system-web/messages'
-import {
-  Defendant as TDefendant,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Button,
@@ -36,15 +12,41 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import {
-  CaseType,
-  CaseOrigin,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
+import { prosecutorCanSelectDefenderForInvestigationCase } from '@island.is/judicial-system/types'
+import {
+  core,
+  defendant as m,
+  errors,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  DefenderInfo,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageHeader,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  CaseOrigin,
+  CaseType,
+  Defendant as TDefendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  useCase,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
   DefendantInfo,
@@ -56,18 +58,14 @@ const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = React.useState<CaseType>()
+  const [caseType, setCaseType] = React.useState<CaseType | null>()
 
   useEffect(() => {
     if (workingCase.id) {
@@ -75,9 +73,8 @@ const Defendant = () => {
     }
   }, [workingCase.id, workingCase.type])
 
-  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
-    workingCase,
-  )
+  const { clientPoliceNumbers, setClientPoliceNumbers } =
+    usePoliceCaseNumbers(workingCase)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -91,20 +88,19 @@ const Defendant = () => {
               createdCase.defendants &&
               createdCase.defendants.length > 0
             ) {
-              await updateDefendant(
-                createdCase.id,
-                createdCase.defendants[0].id,
-                {
-                  gender: defendant.gender,
-                  name: defendant.name,
-                  address: defendant.address,
-                  nationalId: defendant.nationalId,
-                  noNationalId: defendant.noNationalId,
-                  citizenship: defendant.citizenship,
-                },
-              )
+              await updateDefendant({
+                caseId: createdCase.id,
+                defendantId: createdCase.defendants[0].id,
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              })
             } else {
-              await createDefendant(createdCase.id, {
+              await createDefendant({
+                caseId: createdCase.id,
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
@@ -133,14 +129,14 @@ const Defendant = () => {
   )
 
   const updateDefendantState = useCallback(
-    (defendantId: string, update: UpdateDefendant) => {
+    (update: UpdateDefendantInput) => {
       setWorkingCase((theCase: Case) => {
         if (!theCase.defendants) {
           return theCase
         }
 
         const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-          (defendant) => defendant.id === defendantId,
+          (defendant) => defendant.id === update.defendantId,
         )
 
         const newDefendants = [...theCase.defendants]
@@ -148,7 +144,7 @@ const Defendant = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        }
+        } as TDefendant
         return { ...theCase, defendants: newDefendants }
       })
     },
@@ -156,11 +152,11 @@ const Defendant = () => {
   )
 
   const handleUpdateDefendant = useCallback(
-    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant)
+    async (updatedDefendant: UpdateDefendantInput) => {
+      updateDefendantState(updatedDefendant)
 
       if (workingCase.id) {
-        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+        updateDefendant(updatedDefendant)
       }
     },
     [updateDefendantState, workingCase.id, updateDefendant],
@@ -198,7 +194,8 @@ const Defendant = () => {
 
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
-      const defendantId = await createDefendant(workingCase.id, {
+      const defendantId = await createDefendant({
+        caseId: workingCase.id,
         gender: undefined,
         name: '',
         address: '',
@@ -277,16 +274,13 @@ const Defendant = () => {
               <Box marginBottom={3}>
                 <Select
                   name="type"
-                  options={
-                    constants.InvestigationCaseTypes as ReactSelectOption[]
-                  }
+                  options={constants.InvestigationCaseTypes}
                   label={formatMessage(m.sections.investigationType.type.label)}
                   placeholder={formatMessage(
                     m.sections.investigationType.type.placeholder,
                   )}
-                  onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-                    const type = (selectedOption as ReactSelectOption)
-                      .value as CaseType
+                  onChange={(selectedOption) => {
+                    const type = selectedOption?.value
 
                     setCaseType(type)
                     setAndSendCaseToServer(
@@ -303,10 +297,8 @@ const Defendant = () => {
                   value={
                     workingCase.id
                       ? {
-                          value: Object.keys(CaseType).indexOf(
-                            workingCase.type,
-                          ),
-                          label: capitalize(caseTypes[workingCase.type]),
+                          value: workingCase.type,
+                          label: capitalize(formatCaseType(workingCase.type)),
                         }
                       : undefined
                   }
@@ -418,14 +410,9 @@ const Defendant = () => {
             </Box>
           </Box>
           <AnimatePresence>
-            {[
-              CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-              CaseType.EXPULSION_FROM_HOME,
-              CaseType.PSYCHIATRIC_EXAMINATION,
-              CaseType.RESTRAINING_ORDER,
-              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-              CaseType.OTHER,
-            ].includes(workingCase.type) && (
+            {prosecutorCanSelectDefenderForInvestigationCase(
+              workingCase.type,
+            ) && (
               <motion.section
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}

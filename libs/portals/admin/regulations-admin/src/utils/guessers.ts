@@ -109,13 +109,8 @@ export const findSignatureInText = (html: HTMLText) => {
       signatureDate: undefined,
     }
   }
-  const [
-    _,
-    ministryNameRaw,
-    dayOfMonthStr,
-    monthName,
-    yearStr,
-  ] = match as RegExpMatchArray
+  const [_, ministryNameRaw, dayOfMonthStr, monthName, yearStr] =
+    match as RegExpMatchArray
 
   const month = threeLetterMonths.indexOf(monthName.slice(0, 3).toLowerCase())
 
@@ -151,8 +146,10 @@ export const findRegulationType = (
   if (!title || !/reglugerð/i.test(title)) {
     return
   }
-  const amendingTitleRe = /^Reglugerð um (?:\(?\d+\.\)? )?breyting(?:u|ar) á .*reglugerð(?:um)?(?: |$)/i
-  const repealingTitleRe = /^Reglugerð um (að fella úr gildi|brottfelling(?:u|ar)( ýmissa)?) .*reglugerð(?:ir|a|ar)?/i
+  const amendingTitleRe =
+    /^Reglugerð um (?:\(?\d+\.\)? )?breyting(?:u|ar) á .*reglugerð(?:um)?(?: |$)/i
+  const repealingTitleRe =
+    /^Reglugerð um (að fella úr gildi|brottfelling(?:u|ar)( ýmissa)?) .*reglugerð(?:ir|a|ar)?/i
   return amendingTitleRe.test(title) || repealingTitleRe.test(title)
     ? 'amending'
     : 'base'

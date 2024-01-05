@@ -21,7 +21,6 @@ import {
   Input,
   AlertMessage,
   Select,
-  Option,
   GridContainer,
   GridRow,
   GridColumn,
@@ -38,7 +37,9 @@ interface AlcoholLicencesListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
+const AlcoholLicencesList: FC<
+  React.PropsWithChildren<AlcoholLicencesListProps>
+> = ({ slice }) => {
   const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
@@ -68,6 +69,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
       // Add the subtype, but only if it's not redundant
       result += ' - ' + licence.licenceSubType
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     return result
   }
 
@@ -109,6 +112,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
             alcoholLicence.location, // Starfsstöð embættis
           ])
         }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         return resolve(prepareCsvString(headerRow, dataRows))
       }
       reject('Alcohol Licences data has not been loaded.')
@@ -120,6 +125,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   const avaibleOfficesOptions = [
     allOfficesOption,
     ...Array.from(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       new Set<string>(alcoholLicences.map((x) => x.office)).values(),
     ),
   ]
@@ -132,6 +139,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
   const avaibleLicenceTypeOptions = [
     allLicenceTypeOption,
     ...Array.from(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       new Set<string>(alcoholLicences.map((x) => x.licenceType)).values(),
     ),
   ]
@@ -153,9 +162,17 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
       // Filter by search string
       textSearch(searchTerms, [
         // Fields to search
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         alcoholLicence.licenceType,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         alcoholLicence.licenseHolder,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         alcoholLicence.licenseNumber,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         alcoholLicence.licenseResponsible,
       ]),
   )
@@ -205,6 +222,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                       value: x,
                     }))
                     .find((x) => x.value === filterLicenceType)}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterLicenceType(String(value))
                   }}
@@ -231,6 +250,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                       value: x,
                     }))
                     .find((x) => x.value === filterOffice)}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterOffice(String(value))
                   }}
@@ -327,6 +348,8 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                       <Text>
                         {n('validPeriodLabel', 'Gildistími')}:{' '}
                         {getValidPeriodRepresentation(
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           alcoholLicence.validFrom,
                           alcoholLicence.validTo,
                           DATE_FORMAT,

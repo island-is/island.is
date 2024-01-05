@@ -6,7 +6,7 @@
         "name": "Dóra Dómari",
         "nationalId": "0000000000",
         "mobileNumber": "0000000",
-        "role": "JUDGE",
+        "role": "DISTRICT_COURT_JUDGE",
         "title": "Aðaldómari",
         "email": "dora@explorer.is",
         "institution": {
@@ -21,7 +21,7 @@
         "name": "Dómhildur",
         "nationalId": "1111111111",
         "mobileNumber": "1111111",
-        "role": "JUDGE",
+        "role": "DISTRICT_COURT_JUDGE",
         "title": "aðstoðardómari",
         "email": "skelli@bjalla.is",
         "institution": {
@@ -36,7 +36,7 @@
         "name": "Dómritarahildigunnur",
         "nationalId": "1111111111",
         "mobileNumber": "1111111",
-        "role": "REGISTRAR",
+        "role": "DISTRICT_COURT_REGISTRAR",
         "title": "aðstoðardómritarinn",
         "email": "skelli@bjallakallar.is",
         "institution": {

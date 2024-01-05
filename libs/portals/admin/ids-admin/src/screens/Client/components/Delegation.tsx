@@ -99,7 +99,8 @@ const Delegation = ({
           onChange={() => {
             setInputValues((prev) => ({
               ...prev,
-              supportsPersonalRepresentatives: !prev.supportsPersonalRepresentatives,
+              supportsPersonalRepresentatives:
+                !prev.supportsPersonalRepresentatives,
             }))
           }}
           subLabel={formatMessage(

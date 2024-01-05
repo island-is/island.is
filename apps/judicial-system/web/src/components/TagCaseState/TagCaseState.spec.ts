@@ -1,12 +1,18 @@
 import { createIntl } from 'react-intl'
 
 import { tables } from '@island.is/judicial-system-web/messages'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
-import { tagCaseState as m } from './TagCaseState.strings'
-import { mapCaseStateToTagVariant } from './TagCaseState'
+import {
+  CaseState,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-const formatMessage = createIntl({ locale: 'is-IS', onError: jest.fn })
-  .formatMessage
+import { mapCaseStateToTagVariant } from './TagCaseState'
+import { tagCaseState as m } from './TagCaseState.strings'
+
+const formatMessage = createIntl({
+  locale: 'is-IS',
+  onError: jest.fn,
+}).formatMessage
 
 describe('mapCaseStateToTagVariant', () => {
   const fn = (

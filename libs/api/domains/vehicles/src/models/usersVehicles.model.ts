@@ -108,6 +108,15 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true, defaultValue: null })
   nextInspectionDate?: Date
+
+  @Field(() => Date, { nullable: true })
+  nextAvailableMileageReadDate?: Date | null
+
+  @Field(() => Boolean, { nullable: true })
+  requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMileage?: boolean | null
 }
 
 @ObjectType()
@@ -132,25 +141,58 @@ export class VehiclesHistory {
 }
 
 @ObjectType()
+export class VehiclePaging {
+  @Field({ nullable: true })
+  pageNumber?: number
+
+  @Field({ nullable: true })
+  pageSize?: number
+
+  @Field({ nullable: true })
+  totalPages?: number
+
+  @Field({ nullable: true })
+  totalRecords?: number
+}
+
+@ObjectType()
 export class VehiclesList {
-  @Field({ nullable: true })
-  persidno?: string
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  address?: string
-
-  @Field({ nullable: true })
-  postStation?: string
-
   @Field(() => [VehiclesVehicle], { nullable: true })
   vehicleList?: VehiclesVehicle[]
 
   @Field({ nullable: true })
-  createdTimestamp?: string
+  paging?: VehiclePaging
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  postStation?: string
 
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  persidno?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  name?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  address?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  createdTimestamp?: string
 }

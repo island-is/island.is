@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # General Petitions
 
 This application allows individuals to create general petitions

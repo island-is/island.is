@@ -7,6 +7,7 @@ import TimeInputField from './TimeInputField'
 describe('TimeInputField', () => {
   test('should add a : character when the user enters two digits', async () => {
     // Arrange
+    const user = userEvent.setup()
     render(
       <TimeInputField>
         <input type="text" />
@@ -14,7 +15,7 @@ describe('TimeInputField', () => {
     )
 
     // Act
-    userEvent.type(await screen.findByRole('textbox'), '11')
+    await user.type(await screen.findByRole('textbox'), '11')
 
     // Assert
     expect(

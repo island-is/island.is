@@ -14,7 +14,9 @@ interface SidebarWrapperProps {
   fullWidthContent?: boolean
 }
 
-export const SidebarWrapper: FC<SidebarWrapperProps> = ({
+export const SidebarWrapper: FC<
+  React.PropsWithChildren<SidebarWrapperProps>
+> = ({
   sidebarContent,
   hideSidebarInMobile = false,
   fullWidthContent = false,

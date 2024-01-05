@@ -21,9 +21,15 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import { ApplicationChargeModule } from './charge/application-charge.module'
-import { ApplicationFilesModule } from '@island.is/application/api/files'
+import {
+  ApplicationFilesModule,
+  createBullModule,
+} from '@island.is/application/api/files'
 import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
+import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
+import { ApplicationActionService } from './application-action.service'
+
 @Module({
   imports: [
     PaymentModule,
@@ -34,6 +40,7 @@ import { HistoryModule } from '@island.is/application/api/history'
       applicationService: TemplateApiApplicationService,
     }),
     ApplicationApiCoreModule,
+    createBullModule(),
     ApplicationFilesModule,
     AwsModule,
     FileStorageModule,
@@ -43,12 +50,14 @@ import { HistoryModule } from '@island.is/application/api/history'
     HistoryModule,
     LoggingModule,
     ApplicationChargeModule,
+    AuthPublicApiClientModule,
   ],
   controllers: [ApplicationController, AdminController],
   providers: [
     ApplicationAccessService,
     ApplicationValidationService,
     TemplateApiActionRunner,
+    ApplicationActionService,
   ],
 })
 export class ApplicationModule {}

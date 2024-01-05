@@ -10,7 +10,7 @@ interface Props {
   figure?: string
 }
 
-export const ErrorScreen: FC<Props> = ({
+export const ErrorScreen: FC<React.PropsWithChildren<Props>> = ({
   title,
   tag,
   figure,

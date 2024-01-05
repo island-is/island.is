@@ -1,70 +1,42 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
-import { ValueType } from 'react-select'
 
-import {
-  FormContentContainer,
-  FormContext,
-  FormFooter,
-  PageLayout,
-  SelectCourtOfficials,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  ReactSelectOption,
-  UserData,
-} from '@island.is/judicial-system-web/src/types'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
+import {
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageHeader,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/components'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
 
-import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
-
-type JudgeSelectOption = ReactSelectOption & { judge: User }
-type RegistrarSelectOption = ReactSelectOption & { registrar: User }
+import SelectCourtOfficials from './SelectCourtOfficials/SelectCourtOfficials'
+import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 
 const ReceptionAndAssignment = () => {
   const router = useRouter()
   const id = router.query.id
   const { formatMessage } = useIntl()
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
-  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
-    false,
-  )
+  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
+    useState<boolean>(false)
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
-  const {
-    createCourtCase,
-    isCreatingCourtCase,
-    setAndSendCaseToServer,
-  } = useCase()
-
-  const { data: userData, loading: userLoading } = useQuery<UserData>(
-    UsersQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { createCourtCase, isCreatingCourtCase } = useCase()
 
   const handleCreateCourtCase = async (workingCase: Case) => {
     const courtCaseNumber = await createCourtCase(
@@ -75,26 +47,6 @@ const ReceptionAndAssignment = () => {
 
     if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
-    }
-  }
-
-  const setJudge = (judge: User) => {
-    if (workingCase) {
-      setAndSendCaseToServer(
-        [{ judgeId: judge.id, force: true }],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }
-
-  const setRegistrar = (registrar?: User) => {
-    if (workingCase) {
-      setAndSendCaseToServer(
-        [{ registrarId: registrar?.id ?? null, force: true }],
-        workingCase,
-        setWorkingCase,
-      )
     }
   }
 
@@ -115,7 +67,7 @@ const ReceptionAndAssignment = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      isLoading={isLoadingWorkingCase || userLoading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
@@ -147,18 +99,7 @@ const ReceptionAndAssignment = () => {
           />
         </Box>
         <Box component="section" marginBottom={10}>
-          <SelectCourtOfficials
-            workingCase={workingCase}
-            handleJudgeChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setJudge((selectedOption as JudgeSelectOption).judge)
-            }
-            handleRegistrarChange={(
-              selectedOption: ValueType<ReactSelectOption>,
-            ) =>
-              setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
-            }
-            users={userData?.users}
-          />
+          <SelectCourtOfficials />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

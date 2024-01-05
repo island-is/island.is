@@ -14,11 +14,9 @@ export interface SectionWithImageProps {
   html?: { __typename: 'Html'; id: string; document: Document }
 }
 
-export const SectionWithImage: FC<SectionWithImageProps> = ({
-  title,
-  image,
-  html,
-}) => {
+export const SectionWithImage: FC<
+  React.PropsWithChildren<SectionWithImageProps>
+> = ({ title, image, html }) => {
   const htmlDocument = html?.document ?? null
 
   if (!image && htmlDocument) {

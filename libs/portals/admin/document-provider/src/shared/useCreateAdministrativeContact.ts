@@ -26,10 +26,8 @@ export function useCreateAdministrativeContact(
   organisationId: string,
   organisationNationalId: string,
 ) {
-  const [
-    createAdministrativeContactMutation,
-    { called, loading, error },
-  ] = useMutation(CREATE_ADMINISTRATIVE_CONTACT_MUTATION)
+  const [createAdministrativeContactMutation, { called, loading, error }] =
+    useMutation(CREATE_ADMINISTRATIVE_CONTACT_MUTATION)
 
   const { formatMessage } = useLocale()
   const errorMsg = formatMessage(m.SingleProviderUpdateInformationError)

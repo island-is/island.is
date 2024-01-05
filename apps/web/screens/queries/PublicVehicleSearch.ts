@@ -23,3 +23,12 @@ export const PUBLIC_VEHICLE_SEARCH_QUERY = gql`
     }
   }
 `
+
+export const PLATE_AVAILABLE_SEARCH_QUERY = gql`
+  query GetPlateAvailability($input: PlateAvailabilityInput!) {
+    plateAvailable(input: $input) {
+      regno
+      available
+    }
+  }
+`

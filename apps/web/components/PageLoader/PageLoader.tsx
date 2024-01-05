@@ -9,7 +9,7 @@ export const PageLoader = () => {
 
   useEffect(() => {
     const start = () => {
-      ref.current.continuousStart()
+      ref?.current?.continuousStart()
     }
     const done = () => {
       ref.current?.complete()

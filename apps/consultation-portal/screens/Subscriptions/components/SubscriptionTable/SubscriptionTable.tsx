@@ -5,7 +5,7 @@ import {
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import { mapIsToEn } from '../../../../utils/helpers'
+import { mapIsToEn, sortLocale } from '../../../../utils/helpers'
 import { SubscriptionArray } from '../../../../types/interfaces'
 import { Area } from '../../../../types/enums'
 import { SubscriptionTableItem, SubscriptionTableHeader } from './components'
@@ -21,6 +21,13 @@ interface Props {
   isMySubscriptions?: boolean
 }
 
+const processData = ({ currentTab, data }) => {
+  if (currentTab === 'institutions' || currentTab === 'policyAreas') {
+    return sortLocale({ list: data, sortOption: 'name' })
+  }
+  return data
+}
+
 const SubscriptionTable = ({
   currentTab,
   subscriptionArray,
@@ -33,12 +40,22 @@ const SubscriptionTable = ({
   const { md: mdBreakpoint } = useBreakpoint()
   const { Table, Body } = T
   const loc = localization.subscriptionTable
+  const mappedCurrentTab = mapIsToEn[currentTab]
+
+  const generalSubscriptionCount = [dontShowChanges, dontShowNew].filter(
+    Boolean,
+  ).length
 
   const { subscribedToAllNewObj, subscribedToAllChangesObj } = subscriptionArray
-  const thisData = subscriptionArray[mapIsToEn[currentTab]]
+  const thisData = subscriptionArray[mappedCurrentTab]
+
+  const dataToRender = processData({
+    currentTab: mappedCurrentTab,
+    data: thisData,
+  })
 
   if (
-    thisData.length === 0 &&
+    dataToRender.length === 0 &&
     !subscribedToAllNewObj.checked &&
     !subscribedToAllChangesObj.checked
   ) {
@@ -91,14 +108,14 @@ const SubscriptionTable = ({
           />
         )}
 
-        {thisData &&
-          thisData.length > 0 &&
-          thisData.map((item, idx) => {
+        {dataToRender &&
+          dataToRender.length > 0 &&
+          dataToRender.map((item, idx) => {
             return (
               <SubscriptionTableItem
                 key={item.key}
                 item={item}
-                idx={idx}
+                idx={idx + generalSubscriptionCount}
                 mdBreakpoint={mdBreakpoint}
                 currentTab={currentTab}
                 subscriptionArray={subscriptionArray}

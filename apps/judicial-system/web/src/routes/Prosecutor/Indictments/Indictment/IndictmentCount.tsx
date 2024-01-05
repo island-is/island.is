@@ -1,21 +1,16 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
+import { IntlShape, useIntl } from 'react-intl'
 
 import {
   Box,
+  Button,
+  Icon,
   Input,
   Select,
-  Button,
   Tag,
-  Icon,
 } from '@island.is/island-ui/core'
-import {
-  ReactSelectOption,
-  TempCase as Case,
-  TempIndictmentCount as TIndictmentCount,
-} from '@island.is/judicial-system-web/src/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   offenseSubstances,
   Substance,
@@ -25,13 +20,19 @@ import {
   BlueBox,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  TempCase as Case,
+  TempIndictmentCount as TIndictmentCount,
+} from '@island.is/judicial-system-web/src/types'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  UpdateIndictmentCount,
+  useIndictmentCounts,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
@@ -112,10 +113,10 @@ const laws = Object.values(offenseLawsMap)
   .sort(lawsCompare)
 
 function getLawsBroken(
-  offenses: IndictmentCountOffense[],
-  substances?: SubstanceMap,
+  offenses?: IndictmentCountOffense[] | null,
+  substances?: SubstanceMap | null,
 ) {
-  if (offenses.length === 0) {
+  if (!offenses || offenses.length === 0) {
     return []
   }
 
@@ -273,7 +274,9 @@ export function getLegalArguments(
   })
 }
 
-export const IndictmentCount: React.FC<Props> = (props) => {
+export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     indictmentCount,
     workingCase,
@@ -283,32 +286,18 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     setWorkingCase,
   } = props
   const { formatMessage } = useIntl()
+  const { lawTag } = useIndictmentCounts()
 
   const [
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
-  const [
-    incidentDescriptionErrorMessage,
-    setIncidentDescriptionErrorMessage,
-  ] = useState<string>('')
-  const [
-    bloodAlcoholContentErrorMessage,
-    setBloodAlcoholContentErrorMessage,
-  ] = useState<string>('')
-  const [
-    legalArgumentsErrorMessage,
-    setLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-
-  const lawTag = useCallback(
-    (law: number[]) =>
-      formatMessage(strings.lawsBrokenTag, {
-        paragraph: law[1],
-        article: law[0],
-      }),
-    [formatMessage],
-  )
+  const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
+    useState<string>('')
+  const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
+    useState<string>('')
+  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
+    useState<string>('')
 
   const offensesOptions = useMemo(
     () =>
@@ -388,7 +377,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
 
     if (update.substances || update.offenses) {
       lawsBroken = getLawsBroken(
-        update.offenses || indictmentCount.offenses || [],
+        update.offenses || indictmentCount.offenses,
         update.substances || indictmentCount.substances,
       )
     }
@@ -424,20 +413,20 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       <Box marginBottom={1}>
         <Select
           name="policeCaseNumber"
-          options={workingCase.policeCaseNumbers.map((val) => ({
+          options={workingCase.policeCaseNumbers?.map((val) => ({
             value: val,
             label: val,
           }))}
           label={formatMessage(strings.policeCaseNumberLabel)}
           placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
-          onChange={async (so: ValueType<ReactSelectOption>) => {
-            const policeCaseNumber = (so as ReactSelectOption).value as string
+          onChange={async (so) => {
+            const policeCaseNumber = so?.value
 
             handleIndictmentCountChanges({ policeCaseNumber })
           }}
           value={
             workingCase.policeCaseNumbers
-              .map((val) => ({
+              ?.map((val) => ({
                 value: val,
                 label: val,
               }))
@@ -514,9 +503,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           options={offensesOptions}
           label={formatMessage(strings.incidentLabel)}
           placeholder={formatMessage(strings.incidentPlaceholder)}
-          onChange={(so: ValueType<ReactSelectOption>) => {
-            const selectedOffense = (so as ReactSelectOption)
-              .value as IndictmentCountOffense
+          onChange={(so) => {
+            const selectedOffense = so?.value as IndictmentCountOffense
             const offenses = [
               ...(indictmentCount.offenses ?? []),
               selectedOffense,
@@ -655,7 +643,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           label={formatMessage(strings.lawsBrokenLabel)}
           placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
           value={null}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+          onChange={(selectedOption) => {
             const law = (selectedOption as LawsBrokenOption).law
             const lawsBroken = [
               ...(indictmentCount.lawsBroken ?? []),

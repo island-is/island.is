@@ -1,0 +1,6 @@
+mutation UploadPoliceCaseFile($input: UploadPoliceCaseFileInput!) {
+  uploadPoliceCaseFile(input: $input) {
+    key
+    size
+  }
+}

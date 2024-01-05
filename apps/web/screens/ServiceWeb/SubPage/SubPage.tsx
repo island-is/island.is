@@ -78,17 +78,19 @@ const SubPage: Screen<SubPageProps> = ({
   locale,
 }) => {
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
   useContentfulId(
-    organization.id,
+    organization?.id,
     singleSupportCategory?.id,
     singleSupportQNA?.id,
   )
   useLocalLinkTypeResolver()
 
-  const organizationSlug = organization.slug
+  const organizationSlug = organization?.slug
   const question = singleSupportQNA
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
@@ -119,9 +121,8 @@ const SubPage: Screen<SubPageProps> = ({
     linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = [
     {
@@ -130,8 +131,10 @@ const SubPage: Screen<SubPageProps> = ({
       href: linkResolver('serviceweb').href,
     },
     {
-      title: organization.title,
+      title: organization?.title,
       typename: 'serviceweb',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       href: linkResolver('serviceweborganization', [organizationSlug]).href,
     },
     {
@@ -139,6 +142,8 @@ const SubPage: Screen<SubPageProps> = ({
       typename: 'serviceweb',
       isTag: true,
       ...(questionSlug && {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         href: linkResolver('supportcategory', [organizationSlug, categorySlug])
           .href,
       }),
@@ -154,6 +159,8 @@ const SubPage: Screen<SubPageProps> = ({
         n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
       )}
       institutionSlug={institutionSlug}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
@@ -166,6 +173,8 @@ const SubPage: Screen<SubPageProps> = ({
         <GridContainer>
           <GridRow>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -174,12 +183,20 @@ const SubPage: Screen<SubPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         items={breadcrumbItems.slice(
                           institutionSlugBelongsToMannaudstorg ? 1 : 0,
                         )}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref>
+                            <NextLink
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
+                              href={href}
+                              passHref
+                              legacyBehavior
+                            >
                               {link}
                             </NextLink>
                           )
@@ -279,7 +296,7 @@ const SubPage: Screen<SubPageProps> = ({
                               }
                             >
                               <OrganizationContactBanner
-                                organizationLogoUrl={organization.logo?.url}
+                                organizationLogoUrl={organization?.logo?.url}
                                 contactLink={question.contactLink}
                                 headerText={o(
                                   'serviceWebOrganizationContactBannerHeaderTitle',
@@ -327,7 +344,11 @@ const SubPage: Screen<SubPageProps> = ({
                                             <TopicCard
                                               href={
                                                 linkResolver('supportqna', [
+                                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                  // @ts-ignore make web strict
                                                   organizationSlug,
+                                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                  // @ts-ignore make web strict
                                                   categorySlug,
                                                   slug,
                                                 ]).href
@@ -381,7 +402,7 @@ const SubPage: Screen<SubPageProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
+SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
   const slugs = query.slugs as string
   const organizationSlug = slugs[0]
   const categorySlug = slugs[1]
@@ -392,6 +413,8 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
       res.writeHead(302, {
         Location: linkResolver(
           'supportqna',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           [organizationSlug, categorySlug, single(query.q)],
           locale as Locale,
         ).href,
@@ -428,7 +451,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -462,16 +485,26 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
   ])
 
   const organizationNamespace = JSON.parse(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     organization?.data?.getOrganization?.namespace?.fields ?? '{}',
   )
 
   return {
     namespace,
     organizationNamespace,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     organization: organization?.data?.getOrganization,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     singleSupportQNA: singleSupportQNA?.data?.getSingleSupportQNA,
     questionSlug,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     singleSupportCategory: singleSupportCategory?.data?.getSupportCategory,
     locale: locale as Locale,
   }
@@ -490,7 +523,11 @@ const getSortedSupportSubCategoryTitles = (
     if (subCategoryB.length === 0) return -1
 
     return (
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       subCategoryB[0].subCategory?.importance -
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       subCategoryA[0].subCategory?.importance
     )
   })

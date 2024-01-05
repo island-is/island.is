@@ -22,6 +22,7 @@ export const UniversityOfIcelandApiProvider: Provider<StudentTranscriptApi> = {
         fetchApi: createEnhancedFetch({
           logErrorResponseBody: true,
           name: 'clients-university-of-iceland',
+          organizationSlug: 'haskoli-islands',
           timeout: config.fetch.timeout,
           autoAuth: idsClientConfig.isConfigured
             ? {

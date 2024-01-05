@@ -9,7 +9,7 @@ interface Props {
   dismiss: () => void
 }
 
-const FileNotFoundModal: React.FC<Props> = (props) => {
+const FileNotFoundModal: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { dismiss } = props
 
   const { formatMessage } = useIntl()

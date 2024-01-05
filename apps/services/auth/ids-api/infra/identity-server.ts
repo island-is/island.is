@@ -30,25 +30,13 @@ export const serviceSetup = (services: {
         staging: 'true',
         prod: 'true',
       },
-      CacheSettings__Memcached__Address: {
-        dev: 'identity-server.5fzau3.cfg.euw1.cache.amazonaws.com',
-        staging: 'identity-server.ab9ckb.cfg.euw1.cache.amazonaws.com',
-        prod: 'identity-server.dnugi2.cfg.euw1.cache.amazonaws.com',
-      },
-      CacheSettings__Memcached__Port: {
-        dev: '11211',
-        staging: '11211',
-        prod: '11211',
-      },
-      CacheSettings__Redis__Address: {
-        dev:
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
+      RedisSettings__Address: {
+        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
         staging:
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com',
-        prod:
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
+        prod: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
       },
-      CacheSettings__Redis__Port: {
+      RedisSettings__Port: {
         dev: '6379',
         staging: '6379',
         prod: '6379',
@@ -83,12 +71,22 @@ export const serviceSetup = (services: {
         staging: 'false',
         prod: 'true',
       },
+      MeUserProfileApiSettings__BaseAddress: {
+        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        staging:
+          'http://web-service-portal-api.service-portal.svc.cluster.local',
+        prod: 'https://service-portal-api.internal.island.is',
+      },
       Application__MinCompletionPortThreads: '10',
-      NO_UPDATE_NOTIFIER: 'true',
       ContentfulSettings__BaseAddress: {
         dev: 'https://preview.contentful.com',
         staging: 'https://cdn.contentful.com',
         prod: 'https://cdn.contentful.com',
+      },
+      Application__AllowedRedirectUris: {
+        dev: 'https://beta.dev01.devland.is/minarsidur',
+        staging: 'https://beta.staging01.devland.is/minarsidur',
+        prod: 'https://island.is/minarsidur',
       },
     })
     .secrets({
@@ -105,6 +103,10 @@ export const serviceSetup = (services: {
       FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       ContentfulSettings__AccessToken:
         '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
+      Redaction__UserIdentifiers__KeyId:
+        '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID',
+      Redaction__UserIdentifiers__Key:
+        '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY',
     })
     .ingress({
       primary: {

@@ -1,0 +1,7 @@
+mutation UpdateFiles($input: UpdateFilesInput!) {
+  updateFiles(input: $input) {
+    caseFiles {
+      id
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 import { withFigma } from '../../utils/withFigma'
-import { PhoneInput } from './PhoneInput'
+import { PhoneInput, PhoneInputProps } from './PhoneInput'
 
 export default {
   title: 'Form/PhoneInput',
@@ -9,6 +9,11 @@ export default {
   argTypes: {
     label: { control: 'text', defaultValue: 'Phone' },
     placeholder: { control: 'text', defaultValue: 'This is the placeholder' },
+    size: {
+      options: ['xs', 'sm', 'md'],
+      defaultValue: 'md',
+      control: { type: 'radio' },
+    },
     backgroundColor: {
       options: ['white', 'blue'],
       control: { type: 'radio' },
@@ -18,10 +23,12 @@ export default {
 }
 
 const Wrap = ({ children }: PropsWithChildren<{}>) => (
-  <div style={{ height: 400 }}>{children}</div>
+  <div style={{ height: 400, position: 'relative', overflow: 'auto' }}>
+    {children}
+  </div>
 )
 
-export const Template = (args) => (
+export const Template = (args: PhoneInputProps) => (
   <Wrap>
     <PhoneInput size="md" label="Phone" name="Test1" {...args} />
   </Wrap>
@@ -83,4 +90,12 @@ WithLabelAbove.args = {
   placeholder: 'This is the placeholder',
   name: 'Test8',
   size: 'xs',
+}
+
+export const Small = Template.bind({})
+Small.args = {
+  label: 'Phone',
+  placeholder: 'This is the placeholder',
+  name: 'Test9',
+  size: 'sm',
 }

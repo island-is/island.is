@@ -65,7 +65,13 @@ export const AnchorNavigation = ({
         {navigation.map(({ id, text }) => (
           <Text color={id === activeId ? 'blue400' : 'blue600'}>
             <FocusableBox
-              ref={id === activeId ? setBulletRef : null}
+              ref={
+                id === activeId
+                  ? (arg) => {
+                      setBulletRef(arg ?? undefined)
+                    }
+                  : undefined
+              }
               key={id}
               component="button"
               type="button"

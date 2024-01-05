@@ -48,7 +48,7 @@ export const SkilavottordVehiclesQuery = gql`
   }
 `
 
-const Overview: FC = () => {
+const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
@@ -151,7 +151,9 @@ const Overview: FC = () => {
           ]}
           renderLink={(link, item) => {
             return item?.href ? (
-              <NextLink href={item?.href}>{link}</NextLink>
+              <NextLink href={item?.href} legacyBehavior>
+                {link}
+              </NextLink>
             ) : (
               link
             )

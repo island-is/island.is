@@ -15,8 +15,7 @@ export const contract = {
       description: 'Contract page description',
     },
     parentBDescription: {
-      id:
-        'crc.application:section.contract.overview.parentBDescription#markdown',
+      id: 'crc.application:section.contract.overview.parentBDescription#markdown',
       defaultMessage:
         'Hér er yfirlit yfir samning um breytt lögheimili og meðlag. __{otherParent}__ hefur nú þegar undrritað samningin og næst þarft þú að undirrita áður en umsóknin fer í afgreiðslu hjá sýslumanni.\\n\\nBreyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
       description: 'Contract page description for parent B',
@@ -52,8 +51,7 @@ export const contract = {
       description: 'Label for child benefit',
     },
     text: {
-      id:
-        'crc.application:section.contract.overview.childBenefit.text#markdown',
+      id: 'crc.application:section.contract.overview.childBenefit.text#markdown',
       defaultMessage:
         '{currentResidenceParentName} greiðir einfalt meðlag með hverju barni til nýs lögheimilisforeldris.\\nEf foreldrar greiða aukið meðlag þarf að semja að nýju og leita staðfestingar sýslumanns.',
       description: 'Text for child benefit',

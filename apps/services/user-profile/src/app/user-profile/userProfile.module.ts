@@ -12,14 +12,10 @@ import { EmailVerification } from './emailVerification.model'
 import { VerificationService } from './verification.service'
 import { UserProfileInfraController } from './userProfileInfra.controller'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
-import { AuditModule } from '@island.is/nest/audit'
-import { AuthModule } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
-    AuthModule.register(environment.auth),
     SequelizeModule.forFeature([
       EmailVerification,
       SmsVerification,

@@ -9,7 +9,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const SAkHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -17,7 +19,7 @@ const SAkHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -33,7 +35,7 @@ const SAkHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={

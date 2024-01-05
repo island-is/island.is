@@ -1,27 +1,29 @@
 {
-  "root": "libs/clients/assets",
+  "name": "clients-assets",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/assets/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/assets/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/assets"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/assets"],
       "options": {
-        "jestConfig": "libs/clients/assets/jest.config.js",
+        "jestConfig": "libs/clients/assets/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/assets/gen/fetch -i libs/clients/assets/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

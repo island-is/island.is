@@ -19,7 +19,11 @@ interface Props extends FieldBaseProps {
   field: DateField
 }
 
-export const DateFormField: FC<Props> = ({ application, error, field }) => {
+export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
+  application,
+  error,
+  field,
+}) => {
   const {
     id,
     disabled,

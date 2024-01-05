@@ -2,6 +2,16 @@ import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  core,
+  rcDemands,
+  rcReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CheckboxList,
@@ -9,30 +19,17 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  useCase,
-  useDeb,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  core,
-  rcDemands,
-  rcReportForm,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseType,
   Defendant,
   Gender,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
@@ -40,30 +37,31 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  autofillEntry,
   formatDateForServer,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import {
-  restrictionsCheckboxes,
-  travelBanRestrictionsCheckboxes,
-} from '@island.is/judicial-system-web/src/utils/restrictions'
+  UpdateCase,
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  restrictionsCheckboxes,
+  travelBanRestrictionsCheckboxes,
+} from '@island.is/judicial-system-web/src/utils/restrictions'
+import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './PoliceDemands.css'
 
 export interface DemandsAutofillProps {
   defendant: Defendant
-  caseType: CaseType
-  requestedValidToDate?: string | Date
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  parentCaseDecision?: CaseDecision
-  courtName?: string
+  caseType?: CaseType | null
+  requestedValidToDate?: string | Date | null
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null
+  parentCaseDecision?: CaseDecision | null
+  courtName?: string | null
 }
 
 export const getDemandsAutofill = (
@@ -92,7 +90,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const PoliceDemands: React.FC = () => {
+export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -102,9 +100,8 @@ export const PoliceDemands: React.FC = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
-    '',
-  )
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
+    useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
   useDeb(workingCase, [
     'lawsBroken',
@@ -142,10 +139,10 @@ export const PoliceDemands: React.FC = () => {
 
   const onDemandsChange = React.useCallback(
     (
-      entry: autofillEntry,
-      caseType: CaseType,
-      requestedValidToDate: Date | string | undefined,
-      requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
+      entry: UpdateCase,
+      caseType?: CaseType | null,
+      requestedValidToDate?: Date | string | null,
+      requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
     ) => {
       setAndSendCaseToServer(
         [
@@ -260,7 +257,8 @@ export const PoliceDemands: React.FC = () => {
                     )
                     onDemandsChange(
                       {
-                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions:
+                          nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,

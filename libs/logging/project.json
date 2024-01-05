@@ -1,22 +1,23 @@
 {
-  "root": "libs/logging",
+  "name": "logging",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/logging/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/logging/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/logging/jest.config.js",
+        "jestConfig": "libs/logging/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/logging"]
+      "outputs": ["{workspaceRoot}/coverage/libs/logging"]
     }
   },
   "tags": ["lib:nest", "lib:node", "scope:nest", "TODO:splitUp"]

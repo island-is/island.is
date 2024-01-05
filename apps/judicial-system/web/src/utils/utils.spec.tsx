@@ -7,14 +7,14 @@ import {
   Gender,
   Notification,
   NotificationType,
-} from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
+import * as formatters from './formatters'
 import {
   getAppealEndDate,
   getShortGender,
   hasSentNotification,
 } from './stepHelper'
-import * as formatters from './formatters'
 
 describe('Formatters utils', () => {
   describe('Parse time', () => {
@@ -73,11 +73,12 @@ describe('Formatters utils', () => {
   describe('replaceTabsOnChange', () => {
     test('should not call replaceTabs if called with a string that does not have a tab character', async () => {
       // Arrange
+      const user = userEvent.setup()
       const spy = jest.spyOn(formatters, 'replaceTabs')
       render(<input onChange={(evt) => formatters.replaceTabsOnChange(evt)} />)
 
       // Act
-      userEvent.type(await screen.findByRole('textbox'), 'Lorem ipsum')
+      await user.type(await screen.findByRole('textbox'), 'Lorem ipsum')
 
       // Assert
       expect(spy).not.toBeCalled()
@@ -213,7 +214,7 @@ describe('Step helper', () => {
       // Arrange
 
       // Act
-      const res = formatters.replaceTabs((undefined as unknown) as string)
+      const res = formatters.replaceTabs(undefined as unknown as string)
 
       // Assert
       expect(res).toBeUndefined()

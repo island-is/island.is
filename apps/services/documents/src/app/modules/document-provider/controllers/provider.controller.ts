@@ -80,9 +80,8 @@ export class ProviderController {
     resources: (provider) => provider.id,
   })
   async findByExternalId(@Param('id') id: string): Promise<Provider> {
-    const provider = await this.documentProviderService.findProviderByExternalProviderId(
-      id,
-    )
+    const provider =
+      await this.documentProviderService.findProviderByExternalProviderId(id)
 
     if (!provider) {
       throw new NotFoundException(
@@ -117,14 +116,12 @@ export class ProviderController {
     @Body() provider: UpdateProviderDto,
     @CurrentUser() user: User,
   ): Promise<Provider> {
-    const {
-      numberOfAffectedRows,
-      updatedProvider,
-    } = await this.documentProviderService.updateProvider(
-      id,
-      provider,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedProvider } =
+      await this.documentProviderService.updateProvider(
+        id,
+        provider,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Provider ${id} does not exist.`)

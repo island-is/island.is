@@ -1,28 +1,36 @@
 {
-  "root": "libs/clients/smartsolutions",
+  "name": "clients-smartsolutions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/smartsolutions/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/clients/smartsolutions/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/smartsolutions"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/smartsolutions"],
       "options": {
-        "jestConfig": "libs/clients/smartsolutions/jest.config.js",
+        "jestConfig": "libs/clients/smartsolutions/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/clients/smartsolutions/fetchGraphql.yml"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/clients/smartsolutions/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/schema.ts"]
     }
   },
   "tags": ["lib:client", "scope:client"]

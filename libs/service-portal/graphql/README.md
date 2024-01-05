@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # service-portal-graphql
 
 This library was generated with [Nx](https://nx.dev).

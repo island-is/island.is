@@ -8,7 +8,10 @@ interface TableProps {
   vehicles: Vehicle[]
 }
 
-export const CarsTable: FC<TableProps> = ({ titles, vehicles }) => {
+export const CarsTable: FC<React.PropsWithChildren<TableProps>> = ({
+  titles,
+  vehicles,
+}) => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   return (
     <Table>

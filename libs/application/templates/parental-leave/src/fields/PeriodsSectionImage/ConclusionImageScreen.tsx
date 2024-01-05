@@ -24,7 +24,9 @@ import {
 
 import * as styles from './ConclusionImageScreen.css'
 
-const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
+const ConclusionSectionImage: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const {
     isSelfEmployed,

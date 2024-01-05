@@ -4,7 +4,7 @@ interface Props {
   altText?: string
 }
 
-export const Company: FC<Props> = ({ altText }) => (
+export const Company: FC<React.PropsWithChildren<Props>> = ({ altText }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="100%"

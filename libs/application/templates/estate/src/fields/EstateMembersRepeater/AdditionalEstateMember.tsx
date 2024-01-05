@@ -6,6 +6,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
+import * as kennitala from 'kennitala'
 import {
   Box,
   GridColumn,
@@ -14,9 +15,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
-import { GenericFormField } from '@island.is/application/types'
-import { EstateMember } from '../../types'
+import { EstateTypes, YES } from '../../lib/constants'
+import intervalToDuration from 'date-fns/intervalToDuration'
+import { GenericFormField, Application } from '@island.is/application/types'
+import { ErrorValue, EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
 import { useEffect } from 'react'
@@ -27,19 +29,24 @@ export const AdditionalEstateMember = ({
   remove,
   fieldName,
   relationOptions,
+  relationWithApplicantOptions,
   error,
+  application,
 }: {
+  application: Application
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
+  relationWithApplicantOptions: { value: string; label: string }[]
   error: Record<string, string>
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
   const nameField = `${fieldIndex}.name`
   const relationField = `${fieldIndex}.relation`
+  const relationWithApplicantField = `${fieldIndex}.relationWithApplicant`
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
   const initialField = `${fieldIndex}.initial`
@@ -47,12 +54,28 @@ export const AdditionalEstateMember = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
+  const advocatePhone = `${fieldIndex}.advocate.phone`
+  const advocateEmail = `${fieldIndex}.advocate.email`
+
+  const selectedEstate = application.answers.selectedEstate
+
   const foreignCitizenship = useWatch({
     name: foreignCitizenshipField,
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
-  const { control, setValue, clearErrors } = useFormContext()
+  const { control, setValue, clearErrors, getValues } = useFormContext()
+
+  const values = getValues()
+  const currentEstateMember = values?.estate?.estateMembers?.[index]
+  const hasForeignCitizenship =
+    currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
+  const birthDate = currentEstateMember?.dateOfBirth
+  const memberAge =
+    hasForeignCitizenship && birthDate
+      ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
+          ?.years
+      : kennitala.info(currentEstateMember.nationalId)?.age
 
   useEffect(() => {
     clearErrors(nameField)
@@ -113,6 +136,8 @@ export const AdditionalEstateMember = ({
               name={dateOfBirthField}
               locale="is"
               maxDate={new Date()}
+              minYear={1900}
+              maxYear={new Date().getFullYear()}
               backgroundColor="blue"
               onChange={(d) => {
                 setValue(dateOfBirthField, d)
@@ -124,7 +149,15 @@ export const AdditionalEstateMember = ({
       ) : (
         <Box paddingY={2}>
           <LookupPerson
-            field={{ id: fieldIndex, props: { alertWhenUnder18: true } }}
+            message={formatMessage(m.inheritanceUnder18Error)}
+            field={{
+              id: `${fieldIndex}`,
+              props: {
+                alertWhenUnder18:
+                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+                requiredNationalId: true,
+              },
+            }}
             error={error}
           />
         </Box>
@@ -143,47 +176,131 @@ export const AdditionalEstateMember = ({
             required
           />
         </GridColumn>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-          <InputController
-            id={phoneField}
-            name={phoneField}
-            label={m.phone.defaultMessage}
-            defaultValue={field.phone || ''}
-            backgroundColor="blue"
-            format={'###-####'}
-            error={error?.phone}
-          />
-        </GridColumn>
+        {application.answers.selectedEstate ===
+          EstateTypes.permitForUndividedEstate && (
+          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+            <SelectController
+              key={relationWithApplicantField}
+              id={relationWithApplicantField}
+              name={relationWithApplicantField}
+              label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
+              defaultValue={field.relationWithApplicant}
+              options={relationWithApplicantOptions}
+              error={error?.relationWithApplicant}
+              backgroundColor="blue"
+              required={!field.initial}
+            />
+          </GridColumn>
+        )}
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={emailField}
             name={emailField}
-            label={m.email.defaultMessage}
+            label={formatMessage(m.email)}
             defaultValue={field.email || ''}
             backgroundColor="blue"
             error={error?.email}
+            required
           />
         </GridColumn>
-        <GridColumn span="1/1" paddingBottom={2}>
-          <Box width="half">
-            <CheckboxController
-              key={foreignCitizenshipField}
-              id={foreignCitizenshipField}
-              name={foreignCitizenshipField}
-              defaultValue={field?.foreignCitizenship || []}
-              options={[
-                {
-                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                  value: YES,
-                },
-              ]}
-              onSelect={(val) => {
-                setValue(foreignCitizenshipField, val)
-              }}
-            />
-          </Box>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <InputController
+            id={phoneField}
+            name={phoneField}
+            label={formatMessage(m.phone)}
+            defaultValue={field.phone || ''}
+            backgroundColor="blue"
+            format={'###-####'}
+            error={error?.phone}
+            required
+          />
         </GridColumn>
       </GridRow>
+      {/* ADVOCATE */}
+      {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
+        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        memberAge !== undefined &&
+        memberAge < 18 && (
+          <Box
+            marginTop={2}
+            marginBottom={2}
+            paddingY={5}
+            paddingX={7}
+            borderRadius="large"
+            border="standard"
+          >
+            <GridRow>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <Text variant="h4">
+                  {formatMessage(m.inheritanceAdvocateLabel)}
+                </Text>
+              </GridColumn>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <LookupPerson
+                  message={
+                    selectedEstate === EstateTypes.divisionOfEstateByHeirs
+                      ? formatMessage(m.inheritanceUnder18Error)
+                      : formatMessage(m.inheritanceUnder18ErrorAdvocate)
+                  }
+                  nested
+                  field={{
+                    id: `${fieldIndex}.advocate`,
+                    props: {
+                      alertWhenUnder18:
+                        selectedEstate !==
+                          EstateTypes.divisionOfEstateByHeirs &&
+                        memberAge !== undefined &&
+                        memberAge < 18,
+                    },
+                  }}
+                  error={error}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocatePhone}
+                  name={advocatePhone}
+                  label={formatMessage(m.phone)}
+                  backgroundColor="blue"
+                  format="###-####"
+                  error={(error?.advocate as unknown as ErrorValue)?.phone}
+                  size="sm"
+                  required
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocateEmail}
+                  name={advocateEmail}
+                  label={formatMessage(m.email)}
+                  backgroundColor="blue"
+                  error={(error?.advocate as unknown as ErrorValue)?.email}
+                  size="sm"
+                  required
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+        )}
+      <GridColumn span="1/1" paddingBottom={2}>
+        <Box width="half">
+          <CheckboxController
+            key={foreignCitizenshipField}
+            id={foreignCitizenshipField}
+            name={foreignCitizenshipField}
+            defaultValue={field?.foreignCitizenship || []}
+            options={[
+              {
+                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                value: YES,
+              },
+            ]}
+            onSelect={(val) => {
+              setValue(foreignCitizenshipField, val)
+            }}
+          />
+        </Box>
+      </GridColumn>
     </Box>
   )
 }

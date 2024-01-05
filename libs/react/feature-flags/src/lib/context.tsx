@@ -1,12 +1,15 @@
 import React, { FC, createContext, useContext, useMemo } from 'react'
+import * as ConfigCatJS from 'configcat-js'
 import {
-  createClient,
   FeatureFlagClient,
   FeatureFlagUser,
   SettingValue,
   SettingTypeOf,
+  createClientFactory,
 } from '@island.is/feature-flags'
 import { useAuth } from '@island.is/auth/react'
+
+const createClient = createClientFactory(ConfigCatJS)
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: <T extends SettingValue>(_: string, defaultValue: T) =>
@@ -20,11 +23,9 @@ export interface FeatureFlagContextProviderProps {
   defaultUser?: FeatureFlagUser
 }
 
-export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
-  children,
-  sdkKey,
-  defaultUser: userProp,
-}) => {
+export const FeatureFlagProvider: FC<
+  React.PropsWithChildren<FeatureFlagContextProviderProps>
+> = ({ children, sdkKey, defaultUser: userProp }) => {
   const { userInfo } = useAuth()
   const featureFlagClient = useMemo(() => {
     return createClient({ sdkKey })
@@ -68,10 +69,9 @@ export interface MockedFeatureFlagProviderProps {
   flags: string[] | FeatureFlagRecord
 }
 
-export const MockedFeatureFlagProvider: FC<MockedFeatureFlagProviderProps> = ({
-  flags,
-  children,
-}) => {
+export const MockedFeatureFlagProvider: FC<
+  React.PropsWithChildren<MockedFeatureFlagProviderProps>
+> = ({ flags, children }) => {
   const context = useMemo<FeatureFlagClient>(() => {
     const cleanFlags = Array.isArray(flags)
       ? flags.reduce<FeatureFlagRecord>((obj, flag) => {

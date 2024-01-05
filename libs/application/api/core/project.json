@@ -1,19 +1,20 @@
 {
-  "root": "libs/application/api/core",
+  "name": "application-api-core",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/api/core/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/application/api/core/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/application/api/core"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/application/api/core"],
       "options": {
-        "jestConfig": "libs/application/api/core/jest.config.js",
+        "jestConfig": "libs/application/api/core/jest.config.ts",
         "passWithNoTests": true
       }
     }

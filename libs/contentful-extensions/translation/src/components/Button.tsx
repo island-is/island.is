@@ -19,7 +19,11 @@ export const ICONS = [
   { id: 'format_list_bulleted', src: require('../assets/list_bulleted.png') },
 ]
 
-export const Button: FC<ButtonProps> = ({ active, icon, ...props }) => {
+export const Button: FC<React.PropsWithChildren<ButtonProps>> = ({
+  active,
+  icon,
+  ...props
+}) => {
   const getIcon = ICONS.find((item) => item.id === icon)?.src ?? ICONS[0].src
 
   return (

@@ -1,5 +1,6 @@
-import transformLib from './transformLib'
 import { TransformOptions, ConfigAPI, PluginItem } from '@babel/core'
+import { workspaceRoot } from '@nx/devkit'
+import transformLib from './transformLib'
 
 export default function (api: ConfigAPI): TransformOptions {
   const config: TransformOptions = {
@@ -16,7 +17,7 @@ export default function (api: ConfigAPI): TransformOptions {
         ...transformLib('@island.is/island-ui/contentful'),
         ...transformLib(
           '@island.is/web/components',
-          'apps/web/components/real.ts',
+          `${workspaceRoot}/apps/web/components/real.ts`,
         ),
         lodash: {
           transform: 'lodash/${member}',

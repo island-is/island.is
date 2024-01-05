@@ -35,18 +35,22 @@ export class Document {
   @Field(() => String)
   url!: string
 
+  @Field(() => Boolean, { nullable: true })
+  bookmarked?: boolean
+
   @Field(() => String, { nullable: true })
   categoryId?: string
 
   static fromDocumentInfo(docInfo: DocumentInfoDTO): Document {
     const doc = new Document()
-    doc.date = new Date(docInfo.documentDate)
+    doc.date = new Date(docInfo.publicationDate || docInfo.documentDate)
     doc.id = docInfo.id
     doc.opened = docInfo.opened
     doc.senderName = docInfo.senderName
     doc.subject = docInfo.subject
     doc.senderNatReg = docInfo.senderKennitala
     doc.categoryId = docInfo.categoryId
+    doc.bookmarked = docInfo.bookmarked
 
     return doc
   }

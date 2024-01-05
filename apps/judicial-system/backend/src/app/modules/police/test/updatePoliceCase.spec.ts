@@ -1,18 +1,20 @@
-import { uuid } from 'uuidv4'
-import fetch from 'node-fetch'
-import { Base64 } from 'js-base64'
 import { Agent } from 'https'
+import { Base64 } from 'js-base64'
+import fetch from 'node-fetch'
+import { uuid } from 'uuidv4'
 
 import { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
+
 import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+
+import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { randomDate } from '../../../test'
 import { policeModuleConfig } from '../police.config'
-import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('node-fetch')
 
@@ -36,13 +38,14 @@ describe('PoliceController - Update Police Case', () => {
   const courtRecordPdf = 'test court record pdf'
   const rulingPdf = 'test ruling pdf'
   const custodyNoticePdf = 'test custody notice pdf'
+  const appealRulingPdf = 'test court of appeals ruling pdf'
 
   let mockConfig: ConfigType<typeof policeModuleConfig>
   let xRoadPath: string
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const mockFetch = (fetch as unknown) as jest.Mock
+    const mockFetch = fetch as unknown as jest.Mock
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: jest.fn().mockResolvedValueOnce({ ok: true }),
@@ -75,6 +78,7 @@ describe('PoliceController - Update Police Case', () => {
           courtRecordPdf,
           rulingPdf,
           custodyNoticePdf,
+          [appealRulingPdf],
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -115,6 +119,7 @@ describe('PoliceController - Update Police Case', () => {
               { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
               { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
               { type: 'RVVI', courtDocument: Base64.btoa(custodyNoticePdf) },
+              { type: 'RVUL', courtDocument: Base64.btoa(appealRulingPdf) },
             ],
           }),
         },

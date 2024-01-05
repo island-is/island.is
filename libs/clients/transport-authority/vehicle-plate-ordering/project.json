@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/transport-authority/vehicle-plate-ordering",
+  "name": "clients-transport-authority-vehicle-plate-ordering",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/transport-authority/vehicle-plate-ordering/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,17 +14,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/clients/transport-authority/vehicle-plate-ordering"
+        "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-plate-ordering"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-plate-ordering/jest.config.js",
+        "jestConfig": "libs/clients/transport-authority/vehicle-plate-ordering/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Vehicle-PlateOrdering-V1 -H 'Accept: application/json' > src/clientConfig.json",
@@ -33,13 +34,12 @@
         "cwd": "libs/clients/transport-authority/vehicle-plate-ordering"
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/transport-authority/vehicle-plate-ordering/gen/fetch -i libs/clients/transport-authority/vehicle-plate-ordering/src/clientConfig.json"
-        ]
-      }
+        "command": "yarn openapi-generator -o libs/clients/transport-authority/vehicle-plate-ordering/gen/fetch -i libs/clients/transport-authority/vehicle-plate-ordering/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

@@ -14,15 +14,20 @@ export const buildHistoryItems = (
 ): ApplicationCardHistoryItem[] | undefined => {
   if (application.status === ApplicationStatus.DRAFT) return
 
-  let history: {
-    title: string
-    date?: string
-    content?: React.ReactNode
-  }[] = []
+  let historyItems: ApplicationCardHistoryItem[] = []
+
+  const actionCardHistory = application.actionCard?.history
+  const lastHistoryItem = actionCardHistory
+    ? actionCardHistory[actionCardHistory.length - 1]
+    : undefined
+  const lastHistoryDate = lastHistoryItem?.date
 
   if (application.actionCard?.pendingAction?.title) {
-    history.push({
-      date: format(new Date(), dateFormat),
+    historyItems.push({
+      date: format(
+        lastHistoryDate ? new Date(lastHistoryDate) : new Date(),
+        dateFormat,
+      ),
       title: formatMessage(application.actionCard.pendingAction.title ?? ''),
       content: application.actionCard.pendingAction.content ? (
         <AlertMessage
@@ -50,14 +55,14 @@ export const buildHistoryItems = (
     })
   }
 
-  if (application.actionCard?.history) {
-    history = history.concat(
-      application.actionCard?.history.map((x) => ({
+  if (actionCardHistory) {
+    historyItems = historyItems.concat(
+      actionCardHistory.map((x) => ({
         date: format(new Date(x.date), dateFormat),
         title: formatMessage(x.log),
       })),
     )
   }
 
-  return history
+  return historyItems
 }

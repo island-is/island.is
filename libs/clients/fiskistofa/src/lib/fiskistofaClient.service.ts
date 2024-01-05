@@ -30,22 +30,24 @@ export class FiskistofaClientService {
     timePeriod: string
     changes: { catchChange: number; catchQuotaChange: number; id: number }[]
   }) {
-    const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest = {
-      skipnumer: input.shipNumber,
-      fiskveidiar: input.timePeriod,
-      aflamarkSkipsBreytingar: {
-        breytingarFisktegundar: input.changes.map(
-          ({ catchChange, catchQuotaChange, id }) => ({
-            aflabreyting: catchChange,
-            aflamarksbreyting: catchQuotaChange,
-            kvotategund: id,
-          }),
-        ),
-      },
-    }
-    const data = await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPost(
-      params,
-    )
+    const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest =
+      {
+        skipnumer: input.shipNumber,
+        fiskveidiar: input.timePeriod,
+        aflamarkSkipsBreytingar: {
+          breytingarFisktegundar: input.changes.map(
+            ({ catchChange, catchQuotaChange, id }) => ({
+              aflabreyting: catchChange,
+              aflamarksbreyting: catchQuotaChange,
+              kvotategund: id,
+            }),
+          ),
+        },
+      }
+    const data =
+      await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPost(
+        params,
+      )
     return { fiskistofaShipStatus: mapShipStatusForTimePeriod(data) }
   }
 
@@ -60,20 +62,22 @@ export class FiskistofaClientService {
       allocatedCatchQuota?: number
     }
   }) {
-    const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPostRequest = {
-      aflamarkSkipsKvotaParams: {
-        kvotategund: input.change.id,
-        afNaestaAriKvotiBreytt: input.change.nextYearFromQuota,
-        aNaestaArKvotiBreytt: input.change.nextYearQuota,
-        hlutdeildBreytt: input.change.quotaShare,
-        uthlutadAflamarkBreytt: input.change.allocatedCatchQuota,
-      },
-      fiskveidiar: input.timePeriod,
-      skipnumer: input.shipNumber,
-    }
-    const data = await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPost(
-      params,
-    )
+    const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPostRequest =
+      {
+        aflamarkSkipsKvotaParams: {
+          kvotategund: input.change.id,
+          afNaestaAriKvotiBreytt: input.change.nextYearFromQuota,
+          aNaestaArKvotiBreytt: input.change.nextYearQuota,
+          hlutdeildBreytt: input.change.quotaShare,
+          uthlutadAflamarkBreytt: input.change.allocatedCatchQuota,
+        },
+        fiskveidiar: input.timePeriod,
+        skipnumer: input.shipNumber,
+      }
+    const data =
+      await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPost(
+        params,
+      )
     return {
       fiskistofaShipQuotaStatus: {
         nextYearCatchQuota: data?.aNaestaArAflamark,
@@ -100,9 +104,10 @@ export class FiskistofaClientService {
       skipnumer: input.shipNumber,
       fiskveidiar: input.timePeriod,
     }
-    const data = await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarGet(
-      params,
-    )
+    const data =
+      await this.shipStatusApi.v1StadaskipsSkipnumerFiskveidiarFiskveidiarGet(
+        params,
+      )
     return {
       fiskistofaShipStatus: mapShipStatusForTimePeriod(data),
     }
@@ -116,9 +121,10 @@ export class FiskistofaClientService {
       ar: input.year,
       skipnumer: input.shipNumber,
     }
-    const data = await this.shipStatusApi.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarGet(
-      params,
-    )
+    const data =
+      await this.shipStatusApi.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarGet(
+        params,
+      )
     return {
       fiskistofaShipStatus: mapShipStatusForCalendarYear(data),
     }
@@ -129,22 +135,24 @@ export class FiskistofaClientService {
     year: string
     changes: { id: number; catchChange: number; catchQuotaChange: number }[]
   }) {
-    const params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest = {
-      ar: input.year,
-      skipnumer: input.shipNumber,
-      aflamarkSkipsBreytingar: {
-        breytingarFisktegundar: input.changes.map(
-          ({ catchChange, catchQuotaChange, id }) => ({
-            aflabreyting: catchChange,
-            aflamarksbreyting: catchQuotaChange,
-            kvotategund: id,
-          }),
-        ),
-      },
-    }
-    const data = await this.shipStatusApi.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPost(
-      params,
-    )
+    const params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest =
+      {
+        ar: input.year,
+        skipnumer: input.shipNumber,
+        aflamarkSkipsBreytingar: {
+          breytingarFisktegundar: input.changes.map(
+            ({ catchChange, catchQuotaChange, id }) => ({
+              aflabreyting: catchChange,
+              aflamarksbreyting: catchQuotaChange,
+              kvotategund: id,
+            }),
+          ),
+        },
+      }
+    const data =
+      await this.shipStatusApi.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPost(
+        params,
+      )
     return {
       fiskistofaShipStatus: mapShipStatusForCalendarYear(data),
     }
@@ -154,9 +162,10 @@ export class FiskistofaClientService {
     const params: V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest = {
       fiskveidiar: input.timePeriod,
     }
-    const data = await this.shipStatusApi.v1StadaskipsKvotategundirFiskveidiarFiskveidiarGet(
-      params,
-    )
+    const data =
+      await this.shipStatusApi.v1StadaskipsKvotategundirFiskveidiarFiskveidiarGet(
+        params,
+      )
     return {
       fiskistofaQuotaTypes: (data ?? []).map(mapQuotaType),
     }
@@ -166,9 +175,8 @@ export class FiskistofaClientService {
     const params: V1StadaskipsKvotategundirAlmanaksarArGetRequest = {
       ar: input.year,
     }
-    const data = await this.shipStatusApi.v1StadaskipsKvotategundirAlmanaksarArGet(
-      params,
-    )
+    const data =
+      await this.shipStatusApi.v1StadaskipsKvotategundirAlmanaksarArGet(params)
     return {
       fiskistofaQuotaTypes: (data ?? []).map(mapQuotaType),
     }

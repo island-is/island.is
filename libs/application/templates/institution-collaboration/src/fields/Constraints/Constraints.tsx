@@ -7,7 +7,10 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
+const Constraints: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const { answers } = application

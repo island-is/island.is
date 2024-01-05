@@ -30,26 +30,26 @@ const DocFileName = ({ doc, isAdvice = false }: Props) => {
   })
 
   return (
-    <Tooltip placement="right" as="span" text={name} fullWidth>
-      <span>
-        <LinkV2
-          href={linkHref}
-          color="blue400"
-          underline="normal"
-          underlineVisibility="always"
-          newTab
-        >
-          {linkDesc}
-          <Icon
-            size="small"
-            icon={icon}
-            type="outline"
-            className={styles.iconStyle}
-            title={iconTitle}
-          />
-        </LinkV2>
-      </span>
-    </Tooltip>
+    <LinkV2
+      href={linkHref}
+      color="blue400"
+      underline="normal"
+      underlineVisibility="always"
+      newTab
+    >
+      <>
+        <Tooltip placement="right" as="span" text={name} fullWidth>
+          <span>{linkDesc}</span>
+        </Tooltip>
+        <Icon
+          size="small"
+          icon={icon}
+          type="outline"
+          className={styles.iconStyle}
+          title={iconTitle}
+        />
+      </>
+    </LinkV2>
   )
 }
 

@@ -17,7 +17,7 @@ import { EmployersTable } from '../components/EmployersTable'
 import { States, YES } from '../../constants'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
-const EmployersOverview: FC<RepeaterProps> = ({
+const EmployersOverview: FC<React.PropsWithChildren<RepeaterProps>> = ({
   error,
   application,
   expandRepeater,
@@ -83,13 +83,16 @@ const EmployersOverview: FC<RepeaterProps> = ({
     <Box>
       <Text variant="default">
         {answers.employerLastSixMonths === YES
-          ? parentalLeaveFormMessages.employer.grantsDescription.defaultMessage
-          : parentalLeaveFormMessages.employer.description.defaultMessage}
+          ? formatMessage(parentalLeaveFormMessages.employer.grantsDescription)
+          : formatMessage(parentalLeaveFormMessages.employer.description)}
       </Text>
       <Box paddingTop={5} paddingBottom={5}>
         <EmployersTable
           employers={employers}
-          editable={application.state === States.DRAFT}
+          editable={
+            application.state === States.DRAFT ||
+            application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+          }
           onDeleteEmployer={onDeleteEmployer}
         />
       </Box>

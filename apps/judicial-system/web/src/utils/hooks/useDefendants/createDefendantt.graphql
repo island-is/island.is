@@ -1,0 +1,5 @@
+mutation CreateDefendant($input: CreateDefendantInput!) {
+  createDefendant(input: $input) {
+    id
+  }
+}

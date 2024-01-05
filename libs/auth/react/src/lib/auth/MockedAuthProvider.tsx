@@ -8,12 +8,9 @@ interface MockedAuthenticatorProps {
   switchUser?: (nationalId?: string) => void
 }
 
-export const MockedAuthProvider: FC<MockedAuthenticatorProps> = ({
-  children,
-  signOut,
-  switchUser,
-  user,
-}) => {
+export const MockedAuthProvider: FC<
+  React.PropsWithChildren<MockedAuthenticatorProps>
+> = ({ children, signOut, switchUser, user }) => {
   const userInfo = user ? createMockUser(user) : null
   return (
     <AuthContext.Provider

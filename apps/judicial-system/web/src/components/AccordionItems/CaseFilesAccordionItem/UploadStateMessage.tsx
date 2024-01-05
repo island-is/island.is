@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 
-import { Box, Icon, Text, IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 
 interface Props {

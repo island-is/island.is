@@ -1,8 +1,9 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { ObjectType } from '@nestjs/graphql'
 import { IcelandicGovernmentInstitutionVacancy } from '../models/icelandicGovernmentInstitutionVacancy.model'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class IcelandicGovernmentInstitutionVacancyByIdResponse {
-  @Field(() => IcelandicGovernmentInstitutionVacancy, { nullable: true })
+  @CacheField(() => IcelandicGovernmentInstitutionVacancy, { nullable: true })
   vacancy?: IcelandicGovernmentInstitutionVacancy | null
 }

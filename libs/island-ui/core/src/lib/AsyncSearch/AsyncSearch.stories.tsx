@@ -79,7 +79,7 @@ Features.args = {
   large: false,
 }
 
-export const OnSubmit: FC = () => (
+export const OnSubmit: FC<React.PropsWithChildren<unknown>> = () => (
   <Box padding={2}>
     <Stack space={2}>
       <AsyncSearch
@@ -99,7 +99,7 @@ interface ContainerProps {
 }
 
 export const CustomItem = ({ colored, large }) => {
-  const Container: React.FC<ContainerProps> = ({
+  const Container: React.FC<React.PropsWithChildren<ContainerProps>> = ({
     active,
     colored,
     children,

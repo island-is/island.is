@@ -11,47 +11,52 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 import {
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import {
-  judgeRule,
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prisonSystemStaffRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
-  registrarRule,
-  representativeRule,
-  assistantRule,
 } from '../../guards'
 import {
   Case,
-  CaseNotCompletedGuard,
-  CurrentCase,
   CaseExistsGuard,
+  CaseNotCompletedGuard,
   CaseReadGuard,
   CaseReceivedGuard,
-  CaseWriteGuard,
   CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
 } from '../case'
-import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
-import { CurrentCaseFile } from './guards/caseFile.decorator'
-import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
+import { CurrentCaseFile } from './guards/caseFile.decorator'
+import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { CaseFile } from './models/file.model'
+import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
@@ -68,10 +73,13 @@ export class FileController {
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
-    registrarRule,
-    judgeRule,
-    assistantRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Post('file/url')
   @ApiCreatedResponse({
@@ -91,10 +99,13 @@ export class FileController {
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
-    registrarRule,
-    judgeRule,
-    assistantRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Post('file')
   @ApiCreatedResponse({
@@ -120,10 +131,14 @@ export class FileController {
   )
   @RolesRules(
     prosecutorRule,
-    representativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+    prisonSystemStaffRule,
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({
@@ -143,7 +158,16 @@ export class FileController {
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
-  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
@@ -167,7 +191,7 @@ export class FileController {
     CaseReceivedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(judgeRule, registrarRule)
+  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
   @Post('file/:fileId/court')
   @ApiOkResponse({
     type: UploadFileToCourtResponse,
@@ -192,7 +216,7 @@ export class FileController {
     CaseWriteGuard,
     CaseNotCompletedGuard,
   )
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch('files')
   @ApiOkResponse({
     type: CaseFile,

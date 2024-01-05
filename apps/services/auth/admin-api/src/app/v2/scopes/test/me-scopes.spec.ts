@@ -261,23 +261,24 @@ const createTestCases: Record<string, CreateTestCase> = {
       body: expectedCreateOutput,
     },
   },
-  'should create scope with additional fields and have access as current user': {
-    user: currentUser,
-    tenantId: TENANT_ID,
-    input: {
-      ...createInput,
-      grantToAuthenticatedUser: true,
-      grantToLegalGuardians: true,
-    },
-    expected: {
-      status: 200,
-      body: {
-        ...expectedCreateOutput,
+  'should create scope with additional fields and have access as current user':
+    {
+      user: currentUser,
+      tenantId: TENANT_ID,
+      input: {
+        ...createInput,
         grantToAuthenticatedUser: true,
         grantToLegalGuardians: true,
       },
+      expected: {
+        status: 200,
+        body: {
+          ...expectedCreateOutput,
+          grantToAuthenticatedUser: true,
+          grantToLegalGuardians: true,
+        },
+      },
     },
-  },
   'should return a bad request because of invalid input': {
     user: superUser,
     tenantId: TENANT_ID,
@@ -289,17 +290,18 @@ const createTestCases: Record<string, CreateTestCase> = {
       },
     },
   },
-  'should return a bad request because of missing displayName and description': {
-    user: superUser,
-    tenantId: TENANT_ID,
-    input: { name: createInput.name } as typeof createInput,
-    expected: {
-      status: 400,
-      body: {
-        detail: 'Scope displayName and description are required',
+  'should return a bad request because of missing displayName and description':
+    {
+      user: superUser,
+      tenantId: TENANT_ID,
+      input: { name: createInput.name } as typeof createInput,
+      expected: {
+        status: 400,
+        body: {
+          detail: 'Scope displayName and description are required',
+        },
       },
     },
-  },
   'should return a bad request because of invalid scope name': {
     user: superUser,
     tenantId: TENANT_ID,
@@ -399,41 +401,43 @@ const patchExpectedOutput = {
 }
 
 const patchTestCases: Record<string, PatchTestCase> = {
-  'should not update scope since user is not a super user and input contains super user fields': {
-    user: currentUser,
-    tenantId: TENANT_ID,
-    scopeName: mockedPatchApiScope.name,
-    input: inputPatch,
-    expected: {
-      status: 403,
-      body: {
-        detail: 'User does not have access to update admin controlled fields',
+  'should not update scope since user is not a super user and input contains super user fields':
+    {
+      user: currentUser,
+      tenantId: TENANT_ID,
+      scopeName: mockedPatchApiScope.name,
+      input: inputPatch,
+      expected: {
         status: 403,
-        title: 'Forbidden',
-        type: 'https://httpstatuses.org/403',
+        body: {
+          detail: 'User does not have access to update admin controlled fields',
+          status: 403,
+          title: 'Forbidden',
+          type: 'https://httpstatuses.org/403',
+        },
       },
     },
-  },
-  'should update scope even though user is not a super user since there are no super admin fields': {
-    user: currentUser,
-    tenantId: TENANT_ID,
-    scopeName: mockedPatchApiScope.name,
-    input: {
-      description: inputPatch.description,
-      displayName: inputPatch.displayName,
-    },
-    expected: {
-      status: 200,
-      body: {
-        ...patchExpectedOutput,
-        grantToAuthenticatedUser: true,
-        grantToLegalGuardians: false,
-        grantToProcuringHolders: false,
-        allowExplicitDelegationGrant: false,
-        isAccessControlled: false,
+  'should update scope even though user is not a super user since there are no super admin fields':
+    {
+      user: currentUser,
+      tenantId: TENANT_ID,
+      scopeName: mockedPatchApiScope.name,
+      input: {
+        description: inputPatch.description,
+        displayName: inputPatch.displayName,
+      },
+      expected: {
+        status: 200,
+        body: {
+          ...patchExpectedOutput,
+          grantToAuthenticatedUser: true,
+          grantToLegalGuardians: false,
+          grantToProcuringHolders: false,
+          allowExplicitDelegationGrant: false,
+          isAccessControlled: false,
+        },
       },
     },
-  },
   'should update scope and have access as super user': {
     user: superUser,
     tenantId: TENANT_ID,
@@ -463,10 +467,10 @@ const patchTestCases: Record<string, PatchTestCase> = {
     user: superUser,
     tenantId: TENANT_ID,
     scopeName: mockedPatchApiScope.name,
-    input: ({
+    input: {
       displayName: inputPatch.displayName,
       enabled: false,
-    } as unknown) as typeof inputPatch,
+    } as unknown as typeof inputPatch,
     expected: {
       status: 400,
       body: {

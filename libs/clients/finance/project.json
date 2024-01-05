@@ -1,19 +1,20 @@
 {
-  "root": "libs/clients/finance",
+  "name": "clients-finance",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/finance/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/finance/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/finance"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/finance"],
       "options": {
-        "jestConfig": "libs/clients/finance/jest.config.js",
+        "jestConfig": "libs/clients/finance/jest.config.ts",
         "passWithNoTests": true
       }
     }

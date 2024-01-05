@@ -28,6 +28,20 @@ yarn run android
 yarn start
 ```
 
+### Publishing a Beta
+
+```bash
+yarn run beta
+```
+
+### After release
+
+Make sure to increment the version of the app by running `yarn run version:increment` and commit the changes.
+
+```bash
+yarn run version:increment
+```
+
 ## NX commands
 
 NX command example to proxy arguments to `package.json` scripts
@@ -37,7 +51,7 @@ nx run native-app:script --name=<some-script-from-package.json>
 ```
 
 ```bash
-nx run native-app:schemas/codegen
+nx run native-app:codegen/frontend-client
 ```
 
 ## NOTES

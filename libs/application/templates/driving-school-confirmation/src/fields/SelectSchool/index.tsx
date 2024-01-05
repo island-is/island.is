@@ -12,14 +12,19 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-const SelectSchool: FC<FieldBaseProps> = ({ application, field, error }) => {
+const SelectSchool: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  field,
+  error,
+}) => {
   const { id } = field
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const drivingSchools: DrivingSchoolType[] = (application.externalData
-    .drivingSchoolForEmployee.data as DrivingLicenseBookSchool)
-    .allowedDrivingSchoolTypes
+  const drivingSchools: DrivingSchoolType[] = (
+    application.externalData.drivingSchoolForEmployee
+      .data as DrivingLicenseBookSchool
+  ).allowedDrivingSchoolTypes
 
   const options = drivingSchools.map((item) => {
     return {

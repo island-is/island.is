@@ -1,4 +1,3 @@
-import streamBuffers from 'stream-buffers'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
@@ -69,7 +68,11 @@ export async function generateResidenceChangePdf(application: CRCApplication) {
   }
 
   const doc = newDocument()
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const buffers: Buffer[] = []
+
+  doc.on('data', (buffer: Buffer) => {
+    buffers.push(buffer)
+  })
 
   addLogo(doc, DistrictCommissionerLogo)
 
@@ -176,10 +179,9 @@ export async function generateResidenceChangePdf(application: CRCApplication) {
     doc,
   )
   doc.end()
-
-  return await new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
+  await new Promise((resolve) => {
+    doc.on('end', resolve)
   })
+
+  return Buffer.concat(buffers)
 }

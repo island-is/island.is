@@ -1,4 +1,9 @@
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseDecision,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_COURT_RECORD_ROUTE,
@@ -16,6 +21,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   describe('Restriction cases', () => {
     describe('Cases with accepting decision', () => {
       beforeEach(() => {
+        cy.login(UserRole.DISTRICT_COURT_JUDGE)
         cy.stubAPIResponses()
         intercept({ ...caseDataAddition, decision: CaseDecision.ACCEPTING })
         cy.visit(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
@@ -46,6 +52,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
         })
 
       beforeEach(() => {
+        cy.login(UserRole.DISTRICT_COURT_JUDGE)
         cy.stubAPIResponses()
       })
 
@@ -69,7 +76,8 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
           cy.get('#accused-appeal').check()
           cy.getByTestid('datepicker').last().type('17.12.2021')
           cy.clickOutside()
-          cy.getByTestid('courtEndTime-time').clear().blur()
+          cy.getByTestid('courtEndTime-time').clear()
+          cy.getByTestid('courtEndTime-time').blur()
           cy.get('#courtEndTime-time-error').should('exist')
           cy.getByTestid('courtEndTime-time').type('11:00')
           cy.get('#courtEndTime-time-error').should('not.exist')
@@ -160,6 +168,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
     describe('Travel ban cases', () => {
       describe('Cases with accepting decision', () => {
         beforeEach(() => {
+          cy.login(UserRole.DISTRICT_COURT_JUDGE)
           cy.stubAPIResponses()
           intercept({
             ...caseDataAddition,

@@ -2,39 +2,39 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import type { UserRole, UpdateUser } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
 
 @InputType()
-export class UpdateUserInput implements UpdateUser {
+export class UpdateUserInput {
   @Allow()
   @Field()
   readonly id!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly name?: string
+  @Field()
+  readonly name!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly title?: string
+  @Field()
+  readonly title!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly mobileNumber?: string
+  @Field()
+  readonly mobileNumber!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly email?: string
+  @Field()
+  readonly email!: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
-  readonly role?: UserRole
+  @Field(() => UserRole)
+  readonly role!: UserRole
 
   @Allow()
-  @Field({ nullable: true })
-  readonly institutionId?: string
+  @Field()
+  readonly institutionId!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly active?: boolean
+  @Field(() => Boolean)
+  readonly active!: boolean
 }

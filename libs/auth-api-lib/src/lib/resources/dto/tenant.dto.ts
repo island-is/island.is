@@ -12,4 +12,9 @@ export class TenantDto {
     example: 'Ísland.is mínar síður',
   })
   displayName!: TranslatedValueDto[]
+
+  @ApiProperty({
+    example: 'island@example.is',
+  })
+  contactEmail?: string
 }

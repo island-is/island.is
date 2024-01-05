@@ -7,11 +7,16 @@ export const lokeNumberList = defineMessages({
     description:
       'Notaður sem titill í hak til að velja öll Velja öll Löke númerin sem er í boði',
   },
-  selectNumberButton: {
-    id: 'judicial.system.core:loke_number_list.select_number_button',
+  selectNumbersButton: {
+    id: 'judicial.system.core:loke_number_list.select_numbers_button',
     defaultMessage: 'Velja númer',
     description:
-      'Textin á takkanum sem velur Löke númerið sem er valið í töflunni',
+      'Textin á takkanum sem velur Löke númerin sem eru valin í töflunni',
+  },
+  allNumbersSelected: {
+    id: 'judicial.system.core:loke_number_list.all_numbers_selected',
+    defaultMessage: 'Öll númer hafa verið valin',
+    description: 'Textinn sem kemur þegar öll númer hafa verið valin',
   },
   errorMessage: {
     id: 'judicial.system.core:loke_number_list.error_message',

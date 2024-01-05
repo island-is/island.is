@@ -13,13 +13,13 @@ describe('Tax calculator', () => {
     test('should return number without personal tax allowance amount 100000', () => {
       const amountWithoutTaxAllowance = calculateAidFinalAmount(100000, false)
 
-      expect(amountWithoutTaxAllowance).toEqual(68550)
+      expect(amountWithoutTaxAllowance).toEqual(68520)
     })
 
     test('should return number without personal tax allowance amount is 250000', () => {
       const amountWithoutTaxAllowance = calculateAidFinalAmount(250000, false)
 
-      expect(amountWithoutTaxAllowance).toEqual(171375)
+      expect(amountWithoutTaxAllowance).toEqual(171300)
     })
 
     test('should return number with personal tax allowance amount 100000', () => {
@@ -31,19 +31,19 @@ describe('Tax calculator', () => {
     test('should return number with personal tax allowance amount is 250000', () => {
       const amountWithTaxAllowance = calculateAidFinalAmount(250000, true)
 
-      expect(amountWithTaxAllowance).toEqual(231040)
+      expect(amountWithTaxAllowance).toEqual(236226)
     })
   })
 
   describe('calculateTaxOfAmount', () => {
     test('should return tax allowance of 100000', () => {
       const taxOfAmount = calculateTaxOfAmount(100000)
-      expect(taxOfAmount).toEqual(31450)
+      expect(taxOfAmount).toEqual(31480)
     })
 
     test('should return tax allowance of 250000', () => {
       const taxOfAmount = calculateTaxOfAmount(250000)
-      expect(taxOfAmount).toEqual(78625)
+      expect(taxOfAmount).toEqual(78700)
     })
   })
 
@@ -61,7 +61,7 @@ describe('Tax calculator', () => {
         100000,
         true,
       )
-      expect(personalTaxAllowanceUsed).toEqual(31450)
+      expect(personalTaxAllowanceUsed).toEqual(31480)
     })
 
     test('should only show the amount of used personal tax allowence of 250000', () => {
@@ -77,67 +77,50 @@ describe('Tax calculator', () => {
         250000,
         true,
       )
-      expect(personalTaxAllowanceUsed).toEqual(59665)
+      expect(personalTaxAllowanceUsed).toEqual(64926)
     })
   })
 
   describe('calculatePersonalTaxAllowanceFromAmount', () => {
     test('should return 100% personal tax allowence without spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        100,
-      )
-      expect(personalTaxAllowanceFromAmount).toEqual(59665)
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 100)
+      expect(personalTaxAllowanceFromAmount).toEqual(64926)
     })
 
     test('should return 80% personal tax allowence without spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        80,
-      )
-      expect(personalTaxAllowanceFromAmount).toEqual(47732)
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 80)
+      expect(personalTaxAllowanceFromAmount).toEqual(51940)
     })
 
     test('should return 30% personal tax allowence without spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        30,
-      )
-      expect(personalTaxAllowanceFromAmount).toEqual(17899)
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 30)
+      expect(personalTaxAllowanceFromAmount).toEqual(19477)
     })
 
     test('should return 100% personal tax allowence with 100% spouse allowance', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        100,
-        100,
-      )
-      expect(personalTaxAllowanceFromAmount).toEqual(119330)
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 100, 100)
+      expect(personalTaxAllowanceFromAmount).toEqual(129852)
     })
 
     test('should return 80% personal tax allowence with 10% spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        80,
-        10,
-      )
-      expect(personalTaxAllowanceFromAmount).toEqual(53698)
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 80, 10)
+      expect(personalTaxAllowanceFromAmount).toEqual(58432)
     })
 
     test('should return 30% personal tax allowence with 50% spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        30,
-        50,
-      )
-      expect(personalTaxAllowanceFromAmount).toEqual(47731)
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 30, 50)
+      expect(personalTaxAllowanceFromAmount).toEqual(51940)
     })
 
     test('should return the personal tax allowence as equal to the tax amount arguement', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        20000,
-        100,
-      )
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(20000, 100)
       expect(personalTaxAllowanceFromAmount).toEqual(20000)
     })
   })
@@ -149,7 +132,7 @@ describe('Tax calculator', () => {
         100,
         100,
       )
-      expect(acceptedAidFinalAmount).toEqual(68550)
+      expect(acceptedAidFinalAmount).toEqual(68520)
     })
 
     test('should return accepted final amount with 10% personal and 30% spose credit', () => {
@@ -158,7 +141,7 @@ describe('Tax calculator', () => {
         10,
         30,
       )
-      expect(acceptedAidFinalAmount).toEqual(56617)
+      expect(acceptedAidFinalAmount).toEqual(55535)
     })
 
     test('should return accepted final amount with 10% personal and 30% spose credit', () => {
@@ -167,7 +150,7 @@ describe('Tax calculator', () => {
         50,
         0,
       )
-      expect(acceptedAidFinalAmount).toEqual(98382)
+      expect(acceptedAidFinalAmount).toEqual(100000)
     })
   })
 
@@ -181,7 +164,7 @@ describe('Tax calculator', () => {
         },
         {
           title: 'Skattur',
-          calculation: `- 31.450 kr.`,
+          calculation: `- 31.480 kr.`,
         },
         {
           title: 'Persónuafsláttur',
@@ -189,7 +172,7 @@ describe('Tax calculator', () => {
         },
         {
           title: 'Áætluð aðstoð (hámark)',
-          calculation: `68.550 kr.`,
+          calculation: `68.520 kr.`,
         },
       ])
     })
@@ -203,11 +186,11 @@ describe('Tax calculator', () => {
         },
         {
           title: 'Skattur',
-          calculation: `- 31.450 kr.`,
+          calculation: `- 31.480 kr.`,
         },
         {
           title: 'Persónuafsláttur',
-          calculation: `+ 31.450 kr. `,
+          calculation: `+ 31.480 kr. `,
         },
         {
           title: 'Áætluð aðstoð (hámark)',
@@ -225,7 +208,7 @@ describe('Tax calculator', () => {
         },
         {
           title: 'Skattur',
-          calculation: `- 78.625 kr.`,
+          calculation: `- 78.700 kr.`,
         },
         {
           title: 'Persónuafsláttur',
@@ -233,7 +216,7 @@ describe('Tax calculator', () => {
         },
         {
           title: 'Áætluð aðstoð (hámark)',
-          calculation: `171.375 kr.`,
+          calculation: `171.300 kr.`,
         },
       ])
     })
@@ -247,15 +230,15 @@ describe('Tax calculator', () => {
         },
         {
           title: 'Skattur',
-          calculation: `- 78.625 kr.`,
+          calculation: `- 78.700 kr.`,
         },
         {
           title: 'Persónuafsláttur',
-          calculation: `+ 59.665 kr. `,
+          calculation: `+ 64.926 kr. `,
         },
         {
           title: 'Áætluð aðstoð (hámark)',
-          calculation: `231.040 kr.`,
+          calculation: `236.226 kr.`,
         },
       ])
     })
@@ -344,7 +327,7 @@ describe('Tax calculator', () => {
         },
         {
           title: 'Persónuafsláttur',
-          calculation: `+ 47.732 kr.`,
+          calculation: `+ 51.450 kr.`,
         },
         {
           title: 'Aðstoð',
@@ -425,7 +408,7 @@ describe('Tax calculator', () => {
         },
         {
           title: 'Persónuafsláttur',
-          calculation: `+ 59.665 kr.`,
+          calculation: `+ 64.926 kr.`,
         },
         {
           title: 'Aðstoð',

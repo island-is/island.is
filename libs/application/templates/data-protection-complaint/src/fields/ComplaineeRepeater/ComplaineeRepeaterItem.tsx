@@ -34,7 +34,7 @@ interface Props {
   errors: RecordObject<unknown> | undefined
 }
 
-export const ComplaineeRepeaterItem: FC<Props> = ({
+export const ComplaineeRepeaterItem: FC<React.PropsWithChildren<Props>> = ({
   id,
   application,
   field,

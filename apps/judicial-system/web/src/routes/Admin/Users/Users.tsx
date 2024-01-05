@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
 
 import {
   AlertMessage,
@@ -12,49 +10,44 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { Loading } from '@island.is/judicial-system-web/src/components'
+import * as constants from '@island.is/judicial-system/consts'
 import {
-  InstitutionsQuery,
-  UsersQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { titles, errors } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  Institution,
+  Loading,
+  PageHeader,
+} from '@island.is/judicial-system-web/src/components'
+import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useUsersQuery } from './users.generated'
 import * as styles from './Users.css'
 
-interface UserData {
-  users: User[]
-}
-interface InstitutionData {
-  institutions: Institution[]
-}
-
-export const Users: React.FC = () => {
+export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()
-  const { data, error, loading } = useQuery<UserData>(UsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
   const {
-    data: rawInstitutions,
-    loading: loadingInstitutions,
-  } = useQuery<InstitutionData>(InstitutionsQuery, {
+    allInstitutions,
+    loading: institutionsLoading,
+    loaded: institutionsLoaded,
+  } = useInstitution()
+  const {
+    data: usersData,
+    error: usersError,
+    loading: usersLoading,
+  } = useUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const users = data?.users.filter((u) => {
+  const users = usersData?.users?.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
       : true
@@ -64,20 +57,25 @@ export const Users: React.FC = () => {
     router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
-  const userRoleToString = (userRole: UserRole) => {
+  const userRoleToString = (userRole?: UserRole | null) => {
     switch (userRole) {
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
-      case UserRole.REPRESENTATIVE:
+      case UserRole.PROSECUTOR_REPRESENTATIVE:
         return 'Fulltrúi'
-      case UserRole.JUDGE:
+      case UserRole.DISTRICT_COURT_JUDGE:
+      case UserRole.COURT_OF_APPEALS_JUDGE:
         return 'Dómari'
-      case UserRole.REGISTRAR:
+      case UserRole.DISTRICT_COURT_REGISTRAR:
+      case UserRole.COURT_OF_APPEALS_REGISTRAR:
         return 'Dómritari'
-      case UserRole.ASSISTANT:
+      case UserRole.DISTRICT_COURT_ASSISTANT:
+      case UserRole.COURT_OF_APPEALS_ASSISTANT:
         return 'Aðstoðarmaður dómara'
-      case UserRole.STAFF:
+      case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
+      default:
+        return 'Óþekkt'
     }
   }
 
@@ -107,16 +105,16 @@ export const Users: React.FC = () => {
           <Select
             name="institutions"
             options={
-              rawInstitutions?.institutions.map((i) => {
-                return { label: i.name, value: i.id }
-              }) || []
+              institutionsLoaded
+                ? allInstitutions.map((i) => {
+                    return { label: i.name ?? '', value: i.id }
+                  })
+                : []
             }
             placeholder="Veldu stofnun"
-            disabled={loadingInstitutions}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setSelectedInstitution(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
+            isDisabled={institutionsLoading}
+            onChange={(selectedOption) =>
+              setSelectedInstitution(selectedOption?.value)
             }
           />
         </Box>
@@ -154,6 +152,11 @@ export const Users: React.FC = () => {
                   Virkur
                 </Text>
               </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
+                <Text as="span" fontWeight="regular">
+                  Innskráningar
+                </Text>
+              </Box>
             </tr>
           </thead>
           <tbody>
@@ -182,6 +185,15 @@ export const Users: React.FC = () => {
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
                 </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
+                  <Text as="span">
+                    {user.latestLogin
+                      ? `${formatDate(user.latestLogin, 'yyy-MM-dd HH:mm')} - ${
+                          user.loginCount
+                        }`
+                      : ''}
+                  </Text>
+                </Box>
               </tr>
             ))}
           </tbody>
@@ -195,12 +207,12 @@ export const Users: React.FC = () => {
           />
         </Box>
       )}
-      {loading && (
+      {(institutionsLoading || usersLoading) && (
         <Box width="full">
           <Loading />
         </Box>
       )}
-      {error && (
+      {usersError && (
         <div data-testid="users-error">
           <AlertMessage
             title={formatMessage(errors.failedToFetchDataFromDbTitle)}

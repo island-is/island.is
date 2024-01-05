@@ -1,42 +1,44 @@
 {
-  "root": "apps/native/app",
+  "name": "native-app",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/native/app/src",
   "projectType": "application",
   "generators": {},
   "targets": {
     "serve": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/native/app",
         "command": "yarn start"
       }
     },
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/native/app",
         "command": "yarn build-mock"
       }
     },
     "test": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/native/app",
         "command": "yarn test-mock"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/native/app/**/*.{ts,tsx,js,jsx}"]
       }
     },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "parallel": false,
         "command": "graphql-codegen --config apps/native/app/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/graphql/types/schema.ts"]
     },
     "docker-native": {}
   },

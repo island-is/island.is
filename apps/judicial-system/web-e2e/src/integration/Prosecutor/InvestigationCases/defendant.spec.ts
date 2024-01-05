@@ -1,54 +1,71 @@
 import faker from 'faker'
 
 import { CREATE_INVESTIGATION_CASE_ROUTE } from '@island.is/judicial-system/consts'
+import { UserRole } from '@island.is/judicial-system/types'
 
 describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
+    cy.login(UserRole.PROSECUTOR)
     cy.visit(CREATE_INVESTIGATION_CASE_ROUTE)
   })
 
   it('should require valid data', () => {
+    const policeCaseNumbersId = '#policeCaseNumbers'
     // Police case number
-    cy.get('#policeCaseNumbers').type('0').type('{enter}')
+    cy.get(policeCaseNumbersId).type('0')
+    cy.get(policeCaseNumbersId).type('{enter}')
     cy.getByTestid('noPoliceCaseNumbersAssignedMessage').should('exist')
     cy.getByTestid('policeCaseNumbers-list').should('not.exist')
-    cy.get('#policeCaseNumbers').clear().blur()
+    cy.get(policeCaseNumbersId).clear()
+    cy.get(policeCaseNumbersId).blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.get('#policeCaseNumbers').type('007202201').type('{enter}')
+    cy.get(policeCaseNumbersId).type('007202201')
+    cy.get(policeCaseNumbersId).type('{enter}')
     cy.getByTestid('noPoliceCaseNumbersAssignedMessage').should('not.exist')
     cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 1)
     cy.getByTestid('inputErrorMessage').should('not.exist')
 
     // National id
-    cy.getByTestid('nationalId').type('0').blur()
+    const nationalId = 'nationalId'
+    cy.getByTestid(nationalId).type('0')
+    cy.getByTestid(nationalId).blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 000000-0000')
-    cy.getByTestid('nationalId').clear().blur()
+    cy.getByTestid(nationalId).clear()
+    cy.getByTestid(nationalId).blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('nationalId').clear().type('0000000000')
+    cy.getByTestid(nationalId).clear()
+    cy.getByTestid(nationalId).type('0000000000')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')
 
     // Birthday
     cy.get('[type="checkbox"]').check()
-    cy.getByTestid('nationalId').type('0').blur()
+    cy.getByTestid(nationalId).type('0')
+    cy.getByTestid(nationalId).blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 00.00.0000')
-    cy.getByTestid('nationalId').clear().type('01.01.2000')
+    cy.getByTestid(nationalId).clear()
+    cy.getByTestid(nationalId).type('01.01.2000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')
 
     // Address
-    cy.getByTestid('accusedAddress').clear().blur()
+    const accusedAddress = 'accusedAddress'
+    cy.getByTestid(accusedAddress).clear()
+    cy.getByTestid(accusedAddress).blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('accusedAddress').clear().type('Sidwellssongata 300')
+    cy.getByTestid(accusedAddress).clear()
+    cy.getByTestid(accusedAddress).type('Sidwellssongata 300')
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')
     //
     // Name
-    cy.getByTestid('accusedName').clear().blur()
+    cy.getByTestid('accusedName').clear()
+    cy.getByTestid('accusedName').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('accusedName').clear().type('Sidwell Sidwellsson')
+    cy.getByTestid('accusedName').clear()
+    cy.getByTestid('accusedName').type('Sidwell Sidwellsson')
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')
 
@@ -90,7 +107,8 @@ describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
   })
 
   it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
-    cy.get('#policeCaseNumbers').type('00000000000').type('{enter}')
+    cy.get('#policeCaseNumbers').type('00000000000')
+    cy.get('#policeCaseNumbers').type('{enter}')
     cy.getByTestid('select-type').click()
     cy.get('[id="react-select-type-option-5-6"]').click()
 
@@ -108,26 +126,32 @@ describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
     cy.getByTestid('defenderEmail').clear()
     cy.getByTestid('defenderPhoneNumber').type('000')
     cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid('defenderPhoneNumber').clear().type('1234567')
+    cy.getByTestid('defenderPhoneNumber').clear()
+    cy.getByTestid('defenderPhoneNumber').type('1234567')
+    cy.get('#react-select-defenderName-input').type('John Doe')
+    cy.get('#react-select-defenderName-input').type('{enter}')
+    cy.get("[name='defender-access']").check()
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 
   it('should be able to select defender', () => {
     cy.wait('@lawyers')
 
+    cy.getByTestid('creatable-select-defenderName').click()
     cy.getByTestid('creatable-select-defenderName')
-      .click()
       .find('input')
       .get('.island-select__option')
       .should('contain', 'Logmadur')
+    cy.getByTestid('creatable-select-defenderName')
+      .find('input')
+      .get('.island-select__option')
       .click()
     cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
     cy.getByTestid('defenderPhoneNumber').should('have.value', '666-6666')
     cy.getByTestid('defenderNotFound').should('not.exist')
 
-    cy.get('#react-select-defenderName-input')
-      .type('click', { force: true })
-      .type('{enter}')
+    cy.get('#react-select-defenderName-input').type('click', { force: true })
+    cy.get('#react-select-defenderName-input').type('{enter}')
     cy.getByTestid('defenderNotFound').should('exist')
   })
 

@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Air Discount Scheme Api
 
 This service utilizes the AirDiscountSchemeApi

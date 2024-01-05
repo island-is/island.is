@@ -13,9 +13,9 @@ import { createRoutes } from '../lib/routes'
 export const App = () => (
   <ApolloProvider client={client}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
-      <AuthProvider basePath={AdminPortalPaths.Base}>
-        <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-          <ApplicationErrorBoundary>
+      <ApplicationErrorBoundary>
+        <AuthProvider basePath={AdminPortalPaths.Base}>
+          <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
             <PortalRouter
               modules={modules}
               createRoutes={createRoutes}
@@ -24,9 +24,9 @@ export const App = () => (
                 basePath: AdminPortalPaths.Base,
               }}
             />
-          </ApplicationErrorBoundary>
-        </FeatureFlagProvider>
-      </AuthProvider>
+          </FeatureFlagProvider>
+        </AuthProvider>
+      </ApplicationErrorBoundary>
     </LocaleProvider>
   </ApolloProvider>
 )

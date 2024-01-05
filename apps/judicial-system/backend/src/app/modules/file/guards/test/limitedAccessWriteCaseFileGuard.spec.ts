@@ -21,6 +21,7 @@ describe('LimitedAccess Write Case File Guard', () => {
     CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
     CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
     CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
   ]
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
@@ -31,9 +32,9 @@ describe('LimitedAccess Write Case File Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = guard.canActivate(({
+        then.result = guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }

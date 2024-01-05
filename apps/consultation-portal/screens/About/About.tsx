@@ -4,7 +4,7 @@ import { Breadcrumbs, Layout } from '../../components'
 import { AboutContent, TableOfContents } from './components'
 import localization from './About.json'
 
-const AboutScreen: React.FC = () => {
+const AboutScreen: React.FC<React.PropsWithChildren<unknown>> = () => {
   const loc = localization['about']
 
   return (

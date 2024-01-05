@@ -1,5 +1,5 @@
 import React from 'react'
-import Document, { Html, Head, Main, NextScript } from 'next/document'
+import Document, { Head, Html, Main, NextScript } from 'next/document'
 
 export default class MyDocument extends Document {
   render() {
@@ -10,8 +10,6 @@ export default class MyDocument extends Document {
           <div id="main">
             <Main />
           </div>
-          {/* Here we will mount our modal portal */}
-          <div id="modal" />
           <NextScript />
         </body>
       </Html>

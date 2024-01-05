@@ -50,7 +50,11 @@ const statesMap: StatesMap = {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]:
       ReviewSectionState.complete,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE]:
+      ReviewSectionState.complete,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS]:
+      ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT]:
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
@@ -67,7 +71,11 @@ const statesMap: StatesMap = {
       ReviewSectionState.inProgress,
     [ApplicationStates.EMPLOYER_APPROVE_EDITS]: ReviewSectionState.inProgress,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE]:
+      ReviewSectionState.complete,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS]:
+      ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT]:
       ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
@@ -82,6 +90,8 @@ const statesMap: StatesMap = {
     [ApplicationStates.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]:
       ReviewSectionState.requiresAction,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
+      ReviewSectionState.inProgress,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE]:
       ReviewSectionState.inProgress,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
     [ApplicationStates.CLOSED]: ReviewSectionState.complete,
@@ -99,7 +109,7 @@ const descKey: { [key: string]: MessageDescriptor } = {
     parentalLeaveFormMessages.editFlow.employerApprovesDesc,
 }
 
-const InReviewSteps: FC<FieldBaseProps> = (props) => {
+const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application, field, refetch, errors } = props
   const {
     isSelfEmployed,
@@ -195,6 +205,8 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   if (
     (application.state === States.APPROVED ||
       application.state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      application.state === States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT ||
+      application.state === States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE ||
       application.state === States.VINNUMALASTOFNUN_APPROVAL) &&
     showResidenceGrantCard
   ) {
@@ -231,10 +243,14 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
     application.state === ApplicationStates.EMPLOYER_APPROVAL ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVAL ||
+    application.state ===
+      ApplicationStates.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE ||
     application.state === ApplicationStates.APPROVED ||
     application.state ===
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
+    application.state ===
+      ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
 
   const lastEndDate = new Date(periods[periods.length - 1].endDate)
@@ -263,7 +279,9 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       <Box marginBottom={2}>
         <Text variant="h2">
           {formatMessage(
-            application.state === States.VINNUMALASTOFNUN_APPROVAL
+            application.state === States.VINNUMALASTOFNUN_APPROVAL ||
+              application.state ===
+                States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE
               ? parentalLeaveFormMessages.reviewScreen.titleReceived
               : application.state === States.APPROVED
               ? parentalLeaveFormMessages.reviewScreen.titleApproved

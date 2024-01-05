@@ -71,7 +71,9 @@ interface PeriodsSectionImageProp extends FieldBaseProps {
 }
 
 // TODO later move the illustrations from the web project and into a reusable library
-const DottetBackgroundImage: FC<PeriodsSectionImageProp> = ({
+const DottetBackgroundImage: FC<
+  React.PropsWithChildren<PeriodsSectionImageProp>
+> = ({
   children,
   height,
   display,

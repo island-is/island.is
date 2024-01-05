@@ -12,7 +12,7 @@ interface QualityPhotoData {
   application: Application
 }
 
-const Photo: FC<QualityPhotoData> = ({
+const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
   qualityPhoto,
   application,
 }: QualityPhotoData) => {
@@ -32,7 +32,9 @@ const Photo: FC<QualityPhotoData> = ({
   )
 }
 
-const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
+const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { qualityPhoto } = useQualityPhoto(application)
   const img = Photo({ qualityPhoto, application })
   return (

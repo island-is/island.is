@@ -1,0 +1,6 @@
+export { FirearmLicenseClient } from './services/firearmLicenseClient.service'
+export { FirearmLicenseUpdateClient } from './services/firearmLicenseUpdateClient.service'
+export { FirearmDigitalLicenseClientConfig } from './firearmLicenseClient.config'
+export { FirearmClientModule } from './modules/firearmLicenseClient.module'
+export { FirearmUpdateClientModule } from './modules/firearmLicenseUpdateClient.module'
+export { FirearmLicenseDto } from './firearmLicenseClient.type'

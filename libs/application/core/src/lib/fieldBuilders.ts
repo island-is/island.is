@@ -24,7 +24,9 @@ import {
   MaybeWithApplicationAndField,
   MessageWithLinkButtonField,
   Option,
+  PaymentChargeOverviewField,
   PaymentPendingField,
+  PdfLinkButtonField,
   PhoneField,
   RadioField,
   RecordObject,
@@ -32,10 +34,13 @@ import {
   SelectField,
   SubmitField,
   TextField,
+  ImageField,
+  NationalIdWithNameField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { coreDefaultFieldMessages } from './messages'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -248,6 +253,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
   } = data
   return {
     ...extractCommonFields(data),
@@ -262,6 +268,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
@@ -326,10 +333,15 @@ export function buildFileUploadField(
   return {
     ...extractCommonFields(data),
     children: undefined,
-    introduction,
-    uploadHeader,
-    uploadDescription,
-    uploadButtonLabel,
+    introduction: introduction,
+    uploadHeader:
+      uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
+    uploadDescription:
+      uploadDescription ||
+      coreDefaultFieldMessages.defaultFileUploadDescription,
+    uploadButtonLabel:
+      uploadButtonLabel ||
+      coreDefaultFieldMessages.defaultFileUploadButtonLabel,
     uploadMultiple,
     uploadAccept:
       uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
@@ -496,16 +508,17 @@ export function buildExpandableDescriptionField(
 export function buildAlertMessageField(
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField {
-  const { id, title, message, alertType, condition } = data
+  const { message, alertType, marginTop, marginBottom, links } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    id,
-    title,
     message,
     alertType,
-    condition,
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
+    marginTop,
+    marginBottom,
+    links,
   }
 }
 
@@ -521,5 +534,108 @@ export function buildLinkField(
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
+  }
+}
+
+export function buildPaymentChargeOverviewField(
+  data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
+): PaymentChargeOverviewField {
+  const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
+    data
+  return {
+    children: undefined,
+    id,
+    title,
+    forPaymentLabel,
+    totalLabel,
+    getSelectedChargeItems,
+    type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
+    component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
+  }
+}
+
+export function buildImageField(
+  data: Omit<ImageField, 'type' | 'component' | 'children'>,
+): ImageField {
+  const {
+    id,
+    title,
+    image,
+    alt,
+    marginTop,
+    marginBottom,
+    condition,
+    imageWidth = 'full',
+    titleVariant = 'h4',
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    image,
+    alt,
+    imageWidth,
+    marginTop,
+    marginBottom,
+    condition,
+    titleVariant,
+    type: FieldTypes.IMAGE,
+    component: FieldComponents.IMAGE,
+  }
+}
+
+export function buildPdfLinkButtonField(
+  data: Omit<PdfLinkButtonField, 'type' | 'component' | 'children'>,
+): PdfLinkButtonField {
+  const {
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
+    getPdfFiles,
+    setViewPdfFile,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
+    getPdfFiles,
+    setViewPdfFile,
+    children: undefined,
+    type: FieldTypes.PDF_LINK_BUTTON,
+    component: FieldComponents.PDF_LINK_BUTTON,
+  }
+}
+
+export function buildNationalIdWithNameField(
+  data: Omit<NationalIdWithNameField, 'type' | 'component' | 'children'>,
+): NationalIdWithNameField {
+  const {
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+    children: undefined,
+    type: FieldTypes.NATIONAL_ID_WITH_NAME,
+    component: FieldComponents.NATIONAL_ID_WITH_NAME,
   }
 }

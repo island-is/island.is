@@ -19,7 +19,7 @@ const useLawChapterOptions = (
     () => [
       emptyOption(placeholder, true),
       ...lawChapters.map(
-        (ch): Option => ({
+        (ch): Option<LawChapterSlug> => ({
           value: ch.slug,
           label: ch.name,
           disabled: activeChapters.includes(ch.slug),
@@ -37,9 +37,8 @@ export const LawChaptersSelect = () => {
   const chaptersField = draft.lawChapters
   const activeChapters = chaptersField.value
 
-  const {
-    data: mentionedList /*, loading  , error */,
-  } = useRegulationListQuery(draft.mentioned)
+  const { data: mentionedList /*, loading  , error */ } =
+    useRegulationListQuery(draft.mentioned)
 
   const lawChaptersOptions = useLawChapterOptions(
     lawChapters.list,
@@ -70,10 +69,7 @@ export const LawChaptersSelect = () => {
         placeholder={'Lagakafli'}
         options={lawChaptersOptions}
         onChange={(option) =>
-          actions.updateLawChapterProp(
-            'add',
-            (option as Option).value as LawChapterSlug,
-          )
+          actions.updateLawChapterProp('add', option?.value as LawChapterSlug)
         }
         backgroundColor="blue"
         hasError={chaptersField.showError && !!chaptersField.error}

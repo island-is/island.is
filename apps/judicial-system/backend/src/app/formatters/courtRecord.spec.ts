@@ -1,11 +1,13 @@
 import { createTestIntl } from '@island.is/cms-translations/test'
 
-import { formatCourtEndDate } from './courtRecordPdf'
 import { courtRecord } from '../messages'
+import { formatCourtEndDate } from './courtRecordPdf'
 
 describe('formatCourtEndDate', () => {
-  const formatMessage = createTestIntl({ locale: 'is-IS', onError: jest.fn })
-    .formatMessage
+  const formatMessage = createTestIntl({
+    locale: 'is-IS',
+    onError: jest.fn,
+  }).formatMessage
 
   function fn(startDate?: Date, endDate?: Date) {
     return formatCourtEndDate(formatMessage, startDate, endDate)

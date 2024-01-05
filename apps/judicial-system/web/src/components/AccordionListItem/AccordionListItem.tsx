@@ -7,9 +7,9 @@ interface AccordionListItemProps {
   breakSpaces?: boolean
 }
 
-const AccordionListItem: React.FC<AccordionListItemProps> = (
-  props: PropsWithChildren<AccordionListItemProps>,
-) => {
+const AccordionListItem: React.FC<
+  React.PropsWithChildren<AccordionListItemProps>
+> = (props: PropsWithChildren<AccordionListItemProps>) => {
   return (
     <>
       <Box marginBottom={1}>

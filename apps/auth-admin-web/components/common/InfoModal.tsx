@@ -22,7 +22,7 @@ interface Props {
   infoText: string
 }
 
-const InfoModal: React.FC<Props> = (props: Props) => {
+const InfoModal: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   return (
     <Modal isOpen={props.modalIsOpen} style={customStyles} ariaHideApp={false}>
       <div className="info-modal">

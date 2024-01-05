@@ -181,9 +181,8 @@ export class DelegationsService {
         : null,
     )
 
-    const remainingScopes = await this.delegationScopeService.findByDelegationId(
-      id,
-    )
+    const remainingScopes =
+      await this.delegationScopeService.findByDelegationId(id)
 
     // If no remaining scopes then we are save to delete the delegation
     if (remainingScopes.length === 0) {
@@ -485,11 +484,10 @@ export class DelegationsService {
         provider: DelegationProvider.PersonalRepresentativeRegistry,
       })
 
-      const personalRepresentatives = await this.prService.getByPersonalRepresentative(
-        {
+      const personalRepresentatives =
+        await this.prService.getByPersonalRepresentative({
           nationalIdPersonalRepresentative: user.nationalId,
-        },
-      )
+        })
 
       const personPromises = personalRepresentatives.map(
         ({ nationalIdRepresentedPerson }) =>
@@ -598,10 +596,8 @@ export class DelegationsService {
       )
 
     // Check live status, i.e. dead or alive for delegations
-    const {
-      aliveDelegations,
-      deceasedDelegations,
-    } = await this.getLiveStatusFromDelegations(delegationModels)
+    const { aliveDelegations, deceasedDelegations } =
+      await this.getLiveStatusFromDelegations(delegationModels)
 
     if (deceasedDelegations.length > 0) {
       // Delete all deceased delegations by deleting them and their scopes.
@@ -700,10 +696,11 @@ export class DelegationsService {
 
     // Check if the requested scopes are valid
     const scopes = requestedScopes.map((scope) => scope.name)
-    const allowedApiScopesCount = await this.resourcesService.countAllowedDelegationApiScopesForUser(
-      scopes,
-      user,
-    )
+    const allowedApiScopesCount =
+      await this.resourcesService.countAllowedDelegationApiScopesForUser(
+        scopes,
+        user,
+      )
     return requestedScopes.length === allowedApiScopesCount
   }
 }

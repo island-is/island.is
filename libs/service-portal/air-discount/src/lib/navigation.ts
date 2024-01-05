@@ -1,6 +1,7 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/service-portal/core'
 import { AirDiscountPaths } from './paths'
+
 export const airDiscountNavigation: PortalNavigationItem = {
   name: m.airDiscount,
   description: m.airDiscountDescription,
@@ -9,4 +10,5 @@ export const airDiscountNavigation: PortalNavigationItem = {
     icon: 'airplane',
     type: 'outline',
   },
+  children: [{ name: m.delegation, path: AirDiscountPaths.AirDiscountRoot }],
 }

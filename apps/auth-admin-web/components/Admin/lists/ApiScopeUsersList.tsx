@@ -8,7 +8,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 import { ApiScopeUser } from '../../../entities/models/api-scope-user.model'
 
-const ApiScopeUsersList: React.FC = () => {
+const ApiScopeUsersList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [adminAccess, setAdminAccess] = useState<ApiScopeUser[]>([])
   const [page, setPage] = useState(1)
   const [modalIsOpen, setIsOpen] = React.useState(false)
@@ -88,14 +88,13 @@ const ApiScopeUsersList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="api-scope-users-list__container__options">
               <div className="api-scope-users-list__container__options__button">
-                <Link href={'/admin/api-scope-user'}>
-                  <a
-                    className="api-scope-users-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/api-scope-user'}
+                  className="api-scope-users-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -139,6 +138,7 @@ const ApiScopeUsersList: React.FC = () => {
                             href={`/admin/api-scope-user/${encodeURIComponent(
                               apiScopeUser.nationalId,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

@@ -9,9 +9,9 @@ interface FiskistofaDashboardHeaderProps {
   projectPage: ProjectPage
 }
 
-export const FiskistofaDashboardHeader: React.FC<FiskistofaDashboardHeaderProps> = ({
-  projectPage,
-}) => {
+export const FiskistofaDashboardHeader: React.FC<
+  React.PropsWithChildren<FiskistofaDashboardHeaderProps>
+> = ({ projectPage }) => {
   const namespace = useMemo(() => {
     return JSON.parse(projectPage?.namespace?.fields ?? '{}')
   }, [projectPage?.namespace?.fields])

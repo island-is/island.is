@@ -59,15 +59,13 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
                   type: 'reject',
                 },
                 {
-                  name:
-                    parentalLeaveFormMessages.residenceGrantMessage
-                      .residenceGrantApplyTitle,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantApplyTitle,
                   event: 'APPROVE',
                   type: 'primary',
                   condition: (_, externalData) => {
-                    const { dateOfBirth } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { dateOfBirth } =
+                      getApplicationExternalData(externalData)
                     if (dateOfBirth?.data?.dateOfBirth) return true
                     return false
                   },

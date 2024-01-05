@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Infra Next Server
 
 This library was generated with [Nx](https://nx.dev).

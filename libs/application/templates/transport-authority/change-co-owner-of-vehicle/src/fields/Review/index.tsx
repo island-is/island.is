@@ -7,7 +7,7 @@ import { ApplicationStatus } from '../ApplicationStatus'
 import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
 
-export const Review: FC<FieldBaseProps> = (props) => {
+export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { userInfo } = useAuth()
   const [step, setStep] = useState<ReviewState>('states')
 

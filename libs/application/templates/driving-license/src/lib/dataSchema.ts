@@ -11,7 +11,7 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
-  juristiction: z.string().min(1),
+  jurisdiction: z.string().min(1),
   healthDeclaration: z.object({
     usesContactGlasses: z.enum([YES, NO]),
     hasReducedPeripheralVision: z.enum([YES, NO]),

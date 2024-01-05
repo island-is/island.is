@@ -74,9 +74,8 @@ describe('IcelandicNameController', () => {
     icelandicNameController = moduleRef.get<IcelandicNameController>(
       IcelandicNameController,
     )
-    icelandicNameService = moduleRef.get<IcelandicNameService>(
-      IcelandicNameService,
-    )
+    icelandicNameService =
+      moduleRef.get<IcelandicNameService>(IcelandicNameService)
   })
 
   it('should create an icelandic name', async () => {

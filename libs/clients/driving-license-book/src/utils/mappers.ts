@@ -56,6 +56,8 @@ export const getStudentAndBookMapper = (
             schoolTypeName: exam.schoolTypeName ?? '',
             schoolTypeCode: exam.schoolTypeCode ?? '',
             comments: exam.comments ?? '',
+            status: exam.status ?? -1,
+            statusName: exam.statusName ?? '',
           })),
       testResults: !book.testResults
         ? []

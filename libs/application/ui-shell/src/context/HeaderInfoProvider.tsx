@@ -25,7 +25,9 @@ export const HeaderInfoContext = createContext<HeaderInfoProvider>({
   setInfo: () => undefined,
 })
 
-export const HeaderInfoProvider: FC = ({ children }) => {
+export const HeaderInfoProvider: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const [info, setInfo] = useState<Info>({
     applicationName: undefined,
     institutionName: undefined,

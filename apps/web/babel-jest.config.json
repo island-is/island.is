@@ -1,15 +1,4 @@
 {
-  "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "targets": {
-          "node": "current"
-        }
-      }
-    ],
-    "@babel/preset-typescript",
-    "@babel/preset-react"
-  ],
+  "presets": ["@nx/next/babel"],
   "plugins": ["@vanilla-extract/babel-plugin"]
 }

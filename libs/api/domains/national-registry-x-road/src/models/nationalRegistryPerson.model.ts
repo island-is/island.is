@@ -5,7 +5,7 @@ import { NationalRegistryResidence } from './nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from './nationalRegistrySpouse.model'
 import { NationalRegistryCitizenship } from './nationalRegistryCitizenship.model'
 
-@ObjectType()
+@ObjectType('NationalRegistryXRoadPerson')
 export class NationalRegistryPerson {
   @Field(() => ID)
   nationalId!: string

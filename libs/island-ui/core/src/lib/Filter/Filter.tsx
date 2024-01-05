@@ -62,7 +62,7 @@ export const FilterContext = createContext<FilterContextValue>({
   variant: undefined,
 })
 
-export const Filter: FC<FilterProps> = ({
+export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   labelClearAll = '',
   labelClear = '',
   labelOpen = '',
@@ -109,7 +109,6 @@ export const Filter: FC<FilterProps> = ({
                   {labelOpen}
                 </Button>
               </Box>
-
               {hasFilterInput && filterInput}
             </Inline>
           </Box>

@@ -5,11 +5,9 @@ import {
   CaseState,
   CaseType,
   Defendant,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import {
-  DEFENDER_ROUTE,
-  RESTRICTION_CASE_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { RESTRICTION_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   makeCourt,
@@ -49,6 +47,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
     state: CaseState.RECEIVED,
   }
   const interceptByState = (state: CaseState, forceFail?: Operation) => {
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept({ ...caseDataAddition, state }, forceFail)
     cy.visit(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/test_id_stadfesta`)

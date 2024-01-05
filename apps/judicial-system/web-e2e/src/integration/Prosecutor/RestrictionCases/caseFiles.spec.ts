@@ -1,4 +1,4 @@
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType, UserRole } from '@island.is/judicial-system/types'
 import { RESTRICTION_CASE_CASE_FILES_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
@@ -11,8 +11,8 @@ import {
 
 describe(`${RESTRICTION_CASE_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const file1 = makeCaseFile('file1', 'file1')
-    const file2 = makeCaseFile('file2', 'file2')
+    const file1 = makeCaseFile({ name: 'file1' })
+    const file2 = makeCaseFile({ name: 'file2' })
     const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,
@@ -21,6 +21,7 @@ describe(`${RESTRICTION_CASE_CASE_FILES_ROUTE}/:id`, () => {
       parentCase: { ...mockCase(CaseType.CUSTODY), caseFiles: [file1, file2] },
     }
 
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${RESTRICTION_CASE_CASE_FILES_ROUTE}/test_id`)

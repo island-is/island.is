@@ -64,6 +64,14 @@ export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
   '/afgreidd': ApplicationStateUrl.PROCESSED,
 }
 
+export const getStateFromRoute: KeyMapping<string, ApplicationState[]> = {
+  '/': [ApplicationState.NEW],
+  '/nymal': [ApplicationState.NEW],
+  '/vinnslu': [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  '/teymid': [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  '/afgreidd': [ApplicationState.REJECTED, ApplicationState.APPROVED],
+}
+
 export const getEventData = (
   event: ApplicationEvent,
   applicantName: string,
@@ -144,16 +152,14 @@ export const eventTypeFromApplicationState: KeyMapping<
   Approved: ApplicationEventType.APPROVED,
 }
 
-export const getActiveSectionForTimeline: KeyMapping<
-  ApplicationState,
-  number
-> = {
-  New: 0,
-  DataNeeded: 1,
-  InProgress: 1,
-  Rejected: 2,
-  Approved: 2,
-}
+export const getActiveSectionForTimeline: KeyMapping<ApplicationState, number> =
+  {
+    New: 0,
+    DataNeeded: 1,
+    InProgress: 1,
+    Rejected: 2,
+    Approved: 2,
+  }
 
 export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   New: 'InProgress',
@@ -250,7 +256,9 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn vantar gögn',
           header: `Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina`,
-          content: `Til þess að hægt sé að meta umsóknina þarft þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
+          content:
+            typeOfDataNeeded ??
+            `Þú getur sent okkur upplýsingar og/eða gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
           applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsóknin bíður eftir gögnum',
           applicationMonth: getPeriod.month,
@@ -267,7 +275,9 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
-          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað <b>${rejectionComment}</b>. Þú getur kynnt þér nánar <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a> <br><br> <b>Málskot</b> <br> Bent skal á að unnt er að skjóta ákvörðun þessari til áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu samband með tölvupósti á netfangið <a href="mailto:${municipality.email}">${municipality.email}</a>. <br><br> Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.`,
+          content:
+            rejectionComment ??
+            `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað`,
           applicationLinkText: 'Opna stöðusíðu',
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,

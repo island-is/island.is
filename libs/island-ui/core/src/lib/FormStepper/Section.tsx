@@ -12,14 +12,16 @@ import * as styles from './Section.css'
 import * as types from './types'
 import SubSections from './SubSectionsV2/SubSectionsV2'
 
-export const Section: FC<{
-  theme?: types.FormStepperThemes
-  section: string
-  subSections?: Array<React.ReactNode>
-  sectionIndex: number
-  isActive?: boolean
-  isComplete?: boolean
-}> = ({
+export const Section: FC<
+  React.PropsWithChildren<{
+    theme?: types.FormStepperThemes
+    section: string
+    subSections?: Array<React.ReactNode>
+    sectionIndex: number
+    isActive?: boolean
+    isComplete?: boolean
+  }>
+> = ({
   theme = types.FormStepperThemes.PURPLE,
   section,
   subSections,
@@ -28,9 +30,8 @@ export const Section: FC<{
   isComplete = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const { height: activeHeight, width: activeWidth } = useComponentSize(
-    containerRef,
-  )
+  const { height: activeHeight, width: activeWidth } =
+    useComponentSize(containerRef)
   const { width } = useWindowSize()
   const [containerHeight, setContainerHeight] = useState(0)
   const [containerWidth, setContainerWidth] = useState(0)

@@ -20,7 +20,7 @@ interface Props extends FieldBaseProps {
   field: RadioField
 }
 
-export const RadioFormField: FC<Props> = ({
+export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
   showFieldName = false,
   field,
   error,

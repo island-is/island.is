@@ -1,19 +1,20 @@
-import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
+import parseISO from 'date-fns/parseISO'
 import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseCustodyRestrictions,
   CaseFileCategory,
+  CaseType,
   Gender,
-  IndictmentSubtype,
   Notification,
   NotificationType,
-} from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -64,7 +65,7 @@ export const getAppealEndDate = (rulingDate: string) => {
   return formatDate(appealEndDate, 'PPPp')
 }
 
-export const isBusiness = (nationalId?: string) => {
+export const isBusiness = (nationalId?: string | null) => {
   if (!nationalId) {
     return false
   }
@@ -113,7 +114,7 @@ export const isTrafficViolationCase = (workingCase: Case): boolean => {
 
 export const hasSentNotification = (
   notificationType: NotificationType,
-  notifications?: Notification[],
+  notifications?: Notification[] | null,
 ) => {
   if (!notifications || notifications.length === 0) {
     return false
@@ -127,7 +128,17 @@ export const hasSentNotification = (
     return false
   }
 
-  return notificationsOfType[0].recipients.some(
-    (recipient) => recipient.success,
+  return Boolean(
+    notificationsOfType[0].recipients?.some((recipient) => recipient.success),
+  )
+}
+
+export const isReopenedCOACase = (
+  appealState?: CaseAppealState | null,
+  notifications?: Notification[] | null,
+): boolean => {
+  return (
+    appealState !== CaseAppealState.COMPLETED &&
+    hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
   )
 }

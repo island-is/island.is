@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import * as styles from './TwoColumnUserInfoLine.css'
 import { Maybe } from '@island.is/service-portal/graphql'
+import cn from 'classnames'
 
 interface Props {
   label: MessageDescriptor | string
@@ -23,9 +24,10 @@ interface Props {
   secondValue?: Maybe<string>
   tooltip?: string
   className?: string
+  printable?: boolean
 }
 
-export const TwoColumnUserInfoLine: FC<Props> = ({
+export const TwoColumnUserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   loading,
   title,
@@ -33,6 +35,7 @@ export const TwoColumnUserInfoLine: FC<Props> = ({
   secondValue,
   tooltip,
   className,
+  printable = false,
 }) => {
   const labelColumnSpan: GridColumnProps['span'] = ['8/12', '4/12']
   const valueColumnSpan: GridColumnProps['span'] = ['1/1', '4/12']
@@ -43,7 +46,9 @@ export const TwoColumnUserInfoLine: FC<Props> = ({
       position="relative"
       paddingY={1}
       paddingRight={4}
-      className={className}
+      className={cn(className, {
+        [styles.printable]: printable,
+      })}
     >
       {title && (
         <Text variant="eyebrow" color="purple400" paddingBottom={2}>

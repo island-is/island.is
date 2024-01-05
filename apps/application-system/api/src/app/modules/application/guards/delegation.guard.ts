@@ -60,7 +60,7 @@ export class DelegationGuard implements CanActivate {
       // If there is no actor then the user is not using delegations
       return true
     } else {
-      // typeId is type of appliation / applications the user is trying to access
+      // typeId is type of application / applications the user is trying to access
       // Directly accessible in request params or body
       // If the request has the application id in params or the body contains a coded token from the assign application function
       // then we get the application to get its typeId
@@ -73,16 +73,28 @@ export class DelegationGuard implements CanActivate {
       // Get the delegation types the application type supports
       if (typeId) {
         const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
-        const intersection =
-          (await applicationTemplate.allowedDelegations?.filter(
-            async (delegation) =>
-              this.applicationAccessService.isDelegatationAllowed(
-                delegation,
-                user,
-              ),
-          )) || []
+        const delegations = applicationTemplate.allowedDelegations || []
+        // Prepare an array of promises that will be resolved in parallel.
+        // Each promise represents a permission check.
+        const delegationCheckPromises = delegations.map((delegation) =>
+          this.applicationAccessService.isDelegationAllowed(
+            delegation,
+            user,
+            applicationTemplate,
+          ),
+        )
+        // Execute all the permission checks in parallel and wait for them to finish.
+        const delegationCheckResults = await Promise.all(
+          delegationCheckPromises,
+        )
+        // Filter the original list of delegations using the results of the checks.
+        // This will give us a new array containing only those delegations that are allowed.
+        const allowedDelegations = delegations.filter(
+          (_, index) => delegationCheckResults[index],
+        )
+
         // returns true if the actors delegation type for the subject is allowed for this type of application
-        if (intersection.length > 0) {
+        if (allowedDelegations.length > 0) {
           return true
         } else {
           // throw bad subject with no fields,

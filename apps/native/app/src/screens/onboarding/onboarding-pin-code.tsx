@@ -1,24 +1,27 @@
-import {CancelButton, dynamicColor, font} from '@ui';
-import React, {useEffect, useState} from 'react';
-import {Image, SafeAreaView, View} from 'react-native';
-import Keychain from 'react-native-keychain';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import styled from 'styled-components/native';
-import logo from '../../assets/logo/logo-64w.png';
-import {PinKeypad} from '../../components/pin-keypad/pin-keypad';
-import {VisualizedPinCode} from '../../components/visualized-pin-code/visualized-pin-code';
-import {FormattedMessage, useIntl} from 'react-intl';
-import {preferencesStore} from '../../stores/preferences-store';
-import {ComponentRegistry} from '../../utils/component-registry';
-import {nextOnboardingStep} from '../../utils/onboarding';
-import {testIDs} from '../../utils/test-ids';
+import { CancelButton, dynamicColor, font } from '@ui'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, SafeAreaView, View } from 'react-native'
+import Keychain from 'react-native-keychain'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
+import styled from 'styled-components/native'
+import logo from '../../assets/logo/logo-64w.png'
+import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
+import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
+import { preferencesStore } from '../../stores/preferences-store'
+import { ComponentRegistry } from '../../utils/component-registry'
+import { nextOnboardingStep } from '../../utils/onboarding'
+import { testIDs } from '../../utils/test-ids'
 
 const Host = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
   background-color: ${dynamicColor('background')};
-`;
+`
 
 const Title = styled.Text`
   ${font({
@@ -28,7 +31,7 @@ const Title = styled.Text`
   max-width: 75%;
   min-width: 360px;
   text-align: center;
-`;
+`
 
 const Subtitle = styled.Text`
   ${font({
@@ -37,44 +40,44 @@ const Subtitle = styled.Text`
   min-height: 20px;
   max-width: 75%;
   text-align: center;
-`;
+`
 
 const Center = styled.View`
   justify-content: center;
   align-items: center;
-`;
+`
 
-const MAX_PIN_CHARS = 4;
+const MAX_PIN_CHARS = 4
 
 export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
-  confirmPin?: string;
-  replacePin?: number;
-}> = ({componentId, confirmPin, replacePin}) => {
-  const intl = useIntl();
-  const [code, setCode] = useState('');
-  const [invalid, setInvalid] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  confirmPin?: string
+  replacePin?: number
+}> = ({ componentId, confirmPin, replacePin }) => {
+  const intl = useIntl()
+  const [code, setCode] = useState('')
+  const [invalid, setInvalid] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const onPinInput = (char: string) => {
     setCode(
-      previousCode =>
+      (previousCode) =>
         `${previousCode}${previousCode.length >= MAX_PIN_CHARS ? '' : char}`,
-    );
-  };
+    )
+  }
 
   const onBackPress = () => {
     setCode(
-      previousCode => `${previousCode.substr(0, previousCode.length - 1)}`,
-    );
-  };
+      (previousCode) => `${previousCode.substr(0, previousCode.length - 1)}`,
+    )
+  }
 
   const onCancelPress = () => {
     if (confirmPin) {
-      Navigation.pop(componentId);
+      Navigation.pop(componentId)
     } else if (replacePin) {
-      Navigation.dismissModal(componentId);
+      Navigation.dismissModal(componentId)
     }
-  };
+  }
 
   useEffect(() => {
     if (code.length === MAX_PIN_CHARS) {
@@ -83,28 +86,28 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
           Keychain.setGenericPassword('PIN_CODE', code, {
             service: 'PIN_CODE',
           }).then(() => {
-            preferencesStore.setState(() => ({hasOnboardedPinCode: true}));
+            preferencesStore.setState(() => ({ hasOnboardedPinCode: true }))
             if (replacePin) {
-              Navigation.dismissModal(componentId);
+              Navigation.dismissModal(componentId)
             } else {
-              nextOnboardingStep();
+              nextOnboardingStep()
             }
-          });
+          })
         } else {
-          setInvalid(true);
+          setInvalid(true)
           setErrorMessage(
             intl.formatMessage({
               id: 'onboarding.pinCode.nonMatchingPinCodes',
             }),
-          );
+          )
           setTimeout(() => {
-            setInvalid(false);
-            setCode('');
-          }, 660);
+            setInvalid(false)
+            setCode('')
+          }, 660)
         }
       } else {
         setTimeout(() => {
-          setCode('');
+          setCode('')
           Navigation.push(componentId, {
             component: {
               name: ComponentRegistry.OnboardingPinCodeScreen,
@@ -113,13 +116,13 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
                 replacePin,
               },
             },
-          });
-        }, 110);
+          })
+        }, 110)
       }
     } else if (code.length >= 1) {
-      setErrorMessage('');
+      setErrorMessage('')
     }
-  }, [code]);
+  }, [code])
 
   return (
     <Host
@@ -143,7 +146,7 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
           <Image
             source={logo}
             resizeMode="contain"
-            style={{width: 45, height: 45, marginBottom: 16}}
+            style={{ width: 45, height: 45, marginBottom: 16 }}
           />
           <Title>
             {confirmPin ? (
@@ -159,7 +162,7 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
             code={code}
             invalid={invalid}
             maxChars={MAX_PIN_CHARS}
-            style={{marginBottom: 20}}
+            style={{ marginBottom: 20 }}
           />
           <PinKeypad
             onInput={onPinInput}
@@ -190,8 +193,8 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
         </Center>
       </SafeAreaView>
     </Host>
-  );
-};
+  )
+}
 
 OnboardingPinCodeScreen.options = {
   popGesture: false,
@@ -201,4 +204,4 @@ OnboardingPinCodeScreen.options = {
   layout: {
     orientation: ['portrait'],
   },
-};
+}

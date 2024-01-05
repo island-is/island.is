@@ -16,6 +16,7 @@ import {
 import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
+import type { Logger } from '@island.is/logging'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -169,6 +170,10 @@ export class InheritanceReportService extends BaseTemplateApiService {
       })
 
     if (!result.success) {
+      this.logger.error(
+        '[inheritance-report]: Failed to upload data - ',
+        result.message,
+      )
       throw new Error(
         `Application submission failed on syslumadur upload data: ${result.message}`,
       )

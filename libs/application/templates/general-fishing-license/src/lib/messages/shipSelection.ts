@@ -86,8 +86,7 @@ export const shipSelection = {
       description: 'Modal title for unfulfilled licenses',
     },
     unfulfilledLicensesModalExpandButton: {
-      id:
-        'gfl.application:shipSelection.labels.unfulfilledLicensesModalExpandButton',
+      id: 'gfl.application:shipSelection.labels.unfulfilledLicensesModalExpandButton',
       defaultMessage: 'Nánar',
       description: 'Expand button text for unfulfilled licenses',
     },

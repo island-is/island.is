@@ -13,6 +13,11 @@ export const is = {
   'login.networkErrorTitle': 'Villa kom upp',
   'login.networkErrorMessage':
     '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
+  'login.expiredTitle': 'Innskráning útrunnin',
+  'login.expiredScopesMessage':
+    'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMissingUserMessage':
+    'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -131,11 +136,12 @@ export const is = {
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
   'user.natreg.religion': 'Trú- eða lífsskoðunarfélag',
+  'user.natreg.settingsButton': 'Fara í stillingar',
 
   // home
   'home.screenTitle': 'Yfirlit',
   'home.applicationsStatus': 'Staða umsókna',
-  'home.allApplications': 'Allar stafrænar umsóknir',
+  'home.allApplications': 'Stafrænar umsóknir',
   'home.notifications': 'Tilkynningar',
   'home.welcomeText': 'Hæ',
   'home.onboardingModule.card1':
@@ -146,11 +152,15 @@ export const is = {
     'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á',
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
+  'home.vehicleModule.summary':
+    'Skrá kílómetrastöðu  rafmagns- og tengiltvinnbíla',
+  'home.vehicleModule.button': 'Mín ökutæki',
+  'button.seeAll': 'Sjá allt',
 
   // inbox
   'inbox.screenTitle': 'Pósthólf',
   'inbox.bottomTabText': 'Pósthólf',
-  'inbox.searchPlaceholder': 'Sláðu inn leitarorð...',
+  'inbox.searchPlaceholder': 'Leita...',
   'inbox.loadingText': 'Leita í pósthólfi...',
   'inbox.resultText': 'niðurstöður fundust',
   'inbox.singleResultText': 'niðurstaða fannst',
@@ -158,25 +168,37 @@ export const is = {
   'inbox.emptyListTitle': 'Hér eru engin skjöl sem stendur',
   'inbox.emptyListDescription':
     'Þegar þú færð send rafræn skjöl frá hinu opinbera birtast þau hér.',
+  'inbox.filterButtonTitle': 'Opna síu',
+  'inbox.filterOpenedTagTitle': 'Ólesið',
+  'inbox.filterArchivedTagTitle': 'Geymsla',
+  'inbox.filterStarredTagTitle': 'Stjörnumerkt',
+
+  // inbox filters
+  'inboxFilters.screenTitle': 'Sía skjöl',
+  'inboxFilters.unreadOnly': 'Sýna einungis ólesið',
+  'inboxFilters.starred': 'Stjörnumerkt',
+  'inboxFilters.archived': 'Geymsla',
 
   // document detail
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
 
   // profile
-  'profile.screenTitle': 'Mínar upplýsingar',
-  'profile.bottomTabText': 'Ég',
+  'profile.screenTitle': 'Meira',
+  'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.infoHeading': 'Eignir og fjölskylda',
   'profile.family': 'Fjölskylda',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
+  'profile.finance': 'Fjármál',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
   'vehicles.emptyListTitle': 'Engin ökutæki finnast fyrir notanda',
   'vehicles.emptyListDescription':
     'Ökutæki sem eru skráð á þig munu birtast hér.',
+  'vehicles.nextInspectionLabel': 'Næsta skoðun {date}',
+  'vehicles.mileageRequired': 'Skrá þarf kílómetrastöðu',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
@@ -199,6 +221,30 @@ export const is = {
   'vehicleDetail.vehicleWeight': 'Eigin þyngd',
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
+  'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
+
+  // vehicle mileage
+  'vehicle.mileage.errorTitle': 'Villa',
+  'vehicle.mileage.errorMileageInputTooLow':
+    'Innslegin kílómetrastaða er of lág',
+  'vehicle.mileage.errorMileageInputTooHigh':
+    'Innslegin kílómetrastaða er of há',
+  'vehicle.mileage.errorFailedToUpdate':
+    'Ekki virðist hafa tekist að uppfæra kílómetrastöðu. Vinsamlegast reynið síðar.',
+  'vehicle.mileage.successTitle': 'Kílómetrastaða uppfærð',
+  'vehicle.mileage.successMessage': 'Kílómetrastaða hefur verið uppfærð.',
+  'vehicle.mileage.promptEditTitle': 'Breyta kílómetrastöðu',
+  'vehicle.mileage.promptEditButton': 'Senda inn breytingu',
+  'vehicle.mileage.promptCancelButton': 'Hætta við',
+  'vehicle.mileage.inputPlaceholder': 'Sláðu inn núverandi kílómetrastöðu',
+  'vehicle.mileage.inputLabel': 'Skrá kílómetrastöðu',
+  'vehicle.mileage.inputSubmitButton': 'Skrá',
+  'vehicle.mileage.registerIntervalCopy':
+    'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',
+  'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á Ísland.is',
+  'vehicle.mileage.historyTitle': 'Skráningar',
+  'vehicle.mileage.editRecordButton': 'Breyta færslu',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
@@ -216,6 +262,34 @@ export const is = {
   'assetsDetail.municipality': 'Sveitarfélag',
   'assetsDetail.postNumber': 'Póstnúmer',
   'assetsDetail.buildYearDisplay': 'Byggingarár',
+
+  // finance
+  'finance.screenTitle': 'Fjármál',
+  'finance.statusCard.status': 'Staða',
+  'finance.statusCard.paymentBase': 'Gjaldgrunnur',
+  'finance.statusCard.deadline': 'Eindagi',
+  'finance.statusCard.amount': 'Upphæð',
+  'finance.statusCard.total': 'Samtals',
+  'finance.statusCard.organization': 'Þjónustuaðili',
+  'finance.statusCard.organizationWebsite': 'Vefur',
+  'finance.statusCard.organizationEmail': 'Netfang',
+  'finance.statusCard.organizationPhone': 'Sími',
+  'finance.statusCard.schedulePaymentPlan': 'Gera greiðsluáætlun',
+  'finance.heading.title': 'Staða við ríkissjóð og stofnanir',
+  'finance.heading.subtitle':
+    'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+
+  // finance detail
+  'financeDetail.title': 'Ítarupplýsingar',
+  'financeDetail.paymentBase': 'Gjaldgrunnur',
+  'financeDetail.yearAndPeriod': `Ár og tímabil`,
+  'financeDetail.dueDate': 'Gjalddagi',
+  'financeDetail.finalDueDate': 'Eindagi',
+  'financeDetail.principal': 'Höfuðstóll',
+  'financeDetail.interest': 'Vextir',
+  'financeDetail.costs': 'Kostnaður',
+  'financeDetail.payments': 'Greiðslur',
+  'financeDetail.status': 'Staða',
 
   // family
   'family.screenTitle': 'Fjölskylda',
@@ -254,6 +328,11 @@ export const is = {
   'walletPass.screenTitle': 'Skírteini',
   'walletPass.lastUpdate': 'Síðast uppfært',
   'walletPass.expirationDate': 'Gildir til',
+  'walletPass.errorTitle': 'Villa',
+  'walletPass.errorNotPossibleToAddDriverLicense':
+    'Í augnablikinu er ekki hægt að senda ökuskírteini í síma.',
+  'walletPass.moreInfo': 'Nánari upplýsingar',
+  'walletPass.alertClose': 'Loka',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
@@ -315,6 +394,11 @@ export const is = {
   'licenseScannerResult.nationalId': 'Kennitala',
   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
+  // license details
+  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
+  'licenseDetail.pcard.alert.description':
+    'Þetta yfirlit gildir ekki sem stæðiskort.',
+
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
 
@@ -352,12 +436,18 @@ export const is = {
   'edit.phone.description': 'Hér getur þú breytt símanúmeri',
   'edit.phone.inputlabel': 'Símanúmer',
   'edit.phone.button': 'Vista',
+  'edit.phone.button.empty': 'Vista tómt',
+  'edit.phone.button.error': 'Villa',
+  'edit.phone.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit email
   'edit.email.screenTitle': 'Breyta Netfangi',
   'edit.email.description': 'Hér getur þú breytt netfangi',
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
+  'edit.email.button.empty': 'Vista tómt',
+  'edit.email.button.error': 'Villa',
+  'edit.email.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',
@@ -380,4 +470,4 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
-};
+}

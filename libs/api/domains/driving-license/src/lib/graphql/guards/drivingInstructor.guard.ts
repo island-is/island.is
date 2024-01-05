@@ -9,9 +9,10 @@ export class DrivingInstructorGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context)
     const user = ctx.getContext().req.user
-    const teachingRights = await this.drivingLicenseService.getTeachingRights(
-      user.nationalId,
-    )
+    const teachingRights = await this.drivingLicenseService.getTeachingRights({
+      nationalId: user.nationalId,
+      token: user.authorization,
+    })
     return teachingRights.hasTeachingRights
   }
 }

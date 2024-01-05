@@ -1,0 +1,13 @@
+query UserInfoOverview($api: String, $useFakeData: Boolean) {
+  nationalRegistryPerson(api: $api, useFakeData: $useFakeData) {
+    nationalId
+    spouse {
+      nationalId
+      fullName
+    }
+    childCustody {
+      nationalId
+      fullName
+    }
+  }
+}

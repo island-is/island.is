@@ -10,10 +10,9 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-export const PropertyOverviewRepeater: FC<PropTypes> = ({
-  field,
-  application,
-}) => {
+export const PropertyOverviewRepeater: FC<
+  React.PropsWithChildren<PropTypes>
+> = ({ field, application }) => {
   const { formatMessage } = useLocale()
   const { title } = field
   const { id } = field.props as { id: string }

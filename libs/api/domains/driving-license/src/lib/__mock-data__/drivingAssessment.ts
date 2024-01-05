@@ -7,9 +7,9 @@ const getDateOfAssessment = () => {
 }
 
 const DrivingAssessment = {
-  dagsetningMats: getDateOfAssessment(),
-  kennitalaOkukennara: '2',
-  kennitala: '0',
+  dateOfAssessment: getDateOfAssessment(),
+  ssn: '0',
+  instructorSSN: '2',
 }
 
 export default DrivingAssessment

@@ -6,7 +6,10 @@ interface FilterTagProps {
   onClick?: () => void
 }
 
-export const FilterTag: React.FC<FilterTagProps> = ({ children, onClick }) => {
+export const FilterTag: React.FC<React.PropsWithChildren<FilterTagProps>> = ({
+  children,
+  onClick,
+}) => {
   return (
     <Tag onClick={onClick}>
       <Box flexDirection="row" alignItems="center">

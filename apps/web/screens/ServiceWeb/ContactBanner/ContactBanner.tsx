@@ -40,7 +40,7 @@ const ContactBanner = ({
           <Text variant="intro" marginBottom={[5, 10]}>
             {howCanWeHelpText}
           </Text>
-          <Link href={link}>
+          <Link href={link} legacyBehavior>
             <Button type="button" variant="ghost" icon="arrowForward">
               {contactUsText}
             </Button>

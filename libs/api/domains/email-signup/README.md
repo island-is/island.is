@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Mailchimp Module
 
 Module for mailing list signup endpoints.

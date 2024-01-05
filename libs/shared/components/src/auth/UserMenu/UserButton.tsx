@@ -17,6 +17,7 @@ interface UserButtonProps {
   small: boolean
   onClick(): void
   iconOnlyMobile?: boolean
+  userMenuOpen?: boolean
 }
 
 export const UserButton = ({
@@ -24,6 +25,7 @@ export const UserButton = ({
   user,
   small,
   iconOnlyMobile = false,
+  userMenuOpen,
 }: UserButtonProps) => {
   const isDelegation = checkDelegation(user)
   const { profile } = user
@@ -45,9 +47,9 @@ export const UserButton = ({
         ) : (
           <Button
             variant="utility"
-            colorScheme={isDelegation ? 'primary' : 'default'}
+            colorScheme={isDelegation ? 'primary' : 'white'}
             onClick={onClick}
-            icon={isDelegation ? 'people' : 'person'}
+            icon={userMenuOpen ? 'close' : isDelegation ? 'people' : 'person'}
             iconType="outline"
             aria-label={formatMessage(userMessages.userButtonAria)}
             data-testid="user-menu"
@@ -65,7 +67,7 @@ export const UserButton = ({
       <Hidden below="md">
         <Button
           variant="utility"
-          colorScheme={isDelegation ? 'primary' : 'default'}
+          colorScheme={isDelegation ? 'primary' : 'white'}
           onClick={onClick}
           icon="chevronDown"
           aria-label={formatMessage(userMessages.userButtonAria)}

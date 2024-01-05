@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { ReactNode, useContext } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
@@ -21,11 +21,9 @@ interface FooterProps {
   organizationSlug: string
 }
 
-const SjukratryggingarFooter: React.FC<FooterProps> = ({
-  footerItems,
-  namespace,
-  organizationSlug,
-}) => {
+const SjukratryggingarFooter: React.FC<
+  React.PropsWithChildren<FooterProps>
+> = ({ footerItems, namespace, organizationSlug }) => {
   const n = useNamespace(namespace)
   const { isServiceWeb } = useContext(GlobalContext)
   const { linkResolver } = useLinkResolver()
@@ -179,7 +177,10 @@ const SjukratryggingarFooter: React.FC<FooterProps> = ({
                       ] ?? []) as SliceType[],
                       {
                         renderNode: {
-                          [BLOCKS.PARAGRAPH]: (_node, children) => (
+                          [BLOCKS.PARAGRAPH]: (
+                            _node: never,
+                            children: ReactNode,
+                          ) => (
                             <Text variant="small" color="dark400" marginY={1}>
                               {children}
                             </Text>
@@ -202,7 +203,10 @@ const SjukratryggingarFooter: React.FC<FooterProps> = ({
                         ] as SliceType[],
                         {
                           renderNode: {
-                            [BLOCKS.PARAGRAPH]: (_node, children) => (
+                            [BLOCKS.PARAGRAPH]: (
+                              _node: never,
+                              children: ReactNode,
+                            ) => (
                               <Text variant="small" color="dark400" marginY={1}>
                                 {children}
                               </Text>

@@ -3,6 +3,9 @@ import { FieldBaseProps } from '@island.is/application/types'
 import ManWithStrollerIllustration from './ManWithStrollerIllustration'
 import { Box, ResponsiveProp } from '@island.is/island-ui/core'
 import BackgroundImage from '../../assets/BackgroundImage'
+import { FieldDescription } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
+import { formatText } from '@island.is/application/core'
 
 type ResponsivePropType =
   | ResponsiveProp<
@@ -71,7 +74,11 @@ interface PeriodsSectionImageProp extends FieldBaseProps {
 }
 
 // TODO later move the illustrations from the web project and into a reusable library
-const PeriodsSectionImage: FC<PeriodsSectionImageProp> = ({
+const PeriodsSectionImage: FC<
+  React.PropsWithChildren<PeriodsSectionImageProp>
+> = ({
+  application,
+  field,
   children,
   height,
   display,
@@ -81,6 +88,9 @@ const PeriodsSectionImage: FC<PeriodsSectionImageProp> = ({
   flexDirection,
   justifyContent,
 }) => {
+  const { formatMessage } = useLocale()
+  const { description } = field
+
   return (
     <Box
       display={display || 'flex'}
@@ -91,6 +101,11 @@ const PeriodsSectionImage: FC<PeriodsSectionImageProp> = ({
       marginRight={marginRight || 0}
       marginTop={marginTop || 0}
     >
+      {description && (
+        <FieldDescription
+          description={formatText(description, application, formatMessage)}
+        />
+      )}
       <BackgroundImage>
         {children || <ManWithStrollerIllustration />}
       </BackgroundImage>

@@ -17,7 +17,7 @@ import { information } from '../../lib/messages'
 import { OwnerCoOwnersInformation } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 
-export const CoOwner: FC<FieldBaseProps> = (props) => {
+export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application, field, setFieldLoadingState, errors } = props
 
   const { formatMessage } = useLocale()
@@ -49,9 +49,7 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
   )
 
   useEffect(() => {
-    if (coOwners.length === 0) {
-      setFieldLoadingState?.(loading || !!error)
-    }
+    setFieldLoadingState?.(loading || !!error)
   }, [loading, error])
 
   useEffect(() => {

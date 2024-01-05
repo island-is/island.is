@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Service Portal Education Career
 
 This library was generated with [Nx](https://nx.dev).

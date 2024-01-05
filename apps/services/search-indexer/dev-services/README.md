@@ -20,6 +20,12 @@ And Kibana running on port `localhost:5601`
 **You must have access to Contentful for the indexer to work correctly**  
 To import map templates, create indice and import data run
 
+Requred env variables:
+
+- `CONTENTFUL_HOST=preview.contentful.com` - Get from Contentful
+- `CONTENTFUL_ACCESS_TOKEN=` - Get from Contentful or by running `yarn get-secrets api`
+- `ELASTIC_NODE=http://localhost:9200/`
+
 ```bash
 yarn nx run services-search-indexer:build
 yarn nx run services-search-indexer:migrate

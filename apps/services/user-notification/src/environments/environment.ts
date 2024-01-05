@@ -1,4 +1,5 @@
-import yargs from 'yargs'
+import { processJob } from '@island.is/infra-nest-server'
+
 let env = process.env
 
 if (!env.NODE_ENV || env.NODE_ENV === 'development') {
@@ -10,15 +11,14 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
     SQS_ACCESS_KEY: 'testing',
     SQS_SECRET_ACCESS_KEY: 'testing',
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev',
+
     ...env,
   }
 }
 
 const required = (name: string): string => env[name] ?? ''
 
-const {
-  argv: { job },
-} = yargs(process.argv.slice(2))
+const job = processJob()
 
 export const environment = {
   identityServerPath: required('IDENTITY_SERVER_PATH'),
@@ -47,6 +47,9 @@ export const environment = {
       }),
   },
   contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+  auth: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+  },
 }
 
 export type Config = typeof environment

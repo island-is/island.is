@@ -9,7 +9,9 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { RadioController } from '@island.is/shared/form-fields'
 import kennitala from 'kennitala'
 
-export const ReviewMainOperator: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const ReviewMainOperator: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({
   setStep,
   coOwnersAndOperators = [],
   setMainOperator,

@@ -15,12 +15,8 @@ const renderDocFileName = ({ name, isAdvice = false }: Props) => {
   if (name.length < len) {
     return name
   } else {
-    // finding the first 38 characters in filename to return a shorter name in case of REVEIEW_CARD_MAX_FILENAME_LENGTH
-    const indexOfLastDot = name.lastIndexOf('.')
-    const fileName = name.substring(0, indexOfLastDot)
-    const extensionName = name.substring(indexOfLastDot)
-    const shortFileName = fileName.substring(0, len - extensionName.length)
-    const retFileName = `${shortFileName}..${extensionName}`
+    const shortFileName = name.substring(0, len)
+    const retFileName = `${shortFileName}...`
     return retFileName
   }
 }

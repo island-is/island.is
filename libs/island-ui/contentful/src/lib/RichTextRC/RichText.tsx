@@ -10,9 +10,11 @@ import { ImageProps } from '../Image/Image'
 import { FaqListProps } from '../FaqList/FaqList'
 import { StatisticsProps } from '../Statistics/Statistics'
 import { AssetLinkProps } from '../AssetLink/AssetLink'
+import { LinkCardProps } from '../LinkCard/LinkCard'
 import { ProcessEntryProps } from '../ProcessEntry/ProcessEntry'
 import { EmbeddedVideoProps } from '../EmbeddedVideo/EmbeddedVideo'
 import { SectionWithImageProps } from '../SectionWithImage/SectionWithImage'
+import { SectionWithVideoProps } from '../SectionWithVideo/SectionWithVideo'
 import { TeamListProps } from '../TeamList/TeamList'
 import { ContactUsProps } from '../ContactUs/ContactUs'
 import { LocationProps } from '../Location/Location'
@@ -40,6 +42,7 @@ type ImageSlice = { __typename: 'Image'; id: string } & Omit<
   'thumbnail'
 >
 type AssetSlice = { __typename: 'Asset'; id: string } & AssetLinkProps
+type LinkCardSlice = { __typename: 'LinkCard'; id: string } & LinkCardProps
 type ProcessEntrySlice = {
   __typename: 'ProcessEntry'
   id: string
@@ -62,6 +65,10 @@ type SectionWithImageSlice = {
   __typename: 'SectionWithImage'
   id: string
 } & SectionWithImageProps
+type SectionWithVideoSlice = {
+  __typename: 'SectionWithVideo'
+  id: string
+} & SectionWithVideoProps
 
 export type SliceType =
   | HtmlSlice
@@ -70,6 +77,7 @@ export type SliceType =
   | StatisticsSlice
   | ImageSlice
   | AssetSlice
+  | LinkCardSlice
   | ProcessEntrySlice
   | EmbeddedVideoSlice
   | TeamListSlice
@@ -77,13 +85,14 @@ export type SliceType =
   | LocationSlice
   | TellUsAStorySlice
   | SectionWithImageSlice
+  | SectionWithVideoSlice
   | {
       // TODO: these are used on the about page - we need to move their rendering
       // to here to make them re-usable by other page types
       __typename:
         | 'TimelineSlice'
         | 'HeadingSlice'
-        | 'LinkCardSlice'
+        | 'LinkCardSection'
         | 'EmailSignup'
         | 'StorySlice'
         | 'LatestNewsSlice'
@@ -101,6 +110,8 @@ type RichText = (
         renderMark: Options['renderMark']
         renderComponent: {
           [slice in keyof typeof defaultRenderComponentObject]: (
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             SliceType,
           ) => ReactNode
         }
@@ -115,10 +126,16 @@ export const richText: RichText = (
   locale = 'is',
 ) => {
   const options = {
-    renderText: (text) => {
-      return text.split('\n').reduce((children, textSegment, index) => {
-        return [...children, index > 0 && <br key={index} />, textSegment]
-      }, [])
+    renderText: (text: string) => {
+      return (
+        text
+          .split('\n')
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          .reduce((children: string[], textSegment: string, index: number) => {
+            return [...children, index > 0 && <br key={index} />, textSegment]
+          }, [])
+      )
     },
     renderNode: { ...defaultRenderNodeObject, ...opt.renderNode },
     renderMark: { ...defaultRenderMarkObject, ...opt.renderMark },
@@ -143,6 +160,9 @@ export const richText: RichText = (
         marginBottom={[5, 5, 5, 6]}
         marginTop={[5, 5, 5, 6]}
       >
+        {/**
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         // @ts-ignore make web strict */}
         {renderComponent[slice.__typename]?.(slice, locale)}
       </Box>
     )

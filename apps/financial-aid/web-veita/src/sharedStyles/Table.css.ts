@@ -67,3 +67,26 @@ export const tableBody = style({
     },
   },
 })
+
+export const sortIcon = style({
+  opacity: 0,
+  transition: 'opacity .2s ease-in-out',
+
+  selectors: {
+    [`${tablePadding}:hover &`]: {
+      opacity: 0.6,
+    },
+  },
+})
+
+export const sortActive = style({
+  opacity: 1,
+})
+
+export const sortAsc = style({
+  transform: 'rotate(180deg)',
+})
+
+export const sortDes = style({
+  transform: 'rotate(0deg)',
+})

@@ -1,19 +1,20 @@
 {
-  "root": "libs/nest/pagination",
+  "name": "nest-pagination",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/pagination/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/nest/pagination/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/pagination"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/pagination"],
       "options": {
-        "jestConfig": "libs/nest/pagination/jest.config.js",
+        "jestConfig": "libs/nest/pagination/jest.config.ts",
         "passWithNoTests": true
       }
     }

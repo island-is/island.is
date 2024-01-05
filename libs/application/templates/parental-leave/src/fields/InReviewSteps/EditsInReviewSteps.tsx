@@ -25,14 +25,20 @@ const statesMap: StatesMap = {
     [ApplicationStates.EMPLOYER_APPROVE_EDITS]: ReviewSectionState.inProgress,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS]:
       ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT]:
+      ReviewSectionState.complete,
   },
   vinnumalastofnun: {
     [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS]:
       ReviewSectionState.inProgress,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT]:
+      ReviewSectionState.inProgress,
   },
 }
 
-const EditInReviewSteps: FC<FieldBaseProps> = (props) => {
+const EditInReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application } = props
   const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const dobDate = dob ? new Date(dob) : null

@@ -23,7 +23,7 @@ type FilesRecipientCardProps = {
 }
 
 export const FilesRecipientCard: FC<
-  FieldBaseProps<AODAnswers> & FilesRecipientCardProps
+  React.PropsWithChildren<FieldBaseProps<AODAnswers> & FilesRecipientCardProps>
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
   let options =

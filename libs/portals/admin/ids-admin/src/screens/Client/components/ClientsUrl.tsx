@@ -56,7 +56,7 @@ const ClientsUrl = ({
             value={uris.redirectUris}
             placeholder={formatMessage(m.callBackUrlPlaceholder)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors?.redirectUris as unknown) as string,
+              actionData?.errors?.redirectUris as unknown as string,
             )}
           />
           <Text variant="small">{formatMessage(m.callBackUrlDescription)}</Text>
@@ -74,7 +74,7 @@ const ClientsUrl = ({
             value={uris.postLogoutRedirectUris}
             placeholder={formatMessage(m.logoutUrlPlaceholder)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors?.postLogoutRedirectUris as unknown) as string,
+              actionData?.errors?.postLogoutRedirectUris as unknown as string,
             )}
           />
           <Text variant="small">{formatMessage(m.logoutUrlDescription)}</Text>

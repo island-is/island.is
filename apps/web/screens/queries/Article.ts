@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { nestedFields, slices } from './fragments'
 
 export const GET_ARTICLE_QUERY = gql`
@@ -12,6 +13,10 @@ export const GET_ARTICLE_QUERY = gql`
       importance
       showTableOfContents
       processEntryButtonText
+      signLanguageVideo {
+        url
+        thumbnailImageUrl
+      }
       alertBanner {
         showAlertBanner
         bannerVariant
@@ -45,11 +50,7 @@ export const GET_ARTICLE_QUERY = gql`
         config
       }
       processEntry {
-        id
-        processTitle
-        processLink
-        openLinkInModal
-        buttonText
+        ...ProcessEntryFields
       }
       organization {
         id
@@ -59,6 +60,7 @@ export const GET_ARTICLE_QUERY = gql`
         link
         hasALandingPage
         trackingDomain
+        footerConfig
         logo {
           url
           width
@@ -122,6 +124,10 @@ export const GET_ARTICLE_QUERY = gql`
         id
         title
         slug
+        signLanguageVideo {
+          url
+          thumbnailImageUrl
+        }
         body {
           ...AllSlices
           ${nestedFields}

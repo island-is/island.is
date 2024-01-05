@@ -1,0 +1,14 @@
+query GetFinanceDocumentsList($input: GetFinanceDocumentsListInput!) {
+  getDocumentsList(input: $input) {
+    downloadServiceURL
+    documentsList {
+      id
+      date
+      type
+      note
+      sender
+      dateOpen
+      amount
+    }
+  }
+}

@@ -4,19 +4,20 @@ import CaseScreen from '../../screens/Case/Case'
 import { CASE_GET_CASE_BY_ID } from '../../graphql/queries.graphql'
 import { CaseGetCaseByIdQuery } from '../../graphql/queries.graphql.generated'
 import { Case } from '../../types/interfaces'
+import { withApollo } from '../../graphql/withApollo'
 
 interface CaseProps {
   case: Case
   caseId: number
 }
 
-const CaseDetails: React.FC<CaseProps> = ({
+const CaseDetails: React.FC<React.PropsWithChildren<CaseProps>> = ({
   case: Case,
   caseId,
 }: CaseProps) => {
   return <CaseScreen chosenCase={Case} caseId={caseId} />
 }
-export default CaseDetails
+export default withApollo(CaseDetails)
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()

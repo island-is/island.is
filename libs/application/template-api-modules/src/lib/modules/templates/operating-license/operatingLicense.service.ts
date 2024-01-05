@@ -22,6 +22,7 @@ import {
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  InstitutionNationalIds,
   YES,
 } from '@island.is/application/types'
 import { Info, BankruptcyHistoryResult } from './types/application'
@@ -76,9 +77,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         application.applicantActors.length > 0
           ? application.applicantActors[0]
           : application.applicant
-      const hasCriminalRecord = await this.criminalRecordService.validateCriminalRecord(
-        applicantSsn,
-      )
+      const hasCriminalRecord =
+        await this.criminalRecordService.validateCriminalRecord(applicantSsn)
       if (hasCriminalRecord) {
         return { success: true }
       }
@@ -180,31 +180,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     }
 
     return cert[0]
-  }
-
-  async createCharge({
-    application: { id, answers },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
-    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
-    if (!chargeItemCode) {
-      throw new Error('chargeItemCode missing in request')
-    }
-
-    const response = await this.sharedTemplateAPIService.createCharge(
-      auth,
-      id,
-      SYSLUMADUR_NATIONAL_ID,
-      [chargeItemCode],
-    )
-    // last chance to validate before the user receives a dummy
-    if (!response?.paymentUrl) {
-      throw new Error('paymentUrl missing in response')
-    }
-
-    return response
   }
 
   async submitOperatingLicenseApplication({

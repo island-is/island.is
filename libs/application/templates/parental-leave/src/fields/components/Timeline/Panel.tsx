@@ -8,15 +8,17 @@ import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { TimelinePeriod } from './Timeline'
 import * as styles from './Panel.css'
 
-export const Panel: FC<{
-  editable: boolean
-  initDate: Date
-  title: string
-  titleSmall: string
-  periods: TimelinePeriod[]
-  isMobile: boolean
-  onDeletePeriod?: (startDate: string) => void
-}> = ({
+export const Panel: FC<
+  React.PropsWithChildren<{
+    editable: boolean
+    initDate: Date
+    title: string
+    titleSmall: string
+    periods: TimelinePeriod[]
+    isMobile: boolean
+    onDeletePeriod?: (startDate: string) => void
+  }>
+> = ({
   editable = true,
   initDate,
   title,

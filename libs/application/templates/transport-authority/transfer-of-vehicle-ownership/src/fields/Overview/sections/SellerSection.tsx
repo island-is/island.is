@@ -10,10 +10,9 @@ import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
 import { formatPhoneNumber } from '../../../utils'
 
-export const SellerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
-  reviewerNationalId = '',
-}) => {
+export const SellerSection: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({ application, reviewerNationalId = '' }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
 

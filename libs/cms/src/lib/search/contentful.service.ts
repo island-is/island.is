@@ -5,9 +5,11 @@ import {
   CreateClientParams,
   Entry,
   EntryCollection,
-  SyncCollection,
+  SyncCollection as ContentfulSyncCollection,
+  Sys,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
@@ -19,6 +21,10 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
+
+type SyncCollection = ContentfulSyncCollection & {
+  nextPageToken?: string
+}
 
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,6 +43,7 @@ interface SyncerResult {
   items: Entry<unknown>[]
   deletedEntryIds: string[]
   elasticIndex: string
+  nextPageToken?: string
 }
 
 interface UpdateNextSyncTokenOptions {
@@ -44,7 +51,10 @@ interface UpdateNextSyncTokenOptions {
   elasticIndex: string
 }
 
-type typeOfSync = { initial: boolean } | { nextSyncToken: string }
+type typeOfSync =
+  | { initial: boolean }
+  | { nextSyncToken: string }
+  | { nextPageToken: string }
 
 @Injectable()
 export class ContentfulService {
@@ -58,7 +68,10 @@ export class ContentfulService {
     en: 'en',
   }
 
-  constructor(private readonly elasticService: ElasticService) {
+  constructor(
+    private readonly elasticService: ElasticService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {
     const params: CreateClientParams = {
       space: environment.contentful.space,
       accessToken: environment.contentful.accessToken,
@@ -89,7 +102,7 @@ export class ContentfulService {
     })
   }
 
-  private getFilteredIds(chunkToProcess: Entry<unknown>[]): string[] {
+  private getFilteredIds(chunkToProcess: { sys: Sys }[]): string[] {
     return chunkToProcess.reduce((csvIds: string[], entry) => {
       // contentful sync api does not support limiting the sync to a single content type we filter here to reduce subsequent calls to Contentful
       if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
@@ -185,10 +198,19 @@ export class ContentfulService {
   private async getTypeOfSync({
     syncType,
     elasticIndex,
+    nextPageToken,
   }: {
     syncType: SyncOptions['syncType']
     elasticIndex: string
+    nextPageToken?: string
   }): Promise<typeOfSync> {
+    if (nextPageToken) {
+      logger.info('Getting data from next page token found in Contentful', {
+        elasticIndex,
+        nextPageToken,
+      })
+      return { nextPageToken }
+    }
     if (syncType === 'full') {
       // this is a full sync, get all data
       logger.info('Getting all data from Contentful')
@@ -204,15 +226,39 @@ export class ContentfulService {
     }
   }
 
-  private getSyncData(typeOfSync: typeOfSync): Promise<SyncCollection> {
-    return this.contentfulClient.sync({
-      resolveLinks: true,
-      ...typeOfSync,
-    })
+  private async getSyncData(typeOfSync: typeOfSync) {
+    const syncData = await (
+      this.contentfulClient.sync as (
+        query: unknown,
+        options: unknown,
+      ) => Promise<SyncCollection>
+    )(
+      {
+        ...typeOfSync,
+      },
+      {
+        // So we get a paginated response (sounds counter-intuitive to set paginate to false but that's how it is)
+        // This was derived from reading the contentfulClient source code: https://github.com/contentful/contentful.js/blob/8f88492583f657d8689f40a409f08e3161fb0a7d/lib/paged-sync.js
+        paginate: false,
+      },
+    )
+
+    // Remove unnecessary fields to save memory
+    for (let i = 0; i < syncData.entries.length; i += 1) {
+      syncData.entries[i] = {
+        ...syncData.entries[i],
+        fields: {
+          // In case the entry can be turned off via activeTranslations toggle we want to keep that information
+          activeTranslations: syncData.entries[i].fields?.activeTranslations,
+        },
+      }
+    }
+
+    return syncData
   }
 
   private async getPopulatedContentulEntries(
-    entries: Entry<unknown>[],
+    entries: { sys: Sys }[],
     locale: ElasticsearchIndexLocale,
     chunkSize: number,
   ): Promise<Entry<unknown>[]> {
@@ -250,6 +296,7 @@ export class ContentfulService {
     const {
       entries,
       nextSyncToken: newNextSyncToken,
+      nextPageToken,
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
@@ -311,6 +358,7 @@ export class ContentfulService {
       nestedEntryIds,
       deletedEntryIds,
       newNextSyncToken,
+      nextPageToken,
     }
   }
 
@@ -320,15 +368,16 @@ export class ContentfulService {
       locale,
       elasticIndex = getElasticsearchIndex(options.locale),
     } = options
-    const typeOfSync = await this.getTypeOfSync({ syncType, elasticIndex })
+    const typeOfSync = await this.getTypeOfSync({
+      syncType,
+      elasticIndex,
+      nextPageToken: options.nextPageToken,
+    })
 
     // Contentful only allows a maximum of 7MB response size, so this chunkSize variable allows us to tune down how many entries we fetch in one request
     const chunkSize = Number(
       process.env.CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE ?? 40,
     )
-
-    const shouldResolveNestedEntries =
-      process.env.SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES === 'true'
 
     logger.info(`Sync chunk size is: ${chunkSize}`)
 
@@ -342,10 +391,16 @@ export class ContentfulService {
       indexableEntries,
       newNextSyncToken,
       deletedEntryIds,
+      nextPageToken,
     } = populatedSyncEntriesResult
     let { nestedEntryIds } = populatedSyncEntriesResult
 
     const isDeltaUpdate = syncType !== 'full'
+
+    const shouldResolveNestedEntries = await this.featureFlagService.getValue(
+      Features.shouldSearchIndexerResolveNestedEntries,
+      true,
+    )
 
     // In case of delta updates, we need to resolve embedded entries to their root model
     if (isDeltaUpdate && shouldResolveNestedEntries) {
@@ -412,6 +467,7 @@ export class ContentfulService {
       items: indexableEntries,
       deletedEntryIds,
       elasticIndex,
+      nextPageToken,
     }
   }
 }

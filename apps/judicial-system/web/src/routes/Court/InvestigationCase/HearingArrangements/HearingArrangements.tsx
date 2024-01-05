@@ -2,6 +2,9 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
+import { AlertMessage, Box, RadioButton, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CourtArrangements,
@@ -11,24 +14,22 @@ import {
   FormContext,
   FormFooter,
   Modal,
+  PageHeader,
   PageLayout,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system/types'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import {
+  NotificationType,
+  SessionArrangements,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  formatDateForServer,
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
-import { AlertMessage, RadioButton, Box, Text } from '@island.is/island-ui/core'
-import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import * as constants from '@island.is/judicial-system/consts'
+import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
 
@@ -41,11 +42,8 @@ const HearingArrangements = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const {
-    setAndSendCaseToServer,
-    sendNotification,
-    isSendingNotification,
-  } = useCase()
+  const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
+    useCase()
   const {
     courtDate,
     setCourtDate,
@@ -361,6 +359,12 @@ const HearingArrangements = () => {
               }
             }}
             onSecondaryButtonClick={() => {
+              sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+                true,
+              )
+
               router.push(`${navigateTo}/${workingCase.id}`)
             }}
             primaryButtonText={formatMessage(m.modal.primaryButtonText)}

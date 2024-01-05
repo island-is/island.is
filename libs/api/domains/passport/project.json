@@ -1,20 +1,21 @@
 {
-  "root": "libs/api/domains/passport",
+  "name": "api-domains-passport",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/passport/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/passport/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/passport"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/passport"],
       "options": {
-        "jestConfig": "libs/api/domains/passport/jest.config.js",
+        "jestConfig": "libs/api/domains/passport/jest.config.ts",
         "passWithNoTests": true
       }
     }

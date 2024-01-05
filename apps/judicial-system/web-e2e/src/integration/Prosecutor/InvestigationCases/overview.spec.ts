@@ -6,10 +6,7 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import {
-  DEFENDER_ROUTE,
-  INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   mockCase,

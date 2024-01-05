@@ -1,24 +1,25 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 
 import { Box, Text } from '@island.is/island-ui/core'
-
 import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { TagCaseState } from '@island.is/judicial-system-web/src/components'
-import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import { tables } from '@island.is/judicial-system-web/messages'
+import { TagCaseState } from '@island.is/judicial-system-web/src/components'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CategoryCard } from '@island.is/judicial-system-web/src/routes/Shared/Cases/MobileCase'
+import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {
   theCase: CaseListEntry
   onClick: () => void
   isCourtRole: boolean
+  children: React.ReactNode
+  isLoading?: boolean
 }
 
 const MobilePastCase: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const MobilePastCase: React.FC<Props> = ({
   onClick,
   isCourtRole,
   children,
+  isLoading = false,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -42,8 +44,9 @@ const MobilePastCase: React.FC<Props> = ({
           courtDate={theCase.courtDate}
         />,
       ]}
+      isLoading={isLoading}
     >
-      <Text title={theCase.policeCaseNumbers.join(', ')}>
+      <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
       {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}

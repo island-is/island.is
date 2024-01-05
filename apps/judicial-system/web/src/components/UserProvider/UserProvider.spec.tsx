@@ -1,29 +1,17 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
-import { LocaleProvider } from '@island.is/localization'
-import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
-import { CurrentUserDocument } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  UserProvider,
-  Header,
-} from '@island.is/judicial-system-web/src/components'
+import { render, screen } from '@testing-library/react'
 
-const mockJudgeQuery = {
-  request: {
-    query: CurrentUserDocument,
-  },
-  result: {
-    data: {
-      currentUser: mockJudge,
-    },
-  },
-}
+import { Header } from '@island.is/judicial-system-web/src/components'
+import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
+import { LocaleProvider } from '@island.is/localization'
+
+import { UserProvider } from './UserProvider'
 
 describe('UserProvider', () => {
   test('should load the user', async () => {
     render(
-      <MockedProvider mocks={[mockJudgeQuery]} addTypename={false}>
+      <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
         <UserProvider authenticated={true}>
           <LocaleProvider locale="is" messages={{}}>
             <Header />

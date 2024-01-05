@@ -21,7 +21,7 @@ export class DrivingLicense {
   categories!: Eligibility[]
 
   @Field(() => [String])
-  healthRemarks?: string[]
+  remarks?: string[]
 
   @Field(() => Disqualification, { nullable: true })
   disqualification?: Disqualification

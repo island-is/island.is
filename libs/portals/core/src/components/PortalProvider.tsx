@@ -1,3 +1,4 @@
+import { useLocale } from '@island.is/localization'
 import { createContext, useContext, useMemo } from 'react'
 import { useLocation, matchPath, Outlet } from 'react-router-dom'
 import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
@@ -43,6 +44,7 @@ export const PortalProvider = ({
 }: PortalProviderProps) => {
   const { pathname } = useLocation()
   const { userInfo } = useAuth()
+  const { formatMessage } = useLocale()
   const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
 
   const activeModule = useMemo(
@@ -50,7 +52,9 @@ export const PortalProvider = ({
       userInfo
         ? modules.find((module) => {
             return (
-              spreadRoutsChildren(module.routes({ userInfo, client }))
+              spreadRoutsChildren(
+                module.routes({ userInfo, client, formatMessage }),
+              )
                 // Extract the path from each route
                 .map(({ path }) => path)
                 // Find the route path that matches the current pathname

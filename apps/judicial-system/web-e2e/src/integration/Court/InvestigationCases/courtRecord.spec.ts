@@ -5,6 +5,7 @@ import {
   CaseDecision,
   CaseType,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   INVESTIGATION_CASE_CONFIRMATION_ROUTE,
@@ -15,6 +16,7 @@ import { mockCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   beforeEach(() => {
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
   })
 
@@ -236,7 +238,8 @@ describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
     cy.get('#prosecutor-appeal').check()
     cy.get('#accused-appeal').check()
     cy.getByTestid('endOfSessionBookings').type(faker.lorem.words(5))
-    cy.getByTestid('datepicker').last().clear().type('17.12.2021')
+    cy.getByTestid('datepicker').last().clear()
+    cy.getByTestid('datepicker').last().type('17.12.2021')
     cy.clickOutside()
     cy.getByTestid('courtEndTime-time').type('11:00')
     cy.getByTestid('continueButton').should('not.be.disabled')

@@ -74,7 +74,7 @@ export type BodyDraftFields = {
 }
 
 type DraftImpactBaseFields<
-  ImpactType extends DraftRegulationChange | DraftRegulationCancel
+  ImpactType extends DraftRegulationChange | DraftRegulationCancel,
 > = Readonly<
   // always prefilled on "create" - non-editable
   Pick<ImpactType, 'id' | 'type' | 'name'>

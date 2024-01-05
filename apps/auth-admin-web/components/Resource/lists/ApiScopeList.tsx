@@ -9,7 +9,7 @@ import ConfirmModal from '../../common/ConfirmModal'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const ApiScopeList: React.FC = () => {
+const ApiScopeList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [apiScopes, setApiScopes] = useState<ApiScope[]>([])

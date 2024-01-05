@@ -31,7 +31,7 @@ expect.extend({
     const applicationRegExp = new RegExp(
       `^${protocol}${host}/umsoknir/${applicationType}${applicationId}$`,
     )
-    const pass = !!applicationRegExp.test(url)
+    const pass = applicationRegExp.test(url)
     const message = () =>
       `Current page is ${pass ? '' : '*not* '}an application
        Pattern ${applicationRegExp}

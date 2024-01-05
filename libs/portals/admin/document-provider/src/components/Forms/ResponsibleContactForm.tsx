@@ -12,7 +12,7 @@ interface Props {
   administrativeContact: Contact
 }
 
-export const ResponsibleContactForm: FC<Props> = ({
+export const ResponsibleContactForm: FC<React.PropsWithChildren<Props>> = ({
   organisationId,
   administrativeContact,
 }) => {
@@ -22,10 +22,8 @@ export const ResponsibleContactForm: FC<Props> = ({
     formState: { errors },
   } = useForm<Contact>()
   const { formatMessage } = useLocale()
-  const {
-    updateAdministrativeContact,
-    loading,
-  } = useUpdateAdministrativeContact(organisationId)
+  const { updateAdministrativeContact, loading } =
+    useUpdateAdministrativeContact(organisationId)
 
   const onSubmit = (contact: Contact) => {
     if (contact) {

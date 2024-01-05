@@ -15,9 +15,8 @@ export const PersonalAllowance = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [
-    { usePersonalAllowance, personalUseAsMuchAsPossible, personalUsage },
-  ] = useStatefulAnswers(application)
+  const [{ usePersonalAllowance, personalUseAsMuchAsPossible, personalUsage }] =
+    useStatefulAnswers(application)
 
   return (
     <ReviewGroup

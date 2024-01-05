@@ -29,7 +29,7 @@ interface Props {
   namespace: Record<string, string>
 }
 
-export const Footer: FC<Props> = ({
+export const Footer: FC<React.PropsWithChildren<Props>> = ({
   title,
   locale = 'is',
   logoSrc,

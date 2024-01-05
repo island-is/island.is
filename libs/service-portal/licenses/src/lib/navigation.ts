@@ -10,6 +10,10 @@ export const licenseNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      name: m.myLicenses,
+      path: LicensePaths.LicensesRoot,
+    },
+    {
       navHide: true,
       name: m.detailInfo,
       path: LicensePaths.LicensesDetail,
@@ -18,6 +22,7 @@ export const licenseNavigation: PortalNavigationItem = {
       navHide: true,
       name: m.passport,
       path: LicensePaths.LicensesPassportDetail,
+      activeIfExact: false,
     },
   ],
   description: m.licensesDescription,

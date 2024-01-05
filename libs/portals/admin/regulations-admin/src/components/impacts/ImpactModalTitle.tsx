@@ -21,16 +21,8 @@ export type ImpactModalTitleProps = {
 }
 
 export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
-  const {
-    type,
-    tag,
-    title,
-    name,
-    onChangeDate,
-    impact,
-    minDate,
-    readOnly,
-  } = props
+  const { type, tag, title, name, onChangeDate, impact, minDate, readOnly } =
+    props
 
   return (
     <Box paddingY={4}>

@@ -1,28 +1,30 @@
 {
-  "root": "libs/clients/islykill",
+  "name": "clients-islykill",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/islykill/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/islykill/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/clients/islykill/jest.config.js",
+        "jestConfig": "libs/clients/islykill/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/clients/islykill"]
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/islykill"]
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yaml"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

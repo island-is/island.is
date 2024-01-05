@@ -21,11 +21,8 @@ describe('ApplicationController - Spouse', () => {
   let mockFileService: FileService
 
   beforeEach(async () => {
-    const {
-      applicationController,
-      applicationModel,
-      fileService,
-    } = await createTestingApplicationModule()
+    const { applicationController, applicationModel, fileService } =
+      await createTestingApplicationModule()
 
     mockApplicationModel = applicationModel
     mockFileService = fileService

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { DatePicker, Input } from '@island.is/island-ui/core'
-import { TimeInputField, BlueBox } from '../../components'
-import * as styles from './DateTime.css'
+import { useIntl } from 'react-intl'
 
+import { DatePicker, Input } from '@island.is/island-ui/core'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
+
+import { BlueBox, TimeInputField } from '../../components'
+import { dateTime as strings } from './DateTime.strings'
+import * as styles from './DateTime.css'
 
 interface Props {
   name: string
@@ -15,7 +18,7 @@ interface Props {
   timeLabel?: string
   minDate?: Date
   maxDate?: Date
-  selectedDate?: Date | string
+  selectedDate?: Date | string | null
   disabled?: boolean
   required?: boolean
   blueBox?: boolean
@@ -26,7 +29,7 @@ interface Props {
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const DateTime: React.FC<Props> = (props) => {
+const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     name,
     datepickerLabel = 'Veldu dagsetningu',
@@ -34,7 +37,7 @@ const DateTime: React.FC<Props> = (props) => {
     minDate,
     maxDate,
     selectedDate,
-    timeLabel = 'Tímasetning (kk:mm)',
+    timeLabel,
     disabled,
     required = false,
     blueBox = true,
@@ -44,16 +47,17 @@ const DateTime: React.FC<Props> = (props) => {
     dateOnly = false,
     onChange,
   } = props
+  const { formatMessage } = useIntl()
 
   const getTimeFromDate = (date: Date | undefined): string =>
     date
-      ? `${date
-          .getHours()
+      ? `${date.getHours().toString().padStart(2, '0')}:${date
+          .getMinutes()
           .toString()
-          .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+          .padStart(2, '0')}`
       : ''
 
-  const date = (d: Date | string | undefined) => {
+  const date = (d: Date | string | undefined | null) => {
     return d ? new Date(d) : undefined
   }
 
@@ -178,7 +182,7 @@ const DateTime: React.FC<Props> = (props) => {
           icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
           minDate={minDate}
           maxDate={maxDate}
-          selected={selectedDate ? new Date(selectedDate) : undefined}
+          selected={currentDate ? new Date(currentDate) : undefined}
           disabled={disabled || locked}
           handleCloseCalendar={onCalendarClose}
           required={required}
@@ -195,8 +199,8 @@ const DateTime: React.FC<Props> = (props) => {
             <Input
               data-testid={`${name}-time`}
               name={`${name}-time`}
-              label={timeLabel}
-              placeholder="Veldu tíma"
+              label={timeLabel ?? formatMessage(strings.timeLabel)}
+              placeholder={formatMessage(strings.timePlaceholder)}
               errorMessage={timeErrorMessage}
               hasError={timeErrorMessage !== undefined}
               icon={

@@ -51,3 +51,10 @@ export const gridTwoCols = style({
     },
   }),
 })
+
+export const dateContainer = style({
+  display: 'flex',
+  alignItems: 'flex-start',
+  columnGap: theme.spacing[1] / 2,
+  whiteSpace: 'pre',
+})

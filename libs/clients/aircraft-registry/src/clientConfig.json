@@ -17,6 +17,11 @@
         "tags": ["AircraftRegistry"],
         "parameters": [
           {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": { "type": "string", "default": "" }
+          },
+          {
             "name": "pageNumber",
             "in": "query",
             "schema": { "type": "integer", "format": "int32", "default": 1 }

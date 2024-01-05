@@ -15,7 +15,10 @@ import { generateAssignParentBApplicationEmail } from './emailGenerators/assignP
 import { PassportSchema } from '@island.is/application/templates/passport'
 import { PassportsService } from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
@@ -28,8 +31,12 @@ export class PassportService extends BaseTemplateApiService {
     super(ApplicationTypes.PASSPORT)
   }
 
-  async identityDocument({ auth }: TemplateApiModuleActionProps) {
+  async identityDocument({ auth, application }: TemplateApiModuleActionProps) {
     const identityDocument = await this.passportApi.getCurrentPassport(auth)
+    this.logger.warn(
+      'No passport found for user for application: ',
+      application.id,
+    )
     if (!identityDocument) {
       throw new TemplateApiError(
         {
@@ -42,9 +49,13 @@ export class PassportService extends BaseTemplateApiService {
     return identityDocument
   }
 
-  async deliveryAddress({ auth }: TemplateApiModuleActionProps) {
+  async deliveryAddress({ auth, application }: TemplateApiModuleActionProps) {
     const res = await this.passportApi.getDeliveryAddress(auth)
     if (!res) {
+      this.logger.warn(
+        'No delivery address for passport found for user for application: ',
+        application.id,
+      )
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
@@ -78,8 +89,6 @@ export class PassportService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
     const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
     if (!chargeItemCode) {
       throw new Error('chargeItemCode missing in request')
@@ -87,7 +96,7 @@ export class PassportService extends BaseTemplateApiService {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
-      SYSLUMADUR_NATIONAL_ID,
+      InstitutionNationalIds.SYSLUMENN,
       [chargeItemCode],
     )
     // last chance to validate before the user receives a dummy

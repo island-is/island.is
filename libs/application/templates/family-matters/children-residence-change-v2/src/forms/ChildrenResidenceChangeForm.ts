@@ -230,8 +230,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   message: m.childSupportPayments.general.alert,
                   alertType: 'info',
                   condition: (values) =>
-                    ((values as unknown) as Answers)
-                      .selectChildSupportPayment === 'agreement',
+                    (values as unknown as Answers).selectChildSupportPayment ===
+                    'agreement',
                 }),
                 buildDescriptionField({
                   id: 'infoText',

@@ -9,7 +9,9 @@ interface Props {
   children: ReactNode
 }
 
-export const DynamicWrapper: FC<Props> = ({ children }) => {
+export const DynamicWrapper: FC<React.PropsWithChildren<Props>> = ({
+  children,
+}) => {
   const [noMatch, setNoMatch] = useState(false)
   const { activeDynamicRoutes, loading } = useDynamicRoutes()
   const location = useLocation()
@@ -25,6 +27,7 @@ export const DynamicWrapper: FC<Props> = ({ children }) => {
   }, [loading, matches])
 
   if (matches) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>
   }
 

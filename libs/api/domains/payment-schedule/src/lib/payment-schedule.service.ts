@@ -73,18 +73,16 @@ export class PaymentScheduleService {
     user: User,
     input: GetScheduleDistributionInput,
   ): Promise<PaymentScheduleDistribution> {
-    const {
-      paymentDistribution,
-      error,
-    } = await this.paymentScheduleApiWithAuth(
-      user,
-    ).paymentDistributionnationalIdscheduleTypeGET5({
-      nationalId: user.nationalId,
-      monthAmount: input.monthAmount ?? 0,
-      monthCount: input.monthCount ?? 0,
-      scheduleType: input.scheduleType,
-      totalAmount: input.totalAmount,
-    })
+    const { paymentDistribution, error } =
+      await this.paymentScheduleApiWithAuth(
+        user,
+      ).paymentDistributionnationalIdscheduleTypeGET5({
+        nationalId: user.nationalId,
+        monthAmount: input.monthAmount ?? 0,
+        monthCount: input.monthCount ?? 0,
+        scheduleType: input.scheduleType,
+        totalAmount: input.totalAmount,
+      })
 
     if (error) {
       this.logger.error('Error getting payment distribution', error)
@@ -138,17 +136,15 @@ export class PaymentScheduleService {
     user: User,
     input: GetInitialScheduleInput,
   ): Promise<PaymentScheduleInitialSchedule> {
-    const {
-      distributionInitialPosition,
-      error,
-    } = await this.paymentScheduleApiWithAuth(
-      user,
-    ).distributionInitialPositionnationalIdscheduleTypeGET4({
-      disposableIncome: input.disposableIncome,
-      nationalId: user.nationalId,
-      scheduleType: input.type,
-      totalAmount: input.totalAmount,
-    })
+    const { distributionInitialPosition, error } =
+      await this.paymentScheduleApiWithAuth(
+        user,
+      ).distributionInitialPositionnationalIdscheduleTypeGET4({
+        disposableIncome: input.disposableIncome,
+        nationalId: user.nationalId,
+        scheduleType: input.type,
+        totalAmount: input.totalAmount,
+      })
 
     if (error) {
       this.logger.error('Error getting initial schedule', error)

@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # application-templates-driving-license
 
 This library was generated with [Nx](https://nx.dev).

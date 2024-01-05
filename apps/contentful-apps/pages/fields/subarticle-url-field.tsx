@@ -109,8 +109,11 @@ const SubArticleUrlField = () => {
           return
         }
       }
-
-      sdk.field.setValue(`${prefix}/${value}`)
+      if (value.trim().length === 0) {
+        sdk.field.setValue('')
+      } else {
+        sdk.field.setValue(`${prefix}/${value}`)
+      }
       sdk.field.setInvalid(
         value.length === 0 && sdk.field.locale === defaultLocale,
       )

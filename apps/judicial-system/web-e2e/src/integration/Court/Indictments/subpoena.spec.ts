@@ -1,4 +1,9 @@
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  IndictmentSubtype,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   INDICTMENTS_DEFENDER_ROUTE,
   INDICTMENTS_SUBPOENA_ROUTE,
@@ -7,7 +12,10 @@ import {
 import { makeCourt, intercept, mockCase } from '../../../utils'
 
 describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.MAJOR_ASSAULT)
+  const caseData = mockCase(
+    CaseType.INDICTMENT,
+    IndictmentSubtype.MAJOR_ASSAULT,
+  )
 
   beforeEach(() => {
     const caseDataAddition = {
@@ -17,7 +25,7 @@ describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
       courtDate: '2020-09-16T19:50:08.033Z',
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INDICTMENTS_SUBPOENA_ROUTE}/${caseData.id}`)

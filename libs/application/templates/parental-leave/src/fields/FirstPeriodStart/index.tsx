@@ -22,16 +22,15 @@ import { StartDateOptions } from '../../constants'
 
 type ValidAnswers = StartDateOptions | undefined
 
-const FirstPeriodStart: FC<FieldBaseProps> = ({
+const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   field,
   application,
 }) => {
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
-    application,
-  )
+  const expectedDateOfBirthOrAdoptionDate =
+    getExpectedDateOfBirthOrAdoptionDate(application)
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
@@ -122,6 +121,14 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                   {
                     label: formatMessage(
                       parentalLeaveFormMessages.firstPeriodStart
+                        .dateOfBirthOption,
+                    ),
+                    value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+                    disabled: isDisable,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
                         .estimatedDateOfBirthOption,
                     ),
                     value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
@@ -129,14 +136,6 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
                       parentalLeaveFormMessages.firstPeriodStart
                         .specificDateOptionTooltip,
                     ),
-                    disabled: isDisable,
-                  },
-                  {
-                    label: formatMessage(
-                      parentalLeaveFormMessages.firstPeriodStart
-                        .dateOfBirthOption,
-                    ),
-                    value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
                     disabled: isDisable,
                   },
                   {

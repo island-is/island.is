@@ -2,7 +2,10 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsObject } from 'class-validator'
 import { GenericLicenseDataFieldType } from '../licenceService.type'
 import graphqlTypeJson from 'graphql-type-json'
-import { GenericUserLicenseMetadata } from './genericLicense.model'
+import {
+  GenericUserLicenseMetaLinks,
+  GenericUserLicenseMetadata,
+} from './genericLicense.model'
 
 registerEnumType(GenericLicenseDataFieldType, {
   name: 'GenericLicenseDataFieldType',
@@ -30,6 +33,12 @@ export class GenericLicenseDataField {
     description: 'Same as value, used in service portal',
   })
   description?: string
+
+  @Field(() => GenericUserLicenseMetaLinks, {
+    nullable: true,
+    description: 'External meta link',
+  })
+  link?: GenericUserLicenseMetaLinks
 
   @Field({
     nullable: true,

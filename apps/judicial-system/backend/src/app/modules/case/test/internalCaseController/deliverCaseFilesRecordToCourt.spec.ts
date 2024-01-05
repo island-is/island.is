@@ -5,11 +5,12 @@ import { BadRequestException } from '@nestjs/common'
 import { CaseState, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { createCaseFilesRecord } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
+import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/caseFilesRecordPdf')
 
@@ -47,11 +48,8 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     const mockGet = createCaseFilesRecord as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const {
-      awsS3Service,
-      courtService,
-      internalCaseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, courtService, internalCaseController } =
+      await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock

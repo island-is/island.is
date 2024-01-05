@@ -4,12 +4,12 @@
     "outDir": "../../../../dist/out-tsc",
     "declaration": true,
     "types": [],
-    "target": "es6"
+    "target": "es2021"
   },
   "include": [
     "**/*.ts",
     "../../../../apps/application-system/api/src/app/modules/application/e2e/payment/payment.spec.ts",
     "../../../../apps/application-system/api/src/app/modules/application/e2e/payment/payment.service.spec.ts"
   ],
-  "exclude": ["**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"]
 }

@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
@@ -86,11 +87,11 @@ export const aboutTheAccidentSection = buildSection({
               largeButtons: true,
               required: true,
             }),
-            buildCustomField({
-              component: 'FieldAlertMessage',
+            buildAlertMessageField({
               id: 'timePassedHindranceFielAlertMessage',
               title: hindrances.timePassedHindrance.errorTitle,
-              description: hindrances.timePassedHindrance.errorDescription,
+              message: hindrances.timePassedHindrance.errorDescription,
+              alertType: 'info',
               doesNotRequireAnswer: true,
               condition: (formValue) => formValue.timePassedHindrance === YES,
             }),
@@ -111,11 +112,11 @@ export const aboutTheAccidentSection = buildSection({
               largeButtons: true,
               required: true,
             }),
-            buildCustomField({
-              component: 'FieldAlertMessage',
+            buildAlertMessageField({
               id: 'carAccidentHindranceFielAlertMessage',
               title: hindrances.carAccident.errorTitle,
-              description: hindrances.carAccident.errorDescription,
+              message: hindrances.carAccident.errorDescription,
+              alertType: 'info',
               doesNotRequireAnswer: true,
               condition: (formValue) => formValue.carAccidentHindrance === YES,
             }),
@@ -170,17 +171,16 @@ export const aboutTheAccidentSection = buildSection({
                 },
               ],
             }),
-            buildCustomField(
-              {
-                id: 'attachments.injuryCertificate.alert',
-                title: attachments.labels.alertMessage,
-                description: accidentType.warning.agricultureAccidentWarning,
-                component: 'FieldAlertMessage',
-                doesNotRequireAnswer: true,
-                condition: (formValue) => isAgricultureAccident(formValue),
-              },
-              { type: 'warning' },
-            ),
+            buildAlertMessageField({
+              id: 'attachments.injuryCertificate.alert2',
+              title: attachments.labels.alertMessage,
+              description: accidentType.warning.agricultureAccidentWarning,
+              doesNotRequireAnswer: true,
+              message: accidentType.warning.agricultureAccidentWarning,
+              alertType: 'warning',
+              condition: (formValue) => isAgricultureAccident(formValue),
+              marginBottom: 5,
+            }),
           ],
         }),
       ],
@@ -582,17 +582,15 @@ export const aboutTheAccidentSection = buildSection({
               width: 'half',
               format: '##:##',
             }),
-            buildCustomField(
-              {
-                id: 'accidentDetails.notHealthInsuredAlertMessage',
-                title: accidentDetails.general.insuranceAlertTitle,
-                component: 'FieldAlertMessage',
-                description: accidentDetails.general.insuranceAlertText,
-                width: 'full',
-                condition: (formValue) => !isHealthInsured(formValue),
-              },
-              { type: 'warning', marginBottom: 0, marginTop: 2 },
-            ),
+            buildAlertMessageField({
+              id: 'accidentDetails.notHealthInsuredAlertMessage',
+              title: accidentDetails.general.insuranceAlertTitle,
+              message: accidentDetails.general.insuranceAlertText,
+              width: 'full',
+              alertType: 'warning',
+              condition: (formValue) => !isHealthInsured(formValue),
+              marginBottom: 0,
+            }),
             buildTextField({
               id: 'accidentDetails.descriptionOfAccident',
               title: accidentDetails.labels.description,
@@ -649,19 +647,16 @@ export const aboutTheAccidentSection = buildSection({
                       },
                     ],
             }),
-            buildCustomField(
-              {
-                id: 'attachments.injuryCertificate.alert',
-                title: attachments.labels.alertMessage,
-                description: attachments.general.alertMessage,
-                component: 'FieldAlertMessage',
-                doesNotRequireAnswer: true,
-                condition: (formValue) =>
-                  getValueViaPath(formValue, 'injuryCertificate.answer') ===
-                  AttachmentsEnum.SENDCERTIFICATELATER,
-              },
-              { type: 'warning' },
-            ),
+            buildAlertMessageField({
+              id: 'attachments.injuryCertificate.alert',
+              title: attachments.labels.alertMessage,
+              message: attachments.general.alertMessage,
+              doesNotRequireAnswer: true,
+              condition: (formValue) =>
+                getValueViaPath(formValue, 'injuryCertificate.answer') ===
+                AttachmentsEnum.SENDCERTIFICATELATER,
+              alertType: 'warning',
+            }),
           ],
         }),
         buildMultiField({
@@ -726,21 +721,18 @@ export const aboutTheAccidentSection = buildSection({
                 },
               ],
             }),
-            buildCustomField(
-              {
-                id: 'attachments.injuryCertificate.alert',
-                title: fatalAccident.alertMessage.title,
-                description: fatalAccident.alertMessage.description,
-                component: 'FieldAlertMessage',
-                doesNotRequireAnswer: true,
-                condition: (formValue) =>
-                  getValueViaPath(
-                    formValue,
-                    'fatalAccidentUploadDeathCertificateNow',
-                  ) === NO,
-              },
-              { type: 'warning' },
-            ),
+            buildAlertMessageField({
+              id: 'attachments.injuryCertificate.alert',
+              title: fatalAccident.alertMessage.title,
+              message: fatalAccident.alertMessage.description,
+              doesNotRequireAnswer: true,
+              alertType: 'warning',
+              condition: (formValue) =>
+                getValueViaPath(
+                  formValue,
+                  'fatalAccidentUploadDeathCertificateNow',
+                ) === NO,
+            }),
           ],
         }),
 
@@ -785,19 +777,16 @@ export const aboutTheAccidentSection = buildSection({
                 },
               ],
             }),
-            buildCustomField(
-              {
-                id: 'attachments.injuryCertificate.alert',
-                title: attachments.labels.alertMessage,
-                description: attachments.general.alertMessage,
-                component: 'FieldAlertMessage',
-                doesNotRequireAnswer: true,
-                condition: (formValue) =>
-                  getValueViaPath(formValue, 'additionalAttachments.answer') ===
-                  AttachmentsEnum.ADDITIONALLATER,
-              },
-              { type: 'warning' },
-            ),
+            buildAlertMessageField({
+              id: 'attachments.injuryCertificate.alert',
+              title: attachments.labels.alertMessage,
+              message: attachments.general.alertMessage,
+              alertType: 'warning',
+              doesNotRequireAnswer: true,
+              condition: (formValue) =>
+                getValueViaPath(formValue, 'additionalAttachments.answer') ===
+                AttachmentsEnum.ADDITIONALLATER,
+            }),
           ],
         }),
         buildMultiField({

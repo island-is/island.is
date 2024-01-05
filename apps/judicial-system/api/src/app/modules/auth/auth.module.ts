@@ -1,20 +1,12 @@
 import { Module } from '@nestjs/common'
 
-import { environment } from '../../../environments'
-import { AuthService } from './auth.service'
+import { DefenderModule } from '../defender/defender.module'
 import { AuthController } from './auth.controller'
-
-const { audience: audienceUrl } = environment.auth
+import { AuthService } from './auth.service'
 
 @Module({
+  imports: [DefenderModule],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    {
-      provide: 'IslandisLogin',
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      useFactory: () => new (require('@island.is/login'))({ audienceUrl }),
-    },
-  ],
+  providers: [AuthService],
 })
 export class AuthModule {}

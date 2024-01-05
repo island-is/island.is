@@ -27,11 +27,11 @@ export interface ServiceListProps {
   tagDisplayNames?: GetNamespaceQuery['getNamespace']
 }
 
-export const ServiceList: React.FC<ServiceListProps> = ({
-  baseUrl,
-  services = [],
-  tagDisplayNames = {},
-}) => {
+export const ServiceList: React.FC<
+  React.PropsWithChildren<ServiceListProps>
+> = ({ baseUrl, services = [], tagDisplayNames = {} }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(tagDisplayNames)
 
   const CategoriesToTags = (service: Service) => {

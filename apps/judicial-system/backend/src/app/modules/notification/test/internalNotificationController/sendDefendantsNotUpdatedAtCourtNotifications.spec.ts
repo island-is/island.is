@@ -1,13 +1,15 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
+
 import { NotificationType, User } from '@island.is/judicial-system/types'
+
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: DeliverResponse
@@ -41,11 +43,8 @@ describe('InternalNotificationController - Send defendants not updated at court 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      emailService,
-      notificationModel,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationModel, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockNotificationModel = notificationModel

@@ -66,6 +66,8 @@ const StraddlingStockCalculator = ({
     }
   }, [router.query.nr])
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const [state, send] = useMachine<Context, EventType>(machine)
 
   const reset = () => {
@@ -174,9 +176,13 @@ const StraddlingStockCalculator = ({
     category: CatchQuotaCategory,
     fieldName: string,
   ) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const current = state.context.data?.catchQuotaCategories?.find(
       (c) => c.id === category.id,
     )?.[fieldName]
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const initial = state.context.initialData?.catchQuotaCategories?.find(
       (c) => c.id === category.id,
     )?.[fieldName]
@@ -206,12 +212,14 @@ const StraddlingStockCalculator = ({
         <Inline space={3}>
           <Box className={styles.selectBox}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               size="sm"
               label={n('year', 'Ár')}
               name="year-select"
               options={yearOptions}
               value={selectedYear}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(newYear) => {
                 setSelectedYear(newYear as YearOption)
               }}
@@ -219,12 +227,14 @@ const StraddlingStockCalculator = ({
           </Box>
           <Box className={styles.selectBox} marginBottom={3}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               value={emptyValue}
               size="sm"
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
               options={quotaTypes}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(selectedOption) => {
                 send({
                   type: 'ADD_CATEGORY',

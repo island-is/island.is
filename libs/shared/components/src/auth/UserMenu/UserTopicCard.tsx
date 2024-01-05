@@ -30,13 +30,9 @@ const colorSchemes = {
   },
 } as const
 
-export const UserTopicCard: React.FC<UserTopicCardProps> = ({
-  children,
-  colorScheme = 'blue',
-  href,
-  icon,
-  onClick,
-}) => {
+export const UserTopicCard: React.FC<
+  React.PropsWithChildren<UserTopicCardProps>
+> = ({ children, colorScheme = 'blue', href, icon, onClick }) => {
   return (
     <Box
       className={styles.userTopicCardBox}

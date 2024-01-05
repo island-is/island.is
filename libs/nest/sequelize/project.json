@@ -1,19 +1,20 @@
 {
-  "root": "libs/nest/sequelize",
+  "name": "nest-sequelize",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/sequelize/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/nest/sequelize/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/sequelize"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/sequelize"],
       "options": {
-        "jestConfig": "libs/nest/sequelize/jest.config.js",
+        "jestConfig": "libs/nest/sequelize/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,19 +1,20 @@
 {
-  "root": "libs/user-monitoring",
+  "name": "user-monitoring",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/user-monitoring/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/user-monitoring/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/user-monitoring"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/user-monitoring"],
       "options": {
-        "jestConfig": "libs/user-monitoring/jest.config.js",
+        "jestConfig": "libs/user-monitoring/jest.config.ts",
         "passWithNoTests": true
       }
     }

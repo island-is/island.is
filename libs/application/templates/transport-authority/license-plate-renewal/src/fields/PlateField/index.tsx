@@ -9,7 +9,9 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 
-export const PlateField: FC<FieldBaseProps> = (props) => {
+export const PlateField: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { locale } = useLocale()
   const { setValue } = useFormContext()
   const { application } = props

@@ -22,7 +22,7 @@ interface Option extends TestSupport {
     outlined?: boolean
   }
   excludeOthers?: boolean
-  illustration?: React.FC
+  illustration?: React.FC<React.PropsWithChildren<unknown>>
   disabled?: boolean
 }
 
@@ -40,7 +40,7 @@ interface Props {
   onSelect?: (s: string) => void
 }
 
-export const RadioController: FC<Props> = ({
+export const RadioController: FC<React.PropsWithChildren<Props>> = ({
   defaultValue,
   disabled = false,
   error,

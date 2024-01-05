@@ -6,7 +6,10 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 
-import { CreateCaseMutation } from '../graphql/schema'
+import {
+  CreateCaseMutation,
+  RequestSharedWithDefender,
+} from '../graphql/schema'
 
 const cache = new InMemoryCache()
 const client = new ApolloClient({
@@ -43,7 +46,7 @@ export const loginAndCreateCase = (
             defenderNationalId: '0000000000',
             defenderEmail: 'ivaro@kolibri.is',
             defenderPhoneNumber: '0000000',
-            sendRequestToDefender: false,
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
             leadInvestigator: 'asd',
           },
         },

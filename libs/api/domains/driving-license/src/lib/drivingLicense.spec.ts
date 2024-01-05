@@ -6,10 +6,15 @@ import {
 } from '@island.is/clients/driving-license'
 import {
   DISQUALIFIED_NATIONAL_IDS,
+  DISQUALIFIED_TOKENS,
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
   MOCK_NATIONAL_ID_TEACHER,
+  MOCK_TOKEN,
+  MOCK_TOKEN_EXPIRED,
+  MOCK_TOKEN_NO_ASSESSMENT,
+  MOCK_TOKEN_TEACHER,
   MOCK_USER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
@@ -64,7 +69,7 @@ describe('DrivingLicenseService', () => {
       const response = await service.legacyGetDrivingLicense(MOCK_NATIONAL_ID)
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
-        issued: new Date('2021-05-25T06:43:15.327Z'),
+        issued: new Date('2018-05-25T06:43:15.327Z'),
         expires: new Date('2036-05-25T06:43:15.327Z'),
       })
     })
@@ -103,7 +108,10 @@ describe('DrivingLicenseService', () => {
 
   describe('getTeachingRights', () => {
     it('should return false for a normal license', async () => {
-      const response = await service.getTeachingRights(MOCK_NATIONAL_ID)
+      const response = await service.getTeachingRights({
+        nationalId: MOCK_NATIONAL_ID,
+        token: MOCK_TOKEN,
+      })
 
       expect(response).toStrictEqual({
         nationalId: MOCK_NATIONAL_ID,
@@ -112,7 +120,10 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should return true for a teacher', async () => {
-      const response = await service.getTeachingRights(MOCK_NATIONAL_ID_TEACHER)
+      const response = await service.getTeachingRights({
+        nationalId: MOCK_NATIONAL_ID_TEACHER,
+        token: MOCK_TOKEN_TEACHER,
+      })
 
       expect(response).toStrictEqual({
         nationalId: MOCK_NATIONAL_ID_TEACHER,
@@ -121,29 +132,9 @@ describe('DrivingLicenseService', () => {
     })
   })
 
-  describe('getListOfJuristictions', () => {
-    it('should return a list', async () => {
-      const response = await service.getListOfJuristictions()
-
-      expect(response).toHaveLength(24)
-
-      expect(response).toContainEqual({
-        id: 21,
-        name: 'Sýslumaðurinn á Norðurlandi vestra - Sauðárkróki',
-        zip: 550,
-      })
-    })
-
-    it('should not include juristiction nr 11', async () => {
-      const response = await service.getListOfJuristictions()
-
-      expect(response.find(({ id }) => id === 11)).toBeUndefined()
-    })
-  })
-
   describe('getTeachers', () => {
     it('should return a list', async () => {
-      const response = await service.getTeachers()
+      const response = await service.getTeachersV4()
 
       expect(response).toHaveLength(2)
 
@@ -160,7 +151,9 @@ describe('DrivingLicenseService', () => {
 
   describe('getDrivingAssessmentResult', () => {
     it('should return a valid assessment when applicable', async () => {
-      const response = await service.getDrivingAssessment(MOCK_NATIONAL_ID)
+      const response = await service.getDrivingAssessment(
+        MOCK_USER.authorization,
+      )
 
       expect(response).toStrictEqual({
         studentNationalId: MOCK_NATIONAL_ID,
@@ -171,7 +164,7 @@ describe('DrivingLicenseService', () => {
 
     it('should return null for missing assessment', async () => {
       const response = await service.getDrivingAssessment(
-        MOCK_NATIONAL_ID_NO_ASSESSMENT,
+        MOCK_TOKEN_NO_ASSESSMENT,
       )
 
       expect(response).toStrictEqual(null)
@@ -180,8 +173,10 @@ describe('DrivingLicenseService', () => {
 
   describe('getLearnerMentorEligibility', () => {
     it('should not disqualify for disqualifications older than 12 months', async () => {
+      const MOCK_USER_COPY = { ...MOCK_USER }
+      MOCK_USER_COPY.authorization = DISQUALIFIED_TOKENS[2]
       const response = await service.getLearnerMentorEligibility(
-        MOCK_USER,
+        MOCK_USER_COPY,
         DISQUALIFIED_NATIONAL_IDS[2],
       )
       expect(response).toStrictEqual({
@@ -297,6 +292,7 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'CurrentLocalResidency',
+            daysOfResidency: 365,
             requirementMet: true,
           },
           {
@@ -319,6 +315,7 @@ describe('DrivingLicenseService', () => {
         requirements: [
           {
             key: 'LocalResidency',
+            daysOfResidency: 365,
             requirementMet: true,
           },
           {
@@ -330,8 +327,10 @@ describe('DrivingLicenseService', () => {
     })
 
     it('checks should fail for non-applicable students', async () => {
+      const MOCK_USER_COPY = { ...MOCK_USER }
+      MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
       const response = await service.getApplicationEligibility(
-        MOCK_USER,
+        MOCK_USER_COPY,
         MOCK_NATIONAL_ID_EXPIRED,
         'B-full',
       )
@@ -349,6 +348,7 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'CurrentLocalResidency',
+            daysOfResidency: 365,
             requirementMet: true,
           },
           {
@@ -385,7 +385,7 @@ describe('DrivingLicenseService', () => {
   describe('newDrivingLicense', () => {
     it('should handle driving license creation', async () => {
       const response = await service.newDrivingLicense(MOCK_NATIONAL_ID, {
-        juristictionId: 11,
+        jurisdictionId: 11,
         needsToPresentHealthCertificate: false,
         needsToPresentQualityPhoto: false,
       })
@@ -401,7 +401,7 @@ describe('DrivingLicenseService', () => {
 
       return service
         .newDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
-          juristictionId: 11,
+          jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
         })
@@ -413,8 +413,9 @@ describe('DrivingLicenseService', () => {
     it('should handle driving license creation', async () => {
       const response = await service.newTemporaryDrivingLicense(
         MOCK_NATIONAL_ID,
+        MOCK_USER.authorization,
         {
-          juristictionId: 11,
+          jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: false,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
@@ -431,14 +432,18 @@ describe('DrivingLicenseService', () => {
 
     it('should handle error responses when creating a license', async () => {
       return await service
-        .newTemporaryDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
-          juristictionId: 11,
-          needsToPresentHealthCertificate: false,
-          needsToPresentQualityPhoto: true,
-          teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
-          email: 'mock@email.com',
-          phone: '9999999',
-        })
+        .newTemporaryDrivingLicense(
+          MOCK_NATIONAL_ID_NO_ASSESSMENT,
+          MOCK_USER.authorization,
+          {
+            jurisdictionId: 11,
+            needsToPresentHealthCertificate: false,
+            needsToPresentQualityPhoto: true,
+            teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+            email: 'mock@email.com',
+            phone: '9999999',
+          },
+        )
         .catch((e) => expect(e).toBeTruthy())
     })
   })

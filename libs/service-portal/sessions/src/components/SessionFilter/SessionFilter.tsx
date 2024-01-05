@@ -23,7 +23,7 @@ interface IProps {
   resultCount: number
 }
 
-const SessionFilter: React.FC<IProps> = ({
+const SessionFilter: React.FC<React.PropsWithChildren<IProps>> = ({
   onNationalIdFilterChange,
   nationalId,
   handleDateChange,

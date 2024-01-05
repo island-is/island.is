@@ -1,8 +1,8 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   AuditedAction,
@@ -16,8 +16,8 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
 import { CreateIndictmentCountInput } from './dto/createIndictmentCount.input'
-import { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
 import { DeleteIndictmentCountInput } from './dto/deleteIndictmentCount.input'
+import { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
 import { DeleteIndictmentCountResponse } from './models/delete.response'
 import { IndictmentCount } from './models/indictmentCount.model'
 

@@ -2,6 +2,9 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
+import { Box } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
   CourtCaseInfo,
@@ -15,32 +18,24 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { Box } from '@island.is/island-ui/core'
-import { NotificationType } from '@island.is/judicial-system/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import * as constants from '@island.is/judicial-system/consts'
+import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  formatDateForServer,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
 
-const Subpoena: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const { formatMessage } = useIntl()
-  const {
-    courtDate,
-    handleCourtDateChange,
-    courtDateHasChanged,
-  } = useCourtArrangements(workingCase)
+  const { courtDate, handleCourtDateChange, courtDateHasChanged } =
+    useCourtArrangements(workingCase)
   const { setAndSendCaseToServer, sendNotification } = useCase()
 
   const handleNavigationTo = useCallback(

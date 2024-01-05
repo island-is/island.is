@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/municipalities-financial-aid",
+  "name": "clients-municipalities-financial-aid",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/municipalities-financial-aid/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/municipalities-financial-aid/**/*.{ts,tsx,js,jsx}"
@@ -12,23 +13,23 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/municipalities-financial-aid"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/municipalities-financial-aid"
+      ],
       "options": {
-        "jestConfig": "libs/clients/municipalities-financial-aid/jest.config.js",
+        "jestConfig": "libs/clients/municipalities-financial-aid/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run financial-aid-backend:schemas/build-openapi-internal $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/municipalities-financial-aid/gen/fetch -i apps/financial-aid/backend/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-        ],
-        "parallel": false
-      }
+        "command": "yarn openapi-generator -o libs/clients/municipalities-financial-aid/gen/fetch -i apps/financial-aid/backend/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["financial-aid-backend"],
   "tags": ["lib:client", "scope:client"]
 }

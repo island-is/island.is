@@ -24,8 +24,7 @@ export const fishingCompanyInfo = {
       description: 'Information about ship',
     },
     informationAboutShipDescription: {
-      id:
-        'an.application:fishingCompanyInfo.general.informationAboutShipDescription',
+      id: 'an.application:fishingCompanyInfo.general.informationAboutShipDescription',
       defaultMessage:
         'Vinsamlegast fylltu út upplýsingar um skipið sem slysa aðili starfaði á þegar slysið átti sér stað.',
       description: 'Information about description',

@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Syslumenn" -->
-
 # Syslumenn Client
 
 ## About
@@ -19,7 +17,7 @@ yarn nx run clients-syslumenn:update-openapi-document
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-syslumenn:schemas/external-openapi-generator
+yarn nx run clients-syslumenn:codegen/backend-client
 ```
 
 ### Import into other NestJS modules

@@ -15,7 +15,9 @@ interface SliceProps {
   slice: MultipleStatisticsSchema
 }
 
-export const MultipleStatistics: React.FC<SliceProps> = ({ slice }) => {
+export const MultipleStatistics: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
   const boxProps: BoxProps = slice.hasBorderAbove
     ? {
         borderTopWidth: 'standard',

@@ -1,5 +1,6 @@
 export type Type = 'filled' | 'outline'
 export type Icon =
+  | 'archive'
   | 'accessibility'
   | 'add'
   | 'airplane'
@@ -9,6 +10,7 @@ export type Icon =
   | 'arrowDown'
   | 'attach'
   | 'business'
+  | 'calculator'
   | 'calendar'
   | 'call'
   | 'car'
@@ -27,10 +29,12 @@ export type Icon =
   | 'copy'
   | 'document'
   | 'documents'
+  | 'dots'
   | 'download'
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
+  | 'expand'
   | 'eye'
   | 'eyeOff'
   | 'facebook'
@@ -41,6 +45,7 @@ export type Icon =
   | 'informationCircle'
   | 'link'
   | 'lockClosed'
+  | 'lockOpened'
   | 'logOut'
   | 'mail'
   | 'menu'
@@ -50,6 +55,8 @@ export type Icon =
   | 'people'
   | 'person'
   | 'playCircle'
+  | 'pause'
+  | 'pauseCircle'
   | 'print'
   | 'reader'
   | 'receipt'
@@ -57,8 +64,11 @@ export type Icon =
   | 'school'
   | 'search'
   | 'settings'
+  | 'star'
   | 'time'
   | 'trash'
+  | 'volumeHigh'
+  | 'volumeMute'
   | 'wallet'
   | 'warning'
   | 'reload'
@@ -68,9 +78,13 @@ export type Icon =
   | 'share'
   | 'QRCode'
   | 'globe'
+  | 'signLanguage'
+  | 'listView'
+  | 'gridView'
 
 export default {
   filled: {
+    archive: 'Archive',
     accessibility: 'Accessibility',
     add: 'Add',
     airplane: 'Airplane',
@@ -80,6 +94,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'Attach',
     business: 'Business',
+    calculator: 'Calculator',
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
@@ -98,12 +113,14 @@ export default {
     copy: 'Copy',
     document: 'Document',
     documents: 'Documents',
+    dots: 'Dots',
     download: 'Download',
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
     eye: 'Eye',
     eyeOff: 'EyeOff',
+    expand: 'Expand',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
@@ -112,11 +129,14 @@ export default {
     informationCircle: 'InformationCircle',
     link: 'Link',
     lockClosed: 'LockClosed',
+    lockOpened: 'LockOpened',
     logOut: 'LogOut',
     mail: 'Mail',
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pause: 'Pause',
+    pauseCircle: 'PauseCircle',
     pencil: 'Pencil',
     people: 'People',
     person: 'Person',
@@ -125,10 +145,13 @@ export default {
     reader: 'Reader',
     receipt: 'Receipt',
     removeCircle: 'RemoveCircle',
+    star: 'Star',
     school: 'School',
     search: 'Search',
     settings: 'Settings',
     trash: 'Trash',
+    volumeHigh: 'VolumeHigh',
+    volumeMute: 'VolumeMute',
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
@@ -139,8 +162,12 @@ export default {
     share: 'Share',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
+    signLanguage: 'SignLanguage',
+    listView: 'ListView',
+    gridView: 'GridView',
   },
   outline: {
+    archive: 'ArchiveOutline',
     accessibility: 'AccessibilityOutline',
     add: 'AddOutline',
     airplane: 'Airplane',
@@ -150,6 +177,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
     business: 'BusinessOutline',
+    calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
     call: 'CallOutline',
     car: 'CarOutline',
@@ -168,12 +196,14 @@ export default {
     copy: 'CopyOutline',
     document: 'DocumentOutline',
     documents: 'DocumentsOutline',
+    dots: 'Dots',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
+    expand: 'ExpandOutline',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
@@ -182,11 +212,14 @@ export default {
     informationCircle: 'InformationCircleOutline',
     link: 'LinkOutline',
     lockClosed: 'LockClosedOutline',
+    lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
     mail: 'MailOutline',
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pause: 'PauseOutline',
+    pauseCircle: 'PauseCircleOutline',
     pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
@@ -198,7 +231,10 @@ export default {
     school: 'SchoolOutline',
     search: 'SearchOutline',
     settings: 'SettingsOutline',
+    star: 'StarOutline',
     trash: 'TrashOutline',
+    volumeHigh: 'VolumeHighOutline',
+    volumeMute: 'VolumeMuteOutline',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
@@ -209,5 +245,8 @@ export default {
     share: 'ShareOutline',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
+    signLanguage: 'SignLanguage',
+    listView: 'ListView',
+    gridView: 'GridView',
   },
 }

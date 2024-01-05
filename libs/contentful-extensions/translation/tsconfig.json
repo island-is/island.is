@@ -9,5 +9,6 @@
     "esModuleInterop": true,
     "lib": ["dom", "es2017"],
     "resolveJsonModule": true
-  }
+  },
+  "exclude": ["jest.config.ts"]
 }

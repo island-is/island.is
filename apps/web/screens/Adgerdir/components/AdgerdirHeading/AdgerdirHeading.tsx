@@ -10,14 +10,9 @@ export interface AdgerdirHeadingProps {
   main?: boolean
 }
 
-export const AdgerdirHeading: FC<AdgerdirHeadingProps> = ({
-  subtitle,
-  title,
-  intro,
-  as = 'h1',
-  variant = 'h1',
-  main = false,
-}) => {
+export const AdgerdirHeading: FC<
+  React.PropsWithChildren<AdgerdirHeadingProps>
+> = ({ subtitle, title, intro, as = 'h1', variant = 'h1', main = false }) => {
   if (!subtitle || !title || !intro) {
     return null
   }

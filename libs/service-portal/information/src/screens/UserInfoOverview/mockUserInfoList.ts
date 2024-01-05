@@ -1,6 +1,7 @@
-import { ServicePortalPath, m } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { MessageDescriptor } from 'react-intl'
+import { InformationPaths } from '../../lib/paths'
 
 export type UserInfoItem = {
   heading: MessageDescriptor | string
@@ -17,7 +18,7 @@ export const mockUserInfoList: UserInfoItem[] = [
       defaultMessage:
         'Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn.',
     }),
-    link: ServicePortalPath.UserInfo,
+    link: InformationPaths.UserInfo,
     image: '/assets/images/individualsGrid.svg',
   },
 

@@ -9,8 +9,7 @@ import { DraftImpactName } from '@island.is/regulations/admin'
 import { Option, Select } from '@island.is/island-ui/core'
 import { useAffectedRegulations } from '../../utils/hooks'
 
-export type SelRegOption = Option & {
-  value?: DraftImpactName | ''
+export type SelRegOption = Option<DraftImpactName | ''> & {
   type: RegulationType | ''
   migrated?: boolean
 }

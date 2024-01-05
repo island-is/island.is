@@ -17,4 +17,5 @@ export interface JwtPayload {
     nationalId: string
     scope?: string | string[]
   }
+  audkenni_sim_number?: string
 }

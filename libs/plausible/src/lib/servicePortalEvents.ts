@@ -14,6 +14,11 @@ export type ParamType = {
   fileName?: string
 }
 
+type OutboundTypes = {
+  url: ParamType['url']
+  outboundUrl?: string
+}
+
 // Event sent when the search feature of documents is interacted with by the user
 export const documentsSearchDocumentsInitialized = (params: ParamType) => {
   const event: BaseEvent = {
@@ -71,13 +76,13 @@ export const servicePortalSaveAccessControl = (params: ParamType) => {
  * Special function for outbound link as described in plausible see here https://plausible.io/blog/track-outbound-link-clicks
  * Event does not require any additional metadata
  */
-export const servicePortalOutboundLink = (params: ParamType) => {
+export const servicePortalOutboundLink = (params: OutboundTypes) => {
   const plausible = window.plausible
 
   if (plausible) {
     plausible(plausibleOutboundLinkGoal, {
       props: {
-        location: params.location,
+        url: params.outboundUrl,
       },
       u: params.url,
     })

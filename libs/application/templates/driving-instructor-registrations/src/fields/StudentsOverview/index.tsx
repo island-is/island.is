@@ -22,7 +22,9 @@ import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/sche
 import { format as formatKennitala } from 'kennitala'
 import * as styles from '../style.css'
 
-const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
+const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   /* table pagination */

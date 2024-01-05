@@ -8,7 +8,10 @@ interface Props {
   value: number
 }
 
-export const StatisticBox: FC<Props> = ({ name, value }) => {
+export const StatisticBox: FC<React.PropsWithChildren<Props>> = ({
+  name,
+  value,
+}) => {
   const { formatMessage } = useLocale()
 
   let displayValue = value.toString()

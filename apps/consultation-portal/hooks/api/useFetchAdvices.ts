@@ -1,4 +1,3 @@
-import initApollo from '../../graphql/client'
 import { AdviceFilter } from '../../types/interfaces'
 import { ADVICES_GET_ALL_USER_ADVICES } from '../../graphql/queries.graphql'
 import { useQuery } from '@apollo/client'
@@ -9,9 +8,7 @@ interface Props {
 }
 
 export const useFetchAdvices = ({ input, isAuthenticated }: Props) => {
-  const client = initApollo()
   const { data, loading } = useQuery(ADVICES_GET_ALL_USER_ADVICES, {
-    client: client,
     ssr: false,
     fetchPolicy: 'network-only',
     skip: !isAuthenticated,

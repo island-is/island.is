@@ -11,31 +11,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
-  formatDate,
-  caseTypes,
   capitalize,
+  formatCaseType,
+  formatDate,
 } from '@island.is/judicial-system/formatters'
-import {
-  AccordionListItem,
-  CaseFilesAccordionItem,
-  CommentsAccordionItem,
-  CourtCaseInfo,
-  FormContentContainer,
-  FormContext,
-  FormFooter,
-  InfoCard,
-  PageLayout,
-  PdfButton,
-  UserContext,
-  CaseResentExplanation,
-  PageHeader,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
@@ -43,6 +24,26 @@ import {
   ruling,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import {
+  AccordionListItem,
+  CaseFilesAccordionItem,
+  CaseResentExplanation,
+  CommentsAccordionItem,
+  CourtCaseInfo,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  InfoCard,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   UploadState,
   useCourtUpload,
@@ -137,7 +138,7 @@ const Overview = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },
@@ -161,7 +162,7 @@ const Overview = () => {
               },
               {
                 title: formatMessage(core.caseType),
-                value: capitalize(caseTypes[workingCase.type]),
+                value: capitalize(formatCaseType(workingCase.type)),
               },
             ]}
             defendants={
@@ -178,7 +179,7 @@ const Overview = () => {
             }
             defenders={[
               {
-                name: workingCase.defenderName ?? '',
+                name: workingCase.defenderName,
                 defenderNationalId: workingCase.defenderNationalId,
                 sessionArrangement: workingCase.sessionArrangements,
                 email: workingCase.defenderEmail,
@@ -211,7 +212,7 @@ const Overview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label="Lagaákvæði sem brot varða við"
+                label={formatMessage(lawsBrokenAccordion.heading)}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>

@@ -1,5 +1,4 @@
-import { CanActivate } from '@nestjs/common'
-
+import { CaseReadGuard } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { LimitedAccessViewCaseFileGuard } from '../../guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
@@ -15,31 +14,10 @@ describe('LimitedAccessFileController - Get case file signed url guards', () => 
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
-  })
-
-  describe('CaseFileExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have CaseFileExistsGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(CaseFileExistsGuard)
-    })
-  })
-
-  describe('LimitedAccessViewCaseFileGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have LimitedAccessViewCaseFileGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessViewCaseFileGuard)
-    })
+  it('should have the right guard configuration', () => {
+    expect(guards).toHaveLength(3)
+    expect(new guards[0]()).toBeInstanceOf(CaseReadGuard)
+    expect(new guards[1]()).toBeInstanceOf(CaseFileExistsGuard)
+    expect(new guards[2]()).toBeInstanceOf(LimitedAccessViewCaseFileGuard)
   })
 })

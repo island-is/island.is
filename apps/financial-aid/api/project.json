@@ -1,5 +1,6 @@
 {
-  "root": "apps/financial-aid/api",
+  "name": "financial-aid-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/financial-aid/api/src",
   "projectType": "application",
   "prefix": "financial-aid-api",
@@ -24,36 +25,31 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "financial-aid-api:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/financial-aid/api/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/financial-aid/api/jest.config.js",
+        "jestConfig": "apps/financial-aid/api/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/financial-aid/api"]
+      "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/api"]
     },
-    "schemas/build-graphql-schema": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P apps/financial-aid/api/tsconfig.json scripts/build-graphql-schema.ts apps/financial-aid/api/src/app/app.module"
-      }
-    },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "graphql-codegen --config apps/financial-aid/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/api.graphql"]
     },
     "docker-express": {}
   },

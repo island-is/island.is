@@ -1,64 +1,59 @@
 import React, { useContext, useMemo } from 'react'
-import cn from 'classnames'
-
-import { theme } from '@island.is/island-ui/theme'
-import { Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  CaseListEntry,
-  isExtendedCourtRole,
-} from '@island.is/judicial-system/types'
-import { tables, core } from '@island.is/judicial-system-web/messages'
-import {
-  useSortCases,
-  useViewport,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import cn from 'classnames'
+import { AnimatePresence } from 'framer-motion'
 
+import { Box, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
-  UserContext,
   TagAppealState,
   TagCaseState,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-
 import {
   ColumnCaseType,
   CourtCaseNumber,
+  CreatedDate,
   DefendantInfo,
+  DurationDate,
+  getDurationDate,
   SortButton,
   TableContainer,
   TableHeaderText,
-  DurationDate,
-  getDurationDate,
-  CreatedDate,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useCaseList,
+  useSortCases,
+  useViewport,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import MobilePastCase from './MobilePastCase'
 import * as styles from '../Table.css'
 
 interface Props {
   cases: CaseListEntry[]
-  onRowClick: (id: string) => void
   loading?: boolean
   testid?: string
 }
 
-const PastCasesTable: React.FC<Props> = (props) => {
-  const { cases, onRowClick, loading = false, testid } = props
+const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
+  const { cases, loading = false, testid } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
+    useCaseList()
 
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        b['created'].localeCompare(a['created']),
+        (b['created'] ?? '').localeCompare(a['created'] ?? ''),
       ),
     [cases],
   )
@@ -71,8 +66,9 @@ const PastCasesTable: React.FC<Props> = (props) => {
         <Box marginTop={2} key={theCase.id}>
           <MobilePastCase
             theCase={theCase}
-            onClick={() => onRowClick(theCase.id)}
+            onClick={() => handleOpenCase(theCase.id)}
             isCourtRole={false}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             <DurationDate
               key={`${theCase.id}-duration-date`}
@@ -115,6 +111,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
           </th>
           <TableHeaderText title={formatMessage(tables.state)} />
           <TableHeaderText title={formatMessage(tables.duration)} />
+          <th></th>
         </>
       }
     >
@@ -122,7 +119,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
         return (
           <tr
             className={styles.row}
-            onClick={() => onRowClick(column.id)}
+            onClick={() => handleOpenCase(column.id)}
             key={column.id}
           >
             <td>
@@ -150,9 +147,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
                 <TagCaseState
                   caseState={column.state}
                   caseType={column.type}
-                  isCourtRole={
-                    user?.role ? isExtendedCourtRole(user.role) : false
-                  }
+                  isCourtRole={isDistrictCourtUser(user)}
                   isValidToDateInThePast={column.isValidToDateInThePast}
                 />
               </Box>
@@ -172,6 +167,13 @@ const PastCasesTable: React.FC<Props> = (props) => {
                   column.rulingDate,
                 )}
               </Text>
+            </td>
+            <td className={styles.loadingContainer}>
+              <AnimatePresence>
+                {isOpeningCaseId === column.id && showLoading && (
+                  <LoadingIndicator />
+                )}
+              </AnimatePresence>
             </td>
           </tr>
         )

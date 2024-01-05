@@ -7,10 +7,9 @@ import { FieldBaseProps, Application } from '@island.is/application/types'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
 
-export const LinkExistingApplication: FC<FieldBaseProps> = ({
-  application,
-  field,
-}) => {
+export const LinkExistingApplication: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field }) => {
   const { formatMessage } = useLocale()
   const { description } = field
   const navigate = useNavigate()

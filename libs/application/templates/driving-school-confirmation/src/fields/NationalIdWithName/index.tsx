@@ -20,7 +20,10 @@ const IdentityQuery = gql`
   }
 `
 
-const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
+const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const {
@@ -33,16 +36,14 @@ const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
   const nameFieldErrors = getErrorViaPath(errors, nameField)
   const nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
 
-  const [
-    getIdentity,
-    { data, loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
-    onCompleted: (data) => {
-      if (data.identity?.name) {
-        setValue(nameField, data.identity?.name)
-      }
-    },
-  })
+  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
+      onCompleted: (data) => {
+        if (data.identity?.name) {
+          setValue(nameField, data.identity?.name)
+        }
+      },
+    })
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {

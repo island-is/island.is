@@ -1,0 +1,5 @@
+mutation LimitedAccessDeleteFile($input: DeleteFileInput!) {
+  limitedAccessDeleteFile(input: $input) {
+    success
+  }
+}

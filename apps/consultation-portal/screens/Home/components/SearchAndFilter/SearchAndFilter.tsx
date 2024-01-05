@@ -11,21 +11,16 @@ import { DebouncedSearch } from '../../../../components'
 import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
 import localization from '../../Home.json'
 import { sortLocale } from '../../../../utils/helpers'
-import { OptionsType } from 'react-select'
-
-interface ArrOfValueAndLabel {
-  value: string
-  label: string
-}
 
 interface SearchAndFilterProps {
-  PolicyAreas: Array<ArrOfValueAndLabel>
+  PolicyAreas: Array<Option<string>>
   defaultPolicyAreas: Array<number>
-  Institutions: Array<ArrOfValueAndLabel>
+  Institutions: Array<Option<string>>
   defaultInstitutions: Array<number>
   filters: CaseFilter
   setFilters: (arr: CaseFilter) => void
   loading?: boolean
+  filtersLoaded?: boolean
 }
 
 const SearchAndFilter = ({
@@ -36,6 +31,7 @@ const SearchAndFilter = ({
   filters,
   setFilters,
   loading,
+  filtersLoaded,
 }: SearchAndFilterProps) => {
   const loc = localization.searchAndFilter
 
@@ -53,12 +49,12 @@ const SearchAndFilter = ({
   const sortedPolicyAreas = sortLocale({
     list: PolicyAreas,
     sortOption: 'label',
-  }) as OptionsType<Option>
+  })
 
   const sortedInstitutions = sortLocale({
     list: Institutions,
     sortOption: 'label',
-  }) as OptionsType<Option>
+  })
 
   return (
     <GridContainer>
@@ -70,12 +66,12 @@ const SearchAndFilter = ({
               setFilters={setFilters}
               name="front_page_search"
               localStorageId={FILTERS_FRONT_PAGE_KEY}
-              isDisabled={loading}
+              filtersLoaded={filtersLoaded}
             />
           </GridColumn>
           <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               isSearchable
               size="xs"
               label={loc.policyAreaSelect.label}
@@ -89,13 +85,13 @@ const SearchAndFilter = ({
                 filters?.policyAreas.length === 1 &&
                 [...PolicyAreas].filter(
                   (item) => parseInt(item.value) === filters?.policyAreas[0],
-                )
+                )?.[0]
               }
             />
           </GridColumn>
           <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               isSearchable
               size="xs"
               label={loc.institutionSelect.label}
@@ -108,7 +104,7 @@ const SearchAndFilter = ({
                 filters?.institutions.length === 1 &&
                 [...Institutions].filter(
                   (item) => parseInt(item.value) === filters?.institutions[0],
-                )
+                )?.[0]
               }
               isClearable
             />

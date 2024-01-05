@@ -12,7 +12,9 @@ interface HeadWithSocialSharingProps {
 
 const usableContentTypes = ['image/jpeg', 'image/gif', 'image/png', undefined]
 
-export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
+export const HeadWithSocialSharing: FC<
+  React.PropsWithChildren<HeadWithSocialSharingProps>
+> = ({
   title,
   description,
   imageUrl,

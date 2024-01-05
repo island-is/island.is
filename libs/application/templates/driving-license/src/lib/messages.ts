@@ -716,6 +716,19 @@ export const m = defineMessages({
     description:
       'Alert message for health remarks on temporary driving license',
   },
+
+  phoneNumberTitle: {
+    id: 'dl.application:phoneNumberTitle',
+    defaultMessage: 'Símanúmer',
+    description: 'Phone number',
+  },
+
+  phoneNumberDescription: {
+    id: 'dl.application:phoneNumberDescription',
+    defaultMessage:
+      'Vinsamlegast gefðu upp símanúmerið þitt eða þá staðfestu að símanúmerið þitt sé rétt',
+    description: 'Your phone number',
+  },
 })
 
 export const requirementsMessages = defineMessages({
@@ -779,7 +792,7 @@ export const requirementsMessages = defineMessages({
   localResidencyDescription: {
     id: 'dl.application:requirementunmet.localResidencyDescription',
     defaultMessage:
-      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+      'Þú þarft að hafa búið að minnsta kosti 185 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
     description: 'requirement unmet api returned false',
   },
   currentLocalResidencyDescription: {

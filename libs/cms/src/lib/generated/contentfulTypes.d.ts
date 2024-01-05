@@ -8,7 +8,7 @@ export interface IAccordionSliceFields {
   title?: string | undefined
 
   /** Type */
-  type: 'accordion' | 'accordion_minimal' | 'CTA'
+  type: 'accordion' | 'accordion_minimal' | 'CTA' | 'category_card'
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
@@ -75,12 +75,14 @@ export interface IAlertBannerFields {
         | 'umsoknir'
         | 'min-gogn'
         | 'skirteini'
-        | 'leyfisbref'
         | 'menntun'
         | 'fasteignir'
         | 'fjarmal'
         | 'okutaeki'
         | 'stillingar'
+        | 'starfsleyfi'
+        | 'loftbru'
+        | 'heilsa'
       )[]
     | undefined
 }
@@ -97,6 +99,93 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
     contentType: {
       sys: {
         id: 'alertBanner'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAnchorPageFields {
+  /** title */
+  title: string
+
+  /** short title */
+  shortTitle?: string | undefined
+
+  /** slug */
+  slug: string
+
+  /** intro */
+  intro?: string | undefined
+
+  /** short intro */
+  shortIntro?: string | undefined
+
+  /** image */
+  image?: Asset | undefined
+
+  /** thumbnail */
+  thumbnail?: Asset | undefined
+
+  /** tiny thumbnail */
+  tinyThumbnail?: Asset | undefined
+
+  /** content */
+  content: Document
+
+  /** category */
+  category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
+
+  /** page type */
+  pageType?:
+    | 'Digital Iceland Service'
+    | 'Digital Iceland Community Page'
+    | 'Life Event'
+    | undefined
+
+  /** featured image */
+  featuredImage?: Asset | undefined
+}
+
+export interface IAnchorPage extends Entry<IAnchorPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'anchorPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAnchorPageListFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Pages */
+  pages?: IAnchorPage[] | undefined
+}
+
+export interface IAnchorPageList extends Entry<IAnchorPageListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'anchorPageList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -161,7 +250,7 @@ export interface IArticleFields {
   category: IArticleCategory
 
   /** Group (Main) */
-  group?: IArticleGroup | undefined
+  group: IArticleGroup
 
   /** Subgroup (Main) */
   subgroup?: IArticleSubgroup | undefined
@@ -213,6 +302,9 @@ export interface IArticleFields {
 
   /** Active Translations */
   activeTranslations?: Record<string, any> | undefined
+
+  /** Sign language video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -387,7 +479,10 @@ export interface ICardFields {
   title: string
 
   /** Body */
-  body: string
+  body?: string | undefined
+
+  /** Link */
+  linkUrl: string
 
   /** Link Text */
   linkText?: string | undefined
@@ -433,6 +528,141 @@ export interface ICardSection extends Entry<ICardSectionFields> {
     contentType: {
       sys: {
         id: 'cardSection'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IChartFields {
+  /** Title */
+  title: string
+
+  /** Description */
+  chartDescription: string
+
+  /** Alternative Description */
+  alternativeDescription: string
+
+  /** Display As Card */
+  displayAsCard: boolean
+
+  /** Start Expanded */
+  startExpanded?: boolean | undefined
+
+  /** Components */
+  components: IChartComponent[]
+
+  /** Date From */
+  dateFrom?: string | undefined
+
+  /** Date To */
+  dateTo?: string | undefined
+
+  /** Number Of Data Points */
+  numberOfDataPoints?: number | undefined
+
+  /** Source Data */
+  sourceData?: Record<string, any> | undefined
+
+  /** X Axis Key */
+  xAxisKey?: string | undefined
+
+  /** X Axis Value Type */
+  xAxisValueType?: 'date' | 'number' | 'string' | undefined
+}
+
+/** A wrapper to render any graphical representation of data using [Chart Component]s. */
+
+export interface IChart extends Entry<IChartFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'chart'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IChartComponentFields {
+  /** Label */
+  label: string
+
+  /** Type */
+  type: 'line' | 'bar' | 'area' | 'pie-cell'
+
+  /** Source Data Key */
+  sourceDataKey: string
+
+  /** Interval */
+  interval?: string | undefined
+
+  /** Stack Id */
+  stackId?: string | undefined
+}
+
+/** A component to be used with [Chart]. This component controls how data is visualised on a chart. What type of visualisation, what data is used and how it is used. */
+
+export interface IChartComponent extends Entry<IChartComponentFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'chartComponent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IChartNumberBoxFields {
+  /** Title */
+  title: string
+
+  /** Description */
+  numberBoxDescription: string
+
+  /** Source Data Key */
+  sourceDataKey: string
+
+  /** Value Type */
+  valueType: 'number' | 'percentage'
+
+  /** Display Change Month Over Month */
+  displayChangeMonthOverMonth: boolean
+
+  /** Display Change Year Over Year */
+  displayChangeYearOverYear?: boolean | undefined
+
+  /** Date */
+  numberBoxDate?: string | undefined
+}
+
+/** A standalone component to display a value for a data key and optionally how it has evolved over a period of time. */
+
+export interface IChartNumberBox extends Entry<IChartNumberBoxFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'chartNumberBox'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -566,12 +796,48 @@ export interface IEmailSignup extends Entry<IEmailSignupFields> {
   }
 }
 
+export interface IEmbedFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Embed link */
+  embedUrl?: string | undefined
+
+  /** Alt Text */
+  altText?: string | undefined
+
+  /** Aspect Ratio */
+  aspectRatio?: '713/630' | '16/9' | '795/450' | undefined
+}
+
+/** A content type which allows you to embed an iframe (but only from sources that have been approved of) */
+
+export interface IEmbed extends Entry<IEmbedFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'embed'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEmbeddedVideoFields {
   /** Title */
   title: string
 
   /** url */
   url: string
+
+  /** Thumbnail Image */
+  thumbnailImage: Asset
 }
 
 /** YouTube or Vimeo */
@@ -653,6 +919,61 @@ export interface IErrorPage extends Entry<IErrorPageFields> {
     contentType: {
       sys: {
         id: 'errorPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IEventFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Date */
+  startDate: string
+
+  /** Event time duration */
+  time?: Record<string, any> | undefined
+
+  /** Event Location */
+  location?: Record<string, any> | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Video */
+  video?: IEmbeddedVideo | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage: Asset
+
+  /** Content Image */
+  contentImage?: Asset | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
+}
+
+export interface IEvent extends Entry<IEventFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'event'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -899,6 +1220,9 @@ export interface IFormFields {
   /** Recipient */
   recipient: string
 
+  /** Default field namespace (In development) */
+  defaultFieldNamespace?: Record<string, any> | undefined
+
   /** Fields */
   fields?: IFormField[] | undefined
 
@@ -1017,7 +1341,7 @@ export interface IFrontpageFields {
   slides?: IFrontpageSlider[] | undefined
 
   /** Life Events */
-  lifeEvents?: ILifeEventPage[] | undefined
+  lifeEvents?: (ILifeEventPage | IAnchorPage)[] | undefined
 
   /** Namespace */
   namespace: IUiConfiguration
@@ -1398,11 +1722,10 @@ export interface IIntroLinkImageFields {
   leftImage?: boolean | undefined
 
   /** Link Title */
-  linkTitle: string
+  linkTitle?: string | undefined
 
   /** Link */
-  link:
-    | IAboutSubPage
+  link?:
     | IArticle
     | IArticleCategory
     | ISubArticle
@@ -1411,9 +1734,11 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
+    | undefined
 
   /** Open Link in New Tab */
-  openLinkInNewTab: boolean
+  openLinkInNewTab?: boolean | undefined
 }
 
 export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
@@ -1426,6 +1751,31 @@ export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
     contentType: {
       sys: {
         id: 'introLinkImage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILatestEventsSliceFields {
+  /** Title */
+  title: string
+
+  /** Organization */
+  organization: IOrganization
+}
+
+export interface ILatestEventsSlice extends Entry<ILatestEventsSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'latestEventsSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1504,7 +1854,11 @@ export interface ILifeEventPageFields {
   seeMoreText?: string | undefined
 
   /** page type */
-  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
+  pageType?:
+    | 'Life Event'
+    | 'Digital Iceland Service'
+    | 'Digital Iceland Community Page'
+    | undefined
 
   /** featured image */
   featuredImage?: Asset | undefined
@@ -1532,7 +1886,7 @@ export interface ILifeEventPageListSliceFields {
   title?: string | undefined
 
   /** List */
-  lifeEventPageList?: ILifeEventPage[] | undefined
+  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
 }
 
 export interface ILifeEventPageListSlice
@@ -1757,6 +2111,92 @@ export interface ILogoListSlice extends Entry<ILogoListSliceFields> {
   }
 }
 
+export interface IManualFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Info */
+  info?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Chapters */
+  chapters: IManualChapter[]
+
+  /** Category */
+  category?: IArticleCategory | undefined
+
+  /** Group */
+  group?: IArticleGroup | undefined
+
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
+
+  /** Importance */
+  importance?: number | undefined
+}
+
+export interface IManual extends Entry<IManualFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'manual'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IManualChapterFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Chapter Items */
+  chapterItems?: IOneColumnText[] | undefined
+
+  /** Changelog */
+  changelog?: Record<string, any> | undefined
+}
+
+export interface IManualChapter extends Entry<IManualChapterFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'manualChapter'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IMenuFields {
   /** Title */
   title?: string | undefined
@@ -1802,6 +2242,7 @@ export interface IMenuLinkFields {
     | IOrganizationSubpage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
     | undefined
 }
 
@@ -1841,6 +2282,7 @@ export interface IMenuLinkWithChildrenFields {
     | IOrganizationSubpage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
     | undefined
 
   /** Child links */
@@ -1976,6 +2418,9 @@ export interface INewsFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2204,6 +2649,9 @@ export interface IOrganizationFields {
   /** Logo */
   logo?: Asset | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2242,6 +2690,9 @@ export interface IOrganizationFields {
 
   /** Name In Vacancy List */
   nameInVacancyList?: string | undefined
+
+  /** Reference Identifier */
+  referenceIdentifier?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2297,6 +2748,8 @@ export interface IOrganizationPageFields {
         | ITabSection
         | ITimeline
         | ITwoColumnText
+        | ISectionWithVideo
+        | IAnchorPageList
       )[]
     | undefined
 
@@ -2314,6 +2767,7 @@ export interface IOrganizationPageFields {
         | IOneColumnText
         | ITimeline
         | ITwoColumnText
+        | ILatestEventsSlice
       )[]
     | undefined
 
@@ -2373,6 +2827,12 @@ export interface IOrganizationPageFields {
     | 'haskolanam'
     | 'nti'
     | 'samgongustofa'
+    | 'geislavarnir-rikisins'
+    | 'rettindagaesla-fatlads-folks'
+    | 'hms'
+    | 'rikissaksoknari'
+    | 'vinnueftirlitid'
+    | 'hljodbokasafn-islands'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2432,6 +2892,9 @@ export interface IOrganizationSubpageFields {
         | ITeamList
         | ITellUsAStory
         | ITwoColumnText
+        | IAnchorPageList
+        | ISectionWithVideo
+        | ISectionHeading
       )[]
     | undefined
 
@@ -2449,6 +2912,9 @@ export interface IOrganizationSubpageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IOrganizationSubpage
@@ -2680,12 +3146,18 @@ export interface IProjectPageFields {
     | 'ukraine'
     | 'opinbernyskopun'
     | 'gagnasidur-fiskistofu'
+    | 'directorate-of-health'
+    | 'grindavik'
+    | 'default-v2'
 
   /** Sidebar */
   sidebar: boolean
 
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
+
+  /** Secondary Sidebar */
+  secondarySidebar?: ILinkGroup | undefined
 
   /** Subtitle */
   subtitle?: string | undefined
@@ -2738,6 +3210,9 @@ export interface IProjectPageFields {
   /** Default Header Background Color */
   defaultHeaderBackgroundColor?: string | undefined
 
+  /** Theme Properties */
+  themeProperties?: Record<string, any> | undefined
+
   /** Featured Description */
   featuredDescription?: string | undefined
 
@@ -2753,6 +3228,9 @@ export interface IProjectPageFields {
         | ISliceConnectedComponent
       )[]
     | undefined
+
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
@@ -2818,6 +3296,9 @@ export interface IProjectSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
   /** Bottom Slices */
   bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
@@ -2923,6 +3404,73 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISectionWithVideoFields {
+  /** Title */
+  title: string
+
+  /** Show title */
+  showTitle?: boolean | undefined
+
+  /** Content */
+  content: Document
+
+  /** Video */
+  video: IEmbeddedVideo
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Show divider on top */
+  showDividerOnTop?: boolean | undefined
+}
+
+/** A section containing a video on the left and text on the right (which wraps below the video on smaller screens) */
+
+export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sectionWithVideo'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IServiceWebPageFields {
+  /** Title */
+  title: string
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Slices */
+  slices?: IFeaturedArticles[] | undefined
+}
+
+export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'serviceWebPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISidebarCardFields {
   /** Type */
   type?:
@@ -2991,6 +3539,15 @@ export interface ISliceConnectedComponentFields {
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
     | 'PublicVehicleSearch'
+    | 'PlateAvailableSearch'
+    | 'AircraftSearch'
+    | 'DrivingInstructorList'
+    | 'HousingBenefitCalculator'
+    | 'PublicShipSearch'
+    | 'Meistaraleyfi/MasterLicences'
+    | 'Vinnueftirlitid/Namskeid'
+    | 'Meðmælalistar/SignatureLists'
+    | 'KilometerFee'
     | undefined
 
   /** Localized JSON */
@@ -3287,6 +3844,9 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -3873,6 +4433,7 @@ export interface IUrlFields {
     | IProjectPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IOrganizationPage
     | undefined
 
   /** Urls list */
@@ -3925,18 +4486,20 @@ export interface IVacancyFields {
     | 'Sumarstörf'
 
   /** Organization */
-  organization: IOrganization
+  organization?: IOrganization | undefined
 
   /** Locations */
   locations: (
-    | 'Án staðsetningar'
+    | 'Óstaðbundið'
     | 'Höfuðborgarsvæðið'
-    | 'Norðurland'
+    | 'Norðurland vestra'
+    | 'Norðurland eystra'
     | 'Vesturland'
     | 'Austurland'
     | 'Suðurland'
     | 'Vestfirðir'
     | 'Suðurnes'
+    | 'Erlendis'
   )[]
 
   /** Job Percentage */
@@ -4165,6 +4728,8 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
+  | 'anchorPage'
+  | 'anchorPageList'
   | 'appUri'
   | 'article'
   | 'articleCategory'
@@ -4174,12 +4739,17 @@ export type CONTENT_TYPE =
   | 'bigBulletList'
   | 'card'
   | 'cardSection'
+  | 'chart'
+  | 'chartComponent'
+  | 'chartNumberBox'
   | 'contactUs'
   | 'districts'
   | 'emailSignup'
+  | 'embed'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
+  | 'event'
   | 'eventSlice'
   | 'faqList'
   | 'featured'
@@ -4199,6 +4769,7 @@ export type CONTENT_TYPE =
   | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
+  | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'lifeEventPageListSlice'
@@ -4209,6 +4780,8 @@ export type CONTENT_TYPE =
   | 'linkUrl'
   | 'location'
   | 'logoListSlice'
+  | 'manual'
+  | 'manualChapter'
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'
@@ -4234,6 +4807,8 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sectionWithVideo'
+  | 'serviceWebPage'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'

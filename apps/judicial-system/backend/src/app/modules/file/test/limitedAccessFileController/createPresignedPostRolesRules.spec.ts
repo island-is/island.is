@@ -14,9 +14,6 @@ describe('LimitedAccessFileController - Create presigned post rules', () => {
 
   it('should give permission to one role', () => {
     expect(rules).toHaveLength(1)
-  })
-
-  it('should give permission to defenders', () => {
     expect(rules).toContain(defenderRule)
   })
 })

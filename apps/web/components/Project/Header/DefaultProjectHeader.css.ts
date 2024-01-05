@@ -15,7 +15,6 @@ export const headerBg = style({
 
 export const headerWrapper = style({
   display: 'grid',
-  minHeight: '300px',
   height: 'fit-content',
   maxHeight: 'min-content',
   ...themeUtils.responsiveStyle({

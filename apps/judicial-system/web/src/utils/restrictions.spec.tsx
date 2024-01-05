@@ -1,20 +1,22 @@
 import React from 'react'
-import { formatCustodyRestrictions } from './restrictions'
-import { IntlFormatters, useIntl, createIntl } from 'react-intl'
+import { createIntl, IntlFormatters, useIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
-import { render, screen, getDefaultNormalizer } from '@testing-library/react'
+import { getDefaultNormalizer, render, screen } from '@testing-library/react'
 
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { formatCustodyRestrictions } from './restrictions'
 import { formatRequestedCustodyRestrictions } from './restrictions'
 
 interface Props {
   getMessage: (formatMessage: IntlFormatters['formatMessage']) => string
 }
 
-const Message: React.FC<Props> = (props) => {
+const Message: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const messageFormatted = props.getMessage(formatMessage)
   return <span>{messageFormatted}</span>
@@ -172,8 +174,10 @@ describe('formatRequestedCustodyRestrictions', () => {
 })
 
 describe('formatCustodyRestrictions', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
 
   it('should return empty string if no custody restrictions', () => {
     const caseType = CaseType.CUSTODY

@@ -7,7 +7,9 @@ import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
 import { MessageDescriptor } from '@formatjs/intl'
+import { requirementsMessages } from '../../../lib/messages'
 import { m } from '../../../lib/messages'
+import isNumber from 'lodash/isNumber'
 
 export enum ReviewSectionState {
   inProgress = 'In progress',
@@ -18,7 +20,9 @@ export enum ReviewSectionState {
 export interface Step {
   title: MessageDescriptor
   description: MessageDescriptor
+  residenceRequirement?: MessageDescriptor
   state: ReviewSectionState
+  daysOfResidency?: number
 }
 
 type ReviewSectionProps = {
@@ -27,11 +31,16 @@ type ReviewSectionProps = {
   index: number
 }
 
-const ReviewSection: FC<ReviewSectionProps> = ({
+const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   application,
-  step: { state, description, title },
+  step: { state, description, title, daysOfResidency },
 }) => {
   const { formatMessage } = useLocale()
+
+  const showLocalRequirementDays: boolean =
+    isNumber(daysOfResidency) &&
+    state === ReviewSectionState.requiresAction &&
+    title === requirementsMessages.localResidencyTitle
 
   return (
     <Box
@@ -66,18 +75,12 @@ const ReviewSection: FC<ReviewSectionProps> = ({
       <Box
         alignItems="flexStart"
         display="flex"
-        flexDirection={['columnReverse', 'row']}
+        flexDirection={'row'}
         justifyContent="spaceBetween"
       >
-        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
-          <Text variant="h3">
-            {formatText(title, application, formatMessage)}
-          </Text>
-          <Text marginTop={1} variant="default">
-            {formatText(description, application, formatMessage)}
-          </Text>
-        </Box>
-
+        <Text variant="h3">
+          {formatText(title, application, formatMessage)}
+        </Text>
         {state === ReviewSectionState.complete && (
           <Box pointerEvents="none">
             <button type="button" className={styles.container}>
@@ -88,7 +91,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           </Box>
         )}
         {state === ReviewSectionState.requiresAction && (
-          <Box pointerEvents="none">
+          <Box pointerEvents="none" style={{ whiteSpace: 'nowrap' }}>
             <Tag variant="red">
               {formatText(
                 coreMessages.tagsRequiresAction,
@@ -97,6 +100,17 @@ const ReviewSection: FC<ReviewSectionProps> = ({
               )}
             </Tag>
           </Box>
+        )}
+      </Box>
+      <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
+        <Text marginTop={1} variant="default">
+          {formatText(description, application, formatMessage)}
+        </Text>
+        {showLocalRequirementDays && (
+          <Text
+            marginTop={2}
+            fontWeight="medium"
+          >{`Þú hefur aðeins búið á Íslandi í ${daysOfResidency} daga.`}</Text>
         )}
       </Box>
     </Box>

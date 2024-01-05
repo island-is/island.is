@@ -1,11 +1,13 @@
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize'
+import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   CaseState,
   CaseTransition,
   completedCaseStates,
@@ -15,14 +17,14 @@ import {
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { include, order } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
-import { order, include } from '../../case.service'
 
 jest.mock('../../../factories')
 
@@ -48,12 +50,8 @@ describe('CaseController - Transition', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageService,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { messageService, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
 
     mockMessageService = messageService
     mockCaseModel = caseModel
@@ -103,6 +101,7 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.DELETE}  | ${CaseState.DRAFT}     | ${CaseState.DELETED}
       ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
       ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
+      ${CaseTransition.REOPEN}  | ${CaseState.ACCEPTED}  | ${CaseState.RECEIVED}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -237,7 +236,10 @@ describe('CaseController - Transition', () => {
                 },
               ],
             )
-          } else if (newState === CaseState.RECEIVED) {
+          } else if (
+            transition !== CaseTransition.REOPEN &&
+            newState === CaseState.RECEIVED
+          ) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
@@ -286,6 +288,7 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${CaseAppealState.APPEALED}
       ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
       ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
+      ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${CaseAppealState.COMPLETED} | ${CaseAppealState.RECEIVED}
     `.describe(
     '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
     ({ transition, caseState, currentAppealState, newAppealState }) => {
@@ -329,6 +332,7 @@ describe('CaseController - Transition', () => {
             state: caseState,
             caseFiles,
             appealState: currentAppealState,
+            origin: CaseOrigin.LOKE,
           } as Case
 
           const updatedCase = {
@@ -337,6 +341,7 @@ describe('CaseController - Transition', () => {
             state: caseState,
             caseFiles,
             appealState: newAppealState,
+            origin: CaseOrigin.LOKE,
           } as Case
 
           beforeEach(async () => {
@@ -353,11 +358,9 @@ describe('CaseController - Transition', () => {
               {
                 appealState: newAppealState,
                 prosecutorPostponedAppealDate:
-                  newAppealState === CaseAppealState.APPEALED
-                    ? date
-                    : undefined,
+                  transition === CaseTransition.APPEAL ? date : undefined,
                 appealReceivedByCourtDate:
-                  newAppealState === CaseAppealState.RECEIVED
+                  transition === CaseTransition.RECEIVE_APPEAL
                     ? date
                     : undefined,
               },
@@ -389,8 +392,7 @@ describe('CaseController - Transition', () => {
                   caseFileId: prosecutorAppealBriefCaseFileId2,
                 },
                 {
-                  type:
-                    MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+                  type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
                   user: defaultUser,
                   caseId,
                 },
@@ -427,6 +429,11 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
                   user: defaultUser,
                   caseId,
+                },
+                {
+                  type: MessageType.DELIVER_APPEAL_TO_POLICE,
+                  user: defaultUser,
+                  caseId: theCase.id,
                 },
               ])
             }

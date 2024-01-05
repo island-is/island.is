@@ -33,6 +33,7 @@ export class ApplicationLifeCycleService {
 
   public async run() {
     this.logger.info(`Starting application pruning...`)
+
     await this.fetchApplicationsToBePruned()
     await this.pruneAttachments()
     await this.pruneApplicationCharge()
@@ -46,10 +47,11 @@ export class ApplicationLifeCycleService {
   }
 
   private async fetchApplicationsToBePruned() {
-    const applications = (await this.applicationService.findAllDueToBePruned()) as Pick<
-      Application,
-      'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
-    >[]
+    const applications =
+      (await this.applicationService.findAllDueToBePruned()) as Pick<
+        Application,
+        'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
+      >[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
 

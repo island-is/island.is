@@ -17,6 +17,7 @@ import * as styles from './ActionCard.css'
 import LinkResolver from '../LinkResolver/LinkResolver'
 
 type ActionCardProps = {
+  capitalizeHeading?: boolean
   date?: string
   heading?: string
   text?: string
@@ -30,6 +31,7 @@ type ActionCardProps = {
     variant?: TagVariant
     outlined?: boolean
   }
+  secondaryTag?: ActionCardProps['tag']
   cta: {
     url?: string
     internalUrl?: string
@@ -70,7 +72,8 @@ const defaultTag = {
   label: '',
 } as const
 
-export const ActionCard: React.FC<ActionCardProps> = ({
+export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
+  capitalizeHeading = false,
   date,
   heading,
   text,
@@ -82,6 +85,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   cta: _cta,
   secondaryCta,
   tag: _tag,
+  secondaryTag,
   image,
   translateLabel = 'yes',
 }) => {
@@ -111,7 +115,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           background="blue100"
           className={styles.avatar}
         >
-          <Text variant="h3" as="p" color="blue400">
+          <Text
+            capitalizeFirstLetter={capitalizeHeading}
+            variant="h3"
+            as="p"
+            color="blue400"
+          >
             {getTitleAbbreviation(heading)}
           </Text>
         </Box>
@@ -161,8 +170,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         <Text variant="eyebrow" color="purple400">
           {eyebrow}
         </Text>
-
-        {renderTag()}
+        {renderTag(tag)}
       </Box>
     )
   }
@@ -193,20 +201,20 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           </Box>
         </Box>
         <Inline alignY="center" space={1}>
-          {!eyebrow && renderTag()}
+          {!eyebrow && renderTag(tag)}
         </Inline>
       </Box>
     )
   }
 
-  const renderTag = () => {
-    if (!tag.label) {
+  const renderTag = (actionTag: ActionCardProps['tag']) => {
+    if (!actionTag?.label) {
       return null
     }
 
     return (
-      <Tag outlined={tag.outlined} variant={tag.variant} disabled>
-        {tag.label}
+      <Tag outlined={actionTag.outlined} variant={actionTag.variant} disabled>
+        {actionTag.label}
       </Tag>
     )
   }
@@ -247,7 +255,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
                     colorScheme="default"
                     iconType="outline"
                     size="small"
-                    type="button"
+                    type="span"
+                    unfocusable
                     variant="text"
                   >
                     {cta.label}
@@ -278,6 +287,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       </Box>
     )
   }
+
   return (
     <Box
       display="flex"
@@ -314,10 +324,16 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Box display="flex" flexDirection="row" alignItems="center">
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                style={{ flex: 1 }}
+              >
                 {/* Checking image type so the logo is placed correctly */}
                 {image?.type === 'logo' && renderImage()}
                 <Text
+                  capitalizeFirstLetter={capitalizeHeading}
                   variant="h4"
                   translate={translateLabel}
                   color={
@@ -328,7 +344,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
                 </Text>
               </Box>
               <Hidden above="xs">
-                <Box>{!date && !eyebrow && renderTag()}</Box>
+                {secondaryTag && (
+                  <Box marginRight="smallGutter">
+                    {!date && !eyebrow && renderTag(secondaryTag)}
+                  </Box>
+                )}
+                <Box>{!date && !eyebrow && renderTag(tag)}</Box>
               </Hidden>
             </Box>
           )}
@@ -357,7 +378,23 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             tag?.label ? styles.tag : cta.centered ? undefined : styles.button
           }
         >
-          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
+          <Hidden below="sm">
+            <Box
+              display="flex"
+              flexDirection={[
+                'columnReverse',
+                'columnReverse',
+                'columnReverse',
+                'row',
+              ]}
+            >
+              <>
+                {!date && !eyebrow && renderTag(secondaryTag)}
+                <Box marginRight="smallGutter" marginBottom="smallGutter" />
+                {!date && !eyebrow && renderTag(tag)}
+              </>
+            </Box>
+          </Hidden>
           {renderDefault()}
         </Box>
       </Box>

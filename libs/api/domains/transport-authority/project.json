@@ -1,20 +1,23 @@
 {
-  "root": "libs/api/domains/transport-authority",
+  "name": "api-domains-transport-authority",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/transport-authority/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/transport-authority/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/transport-authority"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/transport-authority"
+      ],
       "options": {
-        "jestConfig": "libs/api/domains/transport-authority/jest.config.js",
+        "jestConfig": "libs/api/domains/transport-authority/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,17 +1,18 @@
 import React from 'react'
-
-import { Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 
+import { Box, Text } from '@island.is/island-ui/core'
 import { tables } from '@island.is/judicial-system-web/messages'
-
-import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {
-  type: CaseType
-  decision?: CaseDecision
-  parentCaseId?: string
+  type?: CaseType | null
+  decision?: CaseDecision | null
+  parentCaseId?: string | null
 }
 
 const ColumnCaseType: React.FC<Props> = ({ type, decision, parentCaseId }) => {

@@ -1,10 +1,10 @@
-import {withKnobs, text} from '@storybook/addon-knobs';
-import {storiesOf} from '@storybook/react-native';
-import React from 'react';
-import {View} from 'react-native';
-import {Loader} from './loader';
+import { text, withKnobs } from '@storybook/addon-knobs'
+import { storiesOf } from '@storybook/react-native'
+import React from 'react'
+import { View } from 'react-native'
+import { Loader } from './loader'
 
-const CenterView = ({children}: any) => (
+const CenterView = ({ children }: any) => (
   <View
     style={{
       flex: 1,
@@ -15,15 +15,15 @@ const CenterView = ({children}: any) => (
   >
     {children}
   </View>
-);
+)
 
 storiesOf('Loader', module)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
-    return <Loader />;
+    return <Loader />
   })
   .add('Default With Text', () => {
-    const title = text('Loader Text', 'Sæki skjal');
-    return <Loader text={title} />;
-  });
+    const title = text('Loader Text', 'Sæki skjal')
+    return <Loader text={title} />
+  })

@@ -1,6 +1,7 @@
 import {
   ArrowLink,
   Columns,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -9,11 +10,10 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { SGLogo } from '../../../svg/index'
 import { FooterColumn } from './components/FooterColumn'
 import localization from '../../Layout.json'
-
 import * as styles from './Footer.css'
+import { LogoText } from '../../../../components'
 
 const Footer = () => {
   const loc = localization.footer
@@ -31,11 +31,15 @@ const Footer = () => {
                   align="center"
                 >
                   <FooterColumn justifyContent="flexStart">
-                    <SGLogo />
+                    <FocusableBox href="/">
+                      <LogoText isSmall />
+                    </FocusableBox>
                   </FooterColumn>
                   <FooterColumn isDivider />
                   <FooterColumn justifyContent="center">
-                    <Logo />
+                    <FocusableBox href="https://island.is">
+                      <Logo />
+                    </FocusableBox>
                   </FooterColumn>
                   <FooterColumn isDivider />
                   <FooterColumn justifyContent="flexEnd">

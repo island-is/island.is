@@ -25,11 +25,10 @@ export class PaginatedEndorsementInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<PaginatedEndorsementDto>> {
     const user = GqlExecutionContext.create(context).getContext().req?.user
-    const listId = GqlExecutionContext.create(context).getContext().req?.params
-      ?.listId
-    const listOwnerNationalId = await this.endorsementListService.getListOwnerNationalId(
-      listId,
-    )
+    const listId =
+      GqlExecutionContext.create(context).getContext().req?.params?.listId
+    const listOwnerNationalId =
+      await this.endorsementListService.getListOwnerNationalId(listId)
     const isListOwner = user?.nationalId === listOwnerNationalId
     const isAdmin = this.endorsementListService.hasAdminScope(user as User)
 

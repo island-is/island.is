@@ -23,9 +23,9 @@ export interface CompanyListConnectedProps {
   graphqlLink: string
 }
 
-export const CompanyListConnected: FC<CompanyListConnectedProps> = ({
-  graphqlLink = '',
-}) => {
+export const CompanyListConnected: FC<
+  React.PropsWithChildren<CompanyListConnectedProps>
+> = ({ graphqlLink = '' }) => {
   const uri = graphqlLink || 'https://skilavottord.dev01.devland.is/api/graphql'
 
   const { data, error, loading } = useQuery(RECYCLING_PARTNERS, {

@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/xroad-collector",
+  "name": "services-xroad-collector",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/xroad-collector/src",
   "projectType": "application",
   "prefix": "services-xroad-collector",
@@ -24,13 +25,13 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-xroad-collector:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/xroad-collector/**/*.{ts,tsx,js,jsx}"
@@ -38,12 +39,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/xroad-collector/jest.config.js",
+        "jestConfig": "apps/services/xroad-collector/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/services/xroad-collector"]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/xroad-collector"]
     },
     "docker-express": {}
   },

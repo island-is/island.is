@@ -1,0 +1,5 @@
+schema: https://smartpages-api-dev.smartsolutions.is/graphql
+generates:
+  libs/clients/smartsolutions/smartsolutions-api.graphql:
+    plugins:
+      - schema-ast

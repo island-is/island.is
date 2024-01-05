@@ -27,7 +27,9 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const BackgroundImage: FC<BackgroundImageProps> = ({
+export const BackgroundImage: FC<
+  React.PropsWithChildren<BackgroundImageProps>
+> = ({
   image = null,
   ratio = '',
   width = 1000,
@@ -43,8 +45,12 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
     borderRadius: 'large',
   },
 }) => {
-  const src = `${image.url}?w=${width}`
+  const src = `${image?.url ? image.url : ''}?w=${width}`
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const thumbnail = image.url + '?w=50'
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const alt = image.title ?? ''
   const imageProps = alt
     ? {

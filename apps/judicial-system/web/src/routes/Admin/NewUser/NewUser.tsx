@@ -1,22 +1,23 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import { Skeleton } from '@island.is/judicial-system-web/src/components'
+import { Box } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { titles } from '@island.is/judicial-system-web/messages'
+import {
+  PageHeader,
+  Skeleton,
+} from '@island.is/judicial-system-web/src/components'
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
-import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 
-import * as styles from '../Users/Users.css'
 import UserForm from '../UserForm/UserForm'
+import { useCreateUserMutation } from './createUser.generated'
+import * as styles from '../Users/Users.css'
 
 const user: User = {
   id: '',
@@ -32,24 +33,31 @@ const user: User = {
   active: true,
 }
 
-export const NewUser: React.FC = () => {
+export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   const {
-    allCourts,
-    prosecutorsOffices,
-    prisonInstitutions,
-    loading: institutionLoading,
-    loaded: institutionLoaded,
+    allInstitutions,
+    loading: institutionsLoading,
+    loaded: institutionsLoaded,
   } = useInstitution()
   const { formatMessage } = useIntl()
 
-  const [createUserMutation, { loading: createLoading }] = useMutation(
-    CreateUserMutation,
-  )
+  const [createUserMutation, { loading: userCreating }] =
+    useCreateUserMutation()
 
   const createUser = async (user: User): Promise<void> => {
-    if (createLoading === false && user) {
+    if (
+      !userCreating &&
+      user.nationalId &&
+      user.name &&
+      user.role &&
+      user.title &&
+      user.mobileNumber &&
+      user.email &&
+      user.active &&
+      user.institution
+    ) {
       await createUserMutation({
         variables: {
           input: {
@@ -69,19 +77,17 @@ export const NewUser: React.FC = () => {
     router.push(constants.USERS_ROUTE)
   }
 
-  return institutionLoading ? (
+  return institutionsLoading ? (
     <Skeleton />
-  ) : institutionLoaded ? (
+  ) : institutionsLoaded ? (
     <Box background="purple100">
       <div className={styles.userManagementContainer}>
         <PageHeader title={formatMessage(titles.admin.newUser)} />
         <UserForm
           user={user}
-          allCourts={allCourts}
-          prosecutorsOffices={prosecutorsOffices}
-          prisonInstitutions={prisonInstitutions}
+          institutions={allInstitutions}
           onSave={createUser}
-          loading={createLoading}
+          loading={userCreating}
         />
       </div>
     </Box>

@@ -30,7 +30,9 @@ type FieldPeriodEndDateProps = {
 }
 
 export const PeriodEndDate: FC<
-  FieldBaseProps & CustomField & FieldPeriodEndDateProps
+  React.PropsWithChildren<
+    FieldBaseProps & CustomField & FieldPeriodEndDateProps
+  >
 > = ({ field, application, errors }) => {
   const { formatMessage } = useLocale()
   const { title, props } = field

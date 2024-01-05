@@ -14,5 +14,9 @@
   "/api/feature": {
     "target": "http://localhost:3333",
     "secure": false
+  },
+  "/api/defender": {
+    "target": "http://localhost:3333",
+    "secure": false
   }
 }

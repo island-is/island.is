@@ -112,8 +112,8 @@ export const prerequisite = (): Form => {
                 }) => {
                   return format(
                     new Date(
-                      ((data as { estate: EstateRegistrant }).estate
-                        .dateOfDeath as unknown) as string,
+                      (data as { estate: EstateRegistrant }).estate
+                        .dateOfDeath as unknown as string,
                     ),
                     'dd.MM.yyyy',
                   )

@@ -18,17 +18,18 @@ import {
 import { IsBoolean, IsArray, IsOptional } from 'class-validator'
 import type { Locale } from '@island.is/shared/types'
 import { Audit } from '@island.is/nest/audit'
-import { LicenseServiceService } from '../licenseService.service'
 import {
   GenericPkPass,
   GenericPkPassQrCode,
   GenericPkPassVerification,
   GenericUserLicense,
+  UserLicensesResponse,
 } from './genericLicense.model'
 import {
   GenericLicenseType,
   GenericLicenseTypeType,
 } from '../licenceService.type'
+import { LicenseServiceService } from '../licenseService.service'
 
 @InputType()
 export class GetGenericLicensesInput {
@@ -57,6 +58,9 @@ export class GetGenericLicensesInput {
 export class GetGenericLicenseInput {
   @Field(() => String)
   licenseType!: GenericLicenseType
+
+  @Field(() => String, { nullable: true })
+  licenseId?: string
 }
 
 @InputType()
@@ -78,7 +82,9 @@ export class VerifyPkPassInput {
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
-  @Query(() => [GenericUserLicense])
+  @Query(() => [GenericUserLicense], {
+    deprecationReason: 'Use genericUserLicenses instead',
+  })
   @Audit()
   async genericLicenses(
     @CurrentUser() user: User,
@@ -111,6 +117,26 @@ export class MainResolver {
       user,
       locale,
       input.licenseType,
+      input.licenseId,
+    )
+    return license
+  }
+
+  @Query(() => UserLicensesResponse)
+  @Audit()
+  async genericUserLicenses(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: GetGenericLicensesInput,
+  ) {
+    const license = await this.licenseServiceService.getUserLicenses(
+      user,
+      locale,
+      {
+        ...input,
+        includedTypes: input?.includedTypes ?? ['DriversLicense'],
+      },
     )
     return license
   }
@@ -123,12 +149,15 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
-    const { pkpassUrl } = await this.licenseServiceService.generatePkPass(
+    const pkpassUrl = await this.licenseServiceService.generatePkPassUrl(
       user,
       locale,
       input.licenseType,
     )
-    return { pkpassUrl }
+
+    return {
+      pkpassUrl,
+    }
   }
 
   @Mutation(() => GenericPkPassQrCode)
@@ -139,15 +168,15 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
-    const {
-      pkpassQRCode,
-    } = await this.licenseServiceService.generatePkPassQrCode(
+    const pkpassQRCode = await this.licenseServiceService.generatePkPassQRCode(
       user,
       locale,
       input.licenseType,
     )
 
-    return { pkpassQRCode }
+    return {
+      pkpassQRCode,
+    }
   }
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
@@ -160,8 +189,6 @@ export class MainResolver {
     @Args('input') input: VerifyPkPassInput,
   ): Promise<GenericPkPassVerification> {
     const verification = await this.licenseServiceService.verifyPkPass(
-      user,
-      locale,
       input.data,
     )
     return verification

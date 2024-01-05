@@ -12,6 +12,7 @@ import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
 import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
 import { AssetName } from './models/assetName'
+import { VehicleRegistration } from './models/vehicleRegistration'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PropertyDetail } from '@island.is/api/domains/assets'
@@ -27,6 +28,8 @@ import { SearchForPropertyInput } from './dto/searchForProperty.input'
 import { EstateRelations } from './models/relations'
 import { AlcoholLicence } from './models/alcoholLicence'
 import { TemporaryEventLicence } from './models/temporaryEventLicence'
+import { MasterLicencesResponse } from './models/masterLicence'
+import { GetVehicleInput } from './dto/getVehicle.input'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -136,6 +139,13 @@ export class SyslumennResolver {
     return this.syslumennService.getVehicleType(licenseNumber)
   }
 
+  @Query(() => VehicleRegistration)
+  syslumennGetVehicle(
+    @Args('input') input: GetVehicleInput,
+  ): Promise<VehicleRegistration> {
+    return this.syslumennService.getVehicle(input.vehicleId)
+  }
+
   @Query(() => PropertyDetail, { nullable: true })
   @Scopes(ApiScope.assets)
   searchForProperty(
@@ -148,5 +158,13 @@ export class SyslumennResolver {
   @Query(() => EstateRelations)
   getSyslumennEstateRelations(): Promise<EstateRelations> {
     return this.syslumennService.getEstateRelations()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => MasterLicencesResponse)
+  @BypassAuth()
+  async getMasterLicences(): Promise<MasterLicencesResponse> {
+    const licences = await this.syslumennService.getMasterLicences()
+    return { licences }
   }
 }

@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Core" -->
-
 # Portals Admin Core
 
 Library containing core functionality, components and other utilities for the Portals Admin application.

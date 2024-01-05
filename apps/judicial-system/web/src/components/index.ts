@@ -6,7 +6,10 @@ export { default as CaseFile } from './CaseFile/CaseFile'
 export { default as CaseFileList } from './CaseFileList/CaseFileList'
 export { default as CaseFilesAccordionItem } from './AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 export { default as CaseResubmitModal } from './CaseResubmitModal/CaseResubmitModal'
-export { default as CheckboxList } from './CheckboxList/CheckboxList'
+export {
+  default as CheckboxList,
+  type CheckboxInfo,
+} from './CheckboxList/CheckboxList'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export {
@@ -52,14 +55,11 @@ export { default as RestrictionTags } from './RestrictionTags/RestrictionTags'
 export { default as RulingAccordionItem } from './AccordionItems/RulingAccordionItem/RulingAccordionItem'
 export { default as RulingInput } from './RulingInput/RulingInput'
 export { default as SectionHeading } from './SectionHeading/SectionHeading'
-export { default as SelectCourtOfficials } from './SelectCourtOfficials/SelectCourtOfficials'
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
-export { default as AppealCasesTable } from './Table/AppealCasesTable/AppealCasesTable'
-export { default as PastCasesTable } from './Table/PastCasesTable/PastCasesTable'
 export {
   SigningModal,
   useRequestRulingSignature,
@@ -71,14 +71,28 @@ export { UserProvider, UserContext } from './UserProvider/UserProvider'
 export {
   ViewportProvider,
   ViewportContext,
+  type Rect,
 } from './ViewportProvider/ViewportProvider'
 export { default as FileNotFoundModal } from './FileNotFoundModal/FileNotFoundModal'
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
 export { default as Conclusion } from './Conclusion/Conclusion'
+export { conclusion } from './Conclusion/Conclusion.strings'
 export { default as CaseResentExplanation } from './CaseResentExplanation/CaseResentExplanation'
-export { default as AppealConclusion } from './Conclusion/AppealConclusion'
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './RulingDateLabel/RulingDateLabel'
 export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'
-
-export type { Rect } from './ViewportProvider/ViewportProvider'
+export { default as ReopenModal } from './ReopenModal/ReopenModal'
+export { default as RulingModifiedModal } from './RulingModifiedModal/RulingModifiedModal'
+export { default as CommentsInput } from './CommentsInput/CommentsInput'
+export { default as RestrictionLength } from './RestrictionLength/RestrictionLength'
+export { default as CaseTitleInfoAndTags } from './CaseTitleInfoAndTags/CaseTitleInfoAndTags'
+export { default as IconAndText } from './IconAndText/IconAndText'
+export {
+  type Item,
+  default as SelectableList,
+} from './SelectableList/SelectableList'
+export {
+  default as IndictmentsLawsBrokenAccordionItem,
+  useIndictmentsLawsBroken,
+} from './AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
+export { default as IndictmentCaseFilesList } from './IndictmentCaseFilesList/IndictmentCaseFilesList'

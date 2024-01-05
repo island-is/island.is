@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ApolloError, useMutation } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 
 import {
-  CaseFile as TCaseFile,
+  CaseFile,
   CaseFileState,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  UploadFileToCourtDocument,
-  UploadFileToCourtMutation,
-  UploadFileToCourtMutationVariables,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
+import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
@@ -32,8 +29,8 @@ export type CaseFileStatus =
   | 'case-not-found'
   | 'unsupported'
 
-export interface CaseFile extends TCaseFile {
-  status: CaseFileStatus
+export interface CaseFileWithStatus extends CaseFile {
+  status?: CaseFileStatus
 }
 
 export const useCourtUpload = (
@@ -41,14 +38,11 @@ export const useCourtUpload = (
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
-  const [uploadFileToCourtMutation] = useMutation<
-    UploadFileToCourtMutation,
-    UploadFileToCourtMutationVariables
-  >(UploadFileToCourtDocument)
+  const [uploadFileToCourtMutation] = useUploadFileToCourtMutation()
 
   const setFileUploadStatus = useCallback(
-    (theCase: Case, file: CaseFile, status: CaseFileStatus) => {
-      const files = theCase.caseFiles as CaseFile[]
+    (theCase: Case, file: CaseFileWithStatus, status: CaseFileStatus) => {
+      const files = theCase.caseFiles as CaseFileWithStatus[]
 
       if (files) {
         const fileIndexToUpdate = files.findIndex((f) => f.id === file.id)
@@ -64,10 +58,11 @@ export const useCourtUpload = (
   )
 
   useEffect(() => {
-    const files = workingCase.caseFiles as CaseFile[]
+    const files = (workingCase.caseFiles?.filter((f) => !f.category) ??
+      []) as CaseFileWithStatus[]
 
     files
-      ?.filter((file) => !file.status)
+      .filter((file) => !file.status)
       .forEach((file) => {
         if (file.state === CaseFileState.STORED_IN_COURT) {
           if (file.key) {
@@ -85,19 +80,19 @@ export const useCourtUpload = (
       })
 
     setUploadState(
-      files?.some((file) => file.status === 'uploading')
+      files.some((file) => file.status === 'uploading')
         ? UploadState.UPLOADING
-        : files?.some((file) => file.status === 'error')
+        : files.some((file) => file.status === 'error')
         ? UploadState.UPLOAD_ERROR
-        : files?.some((file) => file.status === 'not-uploaded')
+        : files.some((file) => file.status === 'not-uploaded')
         ? UploadState.SOME_NOT_UPLOADED
-        : files?.every((file) => file.status === 'done-broken')
+        : files.every((file) => file.status === 'done-broken')
         ? UploadState.ALL_UPLOADED_NONE_AVAILABLE
-        : files?.every(
+        : files.every(
             (file) => file.status === 'done' || file.status === 'done-broken',
           )
         ? UploadState.ALL_UPLOADED
-        : files?.every(
+        : files.every(
             (file) => file.status === 'broken' || file.status === 'done-broken',
           )
         ? UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE
@@ -105,9 +100,9 @@ export const useCourtUpload = (
     )
   }, [setFileUploadStatus, workingCase])
 
-  const uploadFilesToCourt = async (files?: TCaseFile[]) => {
+  const uploadFilesToCourt = async (files?: CaseFile[]) => {
     if (files) {
-      const xFiles = files as CaseFile[]
+      const xFiles = files as CaseFileWithStatus[]
       xFiles.forEach(async (file) => {
         try {
           if (file.state === CaseFileState.STORED_IN_RVG && file.key) {
@@ -135,8 +130,10 @@ export const useCourtUpload = (
               (error as ApolloError).graphQLErrors[0].extensions?.code,
             detail:
               (error instanceof ApolloError &&
-                ((error as ApolloError).graphQLErrors[0].extensions
-                  ?.problem as { detail: string })?.detail) ||
+                (
+                  (error as ApolloError).graphQLErrors[0].extensions
+                    ?.problem as { detail: string }
+                )?.detail) ||
               '',
           }
 

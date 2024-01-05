@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import glob from 'glob'
+import { globSync } from 'glob'
 import spawn from 'cross-spawn'
 import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
@@ -113,17 +113,18 @@ export const updateNamespace = async (
     })
 }
 
-glob
-  .sync('libs/localization/messages.json')
+globSync('libs/localization/messages.json')
   .map((filename) => readFileSync(filename, { encoding: 'utf-8' }))
   .map((file) => JSON.parse(file))
   .forEach((f) => {
     Object.entries<MessageDict>(f).forEach(
       async ([namespaceId, namespaceMessages]) => {
         const namespace = await getNamespace(namespaceId)
-        const locales = ((await getLocales()) as {
-          items: Record<string, any>[]
-        }).items.map((locale) => ({ id: locale.code }))
+        const locales = (
+          (await getLocales()) as {
+            items: Record<string, any>[]
+          }
+        ).items.map((locale) => ({ id: locale.code }))
 
         // If namespace does exist we update it, else we create it
         if (namespace) {

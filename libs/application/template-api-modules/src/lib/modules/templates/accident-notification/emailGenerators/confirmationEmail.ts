@@ -70,8 +70,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         {
           component: 'Copy',
           context: {
-            copy:
-              'Sjúkratryggingar Íslands verða í sambandi við þig ef frekari upplýsingar vantar. Hægt er að skoða tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.',
+            copy: 'Sjúkratryggingar Íslands verða í sambandi við þig ef frekari upplýsingar vantar. Hægt er að skoða tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.',
           },
         },
         {

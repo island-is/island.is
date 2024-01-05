@@ -12,7 +12,7 @@ const escapeRegexp = (query: string) => {
 }
 
 export const CompanySearchItem: FC<
-  CompanySearchItemProps & { loading?: boolean }
+  React.PropsWithChildren<CompanySearchItemProps & { loading?: boolean }>
 > = ({ active, nationalId, query, name }): ReactElement => {
   const cleanedQuery = escapeRegexp(query)
   const splitCompanyName = name.split(new RegExp(cleanedQuery, 'i'))

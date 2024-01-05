@@ -50,8 +50,7 @@ export const m = defineMessages({
     defaultMessage: 'Flokkur',
   },
   DashBoardStatisticsCategoryPlaceHolder: {
-    id:
-      'portals-admin.document-provider:dashboard-statistics-category-placeholder',
+    id: 'portals-admin.document-provider:dashboard-statistics-category-placeholder',
     defaultMessage: 'Veldu flokk',
   },
   DashBoardStatisticsType: {
@@ -67,8 +66,7 @@ export const m = defineMessages({
     defaultMessage: 'Dagsetning frá',
   },
   DashBoardStatisticsDateFromPlaceHolder: {
-    id:
-      'portals-admin.document-provider:dashboard-statistics-date-from-placeholder',
+    id: 'portals-admin.document-provider:dashboard-statistics-date-from-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
   DashBoardStatisticsDateTo: {
@@ -76,8 +74,7 @@ export const m = defineMessages({
     defaultMessage: 'Dagsetning til',
   },
   DashBoardStatisticsDateToPlaceHolder: {
-    id:
-      'portals-admin.document-provider:dashboard-statistics-date-to-placeholder',
+    id: 'portals-admin.document-provider:dashboard-statistics-date-to-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
   DashBoardStatisticsSearchButton: {
@@ -100,13 +97,11 @@ export const m = defineMessages({
     defaultMessage: 'Leitaðu að skjalaveitu',
   },
   documentProvidersNumberOfSearchResultsFoundMessage: {
-    id:
-      'portals-admin.document-provider:document-providers-number-of-search-results-found-message',
+    id: 'portals-admin.document-provider:document-providers-number-of-search-results-found-message',
     defaultMessage: 'Skjalaveitur fundust',
   },
   documentProvidersSearchResultsActionCardLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-search-results-action-card-label',
+    id: 'portals-admin.document-provider:document-providers-search-results-action-card-label',
     defaultMessage: 'Skoða nánar',
   },
   documentProvidersDateFromLabel: {
@@ -114,8 +109,7 @@ export const m = defineMessages({
     defaultMessage: 'Dagsetning frá',
   },
   documentProvidersDateFromPlaceholderText: {
-    id:
-      'portals-admin.document-provider:document-providers-datefrom-placeholder-text',
+    id: 'portals-admin.document-provider:document-providers-datefrom-placeholder-text',
     defaultMessage: 'Veldu dagsetningu',
   },
   documentProvidersDateToLabel: {
@@ -123,13 +117,11 @@ export const m = defineMessages({
     defaultMessage: 'Dagsetning til',
   },
   documentProvidersDateToPlaceholderText: {
-    id:
-      'portals-admin.document-provider:document-providers-dateto-placeholder-text',
+    id: 'portals-admin.document-provider:document-providers-dateto-placeholder-text',
     defaultMessage: 'Veldu dagsetningu',
   },
   documentProvidersDateToErrorMessage: {
-    id:
-      'portals-admin.document-provider:document-providers-dateto-error-message',
+    id: 'portals-admin.document-provider:document-providers-dateto-error-message',
     defaultMessage: 'Dagsetning til þarf að vera stærri en dagsetning frá',
   },
 
@@ -140,309 +132,249 @@ export const m = defineMessages({
     defaultMessage: 'Ýtarlegar upplýsingar um skjalaveitu',
   },
   SingleProviderOrganisationNameNotFoundMessage: {
-    id:
-      'portals-admin.document-provider:single-provider-organistion-name-not-found-message',
+    id: 'portals-admin.document-provider:single-provider-organistion-name-not-found-message',
     defaultMessage: 'Heiti stofnunar fannst ekki',
   },
   SingleProviderInstitutionHeading: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-name',
+    id: 'portals-admin.document-provider:document-providers-single-institution-name',
     defaultMessage: 'Stofnun',
   },
   SingleProviderInstitutionNameLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-name-label',
+    id: 'portals-admin.document-provider:document-providers-single-institution-name-label',
     defaultMessage: 'Nafn á stofnun',
   },
   SingleProviderInstitutionNamePlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-name-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-institution-name-placeholder',
     defaultMessage: 'Nafn á stofnun',
   },
   SingleProviderInstitutionNameError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-name-error',
+    id: 'portals-admin.document-provider:document-providers-single-institution-name-error',
     defaultMessage: 'Nafn á stofnun er skilyrt',
   },
   SingleProviderInstitutionNationalIdLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-nationalid-label',
+    id: 'portals-admin.document-provider:document-providers-single-institution-nationalid-label',
     defaultMessage: 'Kennitala',
   },
   SingleProviderInstitutionNationalIdPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-nationalid-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-institution-nationalid-placeholder',
     defaultMessage: 'Kennitala',
   },
   SingleProviderInstitutionNationalIdError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-nationalid-error',
+    id: 'portals-admin.document-provider:document-providers-single-institution-nationalid-error',
     defaultMessage: 'Kennitala er skilyrt',
   },
   SingleProviderInstitutionNationalIdFormatError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-nationalid-format-error',
+    id: 'portals-admin.document-provider:document-providers-single-institution-nationalid-format-error',
     defaultMessage: 'Kennitala verður að vera á réttu sniði',
   },
   SingleProviderInstitutionEmailLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-email-label',
+    id: 'portals-admin.document-provider:document-providers-single-institution-email-label',
     defaultMessage: 'Netfang',
   },
   SingleProviderInstitutionEmailPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-email-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-institution-email-placeholder',
     defaultMessage: 'Netfang',
   },
   SingleProviderInstitutionEmailError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-email-error',
+    id: 'portals-admin.document-provider:document-providers-single-institution-email-error',
     defaultMessage: 'Netfang er skilyrt',
   },
   SingleProviderInstitutionEmailFormatError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-email-format-error',
+    id: 'portals-admin.document-provider:document-providers-single-institution-email-format-error',
     defaultMessage: 'Netfang verður að vera á réttu sniði',
   },
   SingleProviderInstitutionPhonenumberLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-phonenumber-label',
+    id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-label',
     defaultMessage: 'Símanúmer',
   },
   SingleProviderInstitutionPhonenumberPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-phonenumber-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-placeholder',
     defaultMessage: 'Símanúmer',
   },
   SingleProviderInstitutionPhonenumberError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-phonenumber-error',
+    id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-error',
     defaultMessage: 'Símanúmer er skilyrt',
   },
   SingleProviderInstitutionPhonenumberErrorOnlyNumbers: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-phonenumber-error-only-numbers',
+    id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-error-only-numbers',
     defaultMessage: 'Eingöngu tölustafir eru leyfðir',
   },
   SingleProviderInstitutionPhonenumberErrorLength: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-phonenumber-error-length',
+    id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-error-length',
     defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
   },
   SingleProviderInstitutionAddressLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-address-label',
+    id: 'portals-admin.document-provider:document-providers-single-institution-address-label',
     defaultMessage: 'Heimilisfang',
   },
   SingleProviderInstitutionAddressPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-address-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-institution-address-placeholder',
     defaultMessage: 'Heimilisfang',
   },
   SingleProviderInstitutionAddressError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-institution-address-error',
+    id: 'portals-admin.document-provider:document-providers-single-institution-address-error',
     defaultMessage: 'Heimilisfang er skilyrt',
   },
   SingleProviderUpdateInformationError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-update-information-error',
+    id: 'portals-admin.document-provider:document-providers-single-update-information-error',
     defaultMessage: 'Ekki tókst að uppfæra upplýsingar',
   },
   SingleProviderUpdateInformationSuccess: {
-    id:
-      'portals-admin.document-provider:document-providers-single-update-information-success',
+    id: 'portals-admin.document-provider:document-providers-single-update-information-success',
     defaultMessage: 'Upplýsingar uppfærðar!',
   },
 
   //DocumentProvidersSingleResponsibleContact
   SingleProviderResponsibleContactHeading: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-heading',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-heading',
     defaultMessage: 'Ábyrgðarmaður',
   },
   SingleProviderResponsibleContactNameLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-name-label',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-name-label',
     defaultMessage: 'Nafn',
   },
   SingleProviderResponsibleContactNamePlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-name-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-name-placeholder',
     defaultMessage: 'Nafn',
   },
   SingleProviderResponsibleContactNameError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-name-error',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-name-error',
     defaultMessage: 'Nafn er skilyrt',
   },
   SingleProviderResponsibleContactEmailLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-email-label',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-email-label',
     defaultMessage: 'Netfang',
   },
   SingleProviderResponsibleContactEmailPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-email-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-email-placeholder',
     defaultMessage: 'Netfang',
   },
   SingleProviderResponsibleContactEmailError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-email-error',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-email-error',
     defaultMessage: 'Netfang er skilyrt',
   },
   SingleProviderResponsibleContactEmailFormatError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-email-format-error',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-email-format-error',
     defaultMessage: 'Netfang verður að vera á réttu sniði',
   },
   SingleProviderResponsibleContactPhoneNumberLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-phoneNumber-label',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-phoneNumber-label',
     defaultMessage: 'Símanúmer',
   },
   SingleProviderResponsibleContactPhoneNumberPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-phoneNumber-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-phoneNumber-placeholder',
     defaultMessage: 'Símanúmer',
   },
   SingleProviderResponsibleContactPhonenumberError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-phonenumber-error',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-phonenumber-error',
     defaultMessage: 'Símanúmer er skilyrt',
   },
   SingleProviderResponsibleContactPhonenumberErrorOnlyNumbers: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-phonenumber-error-only-numbers',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-phonenumber-error-only-numbers',
     defaultMessage: 'Eingöngu tölustafir eru leyfðir',
   },
   SingleProviderResponsibleContactPhonenumberErrorLength: {
-    id:
-      'portals-admin.document-provider:document-providers-single-responsible-contact-phonenumber-error-length',
+    id: 'portals-admin.document-provider:document-providers-single-responsible-contact-phonenumber-error-length',
     defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
   },
   SingleProviderGetOrganisationError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-get-organisation-error',
+    id: 'portals-admin.document-provider:document-providers-single-get-organisation-error',
     defaultMessage: 'Ekki tókst að sækja upplýsingar um stofnun með kt.',
   },
 
   //DocumentProvidersSingleTechnicalContact
   SingleProviderTechnicalContactHeading: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-heading',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-heading',
     defaultMessage: 'Tæknilegur tengiliður',
   },
   SingleProviderTechnicalContactNameLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-name-label',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-name-label',
     defaultMessage: 'Nafn',
   },
   SingleProviderTechnicalContactNamePlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-name-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-name-placeholder',
     defaultMessage: 'Nafn',
   },
   SingleProviderTechnicalContactNameError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-name-error',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-name-error',
     defaultMessage: 'Nafn er skilyrt',
   },
   SingleProviderTechnicalContactEmailLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-email-label',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-email-label',
     defaultMessage: 'Netfang',
   },
   SingleProviderTechnicalContactEmailPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-email-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-email-placeholder',
     defaultMessage: 'Netfang',
   },
   SingleProviderTechnicalContactEmailError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-email-error',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-email-error',
     defaultMessage: 'Netfang er skilyrt',
   },
   SingleProviderTechnicalContactEmailErrorFormat: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-email-error-format',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-email-error-format',
     defaultMessage: 'Netfang verður að vera á réttu sniði',
   },
   SingleProviderTechnicalContactPhoneNumberLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-phoneNumber-label',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-phoneNumber-label',
     defaultMessage: 'Símanúmer',
   },
   SingleProviderTechnicalContactPhoneNumberPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-phoneNumber-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-phoneNumber-placeholder',
     defaultMessage: 'Símanúmer',
   },
   SingleProviderTechnicalContactPhonenumberError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-phonenumber-error',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-phonenumber-error',
     defaultMessage: 'Símanúmer er skilyrt',
   },
   SingleProviderTechnicalContactPhonenumberErrorOnlyNumbers: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-phonenumber-error-only-numbers',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-phonenumber-error-only-numbers',
     defaultMessage: 'Eingöngu tölustafir eru leyfðir',
   },
   SingleProviderTechnicalContactPhonenumberErrorLength: {
-    id:
-      'portals-admin.document-provider:document-providers-single-technical-contact-phonenumber-error-length',
+    id: 'portals-admin.document-provider:document-providers-single-technical-contact-phonenumber-error-length',
     defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
   },
 
   //DocumentProvidersSingleUserHelpContact
   SingleProviderUserHelpContactHeading: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-heading',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-heading',
     defaultMessage: 'Notendaaðstoð',
   },
   SingleProviderUserHelpContactEmailLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-email-label',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-email-label',
     defaultMessage: 'Netfang',
   },
   SingleProviderUserHelpEmailError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-email-error',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-email-error',
     defaultMessage: 'Netfang er skilyrt',
   },
   SingleProviderUserHelpEmailErrorFormat: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-email-error-format',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-email-error-format',
     defaultMessage: 'Netfang verður að vera á réttu sniði',
   },
   SingleProviderUserHelpContactEmailPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-email-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-email-placeholder',
     defaultMessage: 'Netfang',
   },
   SingleProviderUserHelpContactPhoneNumberLabel: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-phoneNumber-label',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-phoneNumber-label',
     defaultMessage: 'Símanúmer',
   },
   SingleProviderUserHelpContactPhoneNumberPlaceholder: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-phoneNumber-placeholder',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-phoneNumber-placeholder',
     defaultMessage: 'Símanúmer',
   },
   SingleProviderUserHelpPhonenumberError: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-phonenumber-error',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-phonenumber-error',
     defaultMessage: 'Símanúmer er skilyrt',
   },
   SingleProviderUserHelpPhonenumberErrorOnlyNumbers: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-phonenumber-error-only-numbers',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-phonenumber-error-only-numbers',
     defaultMessage: 'Eingöngu tölustafir eru leyfðir',
   },
   SingleProviderUserHelpPhonenumberErrorLength: {
-    id:
-      'portals-admin.document-provider:document-providers-single-user-help-contact-phonenumber-error-length',
+    id: 'portals-admin.document-provider:document-providers-single-user-help-contact-phonenumber-error-length',
     defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
   },
 
@@ -536,8 +468,7 @@ export const m = defineMessages({
     defaultMessage: 'Nafn á stofnun',
   },
   SettingsEditInstitutionNameRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-institution-name-required-message',
+    id: 'portals-admin.document-provider:settings-edit-institution-name-required-message',
     defaultMessage: 'Skylda er að fylla út nafn stofnunar',
   },
   SettingsEditInstitutionNationalId: {
@@ -545,13 +476,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
   },
   SettingsEditInstitutionNationalIdRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-institution-nationalId-required-message',
+    id: 'portals-admin.document-provider:settings-edit-institution-nationalId-required-message',
     defaultMessage: 'Skylda er að fylla út kennitölu',
   },
   SettingsEditInstitutionNationalIdWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-institution-nationalId-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-institution-nationalId-wrong-format-message',
     defaultMessage: 'Kennitalan er ekki á réttu formi',
   },
   SettingsEditInstitutionAddress: {
@@ -559,8 +488,7 @@ export const m = defineMessages({
     defaultMessage: 'Heimilisfang',
   },
   SettingsEditInstitutionAddressRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-institution-address-required-message',
+    id: 'portals-admin.document-provider:settings-edit-institution-address-required-message',
     defaultMessage: 'Skylda er að fylla út heimilisfang',
   },
   SettingsEditInstitutionEmail: {
@@ -568,13 +496,11 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
   },
   SettingsEditInstitutionEmailRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-institution-email-required-message',
+    id: 'portals-admin.document-provider:settings-edit-institution-email-required-message',
     defaultMessage: 'Skylda er að fylla út netfang',
   },
   SettingsEditInstitutionEmailWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-institution-email-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-institution-email-wrong-format-message',
     defaultMessage: 'Netfangið er ekki á réttu formi',
   },
   SettingsEditInstitutionTel: {
@@ -582,13 +508,11 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
   },
   SettingsEditInstitutionTelRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-institution-tel-required-message',
+    id: 'portals-admin.document-provider:settings-edit-institution-tel-required-message',
     defaultMessage: 'Skylda er að fylla út símanúmer',
   },
   SettingsEditInstitutionTelWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-institution-tel-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-institution-tel-wrong-format-message',
     defaultMessage: 'Símanúmerið er ekki á réttu formi',
   },
   SettingsEditInstitutionSaveButton: {
@@ -602,38 +526,31 @@ export const m = defineMessages({
 
   //EditResponsibleContact
   SettingsEditResponsibleContactTitle: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-title',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-title',
     defaultMessage: 'Breyta ábyrgðarmanni',
   },
   SettingsEditResponsibleContactDescription: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-description',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-description',
     defaultMessage: 'Hér kemur form fyrir ábyrgðarmann TODO',
   },
   SettingsEditResponsibleContactName: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-name',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-name',
     defaultMessage: 'Nafn',
   },
   SettingsEditResponsibleContactNameRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-name-required-message',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-name-required-message',
     defaultMessage: 'Skylda er að fylla út nafn',
   },
   SettingsEditResponsibleContactEmail: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-email',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-email',
     defaultMessage: 'Netfang',
   },
   SettingsEditResponsibleContactEmailRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-email-required-message',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-email-required-message',
     defaultMessage: 'Skylda er að fylla út netfang',
   },
   SettingsEditResponsibleContactEmailWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-email-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-email-wrong-format-message',
     defaultMessage: 'Netfangið er á vitlausu formi',
   },
   SettingsEditResponsibleContactTel: {
@@ -641,23 +558,19 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
   },
   SettingsEditResponsibleContactTelRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-tel-required-message',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-tel-required-message',
     defaultMessage: 'Skylda er að fylla út símanúmer',
   },
   SettingsEditResponsibleContactTelWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-tel-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-tel-wrong-format-message',
     defaultMessage: 'Símanúmerið er á vitlausu formi',
   },
   SettingsEditResponsibleContactSaveButton: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-save-button',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-save-button',
     defaultMessage: 'Vista breytingar',
   },
   SettingsEditResponsibleContactBackButton: {
-    id:
-      'portals-admin.document-provider:settings-edit-responsible-contact-back-button',
+    id: 'portals-admin.document-provider:settings-edit-responsible-contact-back-button',
     defaultMessage: 'Til baka',
   },
 
@@ -667,8 +580,7 @@ export const m = defineMessages({
     defaultMessage: 'Breyta tæknilegum tengilið',
   },
   SettingsEditTechnicalContactDescription: {
-    id:
-      'portals-admin.document-provider:settings-edit-technical-contact-description',
+    id: 'portals-admin.document-provider:settings-edit-technical-contact-description',
     defaultMessage: 'Hér kemur form fyrir tæknilegan tengilið TODO',
   },
   SettingsEditTechnicalContactName: {
@@ -676,8 +588,7 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
   },
   SettingsEditTechnicalContactNameRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-technical-contact-name-required-message',
+    id: 'portals-admin.document-provider:settings-edit-technical-contact-name-required-message',
     defaultMessage: 'Skylda er að fylla út nafn',
   },
   SettingsEditTechnicalContactEmail: {
@@ -685,14 +596,12 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
   },
   SettingsEditTechnicalContactEmailRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-technical-contact-email-required-message',
+    id: 'portals-admin.document-provider:settings-edit-technical-contact-email-required-message',
     defaultMessage: 'Skylda er að fylla út netfang',
   },
 
   SettingsEditTechnicalContactEmailWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-technical-contact-email-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-technical-contact-email-wrong-format-message',
     defaultMessage: 'Netfangið er ekki á réttu formi',
   },
   SettingsEditTechnicalContactTel: {
@@ -700,23 +609,19 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
   },
   SettingsEditTechnicalContactTelRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-technical-contact-tel-required-message',
+    id: 'portals-admin.document-provider:settings-edit-technical-contact-tel-required-message',
     defaultMessage: 'Skylda er að fylla út símanúmer',
   },
   SettingsEditTechnicalContactTelWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-technical-contact-tel-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-technical-contact-tel-wrong-format-message',
     defaultMessage: 'Símanúmerið er ekki á réttu formi',
   },
   SettingsEditTechnicalContactSaveButton: {
-    id:
-      'portals-admin.document-provider:settings-edit-technical-contact-save-button',
+    id: 'portals-admin.document-provider:settings-edit-technical-contact-save-button',
     defaultMessage: 'Vista breytingar',
   },
   SettingsEditTechnicalContactBackButton: {
-    id:
-      'portals-admin.document-provider:settings-edit-technical-contact-back-button',
+    id: 'portals-admin.document-provider:settings-edit-technical-contact-back-button',
     defaultMessage: 'Til baka',
   },
 
@@ -726,8 +631,7 @@ export const m = defineMessages({
     defaultMessage: 'Breyta notendaaðstoð',
   },
   SettingsEditUserHelpContactDescription: {
-    id:
-      'portals-admin.document-provider:settings-edit-user-help-contact-description',
+    id: 'portals-admin.document-provider:settings-edit-user-help-contact-description',
     defaultMessage: 'Hér kemur form fyrir notendaaðstoð TODO',
   },
 
@@ -736,13 +640,11 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
   },
   SettingsEditUserHelpContactEmailRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-user-help-contact-email-required-message',
+    id: 'portals-admin.document-provider:settings-edit-user-help-contact-email-required-message',
     defaultMessage: 'Skylda er að fylla út netfang',
   },
   SettingsEditUserHelpContactEmailWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-user-help-contact-email-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-user-help-contact-email-wrong-format-message',
     defaultMessage: 'Netfangið er ekki á réttu formi',
   },
   SettingsEditUserHelpContactTel: {
@@ -750,23 +652,19 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
   },
   SettingsEditUserHelpContactTelRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-user-help-contact-tel-required-message',
+    id: 'portals-admin.document-provider:settings-edit-user-help-contact-tel-required-message',
     defaultMessage: 'Skylda er að fylla út símanúmer',
   },
   SettingsEditUserHelpContactTelWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-user-help-contact-tel-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-user-help-contact-tel-wrong-format-message',
     defaultMessage: 'Símanúmerið er ekki á réttu formi',
   },
   SettingsEditHelpContactSaveButton: {
-    id:
-      'portals-admin.document-provider:settings-edit-help-contact-save-button',
+    id: 'portals-admin.document-provider:settings-edit-help-contact-save-button',
     defaultMessage: 'Vista breytingar',
   },
   SettingsEditHelpContactBackButton: {
-    id:
-      'portals-admin.document-provider:settings-edit-help-contact-back-button',
+    id: 'portals-admin.document-provider:settings-edit-help-contact-back-button',
     defaultMessage: 'Til baka',
   },
 
@@ -784,13 +682,11 @@ export const m = defineMessages({
     defaultMessage: 'Endapunktur',
   },
   SettingsEditEndPointsUrlRequiredMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-endpoints-url-required-message',
+    id: 'portals-admin.document-provider:settings-edit-endpoints-url-required-message',
     defaultMessage: 'Skylda er að fylla út endapunkt',
   },
   SettingsEditEndPointsUrlWrongFormatMessage: {
-    id:
-      'portals-admin.document-provider:settings-edit-endpoints-url-wrong-format-message',
+    id: 'portals-admin.document-provider:settings-edit-endpoints-url-wrong-format-message',
     defaultMessage: 'Endapunkturinn er ekki á réttu formi',
   },
   SettingsEditEndPointsSaveButton: {

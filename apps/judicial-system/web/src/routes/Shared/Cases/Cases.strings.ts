@@ -1,4 +1,4 @@
-import { defineMessages, defineMessage } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const cases = {
   tags: defineMessages({
@@ -79,15 +79,13 @@ export const cases = {
             'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreidd mál í vinnslu.',
         },
         created: {
-          id:
-            'judicial.system.core:cases.active_requests.table.headers.created',
+          id: 'judicial.system.core:cases.active_requests.table.headers.created',
           defaultMessage: 'Stofnað',
           description:
             'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
         },
         hearing: {
-          id:
-            'judicial.system.core:cases.active_requests.table.headers.hearing',
+          id: 'judicial.system.core:cases.active_requests.table.headers.hearing',
           defaultMessage: 'Fyrirtaka',
           description:
             'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
@@ -113,28 +111,24 @@ export const cases = {
     }),
     prisonStaffUsers: defineMessages({
       title: {
-        id:
-          'judicial.system.core:cases.active_requests.prison_staff_users.title',
+        id: 'judicial.system.core:cases.active_requests.prison_staff_users.title',
         defaultMessage: 'Virkt gæsluvarðhald',
         description:
           'Notaður sem titill í fyrsta málalista á heimaskjá fangelsisstarfsmanna.',
       },
       prisonAdminTitle: {
-        id:
-          'judicial.system.core:cases.active_requests.prison_staff_users.prison_admin_title',
+        id: 'judicial.system.core:cases.active_requests.prison_staff_users.prison_admin_title',
         defaultMessage: 'Virkt gæsluvarðhald og farbann',
         description: 'Notaður sem titill í fyrsta málalista á heimaskjá FMST.',
       },
       infoContainerTitle: {
-        id:
-          'judicial.system.core:cases.active_requests.prison_staff_users.info_container_title',
+        id: 'judicial.system.core:cases.active_requests.prison_staff_users.info_container_title',
         defaultMessage: 'Engin mál fundust.',
         description:
           'Notaður sem titill í upplýsingasvæði sem segir að engin mál fundust á heimaskjá fangelsisstarfsmanna.',
       },
       infoContainerText: {
-        id:
-          'judicial.system.core:cases.active_requests.prison_staff_users.info_container_text',
+        id: 'judicial.system.core:cases.active_requests.prison_staff_users.info_container_text',
         defaultMessage: 'Engar samþykktar kröfur fundust.',
         description:
           'Notaður sem texti í upplýsingasvæði sem segir að engin mál fundust á heimaskjá fangelsisstarfsmanna.',
@@ -145,8 +139,7 @@ export const cases = {
     table: {
       headers: defineMessages({
         caseNumber: {
-          id:
-            'judicial.system.core:cases.past_requests.table.headers.case_number',
+          id: 'judicial.system.core:cases.past_requests.table.headers.case_number',
           defaultMessage: 'Málsnr.',
           description:
             'Notaður sem titill fyrir málsnúmer dálk í lista yfir afgreidd mál.',
@@ -177,9 +170,9 @@ export const cases = {
       description:
         'Notaður sem texti í upplýsingasvæði sem segir að engin afgreidd mál fundust á heimaskjá.',
     }),
-    highCourtUsers: defineMessages({
+    courtOfAppealsUsers: defineMessages({
       title: {
-        id: 'judicial.system.core:cases.past_requests.high_court_users.title',
+        id: 'judicial.system.core:cases.past_requests.court_of_appeals_users.title',
         defaultMessage: 'Kærðir úrskurðir',
         description:
           'Notaður sem titill í seinni málalista á heimaskjá landsréttarnotanda.',
@@ -193,8 +186,7 @@ export const cases = {
           'Notaður sem titill í seinni málalista á heimaskjá fangelsisstarfsmanna.',
       },
       prisonAdminTitle: {
-        id:
-          'judicial.system.core:cases.past_requests.prison_staff_users.prison_admin_title',
+        id: 'judicial.system.core:cases.past_requests.prison_staff_users.prison_admin_title',
         defaultMessage: 'Lokið gæsluvarðhald og farbann',
         description: 'Notaður sem titill í seinni málalista á heimaskjá FMST.',
       },

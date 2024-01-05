@@ -7,16 +7,15 @@ interface ActionMenuItemProps {
   onClick?: () => void
 }
 
-export const ActionMenuItem: FC<ActionMenuItemProps> = ({
-  onClick,
-  children,
-}) => (
+export const ActionMenuItem: FC<
+  React.PropsWithChildren<ActionMenuItemProps>
+> = ({ onClick, children }) => (
   <button className={styles.menuItem} onClick={onClick}>
     {children}
   </button>
 )
 
-export const ActionMenu: FC<{}> = ({ children }) => {
+export const ActionMenu: FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const ref = useRef<HTMLElement>(null)
   const [isOpen, setIsOpen] = useState(false)
 

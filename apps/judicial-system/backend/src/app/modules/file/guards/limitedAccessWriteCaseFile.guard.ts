@@ -1,15 +1,15 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  InternalServerErrorException,
   ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
+  CaseFileCategory,
   User,
   UserRole,
-  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 
 @Injectable()
@@ -39,6 +39,7 @@ export class LimitedAccessWriteCaseFileGuard implements CanActivate {
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(caseFileCategory)
     ) {
       return true

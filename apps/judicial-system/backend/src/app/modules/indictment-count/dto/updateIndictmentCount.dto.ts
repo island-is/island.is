@@ -1,15 +1,15 @@
 import {
-  IsString,
-  IsOptional,
   IsArray,
   IsEnum,
   IsObject,
+  IsOptional,
+  IsString,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 import type { SubstanceMap } from '@island.is/judicial-system/types'
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 export class UpdateIndictmentCountDto {
   @IsOptional()

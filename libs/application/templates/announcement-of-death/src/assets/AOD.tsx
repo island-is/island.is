@@ -1,6 +1,6 @@
 import React from 'react'
 
-const AOD: React.FC = () => (
+const AOD: React.FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="595"
     height="251"

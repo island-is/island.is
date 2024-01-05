@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from 'react'
 import cn from 'classnames'
-import AnimateHeight from 'react-animate-height'
+import AnimateHeight, { Height } from 'react-animate-height'
 
 import { TestSupport } from '@island.is/island-ui/utils'
 import { Colors } from '@island.is/island-ui/theme'
@@ -84,7 +84,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     const { toggledId, setToggledId } = useContext(AccordionContext)
     const [expandedFallback, setExpandedFallback] = useState(false)
     let expanded = expandedProp ?? expandedFallback
-    const [height, setHeight] = useState(expanded ? 'auto' : 0)
+    const [height, setHeight] = useState<Height>(expanded ? 'auto' : 0)
 
     if (toggledId && toggledId !== id && expanded) {
       expanded = false
@@ -175,10 +175,13 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </Column>
                 <Column width="content">
                   <span
-                    className={styles.plusIconWrap({
-                      iconVariant,
-                      color: plusColor,
-                    })}
+                    className={cn(
+                      styles.iconWrap,
+                      styles.plusIconWrap({
+                        iconVariant,
+                        color: plusColor,
+                      }),
+                    )}
                   >
                     <span
                       className={cn(styles.icon, styles.removeIcon, {

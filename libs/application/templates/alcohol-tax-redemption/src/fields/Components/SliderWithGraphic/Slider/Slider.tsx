@@ -9,7 +9,11 @@ interface TooltipProps {
   atEnd?: boolean
 }
 
-const Tooltip: FC<TooltipProps> = ({ style, atEnd = false, children }) => (
+const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
+  style,
+  atEnd = false,
+  children,
+}) => (
   <Box
     data-test="slider-tooltip"
     className={styles.TooltipContainer}

@@ -23,12 +23,10 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       ELASTIC_NODE: {
-        dev:
-          'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
+        dev: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
         staging:
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com',
-        prod:
-          'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
+        prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
       },
       BACKEND_URL: ref((h) => `http://${h.svc(services.adsBackend)}`),
       CONTENTFUL_HOST: {
@@ -36,7 +34,6 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET',

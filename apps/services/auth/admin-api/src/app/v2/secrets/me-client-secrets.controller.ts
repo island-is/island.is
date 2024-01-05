@@ -57,6 +57,7 @@ export class MeClientSecretsController {
   })
   @Audit<ClientSecretDto>({
     resources: (secret) => secret.secretId,
+    alsoLog: true,
   })
   create(
     @CurrentUser() user: User,
@@ -83,6 +84,7 @@ export class MeClientSecretsController {
         namespace,
         action: 'delete',
         resources: secretId,
+        alsoLog: true,
         meta: (deleted) => ({
           deleted,
         }),

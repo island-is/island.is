@@ -4,7 +4,6 @@ import {
   ActionCard,
   EmptyState,
   CardLoader,
-  ServicePortalPath,
   formatDate,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
@@ -14,11 +13,7 @@ import {
   IdentityDocumentModel,
 } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import {
-  getPathFromProviderId,
-  getPathFromType,
-  getTitleAndLogo,
-} from '../../utils/dataMapper'
+import { getPathFromType, getTitleAndLogo } from '../../utils/dataMapper'
 
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { getExpiresIn } from '../../utils/dateUtils'
@@ -33,7 +28,7 @@ interface Props {
   hasTab?: boolean
 }
 
-export const UserLicenses: FC<Props> = ({
+export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
   isLoading,
   hasData,
   hasError,
@@ -106,10 +101,9 @@ export const UserLicenses: FC<Props> = ({
                   )}
                   cta={{
                     label: formatMessage(m.seeDetails),
-                    url: ServicePortalPath.LicensesDetail.replace(
-                      ':provider',
-                      getPathFromProviderId(license.license.provider.id),
-                    ).replace(':type', getPathFromType(license.license.type)),
+                    url: `${getPathFromType(license.license.type)}/${
+                      license.payload?.metadata.licenseId
+                    }`,
                     variant: 'text',
                   }}
                   tag={
@@ -151,7 +145,7 @@ export const UserLicenses: FC<Props> = ({
       )}
 
       {!isLoading && !hasError && !hasData && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState />
         </Box>
       )}

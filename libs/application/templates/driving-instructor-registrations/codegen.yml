@@ -1,8 +1,8 @@
 schema:
   - apps/api/src/api.graphql
 generates:
-  ? libs/application/templates/driving-instructor-registrations/src/types/schema.ts
-  : plugins:
+  libs/application/templates/driving-instructor-registrations/src/types/schema.ts:
+    plugins:
       - typescript
       - typescript-operations
 hooks:

@@ -9,7 +9,7 @@ interface ContentLinkProps {
   children: ReactNode
 }
 
-export const ContentLink: FC<ContentLinkProps> = ({
+export const ContentLink: FC<React.PropsWithChildren<ContentLinkProps>> = ({
   pageData = null,
   fallbackLink,
   children,

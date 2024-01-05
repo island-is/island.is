@@ -1,5 +1,6 @@
 {
-  "root": "apps/reference-backend",
+  "name": "reference-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/reference-backend/src",
   "projectType": "application",
   "prefix": "reference-backend",
@@ -40,49 +41,49 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "reference-backend:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/reference-backend/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/reference-backend/jest.config.js",
+        "jestConfig": "apps/reference-backend/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/reference-backend"]
+      "outputs": ["{workspaceRoot}/coverage/apps/reference-backend"]
     },
     "docker-express": {},
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/reference-backend"
       }
     },
-    "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/reference-backend/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/reference-backend/tsconfig.app.json apps/reference-backend/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../node_modules/.bin/sequelize-cli db:migrate",
         "cwd": "apps/reference-backend"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/reference-backend"

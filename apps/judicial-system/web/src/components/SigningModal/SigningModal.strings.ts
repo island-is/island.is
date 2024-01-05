@@ -39,8 +39,7 @@ export const signingModal = defineMessages({
       'Notaður sem titill í modal glugga þegar verið er að undirrita þegar undirritun mistókst.',
   },
   successText: {
-    id:
-      'judicial.system.restriction_cases:confirmation.modal.ruling_notification.text_v2#markdown',
+    id: 'judicial.system.restriction_cases:confirmation.modal.ruling_notification.text_v2#markdown',
     defaultMessage:
       'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð.{summarySentToPrison, select, true { Auk þess hefur útdráttur verið sendur á fangelsi.} other {}}<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
     description:

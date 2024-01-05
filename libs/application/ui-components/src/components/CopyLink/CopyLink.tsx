@@ -9,7 +9,7 @@ interface CopyLinkProps {
   buttonTitle?: string
 }
 
-const CopyLink: FC<CopyLinkProps> = ({
+const CopyLink: FC<React.PropsWithChildren<CopyLinkProps>> = ({
   linkUrl,
   buttonTitle = 'Afrita tengil',
 }) => {

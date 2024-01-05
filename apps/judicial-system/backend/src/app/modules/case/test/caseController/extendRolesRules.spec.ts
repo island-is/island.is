@@ -11,9 +11,6 @@ describe('CaseController - Extend rules', () => {
 
   it('should give permission to one role', () => {
     expect(rules).toHaveLength(1)
-  })
-
-  it('should give permission to prosecutors', () => {
     expect(rules).toContain(prosecutorRule)
   })
 })

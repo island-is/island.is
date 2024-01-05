@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsString, IsOptional, IsArray, IsDateString } from 'class-validator'
 import { DelegationType } from '../types/delegationType'
+import { DelegationScopeDTO } from './delegation-scope.dto'
 
 export class MergedDelegationDTO {
   @IsString()
@@ -30,4 +31,9 @@ export class MergedDelegationDTO {
     isArray: true,
   })
   types!: DelegationType[]
+
+  @IsOptional()
+  @IsArray()
+  @ApiPropertyOptional({ type: [DelegationScopeDTO], nullable: true })
+  scopes?: DelegationScopeDTO[] | null
 }

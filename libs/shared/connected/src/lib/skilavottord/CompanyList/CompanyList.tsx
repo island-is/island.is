@@ -16,7 +16,9 @@ export interface RecyclingPartner {
   website: string
 }
 
-export const CompanyList: FC<CompanyListProps> = ({ recyclingPartners }) => {
+export const CompanyList: FC<React.PropsWithChildren<CompanyListProps>> = ({
+  recyclingPartners,
+}) => {
   const sortedPartners = recyclingPartners.slice().sort((a, b) => {
     return a.city < b.city ? -1 : 1
   })

@@ -42,19 +42,58 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
     customScopeRules: env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
       {
         scopeName: AuthScope.delegations,
-        onlyForDelegationType: ['ProcurationHolder'],
+        onlyForDelegationType: [DelegationType.ProcurationHolder],
       },
       {
         scopeName: AdminPortalScope.delegations,
-        onlyForDelegationType: ['ProcurationHolder'],
+        onlyForDelegationType: [DelegationType.ProcurationHolder],
+      },
+      {
+        scopeName: ApiScope.samradsgatt,
+        onlyForDelegationType: [
+          DelegationType.ProcurationHolder,
+          DelegationType.Custom,
+        ],
       },
       {
         scopeName: ApiScope.financeSalary,
-        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
+        onlyForDelegationType: [
+          DelegationType.ProcurationHolder,
+          DelegationType.Custom,
+        ],
       },
       {
         scopeName: ApiScope.company,
-        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
+        onlyForDelegationType: [
+          DelegationType.ProcurationHolder,
+          DelegationType.Custom,
+        ],
+      },
+      {
+        // This scope is not in use in our repo hence plain string instead of enum.
+        scopeName: '@akureyri.is/service-portal',
+        onlyForDelegationType: [
+          DelegationType.ProcurationHolder,
+          DelegationType.Custom,
+        ],
+      },
+      {
+        // The branch auth-api/custom-delegation-scope-rule is changing this, but it is not merged yet and this is required for release.
+        // Todo: add this to the scope migration of the branch
+        scopeName: '@island.is/applications/ver',
+        onlyForDelegationType: [
+          DelegationType.ProcurationHolder,
+          DelegationType.Custom,
+        ],
+      },
+      {
+        // The branch auth-api/custom-delegation-scope-rule is changing this, but it is not merged yet and this is required for release.
+        // Todo: add this to the scope migration of the branch
+        scopeName: '@island.is/applications/orkusjodur',
+        onlyForDelegationType: [
+          DelegationType.ProcurationHolder,
+          DelegationType.Custom,
+        ],
       },
     ],
     userInfoUrl:

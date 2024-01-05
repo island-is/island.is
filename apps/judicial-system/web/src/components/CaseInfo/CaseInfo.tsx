@@ -3,17 +3,29 @@ import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
 import { Box, Tag, Text } from '@island.is/island-ui/core'
+import {
+  capitalize,
+  enumerate,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
+import {
+  isCompletedCase,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import { capitalize, enumerate } from '@island.is/judicial-system/formatters'
-import { Defendant, isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
-const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
-  policeCaseNumbers,
-}) => (
+import { strings } from './CaseInfo.strings'
+
+const PoliceCaseNumbersTags: React.FC<{
+  policeCaseNumbers?: string[] | null
+}> = ({ policeCaseNumbers }) => (
   <Box display="flex" flexWrap="wrap">
-    {policeCaseNumbers.map((policeCaseNumber, index) => (
+    {policeCaseNumbers?.map((policeCaseNumber, index) => (
       <Box marginTop={1} marginRight={1} key={`${policeCaseNumber}-${index}`}>
         <Tag disabled>{policeCaseNumber}</Tag>
       </Box>
@@ -21,10 +33,9 @@ const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
   </Box>
 )
 
-const Entry: React.FC<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => {
+const Entry: React.FC<
+  React.PropsWithChildren<{ label: string; value: string }>
+> = ({ label, value }) => {
   return (
     <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
       {`${label}: ${value}`}
@@ -35,7 +46,7 @@ const Entry: React.FC<{ label: string; value: string }> = ({
 export const getDefendantLabel = (
   formatMessage: IntlShape['formatMessage'],
   defendants: Defendant[],
-  type: CaseType,
+  type?: CaseType | null,
 ) => {
   if (!isIndictmentCase(type)) {
     return formatMessage(core.defendant, {
@@ -56,7 +67,9 @@ interface Props {
   workingCase: Case
 }
 
-const Defendants: React.FC<Props> = ({ workingCase }) => {
+const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+}) => {
   const { defendants, type } = workingCase
   const { formatMessage } = useIntl()
 
@@ -73,10 +86,9 @@ const Defendants: React.FC<Props> = ({ workingCase }) => {
   )
 }
 
-export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
-  workingCase,
-  hideCourt = false,
-}) => {
+export const ProsecutorCaseInfo: React.FC<
+  React.PropsWithChildren<Props & { hideCourt?: boolean }>
+> = ({ workingCase, hideCourt = false }) => {
   const { policeCaseNumbers, court } = workingCase
   const { formatMessage } = useIntl()
 
@@ -93,7 +105,9 @@ export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
   )
 }
 
-export const CourtCaseInfo: React.FC<Props> = ({ workingCase }) => {
+export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+}) => {
   const { courtCaseNumber, prosecutor } = workingCase
   const { formatMessage } = useIntl()
 
@@ -108,13 +122,26 @@ export const CourtCaseInfo: React.FC<Props> = ({ workingCase }) => {
           </Text>
         </Box>
       )}
-      {prosecutor?.institution?.name && (
-        <Entry
-          label={formatMessage(core.prosecutor)}
-          value={prosecutor.institution.name}
-        />
+      {isIndictmentCase(workingCase.type) &&
+      isCompletedCase(workingCase.state) ? (
+        <Box marginTop={1}>
+          <Text as="h5" variant="h5">
+            {formatMessage(strings.rulingDate, {
+              rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
+            })}
+          </Text>
+        </Box>
+      ) : (
+        <>
+          {prosecutor?.institution?.name && (
+            <Entry
+              label={formatMessage(core.prosecutor)}
+              value={prosecutor.institution.name}
+            />
+          )}
+          <Defendants workingCase={workingCase} />
+        </>
       )}
-      <Defendants workingCase={workingCase} />
     </Box>
   )
 }

@@ -26,12 +26,14 @@ interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   megaMenuData
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header: FC<HeaderProps> = ({
+export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
   megaMenuData,

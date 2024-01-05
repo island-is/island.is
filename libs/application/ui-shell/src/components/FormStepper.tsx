@@ -30,7 +30,7 @@ interface FormStepperProps {
   screen: FormScreen
 }
 
-const FormStepper: FC<FormStepperProps> = ({
+const FormStepper: FC<React.PropsWithChildren<FormStepperProps>> = ({
   application,
   form,
   mode,
@@ -54,7 +54,7 @@ const FormStepper: FC<FormStepperProps> = ({
     children: section.children.map((child) => formattedChildren(child)),
   }))
 
-  const ProgressTag: FC = () => {
+  const ProgressTag: FC<React.PropsWithChildren<unknown>> = () => {
     switch (mode) {
       case FormModes.IN_PROGRESS:
         return (

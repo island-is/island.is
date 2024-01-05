@@ -1,11 +1,13 @@
 import React, { useCallback, useContext, useState } from 'react'
-import router from 'next/router'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
 import { applyCase } from 'beygla'
+import { AnimatePresence, motion } from 'framer-motion'
+import router from 'next/router'
 
-import { Box, Input, Button, Checkbox } from '@island.is/island-ui/core'
-
+import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -17,29 +19,25 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
-import { titles } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  UpdateIndictmentCount,
   useCase,
   useDeb,
+  useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
-import useIndictmentCounts, {
-  UpdateIndictmentCount,
-} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
 
-const Indictment: React.FC = () => {
+const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -208,7 +206,7 @@ const Indictment: React.FC = () => {
 
     if (workingCase.defendants && workingCase.defendants.length > 0) {
       indictmentIntroductionAutofill = [
-        workingCase.prosecutor?.institution?.name.toUpperCase(),
+        workingCase.prosecutor?.institution?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
@@ -354,12 +352,13 @@ const Indictment: React.FC = () => {
               <Checkbox
                 name="requestDriversLicenseSuspension"
                 label={formatMessage(strings.demandsRequestSuspension)}
-                checked={workingCase.requestDriversLicenseSuspension}
+                checked={Boolean(workingCase.requestDriversLicenseSuspension)}
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                        requestDriversLicenseSuspension:
+                          !workingCase.requestDriversLicenseSuspension,
                         demands: !workingCase.requestDriversLicenseSuspension
                           ? formatMessage(strings.demandsAutofillWithSuspension)
                           : formatMessage(strings.demandsAutofill),

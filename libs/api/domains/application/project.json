@@ -1,11 +1,12 @@
 {
-  "root": "libs/api/domains/application",
+  "name": "api-domains-application",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/application/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/api/domains/application/**/*.{ts,tsx,js,jsx}"
@@ -13,20 +14,21 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/application/jest.config.js",
+        "jestConfig": "libs/api/domains/application/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/application"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/application"]
     },
-    "schemas/openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/api/domains/application/gen/fetch",
         "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["application-system-api"],
   "tags": ["lib:api", "scope:api"]
 }

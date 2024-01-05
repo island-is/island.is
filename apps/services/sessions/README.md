@@ -46,7 +46,7 @@ http://localhost:3333/swagger
 You can start the worker locally by running:
 
 ```bash
-yarn nx run services-sessions:worker
+PORT=3343 yarn nx run services-sessions:worker
 ```
 
 ## Contribute

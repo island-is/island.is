@@ -47,15 +47,13 @@ const formatCustodyRestrictions = (custodyRestrictions) => {
     return isOnly ? 'lið ' : isLast ? 'liðum ' : isNextLast ? ' og ' : ', '
   }
 
-  const filteredCustodyRestrictionsAsString = relevantCustodyRestrictions.reduce(
-    (res, custodyRestriction, index) => {
+  const filteredCustodyRestrictionsAsString =
+    relevantCustodyRestrictions.reduce((res, custodyRestriction, index) => {
       const { id } = custodyRestriction
       const suffix = custodyRestrictionSuffix(index)
 
       return (res += `${id}-${suffix}`)
-    },
-    '',
-  )
+    }, '')
 
   return `Sækjandi kynnir kærða tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. ${filteredCustodyRestrictionsAsString}1. mgr. 99. gr. laga nr. 88/2008.\n\n${guidance}`
 }

@@ -1,4 +1,4 @@
-import { NationalRegistryScope } from '@island.is/auth/scopes'
+import { HmsScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
@@ -19,7 +19,7 @@ export const AssetsClientConfig = defineConfig<z.infer<typeof schema>>({
       ),
       fetchTimeout: env.optionalJSON('XROAD_PROPERTIES_TIMEOUT') ?? 35000,
       tokenExchangeScope: env.optionalJSON('XROAD_PROPERTIES_SCOPE') ?? [
-        NationalRegistryScope.properties,
+        HmsScope.properties,
         'api_resource.scope',
       ],
     }

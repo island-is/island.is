@@ -30,19 +30,17 @@ export type ClientContextType = {
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined)
 
-export const ClientProvider: FC = ({ children }) => {
+export const ClientProvider: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const clientResult = useLoaderData() as AuthAdminClient
   const actionData = useActionData() as EditClientResult
   const [publishData, setPublishData] = useState<PublishData | null>(null)
-  const {
-    environment: selectedEnvironment,
-    updateEnvironment,
-  } = useEnvironmentQuery(clientResult.environments)
+  const { environment: selectedEnvironment, updateEnvironment } =
+    useEnvironmentQuery(clientResult.environments)
 
-  const [
-    currentEnvironment,
-    setCurrentEnvironment,
-  ] = useState<AuthAdminEnvironment>(selectedEnvironment.environment)
+  const [currentEnvironment, setCurrentEnvironment] =
+    useState<AuthAdminEnvironment>(selectedEnvironment.environment)
 
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
     const newEnvironment = updateEnvironment(environment)

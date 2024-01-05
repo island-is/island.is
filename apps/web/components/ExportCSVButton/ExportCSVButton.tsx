@@ -1,11 +1,12 @@
 import React, { FC } from 'react'
 import { Button, Box } from '@island.is/island-ui/core'
 
-const isIterableObject = (val) => {
+const isIterableObject = (val: object[]) => {
   return typeof val === 'object' && val !== null && !Array.isArray(val)
 }
-
-const forAll = function* (obj, keyPrefix = '') {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+const forAll = function* (obj: object, keyPrefix = '') {
   const filteredKeys = Object.entries(obj).filter(([k]) => k !== '__typename')
   for (const [key, val] of filteredKeys) {
     const newKey = keyPrefix + key
@@ -18,7 +19,7 @@ const forAll = function* (obj, keyPrefix = '') {
   }
 }
 
-const triggerDownload = (filename, csvContent) => {
+const triggerDownload = (filename: string, csvContent: string) => {
   const encodedUri = encodeURI(csvContent)
   const a = document.createElement('a')
   a.setAttribute('href', encodedUri)
@@ -29,7 +30,7 @@ const triggerDownload = (filename, csvContent) => {
   document.body.removeChild(a)
 }
 
-const makeCsv = (allFlat) => {
+const makeCsv = (allFlat: [string, string][][]): string => {
   const [firstRow] = allFlat
 
   return (
@@ -44,12 +45,14 @@ export interface ExportCSVButtonProps {
   title: string
 }
 
-export const ExportCSVButton: FC<ExportCSVButtonProps> = ({ data, title }) => {
+export const ExportCSVButton: FC<
+  React.PropsWithChildren<ExportCSVButtonProps>
+> = ({ data, title }) => {
   function useCsvExport() {
     const newdata = JSON.parse(data)
     if (data) {
       try {
-        const allFlat = newdata.map((obj) => [...forAll(obj)])
+        const allFlat = newdata.map((obj: object) => [...forAll(obj)])
 
         const csvContent = makeCsv(allFlat)
 

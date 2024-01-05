@@ -1,30 +1,24 @@
-import { useQuery } from '@apollo/client'
+import { useState, useEffect, CSSProperties } from 'react'
+import { useRouter } from 'next/router'
+import {
+  ConnectedComponent,
+  AircraftRegistryAircraft,
+  GetAllAircraftsQuery,
+  GetAllAircraftsQueryVariables,
+  AircraftRegistryPerson,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import {
   AlertMessage,
   AsyncSearchInput,
   Box,
-  BoxProps,
-  LoadingDots,
+  Button,
   Pagination,
-  Table,
+  Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  AircraftRegistryAircraft,
-  AircraftRegistryPerson,
-  ConnectedComponent,
-  GetAircraftsBySearchTermQueryQuery,
-  GetAircraftsBySearchTermQueryQueryVariables,
-  GetAllAircraftsQuery,
-  GetAllAircraftsQueryVariables,
-} from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
-import {
-  GET_AIRCRAFTS_BY_SEARCH_TERM_QUERY,
-  GET_ALL_AIRCRAFTS_QUERY,
-} from '@island.is/web/screens/queries/AircraftSearch'
-import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { useLazyQuery } from '@apollo/client'
+import { GET_ALL_AIRCRAFTS_QUERY } from '@island.is/web/screens/queries/AircraftSearch'
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -43,7 +37,7 @@ const getDisplayedOwnerName = (
   const displayedOwnerName = getDisplayedOwner(aircraft)?.name
   if (!displayedOwnerName) return displayedOwnerName
   return `${displayedOwnerName}${
-    aircraft?.owners?.length > 1 ? ` ${pluralPostfix}` : ''
+    (aircraft?.owners?.length ?? -1) > 1 ? ` ${pluralPostfix}` : ''
   }`
 }
 
@@ -54,68 +48,220 @@ interface AircraftSearchProps {
 const AircraftSearch = ({ slice }: AircraftSearchProps) => {
   const router = useRouter()
   const [searchInputHasFocus, setSearchInputHasFocus] = useState(false)
-  const [searchValue, setSearchValue] = useState('')
-  const n = useNamespace(slice?.json ?? {})
-  const searchValueHasBeenInitialized = useRef(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const namespace = slice?.json ?? {}
+  const n = useNamespace(namespace)
 
-  const handleSearch = () => {
+  const handleSearch = (page = 1, searchValue?: string) => {
+    let searchString = searchTerm
+
+    if (typeof searchValue === 'string') {
+      searchString = searchValue
+      setSearchTerm(searchValue)
+    }
+
+    setSelectedPage(page)
+    const updatedQuery = { ...router.query }
+    if (!searchString) {
+      delete updatedQuery['aq']
+    } else {
+      updatedQuery['aq'] = searchString
+    }
+    if (page === 1) {
+      delete updatedQuery['page']
+    } else {
+      updatedQuery['page'] = String(page)
+    }
+
     router.replace({
       pathname: router.pathname,
-      query: { ...router.query, aq: searchValue },
+      query: updatedQuery,
+    })
+    search({
+      variables: {
+        input: {
+          pageNumber: page,
+          pageSize: pageSize,
+          searchTerm: searchString,
+        },
+      },
     })
   }
 
+  const [selectedPage, setSelectedPage] = useState(1)
+  const pageSize = Number(slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE)
+  const [latestAircraftListResponse, setLatestAircraftListResponse] =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    useState<typeof data.aircraftRegistryAllAircrafts>(null)
+  const [errorOccurred, setErrorOccurred] = useState(false)
+
+  const [search, { data, loading, called }] = useLazyQuery<
+    GetAllAircraftsQuery,
+    GetAllAircraftsQueryVariables
+  >(GET_ALL_AIRCRAFTS_QUERY, {
+    onCompleted(data) {
+      setLatestAircraftListResponse(data?.aircraftRegistryAllAircrafts)
+      setErrorOccurred(false)
+    },
+    onError() {
+      setErrorOccurred(true)
+    },
+  })
+
   useEffect(() => {
-    if (
-      !searchValue &&
-      router?.query?.aq &&
-      !searchValueHasBeenInitialized.current
-    ) {
-      setSearchValue(router.query.aq as string)
-      searchValueHasBeenInitialized.current = true
+    if (called || !router?.isReady) return
+
+    let searchTerm: string | undefined = undefined
+    if (typeof router.query?.aq === 'string') {
+      searchTerm = router.query.aq
+      setSearchTerm(router.query.aq)
     }
-  }, [router?.query?.aq, searchValue])
 
-  const shouldDisplayAircraftDetails = router?.isReady && router?.query?.aq
+    let pageNumber = 1
+    if (typeof router?.query?.page === 'string') {
+      const pageQueryParam = Number(router.query.page)
+      if (!isNaN(pageQueryParam)) {
+        pageNumber = pageQueryParam
+        setSelectedPage(pageQueryParam)
+      }
+    }
 
-  const shouldDisplaySearchInput =
-    slice?.configJson?.displaySearchInput ?? false
+    search({
+      variables: {
+        input: {
+          pageNumber,
+          pageSize: pageSize,
+          searchTerm,
+        },
+      },
+    })
+  }, [
+    pageSize,
+    search,
+    called,
+    router.query.aq,
+    router?.isReady,
+    router.query.page,
+  ])
+
+  const totalAircrafts = latestAircraftListResponse?.totalCount ?? 0
+  const displayedAircraftList = latestAircraftListResponse?.aircrafts ?? []
+
+  const resetSearchText = n('resetSearch', 'Núllstilla leit')
+  const shouldDisplayResetButton = !!router?.query?.aq
+
+  const minHeightFromConfig = slice?.configJson?.minHeight
+  const tableContainerStyles: CSSProperties = {}
+  const totalPages = Math.ceil(totalAircrafts / pageSize)
+
+  if (totalPages > 1) {
+    /**
+     * Allow for a minimum height of the table, so that the pagination elements stay in the same
+     * location. E.g. when the last page has fewer items, then this will prevent the
+     * pagination elements from moving.
+     */
+    tableContainerStyles.minHeight = minHeightFromConfig ?? undefined
+  }
 
   return (
     <Box>
-      {shouldDisplaySearchInput && (
-        <Box marginTop={2} marginBottom={3}>
-          <AsyncSearchInput
-            buttonProps={{
-              onClick: handleSearch,
-              onFocus: () => setSearchInputHasFocus(true),
-              onBlur: () => setSearchInputHasFocus(false),
-            }}
-            inputProps={{
-              name: 'public-vehicle-search',
-              inputSize: 'large',
-              placeholder: n('inputPlaceholder', 'Númer eða eigandi'),
-              colored: true,
-              onChange: (ev) => setSearchValue(ev.target.value),
-              value: searchValue,
-              onKeyDown: (ev) => {
-                if (ev.key === 'Enter') {
-                  handleSearch()
-                }
-              },
-            }}
-            hasFocus={searchInputHasFocus}
-          />
+      <Box marginBottom={3}>
+        <AsyncSearchInput
+          buttonProps={{
+            onClick: () => handleSearch(),
+            onFocus: () => setSearchInputHasFocus(true),
+            onBlur: () => setSearchInputHasFocus(false),
+          }}
+          inputProps={{
+            onFocus: () => setSearchInputHasFocus(true),
+            onBlur: () => setSearchInputHasFocus(false),
+            name: 'public-vehicle-search',
+            inputSize: 'medium',
+            placeholder: n('inputPlaceholder', 'Númer eða eigandi'),
+            colored: true,
+            onChange: (ev) => setSearchTerm(ev.target.value),
+            value: searchTerm,
+            onKeyDown: (ev) => {
+              if (ev.key === 'Enter') {
+                handleSearch()
+              }
+            },
+          }}
+          hasFocus={searchInputHasFocus}
+          loading={loading}
+        />
+      </Box>
+
+      {resetSearchText && !loading && shouldDisplayResetButton && (
+        <Box marginBottom={3}>
+          <Button
+            variant="text"
+            icon="reload"
+            size="small"
+            onClick={() => handleSearch(1, '')}
+          >
+            {resetSearchText}
+          </Button>
         </Box>
       )}
 
-      {shouldDisplayAircraftDetails && (
-        <AircraftDetails slice={slice} searchTerm={searchValue} />
+      {!loading && errorOccurred && (
+        <AlertMessage
+          type="error"
+          title={n('errorOccurredTitle', 'Villa kom upp')}
+          message={n('errorOccurredMessage', 'Ekki tókst að sækja loftför')}
+        />
       )}
-      {!shouldDisplayAircraftDetails && <AircraftTable slice={slice} />}
+
+      {!errorOccurred &&
+        !loading &&
+        displayedAircraftList.length === 1 &&
+        selectedPage === 1 && (
+          <AircraftDetails
+            namespace={namespace}
+            aircraft={displayedAircraftList[0]}
+          />
+        )}
+
+      {called &&
+        !loading &&
+        !errorOccurred &&
+        displayedAircraftList.length === 0 && (
+          <Text>{n('noResultFound', 'Ekkert loftfar fannst')}</Text>
+        )}
+
+      {!errorOccurred &&
+        (displayedAircraftList.length > 1 || selectedPage !== 1) && (
+          <Box>
+            <Box style={tableContainerStyles}>
+              <AircraftTable
+                namespace={namespace}
+                aircrafts={displayedAircraftList}
+                onAircraftClick={(identifier) => handleSearch(1, identifier)}
+              />
+            </Box>
+            {totalPages > 1 && (
+              <Box marginTop={3}>
+                <Pagination
+                  variant="blue"
+                  page={selectedPage}
+                  itemsPerPage={pageSize}
+                  totalItems={totalAircrafts}
+                  renderLink={(page, className, children) => (
+                    <button onClick={() => handleSearch(page)}>
+                      <span className={className}>{children}</span>
+                    </button>
+                  )}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
     </Box>
   )
 }
+
 interface AircraftPersonProps {
   person?: AircraftRegistryPerson
 }
@@ -133,294 +279,191 @@ const AircraftPerson = ({ person }: AircraftPersonProps) => {
   )
 }
 
-interface AircraftDetailsProps extends AircraftSearchProps {
-  searchTerm: string
+interface AircraftDetailsProps {
+  namespace: Record<string, string>
+  aircraft: AircraftRegistryAircraft
 }
 
-const AircraftDetails = ({ slice, searchTerm }: AircraftDetailsProps) => {
-  const n = useNamespace(slice?.json ?? {})
-  const { data, loading, error } = useQuery<
-    GetAircraftsBySearchTermQueryQuery,
-    GetAircraftsBySearchTermQueryQueryVariables
-  >(GET_AIRCRAFTS_BY_SEARCH_TERM_QUERY, {
-    variables: {
-      input: {
-        searchTerm,
-      },
-    },
-  })
+const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
+  const n = useNamespace(namespace)
 
-  const displayedResults =
-    data?.aircraftRegistryAircraftsBySearchTerm?.aircrafts ?? []
-
-  if (!loading && error) {
-    return (
-      <AlertMessage
-        type="error"
-        title={n('errorOccurredTitle', 'Villa kom upp')}
-        message={n('errorOccurredMessage', 'Ekki tókst að sækja loftför')}
-      />
-    )
-  }
-
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center">
-        <LoadingDots />
-      </Box>
-    )
-  }
-
-  if (displayedResults.length === 0) {
-    return <Text>{n('noResultFound', 'Ekkert loftfar fannst')}</Text>
-  }
+  const displayedOwner = getDisplayedOwner(aircraft)
+  const displayedOwnerName = getDisplayedOwnerName(
+    aircraft,
+    n('andMore', 'ofl.'),
+  )
 
   return (
     <Box>
-      {displayedResults.map((aircraft) => {
-        const displayedOwner = getDisplayedOwner(aircraft)
-        const displayedOwnerName = getDisplayedOwnerName(
-          aircraft,
-          n('andMore', 'ofl.'),
-        )
-        return (
-          <Box key={aircraft?.identifiers}>
-            <Table.Table>
-              <Table.Body>
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('identifier', 'Einkennisstafir')}:
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{aircraft.identifiers}</Text>
-                  </Table.Data>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('registrationNumber', 'Skráningarnúmer')}:
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{aircraft.registrationNumber}</Text>
-                  </Table.Data>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">{n('type', 'Tegund')}:</Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{aircraft.type}</Text>
-                  </Table.Data>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('productionYear', 'Framleiðsluár')}:
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{aircraft.productionYear}</Text>
-                  </Table.Data>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('serialNumber', 'Raðnúmer')}:
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{aircraft.serialNumber}</Text>
-                  </Table.Data>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('maxWeight', 'Hámarksþungi')}:
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{aircraft.maxWeight}</Text>
-                  </Table.Data>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">{n('owner', 'Eigandi')}:</Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <AircraftPerson
-                      person={{ ...displayedOwner, name: displayedOwnerName }}
-                    />
-                  </Table.Data>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('operator', 'Umráðandi')}:
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <AircraftPerson person={aircraft?.operator} />
-                  </Table.Data>
-                </Table.Row>
-              </Table.Body>
-            </Table.Table>
-          </Box>
-        )
-      })}
+      <Box>
+        <T.Table>
+          <T.Body>
+            <T.Row>
+              <T.Data>
+                <Text fontWeight="semiBold">
+                  {n('identifier', 'Einkennisstafir')}:
+                </Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft.identifiers}</Text>
+              </T.Data>
+            </T.Row>
+            <T.Row>
+              <T.Data>
+                <Text fontWeight="semiBold">
+                  {n('registrationNumber', 'Skráningarnúmer')}:
+                </Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft.registrationNumber}</Text>
+              </T.Data>
+            </T.Row>
+            <T.Row>
+              <T.Data>
+                <Text fontWeight="semiBold">{n('type', 'Tegund')}:</Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft.type}</Text>
+              </T.Data>
+            </T.Row>
+            <T.Row>
+              <T.Data>
+                <Text fontWeight="semiBold">
+                  {n('productionYear', 'Framleiðsluár')}:
+                </Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft.productionYear}</Text>
+              </T.Data>
+            </T.Row>
+            <T.Row>
+              <T.Data>
+                <Text fontWeight="semiBold">
+                  {n('serialNumber', 'Raðnúmer')}:
+                </Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft.serialNumber}</Text>
+              </T.Data>
+            </T.Row>
+            <T.Row>
+              <T.Data>
+                <Text fontWeight="semiBold">
+                  {n('maxWeight', 'Hámarksþungi')}:
+                </Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft.maxWeight}</Text>
+              </T.Data>
+            </T.Row>
+            <T.Row>
+              <T.Data>
+                <Text fontWeight="semiBold">{n('owner', 'Eigandi')}:</Text>
+              </T.Data>
+              <T.Data>
+                <AircraftPerson
+                  person={{ ...displayedOwner, name: displayedOwnerName }}
+                />
+              </T.Data>
+            </T.Row>
+            <T.Row>
+              <T.Data>
+                <Text fontWeight="semiBold">{n('operator', 'Umráðandi')}:</Text>
+              </T.Data>
+              <T.Data>
+                <AircraftPerson
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  person={aircraft?.operator}
+                />
+              </T.Data>
+            </T.Row>
+          </T.Body>
+        </T.Table>
+      </Box>
     </Box>
   )
 }
 
-const AircraftTable = ({ slice }: AircraftSearchProps) => {
-  const n = useNamespace(slice?.json ?? {})
-  const [selectedPage, setSelectedPage] = useState(1)
-  const pageSize = Number(slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE)
-  const router = useRouter()
-
-  const [latestAircraftListResponse, setLatestAircraftListResponse] = useState<
-    typeof data.aircraftRegistryAllAircrafts
-  >(null)
-  const [errorOccurred, setErrorOccurred] = useState(false)
-
-  const { data } = useQuery<
-    GetAllAircraftsQuery,
-    GetAllAircraftsQueryVariables
-  >(GET_ALL_AIRCRAFTS_QUERY, {
-    variables: {
-      input: {
-        pageNumber: selectedPage,
-        pageSize: pageSize,
-      },
-    },
-    onCompleted(data) {
-      setLatestAircraftListResponse(data?.aircraftRegistryAllAircrafts)
-      setErrorOccurred(false)
-    },
-    onError() {
-      setErrorOccurred(true)
-    },
-  })
-
-  const totalAircrafts = latestAircraftListResponse?.totalCount ?? 0
-  const displayedAircraftList = latestAircraftListResponse?.aircrafts ?? []
-  const shouldDisplaySearchInput =
-    slice?.configJson?.displaySearchInput ?? false
+interface AircraftTableProps {
+  namespace: Record<string, string>
+  aircrafts: AircraftRegistryAircraft[]
+  onAircraftClick: (identifier: string) => void
+}
+const AircraftTable = ({
+  aircrafts,
+  namespace,
+  onAircraftClick,
+}: AircraftTableProps) => {
+  const n = useNamespace(namespace)
 
   return (
-    <Box>
-      {!errorOccurred && displayedAircraftList.length > 0 && (
-        <Box>
-          <Table.Table>
-            <Table.Head>
-              <Table.HeadData>
-                <Text fontWeight="semiBold">
-                  {n('identifier', 'Einkennisstafir')}
-                </Text>
-              </Table.HeadData>
-              <Table.HeadData>
-                <Text fontWeight="semiBold">
-                  {n('serialNumber', 'Raðnúmer')}
-                </Text>
-              </Table.HeadData>
-              <Table.HeadData>
-                <Text fontWeight="semiBold">{n('type', 'Tegund')}</Text>
-              </Table.HeadData>
-              <Table.HeadData>
-                <Text fontWeight="semiBold">{n('owner', 'Eigandi')}</Text>
-              </Table.HeadData>
-              <Table.HeadData>
-                <Text fontWeight="semiBold">{n('operator', 'Umráðandi')}</Text>
-              </Table.HeadData>
-            </Table.Head>
-            <Table.Body>
-              {displayedAircraftList.map((aircraft) => {
-                const displayedOwnerName = getDisplayedOwnerName(
-                  aircraft,
-                  n('andMore', 'ofl.'),
-                )
-
-                const boxProps: BoxProps = shouldDisplaySearchInput
-                  ? {
-                      cursor: 'pointer',
-                      onClick: () => {
-                        if (!aircraft?.identifiers) return
-                        router.replace({
-                          pathname: router.pathname,
-                          query: {
-                            ...router.query,
-                            aq: aircraft?.identifiers,
-                          },
-                        })
-                      },
-                    }
-                  : {}
-
-                return (
-                  <Table.Row key={aircraft?.identifiers}>
-                    <Table.Data>
-                      <Box {...boxProps}>
-                        <Text
-                          color={
-                            shouldDisplaySearchInput ? 'blue400' : undefined
-                          }
-                        >
-                          {aircraft?.identifiers}
-                        </Text>
-                      </Box>
-                    </Table.Data>
-                    <Table.Data>
-                      <Text>{aircraft?.serialNumber}</Text>
-                    </Table.Data>
-                    <Table.Data>
-                      <Text>{aircraft?.type}</Text>
-                    </Table.Data>
-                    <Table.Data>
-                      <Text>{displayedOwnerName}</Text>
-                    </Table.Data>
-                    <Table.Data>
-                      <Text>{aircraft?.operator?.name}</Text>
-                    </Table.Data>
-                  </Table.Row>
-                )
-              })}
-            </Table.Body>
-          </Table.Table>
-        </Box>
-      )}
-      {errorOccurred && (
-        <AlertMessage
-          type="error"
-          title={n('errorOccurredTitle', 'Villa kom upp')}
-          message={n('errorOccurredMessage', 'Ekki tókst að sækja loftför')}
-        />
-      )}
-
-      {totalAircrafts > 0 && (
-        <Box marginTop={3}>
-          <Pagination
-            page={selectedPage}
-            itemsPerPage={pageSize}
-            totalItems={totalAircrafts}
-            renderLink={(page, className, children) => (
-              <button
-                onClick={() => {
-                  setSelectedPage(page)
-                  router.replace({
-                    pathname: router.pathname,
-                    query: { ...router.query, page: page },
-                  })
-                }}
-              >
-                <span className={className}>{children}</span>
-              </button>
-            )}
-          />
-        </Box>
-      )}
-    </Box>
+    <T.Table>
+      <T.Head>
+        <T.Row>
+          <T.HeadData>
+            <Text fontWeight="semiBold">
+              {n('identifier', 'Einkennisstafir')}
+            </Text>
+          </T.HeadData>
+          <T.HeadData>
+            <Text fontWeight="semiBold">
+              {n('registrationNumber', 'Skráningarnúmer')}
+            </Text>
+          </T.HeadData>
+          <T.HeadData>
+            <Text fontWeight="semiBold">{n('serialNumber', 'Raðnúmer')}</Text>
+          </T.HeadData>
+          <T.HeadData>
+            <Text fontWeight="semiBold">{n('type', 'Tegund')}</Text>
+          </T.HeadData>
+          <T.HeadData>
+            <Text fontWeight="semiBold">{n('owner', 'Eigandi')}</Text>
+          </T.HeadData>
+          <T.HeadData>
+            <Text fontWeight="semiBold">{n('operator', 'Umráðandi')}</Text>
+          </T.HeadData>
+        </T.Row>
+      </T.Head>
+      <T.Body>
+        {aircrafts.map((aircraft) => {
+          const displayedOwnerName = getDisplayedOwnerName(
+            aircraft,
+            n('andMore', 'ofl.'),
+          )
+          return (
+            <T.Row key={aircraft?.identifiers}>
+              <T.Data>
+                <Box
+                  cursor="pointer"
+                  onClick={() => {
+                    if (!aircraft?.identifiers) return
+                    onAircraftClick(aircraft.identifiers)
+                  }}
+                >
+                  <Text color="blue400">{aircraft?.identifiers}</Text>
+                </Box>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft?.registrationNumber}</Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft?.serialNumber}</Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft?.type}</Text>
+              </T.Data>
+              <T.Data>
+                <Text>{displayedOwnerName}</Text>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft?.operator?.name}</Text>
+              </T.Data>
+            </T.Row>
+          )
+        })}
+      </T.Body>
+    </T.Table>
   )
 }
 

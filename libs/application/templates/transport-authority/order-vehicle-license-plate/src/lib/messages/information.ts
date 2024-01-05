@@ -73,20 +73,17 @@ export const information = {
         description: 'Plate size vehicle type label',
       },
       frontPlateSubtitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateSize.frontPlateSubtitle',
+        id: 'ta.ovlp.application:information.labels.plateSize.frontPlateSubtitle',
         defaultMessage: 'Veldu stærð merkis að framan',
         description: 'Plate size front plate sub title',
       },
       rearPlateSubtitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateSize.rearPlateSubtitle',
+        id: 'ta.ovlp.application:information.labels.plateSize.rearPlateSubtitle',
         defaultMessage: 'Veldu stærð merkis að aftan',
         description: 'Plate size rear plate sub title',
       },
       plateSizeOptionTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateSize.plateSizeOptionTitle',
+        id: 'ta.ovlp.application:information.labels.plateSize.plateSizeOptionTitle',
         defaultMessage: 'Stærð {name} ({height}x{width}cm)',
         description: 'Plate size plate size option title',
       },
@@ -96,8 +93,7 @@ export const information = {
         description: 'Plate size error message',
       },
       errorPlateTypeFront: {
-        id:
-          'ta.ovlp.application:information.labels.plateSize.errorPlateTypeFront',
+        id: 'ta.ovlp.application:information.labels.plateSize.errorPlateTypeFront',
         defaultMessage: 'Skráning á núverandi plötustærð bíls er í ólagi',
         description: 'Plate type front error message',
       },
@@ -114,14 +110,12 @@ export const information = {
         description: 'Plate delivery title',
       },
       warningLostPlateTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.warningLostPlateTitle',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.warningLostPlateTitle',
         defaultMessage: 'ATH. Glatað skráningarmerki',
         description: 'Plate delivery warning lost plate title',
       },
       warningLostPlateSubTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.warningLostPlateSubTitle',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.warningLostPlateSubTitle',
         defaultMessage:
           'Ef skráningarmerki hefur glatast en fundist skal því skilað til Samgöngustofu eða á skoðunarstöð.',
         description: 'Plate delivery warning lost plate sub title',
@@ -132,44 +126,37 @@ export const information = {
         description: 'Plate delivery sub title',
       },
       transportAuthorityOptionTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.transportAuthorityOptionTitle',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.transportAuthorityOptionTitle',
         defaultMessage: 'Samgöngustofa',
         description: 'Transport authority option title',
       },
       deliveryStationOptionTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.deliveryStationOptionTitle',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.deliveryStationOptionTitle',
         defaultMessage: 'Skoðunarstofa',
         description: 'Delivery station option title',
       },
       deliveryStationTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.deliveryStationTitle',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.deliveryStationTitle',
         defaultMessage: 'Nafn skoðunarstofu',
         description: 'Delivery station title',
       },
       deliveryStationPlaceholder: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.deliveryStationPlaceholder',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.deliveryStationPlaceholder',
         defaultMessage: 'Veldu skoðunarstofu',
         description: 'Delivery station placeholder',
       },
       includeRushFeeSubTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeSubTitle',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeSubTitle',
         defaultMessage: 'Þarft þú flýtimeðferð?',
         description: 'Include rush fee sub title',
       },
       includeRushFeeCheckboxTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeCheckboxTitle',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeCheckboxTitle',
         defaultMessage: 'Flýtipöntun (afgreitt daginn eftir að greiðsla berst)',
         description: 'Include rush fee checkbox title',
       },
       includeRushFeeCheckboxSubTitle: {
-        id:
-          'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeCheckboxSubTitle',
+        id: 'ta.ovlp.application:information.labels.plateDelivery.includeRushFeeCheckboxSubTitle',
         defaultMessage: 'Flýtigjald:',
         description: 'Include rush fee checkbox sub title',
       },

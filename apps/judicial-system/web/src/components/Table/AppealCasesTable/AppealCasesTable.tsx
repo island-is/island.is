@@ -1,51 +1,52 @@
 import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import {
-  Defendant,
-  isRestrictionCase,
-  CaseDecision as TCaseDecision,
-} from '@island.is/judicial-system/types'
-import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages/Core'
-import {
-  useSortAppealCases,
-  useViewport,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import {
   ColumnCaseType,
   CourtCaseNumber,
   DefendantInfo,
+  getDurationDate,
   SortButton,
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
+import {
+  CaseDecision,
+  CaseListEntry,
+  CaseState,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useCaseList,
+  useSortAppealCases,
+  useViewport,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import * as styles from '../Table.css'
 import MobileAppealCase from './MobileAppealCase'
+import * as styles from '../Table.css'
 
 interface Props {
   cases: CaseListEntry[]
-  onRowClick: (id: string) => void
   loading: boolean
   showingCompletedCases?: boolean
 }
 
 const AppealCasesTable: React.FC<Props> = (props) => {
-  const { cases, onRowClick, loading, showingCompletedCases } = props
+  const { cases, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortAppealCases('appealedDate', 'descending', cases)
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
+    useCaseList()
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortAppealCases('appealedDate', 'descending', cases)
   const activeCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
@@ -62,7 +63,8 @@ const AppealCasesTable: React.FC<Props> = (props) => {
         <Box marginTop={2} key={theCase.id}>
           <MobileAppealCase
             theCase={theCase}
-            onClick={() => onRowClick(theCase.id)}
+            onClick={() => handleOpenCase(theCase.id)}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {showingCompletedCases && (
               <Text fontWeight={'medium'} variant="small">
@@ -92,7 +94,6 @@ const AppealCasesTable: React.FC<Props> = (props) => {
             />
           </th>
           <TableHeaderText title={formatMessage(tables.type)} />
-
           <TableHeaderText title={formatMessage(tables.state)} />
           {showingCompletedCases ? (
             <TableHeaderText title={formatMessage(tables.duration)} />
@@ -107,6 +108,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
               />
             </th>
           )}
+          <th></th>
         </>
       }
     >
@@ -114,7 +116,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
         return (
           <tr
             className={styles.row}
-            onClick={() => onRowClick(column.id)}
+            onClick={() => handleOpenCase(column.id)}
             key={column.id}
           >
             <td>
@@ -130,23 +132,27 @@ const AppealCasesTable: React.FC<Props> = (props) => {
             <td>
               <ColumnCaseType
                 type={column.type}
-                decision={column.decision as TCaseDecision}
+                decision={column.decision as CaseDecision}
                 parentCaseId={column.parentCaseId ?? ''}
               />
             </td>
-
             <td>
               <TagAppealState
                 appealState={column.appealState}
                 appealRulingDecision={column.appealRulingDecision}
+                appealCaseNumber={column.appealCaseNumber}
               />
             </td>
             <td>
               {showingCompletedCases ? (
                 <Text>
                   {isRestrictionCase(column.type)
-                    ? `${formatDate(column.rulingDate ?? '', 'd.M.y')} -
-                      ${formatDate(column.validToDate ?? '', 'd.M.y')}`
+                    ? getDurationDate(
+                        column.state as CaseState,
+                        column.validToDate,
+                        column.initialRulingDate,
+                        column.rulingDate,
+                      )
                     : ''}
                 </Text>
               ) : (
@@ -156,6 +162,13 @@ const AppealCasesTable: React.FC<Props> = (props) => {
                     : '-'}
                 </Text>
               )}
+            </td>
+            <td className={styles.loadingContainer}>
+              <AnimatePresence>
+                {isOpeningCaseId === column.id && showLoading && (
+                  <LoadingIndicator />
+                )}
+              </AnimatePresence>
             </td>
           </tr>
         )

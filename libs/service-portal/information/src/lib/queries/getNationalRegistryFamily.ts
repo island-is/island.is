@@ -31,7 +31,6 @@ export const NATIONAL_REGISTRY_FAMILY_DETAIL = gql`
       homeAddress
       religion
       nationality
-      fate
       religion
       homeAddress
       nationality

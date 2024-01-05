@@ -7,7 +7,10 @@ interface Props {
   size: number
 }
 
-const GeneratedProfile: FunctionComponent<Props> = ({ nationalId, size }) => {
+const GeneratedProfile: FunctionComponent<React.PropsWithChildren<Props>> = ({
+  nationalId,
+  size,
+}) => {
   const data = new Identicon(
     createHash('sha1').update(nationalId, 'ascii').digest('hex'),
     {

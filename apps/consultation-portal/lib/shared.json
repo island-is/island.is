@@ -2,26 +2,30 @@
   "publishingRules": {
     "publishNow": {
       "present": "Umsagnir eru birtar jafnóðum og þær berast.",
-      "past": ""
+      "past": "Umsagnir voru birtar jafnóðum og þær bárust."
     },
     "publishAfter": {
       "present": "Umsagnir eru birtar að loknum umsagnarfresti.",
-      "past": ""
+      "past": "Umsagnir voru birtar að loknum umsagnarfresti."
     },
     "publishNever": {
-      "present": "Umsagnir eru ekki birtar.",
-      "past": ""
+      "present": "Umsagnir eru ekki birtar í gáttinni.",
+      "past": "Umsagnir voru ekki birtar í gáttinni."
     },
     "publishLaw": {
       "text": "Upplýsingalög gilda, sjá nánar í",
       "link": {
-        "label": "um samráðsgáttina.",
+        "label": "Um samráðsgáttina.",
         "href": "/samradsgatt/um"
       }
+    },
+    "hiddenName": {
+      "present": "Þátttakendum í þessu samráðsferli er þó heimilt að óska eftir að efni umsagnar og nafn sendanda birtist ekki í gáttinni.",
+      "past": "Þátttakendum í þessu samráðsferli var þó heimilt að óska eftir því að efni umsagnar og nafn sendanda birtist ekki í gáttinni."
+    },
+    "viewAdvices": {
+      "text": "Skoða umsagnir",
+      "href": "#view-advices"
     }
-  },
-  "mapInProcess": {
-    "pre": "Í vinnslu frá",
-    "post": "Í vinnslu"
   }
 }

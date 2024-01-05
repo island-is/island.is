@@ -9,7 +9,9 @@ import React, {
 import { FieldBaseProps, RepeaterProps } from '@island.is/application/types'
 import * as uiFields from '@island.is/application/ui-fields'
 
-type Fields = { [key: string]: FC<FieldBaseProps | RepeaterProps> }
+type Fields = {
+  [key: string]: FC<React.PropsWithChildren<FieldBaseProps | RepeaterProps>>
+}
 type Dispatch = (fields: Fields) => void
 type FieldStateProviderProps = { children: ReactNode }
 

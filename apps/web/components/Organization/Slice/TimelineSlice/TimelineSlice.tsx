@@ -1,4 +1,11 @@
-import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  Fragment,
+  ReactNode,
+} from 'react'
 import Link from 'next/link'
 import ReactDOM from 'react-dom'
 import flatten from 'lodash/flatten'
@@ -18,7 +25,10 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { TimelineSlice as Timeline } from '@island.is/web/graphql/schema'
+import {
+  TimelineSlice as Timeline,
+  TimelineEvent,
+} from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
 import { useNamespace } from '@island.is/web/hooks'
@@ -60,6 +70,8 @@ const mapEvents = (
 
 const getTimeline = (
   eventMap: Map<number, Map<number, Timeline['events']>>,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   getMonthByIndex,
   seeMoreText = 'Lesa meira',
 ) => {
@@ -69,7 +81,7 @@ const getTimeline = (
 
   let currentMonth = 0
 
-  const items = []
+  const items: ReactNode[] = []
 
   const today = new Date()
   today.setMonth(today.getMonth() - 1)
@@ -128,7 +140,10 @@ interface SliceProps {
   namespace: Record<string, string>
 }
 
-export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
+export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+  namespace,
+}) => {
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
 
@@ -156,6 +171,8 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
       setPosition(
         Math.min(
           position + scrollAmount,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
         ),
       )
@@ -166,6 +183,8 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
 
   useEffect(() => {
     setPosition(currentMonth - 100)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     frameRef.current.scrollTo({
       left: currentMonth - 100,
     })
@@ -174,7 +193,8 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
   useEffect(() => {
     // used to ignore initial state
     if (position < 0) return
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     frameRef.current.scrollTo({
       left: position,
       behavior: 'smooth',
@@ -204,7 +224,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
     return Math.min(...futureMonths)
   })
 
-  const monthEvents = eventMap.get(months[month].year).get(months[month].month)
+  const monthEvents = eventMap.get(months[month].year)?.get(months[month].month)
 
   const borderProps: BoxProps = slice.hasBorderAbove
     ? {
@@ -239,6 +259,8 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
         setPosition((position) => {
           let offset = 0
           if (lastMouseMovePosition === null) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             offset = lastMouseDownPosition - ev.x
           } else {
             offset = lastMouseMovePosition - ev.x
@@ -248,11 +270,15 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
           if (offset > 0) {
             newPosition = Math.min(
               position + offset,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
             )
           } else {
             newPosition = Math.max(position + offset, 0)
           }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           frameRef.current.scrollTo({
             left: newPosition,
           })
@@ -314,9 +340,11 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
                   type="next"
                   onClick={() => moveTimeline('right')}
                   disabled={
-                    frameRef.current?.scrollWidth -
-                      frameRef.current?.offsetWidth ===
-                    position
+                    frameRef.current?.scrollWidth === undefined ||
+                    frameRef.current?.offsetWidth === undefined ||
+                    frameRef.current.scrollWidth -
+                      frameRef.current.offsetWidth ===
+                      position
                   }
                 />
               </ArrowButtonShadow>
@@ -330,7 +358,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
             <div
               className={timelineStyles.timelineContainer}
               style={{
-                height: 140 + monthEvents.length * 104,
+                height: 140 + (monthEvents?.length || 0) * 104,
               }}
             >
               <ArrowButtonShadow type="prev">
@@ -356,12 +384,12 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
                 </Text>
               </div>
               <div className={timelineStyles.mobileContainer}>
-                {monthEvents.map((event) => (
+                {monthEvents?.map((event) => (
                   <TimelineItem
                     event={event}
                     offset={0}
                     index={0}
-                    detailed={!!event.body}
+                    detailed={event.body ? true : false}
                     mobile={true}
                     seeMoreText={n('timelineSeeMoreText', 'Lesa meira')}
                   />
@@ -379,10 +407,9 @@ interface ArrowButtonShadowProps {
   type: 'prev' | 'next'
 }
 
-const ArrowButtonShadow: React.FC<ArrowButtonShadowProps> = ({
-  children,
-  type,
-}) => {
+const ArrowButtonShadow: React.FC<
+  React.PropsWithChildren<ArrowButtonShadowProps>
+> = ({ children, type }) => {
   return (
     <div className={timelineStyles.arrowButtonShadow[type]}>{children}</div>
   )
@@ -424,6 +451,13 @@ const TimelineItem = ({
   detailed,
   mobile = false,
   seeMoreText = 'Lesa meira',
+}: {
+  event: TimelineEvent
+  offset: number
+  index: number
+  detailed: boolean
+  mobile?: boolean
+  seeMoreText: string
 }) => {
   const positionStyles = [
     { bottom: 136 },
@@ -443,6 +477,8 @@ const TimelineItem = ({
   const portalRef = useRef()
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     portalRef.current = document.querySelector('#__next')
   })
 
@@ -475,6 +511,8 @@ const TimelineItem = ({
               seeMoreText={seeMoreText}
             />
           </ModalBase>,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           portalRef.current,
         )}
     </div>
@@ -531,7 +569,15 @@ const BulletLine = ({
   )
 }
 
-const MonthItem = ({ month, offset, year = '' }) => {
+const MonthItem = ({
+  month,
+  offset,
+  year = '',
+}: {
+  month: string
+  offset: number
+  year: string
+}) => {
   return (
     <div className={timelineStyles.monthItem} style={{ left: offset }}>
       <Text color="blue600" variant="eyebrow">
@@ -624,9 +670,9 @@ const EventModal = ({
             </Inline>
           )}
           {Boolean(event.body) &&
-            renderSlices([(event.body as unknown) as SliceType])}
+            renderSlices([event.body as unknown as SliceType])}
           {event.link && (
-            <Link href={event.link}>
+            <Link href={event.link} legacyBehavior>
               <Button variant="text" icon="arrowForward">
                 {seeMoreText}
               </Button>

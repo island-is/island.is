@@ -5,7 +5,9 @@ import { VehiclesCurrentVehicle } from '../../shared'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
 
-export const VehiclesField: FC<FieldBaseProps> = (props) => {
+export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application } = props
   const currentVehicleList = application.externalData.currentVehicleList
     .data as VehiclesCurrentVehicle[]

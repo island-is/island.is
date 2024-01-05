@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Electronic Registrations
 
 This library was generated with [Nx](https://nx.dev).
@@ -25,5 +23,5 @@ yarn nx run clients-electronic-registration-statistics:update-openapi-document
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-electronic-registration-statistics:schemas/external-openapi-generator
+yarn nx run clients-electronic-registration-statistics:codegen/backend-client
 ```

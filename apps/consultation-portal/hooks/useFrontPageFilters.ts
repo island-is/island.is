@@ -42,6 +42,8 @@ export const useFrontPageFilters = ({ types }: Props) => {
     ...initialValues,
   })
 
+  const [filtersLoaded, setFiltersLoaded] = useState(false)
+
   const _caseStatuses = getFilteredItemsOrAll({
     items: [...filters.caseStatuses.items],
     defaultItems: initialValues?.caseStatuses?.items,
@@ -101,11 +103,14 @@ export const useFrontPageFilters = ({ types }: Props) => {
       setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
       setFilters(filtersCopy)
     }
-  }, [filterGroups])
+  }, [filterGroups, getCasesLoading])
 
   useEffect(() => {
     const nextFilters = getFiltersFromLocalStorage({ filters: filters })
     setFilters(nextFilters)
+    setFiltersLoaded(true)
+
+    return () => setFiltersLoaded(false)
   }, [])
 
   return {
@@ -119,5 +124,6 @@ export const useFrontPageFilters = ({ types }: Props) => {
     filters: filters,
     setFilters: setFilters,
     initialValues: initialValues,
+    filtersLoaded: filtersLoaded,
   }
 }

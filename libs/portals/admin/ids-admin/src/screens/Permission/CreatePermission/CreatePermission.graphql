@@ -4,3 +4,10 @@ mutation CreateAuthAdminScope($input: CreateScopeInput!) {
     environment
   }
 }
+
+query GetScopeAvailability($input: ScopeInput!) {
+  authAdminScope(input: $input) {
+    scopeName
+    availableEnvironments
+  }
+}

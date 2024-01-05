@@ -19,8 +19,13 @@ xcuserdata
 DerivedData
 *.hmap
 *.ipa
+*.dSYM.zip
 *.xcuserstate
 ios/.xcode.env.local
+ios/*.cer
+ios/*.certSigningRequest
+ios/*.mobileprovision
+ios/*.p12
 
 # Android/IntelliJ
 #
@@ -34,6 +39,7 @@ local.properties
 *.keystore
 !debug.keystore
 google-services.json
+service-account.json
 
 # node.js
 #

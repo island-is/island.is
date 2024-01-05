@@ -1,65 +1,62 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/router'
 
 import {
-  Box,
-  Text,
   Accordion,
   AccordionItem,
   AlertMessage,
+  Box,
+  Text,
 } from '@island.is/island-ui/core'
-import {
-  NotificationType,
-  CaseState,
-  CaseTransition,
-  CaseLegalProvisions,
-} from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
-import {
-  FormFooter,
-  Modal,
-  InfoCard,
-  PageLayout,
-  PdfButton,
-  FormContentContainer,
-  CaseFileList,
-  ProsecutorCaseInfo,
-  AccordionListItem,
-  CaseResubmitModal,
-  FormContext,
-  UserContext,
-  CommentsAccordionItem,
-  PageHeader,
-} from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
+  errors,
   laws,
   rcOverview as m,
   requestCourtDate,
   restrictionsV2,
   titles,
-  errors,
 } from '@island.is/judicial-system-web/messages'
-import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import {
+  AccordionListItem,
+  CaseFileList,
+  CaseResubmitModal,
+  CommentsAccordionItem,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  InfoCard,
+  Modal,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  ProsecutorCaseInfo,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  CaseLegalProvisions,
+  CaseState,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as styles from './Overview.css'
 
-export const Overview: React.FC = () => {
+export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [modal, setModal] = useState<
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
   const [modalText, setModalText] = useState('')
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const router = useRouter()
   const {
@@ -111,6 +108,9 @@ export const Overview: React.FC = () => {
     setModal('caseSubmittedModal')
   }
 
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -159,7 +159,7 @@ export const Overview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },
@@ -285,7 +285,7 @@ export const Overview: React.FC = () => {
             <AccordionItem
               labelVariant="h3"
               id="id_1"
-              label="Lagaákvæði sem brot varða við"
+              label={formatMessage(lawsBrokenAccordion.heading)}
             >
               <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>
@@ -348,16 +348,11 @@ export const Overview: React.FC = () => {
             </AccordionItem>
             <AccordionItem
               id="id_6"
-              label={`Rannsóknargögn ${`(${
-                workingCase.caseFiles ? workingCase.caseFiles.length : 0
-              })`}`}
+              label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
               labelVariant="h3"
             >
               <Box marginY={3}>
-                <CaseFileList
-                  caseId={workingCase.id}
-                  files={workingCase.caseFiles ?? []}
-                />
+                <CaseFileList caseId={workingCase.id} files={caseFiles} />
               </Box>
             </AccordionItem>
             {(workingCase.comments ||

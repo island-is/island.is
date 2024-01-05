@@ -1,28 +1,30 @@
 {
-  "root": "libs/clients/vmst",
+  "name": "clients-vmst",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/vmst/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/vmst/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/clients/vmst/jest.config.js",
+        "jestConfig": "libs/clients/vmst/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/clients/vmst"]
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/vmst"]
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/vmst/gen/fetch -i libs/clients/vmst/src/clientConfig.yaml"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

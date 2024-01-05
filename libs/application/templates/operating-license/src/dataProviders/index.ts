@@ -1,8 +1,8 @@
 import {
   defineTemplateApi,
+  InstitutionNationalIds,
   PaymentCatalogApi,
 } from '@island.is/application/types'
-import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
 
 export { UserProfileApi } from '@island.is/application/types'
 
@@ -22,7 +22,7 @@ export const JudicialAdministrationApi = defineTemplateApi({
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
-    organizationId: SYSLUMADUR_NATIONAL_ID,
+    organizationId: InstitutionNationalIds.SYSLUMENN,
   },
   externalDataId: 'payment',
 })

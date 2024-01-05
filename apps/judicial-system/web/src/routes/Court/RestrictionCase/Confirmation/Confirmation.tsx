@@ -2,45 +2,43 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  isAcceptingCaseDecision,
+  isCompletedCase,
+} from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  CourtCaseInfo,
+  CourtRecordAccordionItem,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+  RulingModifiedModal,
+  SigningModal,
+  UserContext,
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
   CaseTransition,
-  completedCaseStates,
-  isAcceptingCaseDecision,
   NotificationType,
-} from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
-import {
-  FormFooter,
-  PoliceRequestAccordionItem,
-  CourtRecordAccordionItem,
-  PdfButton,
-  CourtCaseInfo,
-  PageLayout,
-  FormContentContainer,
-  RulingAccordionItem,
-  BlueBox,
-  FormContext,
-  useRequestRulingSignature,
-  SigningModal,
-  UserContext,
-  PageHeader,
-} from '@island.is/judicial-system-web/src/components'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { core, titles } from '@island.is/judicial-system-web/messages'
 
-import { RulingModifiedModal } from '../../components'
 import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
 
-export const Confirmation: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
   const { user } = useContext(UserContext)
@@ -57,7 +55,7 @@ export const Confirmation: React.FC = () => {
 
   async function signRuling() {
     const shouldSign =
-      completedCaseStates.includes(workingCase.state) ||
+      isCompletedCase(workingCase.state) ||
       (await transitionCase(
         workingCase.id,
         workingCase.decision === CaseDecision.REJECTING

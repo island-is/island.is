@@ -4,10 +4,6 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
-const EducationOverview = lazy(() =>
-  import('./screens/EducationOverview/EducationOverview'),
-)
-
 const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
 )
@@ -42,6 +38,10 @@ const SecondarySchoolGraduationDetail = lazy(() =>
   ),
 )
 
+const DrivingLessonsBook = lazy(() =>
+  import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
+)
+
 export const educationModule: PortalModule = {
   name: 'Menntun',
   enabled: ({ isCompany }) => !isCompany,
@@ -49,8 +49,18 @@ export const educationModule: PortalModule = {
     {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
+      enabled:
+        userInfo.scopes.includes(ApiScope.education) ||
+        userInfo.scopes.includes(ApiScope.vehicles),
+      element: <Navigate to={EducationPaths.EducationAssessment} replace />,
+    },
+
+    // Grunnskóli - Elementary
+    {
+      name: 'Grunnskóli',
+      path: EducationPaths.EducationGrunnskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <EducationOverview />,
+      element: <Navigate to={EducationPaths.EducationAssessment} replace />,
     },
     {
       name: 'Námsmat',
@@ -58,20 +68,8 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <EducationCareer />,
     },
-    {
-      name: 'Brautskráning',
-      path: EducationPaths.EducationHaskoliGraduation,
-      enabled: userInfo.scopes.includes(ApiScope.education),
-      dynamic: true, // dynamic to check feature flag
-      element: <EducationGraduation />,
-    },
-    {
-      name: 'Brautskráning - nánar ',
-      path: EducationPaths.EducationHaskoliGraduationDetail,
-      enabled: userInfo.scopes.includes(ApiScope.education),
-      dynamic: true, // dynamic to check feature flag
-      element: <EducationGraduationDetail />,
-    },
+
+    // Framhaldsskóli - Secondary education
     {
       name: 'Framhaldsskóli',
       path: EducationPaths.EducationFramhskoli,
@@ -108,6 +106,37 @@ export const educationModule: PortalModule = {
       key: 'SecondaryEducation',
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <SecondarySchoolGraduationDetail />,
+    },
+
+    // Haskoli - Univeristy
+    {
+      name: 'Háskóli',
+      path: EducationPaths.EducationHaskoli,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: (
+        <Navigate to={EducationPaths.EducationHaskoliGraduation} replace />
+      ),
+    },
+    {
+      name: 'Brautskráning',
+      path: EducationPaths.EducationHaskoliGraduation,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <EducationGraduation />,
+    },
+    {
+      name: 'Brautskráning - nánar ',
+      path: EducationPaths.EducationHaskoliGraduationDetail,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <EducationGraduationDetail />,
+    },
+
+    // Driving lessons
+    {
+      name: 'Ökunám',
+      path: EducationPaths.EducationDrivingLessons,
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      dynamic: true,
+      element: <DrivingLessonsBook />,
     },
   ],
 }

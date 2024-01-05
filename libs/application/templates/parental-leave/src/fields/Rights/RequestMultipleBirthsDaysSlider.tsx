@@ -17,10 +17,9 @@ import { formatText } from '@island.is/application/core'
 import { NO } from '../../constants'
 import { useEffectOnce } from 'react-use'
 
-const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
-  field,
-  application,
-}) => {
+const RequestMultipleBirthsDaysSlider: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ field, application }) => {
   const { id, description } = field
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()

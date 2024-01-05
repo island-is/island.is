@@ -2,6 +2,7 @@
 
 const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
 const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
+const problematicProjects = ['judicial-system-backend']
 
 function groupbByPrefix(arr) {
   arr.sort()
@@ -34,12 +35,25 @@ function chunk(groups, chunkSize) {
   return chunks
 }
 
-const groups = groupbByPrefix(projects)
-const chunked_groups = groups.map((group) => chunk(group, chunkSize)).flat()
-const chunks = chunked_groups
-  .map((chunk) => chunk.join(','))
-  .filter((job) => job.length > 0)
+// Projects which require running solo due to timelimits
+const soloProjects = problematicProjects.filter((p) => projects.includes(p))
+const filteredProjects = projects.filter((p) => !soloProjects.includes(p))
+const groups = groupbByPrefix(filteredProjects)
+const chunkedGroups = groups.map((group) => chunk(group, chunkSize)).flat()
+const chunksJoined = chunkedGroups.map((chunk) => chunk.join(','))
+const chunksFiltered = chunksJoined.filter((job) => job.length > 0)
+const chunksWithSolos = chunksFiltered.concat(soloProjects)
+const chunks = chunksWithSolos.sort()
 
-// console.error("Chunked groups:", chunked_groups)
+new console.Console(process.stderr).log(`Chunk debug:`, {
+  projects,
+  soloProjects,
+  filteredProjects,
+  groups,
+  chunkedGroups,
+  chunksJoined,
+  chunksFiltered,
+  chunksWithSolos,
+})
 
 process.stdout.write(JSON.stringify(chunks))

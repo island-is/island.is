@@ -19,6 +19,7 @@ export const SharedApiConfig = {
     new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-rights-portal',
+        organizationSlug: 'sjukratryggingar',
         timeout: config.fetch.timeout,
         autoAuth: idsClientConfig.isConfigured
           ? {

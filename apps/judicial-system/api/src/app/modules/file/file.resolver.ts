@@ -1,16 +1,17 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
-} from '@island.is/judicial-system/auth'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import {
+  CurrentGraphQlUser,
+  JwtGraphQlAuthGuard,
+} from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
@@ -18,14 +19,14 @@ import { CreateFileInput } from './dto/createFile.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { DeleteFileInput } from './dto/deleteFile.input'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
-import { UploadFileToCourtInput } from './dto/uploadFileToCourt.input'
 import { UpdateFilesInput } from './dto/updateFiles.input'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
+import { UploadFileToCourtInput } from './dto/uploadFileToCourt.input'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { CaseFile } from './models/file.model'
+import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { UpdateFilesResponse } from './models/updateFiles.response'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()

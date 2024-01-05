@@ -44,7 +44,8 @@ export const AdditionalDocumentsRequired: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
               uploadHeader: '',
-              uploadDescription: '',
+              uploadDescription:
+                parentalLeaveFormMessages.selfEmployed.uploadDescription,
               uploadButtonLabel:
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
@@ -57,9 +58,8 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  name:
-                    parentalLeaveFormMessages.attachmentScreen
-                      .additionalDocumentsEditSubmit,
+                  name: parentalLeaveFormMessages.attachmentScreen
+                    .additionalDocumentsEditSubmit,
                   type: 'primary',
                   event: 'APPROVE',
                 },

@@ -25,7 +25,7 @@ type ReviewSectionProps = {
   notifyParentOnClickEvent?: () => void
 }
 
-const ReviewSection: FC<ReviewSectionProps> = ({
+const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   application,
   index,
   title,

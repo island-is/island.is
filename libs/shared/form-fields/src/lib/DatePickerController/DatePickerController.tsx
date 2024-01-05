@@ -23,6 +23,8 @@ interface Props {
   backgroundColor?: DatePickerBackgroundColor
   maxDate?: DatePickerProps['maxDate']
   minDate?: DatePickerProps['minDate']
+  minYear?: number
+  maxYear?: number
   excludeDates?: DatePickerProps['excludeDates']
   onChange?: (_: string) => void
   required?: boolean
@@ -30,7 +32,7 @@ interface Props {
 
 const df = 'yyyy-MM-dd'
 
-export const DatePickerController: FC<Props> = ({
+export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
   error,
   defaultValue,
   disabled = false,
@@ -45,6 +47,8 @@ export const DatePickerController: FC<Props> = ({
   minDate,
   excludeDates,
   required,
+  minYear,
+  maxYear,
   onChange = () => undefined,
 }) => {
   const { clearErrors, setValue } = useFormContext()
@@ -68,6 +72,8 @@ export const DatePickerController: FC<Props> = ({
           selected={value ? parseISO(value) : undefined}
           maxDate={maxDate}
           minDate={minDate}
+          minYear={minYear}
+          maxYear={maxYear}
           excludeDates={excludeDates}
           handleChange={(date) => {
             clearErrors(id)

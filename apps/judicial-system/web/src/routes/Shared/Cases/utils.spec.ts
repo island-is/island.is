@@ -1,12 +1,16 @@
 import { createIntl } from 'react-intl'
 
-import { CaseDecision } from '@island.is/judicial-system/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { displayCaseType } from './utils'
 
-const formatMessage = createIntl({ locale: 'is-IS', onError: jest.fn })
-  .formatMessage
+const formatMessage = createIntl({
+  locale: 'is-IS',
+  onError: jest.fn,
+}).formatMessage
 
 describe('displayCaseType', () => {
   const fn = (caseType: CaseType, decision?: CaseDecision) =>

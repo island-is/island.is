@@ -15,7 +15,11 @@ interface LayoutProps {
   navItems: PortalNavigationItem
 }
 
-export const Layout: FC<LayoutProps> = ({ children, navTitle, navItems }) => (
+export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
+  children,
+  navTitle,
+  navItems,
+}) => (
   <GridContainer>
     <Hidden above="md">
       <Box paddingBottom={4}>

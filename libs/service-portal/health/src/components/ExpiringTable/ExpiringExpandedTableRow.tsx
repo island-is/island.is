@@ -6,7 +6,6 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import { FC } from 'react'
 import * as styles from './ExpiringExpandedTableRow.css'
 
 interface Props {
@@ -15,11 +14,11 @@ interface Props {
   foldedValues: Array<{ title: string; value?: string | number }>
 }
 
-export const ExpiringExpandedTableRow: FC<Props> = ({
+export const ExpiringExpandedTableRow = ({
   expiring,
   visibleValues,
   foldedValues,
-}) => {
+}: Props) => {
   return (
     <ExpandRow
       forceBackgroundColor={expiring}

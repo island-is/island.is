@@ -1,22 +1,23 @@
 {
-  "root": "libs/skilavottord/consts",
+  "name": "skilavottord-consts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/skilavottord/consts/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/skilavottord/consts/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/skilavottord/consts/jest.config.js",
+        "jestConfig": "libs/skilavottord/consts/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/skilavottord/consts"]
+      "outputs": ["{workspaceRoot}/coverage/libs/skilavottord/consts"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

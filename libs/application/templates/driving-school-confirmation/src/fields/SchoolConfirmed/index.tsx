@@ -16,7 +16,9 @@ import Jobs from '../../assets/Jobs'
 import kennitala from 'kennitala'
 import { Student } from '../../types'
 
-const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
+const SchoolConfirmed: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { answers } = application
   const nationalId = kennitala.format((answers.student as Student).nationalId)
   const { formatMessage } = useLocale()

@@ -23,7 +23,7 @@ PODS:
   - DoubleConversion (1.1.6)
   - EXApplication (5.0.1):
     - ExpoModulesCore
-  - EXBarCodeScanner (12.2.0):
+  - EXBarCodeScanner (12.1.0):
     - EXImageLoader
     - ExpoModulesCore
     - ZXingObjC/OneD
@@ -959,7 +959,7 @@ SPEC CHECKSUMS:
   DatadogSDKReactNative: 9b3452c88b092e48a42ea0d54af5ff210f9eeaf1
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   EXApplication: 034b1c40a8e9fe1bff76a1e511ee90dff64ad834
-  EXBarCodeScanner: 572ff0f1d32d4ba63262d4a9995d2ebb57f476a0
+  EXBarCodeScanner: cb4deb49e59b6c7ed6bbf38d187802359908d2a8
   EXCamera: eaf52a96480d4ae1505a9b5e139c244581b5f8ca
   EXConstants: 3c86653c422dd77e40d10cbbabb3025003977415
   EXFileSystem: 60602b6eefa6873f97172c684b7537c9760b50d6
@@ -1012,7 +1012,7 @@ SPEC CHECKSUMS:
   RCTTypeSafety: c276d85975bde3d8448907235c70bf0da257adfd
   React: e481a67971af1ce9639c9f746b753dd0e84ca108
   React-callinvoker: 1051c04a94fa9d243786b86380606bad701a3b31
-  React-Codegen: 14b1e716d361d5ad95e0ce1a338f3fa0733a98b5
+  React-Codegen: a1515fc3e1f52e21cdd56489ddd16c61b2889ed2
   React-Core: 698fc3baecb80d511d987475a16d036cec6d287f
   React-CoreModules: 59245305f41ff0adfeac334acc0594dea4585a7c
   React-cxxreact: 49accd2954b0f532805dbcd1918fa6962f32f247

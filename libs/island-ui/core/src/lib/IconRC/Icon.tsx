@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from 'react'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import iconMap from './iconMap'
@@ -32,6 +32,7 @@ export const Icon = ({
   icon,
   type = 'filled',
   color = 'currentColor',
+  useStroke,
   size = 'medium',
   className,
   title,
@@ -39,11 +40,18 @@ export const Icon = ({
   skipPlaceholderSize,
   ariaHidden,
 }: IconProps) => {
+  const [isMounted, setIsMounted] = useState(false)
   const path = iconMap[type][icon]
-  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
-    path,
-  ])
-  if (typeof window === 'undefined') {
+  const IconSvg = useMemo(
+    () => React.lazy(() => import('./icons/' + path)),
+    [path],
+  )
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
     return (
       <Placeholder
         skipPlaceholderSize={skipPlaceholderSize}
@@ -52,6 +60,7 @@ export const Icon = ({
       />
     )
   }
+
   const optionalProps: SvgProps = {}
   if (className) {
     optionalProps.className = className
@@ -81,6 +90,7 @@ export const Icon = ({
         aria-hidden={ariaHidden}
         fill={colors[color]}
         color={colors[color]}
+        stroke={useStroke && colors[color]}
         {...optionalProps}
       />
     </Suspense>

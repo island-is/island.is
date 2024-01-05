@@ -22,9 +22,8 @@ export const valueContainer = style(
   'valueContainer',
 )
 
-globalStyle(`${wrapper} ${valueContainer} .css-b8ldur-Input`, {
+globalStyle(`${wrapper} ${valueContainer} .island-select__input-container`, {
   margin: 0,
-  padding: 0,
 })
 
 export const placeholder = style({
@@ -45,21 +44,27 @@ export const placeholderPadding = style({
 })
 export const placeholderSizes = styleVariants(inputMixins.inputSizes)
 
-export const input = style(inputMixins.input, 'input')
-export const inputSize = styleVariants(
+export const inputContainer = style(
   {
-    xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
-    sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
-    md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+    ...inputMixins.input,
+    padding: 0,
+    margin: 0,
   },
-  'inputSizes',
+  'input-container',
 )
 
-globalStyle(`${wrapper} ${input} input`, inputMixins.input)
-globalStyle(`${wrapper} ${inputSize.sm} input`, inputMixins.inputSizes.sm)
-globalStyle(`${wrapper} ${inputSize.md} input`, inputMixins.inputSizes.md)
-
-globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
+export const input = style(
+  {
+    ...inputMixins.input,
+    ':focus': inputMixins.inputFocus,
+    ...themeUtils.responsiveStyle({
+      xs: inputMixins.inputSizes.xs,
+      sm: inputMixins.inputSizes.sm,
+      md: inputMixins.inputSizes.md,
+    }),
+  },
+  'input',
+)
 
 export const errorMessage = style(inputMixins.errorMessage)
 export const hasError = style({})
@@ -70,15 +75,14 @@ export const containerDisabled = style({
 export const container = style({}, 'container')
 export const containerSizes = styleVariants(inputMixins.containerSizes)
 
-globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
-  color: theme.color.dark400,
-})
 globalStyle(`${wrapper} .css-1g6gooi`, {
   padding: 0,
   margin: 0,
 })
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
+  flexDirection: 'column',
+  alignItems: 'flex-start',
   paddingRight: 70,
   border: 0,
 })
@@ -143,17 +147,14 @@ export const label = style({
 export const labelDisabled = style({
   opacity: 0.5,
 })
-export const labelSizes = styleVariants({
-  xs: inputMixins.labelSizes.xs,
-  sm: inputMixins.labelSizes.sm,
-  md: inputMixins.labelSizes.md,
-})
+export const labelSizes = styleVariants(inputMixins.labelSizes)
 export const singleValue = style(
   {
     marginLeft: 0,
     marginRight: 0,
     paddingRight: 0,
     ...inputMixins.input,
+    color: theme.color.dark400,
   },
   'singleValue',
 )

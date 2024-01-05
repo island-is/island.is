@@ -39,7 +39,7 @@ export interface ContactUsProps {
   onSubmit: (formState: ContactUsFormState) => Promise<void>
 }
 
-export const ContactUs: FC<ContactUsProps> = ({
+export const ContactUs: FC<React.PropsWithChildren<ContactUsProps>> = ({
   onSubmit,
   state = 'edit',
   title = 'Sendu okkur línu',

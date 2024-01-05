@@ -7,4 +7,7 @@ export class AllAircraftsInput {
 
   @Field(() => Number)
   pageSize!: number
+
+  @Field(() => String, { nullable: true })
+  searchTerm?: string
 }

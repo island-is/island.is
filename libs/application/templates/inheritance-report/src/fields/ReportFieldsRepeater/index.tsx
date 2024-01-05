@@ -26,7 +26,6 @@ type RepeaterProps = {
     props: {
       fields: Array<object>
       repeaterButtonText: string
-      repeaterHeaderText: string
       sumField: string
       fromExternalData?: string
     }
@@ -45,7 +44,7 @@ function setIfValueIsNotNan(
 }
 
 export const ReportFieldsRepeater: FC<
-  FieldBaseProps<Answers> & RepeaterProps
+  React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
@@ -81,11 +80,10 @@ export const ReportFieldsRepeater: FC<
   const [inheritanceTax, setInheritanceTax] = useState(0)
 
   /* ------ Total ------ */
-  const answersValuesTotal = answersValues?.length
-    ? answersValues.reduce((a: number, o: any) => {
-        return a + Number(o[props.sumField])
-      }, 0)
-    : 0
+  const answersValuesTotal = answersValues?.reduce(
+    (a: number, o: any) => a + Number(o[props.sumField]),
+    0,
+  )
 
   const [valueArray, setValueArray] = useState<Array<number>>(
     answersValues?.length
@@ -114,10 +112,13 @@ export const ReportFieldsRepeater: FC<
       return Object.values(field)[1]
     })
 
-    const repeaterFields = values.reduce((acc: any, elem: any) => {
-      acc[elem] = ''
-      return acc
-    }, {})
+    const repeaterFields: Record<string, string> = values.reduce(
+      (acc: Record<string, string>, elem: string) => {
+        acc[elem] = ''
+        return acc
+      },
+      {},
+    )
 
     append(repeaterFields)
   }
@@ -206,9 +207,7 @@ export const ReportFieldsRepeater: FC<
       setValueArray(arr)
     }
     setTotal(
-      valueArray.length
-        ? valueArray.reduce((sum: number, value: number) => (sum = sum + value))
-        : 0,
+      valueArray.reduce((sum: number, value: number) => (sum = sum + value), 0),
     )
   }
 
@@ -231,9 +230,6 @@ export const ReportFieldsRepeater: FC<
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
-              <Text variant="h4" marginBottom={2}>
-                {props.repeaterHeaderText}
-              </Text>
               <Box position="absolute" className={styles.removeFieldButton}>
                 <Button
                   variant="ghost"
@@ -243,11 +239,10 @@ export const ReportFieldsRepeater: FC<
                   onClick={() => {
                     valueArray.splice(index, 1)
                     setTotal(
-                      valueArray.length
-                        ? valueArray.reduce(
-                            (a: number, v: number) => (a = a + v),
-                          )
-                        : 0,
+                      valueArray.reduce(
+                        (a: number, v: number) => (a = a + v),
+                        0,
+                      ),
                     )
                     remove(index)
                   }}

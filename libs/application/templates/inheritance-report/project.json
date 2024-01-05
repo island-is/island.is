@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/templates/inheritance-report",
+  "name": "application-templates-inheritance-report",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/inheritance-report/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/inheritance-report/**/*.{ts,tsx,js,jsx}"
@@ -13,15 +14,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/inheritance-report/jest.config.js",
+        "jestConfig": "libs/application/templates/inheritance-report/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/templates/inheritance-report"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/inheritance-report"
+      ]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/inheritance-report/src/lib/messages.ts"
       }

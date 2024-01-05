@@ -16,7 +16,7 @@ type Props = {
   onEdit: (id: string) => void
 }
 
-export const ComplaintInformation: FC<Props> = ({
+export const ComplaintInformation: FC<React.PropsWithChildren<Props>> = ({
   type,
   name,
   description,
@@ -30,7 +30,7 @@ export const ComplaintInformation: FC<Props> = ({
   return (
     <ReviewGroup
       isEditable={isEditable}
-      editAction={() => onEdit('section.complaintInformation')}
+      editAction={() => onEdit('complainee')}
     >
       <GridRow>
         <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>

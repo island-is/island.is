@@ -1,25 +1,26 @@
 {
-  "root": "libs/service-portal/graphql",
+  "name": "service-portal-graphql",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/graphql/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/service-portal/graphql/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/graphql/jest.config.js",
+        "jestConfig": "libs/service-portal/graphql/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/service-portal/graphql"]
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/graphql"]
     },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "output": "libs/service-portal/graphql/src/schema.ts",
         "command": "graphql-codegen --config libs/service-portal/graphql/codegen.yml"

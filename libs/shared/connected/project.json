@@ -1,22 +1,23 @@
 {
-  "root": "libs/shared/connected",
+  "name": "shared-connected",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/connected/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/shared/connected/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/shared/connected/jest.config.js",
+        "jestConfig": "libs/shared/connected/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/shared/connected"]
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/connected"]
     }
   },
   "tags": ["lib:react", "scope:react"]

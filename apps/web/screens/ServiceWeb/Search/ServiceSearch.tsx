@@ -1,59 +1,62 @@
 import { useMemo } from 'react'
+import { Locale } from 'locale'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { Screen } from '../../../types'
+
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Link,
+  LinkContext,
+  Pagination,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   Card,
   CardTagsProps,
   ServiceWebWrapper,
 } from '@island.is/web/components'
-import {
-  Box,
-  Text,
-  Stack,
-  Breadcrumbs,
-  Pagination,
-  Link,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  LinkContext,
-  Button,
-} from '@island.is/island-ui/core'
+import { ServiceWebSearchInput } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+
+import {
+  ContentLanguage,
+  GetNamespaceQuery,
+  GetSupportSearchResultsQuery,
+  Organization,
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
+  QuerySearchResultsArgs,
+  SearchableContentTypes,
+  SupportQna,
+} from '../../../graphql/schema'
+import { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_SEARCH_RESULTS_QUERY,
 } from '../../queries'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  SearchableContentTypes,
-  SupportQna,
-  GetSupportSearchResultsQuery,
-  Organization,
-  QueryGetOrganizationArgs,
-  Query,
-} from '../../../graphql/schema'
-import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import { ServiceWebSearchInput } from '@island.is/web/components'
 import { getServiceWebSearchTagQuery, getSlugPart } from '../utils'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Locale } from 'locale'
 
 const PERPAGE = 10
 
 interface ServiceSearchProps {
   q: string
   page: number
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   organization?: Organization
   searchResults: GetSupportSearchResultsQuery['searchResults']
   locale: Locale
@@ -69,6 +72,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
   usePlausible('Search Query', {
     query: (q ?? '').trim().toLowerCase(),
     source: 'Service Web',
@@ -95,14 +99,14 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       description: item.organization?.description,
       link: {
         href: linkResolver('supportqna', [
-          item.organization.slug,
-          item.category.slug,
+          item.organization?.slug || '',
+          item.category?.slug || '',
           item.slug,
         ]).href,
       },
-      categorySlug: item.category.slug,
-      category: item.category.title,
-      labels: [item.category.title],
+      categorySlug: item.category?.slug,
+      category: item.category?.title,
+      labels: [item.category?.title],
     }))
 
   const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
@@ -111,14 +115,13 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const pageTitle = `${n('search', 'Leit')} | ${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg
       ? {
-          title: organization.title,
+          title: organization?.title,
           typename: 'serviceweb',
           href: linkResolver('serviceweb', [institutionSlug]).href,
         }
@@ -140,27 +143,41 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
         n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
       )}
       institutionSlug={institutionSlug}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization={organization}
       smallBackground
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
           <GridRow marginBottom={3}>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
               <Stack space={[3, 3, 4]}>
                 <Box display={['none', 'none', 'block']} printHidden>
                   <Breadcrumbs
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        <NextLink href={href} passHref>
+                        <NextLink
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          href={href}
+                          passHref
+                          legacyBehavior
+                        >
                           {link}
                         </NextLink>
                       )
@@ -212,7 +229,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     'serviceWebSearchPlaceholder',
                     'Leitaðu á þjónustuvefnum',
                   )}
-                  nothingFoundText={n('nothingFoundText', 'Ekkert fannst')}
+                  nothingFoundText={n(
+                    'nothingFoundText',
+                    activeLocale === 'is' ? 'Ekkert fannst' : 'Nothing found',
+                  )}
                 />
 
                 {!!q &&
@@ -246,6 +266,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
           <GridRow marginBottom={9}>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
@@ -256,6 +278,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
                     labels.forEach((label) => {
                       tags.push({
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         title: label,
                         tagProps: {
                           outlined: true,
@@ -264,6 +288,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     })
 
                     return (
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
                       <Card
                         key={index}
                         tags={tags}
@@ -281,6 +307,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
           {totalSearchResults > 0 && (
             <GridRow>
               <GridColumn
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 offset={[null, null, null, '1/12']}
                 span={['12/12', '12/12', '12/12', '10/12', '7/12']}
               >
@@ -304,6 +332,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
           <GridRow>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -337,7 +367,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
 
   const q = single(query.q) || ''
@@ -403,6 +433,8 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
     q,
     page,
     namespace,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     organization: organization?.data?.getOrganization,
     searchResults,
     locale: locale as Locale,

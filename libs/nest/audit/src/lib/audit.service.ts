@@ -100,6 +100,7 @@ export class AuditService {
       resources: isString(resources) ? [resources] : resources,
       meta,
       appVersion: process.env.APP_VERSION,
+      ...(message.alsoLog && { alsoLog: message.alsoLog }),
       ...(this.useDevLogger && { message: 'Audit record' }),
     }
 
@@ -127,7 +128,13 @@ export class AuditService {
   }
 
   audit(message: AuditMessage) {
-    this.auditLog?.info(this.formatMessage(message))
+    const formattedMessage = this.formatMessage(message)
+    this.auditLog?.info(formattedMessage)
+
+    // Log to the console if the message has the alsoLog flag set and is not in dev mode.
+    if (message.alsoLog && !this.useDevLogger) {
+      this.logger.info(formattedMessage)
+    }
   }
 
   auditPromise<T>(template: AuditTemplate<T>, promise: Promise<T>): Promise<T> {
@@ -137,6 +144,7 @@ export class AuditService {
         namespace: template.namespace,
         resources: this.unwrap(template.resources, result),
         meta: this.unwrap(template.meta, result),
+        ...(template.alsoLog && { alsoLog: template.alsoLog }),
       }
 
       if (isDefaultAuditTemplate(template)) {

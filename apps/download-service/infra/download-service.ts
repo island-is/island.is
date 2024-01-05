@@ -2,7 +2,9 @@ import { service, ServiceBuilder, ref } from '../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
+  Education,
   Finance,
+  HealthInsurance,
   UniversityOfIceland,
   Vehicles,
   WorkMachines,
@@ -40,7 +42,16 @@ export const serviceSetup = (services: {
       REGULATIONS_FILE_UPLOAD_KEY_PUBLISH:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
     })
-    .xroad(Base, Client, Finance, Vehicles, UniversityOfIceland, WorkMachines)
+    .xroad(
+      Base,
+      Client,
+      Finance,
+      HealthInsurance,
+      Vehicles,
+      UniversityOfIceland,
+      WorkMachines,
+      Education,
+    )
     .ingress({
       primary: {
         host: {

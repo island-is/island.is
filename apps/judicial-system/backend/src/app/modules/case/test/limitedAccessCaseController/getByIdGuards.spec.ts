@@ -1,10 +1,7 @@
-import { CanActivate } from '@nestjs/common'
-
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
+import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { LimitedAccessCaseExistsGuard } from '../../guards/limitedAccessCaseExists.guard'
-import { LimitedAccessCaseReceivedGuard } from '../../guards/limitedAccessCaseReceived.guard'
-import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Get by id guards', () => {
@@ -18,67 +15,11 @@ describe('LimitedAccessCaseController - Get by id guards', () => {
     )
   })
 
-  it('should have five guards', () => {
-    expect(guards).toHaveLength(5)
-  })
-
-  describe('JwtAuthGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have JwtAuthGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(JwtAuthGuard)
-    })
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have RolesGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-
-  describe('LimitedAccessCaseExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have LimitedAccessCaseExistsGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
-    })
-  })
-
-  describe('LimitedAccessCaseReceivedGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[3]()
-    })
-
-    it('should have LimitedAccessCaseReceivedGuard as guard 4', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessCaseReceivedGuard)
-    })
-  })
-
-  describe('CaseDefenderGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[4]()
-    })
-
-    it('should have CaseDefenderGuard as guard 4', () => {
-      expect(guard).toBeInstanceOf(CaseDefenderGuard)
-    })
+  it('should have the right guard configuration', () => {
+    expect(guards).toHaveLength(4)
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[1]()).toBeInstanceOf(RolesGuard)
+    expect(new guards[2]()).toBeInstanceOf(LimitedAccessCaseExistsGuard)
+    expect(new guards[3]()).toBeInstanceOf(CaseReadGuard)
   })
 })

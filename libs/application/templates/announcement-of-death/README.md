@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Application Templates Announcement of Death
 
 ## Application Sequence Diagram

@@ -5,6 +5,7 @@ interface BaseMessage {
   namespace?: string
   resources?: string | string[]
   meta?: Record<string, unknown>
+  alsoLog?: true
 }
 
 interface SystemAuditMessage extends BaseMessage {
@@ -30,6 +31,7 @@ interface BaseAuditTemplate<ResultType> {
   meta?:
     | Record<string, unknown>
     | ((result: ResultType) => Record<string, unknown>)
+  alsoLog?: true
 }
 
 interface SystemAuditTemplate<T> extends BaseAuditTemplate<T> {

@@ -1,4 +1,3 @@
-import { NextPageContext } from 'next'
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client/cache'
 import { ApolloClient } from '@apollo/client/core'
 import { defaultLanguage } from '@island.is/shared/constants'
@@ -7,6 +6,7 @@ import { createHttpLink } from '@island.is/web/graphql/httpLink'
 
 import { ClientOptions, optionsFromContext, optionsFromWindow } from './options'
 import possibleTypes from './fragmentTypes.json'
+import type { ScreenContext } from '../types'
 
 const isBrowser: boolean = process.browser
 
@@ -31,7 +31,7 @@ function create(initialState?: any, options: ClientOptions = {}) {
 export default function initApollo(
   initialState?: any,
   clientLocale?: Locale,
-  ctx?: NextPageContext,
+  ctx?: Partial<ScreenContext>,
 ) {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
@@ -47,6 +47,8 @@ export default function initApollo(
 
   // Create new instance if client is changing language
   if (currentClientLocale !== clientLocale) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     currentClientLocale = clientLocale
     apolloClient = create(initialState)
   }

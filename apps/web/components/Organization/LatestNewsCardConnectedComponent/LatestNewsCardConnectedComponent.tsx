@@ -11,6 +11,8 @@ import { GET_NEWS_WITH_CONTENT_QUERY } from '@island.is/web/screens/queries'
 import * as styles from './LatestNewsCardConnectedComponent.css'
 
 const extractHeadingsFromContent = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   content: GetSingleNewsItemQuery['getSingleNews']['content'],
   count?: number,
   skipLastHeading?: boolean,

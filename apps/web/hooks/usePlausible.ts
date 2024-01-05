@@ -7,7 +7,7 @@ export const usePlausible = (eventName: string, params: unknown) => {
   useEffect(() => {
     const maybeWindow = process.browser ? window : undefined
 
-    if (!maybeWindow || !maybeWindow?.plausible) return null
+    if (!maybeWindow || !maybeWindow?.plausible) return
 
     if (!isEqual(currentParams, params)) {
       setCurrentParams(params)

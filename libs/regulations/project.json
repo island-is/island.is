@@ -1,19 +1,20 @@
 {
-  "root": "libs/regulations",
+  "name": "regulations",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/regulations/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/regulations/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/regulations"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/regulations"],
       "options": {
-        "jestConfig": "libs/regulations/jest.config.js",
+        "jestConfig": "libs/regulations/jest.config.ts",
         "passWithNoTests": true
       }
     }

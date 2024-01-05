@@ -2,31 +2,32 @@ import React from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'
-
 import {
-  CaseState,
-  CaseType,
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
+import {
+  CaseState,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { tagCaseState as m } from './TagCaseState.strings'
 
 interface Props {
-  caseState: CaseState
-  caseType: CaseType
+  caseState?: CaseState | null
+  caseType?: CaseType | null
   isCourtRole?: boolean
-  isValidToDateInThePast?: boolean
-  courtDate?: string
+  isValidToDateInThePast?: boolean | null
+  courtDate?: string | null
 }
 
 export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
-  state: CaseState,
-  caseType: CaseType,
-  isValidToDateInThePast?: boolean,
-  courtDate?: string,
+  state?: CaseState | null,
+  caseType?: CaseType | null,
+  isValidToDateInThePast?: boolean | null,
+  courtDate?: string | null,
   isCourtRole?: boolean,
 ): { color: TagVariant; text: string } => {
   switch (state) {
@@ -61,7 +62,7 @@ export const mapCaseStateToTagVariant = (
   }
 }
 
-const TagCaseState: React.FC<Props> = (Props) => {
+const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
   const { formatMessage } = useIntl()
   const {
     caseState,
@@ -83,7 +84,7 @@ const TagCaseState: React.FC<Props> = (Props) => {
   if (!tagVariant) return null
 
   return (
-    <Tag variant={tagVariant?.color} outlined disabled>
+    <Tag variant={tagVariant?.color} outlined disabled truncate>
       {tagVariant.text}
     </Tag>
   )

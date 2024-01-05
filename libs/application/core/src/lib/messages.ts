@@ -259,6 +259,25 @@ export const coreMessages = defineMessages({
   },
 })
 
+export const coreDefaultFieldMessages = defineMessages({
+  defaultFileUploadDescription: {
+    id: 'application.system:core.default.fileUpload.description',
+    defaultMessage:
+      'Samþykktar skráartegundir eru .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+    description: 'Default file upload description',
+  },
+  defaultFileUploadHeader: {
+    id: 'application.system:core.default.fileUpload.header',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Default file upload header',
+  },
+  defaultFileUploadButtonLabel: {
+    id: 'application.system:core.default.fileUpload.buttonLabel',
+    defaultMessage: 'Veljið skjöl til að hlaða upp',
+    description: 'Default file upload button label',
+  },
+})
+
 export const coreErrorMessages = defineMessages({
   defaultTemplateApiError: {
     id: 'application.system:core.defaultTemplateApiError',
@@ -282,8 +301,7 @@ export const coreErrorMessages = defineMessages({
     description: 'Oops! Something went wrong when fetching your data',
   },
   errorDataProviderHealthInsuranceCantBeReached: {
-    id:
-      'application.system:core.error.dataProviderHealthInsuranceCantBeReached',
+    id: 'application.system:core.error.dataProviderHealthInsuranceCantBeReached',
     defaultMessage:
       'Ekki tókst að sækja upplýsingar til Sjúkratrygginga. Vinsamlegast reynið aftur síðar.',
     description: 'Oops! Something went wrong when fetching your data',
@@ -292,6 +310,18 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.error.dataProviderEstateHeirsWithoutAdvocate',
     defaultMessage: 'Erfingi undir 18 ára án málsvara',
     description: 'Young estate heirs without advocate error',
+  },
+  errorDataProviderEstateValidationFailed: {
+    id: 'application.system:core.error.dataProviderEstateValidationFailed',
+    defaultMessage: 'Gögnum hafnað',
+    description:
+      'Text that appears when district comissioner has validation fails in pre-data',
+  },
+  errorDataProviderEstateValidationFailedSummary: {
+    id: 'application.system:core.error.dataProviderEstateValidationFailedSummary',
+    defaultMessage: 'Svar frá Sýslumanni: {message}',
+    description:
+      'Text that appears when district comissioner has validation fails in pre-data',
   },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
@@ -358,6 +388,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Sending umsóknar mistókst',
     description: 'Message indicating submission after payment failed',
   },
+  applicationSubmitFailed: {
+    id: 'application.system:core.application.SubmitFailed',
+    defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission of application failed',
+  },
   paymentSubmitRetryButtonCaption: {
     id: 'application.system:core.payment.retryCaption',
     defaultMessage: 'Reyna aftur',
@@ -395,15 +430,13 @@ export const coreErrorMessages = defineMessages({
     description: 'Error Message when no company search result is found',
   },
   nationalRegistryAgeLimitNotMetTitle: {
-    id:
-      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetTitle',
+    id: 'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetTitle',
     defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
     description:
       'Error Title when age restriciton from national registry is not met',
   },
   nationalRegistryAgeLimitNotMetSummary: {
-    id:
-      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetSummary',
+    id: 'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetSummary',
     defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn ',
     description:
       'Error message when age restriciton from national registry is not met',
@@ -415,37 +448,45 @@ export const coreErrorMessages = defineMessages({
       'Error message title when a user has no children in their custody',
   },
   nationalRegistryHasNoChildrenSummary: {
-    id:
-      'application.system:core.fetch.data.nationalRegistryHasNoChildrenSummary',
+    id: 'application.system:core.fetch.data.nationalRegistryHasNoChildrenSummary',
     defaultMessage:
       'Samkvæmt gögnum úr Þjóðskrá Ísland eru engin börn skráð í þinni forsjá. Þessi umsókn er aðeins fyrir foreldra með sameiginlega forsjá. Við bendum á að hægt er að senda beiðni um breytt lögheimili barna til Sýslumanna.',
     description:
       'Error message summary when a user has no children in their custody',
   },
   nationalRegistryHasNoJointCustodyTitle: {
-    id:
-      'application.system:core.fetch.data.nationalRegistryHasNoJointCustodyTitle',
+    id: 'application.system:core.fetch.data.nationalRegistryHasNoJointCustodyTitle',
     defaultMessage: 'Þú átt engin börn í sameiginlegri forsjá',
     description:
       'Error message title when a user has no children in joint custody',
   },
   nationalRegistryHasNoJointCustodySummary: {
-    id:
-      'application.system:core.fetch.data.nationalRegistryHasNoJointCustodySummary',
+    id: 'application.system:core.fetch.data.nationalRegistryHasNoJointCustodySummary',
     defaultMessage:
       'Uppfletting í gögnum hjá Þjóðskrá Íslands skilaði eingöngu börnum sem eru alfarið í þinni forsjá.\n\nÞessi umsókn er ætluð foreldrum sem fara sameiginlega með forsjá barna sinna.',
     description:
       'Error message summary when a user has no children in joint custody',
   },
+  nationalRegistryAlreadyIcelandicCitizenTitle: {
+    id: 'application.system:core.fetch.data.nationalRegistryAlreadyIcelandicCitizenTitle',
+    defaultMessage: 'Nú þegar með íslenskt ríkisfang',
+    description:
+      'Error message title when a user already has icelandic citizenship',
+  },
+  nationalRegistryAlreadyIcelandicCitizenSummary: {
+    id: 'application.system:core.fetch.data.nationalRegistryAlreadyIcelandicCitizenSummary',
+    defaultMessage:
+      'Samkvæmt gögnum úr Þjóðskrá Ísland er innskráður notandi nú þegar með íslenskt ríkisfang.',
+    description:
+      'Error message summary when a user already has icelandic citizenship',
+  },
   drivingLicenseNoTeachingRightsTitle: {
-    id:
-      'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
+    id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
     defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
     description: 'Driving License provider no teaching rights error',
   },
   drivingLicenseNoTeachingRightsSummary: {
-    id:
-      'application.system:core.fetch.data.drivingLicenseNoTeachingRightsSummary',
+    id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsSummary',
     defaultMessage:
       'Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða.',
     description: 'Driving License provider no teaching rights error',
@@ -485,14 +526,12 @@ export const coreErrorMessages = defineMessages({
       'You do not have enough driving permission to apply for this application',
   },
   nationalRegistryLegalDomicileNotIceland: {
-    id:
-      'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',
+    id: 'application.system:core.fetch.data.nationalRegistryLegalDomicileNotIceland',
     defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
     description: 'You do not have a domicile in Iceland',
   },
   nationalRegistryCitizenshipNotIcelandic: {
-    id:
-      'application.system:core.fetch.data.nationalRegistryCitizenshipNotIcelandic',
+    id: 'application.system:core.fetch.data.nationalRegistryCitizenshipNotIcelandic',
     defaultMessage: 'Þú ert ekki með íslenskt ríkisfang',
     description: 'You do not have a domicile in Iceland',
   },
@@ -502,8 +541,7 @@ export const coreErrorMessages = defineMessages({
     description: 'You are not old enough to apply for this application',
   },
   nationalRegistryAgeNotValidDescription: {
-    id:
-      'application.system:core.fetch.data.nationalRegistryAgeNotValidDescription',
+    id: 'application.system:core.fetch.data.nationalRegistryAgeNotValidDescription',
     defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
     description: 'You are not old enough to apply for this application',
   },
@@ -512,34 +550,39 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Náði ekki að sækja fæðingarstað',
     description: 'Not able to fetch birthplace',
   },
-
+  nationalRegistryResidenceHistoryMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryResidenceHistoryMissing',
+    defaultMessage: 'Náði ekki að sækja búsetusögu',
+    description: 'Not able to fetch residence history',
+  },
+  nationalRegistryCohabitantsMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryCohabitantsMissing',
+    defaultMessage: 'Náði ekki að sækja samíbúa',
+    description: 'Not able to fetch cohabitants',
+  },
   applicationIsPrunedAndReadOnly: {
     id: 'application.system:core.fetch.data.applicationIsPrunedAndReadOnly',
     defaultMessage: 'Umsókn hefur runnið út á tíma og hefur verið gerð óvirk.',
     description: 'Application has been pruned and is not editable',
   },
   nationalIdNotFoundInNationalRegistryTitle: {
-    id:
-      'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistryTitle',
+    id: 'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistryTitle',
     defaultMessage: 'Ekki tókst að sækja gögn úr Þjóðskrá',
     description: 'Not able to fetch data from national registry title',
   },
   nationalIdNotFoundInNationalRegistrySummary: {
-    id:
-      'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistrySummary',
+    id: 'application.system:core.fetch.data.nationalIdNotFoundInNationalRegistrySummary',
     defaultMessage:
       'Ekki tókst að sækja gögn úr Þjóðskrá fyrir þessa kennitölu.',
     description: 'Not able to fetch data from national registry description',
   },
   paymentCreateChargeFailedStillInProgressTitle: {
-    id:
-      'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressTitle',
+    id: 'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressTitle',
     defaultMessage: 'Greiðsla ennþá í vinnslu',
     description: 'Not able to create payment title',
   },
   paymentCreateChargeFailedStillInProgressSummary: {
-    id:
-      'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressSummary',
+    id: 'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressSummary',
     defaultMessage: 'Greiðsla er enn í vinnslu. Vinsamlega reynið aftur síðar.',
     description: 'Not able to create payment description',
   },
@@ -547,6 +590,49 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:copyLink.copyLinkErrorToast',
     defaultMessage: 'Tókst ekki að afrita hlekk',
     description: 'Copy link error toast',
+  },
+  electricVehicleListEmptyOwner: {
+    id: 'application.system:core.fetch.data.electricVehicleListEmptyOwner',
+    defaultMessage:
+      'Þú átt engan rafbíl þar sem þú ert aðaleigandi og uppfyllir umsóknarskilyrði',
+    description:
+      'You do not have any electric vehicles where you are the main owner',
+  },
+  vehicleNotOwner: {
+    id: 'application.system:core.fetch.data.vehicleNotOwner',
+    defaultMessage: 'Þú ert ekki aðaleigandi á þessu ökutæki',
+    description: 'You are not the main owner of this vehicle',
+  },
+  noBankAccountError: {
+    id: 'application.system:core.fetch.data.noBankAccountError',
+    defaultMessage: 'Þú ert ekki með skráðan bankareikning',
+    description: 'No bank account error',
+  },
+  machinesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.machinesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein tæki',
+    description: 'Did not find any machines',
+  },
+  nationalRegistryName: {
+    id: 'application.system:core.fetch.data.nationalRegistryName',
+    defaultMessage: 'Nafn',
+    description: 'Name',
+  },
+  nationalRegistryNationalId: {
+    id: 'application.system:core.fetch.data.nationalRegistryNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'National ID',
+  },
+  nationalRegistryNameNotFoundForNationalId: {
+    id: 'application.system:core.fetch.data.nationalRegistryNameNotFoundForNationalId',
+    defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
+    description:
+      'Error message if there was no name associated with given national id',
+  },
+  nationalRegistryMinAgeNotFulfilled: {
+    id: 'application.system:core.fetch.data.nationalRegistryMinAgeNotFulfilled',
+    defaultMessage: 'Lágmarksaldur er {minAge} ára',
+    description: 'Min age not fulfilled error',
   },
 })
 
@@ -603,14 +689,12 @@ export const coreDelegationsMessages = defineMessages({
     description: 'Delegations Screen Card Button/Link',
   },
   delegationScreenTitleForOngoingApplication: {
-    id:
-      'application.system:core.delegations.delegationScreenTitleForOngoingApplication',
+    id: 'application.system:core.delegations.delegationScreenTitleForOngoingApplication',
     defaultMessage: 'Umsókn',
     description: 'Delegations screen title for ongoing application',
   },
   delegationScreenSubtitleForOngoingApplication: {
-    id:
-      'application.system:core.delegations.delegationScreenSubtitleForOngoingApplication',
+    id: 'application.system:core.delegations.delegationScreenSubtitleForOngoingApplication',
     defaultMessage:
       'Hér getur þú haldið áfram umsókn fyrir viðkomandi aðila. Ef þú þarft að breyta umsóknaraðila skaltu hefja nýja umsókn.',
     description: 'Delegations screen subtitle for ongoing application',
@@ -621,15 +705,13 @@ export const coreDelegationsMessages = defineMessages({
     description: 'Delegations screen national Id',
   },
   delegationScreenTitleApplicationNoDelegationSupport: {
-    id:
-      'application.system:core.delegations.delegationScreenTitleApplicationNoDelegationSupport',
+    id: 'application.system:core.delegations.delegationScreenTitleApplicationNoDelegationSupport',
     defaultMessage: 'Umsókn styður ekki umboð',
     description:
       'Delegations error application does not support delegations title',
   },
   delegationScreenSubtitleApplicationNoDelegationSupport: {
-    id:
-      'application.system:core.delegations.delegationScreenSubtitleApplicationNoDelegationSupport',
+    id: 'application.system:core.delegations.delegationScreenSubtitleApplicationNoDelegationSupport',
     defaultMessage: 'Vinsamlegast skiptu um notanda til að halda áfram.',
     description:
       'Delegations error application does not support delegations title',
@@ -644,7 +726,7 @@ export const coreDelegationsMessages = defineMessages({
 export const coreErrorScreenMessages = defineMessages({
   notFoundTitle: {
     id: 'application.system:core.errorScreen.notFoundTitle',
-    defaultMessage: 'Umsókn fannst ekki',
+    defaultMessage: 'Engin umsóknartegund skilgreind',
     description: 'Error screen title',
   },
   notFoundSubTitle: {
@@ -655,7 +737,7 @@ export const coreErrorScreenMessages = defineMessages({
   },
   notFoundDescription: {
     id: 'application.system:core.errorScreen.notFoundDescription#markdown',
-    defaultMessage: `* Þú ert á rangri slóð\n`,
+    defaultMessage: `* Umsóknartegund hefur ekki verið skilgreind\n`,
     description: 'Error screen description',
   },
   forbiddenTitle: {
@@ -687,7 +769,45 @@ export const coreErrorScreenMessages = defineMessages({
   },
   notExistDescription: {
     id: 'application.system:core.errorScreen.notExistDescription#markdown',
-    defaultMessage: `* Þú ert á rangri slóð\n`,
+    defaultMessage: `* Það gæti verið stafsetningarvilla í umsóknarnafni\n* Umsóknin gæti verið óaðgengileg\n* Umsóknartegund gæti hafa verið eytt\n* Umsóknartegund gæti verið ógild`,
+  },
+  applicationIdNotOwnedByUserTitle: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserTitle',
+    defaultMessage: 'Tiltekin umsókn fannst ekki',
+    description:
+      'Error screen title when application template exists but the specified application cant be found',
+  },
+  applicationIdNotOwnedByUserSubTitle: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description:
+      'Error screen subtitle when application template exists but the specified application cant be found',
+  },
+  applicationIdNotOwnedByUserDescription: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserDescription#markdown',
+    defaultMessage: `* Þú ert ekki með aðgang að umsókninni\n* Umsóknin gæti verið eytt\n* Umsóknin er í eigu annars notanda`,
+    description:
+      'Error screen description when application template exists but the specified application cant be found',
+  },
+  badSubjectTitle: {
+    id: 'application.system:core.errorScreen.badSubjectTitle',
+    defaultMessage: 'Rangt umboð',
+    description:
+      'Error screen title when user has a bad subject error after checking delegations',
+  },
+  badSubjectSubTitle: {
+    id: 'application.system:core.errorScreen.badSubjectSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin virkar ekki',
+    description:
+      'Error screen subtitle when user has a bad subject error after checking delegations',
+  },
+  badSubjectDescription: {
+    id: 'application.system:core.errorScreen.badSubjectDescription#markdown',
+    defaultMessage: `* Þú hefur ekki rétt umboð til að opna þessa umsóknartegund`,
+    description:
+      'Error screen description when user has a bad subject error after checking delegations',
   },
   lostTitle: {
     id: 'application.system:core.errorScreen.lostTitle',

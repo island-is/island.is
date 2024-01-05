@@ -4,8 +4,6 @@ import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import { AircraftRegistryService } from './aircraftRegistry.service'
 import { AllAircraftsResponse } from './dto/allAircraftsResponse'
 import { AllAircraftsInput } from './dto/allAircrafts.input'
-import { AircraftsBySearchTermResponse } from './dto/aircraftsBySearchTermResponse'
-import { AircraftsBySearchTermInput } from './dto/aircraftsBySearchTerm.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -21,17 +19,6 @@ export class AircraftRegistryResolver {
     return this.aircraftRegistryService.getAllAircrafts(
       input.pageNumber,
       input.pageSize,
-    )
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => AircraftsBySearchTermResponse, {
-    name: 'aircraftRegistryAircraftsBySearchTerm',
-  })
-  async aircraftsBySearchTerm(
-    @Args('input') input: AircraftsBySearchTermInput,
-  ) {
-    return this.aircraftRegistryService.getAircraftBySearchTerm(
       input.searchTerm,
     )
   }

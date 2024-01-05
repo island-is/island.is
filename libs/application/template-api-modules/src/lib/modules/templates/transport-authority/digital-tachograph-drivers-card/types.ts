@@ -15,13 +15,14 @@ export interface NationalRegistryBirthplace {
 }
 
 export interface DrivingLicense {
+  id?: number
   birthCountry: string
+  issued?: Date | null
+  expires?: Date | null
+  publishPlaceName?: string | null
 }
 
-export interface QualityPhoto {
-  dataUri: string
-}
-
-export interface QualitySignature {
-  dataUri: string
+export interface QualityPhotoAndSignature {
+  photoDataUri: string
+  signatureDataUri: string
 }

@@ -1,0 +1,48 @@
+{
+  "name": "clients-housing-benefit-calculator",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/housing-benefit-calculator/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/housing-benefit-calculator/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/housing-benefit-calculator/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10033/HMS-Protected/getOpenAPI?serviceCode=calc-v1 > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/housing-benefit-calculator"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/housing-benefit-calculator/gen/fetch -i libs/clients/housing-benefit-calculator/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  },
+  "tags": ["lib:client"]
+}

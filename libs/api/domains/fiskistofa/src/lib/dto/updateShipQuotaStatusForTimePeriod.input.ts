@@ -1,3 +1,4 @@
+import { CacheField } from '@island.is/nest/graphql'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
@@ -26,6 +27,6 @@ export class FiskistofaUpdateShipQuotaStatusForTimePeriodInput {
   @Field()
   timePeriod!: string
 
-  @Field(() => FiskistofaQuotaCategoryChange)
+  @CacheField(() => FiskistofaQuotaCategoryChange)
   change!: FiskistofaQuotaCategoryChange
 }

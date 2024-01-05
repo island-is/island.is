@@ -23,40 +23,68 @@ const Staging: EnvironmentConfig = {
   global: {},
 }
 
+const migrationInitContainer = {
+  containers: [
+    {
+      command: 'migration',
+      name: 'migration',
+      args: ['all'],
+      resources: {
+        limits: { cpu: '100m', memory: '1024Mi' },
+        requests: { cpu: '100m', memory: '1024Mi' },
+      },
+    },
+    {
+      command: 'seed',
+      name: 'seedation',
+      args: ['all'],
+    },
+  ],
+  envs: {
+    A: 'B',
+    B: {
+      dev: 'a',
+      staging: 'b',
+      prod: 'c',
+    },
+  },
+  secrets: {
+    S1: '/as/dfadf',
+  },
+  postgres: {
+    extensions: ['foo', 'bar'],
+  },
+}
+
+const customImageInitContainer = {
+  containers: [
+    {
+      command: 'run',
+      name: 'init',
+      image: 'container',
+      args: ['some', 'command'],
+      resources: {
+        limits: { cpu: '100m', memory: '1024Mi' },
+        requests: { cpu: '100m', memory: '1024Mi' },
+      },
+    },
+  ],
+  envs: {
+    A: 'B',
+    B: {
+      dev: 'a',
+      staging: 'b',
+      prod: 'c',
+    },
+  },
+  secrets: {
+    S1: '/as/dfadf',
+  },
+}
+
 describe('Init-container definitions', () => {
   it('Basic setup', async () => {
-    const sut = service('api').initContainer({
-      containers: [
-        {
-          command: 'migration',
-          name: 'migration',
-          args: ['all'],
-          resources: {
-            limits: { cpu: '100m', memory: '1024Mi' },
-            requests: { cpu: '100m', memory: '1024Mi' },
-          },
-        },
-        {
-          command: 'seed',
-          name: 'seedation',
-          args: ['all'],
-        },
-      ],
-      envs: {
-        A: 'B',
-        B: {
-          dev: 'a',
-          staging: 'b',
-          prod: 'c',
-        },
-      },
-      secrets: {
-        S1: '/as/dfadf',
-      },
-      postgres: {
-        extensions: ['foo', 'bar'],
-      },
-    })
+    const sut = service('api').initContainer(migrationInitContainer)
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
@@ -101,6 +129,35 @@ describe('Init-container definitions', () => {
         SERVERSIDE_FEATURES_ON: '',
       },
       secrets: { S1: '/as/dfadf', DB_PASS: '/k8s/api/DB_PASSWORD' },
+    })
+  })
+  it('Custom image container', async () => {
+    const sut = service('api').initContainer(customImageInitContainer)
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+    expect(result.serviceDef[0].initContainer).toEqual({
+      containers: [
+        {
+          command: ['run'],
+          name: 'init',
+          image: 'container',
+          args: ['some', 'command'],
+          resources: {
+            limits: { cpu: '100m', memory: '1024Mi' },
+            requests: { cpu: '100m', memory: '1024Mi' },
+          },
+        },
+      ],
+      env: {
+        A: 'B',
+        B: 'b',
+        SERVERSIDE_FEATURES_ON: '',
+      },
+      secrets: { S1: '/as/dfadf' },
     })
   })
   it('Empty list of containers', async () => {

@@ -2,14 +2,12 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
-import {
-  CaseDecision,
-  CaseTransition,
-  completedCaseStates,
-  isAcceptingCaseDecision,
-  NotificationType,
-} from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  isAcceptingCaseDecision,
+  isCompletedCase,
+} from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -17,30 +15,30 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
+  RulingModifiedModal,
   SigningModal,
-  useRequestRulingSignature,
   UserContext,
-  PageHeader,
+  useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseDecision,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { RulingModifiedModal } from '@island.is/judicial-system-web/src/routes/Court/components'
 
 import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
 
 const Confirmation = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
@@ -57,7 +55,7 @@ const Confirmation = () => {
 
   async function signRuling() {
     const shouldSign =
-      completedCaseStates.includes(workingCase.state) ||
+      isCompletedCase(workingCase.state) ||
       (await transitionCase(
         workingCase.id,
         workingCase.decision === CaseDecision.REJECTING

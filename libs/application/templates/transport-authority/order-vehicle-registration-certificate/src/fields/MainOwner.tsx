@@ -16,7 +16,9 @@ import { GET_VEHICLE_INFORMATION } from '../graphql/queries'
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
 
-export const MainOwner: FC<FieldBaseProps> = (props) => {
+export const MainOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()
