@@ -38,4 +38,11 @@ export const appealToCourtOfAppeals = defineMessages({
     defaultMessage: 'Tilkynning um móttöku kæru verður send á verjanda.',
     description: 'Texti í Kæra hefur verið send viðkomandi héraðsdómstól modal',
   },
+  requestAppealRulingNotToBePublished: {
+    id: 'judicial.system.core:appeal_to_court_of_appeals.request_appeal_ruling_not_to_be_published',
+    defaultMessage:
+      'Þess er óskað að birtingu úrskurðar á vef Landsréttar verði frestað',
+    description:
+      'Texti í svæði sem segir til um hvort óskað sé eftir að birtingu úrskurðar á vef Landsréttar verði frestað',
+  },
 })
