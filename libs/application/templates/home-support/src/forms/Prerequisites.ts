@@ -11,6 +11,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import {
   HealthInsuranceApi,
   NationalRegistryUserApi,
+  NationalRegistryCohabitantsApi,
   UserProfileApi,
 } from '../dataProviders'
 import { prerequisites, application } from '../lib/messages'
@@ -61,6 +62,11 @@ export const Prerequisites: Form = buildForm({
               provider: NationalRegistryUserApi,
               title: prerequisites.dataProviders.nationalRegistryTitle,
               subTitle: prerequisites.dataProviders.nationalRegistryDescription,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryCohabitantsApi,
+              title: '',
+              subTitle: '',
             }),
             buildDataProviderItem({
               provider: UserProfileApi,

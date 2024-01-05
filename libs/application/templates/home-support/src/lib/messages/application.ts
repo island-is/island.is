@@ -19,5 +19,10 @@ export const application = {
       defaultMessage: 'Skráðir á lögheimili',
       description: 'Legal domicile persons section title',
     },
+    legalDomicilePersonsSectionSubtitle: {
+      id: 'hst.applicant.legalDomicilePersons:section.subtitle',
+      defaultMessage: 'Einstaklingar skráðir á lögheimili',
+      description: 'Legal domicile persons section subtitle',
+    },
   }),
 }

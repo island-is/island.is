@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   PendingAction,
+  NationalRegistryCohabitantsApi,
 } from '@island.is/application/types'
 import {
   HealthInsuranceApi,
@@ -80,6 +81,7 @@ const HomeSupportTemplate: ApplicationTemplate<
               api: [
                 UserProfileApi,
                 NationalRegistryUserApi,
+                NationalRegistryCohabitantsApi,
                 HealthInsuranceApi,
               ],
             },

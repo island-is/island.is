@@ -34,6 +34,10 @@ export const HomeSupportForm: Form = buildForm({
       id: 'applicantInfoSection',
       title: m.application.applicant.infoSectionTitle,
       children: [applicantInformationMultiField()],
+      condition: (_, externalData) => {
+        console.log('externalData', externalData)
+        return true
+      },
     }),
     buildSection({
       id: 'legalDomicilePersonsSection',
@@ -41,8 +45,16 @@ export const HomeSupportForm: Form = buildForm({
       children: [
         buildDescriptionField({
           id: 'test',
-          title: 'Here be dragons',
-          description: 'Action card list of persons',
+          title: m.application.applicant.legalDomicilePersonsSectionSubtitle,
+          description: ({ externalData }) => {
+            const cohabitants = externalData.nationalRegistryCohabitants
+              .data as any[] | null
+            return (
+              cohabitants
+                ?.map((x) => `${x.fullName} (${x.nationalId})`)
+                .join('\n\n') ?? ''
+            )
+          },
           space: 2,
         }),
       ],
