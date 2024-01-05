@@ -1,4 +1,5 @@
 import React from 'react'
+
 import {
   Box,
   BoxProps,
@@ -23,12 +24,8 @@ export const MultipleStatistics: React.FC<
         borderTopWidth: 'standard',
         borderColor: 'standard',
         paddingTop: [4, 4, 6],
-        paddingBottom: [4, 4, 6],
       }
-    : {
-        paddingTop: 2,
-        paddingBottom: 2,
-      }
+    : {}
 
   return (
     <section

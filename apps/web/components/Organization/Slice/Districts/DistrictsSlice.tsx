@@ -1,5 +1,5 @@
 import React from 'react'
-import { Districts } from '@island.is/web/graphql/schema'
+
 import {
   Box,
   BoxProps,
@@ -9,6 +9,8 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
+import { Districts } from '@island.is/web/graphql/schema'
+
 import * as styles from './DistrictsSlice.css'
 
 interface SliceProps {
@@ -23,12 +25,8 @@ export const DistrictsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
         borderTopWidth: 'standard',
         borderColor: 'standard',
         paddingTop: [8, 6],
-        paddingBottom: [4, 5],
       }
-    : {
-        paddingTop: 2,
-        paddingBottom: 2,
-      }
+    : {}
 
   return (
     !!slice.links.length && (

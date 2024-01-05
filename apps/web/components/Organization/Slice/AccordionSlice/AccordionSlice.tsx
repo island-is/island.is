@@ -34,12 +34,8 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
         borderTopWidth: 'standard',
         borderColor: 'standard',
         paddingTop: [4, 4, 6],
-        paddingBottom: [4, 4, 6],
       }
-    : {
-        paddingTop: 2,
-        paddingBottom: 2,
-      }
+    : {}
 
   const { titleHeading, childHeading } = extractHeadingLevels(slice)
 

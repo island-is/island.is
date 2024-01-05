@@ -37,14 +37,14 @@ export const TwoColumnTextSlice: React.FC<
       <GridContainer>
         <Box {...boxProps}>
           <GridRow>
-            <GridColumn span={columnSpan} paddingBottom={2} hiddenBelow="lg">
+            <GridColumn span={columnSpan}  hiddenBelow="lg">
               {slice.leftTitle && (
                 <Text variant="h2" as="h2" id={labelId}>
                   <Hyphen>{slice.leftTitle}</Hyphen>
                 </Text>
               )}
             </GridColumn>
-            <GridColumn span={columnSpan} paddingBottom={2} hiddenBelow="lg">
+            <GridColumn span={columnSpan} hiddenBelow="lg">
               {slice.rightTitle && (
                 <Text variant="h2" as="h2">
                   <Hyphen>{slice.rightTitle}</Hyphen>

@@ -8,6 +8,7 @@ import {
   GridContainer,
   Inline,
   NavigationItem,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -171,45 +172,51 @@ const OrganizationHomePage: Screen<HomeProps> = ({
               )}
             </GridContainer>
           )}
-          {organizationPage?.slices?.map((slice, index) => {
-            return (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                namespace={namespace}
-                slug={organizationPage.slug}
-                fullWidth={organizationPage.theme === 'landing_page'}
-                marginBottom={
-                  index === organizationPage.slices.length - 1 ? 5 : 0
-                }
-                paddingTop={
-                  !organizationPage.description && index === 0 ? 0 : 6
-                }
-              />
-            )
-          })}
+          <Stack space={8}>
+            {organizationPage?.slices?.map((slice, index) => {
+              return (
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  namespace={namespace}
+                  slug={organizationPage.slug}
+                  fullWidth={organizationPage.theme === 'landing_page'}
+                  marginBottom={
+                    index === organizationPage.slices.length - 1 ? 5 : 0
+                  }
+                  paddingTop={
+                    !organizationPage.description && index === 0 ? 0 : 6
+                  }
+                />
+              )
+            })}
+          </Stack>
         </Box>
       }
     >
-      {organizationPage?.bottomSlices.map((slice) => (
-        <SliceMachine
-          key={slice.id}
-          slice={slice}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          namespace={namespace}
-          slug={organizationPage.slug}
-          fullWidth={true}
-          params={{
-            latestNewsSliceBackground:
-              organizationPage.theme === 'landing_page' ? 'white' : 'purple100',
-            latestNewsSliceColorVariant:
-              organizationPage.theme === 'landing_page' ? 'blue' : 'default',
-          }}
-        />
-      ))}
+      <Stack space={8}>
+        {organizationPage?.bottomSlices.map((slice) => (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            namespace={namespace}
+            slug={organizationPage.slug}
+            fullWidth={true}
+            params={{
+              latestNewsSliceBackground:
+                organizationPage.theme === 'landing_page'
+                  ? 'white'
+                  : 'purple100',
+              latestNewsSliceColorVariant:
+                organizationPage.theme === 'landing_page' ? 'blue' : 'default',
+            }}
+          />
+        ))}
+      </Stack>
       {organizationPage?.theme === 'landing_page' && (
         <LandingPageFooter
           footerItems={organizationPage.organization?.footerItems}

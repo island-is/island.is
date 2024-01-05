@@ -793,7 +793,7 @@ export const OrganizationWrapper: React.FC<
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
-          paddingBottom={[4, 4, 4]}
+          paddingBottom={[4, 4, 9]}
           isSticky={false}
           fullWidthContent={fullWidthContent}
           sidebarContent={
@@ -914,7 +914,7 @@ export const OrganizationWrapper: React.FC<
               )}
             </Box>
           )}
-
+          
           <GridContainer>
             <GridRow>
               <GridColumn

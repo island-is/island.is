@@ -274,21 +274,23 @@ const SubPage: Screen<SubPageProps> = ({
           </GridRow>
         </Box>
       </GridContainer>
-      {renderSlices(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.slices,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceCustomRenderer,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceExtraText,
-        namespace,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationPage.slug,
-      )}
+      <Stack space={8}>
+        {renderSlices(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.slices,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceCustomRenderer,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceExtraText,
+          namespace,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationPage.slug,
+        )}
+      </Stack>
     </OrganizationWrapper>
   )
 }
