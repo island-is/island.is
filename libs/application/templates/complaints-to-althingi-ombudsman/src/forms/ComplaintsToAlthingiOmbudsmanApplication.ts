@@ -436,7 +436,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     }),
     buildSection({
       id: 'previousOmbudsmanComplaint',
-      title: previousOmbudsmanComplaint.general.sectionTitle,
+      title: section.previousComplaint,
       children: [
         buildMultiField({
           id: 'previousOmbudsmanComplaint.question',
@@ -451,16 +451,9 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 { value: NO, label: shared.general.no },
               ],
             }),
-            buildDescriptionField({
-              id: 'previousOmbudsmanComplaint.description',
-              title: previousOmbudsmanComplaint.moreInfo.title,
-              description: previousOmbudsmanComplaint.moreInfo.description,
-              titleVariant: 'h3',
-              condition: (answers) => isPreviousOmbudsmanComplaint(answers),
-            }),
             buildTextField({
               id: 'previousOmbudsmanComplaint.moreInfo',
-              title: previousOmbudsmanComplaint.moreInfo.label,
+              title: previousOmbudsmanComplaint.general.label,
               rows: 6,
               placeholder: '',
               backgroundColor: 'blue',
