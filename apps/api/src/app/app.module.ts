@@ -70,6 +70,7 @@ import {
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
+import { VacanciesModule } from '@island.is/api/domains/vacancies'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
 import { StatisticsModule } from '@island.is/api/domains/statistics'
@@ -153,6 +154,7 @@ import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
+import { VacanciesClientConfig } from '@island.is/clients/vacancies'
 
 const environment = getConfig
 
@@ -260,6 +262,7 @@ const environment = getConfig
     FiskistofaModule,
     WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
+    VacanciesModule,
     AircraftRegistryModule,
     ShipRegistryModule,
     IntellectualPropertiesModule,
@@ -366,6 +369,7 @@ const environment = getConfig
         PowerBiConfig,
         AuthIdsApiClientConfig,
         IcelandicGovernmentInstitutionVacanciesClientConfig,
+        VacanciesClientConfig,
         RskRelationshipsClientConfig,
         AircraftRegistryClientConfig,
         ShipRegistryClientConfig,

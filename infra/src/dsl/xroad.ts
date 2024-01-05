@@ -630,6 +630,11 @@ export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
       staging: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1',
       prod: 'IS/GOV/5402697509/FJS-Protected/recruitment-v1',
     },
+    XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v2',
+      prod: 'IS/GOV/5402697509/FJS-Protected/recruitment-v2',
+    },
   },
   secrets: {
     ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME:

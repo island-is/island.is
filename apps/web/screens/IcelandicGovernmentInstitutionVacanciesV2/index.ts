@@ -1,5 +1,0 @@
-import ListView from './IcelandicGovernmentInstitutionVacanciesListV2'
-import DetailView from './IcelandicGovernmentInstitutionVacancyDetailsV2'
-
-export const IcelandicGovernmentInstitutionVacanciesListV2 = ListView
-export const IcelandicGovernmentInstitutionVacancyDetailsV2 = DetailView

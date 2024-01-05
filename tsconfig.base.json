@@ -141,9 +141,6 @@
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
-      "@island.is/api/domains/icelandic-government-institution-vacancies-v2": [
-        "libs/api/domains/icelandic-government-institution-vacancies-v2/src/index.ts"
-      ],
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
       ],
@@ -224,6 +221,9 @@
       ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
+      ],
+      "@island.is/api/domains/vacancies": [
+        "libs/api/domains/vacancies/src/index.ts"
       ],
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
@@ -600,9 +600,6 @@
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
-      "@island.is/clients/icelandic-government-institution-vacancies-v2": [
-        "libs/clients/icelandic-government-institution-vacancies-v2/src/index.ts"
-      ],
       "@island.is/clients/icelandic-health-insurance/health-insurance": [
         "libs/clients/icelandic-health-insurance/health-insurance/src/index.ts"
       ],
@@ -720,6 +717,7 @@
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],
+      "@island.is/clients/vacancies": ["libs/clients/vacancies/src/index.ts"],
       "@island.is/clients/vehicle-service-fjs-v1": [
         "libs/clients/vehicle-service-fjs-v1/src/index.ts"
       ],

@@ -135,7 +135,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     const vacanciesFromCms = await this.cmsElasticService.getVacancies(
       getElasticsearchIndex(defaultLang),
     )
-    return vacanciesFromCms.map(mapVacancyListItemFromCms)
+    return vacanciesFromCms.vacancies.map(mapVacancyListItemFromCms)
   }
 
   @CacheControl({ maxAge: 600 })

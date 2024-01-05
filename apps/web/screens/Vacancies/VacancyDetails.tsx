@@ -15,8 +15,6 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
-  GetIcelandicGovernmentInstitutionVacancyDetailsQuery,
-  GetIcelandicGovernmentInstitutionVacancyDetailsQueryVariables,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   IcelandicGovernmentInstitutionVacancyByIdResponse,
@@ -32,7 +30,7 @@ import { shortenText } from '@island.is/web/utils/shortenText'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import { VACANCY_INTRO_MAX_LENGTH } from './IcelandicGovernmentInstitutionVacanciesList'
+import { VACANCY_INTRO_MAX_LENGTH } from './utils'
 
 type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
 
@@ -113,14 +111,15 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
   )
 }
 
-interface IcelandicGovernmentInstitutionVacancyDetailsProps {
+interface VacancyDetailsProps {
   vacancy: Vacancy
   namespace: Record<string, string>
 }
 
-const IcelandicGovernmentInstitutionVacancyDetails: Screen<
-  IcelandicGovernmentInstitutionVacancyDetailsProps
-> = ({ vacancy, namespace }) => {
+const VacancyDetails: Screen<VacancyDetailsProps> = ({
+  vacancy,
+  namespace,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   const n = useNamespace(namespace)
@@ -154,7 +153,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
       <SidebarLayout
         sidebarContent={
           <Stack space={3}>
-            <LinkV2 {...linkResolver('vacancies')} skipTab>
+            <LinkV2 {...linkResolver('vacancies-v2')} skipTab>
               <Button
                 preTextIcon="arrowBack"
                 preTextIconType="filled"
@@ -176,12 +175,12 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
               { title: 'Ísland.is', href: '/' },
               {
                 title: n('breadcrumbTitle', 'Starfatorg'),
-                href: linkResolver('vacancies').href,
+                href: linkResolver('vacancies-v2').href,
               },
             ]}
           />
           <Hidden above="sm">
-            <LinkV2 {...linkResolver('vacancies')} skipTab>
+            <LinkV2 {...linkResolver('vacancies-v2')} skipTab>
               <Button
                 preTextIcon="arrowBack"
                 preTextIconType="filled"
@@ -353,20 +352,13 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
   )
 }
 
-IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
-  apolloClient,
-  query,
-  locale,
-}) => {
+VacancyDetails.getProps = async ({ apolloClient, query, locale }) => {
   if (!query?.id) {
     throw new CustomNextError(404, 'Vacancy was not found')
   }
 
   const [vacancyResponse, namespaceResponse] = await Promise.all([
-    apolloClient.query<
-      GetIcelandicGovernmentInstitutionVacancyDetailsQuery,
-      GetIcelandicGovernmentInstitutionVacancyDetailsQueryVariables
-    >({
+    apolloClient.query({
       query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS,
       variables: {
         input: {
@@ -396,8 +388,8 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  if (namespace['display404']) {
-    throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
+  if (namespace['display404forV2']) {
+    throw new CustomNextError(404, 'Vacancies V2 on Ísland.is are turned off')
   }
 
   return {
@@ -407,4 +399,4 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
   }
 }
 
-export default withMainLayout(IcelandicGovernmentInstitutionVacancyDetails)
+export default withMainLayout(VacancyDetails)

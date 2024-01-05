@@ -1,0 +1,1 @@
+export const VACANCY_INTRO_MAX_LENGTH = 80

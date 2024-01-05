@@ -384,11 +384,14 @@ export class CmsElasticsearchService {
         size: 1000,
       },
     )
-    return vacanciesResponse.hits.hits
-      .map<Vacancy>((response) =>
-        JSON.parse(response._source.response ?? 'null'),
-      )
-      .filter(Boolean)
+    return {
+      vacancies: vacanciesResponse.hits.hits
+        .map<Vacancy>((response) =>
+          JSON.parse(response._source.response ?? 'null'),
+        )
+        .filter(Boolean),
+      total: vacanciesResponse.hits.total.value,
+    }
   }
 
   async getPublishedMaterial(
