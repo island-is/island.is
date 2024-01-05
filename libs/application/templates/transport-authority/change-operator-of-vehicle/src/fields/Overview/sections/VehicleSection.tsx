@@ -3,8 +3,9 @@ import { FC } from 'react'
 import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { information } from '../../../lib/messages'
+import { information, overview } from '../../../lib/messages'
 import { ReviewGroup } from '@island.is/application/ui-components'
+import { formatMileage } from '../../../utils'
 
 export const VehicleSection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -16,6 +17,7 @@ export const VehicleSection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     | string
     | undefined
   const carPlate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
+  const mileage = getValueViaPath(answers, 'vehicle.mileage', '') as string
 
   return (
     <ReviewGroup isLast>
@@ -33,6 +35,15 @@ export const VehicleSection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             {carColor ? `${carColor} - ` : ''}
             {carPlate}
           </Text>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          {mileage.length > 0 && (
+            <Text>
+              {`${formatMessage(overview.labels.mileage)} ${formatMileage(
+                parseInt(mileage, 10),
+              )}`}
+            </Text>
+          )}
         </GridColumn>
       </GridRow>
     </ReviewGroup>

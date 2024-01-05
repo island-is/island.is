@@ -1,15 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
-import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
-  CaseTransition,
-  completedCaseStates,
+  isCompletedCase,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -24,21 +21,25 @@ import {
   DropdownMenu,
   Logo,
   PageHeader,
-  PastCasesTable,
   SectionHeading,
   SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
 import {
+  PastCasesTable,
+  TableSkeleton,
+} from '@island.is/judicial-system-web/src/components/Table'
+import {
+  CaseListEntry,
+  CaseState,
+  CaseTransition,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import ActiveCases from './ActiveCases'
+import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
@@ -106,9 +107,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { transitionCase, isTransitioningCase, isSendingNotification } =
     useCase()
 
-  const { data, error, loading, refetch } = useQuery<{
-    cases?: CaseListEntry[]
-  }>(CasesQuery, {
+  const { data, error, loading, refetch } = useCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -125,26 +124,23 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [CaseListEntry[], CaseListEntry[]] =
-    useMemo(() => {
-      if (!resCases) {
-        return [[], []]
+  const [allActiveCases, allPastCases] = useMemo(() => {
+    if (!resCases) {
+      return [[], []]
+    }
+
+    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
+      return c.state !== CaseState.DELETED
+    })
+
+    return partition(casesWithoutDeleted, (c) => {
+      if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
+        return !isCompletedCase(c.state)
+      } else {
+        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
       }
-
-      const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
-        return c.state !== CaseState.DELETED
-      })
-
-      return partition(casesWithoutDeleted, (c) => {
-        if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
-          return !completedCaseStates.includes(c.state)
-        } else {
-          return !(
-            completedCaseStates.includes(c.state) && c.rulingSignatureDate
-          )
-        }
-      })
-    }, [resCases, user])
+    })
+  }, [resCases, user])
 
   const {
     filter,

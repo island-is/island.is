@@ -23,7 +23,6 @@ import {
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -350,12 +349,19 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
-    const applicationType =
-      application.typeId === ApplicationTypes.OLD_AGE_PENSION
-        ? getApplicationType(application).toLowerCase()
-        : application.typeId.toLowerCase()
+    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+      const { applicationType } = getOAPApplicationAnswers(application.answers)
 
-    return await this.siaClientService.getIsEligible(auth, applicationType)
+      return await this.siaClientService.getIsEligible(
+        auth,
+        applicationType.toLowerCase(),
+      )
+    } else {
+      return await this.siaClientService.getIsEligible(
+        auth,
+        application.typeId.toLowerCase(),
+      )
+    }
   }
 
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {

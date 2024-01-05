@@ -1,33 +1,29 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
 
 import { Box } from '@island.is/island-ui/core'
 import { tables, titles } from '@island.is/judicial-system-web/messages'
 import {
-  AppealCasesTable,
   Logo,
   PageHeader,
   SectionHeading,
+  SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
-import {
-  CaseAppealState,
-  CaseListEntry,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { AppealCasesTable } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { useAppealedCasesQuery } from './appealdCases.generated'
 import { courtOfAppealCases as strings } from './Cases.strings'
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
 
-  const input = { appealState: ['RECEIVED', 'COMPLETED'] }
+  const input = {
+    appealState: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+  }
 
-  const { data: appealedCases, loading } = useQuery<{
-    cases: CaseListEntry[]
-  }>(AppealedCasesQuery, {
+  const { data: appealedCases, loading } = useAppealedCasesQuery({
     variables: { input },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',

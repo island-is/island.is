@@ -18,13 +18,13 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Item,
+  PageHeader,
   PageLayout,
   ParentCaseFiles,
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -41,7 +41,7 @@ import {
   PoliceCaseFiles,
   PoliceCaseFilesData,
 } from '../../components'
-import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
+import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -51,7 +51,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useGetPoliceCaseFilesQuery({
+  } = usePoliceCaseFilesQuery({
     variables: { input: { caseId: workingCase.id } },
     skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',

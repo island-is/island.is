@@ -6,10 +6,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  CaseListEntry,
-  isDistrictCourtUser,
-} from '@island.is/judicial-system/types'
+import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
@@ -27,11 +24,12 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  useCaseList,
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
 
 import MobilePastCase from './MobilePastCase'
 import * as styles from '../Table.css'
@@ -55,7 +53,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        b['created'].localeCompare(a['created']),
+        (b['created'] ?? '').localeCompare(a['created'] ?? ''),
       ),
     [cases],
   )

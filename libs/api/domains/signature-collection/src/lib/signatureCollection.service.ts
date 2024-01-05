@@ -14,6 +14,7 @@ import { SignatureCollectionClientService } from '@island.is/clients/signature-c
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionIdInput } from './dto/id.input'
+import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -100,8 +101,20 @@ export class SignatureCollectionService {
     )
   }
 
-  async unsign(signatureId: string): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.unsignList(signatureId)
+  async unsign(
+    signatureId: string,
+    nationalId: string,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.unsignList(
+      signatureId,
+      nationalId,
+    )
+  }
+
+  async unsignAdmin(signatureId: string): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.unsignListAdmin(
+      signatureId,
+    )
   }
 
   async cancel(
@@ -146,13 +159,11 @@ export class SignatureCollectionService {
     )
   }
 
-  async bulkUploadSignatures({
-    nationalIds,
-    listId,
-  }: SignatureCollectionListNationalIdsInput): Promise<SignatureCollectionBulk> {
+  async bulkUploadSignatures(
+    input: SignatureCollectionListBulkUploadInput,
+  ): Promise<SignatureCollectionBulk> {
     return await this.signatureCollectionClientService.bulkUploadSignatures(
-      listId,
-      nationalIds,
+      input,
     )
   }
 

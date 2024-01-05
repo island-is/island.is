@@ -28,12 +28,12 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getAvailableYears,
-  getAvailableMonths,
 } from '../lib/householdSupplementUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   BankAccountType,
-  FILE_SIZE_LIMIT,
+  MONTHS,
+  fileUploadSharedProps,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
@@ -391,13 +391,7 @@ export const HouseholdSupplementForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.monthDefaultText,
-              options: (application: Application) => {
-                const { selectedYear: year } = getApplicationAnswers(
-                  application.answers,
-                )
-                const rightYear = year ?? new Date().getFullYear().toString()
-                return getAvailableMonths(application, rightYear)
-              },
+              options: MONTHS,
             }),
           ],
         }),
@@ -434,21 +428,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 householdSupplementFormMessage.fileUpload.leaseAgreement,
               introduction:
                 householdSupplementFormMessage.fileUpload.leaseAgreement,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -471,21 +451,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 householdSupplementFormMessage.fileUpload.schoolConfirmation,
               introduction:
                 householdSupplementFormMessage.fileUpload.schoolConfirmation,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -511,21 +477,7 @@ export const HouseholdSupplementForm: Form = buildForm({
               introduction:
                 householdSupplementFormMessage.fileUpload
                   .additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),

@@ -290,7 +290,7 @@ export function getStartDateAndEndDate(
   const thisYearBirthday = new Date(
     today.getFullYear(),
     dateOfBirth.getMonth(),
-    dateOfBirth.getDay(),
+    dateOfBirth.getDate(),
   )
 
   const thisYearAge = thisYearBirthday > today ? age + 1 : age
@@ -300,9 +300,9 @@ export function getStartDateAndEndDate(
   // startDate is 1st day of the month after birhday this year
   let startDate = addDays(
     thisYearBirthdayPlusOneMonth,
-    thisYearBirthdayPlusOneMonth.getDay() + 1,
+    thisYearBirthdayPlusOneMonth.getDate() + 1,
   )
-  const endDate = addMonths(today, 6) // þarf að spyrja hvort það sé +6 eða +7
+  const endDate = addMonths(today, 6)
 
   if (thisYearAge >= oldAgePensionAge) {
     // >= 67 year old

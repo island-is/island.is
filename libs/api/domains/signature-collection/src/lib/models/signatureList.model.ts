@@ -36,4 +36,7 @@ export class SignatureCollectionList {
 
   @Field({ nullable: true })
   numberOfSignatures?: number
+
+  @Field()
+  maxReached!: boolean
 }

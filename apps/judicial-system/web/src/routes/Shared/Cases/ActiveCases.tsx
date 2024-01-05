@@ -19,26 +19,32 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
+  TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
-import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import {
+  ColumnCaseType,
+  SortButton,
+} from '@island.is/judicial-system-web/src/components/Table'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
-  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
-import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
-import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
+import {
+  useCaseList,
+  useViewport,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
@@ -246,13 +252,13 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         as="span"
                         variant="small"
                         color="dark400"
-                        title={c.policeCaseNumbers.join(', ')}
+                        title={c.policeCaseNumbers?.join(', ')}
                       >
                         {displayFirstPlusRemaining(c.policeCaseNumbers)}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span" title={c.policeCaseNumbers.join(', ')}>
+                    <Text as="span" title={c.policeCaseNumbers?.join(', ')}>
                       {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
                     </Text>
                   )}
@@ -296,7 +302,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 </td>
                 <td className={styles.td}>
                   <Text as="span">
-                    {format(parseISO(c.created), 'd.M.y', {
+                    {format(parseISO(c.created ?? ''), 'd.M.y', {
                       locale: localeIS,
                     })}
                   </Text>

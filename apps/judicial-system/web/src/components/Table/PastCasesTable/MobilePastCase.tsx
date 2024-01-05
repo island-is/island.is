@@ -10,9 +10,9 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import { TagCaseState } from '@island.is/judicial-system-web/src/components'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CategoryCard } from '@island.is/judicial-system-web/src/routes/Shared/Cases/MobileCase'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   theCase: CaseListEntry
@@ -46,7 +46,7 @@ const MobilePastCase: React.FC<Props> = ({
       ]}
       isLoading={isLoading}
     >
-      <Text title={theCase.policeCaseNumbers.join(', ')}>
+      <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
       {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}

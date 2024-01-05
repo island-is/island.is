@@ -13,10 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import {
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -25,15 +22,16 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   PdfButton,
   PoliceRequestAccordionItem,
+  RestrictionLength,
   RulingInput,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import RestrictionLength from '@island.is/judicial-system-web/src/components/RestrictionLength/RestrictionLength'
 import {
+  CaseDecision,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -44,9 +42,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
+  useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { rcRuling as m } from './Ruling.strings'
@@ -56,9 +54,9 @@ export function getConclusionAutofill(
   workingCase: Case,
   decision: CaseDecision,
   defendant: Defendant,
-  validToDate?: string,
-  isCustodyIsolation?: boolean,
-  isolationToDate?: string,
+  validToDate?: string | null,
+  isCustodyIsolation?: boolean | null,
+  isolationToDate?: string | null,
 ) {
   const isolationEndsBeforeValidToDate =
     validToDate &&
