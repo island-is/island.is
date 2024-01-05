@@ -27,7 +27,7 @@ const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
   const selectedProsecutor = useMemo(() => {
     return workingCase.prosecutor
       ? {
-          label: workingCase.prosecutor.name,
+          label: workingCase.prosecutor.name ?? '',
           value: workingCase.prosecutor.id,
         }
       : undefined
@@ -54,7 +54,7 @@ const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
           user.institution?.id === institutionId,
       )
       .map(({ id, name }) => ({
-        label: name,
+        label: name ?? '',
         value: id,
       }))
   }, [data?.users, user?.institution?.id, workingCase.creatingProsecutor])

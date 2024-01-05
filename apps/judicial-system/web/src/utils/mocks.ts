@@ -1,9 +1,9 @@
-import { CaseTransition } from '@island.is/judicial-system/types'
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
   CaseAppealState,
   CaseOrigin,
   CaseState,
+  CaseTransition,
   CaseType,
   Gender,
   InstitutionType,
@@ -166,5 +166,32 @@ export const mockCase = (caseType: CaseType): Case => {
       },
     ],
     defendantWaivesRightToCounsel: false,
+  }
+}
+
+export const mockUser = (userRole: UserRole): User => {
+  return {
+    active: true,
+    created: '',
+    email: '',
+    id: '',
+    mobileNumber: '',
+    modified: '',
+    name: '',
+    nationalId: '',
+    title: '',
+    role: userRole,
+    institution: {
+      id: '',
+      created: '',
+      modified: '',
+      type:
+        // TODO: Add more institutions if we use more user roles
+        userRole === UserRole.PROSECUTOR
+          ? InstitutionType.PROSECUTORS_OFFICE
+          : InstitutionType.DISTRICT_COURT,
+      name: '',
+      active: true,
+    },
   }
 }

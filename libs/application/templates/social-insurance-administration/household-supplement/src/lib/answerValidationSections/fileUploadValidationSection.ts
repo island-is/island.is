@@ -6,7 +6,7 @@ import {
 } from '../constants'
 import { getApplicationAnswers } from '../householdSupplementUtils'
 import { buildError } from './utils'
-import { validatorErrorMessages } from '../messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const fileUploadValidationSection = (
   newAnswer: unknown,
@@ -22,7 +22,7 @@ export const fileUploadValidationSection = (
       isEmpty((obj as { schoolConfirmation: unknown[] }).schoolConfirmation)
     ) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.schoolConfirmation`,
       )
     }
@@ -34,7 +34,7 @@ export const fileUploadValidationSection = (
   ) {
     if (isEmpty((obj as { leaseAgreement: unknown[] }).leaseAgreement)) {
       return buildError(
-        validatorErrorMessages.requireAttachment,
+        errorMessages.requireAttachment,
         `${FILEUPLOAD}.leaseAgreement`,
       )
     }

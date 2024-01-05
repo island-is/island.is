@@ -192,6 +192,11 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Kílómetrastaða',
       description: 'Vehicles mileage status',
     },
+    canceled: {
+      id: 'rf.cr.application:review.canceled',
+      defaultMessage: 'Hætt við afskráningu',
+      description: 'Deregistration canceled',
+    },
   }),
   conclusionScreen: defineMessages({
     title: {

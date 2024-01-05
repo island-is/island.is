@@ -1,6 +1,9 @@
 import { IntlShape } from 'react-intl'
 
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -10,16 +13,16 @@ import {
 
 export const displayCaseType = (
   formatMessage: IntlShape['formatMessage'],
-  caseType: CaseType,
+  caseType?: CaseType | null,
   decision?: CaseDecision | null,
 ) => {
   if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
-    return capitalize(caseTypes[CaseType.TRAVEL_BAN])
+    return capitalize(formatCaseType(CaseType.TRAVEL_BAN))
   }
 
   const type = isIndictmentCase(caseType)
     ? formatMessage(core.indictment)
-    : caseTypes[caseType]
+    : formatCaseType(caseType)
 
   return capitalize(type)
 }

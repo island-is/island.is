@@ -13,7 +13,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
-  completedCaseStates,
+  isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -89,7 +89,7 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
-        !completedCaseStates.includes(workingCase.state) &&
+        !isCompletedCase(workingCase.state) &&
         !parentCase,
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
@@ -252,7 +252,7 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
-        !completedCaseStates.includes(workingCase.state) &&
+        !isCompletedCase(workingCase.state) &&
         !parentCase,
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
@@ -415,7 +415,7 @@ const useSections = (
         (user?.role === UserRole.PROSECUTOR ||
           user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) &&
         isIndictmentCase(type) &&
-        !completedCaseStates.includes(workingCase.state),
+        !isCompletedCase(workingCase.state),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
         ? []
@@ -607,7 +607,7 @@ const useSections = (
       name: formatMessage(sections.courtSection.title),
       isActive:
         isDistrictCourtUser(user) &&
-        !completedCaseStates.includes(workingCase.state) &&
+        !isCompletedCase(workingCase.state) &&
         !parentCase,
       children:
         user?.institution?.type !== InstitutionType.DISTRICT_COURT
@@ -749,7 +749,7 @@ const useSections = (
       name: formatMessage(sections.investigationCaseCourtSection.title),
       isActive:
         isDistrictCourtUser(user) &&
-        !completedCaseStates.includes(workingCase.state) &&
+        !isCompletedCase(workingCase.state) &&
         !parentCase,
       children:
         user?.institution?.type !== InstitutionType.DISTRICT_COURT
@@ -899,8 +899,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        isDistrictCourtUser(user) &&
-        !completedCaseStates.includes(workingCase.state),
+        isDistrictCourtUser(user) && !isCompletedCase(workingCase.state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
@@ -1006,8 +1005,8 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
-        parentCase !== undefined &&
-        !completedCaseStates.includes(workingCase.state),
+        Boolean(parentCase) &&
+        !isCompletedCase(workingCase.state),
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -1106,8 +1105,8 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
-        parentCase !== undefined &&
-        !completedCaseStates.includes(workingCase.state),
+        Boolean(parentCase) &&
+        !isCompletedCase(workingCase.state),
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -1295,8 +1294,7 @@ const useSections = (
     return {
       ...getRestrictionCaseCourtSections(workingCase, user),
       isActive:
-        !completedCaseStates.includes(workingCase.state) &&
-        isDistrictCourtUser(user),
+        !isCompletedCase(workingCase.state) && isDistrictCourtUser(user),
     }
   }
 
@@ -1307,8 +1305,7 @@ const useSections = (
     return {
       ...getInvestigationCaseCourtSections(workingCase, user),
       isActive:
-        !completedCaseStates.includes(workingCase.state) &&
-        isDistrictCourtUser(user),
+        !isCompletedCase(workingCase.state) && isDistrictCourtUser(user),
     }
   }
 
@@ -1334,7 +1331,7 @@ const useSections = (
         ),
         isActive:
           !workingCase.parentCase &&
-          completedCaseStates.includes(workingCase.state) &&
+          isCompletedCase(workingCase.state) &&
           !workingCase.prosecutorPostponedAppealDate &&
           !workingCase.accusedPostponedAppealDate &&
           workingCase.appealState !== CaseAppealState.COMPLETED,
@@ -1355,7 +1352,7 @@ const useSections = (
                 workingCase.state,
               ),
               isActive:
-                completedCaseStates.includes(workingCase.state) &&
+                isCompletedCase(workingCase.state) &&
                 !workingCase.prosecutorPostponedAppealDate &&
                 !workingCase.accusedPostponedAppealDate &&
                 workingCase.appealState !== CaseAppealState.COMPLETED,

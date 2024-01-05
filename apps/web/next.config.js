@@ -80,6 +80,26 @@ const nextConfig = {
         destination: '/en/search?q=*&type=webManual',
         permanent: true,
       },
+      {
+        source: '/en/o/icelandic-health-insurance',
+        destination: '/en/o/iceland-health',
+        permanent: true,
+      },
+      {
+        source: '/en/help/icelandic-health-insurance',
+        destination: '/en/help/iceland-health',
+        permanent: true,
+      },
+      {
+        source: '/en/o/icelandic-health-insurance/:subSlug*',
+        destination: '/en/o/iceland-health/:subSlug*',
+        permanent: true,
+      },
+      {
+        source: '/en/help/icelandic-health-insurance/:subSlug*',
+        destination: '/en/help/iceland-health/:subSlug*',
+        permanent: true,
+      },
     ]
   },
   webpack: (config, { isServer }) => {

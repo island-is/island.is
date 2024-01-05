@@ -1,9 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import type { UploadFileToCourtResponse as TUploadFileToCourtResponse } from '@island.is/judicial-system/types'
-
 @ObjectType()
-export class UploadFileToCourtResponse implements TUploadFileToCourtResponse {
-  @Field()
+export class UploadFileToCourtResponse {
+  @Field(() => Boolean)
   readonly success!: boolean
 }

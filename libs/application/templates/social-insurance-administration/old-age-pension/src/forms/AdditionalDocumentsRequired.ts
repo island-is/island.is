@@ -6,9 +6,10 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import { inReviewFormMessages } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { inReviewFormMessages, oldAgePensionFormMessage } from '../lib/messages'
-import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'OldAgePensionInReviewUpload',
@@ -21,42 +22,34 @@ export const AdditionalDocumentsRequired: Form = buildForm({
     buildSection({
       id: 'reviewUpload',
       title:
-        oldAgePensionFormMessage.fileUpload.additionalDocumentRequiredTitle,
+        socialInsuranceAdministrationMessage.fileUpload
+          .additionalDocumentRequiredTitle,
       children: [
         buildMultiField({
           id: 'additionalDocumentsRequiredScreen',
           title:
-            oldAgePensionFormMessage.fileUpload.additionalDocumentRequiredTitle,
+            socialInsuranceAdministrationMessage.fileUpload
+              .additionalDocumentRequiredTitle,
           description:
-            oldAgePensionFormMessage.fileUpload
+            socialInsuranceAdministrationMessage.fileUpload
               .additionalDocumentRequiredDescription,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
               title: '',
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                oldAgePensionFormMessage.fileUpload.attachmentHeader,
-              uploadDescription:
-                oldAgePensionFormMessage.fileUpload.attachmentDescription,
-              uploadButtonLabel:
-                oldAgePensionFormMessage.fileUpload.attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
               title:
-                oldAgePensionFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalDocumentsEditSubmit,
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: oldAgePensionFormMessage.fileUpload
+                  name: socialInsuranceAdministrationMessage.fileUpload
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
                 },
