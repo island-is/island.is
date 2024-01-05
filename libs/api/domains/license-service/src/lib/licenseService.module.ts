@@ -92,6 +92,16 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.EHIC,
   },
+  {
+    type: GenericLicenseType.Passport,
+    provider: {
+      id: GenericLicenseProviderId.RegistersIceland,
+    },
+    pkpass: false,
+    pkpassVerify: false,
+    timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.Passport,
+  },
 ]
 @Module({
   imports: [LicenseClientModule, LicenseMapperModule, CmsModule],

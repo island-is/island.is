@@ -930,6 +930,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:registration',
     defaultMessage: 'Skráning',
   },
+  registrationNumber: {
+    id: 'sp.intellectual-property:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+  },
   registrationDate: {
     id: 'sp.intellectual-property:registration-date',
     defaultMessage: 'Skráningardagur',
@@ -949,6 +953,10 @@ export const ipMessages = defineMessages({
   maxValidObjectionDate: {
     id: 'sp.intellectual-property:max-valid-objection-date',
     defaultMessage: 'Andmælafrestur',
+  },
+  productsAndServices: {
+    id: 'sp.intellectual-property:products-and-services',
+    defaultMessage: 'Vörur og þjónusta',
   },
   imageCategories: {
     id: 'sp.intellectual-property:image-categories',

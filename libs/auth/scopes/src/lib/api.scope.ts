@@ -26,4 +26,5 @@ export enum ApiScope {
   samgongustofaVehicles = '@island.is/applications/samgongustofa-vehicles',
   carRecycling = '@island.is/applications/urvinnslusjodur',
   energyFunds = '@island.is/applications/orkusjodur',
+  signatureCollection = '@island.is/signature-collection',
 }

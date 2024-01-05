@@ -33,6 +33,7 @@ import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 
+const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
 const UNAUTHORIZED_LOG = 'Vehicle user authorization failed'
 const UNAUTHORIZED_OWNERSHIP_LOG =
@@ -246,11 +247,14 @@ export class VehiclesService {
     })
 
     const latestDate = res?.[0]?.readDate
+    const isIslandIsReading = res?.[0]?.originCode === ORIGIN_CODE
+    const isEditing =
+      isReadDateToday(latestDate ?? undefined) && isIslandIsReading
 
     return {
       data: res,
       permno: input.permno,
-      editing: isReadDateToday(latestDate ?? undefined),
+      editing: isEditing,
     }
   }
 
