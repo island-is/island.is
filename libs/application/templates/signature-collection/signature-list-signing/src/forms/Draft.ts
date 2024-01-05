@@ -15,7 +15,6 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import { externalData } from '../../../../../../api/mocks/src/domains/applications/factories'
 import { List } from '../lib/constants'
 
 export const Draft: Form = buildForm({
