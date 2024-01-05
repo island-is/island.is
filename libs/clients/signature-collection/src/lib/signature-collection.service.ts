@@ -200,7 +200,7 @@ export class SignatureCollectionClientService {
   ): Promise<Success> {
     const { id, isPresidential, isActive } = await this.currentCollectionInfo()
     const { ownedLists, candidate } = await this.getSignee(nationalId)
-    if (candidate?.nationalId !== nationalId) {
+    if (candidate?.nationalId !== nationalId || !candidate.id) {
       return { success: false, reasons: [ReasonKey.NotOwner] }
     }
     // Lists can only be removed from current collection if it is open
@@ -208,8 +208,7 @@ export class SignatureCollectionClientService {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
-    if (isPresidential) {
-      // TODO: frambod id!
+    if (isPresidential ) {
       await this.candidateApi.frambodIDRemoveFrambodUserPost({
         iD: parseInt(candidate.id),
       })

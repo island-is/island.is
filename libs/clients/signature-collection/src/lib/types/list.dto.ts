@@ -21,7 +21,6 @@ export interface List {
 }
 
 export function getSlug(id: number | string): string {
-  // TODO: create hash function
   return `/umsoknir/maela-med-lista/?q=${id}`
 }
 
