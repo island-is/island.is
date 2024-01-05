@@ -131,6 +131,7 @@ jobs:
             fi
 
             for label in deploy-feature "test everything"; do
+              echo "Searching for label '$label' in ${{ github.event.pull_request.labels.*.name }}"
               if [[ "${{ github.event.pull_request.labels.*.name }}" =~ $label ]]; then
                 echo "Pull request contains '$label', continuing with build"
                 echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
