@@ -129,10 +129,14 @@ jobs:
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
             fi
-            if [[ "$deployFeature" == "true" ]]; then
-              echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-              exit 0
+
+            for label in deploy-feature "test everything"; do
+              if [[ "${{ github.event.pull_request.labels.*.name }}" =~ $label ]]; then
+                echo "Pull request contains '$label', continuing with build"
+                echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
+                exit 0
+              fi
+            done
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
