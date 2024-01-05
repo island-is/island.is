@@ -154,9 +154,9 @@ const FormProvider = ({ children }: Props) => {
   })
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && router.pathname !== '/') {
       window.location.assign(
-        `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
+        `${api.apiUrl}/api/auth/login?redirectRoute=${router.pathname}`,
       )
     } else if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
@@ -169,7 +169,15 @@ const FormProvider = ({ children }: Props) => {
         getCase({ variables: { input: { id } } })
       }
     }
-  }, [getCase, getLimitedAccessCase, id, isAuthenticated, limitedAccess, state])
+  }, [
+    getCase,
+    getLimitedAccessCase,
+    id,
+    isAuthenticated,
+    limitedAccess,
+    router.pathname,
+    state,
+  ])
 
   useEffect(() => {
     let timeout: undefined | NodeJS.Timeout
