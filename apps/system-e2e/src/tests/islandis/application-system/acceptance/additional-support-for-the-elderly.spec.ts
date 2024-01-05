@@ -83,12 +83,12 @@ applicationTest.describe('Additional support for the elderly', () => {
             name: label(socialInsuranceAdministrationMessage.payment.title),
           }),
         ).toBeVisible()
-
-        const paymentBank = page.getByRole('textbox', {
-          name: label(socialInsuranceAdministrationMessage.payment.bank),
-        })
-        await paymentBank.selectText()
-        await paymentBank.type('051226054678')
+        // // TODO: Setja aftur inn? eða er í lagi að sleppa? (virkar ekki að senda inn umsókn ef breyti banka, skilar villu "An error occurred while saving bank information.")
+        // const paymentBank = page.getByRole('textbox', {
+        //   name: label(socialInsuranceAdministrationMessage.payment.bank),
+        // })
+        // await paymentBank.selectText()
+        // await paymentBank.type('051226054678')
 
         await page
           .getByRole('region', {
@@ -124,13 +124,12 @@ applicationTest.describe('Additional support for the elderly', () => {
             name: label(socialInsuranceAdministrationMessage.period.title),
           }),
         ).toBeVisible()
-
-        // TODO: Þurfum að skoða þetta betur því fáum núna upp alla mánuði en ekki bara þá sem má sækja um
         await page.getByTestId('select-period.year').click()
-        await page.keyboard.press('ArrowUp')
         await page.keyboard.press('Enter')
 
+        // TODO: Þurfum að skoða þetta betur, getur komið upp að mánuður er ekki gildur
         await page.getByTestId('select-period.month').click()
+        await page.keyboard.press('ArrowUp')
         await page.keyboard.press('Enter')
         await proceed()
       })
