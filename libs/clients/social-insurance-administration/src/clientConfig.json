@@ -543,9 +543,9 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": { "schema": {} },
-            "text/json": { "schema": {} },
-            "application/*+json": { "schema": {} }
+            "application/json": { "schema": { "type": "object" } },
+            "text/json": { "schema": { "type": "object" } },
+            "application/*+json": { "schema": { "type": "object" } }
           }
         },
         "responses": {

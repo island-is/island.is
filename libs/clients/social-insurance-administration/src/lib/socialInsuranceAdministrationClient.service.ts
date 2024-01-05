@@ -1,12 +1,12 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  ApplicantApi,
   ApplicationApi,
-  CreateApplicationFromPaperReturn,
+  ApplicantApi,
   GeneralApi,
-  Document,
+  CreateApplicationFromPaperReturn,
   ApplicantInfoReturn,
+  Document,
   IsEligibleForApplicationReturn,
 } from '../../gen/fetch'
 
@@ -29,12 +29,15 @@ export class SocialInsuranceAdministrationClientService {
 
   sendApplication(
     user: User,
-    //applicationDTO: ApplicationDTO,
+    applicationDTO: object,
     applicationType: string,
   ): Promise<CreateApplicationFromPaperReturn> {
     return this.applicationApiWithAuth(
       user,
-    ).apiProtectedV1ApplicationApplicationTypePost({ applicationType })
+    ).apiProtectedV1ApplicationApplicationTypePost({
+      applicationType,
+      body: applicationDTO,
+    })
   }
 
   sendAdditionalDocuments(
