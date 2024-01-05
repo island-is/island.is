@@ -174,8 +174,6 @@ export class SignatureCollectionClientService {
 
   async unsignList(listId: string, nationalId: string): Promise<Success> {
     const { signature } = await this.getSignee(nationalId)
-    console.log(signature)
-    console.log(listId)
     if (!signature || signature.listId !== listId || !signature.id) {
       return { success: false, reasons: [ReasonKey.SignatureNotFound] }
     }
@@ -183,7 +181,6 @@ export class SignatureCollectionClientService {
       await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
         iD: parseInt(signature.id),
       })
-    console.log(signatureRemoved)
     return { success: !!signatureRemoved }
   }
 
