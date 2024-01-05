@@ -24,10 +24,10 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
-  GetIcelandicGovernmentInstitutionVacanciesQuery,
-  GetIcelandicGovernmentInstitutionVacanciesQueryVariables,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
+  GetVacanciesQuery,
+  GetVacanciesQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -37,14 +37,14 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { shortenText } from '@island.is/web/utils/shortenText'
 
 import { GET_NAMESPACE_QUERY } from '../queries'
-import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
+import { GET_VACANCIES } from '../queries/Vacancies'
 import { VACANCY_INTRO_MAX_LENGTH } from './utils'
 import * as styles from './VacanciesList.css'
 
 const ITEMS_PER_PAGE = 8
 
 interface VacanciesListProps {
-  vacancies: any[]
+  vacancies: GetVacanciesQuery['vacancies']['vacancies']
   namespace: Record<string, string>
 }
 
@@ -240,8 +240,9 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                   <FocusableBox
                     height="full"
                     href={`${
-                      linkResolver('vacancydetails', [vacancy.id?.toString()])
-                        .href
+                      linkResolver('vacancydetails-v2', [
+                        vacancy.id?.toString() as string,
+                      ]).href
                     }`}
                     background="white"
                     borderRadius="large"
@@ -396,18 +397,19 @@ VacanciesList.getProps = async ({ apolloClient, locale }) => {
   }
 
   const vacanciesResponse = await apolloClient.query<
-    GetIcelandicGovernmentInstitutionVacanciesQuery,
-    GetIcelandicGovernmentInstitutionVacanciesQueryVariables
+    GetVacanciesQuery,
+    GetVacanciesQueryVariables
   >({
-    query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES,
+    query: GET_VACANCIES,
     variables: {
-      input: {},
+      input: {
+        page: 1,
+      },
     },
   })
 
   return {
-    vacancies:
-      vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies,
+    vacancies: vacanciesResponse.data.vacancies.vacancies,
     namespace,
     customAlertBanner: namespace['customAlertBanner'],
   }
