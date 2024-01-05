@@ -52,6 +52,36 @@ const userSeeds = `[
     "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
   },
   {
+    "id": "3bbf247c-c14f-40b5-8f4c-dd3236e7f667",
+    "national_id": "0000033339",
+    "name": "Lára Landsréttardómari",
+    "title": "landsréttardómari",
+    "mobile_number": "2333333",
+    "email": "lara@dummy.dd",
+    "role": "COURT_OF_APPEALS_JUDGE",
+    "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
+  },
+  {
+    "id": "2bbf247c-c14f-40b5-8f4c-dd3236e7f667",
+    "national_id": "0000000001",
+    "name": "Lilja Landsréttardómari",
+    "title": "landsréttardómari",
+    "mobile_number": "1333333",
+    "email": "lilja@dummy.dd",
+    "role": "COURT_OF_APPEALS_JUDGE",
+    "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
+  },
+  {
+    "id": "1bbf247c-c14f-40b5-8f4c-dd3236e7f667",
+    "national_id": "0033333339",
+    "name": "Dóri Dómritari",
+    "title": "landsréttardómari",
+    "mobile_number": "5333333",
+    "email": "dori@dummy.dd",
+    "role": "COURT_OF_APPEALS_ASSISTANT",
+    "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
+  },
+  {
     "id": "a9506891-96cc-4c5d-ad14-eb2f2ef39bb7",
     "national_id": "0000007779",
     "name": "Aðalheiður aðstoðar",
