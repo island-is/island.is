@@ -14,7 +14,7 @@ export enum LoginErrorCodes {
   UNAUTHORIZED = 'innskraning-ekki-notandi',
   UNAUTHENTICATED = 'innskraning-utrunnin',
   LOGIN_FAILED = 'innskraning-ogild',
-  OLD_LOGIN = 'innskraning-gomul',
+  DEPRECATED_LOGIN = 'innskraning-gomul',
 }
 
 export type directionType = 'ascending' | 'descending'

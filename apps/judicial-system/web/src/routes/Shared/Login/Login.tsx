@@ -40,12 +40,12 @@ const Login = () => {
             message={formatMessage(login.error.unAuthorized.message)}
           />
         )
-      case LoginErrorCodes.OLD_LOGIN:
+      case LoginErrorCodes.DEPRECATED_LOGIN:
         return (
           <AlertMessage
             type="warning"
-            title={formatMessage(login.error.oldLogin.title)}
-            message={formatMessage(login.error.oldLogin.message)}
+            title={formatMessage(login.error.deprecatedLogin.title)}
+            message={formatMessage(login.error.deprecatedLogin.message)}
           />
         )
       default:

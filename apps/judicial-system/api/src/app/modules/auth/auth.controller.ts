@@ -185,9 +185,9 @@ export class AuthController {
   }
 
   @Get('callback')
-  async oldAuth(@Res() res: Response) {
+  async deprecatedAuth(@Res() res: Response) {
     this.logger.debug(
-      'Received login request through the old authentication system',
+      'Received login request through a deprecated authentication system',
     )
 
     res.redirect('/?villa=innskraning-gomul')
