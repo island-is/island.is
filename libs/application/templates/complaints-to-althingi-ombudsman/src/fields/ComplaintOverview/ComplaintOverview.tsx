@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, YES } from '@island.is/application/types'
 import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
@@ -150,6 +150,29 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
               label={complaintOverview.labels.courtActionSecond}
               value={yesNoMessageMapper[answers.courtActionAnswer]}
             />
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+      <ReviewGroup
+        isEditable={isEditable}
+        editAction={() => changeScreens('previousOmbudsmanComplaint.question')}
+      >
+        <GridRow>
+          <GridColumn span="9/12">
+            <ValueLine
+              label={complaintOverview.labels.previousOmbudsmanComplaint}
+              value={
+                yesNoMessageMapper[answers.previousOmbudsmanComplaint.Answer]
+              }
+            />
+            {answers.previousOmbudsmanComplaint.Answer === YES && (
+              <ValueLine
+                label={
+                  complaintOverview.labels.previousOmbudsmanComplaintDescription
+                }
+                value={answers.previousOmbudsmanComplaint.moreInfo}
+              />
+            )}
           </GridColumn>
         </GridRow>
       </ReviewGroup>
