@@ -80,6 +80,26 @@ const userSeeds = `[
     "email": "valgard@dummy.dd",
     "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b3ae-2a85-11ec-8d3d-0242ac130003"
+  },
+  {
+    "id": "b129c0f6-d8db-4ac1-a1de-f517657b6e83",
+    "national_id": "9999999999",
+    "name": "Test Sækjandi",
+    "title": "Test Saksóknari",
+    "mobile_number": "9999999",
+    "email": "testsaekjandi@dummy.dd",
+    "role": "PROSECUTOR",
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+  },
+  {
+    "id": "12301c51-2bb7-4014-9469-f7ac2cd9c794",
+    "national_id": "0000000000",
+    "name": "Test Dómari",
+    "title": "Test Dómari",
+    "mobile_number": "0000009",
+    "email": "testdomari@dummy.dd",
+    "role": "DISTRICT_COURT_JUDGE",
+    "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   }
 ]`
 

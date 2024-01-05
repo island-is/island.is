@@ -1,46 +1,26 @@
-import { BrowserContext, expect, test } from '@playwright/test'
+import { expect } from '@playwright/test'
 import faker from 'faker'
 import path from 'path'
 
+import { test } from '../utils/judicialSystemTest'
 import {
-  JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
-  JUDICIAL_SYSTEM_JUDGE_HOME_URL,
-  urls,
-} from '../../../../support/urls'
-import { verifyRequestCompletion } from '../../../../support/api-tools'
-import { judicialSystemSession } from '../../../../support/session'
+  randomPoliceCaseNumber,
+  randomCourtCaseNumber,
+  randomAppealCaseNumber,
+} from '../utils/helpers'
 
-let prosecutorContext: BrowserContext
-let judgeContext: BrowserContext
-let coaContext: BrowserContext
+import { urls } from '../../../support/urls'
+import { verifyRequestCompletion } from '../../../support/api-tools'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
-
-test.beforeAll(async ({ browser }) => {
-  prosecutorContext = await judicialSystemSession({
-    browser,
-  })
-  judgeContext = await judicialSystemSession({
-    browser,
-    homeUrl: JUDICIAL_SYSTEM_JUDGE_HOME_URL,
-  })
-  coaContext = await judicialSystemSession({
-    browser,
-    homeUrl: JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
-  })
-})
-
-test.afterAll(async () => {
-  await prosecutorContext.close()
-  await judgeContext.close()
-  await coaContext.close()
-})
 
 test.describe.serial('Custody tests', () => {
   let caseId = ''
 
-  test('prosecutor should submit a custody request to court', async () => {
-    const page = await prosecutorContext.newPage()
+  test('prosecutor should submit a custody request to court', async ({
+    prosecutorPage,
+  }) => {
+    const page = prosecutorPage
 
     // Case list
     await page.goto('/krofur')
@@ -70,7 +50,6 @@ test.describe.serial('Custody tests', () => {
       .fill('jl-auto-defender@kolibri.is')
     await page.locator('input[name=defender-access-no]').click()
     await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
-
     Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase'),
@@ -78,7 +57,6 @@ test.describe.serial('Custody tests', () => {
       const createCaseResult = values[1]
       caseId = createCaseResult.data.createCase.id
     })
-
     await expect(page).toHaveURL(/.*\/krafa\/fyrirtaka\/.*/)
 
     // Court date request
@@ -131,8 +109,8 @@ test.describe.serial('Custody tests', () => {
     await expect(page).toHaveURL(/.*\/krofur/)
   })
 
-  test('court should submit decision in case', async () => {
-    const page = await judgeContext.newPage()
+  test('court should submit decision in case', async ({ judgePage }) => {
+    const page = judgePage
     await page.goto(`/domur/mottaka/${caseId}`)
 
     // Reception and assignment
@@ -208,8 +186,8 @@ test.describe.serial('Custody tests', () => {
     ])
   })
 
-  test('prosecutor should appeal case', async () => {
-    const page = prosecutorContext.pages()[0]
+  test('prosecutor should appeal case', async ({ prosecutorPage }) => {
+    const page = prosecutorPage
     await page.goto(`krafa/yfirlit/${caseId}`)
 
     await expect(page).toHaveURL(/.*\/krafa\/yfirlit\/.*/)
@@ -252,7 +230,6 @@ test.describe.serial('Custody tests', () => {
       .locator('button')
       .click()
     const statementFileChooser = await statementFileChooserPromise
-    //await page.waitForTimeout(100)
     await statementFileChooser.setFiles(path.join(__dirname, 'TestAppeal.pdf'))
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
@@ -262,8 +239,8 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('modalSecondaryButton').click()
   })
 
-  test('judge should receive appealed case', async () => {
-    const page = judgeContext.pages()[0]
+  test('judge should receive appealed case', async ({ judgePage }) => {
+    const page = judgePage
 
     await page.goto(`krafa/yfirlit/${caseId}`)
     await page
@@ -272,8 +249,10 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('modalPrimaryButton').click()
   })
 
-  test('coa judge should submit decision in appeal case', async () => {
-    const page = await coaContext.newPage()
+  test('coa judge should submit decision in appeal case', async ({
+    coaPage,
+  }) => {
+    const page = coaPage
     await page.goto(`/landsrettur/yfirlit/${caseId}`)
 
     // Overview
@@ -282,13 +261,11 @@ test.describe.serial('Custody tests', () => {
 
     // Appeal case reception
     await expect(page).toHaveURL(/.*\/landsrettur\/kaera\/.*/)
-
+    await page.getByText('Mál nr. *').fill(randomAppealCaseNumber())
     await Promise.all([
-      page.getByText('Mál nr. *').fill(randomAppealCaseNumber()),
       page.getByText('Mál nr. *').press('Tab'),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
-
     await page
       .getByTestId('select-assistant')
       .getByTestId('icon-chevronDown')
@@ -320,7 +297,6 @@ test.describe.serial('Custody tests', () => {
     const fileChooserPromise = page.waitForEvent('filechooser')
     await page.getByText('Velja gögn til að hlaða upp').click()
     const fileChooser = await fileChooserPromise
-    //await page.waitForTimeout(1000)
     await fileChooser.setFiles(path.join(__dirname, 'TestAppeal.pdf'))
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
@@ -332,15 +308,3 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('continueButton').click()
   })
 })
-
-function randomPoliceCaseNumber() {
-  return `007-${new Date().getFullYear()}-${Math.floor(Math.random() * 100000)}`
-}
-
-function randomCourtCaseNumber() {
-  return `R-${Math.floor(Math.random() * 1000)}/${new Date().getFullYear()}`
-}
-
-function randomAppealCaseNumber() {
-  return `${Math.floor(Math.random() * 1000)}/${new Date().getFullYear()}`
-}
