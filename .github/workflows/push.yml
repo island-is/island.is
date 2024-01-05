@@ -130,11 +130,13 @@ jobs:
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
             fi
 
-            for label in deploy-feature "test everything"; do
-              echo "Searching for label '$label' in ${{ github.event.pull_request.labels.*.name }}"
-              if [[ "${{ github.event.pull_request.labels.*.name }}" =~ $label ]]; then
-                echo "Pull request contains '$label', continuing with build"
-                echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
+            PR_LABELS=("${{ github.event.pull_request.labels.*.name }}")
+            ALLOWED_LABELS=("deploy-feature" "test everything")
+            for pr_label in "${PR_LABELS[@]}"
+              echo "Searching for '$pr_label' in '${ALLOWED_LABELS[*]}'"
+              if [[ " ${ALLOWED_LABELS[*]} " =~ " $pr_label " ]]; then
+                echo "Pull request contains '$pr_label', continuing with build"
+                echo "PRE_CHECK=label:$pr_label" >> $GITHUB_OUTPUT
                 exit 0
               fi
             done
