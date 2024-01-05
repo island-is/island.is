@@ -53,14 +53,6 @@ jobs:
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
-      - name: Debug labels, user groups, user, pull request, event name, environment
-        run: |
-          echo "Sender: ${{ github.event.sender.login }}"
-          echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
-          echo "User: ${{ toJSON(github.event.pull_request.user) }}"
-          echo "Event name: ${{ github.event_name }}"
-          echo "Environment: ${{ toJSON(env) }}"
-
       - name: Get git branch
         id: git-branch
         run: |
