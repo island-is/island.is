@@ -379,4 +379,7 @@ export class Case {
 
   @Field({ nullable: true })
   readonly appealIsolationToDate?: string
+
+  @Field(() => [UserRole], { nullable: true })
+  readonly requestAppealRulingNotToBePublished?: UserRole[]
 }

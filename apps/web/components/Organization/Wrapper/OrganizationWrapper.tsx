@@ -346,7 +346,8 @@ export const OrganizationExternalLinks: React.FC<
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
               organizationPage.slug === 'sjukratryggingar' ||
-              organizationPage.slug === 'icelandic-health-insurance'
+              organizationPage.slug === 'icelandic-health-insurance' ||
+              organizationPage.slug === 'iceland-health'
 
             let variant = undefined
             if (
@@ -420,6 +421,7 @@ export const OrganizationFooter: React.FC<
       break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
+    case 'iceland-health':
       OrganizationFooterComponent = (
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
