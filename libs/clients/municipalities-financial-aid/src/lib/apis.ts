@@ -25,8 +25,8 @@ export const exportedApis = [
         fetchApi: createEnhancedFetch({
           name: Api.name,
         }),
-        // headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
-        // basePath: `http://localhost:3344`,
+        headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
+        basePath: `http://localhost:3344`,
       }),
     )
   },
