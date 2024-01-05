@@ -59,6 +59,7 @@ jobs:
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           echo "GIT_BRANCH=${GIT_BRANCH}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
@@ -75,8 +76,12 @@ jobs:
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
 
+      - name: Check user permissions
+        uses: actions-cool/check-user-permission@v2
+        id: check-permission
+
       - name: Set environment variable to test everything on label 'test everything'
-        if: "contains(github.event.pull_request.labels.*.name, 'test everything') && (contains(github.event.sender.login, '@island-is/core') || contains(github.event.sender.login, '@island-is/devops'))"
+        if: "contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin'"
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_OUTPUT
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
