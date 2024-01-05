@@ -25,5 +25,6 @@ query listbyid($input: SignatureCollectionIdInput!) {
     collectionId
     slug
     numberOfSignatures
+    maxReached
   }
 }
