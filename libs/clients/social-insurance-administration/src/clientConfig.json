@@ -660,7 +660,8 @@
                 "items": { "$ref": "#/components/schemas/Document" }
               }
             }
-          }
+          },
+          "required": "true"
         },
         "responses": {
           "400": {

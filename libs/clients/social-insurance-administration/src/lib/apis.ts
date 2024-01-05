@@ -3,7 +3,7 @@ import {
   ApplicationApi,
   GeneralApi,
   Configuration,
-} from '../../v2/gen/fetch'
+} from '../../gen/fetch'
 import { ApiConfiguration } from './apiConfiguration'
 
 export const exportedApis = [ApplicantApi, ApplicationApi, GeneralApi].map(

@@ -1,9 +1,6 @@
 import { Application, YES, YesOrNo } from '@island.is/application/types'
 import parse from 'date-fns/parse'
-import {
-  ApplicationDTO,
-  Attachment,
-} from '@island.is/clients/social-insurance-administration'
+import { Document as Attachment } from '@island.is/clients/social-insurance-administration'
 import {
   ApplicationType,
   getApplicationAnswers as getOAPApplicationAnswers,
@@ -24,7 +21,7 @@ import {
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
   uploads: Attachment[],
-): ApplicationDTO => {
+): object => {
   const {
     applicationType,
     selectedYear,
@@ -55,7 +52,7 @@ export const transformApplicationToOldAgePensionDTO = (
     YES,
   ) as YesOrNo
 
-  const oldAgePensionDTO: ApplicationDTO = {
+  const oldAgePensionDTO = {
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -101,7 +98,7 @@ export const transformApplicationToOldAgePensionDTO = (
 export const transformApplicationToHouseholdSupplementDTO = (
   application: Application,
   uploads: Attachment[],
-): ApplicationDTO => {
+): object => {
   const {
     selectedYear,
     selectedMonth,
@@ -122,7 +119,7 @@ export const transformApplicationToHouseholdSupplementDTO = (
     application.externalData,
   )
 
-  const householdSupplementDTO: ApplicationDTO = {
+  const householdSupplementDTO = {
     applicationId: application.id,
     applicantInfo: {
       email: email,
