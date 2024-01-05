@@ -53,6 +53,14 @@ jobs:
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
+      - name: Debug labels, user groups, user, pull request, event name, environment
+        run: |
+          echo "Sender: ${{ github.event.sender.login }}"
+          echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
+          echo "User: ${{ toJSON(github.event.pull_request.user) }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Environment: ${{ toJSON(env) }}"
+
       - name: Get git branch
         id: git-branch
         run: |
@@ -75,7 +83,7 @@ jobs:
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
 
-      - name: Set env for label
+      - name: Set environment variable to test everything on label 'test everything'
         if: "contains(github.event.pull_request.labels.*.name, 'test everything') && (contains(github.event.sender.login, '@island-is/core') || contains(github.event.sender.login, '@island-is/devops'))"
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_OUTPUT
