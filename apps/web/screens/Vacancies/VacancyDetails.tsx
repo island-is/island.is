@@ -17,7 +17,8 @@ import {
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
-  IcelandicGovernmentInstitutionVacancyByIdResponse,
+  GetVacancyByIdQuery,
+  GetVacancyByIdQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -29,10 +30,10 @@ import { shortenText } from '@island.is/web/utils/shortenText'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
-import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
+import { GET_VACANCY_DETAILS } from '../queries/Vacancies'
 import { VACANCY_INTRO_MAX_LENGTH } from './utils'
 
-type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
+type Vacancy = GetVacancyByIdQuery['vacancyById']['vacancy']
 
 interface InformationPanelProps {
   vacancy: Vacancy
@@ -358,8 +359,8 @@ VacancyDetails.getProps = async ({ apolloClient, query, locale }) => {
   }
 
   const [vacancyResponse, namespaceResponse] = await Promise.all([
-    apolloClient.query({
-      query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS,
+    apolloClient.query<GetVacancyByIdQuery, GetVacancyByIdQueryVariables>({
+      query: GET_VACANCY_DETAILS,
       variables: {
         input: {
           id: query.id as string,
@@ -377,8 +378,7 @@ VacancyDetails.getProps = async ({ apolloClient, query, locale }) => {
     }),
   ])
 
-  const vacancy =
-    vacancyResponse?.data?.icelandicGovernmentInstitutionVacancyById?.vacancy
+  const vacancy = vacancyResponse?.data?.vacancyById?.vacancy
 
   if (!vacancy) {
     throw new CustomNextError(404, 'Vacancy was not found')

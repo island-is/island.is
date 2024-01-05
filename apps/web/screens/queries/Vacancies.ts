@@ -23,7 +23,7 @@ export const GET_VACANCIES = gql`
 `
 
 export const GET_VACANCY_DETAILS = gql`
-  query GetVacancyByIdQuery($input: VacancyByIdInput!) {
+  query GetVacancyById($input: VacancyByIdInput!) {
     vacancyById(input: $input) {
       vacancy {
         id
