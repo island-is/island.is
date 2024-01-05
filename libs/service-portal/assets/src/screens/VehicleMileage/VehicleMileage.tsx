@@ -23,6 +23,7 @@ import {
   icelandLocalTime,
 } from '@island.is/service-portal/core'
 
+import { isReadDateToday } from '../../utils/readDate'
 import { vehicleMessage as messages } from '../../lib/messages'
 import {
   useGetUsersMileageQuery,
@@ -226,10 +227,21 @@ const VehicleMileage = () => {
                           // Input number must be higher than the highest known mileage registration value
 
                           if (details) {
-                            // If we're in editing mode, we want to find the highest number ignoring the most recent one.
-                            const [, ...rest] = details
+                            // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
+                            const confirmedRegistrations = details.filter(
+                              (item) => {
+                                if (item.readDate) {
+                                  const isIslandIsReadingToday =
+                                    item.originCode === ORIGIN_CODE &&
+                                    isReadDateToday(new Date(item.readDate))
+                                  return !isIslandIsReadingToday
+                                }
+                                return true
+                              },
+                            )
+
                             const detailArray = isFormEditable
-                              ? rest
+                              ? confirmedRegistrations
                               : [...details]
 
                             const highestRegistration = Math.max(
