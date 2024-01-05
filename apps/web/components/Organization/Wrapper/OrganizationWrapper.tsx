@@ -914,7 +914,7 @@ export const OrganizationWrapper: React.FC<
               )}
             </Box>
           )}
-          
+
           <GridContainer>
             <GridRow>
               <GridColumn

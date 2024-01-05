@@ -10,7 +10,7 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
-import { Article,FeaturedArticles } from '@island.is/web/graphql/schema'
+import { Article, FeaturedArticles } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { hasProcessEntries } from '@island.is/web/utils/article'
