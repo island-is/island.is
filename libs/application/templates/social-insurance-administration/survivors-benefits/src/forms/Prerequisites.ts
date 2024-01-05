@@ -4,7 +4,6 @@ import {
   buildForm,
   buildSection,
   buildSubmitField,
-  buildSubSection,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -15,70 +14,73 @@ import {
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'SurvivorsBenefitsPrerequisites',
-  title: survivorsBenefitsFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'prerequisites',
-      title: survivorsBenefitsFormMessage.pre.prerequisitesSection,
+      id: 'externalData',
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [
-        buildSubSection({
-          id: 'externalData',
-          title: survivorsBenefitsFormMessage.pre.externalDataSection,
-          children: [
-            buildExternalDataProvider({
-              id: 'approveExternalData',
-              title: survivorsBenefitsFormMessage.pre.externalDataSection,
-              subTitle: survivorsBenefitsFormMessage.pre.externalDataSubTitle,
-              checkboxLabel: survivorsBenefitsFormMessage.pre.checkboxProvider,
-              submitField: buildSubmitField({
-                id: 'submit',
-                placement: 'footer',
-                title: survivorsBenefitsFormMessage.pre.startApplication,
-                refetchApplicationAfterSubmit: true,
-                actions: [
-                  {
-                    event: DefaultEvents.SUBMIT,
-                    name: survivorsBenefitsFormMessage.pre.startApplication,
-                    type: 'primary',
-                  },
-                ],
-              }),
-              dataProviders: [
-                buildDataProviderItem({
-                  provider: NationalRegistryUserApi,
-                  title: survivorsBenefitsFormMessage.pre.registryIcelandTitle,
-                  subTitle:
-                    survivorsBenefitsFormMessage.pre.registryIcelandDescription,
-                }),
-                buildDataProviderItem({
-                  provider: NationalRegistrySpouseApi,
-                  title: '',
-                }),
-              ],
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre.externalDataDescription,
+          checkboxLabel:
+            socialInsuranceAdministrationMessage.pre.checkboxProvider,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: socialInsuranceAdministrationMessage.pre.startApplication,
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: socialInsuranceAdministrationMessage.pre.startApplication,
+                type: 'primary',
+              },
+            ],
+          }),
+          dataProviders: [
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title:
+                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
+              subTitle:
+                survivorsBenefitsFormMessage.pre.registryIcelandDescription,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: '',
             }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'info',
-      title: survivorsBenefitsFormMessage.info.section,
+      id: 'infoSection',
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [],
     }),
     buildSection({
-      id: 'comment',
-      title: survivorsBenefitsFormMessage.additionalInfo.section,
+      id: 'additionalInfo',
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [],
     }),
     buildSection({
-      id: 'confirmation',
-      title: survivorsBenefitsFormMessage.confirm.section,
+      id: 'confirm',
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
+      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
       children: [],
     }),
   ],

@@ -15,9 +15,14 @@ import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { Events, Roles, States } from './constants'
+import {
+  Events,
+  Roles,
+  States,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { dataSchema } from './dataSchema'
 import { survivorsBenefitsFormMessage } from './messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 const SurvivorsBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -26,17 +31,16 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.SURVIVORS_BENEFITS,
   name: survivorsBenefitsFormMessage.shared.applicationTitle,
-  institution: survivorsBenefitsFormMessage.shared.institution,
-  translationNamespaces: [
+  institution: socialInsuranceAdministrationMessage.shared.institution,
+  translationNamespaces:
     ApplicationConfigurations.SurvivorsBenefits.translation,
-  ],
   dataSchema,
   stateMachineConfig: {
-    initial: States.PREREQUESITES,
+    initial: States.PREREQUISITES,
     states: {
-      [States.PREREQUESITES]: {
+      [States.PREREQUISITES]: {
         meta: {
-          name: States.PREREQUESITES,
+          name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,

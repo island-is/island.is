@@ -290,6 +290,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.SURVIVORS_BENEFITS]: {
     slug: 'danarbaetur',
-    translation: 'sb.application',
+    translation: ['sb.application', 'sia.application', 'uiForms.application'],
   },
 }
