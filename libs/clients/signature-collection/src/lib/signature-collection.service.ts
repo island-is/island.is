@@ -208,7 +208,7 @@ export class SignatureCollectionClientService {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
-    if (isPresidential ) {
+    if (isPresidential) {
       await this.candidateApi.frambodIDRemoveFrambodUserPost({
         iD: parseInt(candidate.id),
       })
