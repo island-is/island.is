@@ -15,16 +15,12 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/additional-support-for-the-elderly"
+      ],
       "options": {
-        "jestConfig": "libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/jest.config.ts",
+        "jestConfig": "libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/jest.config.js",
         "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
       }
     },
     "extract-strings": {

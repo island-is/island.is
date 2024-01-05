@@ -23,6 +23,7 @@ import {
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -33,6 +34,7 @@ import {
   getApplicationType,
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToOldAgePensionDTO,
+  transformApplicationToAdditionalSupportForTheElderlyDTO,
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
@@ -247,6 +249,28 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
+  private async getASFTEAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const { additionalAttachments } = getASFTEApplicationAnswers(
+      application.answers,
+    )
+
+    const attachments: Attachment[] = []
+
+    if (additionalAttachments && additionalAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.Other,
+          additionalAttachments,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
   async getPdf(key: string) {
     const file = await this.s3
       .getObject({ Bucket: this.attachmentBucket, Key: key })
@@ -297,10 +321,19 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (
       application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
     ) {
-      // TODO: Implement sendApplication for ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
-      console.log(
-        'Send additional support for the elderly application (Not implemented)',
+      const attachments = await this.getASFTEAttachments(application)
+      const additionalSupportForTheElderlyDTO =
+        transformApplicationToAdditionalSupportForTheElderlyDTO(
+          application,
+          attachments,
+        )
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        additionalSupportForTheElderlyDTO,
+        application.typeId.toLowerCase(),
       )
+      return response
     }
   }
 
