@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import { useRouter } from 'next/router'
@@ -125,6 +131,8 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
     useState<string>('')
   const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
     useState<string>('')
+
+  const restrictionLengthRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
 
@@ -328,6 +336,15 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
     },
     [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
   )
+
+  useEffect(() => {
+    if (workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) {
+      restrictionLengthRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }
+  }, [workingCase.decision])
 
   return (
     <PageLayout
@@ -653,6 +670,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
               handleIsolationChange={handleIsolationChange}
               handleIsolationDateChange={handleIsolationDateChange}
               handleValidToDateChange={handleValidToDateChange}
+              ref={restrictionLengthRef}
             />
           )}
 
