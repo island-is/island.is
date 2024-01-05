@@ -33,7 +33,7 @@ export type ReadWriteValues =
     }
 export interface RoleInState<
   T extends EventObject = AnyEventObject,
-  R = unknown
+  R = unknown,
 > {
   id: ApplicationRole
   read?: ReadWriteValues
@@ -86,7 +86,7 @@ export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
 
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
-  R = unknown
+  R = unknown,
 > {
   name: string
   lifecycle: StateLifeCycle
@@ -142,14 +142,14 @@ export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>
 export type ApplicationStateMachine<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
+  TEvents extends EventObject,
 > = StateMachine<TContext, TStateSchema, TEvents>
 
 // manually overwrites the initial state for the template as well so the interpreter starts in the current application state
 export function createApplicationMachine<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvent>,
-  TEvent extends EventObject = AnyEventObject
+  TEvent extends EventObject = AnyEventObject,
 >(
   application: Application,
   config: StateNodeConfig<TContext, TStateSchema, TEvent>,

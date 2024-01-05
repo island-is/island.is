@@ -1,19 +1,20 @@
 {
-  "root": "libs/api/domains/auth-admin",
+  "name": "api-domains-auth-admin",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/auth-admin/src",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/auth-admin/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/auth-admin"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/auth-admin"],
       "options": {
-        "jestConfig": "libs/api/domains/auth-admin/jest.config.js",
+        "jestConfig": "libs/api/domains/auth-admin/jest.config.ts",
         "passWithNoTests": true
       }
     }

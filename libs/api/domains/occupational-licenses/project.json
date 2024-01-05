@@ -1,0 +1,28 @@
+{
+  "name": "api-domains-occupational-licenses",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/occupational-licenses/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/occupational-licenses/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/occupational-licenses/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/occupational-licenses"
+      ]
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}

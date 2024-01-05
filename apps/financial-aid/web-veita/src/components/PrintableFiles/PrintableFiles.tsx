@@ -41,11 +41,7 @@ const PrintableFiles = ({ applicationId }: Props) => {
               )}
 
               {getFileType(file.key) === 'pdf' && (
-                <PdfViewer
-                  file={file.url}
-                  renderMode="canvas"
-                  showAllPages={true}
-                />
+                <PdfViewer file={file.url} showAllPages={true} />
               )}
             </Box>
           )

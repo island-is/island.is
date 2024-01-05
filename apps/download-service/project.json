@@ -1,5 +1,6 @@
 {
-  "root": "apps/download-service",
+  "name": "download-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/download-service/src",
   "projectType": "application",
   "prefix": "download-service",
@@ -22,22 +23,22 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "download-service:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/download-service/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/download-service"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/download-service"],
       "options": {
-        "jestConfig": "apps/download-service/jest.config.js",
+        "jestConfig": "apps/download-service/jest.config.ts",
         "passWithNoTests": true
       }
     },

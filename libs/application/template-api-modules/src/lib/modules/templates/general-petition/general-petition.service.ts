@@ -7,7 +7,7 @@ import {
   EndorsementListApi,
   EndorsementMetadataDtoFieldEnum,
   EndorsementListTagsEnum,
-} from './gen/fetch/endorsements'
+} from './gen/fetch'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { getValueViaPath } from '@island.is/application/core'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -90,8 +90,8 @@ export class GeneralPetitionService extends BaseTemplateApiService {
 
     // This gets written to externalData under the key createEndorsementList
     return {
-      id:
-        endorsementListResponse.data?.endorsementSystemCreateEndorsementList.id,
+      id: endorsementListResponse.data?.endorsementSystemCreateEndorsementList
+        .id,
     }
   }
 }

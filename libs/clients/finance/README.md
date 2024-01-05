@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Finance" -->
-
 # Finance Client
 
 ## About

@@ -10,12 +10,13 @@ export const PERMANENT_FOSTER_CARE = 'foster_care'
 export const ADOPTION = 'primary_adoption'
 export const OTHER_NO_CHILDREN_FOUND = 'other'
 
-export const FILE_SIZE_LIMIT = 10000000 // 10MB
+export const FILE_SIZE_LIMIT = 2000000 // 2MB
 
 export const NO_UNION = 'F000'
 export const NO_PRIVATE_PENSION_FUND = 'X000'
 export const NO_UNEMPLOYED_BENEFITS = 'B000'
 export const NO_MULTIPLE_BIRTHS = '1'
+export const MINIMUM_PERIOD_LENGTH = 14
 
 export enum UnEmployedBenefitTypes {
   vmst = 'Vinnumálastofnun (atvinnuleysisbætur)',
@@ -69,6 +70,7 @@ export enum States {
   EMPLOYER_ACTION = 'employerRequiresAction',
 
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
+  VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE = 'vinnumalastofnunApprovalAbortChange',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
@@ -78,13 +80,14 @@ export enum States {
   CLOSED = 'closed',
 
   // Edit Flow
-  EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',
+  EDIT_OR_ADD_EMPLOYERS_AND_PERIODS = 'editOrAddEmployersAndPeriods',
 
   EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
   EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',
   EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
+  VINNUMALASTOFNUN_APPROVE_EDITS_ABORT = 'vinnumalastofnunApproveEditsAbort',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRAND_APPLICATION = 'residenceGrantApplication',
@@ -118,4 +121,6 @@ export enum FileType {
   PERIOD = 'period',
   DOCUMENT = 'document',
   DOCUMENTPERIOD = 'documentPeriod',
+  EMPPER = 'empper',
+  EMPLOYER = 'employer',
 }

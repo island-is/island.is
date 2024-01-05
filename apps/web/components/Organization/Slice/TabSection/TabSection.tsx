@@ -30,7 +30,7 @@ interface SliceProps {
   containerPaddingBottom?: ResponsiveSpace
 }
 
-export const TabSectionSlice: React.FC<SliceProps> = ({
+export const TabSectionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slice,
   contentPaddingTop = [0, 4, 6],
   contentPaddingBottom = [8, 0, 6],

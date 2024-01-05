@@ -1,11 +1,12 @@
 {
-  "root": "libs/api/domains/api-catalogue",
+  "name": "api-domains-api-catalogue",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/api-catalogue/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/api/domains/api-catalogue/**/*.{ts,tsx,js,jsx}"
@@ -13,12 +14,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/api-catalogue/jest.config.js",
+        "jestConfig": "libs/api/domains/api-catalogue/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/api-catalogue"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/api-catalogue"]
     }
   },
   "tags": ["lib:api", "scope:api"]

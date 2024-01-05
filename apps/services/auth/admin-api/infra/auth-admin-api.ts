@@ -59,11 +59,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     .resources({
       limits: {
         cpu: '400m',
-        memory: '384Mi',
+        memory: '768Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '256Mi',
+        memory: '512Mi',
       },
     })
     .replicaCount({

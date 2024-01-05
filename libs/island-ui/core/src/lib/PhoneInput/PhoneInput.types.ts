@@ -1,30 +1,35 @@
-import { ActionMeta, OptionsType, ValueType } from 'react-select'
-import { AriaError, InputBackgroundColor } from '../Input/types'
-import { Option } from '../Select/Select'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+import { GroupBase, Props } from 'react-select'
 
-export interface CountryCodeSelectProps {
-  name: string
-  options: OptionsType<Option>
-  id?: string
-  disabled?: boolean
-  onChange?: ((
-    value: ValueType<Option>,
-    actionMeta: ActionMeta<Option>,
-  ) => void) &
-    ((value: ValueType<Option>, action: ActionMeta<Option>) => void)
-  value?: ValueType<Option>
-  placeholder?: string
-  defaultValue?: Option
-  isSearchable?: boolean
-  size?: 'xs' | 'sm' | 'md'
-  isCreatable?: boolean
-  backgroundColor?: InputBackgroundColor
-  ariaError?: AriaError
-  isClearable?: boolean
+import { Option as OptionType } from '../Select/Select.types'
+
+type PropsFromSelectProps<Value> = Pick<
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  Props<OptionType<Value>, false, GroupBase<OptionType<Value>>>,
+  | 'name'
+  | 'options'
+  | 'id'
+  | 'isDisabled'
+  | 'onChange'
+  | 'value'
+  | 'placeholder'
+  | 'defaultValue'
+  | 'isSearchable'
+  | 'size'
+  | 'isCreatable'
+  | 'backgroundColor'
+  | 'ariaError'
+  | 'isClearable'
+  | 'dataTestId'
+>
+
+export type CountryCodeSelectProps = PropsFromSelectProps<string> & {
   inputHasFocus?: boolean
   inputHasLabel?: boolean
-  onFocus?: () => void
-  onBlur?: () => void
-  onMenuOpen?: () => void
-  onMenuClose?: () => void
+  onFocus?(): void
+  onBlur?(): void
+  onMenuOpen?(): void
+  onMenuClose?(): void
 }

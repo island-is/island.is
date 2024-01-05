@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { useIntl, IntlShape } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 
-import { Input, Box } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
+import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { caseResubmitModal as m } from '@island.is/judicial-system-web/messages'
 
 import { Modal } from '..'
+import { strings } from './CaseResubmitModal.strings'
 
 interface Props {
   workingCase: Case
@@ -17,14 +18,17 @@ export function getCaseResubmittedText(
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
 ) {
-  return formatMessage(m.text, {
-    sendRequestToDefender: Boolean(
-      workingCase.sendRequestToDefender && workingCase.courtDate,
-    ),
+  return formatMessage(strings.text, {
+    requestSharedWithDefender:
+      (workingCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.COURT_DATE &&
+        Boolean(workingCase.courtDate)) ||
+      workingCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.READY_FOR_COURT,
   })
 }
 
-const CaseResubmitModal: React.FC<Props> = ({
+const CaseResubmitModal: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
   isLoading,
   onClose,
@@ -34,11 +38,11 @@ const CaseResubmitModal: React.FC<Props> = ({
   const [explanation, setExplanation] = useState('')
   return (
     <Modal
-      title={formatMessage(m.heading)}
+      title={formatMessage(strings.heading)}
       text={getCaseResubmittedText(formatMessage, workingCase)}
       onClose={onClose}
-      primaryButtonText={formatMessage(m.primaryButtonText)}
-      secondaryButtonText={formatMessage(m.secondaryButtonText)}
+      primaryButtonText={formatMessage(strings.primaryButtonText)}
+      secondaryButtonText={formatMessage(strings.secondaryButtonText)}
       onSecondaryButtonClick={onClose}
       onPrimaryButtonClick={() => {
         if (explanation) {
@@ -51,8 +55,8 @@ const CaseResubmitModal: React.FC<Props> = ({
       <Box marginBottom={10}>
         <Input
           name="caseResentExplanation"
-          label={formatMessage(m.input.label)}
-          placeholder={formatMessage(m.input.placeholder)}
+          label={formatMessage(strings.inputLabel)}
+          placeholder={formatMessage(strings.inputPlaceholder)}
           onChange={(evt) => setExplanation(evt.target.value)}
           textarea
           rows={7}

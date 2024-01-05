@@ -13,6 +13,7 @@ import {
 import { ApiActions } from '../shared'
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
+import { Features } from '@island.is/feature-flags'
 
 const States = {
   draft: 'draft',
@@ -38,6 +39,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
     ApplicationConfigurations.ComplaintsToAlthingiOmbudsman.translation,
   ],
   dataSchema: ComplaintsToAlthingiOmbudsmanSchema,
+  featureFlag: Features.complaintsToAlthingiOmbudsman,
   stateMachineConfig: {
     initial: States.draft,
     states: {
@@ -84,10 +86,9 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/ComplaintsToAlthingiOmbudsmanSubmitted'
-                ).then((val) =>
-                  Promise.resolve(val.ComplaintsToAlthingiOmbudsmanSubmitted),
+                import('../forms/ComplaintsToAlthingiOmbudsmanSubmitted').then(
+                  (val) =>
+                    Promise.resolve(val.ComplaintsToAlthingiOmbudsmanSubmitted),
                 ),
             },
           ],

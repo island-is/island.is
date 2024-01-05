@@ -2,7 +2,7 @@ import {
   RESTRICTION_CASE_POLICE_REPORT_ROUTE,
   RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import { intercept, mockCase } from '../../../utils'
 
@@ -10,6 +10,7 @@ describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
   const interceptByType = (type: CaseType) => {
     const caseData = mockCase(CaseType.CUSTODY)
 
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept({ ...caseData, type })
     cy.visit(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/test_id`)
@@ -26,15 +27,19 @@ describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
       cy.getByTestid('datepicker').click()
       cy.getByTestid('datepickerIncreaseMonth').click()
       cy.contains('15').click()
-      cy.getByTestid('reqValidToDate-time').type('13:').blur()
+      cy.getByTestid('reqValidToDate-time').type('13:')
+      cy.getByTestid('reqValidToDate-time').blur()
       cy.getByTestid('inputErrorMessage').contains('Dæmi: 12:34 eða 1:23')
-      cy.getByTestid('reqValidToDate-time').clear().blur()
+      cy.getByTestid('reqValidToDate-time').clear()
+      cy.getByTestid('reqValidToDate-time').blur()
       cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-      cy.getByTestid('reqValidToDate-time').clear().type('1333')
+      cy.getByTestid('reqValidToDate-time').clear()
+      cy.getByTestid('reqValidToDate-time').type('1333')
       cy.getByTestid('inputErrorMessage').should('not.exist')
 
       cy.getByTestid('continueButton').should('be.disabled')
-      cy.getByTestid('lawsBroken').click().blur()
+      cy.getByTestid('lawsBroken').click()
+      cy.getByTestid('lawsBroken').blur()
       cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
       cy.getByTestid('lawsBroken').type('Lorem ipsum')
       cy.getByTestid('inputErrorMessage').should('not.exist')
@@ -54,7 +59,8 @@ describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
       cy.getByTestid('datepickerIncreaseMonth').click()
       cy.contains('15').click()
 
-      cy.getByTestid('reqValidToDate-time').clear().type('1333')
+      cy.getByTestid('reqValidToDate-time').clear()
+      cy.getByTestid('reqValidToDate-time').type('1333')
       cy.wait('@UpdateCaseMutation')
         .its('response.body.data.updateCase')
         .should('have.any.key', 'demands')
@@ -64,7 +70,8 @@ describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
       cy.getByTestid('datepicker').click()
       cy.getByTestid('datepickerIncreaseMonth').click()
       cy.contains('15').click()
-      cy.getByTestid('reqValidToDate-time').clear().type('1333')
+      cy.getByTestid('reqValidToDate-time').clear()
+      cy.getByTestid('reqValidToDate-time').type('1333')
       cy.getByTestid('lawsBroken').type('Lorem ipsum')
       cy.getByTestid('checkbox').first().click()
       cy.getByTestid('continueButton').click()

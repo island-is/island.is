@@ -9,9 +9,9 @@ import {
 
 import { intercept, makeCourt, mockCase, makeCaseFile } from '../../../utils'
 
-describe('Signed verdict overview - Staff - Investigation case', () => {
+describe('Signed verdict overview - Prison system staff - Investigation case', () => {
   const conclusion = faker.lorem.paragraph(1)
-  const caseFile = makeCaseFile('caseId', 'caseFileName')
+  const caseFile = makeCaseFile()
 
   beforeEach(() => {
     const caseData = mockCase(CaseType.INTERNET_USAGE)
@@ -23,7 +23,7 @@ describe('Signed verdict overview - Staff - Investigation case', () => {
       caseFiles: [caseFile],
     }
 
-    cy.login(UserRole.STAFF)
+    cy.login(UserRole.PRISON_SYSTEM_STAFF)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)

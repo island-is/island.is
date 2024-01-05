@@ -1,11 +1,12 @@
 {
-  "root": "libs/portals/admin/icelandic-names-registry",
+  "name": "portals-admin-icelandic-names-registry",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/icelandic-names-registry/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/portals/admin/icelandic-names-registry/**/*.{ts,tsx,js,jsx}"
@@ -13,21 +14,23 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/portals/admin/icelandic-names-registry/jest.config.js",
+        "jestConfig": "libs/portals/admin/icelandic-names-registry/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/portals/admin/icelandic-names-registry"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/admin/icelandic-names-registry"
+      ]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/portals/admin/icelandic-names-registry/src/lib/messages.ts"
       }
     },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "parallel": false,
         "command": "graphql-codegen --config libs/portals/admin/icelandic-names-registry/codegen.yml"

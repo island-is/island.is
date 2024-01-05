@@ -5,7 +5,10 @@ import { PropertiesManager } from './PropertiesManager'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-export const SelectProperty: FC<FieldBaseProps> = ({ application, field }) => {
+export const SelectProperty: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  field,
+}) => {
   const { externalData } = application
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
   const { formatMessage } = useLocale()

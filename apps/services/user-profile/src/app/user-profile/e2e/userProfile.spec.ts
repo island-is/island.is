@@ -9,6 +9,7 @@ import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { SMS_VERIFICATION_MAX_TRIES } from '../verification.service'
 import { DataStatus } from '../types/dataStatusTypes'
+import { formatPhoneNumber } from '../../utils/format-phone-number'
 
 jest.useFakeTimers()
 
@@ -112,16 +113,18 @@ describe('User profile API', () => {
         .send(mockProfileNoEmailNoPhone)
         .expect(201)
 
-      const conflictResponse = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/userProfile')
         .send(mockProfileNoEmailNoPhone)
         .expect(409)
 
       // Assert
-      expect(conflictResponse.body.error).toBe('Conflict')
-      expect(conflictResponse.body.message).toBe(
-        `A profile with nationalId - "${mockProfile.nationalId}" already exists`,
-      )
+      expect(response.body).toMatchObject({
+        detail: `A profile with nationalId - "${mockProfile.nationalId}" already exists`,
+        status: 409,
+        title: 'Conflict',
+        type: 'https://httpstatuses.org/409',
+      })
     })
 
     it('POST /userProfile should return 400 bad request on invalid locale', async () => {
@@ -135,13 +138,12 @@ describe('User profile API', () => {
         .expect(400)
 
       // Assert
-      expect(response.body.error).toBe('Bad Request')
-
-      expect(response.body.message).toEqual(
-        expect.arrayContaining([
-          'locale must be one of the following values: en, is',
-        ]),
-      )
+      expect(response.body).toMatchObject({
+        detail: ['locale must be one of the following values: en, is'],
+        status: 400,
+        title: 'Bad Request',
+        type: 'https://httpstatuses.org/400',
+      })
     })
 
     it('POST /userProrfile should return 403 forbidden on invalid authentication', async () => {
@@ -158,17 +160,14 @@ describe('User profile API', () => {
   })
 
   describe('GET /userProfile', () => {
-    it('GET /userProfile should return 404 not found error msg', async () => {
+    it('GET /userProfile should return 204 and empty body for NoContentException', async () => {
       // Act
       const getResponse = await request(app.getHttpServer())
         .get(`/userProfile/${mockProfile.nationalId}`)
-        .expect(404)
+        .expect(204)
 
       // Assert
-      expect(getResponse.body.error).toBe('Not Found')
-      expect(getResponse.body.message).toBe(
-        `A user profile with nationalId ${mockProfile.nationalId} does not exist`,
-      )
+      expect(getResponse.body).toStrictEqual({})
     })
 
     it('GET /userProfile should return profile', async () => {
@@ -251,7 +250,7 @@ describe('User profile API', () => {
   })
 
   describe('POST /emailVerification/:nationalId', () => {
-    it('POST /emailVerification/:nationalId re-creates an email verfication in db', async () => {
+    it('POST /emailVerification/:nationalId re-creates an email verification in db', async () => {
       const sutProfile = {
         ...mockProfileNoEmailNoPhone,
         email,
@@ -309,9 +308,12 @@ describe('User profile API', () => {
         // Assert
         .expect(400)
 
-      expect(response.body.message).toBe(
-        'Profile does not have a configured email address.',
-      )
+      expect(response.body).toMatchObject({
+        detail: 'Profile does not have a configured email address.',
+        status: 400,
+        title: 'Bad Request',
+        type: 'https://httpstatuses.org/400',
+      })
     })
 
     it('POST /emailVerification/:nationalId returns 403 forbidden for invalid authentication', async () => {
@@ -456,7 +458,7 @@ describe('User profile API', () => {
       expect(response.body).toMatchInlineSnapshot(`
         Object {
           "confirmed": false,
-          "message": "Email verification does not exist for this user",
+          "message": "Email verification code does not match.",
         }
       `)
     })
@@ -495,14 +497,15 @@ describe('User profile API', () => {
       expect(response.body).toMatchInlineSnapshot(`
         Object {
           "confirmed": false,
-          "message": "Email verification with hash ${INCORRECT_HASH} does not exist",
+          "message": "Email verification code does not match.",
+          "remainingAttempts": 4,
         }
       `)
     })
   })
 
   describe('POST /smsVerification', () => {
-    it('POST /smsVerification/ creates a sms verfication in db', async () => {
+    it('POST /smsVerification/ creates a sms verification in db', async () => {
       // Act
       const spy = jest.spyOn(smsService, 'sendSms')
       await request(app.getHttpServer())
@@ -604,7 +607,7 @@ describe('User profile API', () => {
       expect(response.body).toMatchInlineSnapshot(`
         Object {
           "confirmed": false,
-          "message": "Sms verification does not exist for this user",
+          "message": "SMS verification does not exist for this user",
         }
       `)
     })
@@ -688,6 +691,7 @@ describe('User profile API', () => {
         Object {
           "confirmed": false,
           "message": "Too many failed SMS verifications. Please restart verification.",
+          "remainingAttempts": -1,
         }
       `)
     })
@@ -766,7 +770,7 @@ describe('User profile API', () => {
         .post(`/confirmSms/${mockProfile.nationalId}`)
         .send({
           code: verification.smsCode,
-          mobilePhoneNumber: '1234567',
+          mobilePhoneNumber: '7777777',
         })
         .expect(200)
 
@@ -774,7 +778,7 @@ describe('User profile API', () => {
       expect(response.body).toMatchInlineSnapshot(`
           Object {
             "confirmed": false,
-            "message": "Sms verification does not exist for this user",
+            "message": "SMS verification does not exist for this user",
           }
         `)
     })

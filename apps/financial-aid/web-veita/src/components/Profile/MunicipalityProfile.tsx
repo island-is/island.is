@@ -47,13 +47,11 @@ const MunicipalityProfile = ({
   const [adminUsers, setAdminUsers] = useState(municipality.adminUsers)
   const { admin } = useContext(AdminContext)
 
-  const [
-    getAdminUsers,
-    { data: adminUsersData, loading: AdminUsersLoading },
-  ] = useLazyQuery<{ municipality: Municipality }, { input: { id: string } }>(
-    AdminUsersQuery,
-    { fetchPolicy: 'no-cache' },
-  )
+  const [getAdminUsers, { data: adminUsersData, loading: AdminUsersLoading }] =
+    useLazyQuery<{ municipality: Municipality }, { input: { id: string } }>(
+      AdminUsersQuery,
+      { fetchPolicy: 'no-cache' },
+    )
 
   useEffect(() => {
     if (adminUsersData?.municipality.adminUsers) {

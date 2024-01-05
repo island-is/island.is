@@ -1,11 +1,12 @@
 {
-  "root": "libs/judicial-system/audit-trail",
+  "name": "judicial-system-audit-trail",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/judicial-system/audit-trail/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/judicial-system/audit-trail/**/*.{ts,tsx,js,jsx}"
@@ -13,12 +14,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/judicial-system/audit-trail/jest.config.js",
+        "jestConfig": "libs/judicial-system/audit-trail/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/judicial-system/audit-trail"]
+      "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/audit-trail"]
     }
   },
   "tags": ["lib:judicial-system-api", "scope:judicial-system-api"]

@@ -1,22 +1,23 @@
 {
-  "root": "libs/dokobit-signing",
+  "name": "dokobit-signing",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dokobit-signing/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/dokobit-signing/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/dokobit-signing/jest.config.js",
+        "jestConfig": "libs/dokobit-signing/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/dokobit-signing"]
+      "outputs": ["{workspaceRoot}/coverage/libs/dokobit-signing"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

@@ -129,7 +129,7 @@ const mockDelegations = {
 }
 
 beforeAll(() => {
-  jest.useFakeTimers().setSystemTime(today.getTime())
+  jest.useFakeTimers({ now: today })
 })
 
 describe('ActorDelegationsController', () => {
@@ -301,6 +301,48 @@ describe('ActorDelegationsController', () => {
             nationalRegistryUsers,
           ),
         )
+      })
+
+      it('should return only delegations related to the provided otherUser national id', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incoming,
+        ])
+        const expectedModel = await findExpectedMergedDelegationModels(
+          delegationModel,
+          mockDelegations.incoming.id,
+          [Scopes[0].name],
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.Custom}&otherUser=${mockDelegations.incoming.fromNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingMergedDelegations(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
+      })
+
+      it('should return empty array when provided otherUser national id is not related to any delegation', async () => {
+        // Arrange
+        const unrelatedNationalId = createNationalId('person')
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.Custom}&otherUser=${unrelatedNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
       })
 
       it('should return custom delegations and not deceased delegations, when the delegationTypes filter is custom type', async () => {

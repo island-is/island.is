@@ -1,37 +1,40 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { FetchResult, MutationFunctionOptions } from '@apollo/client'
 
+import { Exact } from '@island.is/api/schema'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
-  CaseDecision,
-  CaseState,
-  CaseType,
-  UserRole,
   isAcceptingCaseDecision,
-  isCourtRole,
+  isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonSystemUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import {
+  core,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   PdfButton,
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
 import {
-  core,
-  signedVerdictOverview as m,
-} from '@island.is/judicial-system-web/messages'
-import { Box, Button, Text } from '@island.is/island-ui/core'
-import { FetchResult, MutationFunctionOptions } from '@apollo/client'
-import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/RulingSignature.generated'
-import { Exact } from '@island.is/api/schema'
-import { RequestSignatureInput } from '@island.is/judicial-system-web/src/graphql/schema'
-import { RequestCourtRecordSignatureMutation } from '../../CourtRecordSignature.generated'
+  CaseDecision,
+  CaseState,
+  CaseType,
+  RequestSignatureInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { RequestCourtRecordSignatureMutation } from '../../requestCourtRecordSignature.generated'
 
 function showCustodyNotice(
-  type: CaseType,
-  state: CaseState,
-  decision?: CaseDecision,
+  type?: CaseType | null,
+  state?: CaseState | null,
+  decision?: CaseDecision | null,
 ) {
   return (
     (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
@@ -65,7 +68,7 @@ interface Props {
   ) => Promise<FetchResult<RequestRulingSignatureMutation>>
 }
 
-const CaseDocuments: React.FC<Props> = ({
+const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
   isRequestingCourtRecordSignature,
   handleRequestCourtRecordSignature,
   isRequestingRulingSignature,
@@ -82,7 +85,7 @@ const CaseDocuments: React.FC<Props> = ({
         {formatMessage(m.caseDocuments)}
       </Text>
       <Box marginBottom={2}>
-        {user?.role !== UserRole.STAFF && (
+        {!isPrisonSystemUser(user) && (
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}
@@ -114,7 +117,7 @@ const CaseDocuments: React.FC<Props> = ({
                 signatory={workingCase.courtRecordSignatory.name}
                 signingDate={workingCase.courtRecordSignatureDate}
               />
-            ) : user?.role && isCourtRole(user.role) ? (
+            ) : isDistrictCourtUser(user) ? (
               <Button
                 size="small"
                 data-testid="signCourtRecordButton"
@@ -130,7 +133,7 @@ const CaseDocuments: React.FC<Props> = ({
               <Text>{formatMessage(m.unsignedDocument)}</Text>
             ))}
         </PdfButton>
-        {user?.role !== UserRole.STAFF && (
+        {!isPrisonSystemUser(user) && (
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}
@@ -138,12 +141,12 @@ const CaseDocuments: React.FC<Props> = ({
             pdfType={'ruling'}
           >
             <Box display="flex" flexDirection="row">
-              {workingCase.rulingDate ? (
+              {workingCase.rulingSignatureDate ? (
                 <SignedDocument
                   signatory={workingCase.judge?.name}
-                  signingDate={workingCase.rulingDate}
+                  signingDate={workingCase.rulingSignatureDate}
                 />
-              ) : user && user.id === workingCase.judge?.id ? (
+              ) : user?.id === workingCase.judge?.id ? (
                 <Button
                   size="small"
                   loading={isRequestingRulingSignature}

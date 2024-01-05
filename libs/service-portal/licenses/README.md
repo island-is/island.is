@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Service Portal Licenses
 
 This modal displays various licenses.

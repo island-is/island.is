@@ -25,7 +25,9 @@ interface LawyersListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const LawyersList: FC<LawyersListProps> = ({ slice }) => {
+const LawyersList: FC<React.PropsWithChildren<LawyersListProps>> = ({
+  slice,
+}) => {
   const t = useLocalization(slice.json)
 
   const [listState, setListState] = useState<ListState>('loading')

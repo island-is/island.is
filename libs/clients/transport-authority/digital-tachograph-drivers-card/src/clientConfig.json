@@ -3,13 +3,9 @@
   "info": {
     "title": "TachoNet API",
     "description": "Vefþjónustur fyrir umsóknir um ökuritakort hjá island.is",
-    "version": "1.2.0"
+    "version": "1.2.4"
   },
-  "servers": [
-    {
-      "url": "/tachonet/okuritar"
-    }
-  ],
+  "servers": [{ "url": "/tachonet/okuritar" }],
   "paths": {
     "/v1/drivercards/{persidno}/newest": {
       "get": {
@@ -42,9 +38,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -52,9 +46,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -62,9 +54,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -72,9 +62,7 @@
             "description": "Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           }
@@ -113,9 +101,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -123,9 +109,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -133,9 +117,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -143,9 +125,7 @@
             "description": "Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           }
@@ -158,14 +138,10 @@
         "requestBody": {
           "content": {
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TachonetCheckRequest"
-              }
+              "schema": { "$ref": "#/components/schemas/TachonetCheckRequest" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TachonetCheckRequest"
-              }
+              "schema": { "$ref": "#/components/schemas/TachonetCheckRequest" }
             }
           }
         },
@@ -184,9 +160,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -194,9 +168,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -204,9 +176,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -214,9 +184,7 @@
             "description": "Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           }
@@ -231,9 +199,7 @@
             "name": "persidno",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -251,9 +217,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -261,9 +225,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -271,9 +233,7 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -281,9 +241,7 @@
             "description": "Server Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           }
@@ -297,20 +255,18 @@
         "enum": ["Primary", "Renewal", "Reissue", "Republication"],
         "type": "string"
       },
-      "CardTypeEnum": {
-        "enum": ["DriverCard"],
-        "type": "string"
-      },
-      "DeliveryMethodEnum": {
-        "enum": ["Send", "PickUp"],
-        "type": "string"
-      },
+      "CardTypeEnum": { "enum": ["DriverCard"], "type": "string" },
+      "DeliveryMethodEnum": { "enum": ["Send", "PickUp"], "type": "string" },
       "DriverCardApplicationRequest": {
         "required": [
           "address",
           "birth_country",
           "birth_place",
           "delivery_method",
+          "driverslicence_number",
+          "driverslicence_place_of_publication",
+          "driverslicence_valid_from",
+          "driverslicence_valid_to",
           "full_name",
           "payment_datetime",
           "person_id_number",
@@ -327,36 +283,16 @@
             "pattern": "^[0-9]+",
             "type": "string"
           },
-          "full_name": {
-            "maxLength": 256,
-            "minLength": 1,
-            "type": "string"
-          },
-          "address": {
-            "maxLength": 256,
-            "minLength": 1,
-            "type": "string"
-          },
-          "postal_code": {
-            "maxLength": 16,
-            "minLength": 1,
-            "type": "string"
-          },
-          "place": {
-            "maxLength": 256,
-            "minLength": 1,
-            "type": "string"
-          },
+          "full_name": { "maxLength": 256, "minLength": 1, "type": "string" },
+          "address": { "maxLength": 256, "minLength": 1, "type": "string" },
+          "postal_code": { "maxLength": 16, "minLength": 1, "type": "string" },
+          "place": { "maxLength": 256, "minLength": 1, "type": "string" },
           "birth_country": {
             "maxLength": 256,
             "minLength": 1,
             "type": "string"
           },
-          "birth_place": {
-            "maxLength": 256,
-            "minLength": 1,
-            "type": "string"
-          },
+          "birth_place": { "maxLength": 256, "minLength": 1, "type": "string" },
           "email_address": {
             "maxLength": 256,
             "type": "string",
@@ -370,13 +306,8 @@
           "delivery_method": {
             "$ref": "#/components/schemas/DeliveryMethodEnum"
           },
-          "card_issue_type": {
-            "$ref": "#/components/schemas/CardIssueType"
-          },
-          "payment_datetime": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "card_issue_type": { "$ref": "#/components/schemas/CardIssueType" },
+          "payment_datetime": { "type": "string", "format": "date-time" },
           "photo": {
             "minLength": 1,
             "pattern": "^data:image\\/(png|jpg|jpeg);base64,[a-zA-Z0-9+\\/]+={0,2}$",
@@ -386,37 +317,29 @@
             "minLength": 1,
             "pattern": "^data:image\\/(png|jpg|jpeg);base64,[a-zA-Z0-9+\\/]+={0,2}$",
             "type": "string"
-          }
+          },
+          "driverslicence_number": { "minLength": 1, "type": "string" },
+          "driverslicence_place_of_publication": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "driverslicence_valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "driverslicence_valid_to": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "DriverCardApplicationResponse": {
         "type": "object",
         "properties": {
-          "person_id_number": {
-            "type": "string",
-            "nullable": true
-          },
-          "application_datetime": {
-            "type": "string",
-            "nullable": true
-          },
-          "card_number": {
-            "type": "string",
-            "nullable": true
-          },
-          "card_type": {
-            "type": "string",
-            "nullable": true
-          },
-          "card_valid_from_datetime": {
-            "type": "string",
-            "nullable": true
-          },
-          "card_valid_to_datetime": {
-            "type": "string",
-            "nullable": true
-          },
+          "person_id_number": { "type": "string", "nullable": true },
+          "application_datetime": { "type": "string", "nullable": true },
+          "card_number": { "type": "string", "nullable": true },
+          "card_type": { "type": "string", "nullable": true },
+          "card_valid_from_datetime": { "type": "string", "nullable": true },
+          "card_valid_to_datetime": { "type": "string", "nullable": true },
           "delivery_method": {
             "$ref": "#/components/schemas/DeliveryMethodEnum"
           },
@@ -429,81 +352,39 @@
       "DriverCardApplicationResponseDeliveryIfSend": {
         "type": "object",
         "properties": {
-          "recipient_name": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "postal_code": {
-            "type": "string",
-            "nullable": true
-          },
-          "place": {
-            "type": "string",
-            "nullable": true
-          },
-          "country": {
-            "type": "string",
-            "nullable": true
-          }
+          "recipient_name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postal_code": { "type": "string", "nullable": true },
+          "place": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ErrorDetail": {
         "type": "object",
         "properties": {
-          "tracking_id": {
-            "type": "string",
-            "nullable": true
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "param": {
-            "type": "string",
-            "nullable": true
-          }
+          "tracking_id": { "type": "string", "nullable": true },
+          "message": { "type": "string", "nullable": true },
+          "param": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
+          "code": { "type": "integer", "format": "int32", "nullable": true },
+          "message": { "type": "string", "nullable": true },
           "errors": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ErrorDetail"
-            },
+            "items": { "$ref": "#/components/schemas/ErrorDetail" },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "IsActiveEnum": {
-        "enum": ["Yes", "No"],
-        "type": "string"
-      },
-      "IsTemporaryEnum": {
-        "enum": ["Yes", "No"],
-        "type": "string"
-      },
-      "IsValidEnum": {
-        "enum": ["Yes", "No"],
-        "type": "string"
-      },
+      "IsActiveEnum": { "enum": ["Yes", "No"], "type": "string" },
+      "IsTemporaryEnum": { "enum": ["Yes", "No"], "type": "string" },
+      "IsValidEnum": { "enum": ["Yes", "No"], "type": "string" },
       "NewestIcelandicDriverCardResponse": {
         "type": "object",
         "properties": {
@@ -519,13 +400,8 @@
             "format": "date-time",
             "nullable": true
           },
-          "card_number": {
-            "type": "string",
-            "nullable": true
-          },
-          "card_type": {
-            "$ref": "#/components/schemas/CardTypeEnum"
-          },
+          "card_number": { "type": "string", "nullable": true },
+          "card_type": { "$ref": "#/components/schemas/CardTypeEnum" },
           "card_valid_from_datetime": {
             "type": "string",
             "format": "date-time",
@@ -536,9 +412,7 @@
             "format": "date-time",
             "nullable": true
           },
-          "is_valid": {
-            "$ref": "#/components/schemas/IsValidEnum"
-          }
+          "is_valid": { "$ref": "#/components/schemas/IsValidEnum" }
         },
         "additionalProperties": false
       },
@@ -572,15 +446,8 @@
             "type": "string",
             "nullable": true
           },
-          "last_name": {
-            "maxLength": 256,
-            "minLength": 1,
-            "type": "string"
-          },
-          "birth_date": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "last_name": { "maxLength": 256, "minLength": 1, "type": "string" },
+          "birth_date": { "type": "string", "format": "date-time" },
           "birth_place": {
             "maxLength": 256,
             "type": "string",
@@ -601,26 +468,11 @@
       "TachonetCheckResponse": {
         "type": "object",
         "properties": {
-          "first_name": {
-            "type": "string",
-            "nullable": true
-          },
-          "last_name": {
-            "type": "string",
-            "nullable": true
-          },
-          "birth_date": {
-            "type": "string",
-            "nullable": true
-          },
-          "birth_place": {
-            "type": "string",
-            "nullable": true
-          },
-          "driving_licence_number": {
-            "type": "string",
-            "nullable": true
-          },
+          "first_name": { "type": "string", "nullable": true },
+          "last_name": { "type": "string", "nullable": true },
+          "birth_date": { "type": "string", "nullable": true },
+          "birth_place": { "type": "string", "nullable": true },
+          "driving_licence_number": { "type": "string", "nullable": true },
           "driving_licence_issuing_country": {
             "type": "string",
             "nullable": true
@@ -638,32 +490,13 @@
       "TachonetCheckResponseCards": {
         "type": "object",
         "properties": {
-          "country_name": {
-            "type": "string",
-            "nullable": true
-          },
-          "card_number": {
-            "type": "string",
-            "nullable": true
-          },
-          "card_valid_from_datetime": {
-            "type": "string",
-            "nullable": true
-          },
-          "card_valid_to_datetime": {
-            "type": "string",
-            "nullable": true
-          },
-          "issuing_authority": {
-            "type": "string",
-            "nullable": true
-          },
-          "is_temporary": {
-            "$ref": "#/components/schemas/IsTemporaryEnum"
-          },
-          "is_active": {
-            "$ref": "#/components/schemas/IsActiveEnum"
-          }
+          "country_name": { "type": "string", "nullable": true },
+          "card_number": { "type": "string", "nullable": true },
+          "card_valid_from_datetime": { "type": "string", "nullable": true },
+          "card_valid_to_datetime": { "type": "string", "nullable": true },
+          "issuing_authority": { "type": "string", "nullable": true },
+          "is_temporary": { "$ref": "#/components/schemas/IsTemporaryEnum" },
+          "is_active": { "$ref": "#/components/schemas/IsActiveEnum" }
         },
         "additionalProperties": false
       }

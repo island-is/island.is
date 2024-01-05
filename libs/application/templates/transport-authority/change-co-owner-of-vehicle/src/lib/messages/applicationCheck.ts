@@ -3,8 +3,7 @@ import { defineMessages } from 'react-intl'
 export const applicationCheck = {
   submitApplication: defineMessages({
     sellerNotValid: {
-      id:
-        'ta.ccov.application:applicationCheck.submitApplication.sellerNotValid',
+      id: 'ta.ccov.application:applicationCheck.submitApplication.sellerNotValid',
       defaultMessage:
         'Aðeins sá sem skráði umsókn má vera skráður sem seljandi.',
       description: 'Only applicant can be registered as seller',
@@ -17,8 +16,7 @@ export const applicationCheck = {
       description: 'Application check validation alert title',
     },
     fallbackErrorMessage: {
-      id:
-        'ta.ccov.application:applicationCheck.validation.fallbackErrorMessage',
+      id: 'ta.ccov.application:applicationCheck.validation.fallbackErrorMessage',
       defaultMessage: 'Það kom upp villa við að sannreyna gögn',
       description: 'Fallback error message for validation',
     },

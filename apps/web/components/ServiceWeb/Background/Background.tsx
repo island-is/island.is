@@ -1,9 +1,10 @@
 import React, { ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
 import dynamic from 'next/dynamic'
-import { Hidden } from '@island.is/island-ui/core'
-import { BackgroundProps } from '../types'
 
+import { Hidden } from '@island.is/island-ui/core'
+
+import { BackgroundProps } from '../types'
 import * as styles from './Background.css'
 
 const Default = dynamic(() => import('./Variations/Default/Default'), {
@@ -38,6 +39,11 @@ const Utlendingastofnun = dynamic(
   { ssr: false },
 )
 
+const TransportAuthority = dynamic(
+  () => import('./Variations/TransportAuthority/TransportAuthority'),
+  { ssr: false },
+)
+
 export const Background = ({
   variation,
   small,
@@ -60,11 +66,16 @@ export const Background = ({
         break
       case 'sjukratryggingar':
       case 'icelandic-health-insurance':
+      case 'iceland-health':
         setComponent(<Sjukratryggingar namespace={namespace} />)
         break
       case 'utlendingastofnun':
       case 'directorate-of-immigration':
         setComponent(<Utlendingastofnun namespace={namespace} />)
+        break
+      case 'samgongustofa':
+      case 'transport-authority':
+        setComponent(<TransportAuthority namespace={namespace} />)
         break
       case 'default':
       default:

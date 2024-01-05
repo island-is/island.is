@@ -14,7 +14,9 @@ interface Props {
   isEditing: boolean
 }
 
-const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
+const TranslationCreateFormDropdown: React.FC<
+  React.PropsWithChildren<Props>
+> = (props: Props) => {
   const [languages, setLanguages] = useState<Language[]>([])
   const [selectedLanguage, setSelectedLanguage] = useState<string>('is')
   const [visible, setVisible] = useState<boolean>(false)

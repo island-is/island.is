@@ -2,14 +2,15 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common'
 
-import { CaseListEntry } from '../models/caseList.model'
 import { getAppealedDate } from '@island.is/judicial-system/types'
+
+import { CaseListEntry } from '../models/caseList.model'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {

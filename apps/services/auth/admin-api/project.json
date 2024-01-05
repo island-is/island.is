@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/auth/admin-api",
+  "name": "services-auth-admin-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/auth/admin-api/src",
   "projectType": "application",
   "prefix": "auth-admin-api",
@@ -24,13 +25,13 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-auth-admin-api:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/auth/admin-api/**/*.{ts,tsx,js,jsx}"
@@ -38,19 +39,20 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/auth/admin-api/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/auth/admin-api/jest.config.ts",
+        "passWithNoTests": true,
+        "runInBand": true
       },
-      "outputs": ["coverage/apps/services/auth/admin-api"]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/auth/admin-api"]
     },
-    "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/auth/admin-api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/admin-api/tsconfig.app.json apps/services/auth/admin-api/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "docker-express": {}
   },

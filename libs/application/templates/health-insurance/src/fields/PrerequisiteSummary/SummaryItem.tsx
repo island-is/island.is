@@ -23,7 +23,7 @@ type SummaryItemProps = {
   tagText: string
 }
 
-const SummaryItem: FC<SummaryItemProps> = ({
+const SummaryItem: FC<React.PropsWithChildren<SummaryItemProps>> = ({
   title,
   description,
   furtherInformationTitle,

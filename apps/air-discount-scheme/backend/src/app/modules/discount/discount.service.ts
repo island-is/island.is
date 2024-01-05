@@ -1,10 +1,12 @@
 import { uuid } from 'uuidv4'
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
 
 import { Discount, ExplicitCode } from './discount.model'
 import { Flight } from '../flight/flight.model'
 import {
+  AKUREYRI_FLIGHT_CODES,
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
@@ -13,7 +15,8 @@ import { User } from '../user/user.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { UserService } from '../user/user.service'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { number } from 'yargs'
+import { ExplicitFlight } from './dto/ExplicitFlight.dto'
+import { CreateSuperExplicitDiscountCodeParams } from './dto'
 
 interface CachedDiscount {
   user: User
@@ -88,8 +91,9 @@ export class DiscountService {
   async createDiscountCode(
     user: User,
     nationalId: string,
-    connectableFlights: Flight[],
+    connectableFlights: Flight[] | ExplicitFlight[],
     numberOfDaysUntilExpiration = 1,
+    isExplicit = false,
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
     const cacheId = CACHE_KEYS.discount(uuid())
@@ -101,7 +105,7 @@ export class DiscountService {
 
     let previousFlightIds: string[] = []
 
-    if (previousCache?.connectionDiscountCodes) {
+    if (previousCache?.connectionDiscountCodes && !isExplicit) {
       connectionDiscountCodes = previousCache.connectionDiscountCodes
       previousFlightIds = connectionDiscountCodes.map((cdc) => cdc.flightId)
     }
@@ -131,6 +135,7 @@ export class DiscountService {
         const flightDesc = `${flightLegs[0].origin}-${
           flightLegs[flightLegsCount - 1].destination
         }`
+
         const connectionDiscountCode = this.generateDiscountCode()
 
         // Point every connection discount code to the cache id for lookup later
@@ -189,51 +194,72 @@ export class DiscountService {
     employeeId: string,
     comment: string,
     numberOfDaysUntilExpiration: number,
-    unConnectedFlights: Flight[],
-  ): Promise<Discount | null> {
+    unConnectedFlights: Flight[] | ExplicitFlight[],
+    isExplicit: boolean,
+    flightLegs = 1,
+  ): Promise<Array<Discount> | null> {
     const user = await this.userService.getUserInfoByNationalId(
       nationalId,
       auth,
     )
+
     if (!user) {
       return null
     }
     // overwrite credit since validation may return 0 depending on what the problem is
-    user.fund.credit = user.fund.total - user.fund.used
+    if (user.fund.credit === 0 && isExplicit) {
+      if (user.fund.used === null || user.fund.used <= 5) {
+        user.fund.credit = 2 //making sure we can get flight from and to
+        user.fund.total = 2
+      } else {
+        return null
+      }
+    }
+    if (user.fund.credit === 0 && user.fund.total !== undefined) {
+      return null
+    }
 
-    const discount = await this.createDiscountCode(
-      {
-        ...user,
-        postalcode: postalCode,
-      },
-      nationalId,
-      unConnectedFlights,
-      numberOfDaysUntilExpiration,
-    )
+    const getDiscount = async (unconFlights: Flight[] | ExplicitFlight[]) => {
+      const discount = await this.createDiscountCode(
+        {
+          ...user,
+          postalcode: postalCode,
+        },
+        nationalId,
+        unconFlights,
+        numberOfDaysUntilExpiration,
+        true,
+      )
+      // Create record of the explicit code
+      this.explicitModel.create({
+        code: discount.discountCode,
+        customerId: nationalId,
+        employeeId: employeeId,
+        comment: comment,
+      })
 
-    // Create record of the explicit code
-    this.explicitModel.create({
-      code: discount.discountCode,
-      customerId: nationalId,
-      employeeId: employeeId,
-      comment,
-    })
+      // Flag the discount as explicit in the cache
+      const cacheId = discount.discountCode
+      const cacheKey = CACHE_KEYS.explicitCode(discount.discountCode)
+      await this.setCache<string>(
+        cacheKey,
+        cacheId,
+        numberOfDaysUntilExpiration * ONE_DAY,
+      ) // cacheId pointer
+      await this.setCache<string>(
+        cacheId,
+        discount.discountCode,
+        numberOfDaysUntilExpiration * ONE_DAY,
+      ) // cache value
+      return discount
+    }
 
-    // Flag the discount as explicit in the cache
-    const cacheId = discount.discountCode
-    const cacheKey = CACHE_KEYS.explicitCode(discount.discountCode)
-    await this.setCache<string>(
-      cacheKey,
-      cacheId,
-      numberOfDaysUntilExpiration * ONE_DAY,
-    ) // cacheId pointer
-    await this.setCache<string>(
-      cacheId,
-      discount.discountCode,
-      numberOfDaysUntilExpiration * ONE_DAY,
-    ) // cache value
+    const discounts = []
+    for (let i = 0; i < flightLegs; i++) {
+      discounts.push(await getDiscount(unConnectedFlights.slice(i, i + 1)))
+    }
 
-    return discount
+    return discounts
   }
 
   async getDiscountByNationalId(nationalId: string): Promise<Discount | null> {
@@ -297,7 +323,6 @@ export class DiscountService {
       cacheValue.connectionDiscountCodes,
       discountCode,
     )
-
     if (!connectionDiscountCode) {
       return null
     }
@@ -430,5 +455,42 @@ export class DiscountService {
       cacheId,
       ttl,
     )
+  }
+
+  async createManualDiscountCode(
+    body: CreateSuperExplicitDiscountCodeParams,
+    auth: AuthUser,
+    isExplicit: boolean,
+  ): Promise<Array<Discount>> {
+    const date = new Date()
+    date.setDate(date.getDate() + body.numberOfDaysUntilExpiration)
+
+    const flight: ExplicitFlight = {
+      connectable: true,
+      id: 'explicit',
+      flightLegs: [
+        {
+          origin: REYKJAVIK_FLIGHT_CODES[0],
+          destination: AKUREYRI_FLIGHT_CODES[0],
+          date,
+        },
+      ],
+    }
+
+    const discount = await this.createExplicitDiscountCode(
+      auth,
+      body.nationalId,
+      body.postalcode,
+      auth.nationalId,
+      body.comment,
+      body.numberOfDaysUntilExpiration,
+      body.needsConnectionFlight ? [flight] : [],
+      isExplicit,
+      1,
+    )
+    if (!discount) {
+      throw new Error(`Could not create explicit discount`)
+    }
+    return discount
   }
 }

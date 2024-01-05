@@ -1,7 +1,7 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { Box, CategoryCard, SkeletonLoader } from '@island.is/island-ui/core'
+import { ActionCard, Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { VehiclesCurrentVehicle } from '../../shared'
 import { information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -13,7 +13,7 @@ interface VehicleSearchFieldProps {
 }
 
 export const VehicleSelectField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
+  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
 > = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -26,19 +26,17 @@ export const VehicleSelectField: FC<
   const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [
-    selectedVehicle,
-    setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicle | null>(
-    currentVehicle && currentVehicle.permno
-      ? {
-          permno: currentVehicle.permno,
-          make: currentVehicle?.make || '',
-          color: currentVehicle?.color || '',
-          role: currentVehicle?.role,
-        }
-      : null,
-  )
+  const [selectedVehicle, setSelectedVehicle] =
+    useState<VehiclesCurrentVehicle | null>(
+      currentVehicle && currentVehicle.permno
+        ? {
+            permno: currentVehicle.permno,
+            make: currentVehicle?.make || '',
+            color: currentVehicle?.color || '',
+            role: currentVehicle?.role,
+          }
+        : null,
+    )
 
   const onChange = (option: Option) => {
     const currentVehicle = currentVehicleList[parseInt(option.value, 10)]
@@ -77,10 +75,11 @@ export const VehicleSelectField: FC<
         ) : (
           <Box>
             {selectedVehicle && (
-              <CategoryCard
-                colorScheme="blue"
+              <ActionCard
+                backgroundColor={'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
+                focused={true}
               />
             )}
           </Box>

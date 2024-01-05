@@ -3,10 +3,10 @@ import Markdown from 'markdown-to-jsx'
 
 import {
   Box,
-  Text,
-  BulletList,
   Bullet,
+  BulletList,
   LinkV2,
+  Text,
   TextProps,
 } from '@island.is/island-ui/core'
 

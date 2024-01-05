@@ -10,7 +10,11 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { defaultMonths, maxMonths } from '../../config'
 import { YES, NO } from '../../constants'
 
-const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
+const RequestRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  error,
+  field,
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const currentAnswer = getValueViaPath(
     application.answers,
@@ -18,9 +22,8 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     undefined,
   ) as ValidAnswers
 
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
-    currentAnswer,
-  )
+  const [statefulAnswer, setStatefulAnswer] =
+    useState<ValidAnswers>(currentAnswer)
 
   const numberOfBoxes = statefulAnswer === NO ? defaultMonths : maxMonths
 

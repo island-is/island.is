@@ -21,7 +21,9 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientSecretForm: React.FC<Props> = (props: Props) => {
+const ClientSecretForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<ClientSecretDTO>()
   const { isSubmitting, errors } = formState
   const defaultSecretLength = 25

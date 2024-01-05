@@ -8,9 +8,10 @@ export const startMetricServer = (port: number) => {
   collectDefaultMetrics()
 
   const metricsApp = express()
-  metricsApp.get('/metrics', (req, res) => {
+  metricsApp.get('/metrics', async (req, res) => {
+    const metrics = await register.metrics()
     res.set('Content-Type', register.contentType)
-    res.end(register.metrics())
+    res.end(metrics)
   })
 
   const server = metricsApp.listen(port, () => {

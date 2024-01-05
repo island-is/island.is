@@ -28,7 +28,7 @@ describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       courtDate: '2020-09-16T19:50:08.033Z',
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(
@@ -46,9 +46,8 @@ describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.get('[name*="defenderEmail"]').should('exist')
     cy.get('[name*="defenderPhoneNumber"]').should('exist')
 
-    cy.get('#react-select-defenderName-input')
-      .type('click', { force: true })
-      .type('{enter}')
+    cy.get('#react-select-defenderName-input').type('click', { force: true })
+    cy.get('#react-select-defenderName-input').type('{enter}')
 
     cy.getByTestid('defenderNotFound').should('exist')
 

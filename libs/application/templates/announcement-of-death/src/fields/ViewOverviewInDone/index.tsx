@@ -5,7 +5,9 @@ import { m } from '../../lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
-export const ViewOverviewInDone: FC<FieldBaseProps> = () => {
+export const ViewOverviewInDone: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const [showOverview, setShowOverview] = useState(false)

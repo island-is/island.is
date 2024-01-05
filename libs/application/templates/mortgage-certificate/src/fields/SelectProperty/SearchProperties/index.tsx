@@ -25,12 +25,9 @@ export const searchPropertiesQuery = gql`
   ${SEARCH_PROPERTIES_QUERY}
 `
 
-export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
-  application,
-  field,
-  selectHandler,
-  selectedPropertyNumber,
-}) => {
+export const SearchProperties: FC<
+  React.PropsWithChildren<FieldBaseProps & SearchPropertiesProps>
+> = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { formatMessage } = useLocale()
   const { externalData } = application
   const [hasInitialized, setHasInitialized] = useState<boolean>(false)

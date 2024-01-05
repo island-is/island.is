@@ -1,30 +1,31 @@
-import '@testing-library/jest-dom'
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
+import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseState,
   CaseType,
-} from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  mockHighCourtQuery,
   mockJudgeQuery,
   mockPrisonUserQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserProvider } from '@island.is/judicial-system-web/src/components'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { LocaleProvider } from '@island.is/localization'
 
 import Cases from './Cases'
+import { CasesDocument } from './cases.generated'
+import { PrisonCasesDocument } from './prisonCases.generated'
+
+import '@testing-library/jest-dom'
 
 const mockCasesQuery = [
   {
     request: {
-      query: CasesQuery,
+      query: CasesDocument,
     },
     result: {
       data: {
@@ -59,7 +60,7 @@ const mockCasesQuery = [
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             validToDate: '2020-11-11T12:31:00.000Z',
             accusedAppealDecision: CaseAppealDecision.APPEAL,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_4',
@@ -110,7 +111,7 @@ const mockCasesQuery = [
 const mockCourtCasesQuery = [
   {
     request: {
-      query: CasesQuery,
+      query: CasesDocument,
     },
     result: {
       data: {
@@ -145,7 +146,7 @@ const mockCourtCasesQuery = [
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             validToDate: '2020-11-11T12:31:00.000Z',
             accusedAppealDecision: CaseAppealDecision.APPEAL,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_5',
@@ -185,7 +186,7 @@ const mockCourtCasesQuery = [
 const mockPrisonUserCasesQuery = [
   {
     request: {
-      query: CasesQuery,
+      query: PrisonCasesDocument,
     },
     result: {
       data: {
@@ -199,7 +200,7 @@ const mockPrisonUserCasesQuery = [
             policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: true,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_2',
@@ -210,13 +211,21 @@ const mockPrisonUserCasesQuery = [
             policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: false,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
         ],
       },
     },
   },
 ]
+
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      pathname: '',
+    }
+  },
+}))
 
 describe('Cases', () => {
   describe('Prosecutor users', () => {
@@ -379,27 +388,6 @@ describe('Cases', () => {
     })
   })
 
-  describe('High court users', () => {
-    test('should only have a single table of cases', async () => {
-      render(
-        <MockedProvider
-          mocks={[...mockCasesQuery, ...mockHighCourtQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      await waitFor(() => {
-        expect(screen.getByTestId('pastCasesTable')).toBeInTheDocument()
-      })
-    })
-  })
-
   describe('Prison users', () => {
     test('should list active and past cases in separate tables based on validToDate', async () => {
       render(
@@ -423,6 +411,7 @@ describe('Cases', () => {
 
   describe('All user types - sorting', () => {
     test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -436,7 +425,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByTestId('accusedNameSortButton'))
+      await user.click(await screen.findByTestId('accusedNameSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -448,6 +437,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by accused name in descending order when the user clicks the accused name table header twice', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -461,7 +451,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByTestId('accusedNameSortButton'))
+      await user.dblClick(await screen.findByTestId('accusedNameSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -473,6 +463,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by created in ascending order when the user clicks the created table header', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -486,7 +477,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByText('Stofnað/Fyrirtaka'))
+      await user.click(await screen.findByTestId('createdAtSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -498,6 +489,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by created in descending order when the user clicks the created table header twice', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -511,7 +503,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByText('Stofnað/Fyrirtaka'))
+      await user.dblClick(await screen.findByTestId('createdAtSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -530,7 +522,7 @@ describe('Cases', () => {
           mocks={[
             {
               request: {
-                query: CasesQuery,
+                query: CasesDocument,
               },
               error: { name: 'error', message: 'message' },
             },

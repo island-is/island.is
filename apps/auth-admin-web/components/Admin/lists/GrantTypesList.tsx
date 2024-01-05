@@ -8,7 +8,7 @@ import { GrantType } from './../../../entities/models/grant-type.model'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const GrantTypesList: React.FC = () => {
+const GrantTypesList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [grantTypes, setGrantTypes] = useState<GrantType[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)
@@ -89,14 +89,13 @@ const GrantTypesList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="grant-type-list__container__options">
               <div className="grant-type-list__container__options__button">
-                <Link href={'/admin/grant-type'}>
-                  <a
-                    className="grant-type-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/grant-type'}
+                  className="grant-type-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -143,6 +142,7 @@ const GrantTypesList: React.FC = () => {
                             href={`admin/grant-type/${encodeURIComponent(
                               grantType.name,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

@@ -11,27 +11,6 @@ import { ConfigType } from '@nestjs/config'
 import { UploadProcessor } from './upload.processor'
 import { FileStorageModule } from '@island.is/file-storage'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
-let BullModule: DynamicModule
-
-if (process.env.INIT_SCHEMA === 'true') {
-  BullModule = NestBullModule.registerQueueAsync()
-} else {
-  const bullModuleName = 'application_system_api_bull_module'
-  BullModule = NestBullModule.registerQueueAsync({
-    name: 'upload',
-    useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({
-      prefix: `{${bullModuleName}}`,
-      createClient: () =>
-        createRedisCluster({
-          name: bullModuleName,
-          ssl: config.redis.ssl,
-          nodes: config.redis.nodes,
-          noPrefix: true,
-        }),
-    }),
-    inject: [ApplicationFilesConfig.KEY],
-  })
-}
 
 @Module({
   imports: [
@@ -39,11 +18,31 @@ if (process.env.INIT_SCHEMA === 'true') {
     AwsModule,
     SigningModule,
     LoggingModule,
-    BullModule,
-    ApplicationFilesModule,
     FileStorageModule,
   ],
   providers: [FileService, UploadProcessor],
-  exports: [FileService, BullModule],
+  exports: [FileService],
 })
 export class ApplicationFilesModule {}
+
+export function createBullModule() {
+  if (process.env.INIT_SCHEMA === 'true') {
+    return NestBullModule.registerQueueAsync()
+  } else {
+    const bullModuleName = 'application_system_api_bull_module'
+    return NestBullModule.registerQueueAsync({
+      name: 'upload',
+      useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({
+        prefix: `{${bullModuleName}}`,
+        createClient: () =>
+          createRedisCluster({
+            name: bullModuleName,
+            ssl: config.redis.ssl,
+            nodes: config.redis.nodes,
+            noPrefix: true,
+          }),
+      }),
+      inject: [ApplicationFilesConfig.KEY],
+    })
+  }
+}

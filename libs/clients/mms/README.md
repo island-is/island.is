@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "MMS" -->
-
 # MMS Client
 
 This library was generated with [Nx](https://nx.dev).

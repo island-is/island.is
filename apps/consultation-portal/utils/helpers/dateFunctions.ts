@@ -44,15 +44,20 @@ export function getTimeLineDate({ Case }: Props) {
   }
 }
 export function getStatusEndDate(status: string, Case: Case) {
-  const date = new Date(Case.processEnds)
-  date.setDate(date.getDate() + 1)
+  const forReviewBegins = new Date(Case.processEnds)
+  forReviewBegins.setDate(forReviewBegins.getDate() + 1)
+  const forReviewEnds = new Date(Case.summaryDate)
+  forReviewEnds.setDate(forReviewEnds.getDate() - 1)
+
   switch (status) {
     case CaseStatuses.forReview:
       return getDateBeginDateEnd(Case.processBegins, Case.processEnds)
     case CaseStatuses.inProgress:
-      return Case.statusName != CaseStatuses.forReview
-        ? `${getShortDate(date)}`
-        : ''
+      return Case.statusName !== CaseStatuses.forReview
+        ? Case.statusName === CaseStatuses.inProgress
+          ? `${getShortDate(forReviewBegins)}\u2013`
+          : getDateBeginDateEnd(forReviewBegins, forReviewEnds)
+        : ``
     case CaseStatuses.published:
       return getShortDate(Case.summaryDate)
   }

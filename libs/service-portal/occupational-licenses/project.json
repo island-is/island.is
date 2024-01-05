@@ -1,0 +1,38 @@
+{
+  "name": "service-portal-occupational-licenses",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/service-portal/occupational-licenses/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/occupational-licenses/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/libs/service-portal/occupational-licenses"],
+      "options": {
+        "jestConfig": "libs/service-portal/occupational-licenses/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/occupational-licenses/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/service-portal/occupational-licenses/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/occupational-licenses/codegen.yml"
+      }
+    }
+  },
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+}

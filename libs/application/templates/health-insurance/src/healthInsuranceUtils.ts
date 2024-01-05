@@ -1,5 +1,5 @@
 import { ExternalData } from '@island.is/application/types'
-import { Address } from '@island.is/api/schema'
+import { NationalRegistryAddress as Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
 import { NordicCountriesCountryCode } from './shared'
 import { EU } from './lib/EU'
@@ -15,9 +15,11 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
 }
 
 export const hasNoIcelandicAddress = (externalData: ExternalData) => {
-  const address = (externalData?.nationalRegistry?.data as {
-    address?: Address
-  })?.address
+  const address = (
+    externalData?.nationalRegistry?.data as {
+      address?: Address
+    }
+  )?.address
 
   // Users that lives abroad are registered either without address or without streetaddress and postal code. Hence the check below.
   return !address || (address && !(address.streetAddress && address.postalCode))

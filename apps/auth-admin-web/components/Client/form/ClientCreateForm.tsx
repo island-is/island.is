@@ -25,7 +25,9 @@ interface FormOutput {
   baseUrl: string
 }
 
-const ClientCreateForm: React.FC<Props> = (props: Props) => {
+const ClientCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const {
     register,
     handleSubmit,

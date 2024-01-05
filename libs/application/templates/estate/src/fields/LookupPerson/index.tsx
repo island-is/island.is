@@ -22,10 +22,17 @@ type LookupProps = {
       alertWhenUnder18?: boolean
     }
   }
+  nested?: boolean
+  message?: string
   error: Record<string, string> | any
 }
 
-export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
+export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
+  field,
+  error,
+  message,
+  nested = false,
+}) => {
   const { formatMessage } = useLocale()
   const { id, props } = field
   const { setValue, watch, clearErrors } = useFormContext()
@@ -70,11 +77,13 @@ export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
           <GridColumn span={['1/1']} paddingBottom={3}>
             <AlertMessage
               type="warning"
-              message={formatMessage(m.inheritanceUnder18Error)}
+              message={
+                message ? message : formatMessage(m.inheritanceUnder18Error)
+              }
             />
           </GridColumn>
         )}
-        <GridColumn span="6/12">
+        <GridColumn span={nested ? ['1/1', '1/2'] : '6/12'}>
           <InputController
             id={`${id}.nationalId`}
             name={`${id}.nationalId`}
@@ -82,16 +91,18 @@ export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
             format="######-####"
             backgroundColor="blue"
             loading={queryLoading}
+            size={nested ? 'sm' : 'md'}
             required={props?.requiredNationalId ?? true}
             error={error?.nationalId || error?.name}
           />
         </GridColumn>
-        <GridColumn span="6/12">
+        <GridColumn span={nested ? ['1/1', '1/2'] : '6/12'}>
           <InputController
             id={`${id}.name`}
             name={`${id}.name`}
             label={formatMessage(m.name)}
             readOnly
+            size={nested ? 'sm' : 'md'}
             error={error?.name ? error?.name : undefined}
           />
         </GridColumn>

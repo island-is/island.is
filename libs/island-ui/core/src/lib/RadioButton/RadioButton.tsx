@@ -32,7 +32,7 @@ export interface RadioButtonProps {
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: React.ReactNode
   /** illustration can only be used if the 'large' prop set to true */
-  illustration?: React.FC
+  illustration?: React.FC<React.PropsWithChildren<unknown>>
 }
 
 interface AriaError {

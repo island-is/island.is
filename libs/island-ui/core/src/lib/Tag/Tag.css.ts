@@ -12,9 +12,6 @@ export const container = style({
   textDecoration: 'none',
   maxWidth: '100%',
   border: '1px solid transparent',
-})
-
-export const truncate = style({
   whiteSpace: 'nowrap',
 })
 
@@ -65,9 +62,17 @@ export const variants = styleVariants({
     color: theme.color.dark400,
     backgroundColor: theme.color.dark200,
   },
+  yellow: {
+    backgroundColor: theme.color.yellow400,
+    color: theme.color.dark400,
+  },
   disabled: {
     backgroundColor: theme.color.dark100,
     color: theme.color.dark200,
+  },
+  warn: {
+    backgroundColor: theme.color.yellow200,
+    color: theme.color.dark400,
   },
   label: {},
 })

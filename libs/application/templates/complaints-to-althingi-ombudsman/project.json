@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/templates/complaints-to-althingi-ombudsman",
+  "name": "application-templates-complaints-to-althingi-ombudsman",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/complaints-to-althingi-ombudsman/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/complaints-to-althingi-ombudsman/**/*.{ts,tsx,js,jsx}"
@@ -13,7 +14,7 @@
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/complaints-to-althingi-ombudsman/src/lib/messages/*.ts'"
       }

@@ -11,7 +11,7 @@ interface ConfirmModalProps {
   message: string
 }
 
-const ConfirmModal: FC<ConfirmModalProps> = ({
+const ConfirmModal: FC<React.PropsWithChildren<ConfirmModalProps>> = ({
   isVisible,
   message,
   onConfirm,

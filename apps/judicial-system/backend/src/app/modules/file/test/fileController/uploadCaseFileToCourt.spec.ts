@@ -10,9 +10,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
+
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../../../court'
 import { Case } from '../../../case'
+import { CourtDocumentFolder, CourtService } from '../../../court'
 import { CaseFile } from '../../models/file.model'
 import { UploadFileToCourtResponse } from '../../models/uploadFileToCourt.response'
 
@@ -36,12 +37,8 @@ describe('FileController - Upload case file to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      courtService,
-      fileModel,
-      fileController,
-    } = await createTestingFileModule()
+    const { awsS3Service, courtService, fileModel, fileController } =
+      await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockCourtService = courtService

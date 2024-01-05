@@ -25,7 +25,8 @@ describe(RESTRICTION_CASE_POLICE_DEMANDS_ROUTE, () => {
   })
 
   it('should validate the form', () => {
-    cy.get('#reqValidToDate').type('2020-10-10').type('{enter}')
+    cy.get('#reqValidToDate').type('2020-10-10')
+    cy.get('#reqValidToDate').type('{enter}')
     cy.get('#reqValidToDate-time').type('10:10')
     cy.getByTestid('continueButton').should('be.disabled')
 

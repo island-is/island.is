@@ -21,7 +21,9 @@ interface PageProps {
   children: ReactNode
 }
 
-export const PageLayout: FC<PageProps> = ({ children }) => (
+export const PageLayout: FC<React.PropsWithChildren<PageProps>> = ({
+  children,
+}) => (
   <Box>
     <LinkProvider>
       <Box paddingY={[3, 3, 10, 10]}>
@@ -47,12 +49,9 @@ interface ProcessPageProps extends PageProps {
   activeCar?: string
 }
 
-export const ProcessPageLayout: FC<ProcessPageProps> = ({
-  children,
-  processType = 'citizen',
-  activeSection,
-  activeCar,
-}) => {
+export const ProcessPageLayout: FC<
+  React.PropsWithChildren<ProcessPageProps>
+> = ({ children, processType = 'citizen', activeSection, activeCar }) => {
   const { width } = useWindowSize()
 
   const {
@@ -125,7 +124,9 @@ interface PartnerPageProps {
   side: ReactNode
 }
 
-export const PartnerPageLayout: FC<PartnerPageProps> = ({ children, side }) => (
+export const PartnerPageLayout: FC<
+  React.PropsWithChildren<PartnerPageProps>
+> = ({ children, side }) => (
   <Box>
     <ToastContainer />
     <LinkProvider>
@@ -146,7 +147,9 @@ export const PartnerPageLayout: FC<PartnerPageProps> = ({ children, side }) => (
   </Box>
 )
 
-export const FormPageLayout: FC<PageProps> = ({ children }) => (
+export const FormPageLayout: FC<React.PropsWithChildren<PageProps>> = ({
+  children,
+}) => (
   <Box>
     <LinkProvider>
       <Box paddingY={10}>

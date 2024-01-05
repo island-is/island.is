@@ -26,7 +26,7 @@ interface VehicleSearchFieldProps {
 }
 
 export const VehicleRadioField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
+  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -37,10 +37,14 @@ export const VehicleRadioField: FC<
 
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
-    setPlate(currentVehicle.permno || '')
-    setValue('pickVehicle.plate', currentVehicle.permno || '')
+    const permno = currentVehicle.permno || ''
+
+    setPlate(permno)
+    setValue('pickVehicle.plate', permno)
     setValue('pickVehicle.color', currentVehicle.color || undefined)
     setValue('pickVehicle.type', currentVehicle.make || undefined)
+    if (permno) setValue('vehicleInfo.plate', permno)
+    if (permno) setValue('vehicleInfo.type', currentVehicle.make)
   }
 
   const vehicleOptions = (
@@ -128,7 +132,7 @@ export const VehicleRadioField: FC<
           currentVehicleList as VehiclesCurrentVehicleWithOperatorChangeChecks[],
         )}
       />
-      {plate.length === 0 && errors && errors.pickVehicle && (
+      {plate.length === 0 && (errors as any)?.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </div>

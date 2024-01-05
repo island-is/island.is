@@ -9,7 +9,9 @@ import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
 import { formatPhoneNumber } from '../../../utils'
 
-export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const OperatorSection: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({
   coOwnersAndOperators = [],
   reviewerNationalId = '',
   mainOperator = '',

@@ -32,9 +32,14 @@ export const StoryList = ({
 
   return (
     <Stack space={8}>
-      {stories.map((story, i) => (
-        <Story key={i} variant={variant} {...story} />
-      ))}
+      {stories.map((story, i) => {
+        const props = {
+          ...story,
+          variant: story.variant ? story.variant : variant,
+        }
+
+        return <Story key={i} {...props} />
+      })}
       {stories.length > 0 ? (
         <Box className={styles.margin} display="inlineBlock">
           <Link
@@ -89,7 +94,10 @@ const Story = ({
         </Text>
         <Text color={variant === 'light' ? 'white' : 'dark400'}>{intro}</Text>
         {!!(linkedPage || link) && (
-          <ContentLink pageData={linkedPage} fallbackLink={link}>
+          <ContentLink
+            pageData={linkedPage ? linkedPage : ''}
+            fallbackLink={link}
+          >
             <Button
               as="span"
               variant="text"

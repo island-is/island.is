@@ -20,6 +20,8 @@ const useImageLoader = (url: string): boolean => {
   useEffect(() => {
     const img = new window.Image(100)
     img.onload = img.onerror = () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       if (isMounted) {
         setLoaded(true)
       }
@@ -30,7 +32,7 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const Image: FC<ImageProps> = ({
+export const Image: FC<React.PropsWithChildren<ImageProps>> = ({
   url,
   title,
   thumbnail = url + '?w=50',

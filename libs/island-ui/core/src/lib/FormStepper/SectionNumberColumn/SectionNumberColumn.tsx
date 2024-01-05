@@ -9,10 +9,9 @@ interface SectionNumberColumnProps {
   type?: 'section' | 'subSection'
 }
 
-export const SectionNumberColumn: FC<SectionNumberColumnProps> = ({
-  children,
-  type = 'section',
-}) => (
+export const SectionNumberColumn: FC<
+  React.PropsWithChildren<SectionNumberColumnProps>
+> = ({ children, type = 'section' }) => (
   <Box
     position="relative"
     display="flex"

@@ -11,7 +11,10 @@ import { RadioFormField } from '@island.is/application/ui-fields'
 import { useFormContext } from 'react-hook-form'
 import { getApplicationTypeOptions } from '../../lib/parentalLeaveUtils'
 
-export const ApplicationType: FC<FieldBaseProps> = ({ application, field }) => {
+export const ApplicationType: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  field,
+}) => {
   const { id, title } = field
   const { formatMessage } = useLocale()
   const {

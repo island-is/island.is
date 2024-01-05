@@ -5,7 +5,7 @@ import { NestFactory } from '@nestjs/core'
 
 import { LoggingModule } from '@island.is/logging'
 
-import { appModuleConfig, AppModule, MessageHandlerService } from './app'
+import { AppModule, appModuleConfig, MessageHandlerService } from './app'
 
 async function bootstrap() {
   const port = process.env.PORT || 3366

@@ -24,13 +24,10 @@ export class VehicleResolver {
     @Args('first', { type: () => Int }) first: number,
     @Args('after') after: string,
   ): Promise<VehicleConnection> {
-    const {
-      pageInfo,
-      totalCount,
-      data,
-    } = await this.vehicleService.findAllByFilter(first, after, {
-      requestType: RecyclingRequestTypes.deregistered,
-    })
+    const { pageInfo, totalCount, data } =
+      await this.vehicleService.findAllByFilter(first, after, {
+        requestType: RecyclingRequestTypes.deregistered,
+      })
     return {
       pageInfo,
       count: totalCount,
@@ -59,14 +56,11 @@ export class VehicleResolver {
         items: [],
       }
     }
-    const {
-      pageInfo,
-      totalCount,
-      data,
-    } = await this.vehicleService.findAllByFilter(first, after, {
-      partnerId: user.partnerId,
-      requestType: RecyclingRequestTypes.deregistered,
-    })
+    const { pageInfo, totalCount, data } =
+      await this.vehicleService.findAllByFilter(first, after, {
+        partnerId: user.partnerId,
+        requestType: RecyclingRequestTypes.deregistered,
+      })
     return {
       pageInfo,
       count: totalCount,
@@ -107,5 +101,14 @@ export class VehicleResolver {
     newVehicle.ownerNationalId = user.nationalId
     newVehicle.vehicleId = vehicle.permno
     return await this.vehicleService.create(newVehicle)
+  }
+
+  @Mutation(() => Boolean)
+  async updateSkilavottordVehicleMileage(
+    @CurrentUser() user: User,
+    @Args('permno') permno: string,
+    @Args('mileage') mileage: number,
+  ) {
+    return await this.vehicleService.updateMileage(permno, mileage)
   }
 }

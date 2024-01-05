@@ -1,6 +1,7 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize'
+import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -13,13 +14,13 @@ import {
   restrictionCases,
   User as TUser,
 } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomEnum } from '../../../../test'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 import { CourtService } from '../../../court'
+import { include, order } from '../../case.service'
 import { Case } from '../../models/case.model'
-import { order, include } from '../../case.service'
 
 interface Then {
   result: Case

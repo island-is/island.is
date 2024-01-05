@@ -14,18 +14,16 @@ export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
     if (!params.listId) {
       throw new Error('Listid not provided in parameters')
     }
-    const {
-      data: listData,
-      error: listError,
-    } = await client.query<EndorsementSystemGetSingleEndorsementListQuery>({
-      query: EndorsementSystemGetSingleEndorsementListDocument,
-      fetchPolicy: 'network-only',
-      variables: {
-        input: {
-          listId: params.listId,
+    const { data: listData, error: listError } =
+      await client.query<EndorsementSystemGetSingleEndorsementListQuery>({
+        query: EndorsementSystemGetSingleEndorsementListDocument,
+        fetchPolicy: 'network-only',
+        variables: {
+          input: {
+            listId: params.listId,
+          },
         },
-      },
-    })
+      })
     if (listError) {
       throw listError
     }
@@ -33,17 +31,16 @@ export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
       throw new Error(`No list data found for ${params.listId}`)
     }
 
-    const {
-      data: endorsements,
-      error: endorsementsError,
-    } = await client.query<EndorsementSystemGetEndorsementsQuery>({
-      query: EndorsementSystemGetEndorsementsDocument,
-      variables: {
-        input: {
-          listId: params.listId,
+    const { data: endorsements, error: endorsementsError } =
+      await client.query<EndorsementSystemGetEndorsementsQuery>({
+        query: EndorsementSystemGetEndorsementsDocument,
+        variables: {
+          input: {
+            listId: params.listId,
+            limit: 1000,
+          },
         },
-      },
-    })
+      })
     if (endorsementsError) {
       throw endorsementsError
     }

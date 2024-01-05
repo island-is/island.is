@@ -8,19 +8,17 @@ import { EndorsementListControllerFindByTagsTagsEnum } from '@island.is/api/sche
 
 export const overviewLoader: WrappedLoaderFn = ({ client }) => {
   return async (): Promise<FilteredPetitions> => {
-    const {
-      data,
-      error,
-    } = await client.query<EndorsementSystemFindEndorsementListsQuery>({
-      query: EndorsementSystemFindEndorsementListsDocument,
-      fetchPolicy: 'network-only',
-      variables: {
-        input: {
-          tags: [EndorsementListControllerFindByTagsTagsEnum.generalPetition],
-          limit: 1000,
+    const { data, error } =
+      await client.query<EndorsementSystemFindEndorsementListsQuery>({
+        query: EndorsementSystemFindEndorsementListsDocument,
+        fetchPolicy: 'network-only',
+        variables: {
+          input: {
+            tags: [EndorsementListControllerFindByTagsTagsEnum.generalPetition],
+            limit: 1000,
+          },
         },
-      },
-    })
+      })
 
     if (error) {
       throw error

@@ -1,19 +1,20 @@
 {
-  "root": "libs/clients/zendesk",
+  "name": "clients-zendesk",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/zendesk/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/zendesk/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/zendesk"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/zendesk"],
       "options": {
-        "jestConfig": "libs/clients/zendesk/jest.config.js",
+        "jestConfig": "libs/clients/zendesk/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,51 +1,58 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import isEqual from 'lodash/isEqual'
 import { useRouter } from 'next/router'
+
 import {
-  Text,
-  FocusableBox,
-  GridContainer,
-  GridColumn,
   Box,
-  GridRow,
   Breadcrumbs,
-  Stack,
-  Pagination,
-  Hidden,
   Filter,
-  FilterMultiChoice,
   FilterInput,
+  FilterMultiChoice,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
   Inline,
+  Pagination,
+  Stack,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
+import { sortAlpha } from '@island.is/shared/utils'
+import {
+  FilterTag,
+  HeadWithSocialSharing,
+  Webreader,
+} from '@island.is/web/components'
 import {
   GetIcelandicGovernmentInstitutionVacanciesQuery,
   GetIcelandicGovernmentInstitutionVacanciesQueryVariables,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   IcelandicGovernmentInstitutionVacanciesResponse,
-  Query,
-  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATIONS_QUERY } from '../queries'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
-import { FilterTag, HeadWithSocialSharing } from '@island.is/web/components'
-import { sortAlpha } from '@island.is/shared/utils'
-import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
+import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
+import { GET_NAMESPACE_QUERY } from '../queries'
+import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
-type Vacancy = IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
+type Vacancy =
+  IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
 const ITEMS_PER_PAGE = 8
 export const VACANCY_INTRO_MAX_LENGTH = 80
 
 export const shortenText = (text: string, maxLength: number) => {
+  if (!text) return text
+
   if (text.length <= maxLength) {
     return text
   }
@@ -110,14 +117,11 @@ const mapVacanciesField = (
 interface IcelandicGovernmentInstitutionVacanciesListProps {
   vacancies: Vacancy[]
   namespace: Record<string, string>
-  organizationLogoMap: Record<string, string>
 }
 
-const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentInstitutionVacanciesListProps> = ({
-  vacancies,
-  organizationLogoMap,
-  namespace,
-}) => {
+const IcelandicGovernmentInstitutionVacanciesList: Screen<
+  IcelandicGovernmentInstitutionVacanciesListProps
+> = ({ vacancies, namespace }) => {
   const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -159,22 +163,30 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     let shouldBeShown = searchTermMatches
 
     if (parameters.fieldOfWork.length > 0) {
-      shouldBeShown =
-        shouldBeShown && parameters.fieldOfWork.includes(vacancy.fieldOfWork)
+      shouldBeShown = Boolean(
+        shouldBeShown &&
+          vacancy.fieldOfWork &&
+          parameters.fieldOfWork.includes(vacancy.fieldOfWork),
+      )
     }
 
     if (parameters.location.length > 0) {
       shouldBeShown =
         shouldBeShown &&
-        vacancy.locations.some((location) =>
-          parameters.location.includes(location?.title),
+        Boolean(
+          vacancy.locations?.some(
+            (location) =>
+              location?.title && parameters.location.includes(location?.title),
+          ),
         )
     }
 
     if (parameters.institution.length > 0) {
-      shouldBeShown =
+      shouldBeShown = Boolean(
         shouldBeShown &&
-        parameters.institution.includes(vacancy.institutionName)
+          vacancy.institutionName &&
+          parameters.institution.includes(vacancy.institutionName),
+      )
     }
 
     return shouldBeShown
@@ -231,11 +243,15 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     const updatedParameters = {}
 
     if (query.location) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updatedParameters['location'] =
         typeof query.location === 'string' ? [query.location] : query.location
     }
 
     if (query.fieldOfWork) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updatedParameters['fieldOfWork'] =
         typeof query.fieldOfWork === 'string'
           ? [query.fieldOfWork]
@@ -243,6 +259,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     }
 
     if (query.institution) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updatedParameters['institution'] =
         typeof query.institution === 'string'
           ? [query.institution]
@@ -269,12 +287,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   useEffect(() => {
     const updatedQuery = { ...query }
 
-    let shouldScroll = false
+    const shouldScroll = updatedQuery.page !== selectedPage.toString()
 
-    if (!selectedPage) {
+    if (selectedPage === 1) {
       if ('page' in updatedQuery) delete updatedQuery['page']
     } else {
-      shouldScroll = updatedQuery.page !== selectedPage.toString()
       updatedQuery.page = selectedPage.toString()
     }
 
@@ -301,15 +318,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     } else {
       updatedQuery.location = parameters.location
     }
-
-    replace(
-      {
-        pathname,
-        query: updatedQuery,
-      },
-      undefined,
-      { shallow: true, scroll: shouldScroll },
-    )
+    if (!isEqual(query, updatedQuery)) {
+      replace(
+        {
+          pathname,
+          query: updatedQuery,
+        },
+        undefined,
+        { shallow: true, scroll: shouldScroll },
+      )
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parameters, searchTerm, selectedPage])
 
@@ -357,9 +375,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
           <GridRow marginBottom={[5, 5, 5, 0]}>
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
               <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-              <Text marginTop={2} variant="h1" as="h1">
-                {mainTitle}
-              </Text>
+              <Box className="rs_read" marginTop={2}>
+                <Text variant="h1" as="h1">
+                  {mainTitle}
+                </Text>
+              </Box>
+              <Webreader
+                marginBottom={[0, 0, 0, 4]}
+                readId={undefined}
+                readClass="rs_read"
+              />
             </GridColumn>
             <GridColumn span="1/2">
               <Hidden below="lg">
@@ -451,8 +476,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                     onClick={() => {
                       setParameters((prevParameters) => ({
                         ...prevParameters,
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         [category]: (prevParameters[category] ?? []).filter(
-                          (prevValue) => prevValue !== value,
+                          (prevValue: string) => prevValue !== value,
                         ),
                       }))
                     }}
@@ -467,7 +494,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
       </GridContainer>
       <Box paddingTop={3} paddingBottom={6} background="blue100">
         <GridContainer>
-          <Box marginBottom={6}>
+          <Box className="rs_read" marginBottom={6}>
             <Text>
               {filteredVacancies.length}{' '}
               {filteredVacancies.length % 10 === 1 &&
@@ -483,7 +510,19 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 ITEMS_PER_PAGE * selectedPage,
               )
               .map((vacancy) => {
-                const logoUrl = organizationLogoMap[vacancy.institutionName]
+                let logoUrl =
+                  vacancy.logoUrl ||
+                  n(
+                    'fallbackLogoUrl',
+                    'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg',
+                  )
+
+                const vacancyComesFromCms = vacancy.id?.startsWith('c-')
+
+                if (!vacancy.institutionName && vacancyComesFromCms) {
+                  logoUrl = ''
+                }
+
                 return (
                   <GridColumn
                     key={vacancy.id}
@@ -492,6 +531,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                     <FocusableBox
                       height="full"
                       href={`${
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         linkResolver('vacancydetails', [vacancy.id?.toString()])
                           .href
                       }`}
@@ -502,73 +543,105 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       padding={[3, 3, 'containerGutter']}
                       overflow="hidden"
                     >
-                      <Inline
-                        collapseBelow="lg"
-                        space={[2, 2, 2, 5]}
-                        flexWrap="nowrap"
-                        alignY="center"
-                        justifyContent="spaceBetween"
-                      >
-                        <Stack space={2}>
-                          <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
-                          <Text color="blue400" variant="h3">
-                            {vacancy.title}
-                          </Text>
-                          <Text>
-                            {shortenText(
-                              vacancy.intro,
-                              VACANCY_INTRO_MAX_LENGTH,
-                            )}
-                          </Text>
-                          <Inline space={1}>
-                            {vacancy.institutionName && (
-                              <Tag outlined={true} disabled={true}>
-                                {vacancy.institutionName}
-                              </Tag>
-                            )}
-                            {vacancy.locations &&
-                              vacancy.locations
-                                .filter((location) => location.title)
-                                .map((location, index) => (
-                                  <Tag key={index} outlined={true} disabled>
-                                    {location.title}
+                      <Box width="full">
+                        <GridRow
+                          rowGap={[2, 2, 2, 5]}
+                          direction={['column', 'column', 'column', 'row']}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          alignItems={[null, null, null, 'center']}
+                          align="spaceBetween"
+                          className={styles.vacancyCard}
+                        >
+                          <GridColumn className={styles.vacancyCardText}>
+                            <Stack space={2}>
+                              <Text variant="eyebrow">
+                                {vacancy.fieldOfWork}
+                              </Text>
+                              <Box className="rs_read">
+                                <Text color="blue400" variant="h3">
+                                  {vacancy.title}
+                                </Text>
+                              </Box>
+                              <Box className="rs_read">
+                                <Text>
+                                  {shortenText(
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                    // @ts-ignore make web strict
+                                    vacancy.intro,
+                                    VACANCY_INTRO_MAX_LENGTH,
+                                  )}
+                                </Text>
+                              </Box>
+                              <Box className="rs_read">
+                                <Inline space={1}>
+                                  {vacancy.institutionName && (
+                                    <Tag outlined={true} disabled={true}>
+                                      {vacancy.institutionName}
+                                    </Tag>
+                                  )}
+                                  {vacancy.locations &&
+                                    vacancy.locations
+                                      .filter((location) => location.title)
+                                      .map((location, index) => (
+                                        <Tag
+                                          key={index}
+                                          outlined={true}
+                                          disabled
+                                        >
+                                          {location.title}
+                                        </Tag>
+                                      ))}
+                                </Inline>
+                              </Box>
+                              {vacancy.applicationDeadlineTo && (
+                                <Box className="rs_read">
+                                  <Tag
+                                    outlined={true}
+                                    disabled
+                                    variant="purple"
+                                  >
+                                    {n(
+                                      'applicationDeadlineTo',
+                                      'Umsóknarfrestur',
+                                    )}{' '}
+                                    {vacancy.applicationDeadlineTo}
                                   </Tag>
-                                ))}
-                          </Inline>
-                          {vacancy.applicationDeadlineTo && (
-                            <Tag outlined={true} disabled variant="purple">
-                              {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
-                              {vacancy.applicationDeadlineTo}
-                            </Tag>
-                          )}
-                        </Stack>
-                        <Box>
-                          {logoUrl && (
-                            <>
-                              <Hidden below="lg">
-                                <img
-                                  className={styles.logo}
-                                  src={logoUrl}
-                                  alt=""
-                                />
-                              </Hidden>
-                              <Hidden above="md">
-                                <Box
-                                  display="flex"
-                                  justifyContent="center"
-                                  width="full"
-                                >
-                                  <img
-                                    className={styles.logo}
-                                    src={logoUrl}
-                                    alt=""
-                                  />
                                 </Box>
-                              </Hidden>
-                            </>
-                          )}
-                        </Box>
-                      </Inline>
+                              )}
+                            </Stack>
+                          </GridColumn>
+
+                          <GridColumn>
+                            <Box width="full">
+                              {logoUrl && (
+                                <>
+                                  <Hidden below="lg">
+                                    <img
+                                      className={styles.logo}
+                                      src={logoUrl}
+                                      alt=""
+                                    />
+                                  </Hidden>
+                                  <Hidden above="md">
+                                    <Box
+                                      display="flex"
+                                      justifyContent="center"
+                                      width="full"
+                                    >
+                                      <img
+                                        className={styles.logo}
+                                        src={logoUrl}
+                                        alt=""
+                                      />
+                                    </Box>
+                                  </Hidden>
+                                </>
+                              )}
+                            </Box>
+                          </GridColumn>
+                        </GridRow>
+                      </Box>
                     </FocusableBox>
                   </GridColumn>
                 )
@@ -600,7 +673,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   )
 }
 
-IcelandicGovernmentInstitutionVacanciesList.getInitialProps = async ({
+IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   apolloClient,
   locale,
 }) => {
@@ -638,36 +711,13 @@ IcelandicGovernmentInstitutionVacanciesList.getInitialProps = async ({
   const vacancies =
     vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
 
-  const institutionNames = mapVacanciesField(vacancies, 'institutionName').map(
-    ({ label }) => label,
-  )
-
-  const organizationsResponse = await apolloClient.query<
-    Query,
-    QueryGetOrganizationsArgs
-  >({
-    query: GET_ORGANIZATIONS_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        organizationTitles: institutionNames,
-      },
-    },
-  })
-
-  const organizationLogoMap = new Map<string, string>()
-
-  for (const organization of organizationsResponse?.data?.getOrganizations
-    ?.items ?? []) {
-    if (organization?.logo?.url)
-      organizationLogoMap.set(organization.title, organization.logo.url)
-  }
-
   return {
     vacancies,
     namespace,
-    organizationLogoMap: Object.fromEntries(organizationLogoMap),
+    customAlertBanner: namespace['customAlertBanner'],
   }
 }
 
-export default withMainLayout(IcelandicGovernmentInstitutionVacanciesList)
+export default withMainLayout(IcelandicGovernmentInstitutionVacanciesList, {
+  footerVersion: 'organization',
+})

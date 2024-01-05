@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic'
 
+import Header from './LandlaeknirHeader'
+
 export const LandlaeknirFooter = dynamic(() => import('./LandlaeknirFooter'), {
-  ssr: false,
+  ssr: true,
 })
 
-export const LandlaeknirHeader = dynamic(() => import('./LandlaeknirHeader'), {
-  ssr: false,
-})
+export const LandlaeknirHeader = Header

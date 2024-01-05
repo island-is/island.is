@@ -1,5 +1,6 @@
 {
-  "root": "apps/judicial-system/scheduler",
+  "name": "judicial-system-scheduler",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/scheduler/src",
   "projectType": "application",
   "prefix": "judicial-system-scheduler",
@@ -22,13 +23,13 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "judicial-system-scheduler:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/judicial-system/scheduler/**/*.{ts,tsx,js,jsx}"
@@ -36,10 +37,10 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/judicial-system/scheduler"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/scheduler"],
       "options": {
-        "jestConfig": "apps/judicial-system/scheduler/jest.config.js",
+        "jestConfig": "apps/judicial-system/scheduler/jest.config.ts",
         "passWithNoTests": true
       }
     },

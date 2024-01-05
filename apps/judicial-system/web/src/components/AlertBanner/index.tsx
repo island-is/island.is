@@ -1,13 +1,13 @@
 import { FC, useState } from 'react'
 
-import { Colors } from '@island.is/island-ui/theme'
 import {
+  alertBannerStyles,
   Box,
   Icon,
   IconMapIcon,
   Text,
-  alertBannerStyles,
 } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 
 export type AlertBannerVariants =
   | 'error'
@@ -72,7 +72,7 @@ export interface AlertBannerProps {
   description?: string
 }
 
-export const AlertBanner: FC<AlertBannerProps> = ({
+export const AlertBanner: FC<React.PropsWithChildren<AlertBannerProps>> = ({
   variant: variantKey = 'default',
   dismissable,
   title,

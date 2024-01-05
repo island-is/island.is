@@ -4,4 +4,5 @@ export class DomainDTO {
   nationalId!: string
   displayName!: string
   organisationLogoKey!: string
+  contactEmail?: string
 }

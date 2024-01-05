@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "User Profile" -->
-
 # User Profile Client
 
 This library implements a client to use User Profile APIs

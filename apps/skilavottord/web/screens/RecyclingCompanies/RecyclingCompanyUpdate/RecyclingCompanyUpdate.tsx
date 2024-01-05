@@ -62,7 +62,7 @@ const UpdateSkilavottordRecyclingPartnerMutation = gql`
   }
 `
 
-const RecyclingCompanyUpdate: FC = () => {
+const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { id } = router.query
@@ -171,7 +171,9 @@ const RecyclingCompanyUpdate: FC = () => {
           ]}
           renderLink={(link, item) => {
             return item?.href ? (
-              <NextLink href={item?.href}>{link}</NextLink>
+              <NextLink href={item?.href} legacyBehavior>
+                {link}
+              </NextLink>
             ) : (
               link
             )

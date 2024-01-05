@@ -1,7 +1,8 @@
 import React from 'react'
-import { useRouter } from 'next/router'
-import { useWindowSize } from 'react-use'
 import { useIntl } from 'react-intl'
+import { useWindowSize } from 'react-use'
+import cn from 'classnames'
+import router from 'next/router'
 
 import {
   Box,
@@ -30,8 +31,7 @@ interface Props {
   infoBoxText?: string
 }
 
-const FormFooter: React.FC<Props> = (props: Props) => {
-  const router = useRouter()
+const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const { formatMessage } = useIntl()
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
@@ -40,10 +40,12 @@ const FormFooter: React.FC<Props> = (props: Props) => {
     <Box
       display="flex"
       justifyContent="spaceBetween"
+      flexDirection={['row', 'row', 'columnReverse', 'row']}
       alignItems="center"
       data-testid="formFooter"
+      className={cn(styles.button)}
     >
-      <Box className={styles.footerItem}>
+      <Box className={styles.button}>
         <Button
           variant="ghost"
           disabled={props.previousIsDisabled}
@@ -54,35 +56,43 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           circle={isMobile}
           aria-label={props.previousButtonText || formatMessage(core.back)}
           data-testid="previousButton"
+          fluid
         >
           {!isMobile && (props.previousButtonText || formatMessage(core.back))}
         </Button>
       </Box>
-      <Box
-        className={styles.footerItem}
-        display="flex"
-        justifyContent="flexEnd"
-      >
-        {!props.hideNextButton && (
-          <Button
-            data-testid="continueButton"
-            icon={props.nextButtonIcon}
-            disabled={props.nextIsDisabled}
-            colorScheme={props.nextButtonColorScheme ?? 'default'}
-            loading={props.nextIsLoading}
-            onClick={() => {
-              if (props.onNextButtonClick) {
-                props.onNextButtonClick()
-              } else if (props.nextUrl) {
-                router.push(props.nextUrl)
-              }
-            }}
-          >
-            {props.nextButtonText ?? formatMessage(core.continue)}
-          </Button>
-        )}
-        {props.infoBoxText && <InfoBox text={props.infoBoxText} />}
-      </Box>
+      {(!props.hideNextButton || props.infoBoxText) && (
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          className={cn(styles.button, styles.continueButton)}
+        >
+          {!props.hideNextButton && (
+            <Button
+              data-testid="continueButton"
+              icon={props.nextButtonIcon}
+              disabled={props.nextIsDisabled}
+              colorScheme={props.nextButtonColorScheme ?? 'default'}
+              loading={props.nextIsLoading}
+              onClick={() => {
+                if (props.onNextButtonClick) {
+                  props.onNextButtonClick()
+                } else if (props.nextUrl) {
+                  router.push(props.nextUrl)
+                }
+              }}
+              fluid
+            >
+              {props.nextButtonText ?? formatMessage(core.continue)}
+            </Button>
+          )}
+          {props.infoBoxText && (
+            <div className={styles.infoBoxContainer}>
+              <InfoBox text={props.infoBoxText} />
+            </div>
+          )}
+        </Box>
+      )}
     </Box>
   )
 }

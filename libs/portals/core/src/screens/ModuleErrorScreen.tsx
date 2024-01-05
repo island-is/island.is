@@ -1,30 +1,54 @@
-import React, { useEffect } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
-import { m } from '../lib/messages'
 import { useRouteError } from 'react-router-dom'
+import { MessageDescriptor } from 'react-intl'
+
+import { Box } from '@island.is/island-ui/core'
+import {
+  NotFoundError,
+  Problem,
+  ProblemTypes,
+} from '@island.is/react-spa/shared'
 
 interface ModuleErrorScreenProps {
-  name: string | MessageDescriptor
+  name?: string | MessageDescriptor
+  title?: string
+  message?: string
+  skipPadding?: boolean
 }
 
-export const ModuleErrorScreen = ({ name }: ModuleErrorScreenProps) => {
-  const { formatMessage } = useLocale()
-  const error = useRouteError()
+export const ModuleErrorScreen = ({
+  title,
+  message,
+  skipPadding,
+}: ModuleErrorScreenProps) => {
+  const error = useRouteError() as Error
+  const notFoundError =
+    (error as NotFoundError)?.code === ProblemTypes.notFound
+      ? (error as NotFoundError)
+      : undefined
 
-  useEffect(() => {
-    console.error(error)
-  }, [error])
+  const renderProblem = () => (
+    <Problem
+      {...(notFoundError ? { type: ProblemTypes.notFound } : { error })}
+      expand
+      noBorder
+      title={
+        notFoundError && notFoundError?.title ? notFoundError.title : title
+      }
+      message={
+        notFoundError && notFoundError?.description
+          ? notFoundError.description
+          : message
+      }
+    />
+  )
+
+  if (skipPadding) {
+    return renderProblem()
+  }
 
   return (
-    <Box padding={8}>
-      <Text variant="h2" as="h2">
-        {formatMessage(m.somethingWrong)}
-      </Text>
-      <Text>
-        {formatMessage(m.couldNotFetch)} <i>{formatMessage(name)}</i>
-      </Text>
+    <Box paddingY={6} paddingX={[0, 6]}>
+      {renderProblem()}
     </Box>
   )
 }

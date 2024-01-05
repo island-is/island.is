@@ -16,15 +16,13 @@ import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
 import { InputController } from '@island.is/shared/form-fields'
 
-export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const RealEstateRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
 
@@ -36,13 +34,13 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.assets) {
-      append(externalData.estate.assets)
+      replace(externalData.estate.assets)
     }
   }, [])
 
   const handleAddProperty = () =>
     append({
-      share: 1,
+      share: 100,
       assetNumber: undefined,
       description: undefined,
       marketValue: undefined,
@@ -56,7 +54,6 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           const fieldError = error && error[index] ? error[index] : null
-
           if (!asset.initial) {
             return acc
           }
@@ -73,7 +70,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                 description={[
                   `${formatMessage(m.propertyNumber)}: ${asset.assetNumber}`,
                   asset.share
-                    ? `${formatMessage(m.propertyShare)}: ${asset.share * 100}%`
+                    ? `${formatMessage(m.propertyShare)}: ${asset.share}%`
                     : '',
                   <Box marginTop={1} as="span">
                     <Button

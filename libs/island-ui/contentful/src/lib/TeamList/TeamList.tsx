@@ -17,7 +17,9 @@ export interface TeamListProps {
   }[]
 }
 
-export const TeamList: FC<TeamListProps> = ({ teamMembers }) => {
+export const TeamList: FC<React.PropsWithChildren<TeamListProps>> = ({
+  teamMembers,
+}) => {
   const [selectedIndex, setSelectedIndex] = useState(-1)
 
   const [loadedImageUrls, setLoadedImageUrls] = useState<

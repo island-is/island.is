@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # infra-express-server
 
 This library was generated with [Nx](https://nx.dev).

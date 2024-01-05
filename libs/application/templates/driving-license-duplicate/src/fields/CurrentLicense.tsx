@@ -8,7 +8,9 @@ import { DriversLicenseCategory } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
 import { m } from '../lib/messages'
 
-export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
+export const CurrentLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const fakeLicense = getValueViaPath<string>(

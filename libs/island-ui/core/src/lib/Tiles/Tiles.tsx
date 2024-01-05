@@ -31,13 +31,8 @@ export const Tiles = ({
   const styles = { ...styleRefs }
   const responsiveSpace = normaliseResponsiveProp(space)
 
-  const [
-    xsColumns,
-    smColumns,
-    mdColumns,
-    lgColumns,
-    xlColumns,
-  ] = normaliseResponsiveProp(columns)
+  const [xsColumns, smColumns, mdColumns, lgColumns, xlColumns] =
+    normaliseResponsiveProp(columns)
 
   const negativeMarginTop = useNegativeMarginTop(responsiveSpace)
   const negativeMarginLeft = useNegativeMarginLeft(responsiveSpace)

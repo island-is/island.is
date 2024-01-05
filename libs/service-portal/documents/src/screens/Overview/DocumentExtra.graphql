@@ -1,0 +1,20 @@
+query documentCategories {
+  getDocumentCategories {
+    id
+    name
+  }
+}
+
+query documentTypes {
+  getDocumentTypes {
+    id
+    name
+  }
+}
+
+query documentSenders {
+  getDocumentSenders {
+    id
+    name
+  }
+}

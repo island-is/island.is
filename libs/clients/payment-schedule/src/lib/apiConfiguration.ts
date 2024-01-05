@@ -17,6 +17,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-payment-schedule',
+        organizationSlug: 'fjarsysla-rikisins',
         timeout: config.fetchTimeout,
         autoAuth: idsClientConfig.isConfigured
           ? {

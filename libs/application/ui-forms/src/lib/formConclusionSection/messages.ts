@@ -37,19 +37,41 @@ export const conclusion = {
         'The title of the expandable description field in the conclusion section',
     },
     introText: {
-      id:
-        'uiForms.application:conclusion.expandableDescriptionField.introText#markdown',
+      id: 'uiForms.application:conclusion.expandableDescriptionField.introText#markdown',
       defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
       description:
         'The intro text of the expandable description field in the conclusion section',
     },
     description: {
-      id:
-        'uiForms.application:conclusion.expandableDescriptionField.description#markdown',
+      id: 'uiForms.application:conclusion.expandableDescriptionField.description#markdown',
       defaultMessage:
         '* Þú getur nálgast þínar umsóknir á mínum síðum á island.is.\n',
       description:
         'The description of the expandable description field in the conclusion section',
+    },
+  }),
+  pdfLinkButtonField: defineMessages({
+    downloadButtonTitle: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.downloadButtonTitle',
+      defaultMessage: 'Hlaða niður skjali',
+      description: 'Button label to download file',
+    },
+    verificationDescription: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.verificationDescription',
+      defaultMessage: 'Nánari upplýsingar um sannreyningu má finna á',
+      description: 'The description about verification',
+    },
+    verificationLinkTitle: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.verificationLinkTitle',
+      defaultMessage: 'island.is/sannreyna',
+      description:
+        'The title for the link to further information about the verification',
+    },
+    verificationLinkUrl: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.verificationLinkUrl',
+      defaultMessage: 'https://island.is/sannreyna',
+      description:
+        'The url for the link to further information about the verification',
     },
   }),
 }

@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from 'react'
-import {
-  CaseListEntry,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { useEffect, useMemo, useState } from 'react'
+
+import { isIndictmentCase } from '@island.is/judicial-system/types'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export interface Filters {
   indictmentCaseFilter: boolean

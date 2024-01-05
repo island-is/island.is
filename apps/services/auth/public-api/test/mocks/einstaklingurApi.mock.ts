@@ -8,7 +8,8 @@ export const createMockEinstaklingurApi = (
   nationalRegistryUser: IndividualDto = createNationalRegistryUser(),
 ) => {
   class MockNationalRegistryClientService
-    implements Partial<NationalRegistryClientService> {
+    implements Partial<NationalRegistryClientService>
+  {
     getIndividual() {
       return Promise.resolve(nationalRegistryUser)
     }

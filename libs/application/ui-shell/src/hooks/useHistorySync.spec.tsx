@@ -9,7 +9,7 @@ import { initializeReducer } from '../reducer/ApplicationFormReducer'
 import { useHistorySync } from './useHistorySync'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
-import { act, renderHook } from '@testing-library/react-hooks'
+import { act, renderHook } from '@testing-library/react'
 
 describe('useHistorySync', () => {
   let applicationState: ApplicationUIState

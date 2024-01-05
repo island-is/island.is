@@ -2,20 +2,23 @@ import React, { useCallback, useContext, useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import {
-  FormContentContainer,
-  FormContext,
-  FormFooter,
-  PageLayout,
-  ProsecutorCaseInfo,
-} from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Box, Input, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
   core,
   icDemands,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import {
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageHeader,
+  PageLayout,
+  ProsecutorCaseInfo,
+} from '@island.is/judicial-system-web/src/components'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -25,13 +28,9 @@ import {
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseType } from '@island.is/judicial-system/types'
-import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import * as constants from '@island.is/judicial-system/consts'
-
-export const formatInstitutionName = (name: string | undefined) => {
+export const formatInstitutionName = (name?: string | null) => {
   if (!name) return ''
 
   if (name.startsWith('Lögreglustjórinn')) {
@@ -44,7 +43,7 @@ export const formatInstitutionName = (name: string | undefined) => {
   return ''
 }
 
-const PoliceDemands: React.FC = () => {
+const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -104,9 +103,8 @@ const PoliceDemands: React.FC = () => {
         format: { court: true, institution: true, accused: true },
       },
       [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
-        text:
-          icDemands.sections.demands.prefill
-            .electronicDataDiscoveryInvestigation,
+        text: icDemands.sections.demands.prefill
+          .electronicDataDiscoveryInvestigation,
         format: {
           court: true,
           institution: true,
@@ -115,10 +113,14 @@ const PoliceDemands: React.FC = () => {
           year: true,
         },
       },
+      [CaseType.PAROLE_REVOCATION]: {
+        text: icDemands.sections.demands.prefill.paroleRevocation,
+        format: { court: true, accused: true },
+      },
     }
 
     if (workingCase.defendants && workingCase.defendants.length > 0) {
-      const courtClaim = courtClaimPrefill[workingCase.type]
+      const courtClaim = workingCase.type && courtClaimPrefill[workingCase.type]
       const courtClaimText = courtClaim
         ? formatMessage(courtClaim.text, {
             ...(courtClaim.format?.accused && {

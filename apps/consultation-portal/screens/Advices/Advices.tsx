@@ -37,13 +37,8 @@ export const AdvicesScreen = () => {
     })
   }
 
-  const {
-    advices,
-    total,
-    getAdvicesLoading,
-    filters,
-    setFilters,
-  } = useAdviceFilters({ isAuthenticated: isAuthenticated })
+  const { advices, total, getAdvicesLoading, filters, setFilters } =
+    useAdviceFilters({ isAuthenticated: isAuthenticated })
 
   const renderCards = () => {
     if (userLoading || getAdvicesLoading) {
@@ -55,7 +50,7 @@ export const AdvicesScreen = () => {
           justifyContent="center"
           style={{ height: 200 }}
         >
-          <LoadingDots color="blue" large />
+          <LoadingDots large />
         </Box>
       )
     }

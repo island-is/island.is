@@ -1,46 +1,44 @@
-import { Request } from 'express'
-
 import { DataSource, DataSourceConfig } from 'apollo-datasource'
+import { Request } from 'express'
 
 import { Injectable } from '@nestjs/common'
 
 import { ProblemError } from '@island.is/nest/problem'
+
 import type {
   Case,
+  CaseFile,
+  CaseListEntry,
   CreateCase,
+  CreateDefendant,
   CreateFile,
   CreatePresignedPost,
+  CreateUser,
+  Defendant,
+  DeleteDefendantResponse,
   DeleteFileResponse,
-  CaseFile,
-  UpdateFile,
+  Institution,
+  Notification,
+  PoliceCaseFile,
   PresignedPost,
   RequestSignatureResponse,
+  SendNotification,
+  SendNotificationResponse,
   SignatureConfirmationResponse,
   SignedUrl,
   TransitionCase,
   UpdateCase,
-  Institution,
-  User,
-  CreateUser,
-  UpdateUser,
-  Notification,
-  SendNotification,
-  SendNotificationResponse,
-  UploadFileToCourtResponse,
-  PoliceCaseFile,
-  UploadPoliceCaseFileResponse,
-  UploadPoliceCaseFile,
-  CreateDefendant,
-  Defendant,
   UpdateDefendant,
-  DeleteDefendantResponse,
-  CaseListEntry,
+  UpdateFile,
+  UpdateUser,
+  UploadFileToCourtResponse,
+  UploadPoliceCaseFile,
+  UploadPoliceCaseFileResponse,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { UpdateFilesResponse } from '../modules/file'
-import { PoliceCaseInfo } from '../modules/police'
-
 import {
   CreateIndictmentCountInput,
   DeleteIndictmentCountInput,
@@ -48,6 +46,7 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../modules/indictment-count'
+import { PoliceCaseInfo } from '../modules/police'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -90,6 +89,14 @@ export class BackendApi extends DataSource<{ req: Request }> {
     })
   }
 
+  private put<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
+    return this.callBackend<TResult>(route, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      headers: this.headers,
+    })
+  }
+
   private patch<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
     return this.callBackend<TResult>(route, {
       method: 'PATCH',
@@ -122,7 +129,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   updateUser(id: string, updateUser: UpdateUser): Promise<User> {
-    return this.patch(`user/${id}`, updateUser)
+    return this.put(`user/${id}`, updateUser)
   }
 
   getCases(): Promise<CaseListEntry[]> {
@@ -335,6 +342,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     id: string,
   ): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
+  }
+
+  limitedAccessGetAllFiles(caseId: string): Promise<Buffer> {
+    return this.get(`case/${caseId}/limitedAccess/files/all`)
   }
 }
 

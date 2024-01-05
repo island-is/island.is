@@ -20,7 +20,7 @@ const application = createApplication({
   answers: {
     certificate: 'yes',
     willBringQualityPhoto: 'yes',
-    juristiction: 1,
+    jurisdiction: 1,
     healthDeclaration: {
       a: 'no',
       b: 'yes',
@@ -34,7 +34,7 @@ const application = createApplication({
   created: new Date(),
   modified: new Date(),
   externalData: {
-    juristictions: {
+    jurisdictions: {
       status: 'success',
       date: new Date(),
       data: [{ id: 1, zip: '101', name: 'Sýslumaðurinn' }],
@@ -78,7 +78,7 @@ describe('driving license submission', () => {
         answers: {
           ...application.answers,
           willBringQualityPhoto: 'no',
-          juristiction: 1,
+          jurisdiction: 1,
           healthDeclaration: {
             a: 'yes',
             b: 'no',

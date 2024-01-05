@@ -1,12 +1,20 @@
 // UPGRADE WARNING
-// Copied from @nrwl/jest/plugins/resolver.js v11.4.0
+// Copied from @nx/jest/plugins/resolver.js v11.4.0
 // Removed .css extension override to support vanilla-extract.
-// May need an update whenever @nrwl/jest changes.
+// May need an update whenever @nx/jest changes.
 
 const path_1 = require('path')
 const fs = require('fs')
 const ts = require('typescript')
 const defaultResolver_1 = require('jest-resolve/build/defaultResolver')
+const { readProjectConfiguration, workspaceRoot } = require('@nx/devkit')
+/**
+ * Nx UPGRADE WARNING - Nx 16.3.2:
+ * This is a direct import as the FsTree is not a public API of Nx.
+ * We are using FsTree to find the project configuration to read the project root.
+ * This may break in future versions of Nx.
+ */
+const { FsTree } = require('nx/src/generators/tree')
 
 function getCompilerSetup(rootDir) {
   const tsConfigPath =
@@ -45,16 +53,17 @@ module.exports = function (path, options) {
     return defaultResolver_1.default(path, options)
   } catch (e) {
     // Fallback to using typescript
-    const workspace = JSON.parse(
-      fs.readFileSync(
-        path_1.join(process.env.NX_WORKSPACE_ROOT, 'workspace.json'),
-        { encoding: 'utf-8' },
-      ),
+    const fsTree = new FsTree(workspaceRoot, false)
+    const project = readProjectConfiguration(
+      fsTree,
+      process.env.NX_TASK_TARGET_PROJECT,
     )
-    const projectRoot = workspace.projects[process.env.NX_TASK_TARGET_PROJECT]
+
     compilerSetup =
       compilerSetup ||
-      getCompilerSetup((options.rootDir ?? options.basedir) + `/${projectRoot}`)
+      getCompilerSetup(
+        (options.rootDir ?? options.basedir) + `/${project.root}`,
+      )
     const { compilerOptions, host } = compilerSetup
     return ts.resolveModuleName(path, options.basedir, compilerOptions, host)
       .resolvedModule.resolvedFileName

@@ -16,12 +16,12 @@ export async function graphqlSpy(page: Page, url: string, operation: string) {
     await route.fulfill({ response })
   })
   return {
-    extractor: (
-      fieldExtractor: (op: { request: any; response: any }) => string,
-    ) => () => {
-      const op = data[0]
-      return op ? fieldExtractor(op) : ''
-    },
+    extractor:
+      (fieldExtractor: (op: { request: any; response: any }) => string) =>
+      () => {
+        const op = data[0]
+        return op ? fieldExtractor(op) : ''
+      },
     data: (fieldExtractor: (op: { request: any; response: any }) => string) => {
       const op = data[0]
       return op ? fieldExtractor(op) : ''
@@ -37,4 +37,18 @@ export async function mockApi(page: Page, url: string, response: any) {
       contentType: 'application/json',
     })
   })
+}
+
+export async function verifyRequestCompletion(
+  page: Page,
+  url: string,
+  op: string,
+) {
+  const response = await page.waitForResponse(
+    (resp) =>
+      resp.url().includes(url) &&
+      resp.request().postDataJSON().operationName === op,
+  )
+
+  return response
 }

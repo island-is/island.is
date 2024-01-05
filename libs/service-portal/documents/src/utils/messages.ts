@@ -22,6 +22,14 @@ export const messages = defineMessages({
     id: 'sp.documents:only-show-unread',
     defaultMessage: 'Sýna einungis ólesið',
   },
+  onlyShowArchived: {
+    id: 'sp.documents:only-show-archived',
+    defaultMessage: 'Geymsla',
+  },
+  onlyShowBookmarked: {
+    id: 'sp.documents:only-show-bookmarked',
+    defaultMessage: 'Stjörnumerkt',
+  },
   onlyShowUnreadShort: {
     id: 'sp.documents:only-show-unread-short',
     defaultMessage: 'Sýna ólesið',
@@ -62,9 +70,26 @@ export const messages = defineMessages({
     id: 'sp.documents:error',
     defaultMessage: 'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
   },
-  documentFetchError: {
-    id: 'sp,documents:fetch-error',
+  documentErrorLoad: {
+    id: 'sp.documents:document-error-loading',
+    defaultMessage: 'Villa í birtingu skjals',
+  },
+  documentDisplayError: {
+    id: 'sp.documents:fetch-error',
     defaultMessage:
-      'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess, {senderName}',
+      'Ekki tókst að birta umbeðið skjal, við bendum þér á að prófa að sækja skjalið. Ef ekki tekst að sækja skal beina fyrirspurn til sendanda skjals: {senderName}',
+  },
+  documentFetchError: {
+    id: 'sp.documents:fetch-error',
+    defaultMessage:
+      'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess: {senderName}',
+  },
+  pickDocument: {
+    id: 'sp.documents:pick-document',
+    defaultMessage: 'Veldu skjal til að lesa',
+  },
+  markAsBulkSelection: {
+    id: 'sp.documents:mark-as-bulk-selection',
+    defaultMessage: 'Merkja skjal fyrir fjöldaframkvæmd',
   },
 })

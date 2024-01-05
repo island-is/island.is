@@ -7,7 +7,9 @@ interface SliceProps {
   slice: StorySliceProps
 }
 
-export const StorySlice: React.FC<SliceProps> = ({ slice }) => {
+export const StorySlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   return (
     <section
       key={slice.id}

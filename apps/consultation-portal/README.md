@@ -41,10 +41,10 @@ The frontend can be accessed through the following urls, the backend is hosted e
     yarn
 ```
 
-4. Run schemas to auto generate schemas.
+4. Run codegen to auto generate API schemas and clients.
 
 ```bash
-    yarn schemas
+    yarn codegen
 ```
 
 5. Run the api that fetches data from the backend and feeds the frontend.

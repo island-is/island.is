@@ -3,8 +3,8 @@ import { defineMessages } from 'react-intl'
 // Strings on signed verdict overview screen
 export const strings = defineMessages({
   rulingDate: {
-    id: 'judicial.system.core:defender_case_overview.ruling_date',
-    defaultMessage: 'Úrskurðað {courtEndTime}',
+    id: 'judicial.system.core:defender_case_overview.ruling_date_v2',
+    defaultMessage: 'Úrskurðað {rulingDate}',
     description: 'Notaður fyrir tíma úrskurðar á yfirlitsskjá verjanda.',
   },
   modifiedDatesHeading: {
@@ -27,59 +27,69 @@ export const strings = defineMessages({
       'Texti sem birtist ef úrskurður er ekki undirritaður á yfirlitsskjá verjanda',
   },
   confirmAppealAfterDeadlineModalTitle: {
-    id:
-      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_title',
+    id: 'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_title',
     defaultMessage: 'Kærufrestur er liðinn',
     description:
       'Notaður sem titill modal glugga þegar kært er eftir að kærufrestur rennur út.',
   },
   confirmAppealAfterDeadlineModalText: {
-    id:
-      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_text',
+    id: 'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_text',
     defaultMessage: 'Viltu halda áfram og senda kæru?',
     description:
       'Notaður sem texti í modal glugga þegar kært er eftir að kærufrestur rennur út.',
   },
   confirmAppealAfterDeadlineModalPrimaryButtonText: {
-    id:
-      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_primary_button_text',
+    id: 'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_primary_button_text',
     defaultMessage: 'Já, senda kæru',
     description:
       'Notaður sem texti í staðfesta takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
   },
   confirmAppealAfterDeadlineModalSecondaryButtonText: {
-    id:
-      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_secondary_button_text',
+    id: 'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_secondary_button_text',
     defaultMessage: 'Hætta við',
     description:
       'Notaður sem texti í Hætta við takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
   },
   confirmStatementAfterDeadlineModalTitle: {
-    id:
-      'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_title',
+    id: 'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_title',
     defaultMessage: 'Frestur til að skila greinargerð er liðinn',
     description:
       'Notaður sem titill í modal glugga hjá sækjanda þegar frestur til greinargerðar er liðinn.',
   },
   confirmStatementAfterDeadlineModalText: {
-    id:
-      'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_text',
+    id: 'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_text',
     defaultMessage: 'Viltu halda áfram og senda greinargerð?',
     description:
       'Notaður sem texti í modal glugga hjá sækjanda þegar frestur til greinargerðar er liðinn.',
   },
   confirmStatementAfterDeadlineModalPrimaryButtonText: {
-    id:
-      'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_primary_button_text',
+    id: 'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_primary_button_text',
     defaultMessage: 'Já, senda greinargerð',
     description:
       'Notaður sem texti í staðfesta takka í modal glugga hjá verjanda þegar frestur til greinargerðar er liðinn.',
   },
   confirmStatementAfterDeadlineModalSecondaryButtonText: {
-    id:
-      'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_secondary_button_text',
+    id: 'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_secondary_button_text',
     defaultMessage: 'Hætta við',
     description:
       'Notaður sem texti í Hætta við takka í modal glugga hjá verjanda þegar frestur til greinargerðar er liðinn.',
+  },
+  getAllDocuments: {
+    id: 'judicial.system.core:defender_case_overview.get_all_documents',
+    defaultMessage: 'Sækja öll skjöl',
+    description:
+      'Notaður sem texti í "Sækja öll skjöl" takka á yfirlitsskjá verjanda.',
+  },
+  noCourtNumber: {
+    id: 'judicial.system.core:defender_case_overview.no_court_number',
+    defaultMessage: 'Ekki skráð',
+    description:
+      'Notaður sem texti ef ekkert málsnúmer héraðsdóms er skráð á yfirlitsskjá verjanda.',
+  },
+  rulingModifiedTitle: {
+    id: 'judicial.system.core:defender_case_overview.ruling_modified_title',
+    defaultMessage: 'Úrskurður leiðréttur',
+    description:
+      'Notaður sem titill á modal þegar úrskurður er leiðréttur á yfirlitsskjá verjanda.',
   },
 })

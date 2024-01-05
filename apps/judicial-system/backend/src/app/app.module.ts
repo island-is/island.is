@@ -1,26 +1,32 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { ProblemModule } from '@island.is/nest/problem'
-import { ConfigModule } from '@island.is/nest/config'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
+import { ConfigModule } from '@island.is/nest/config'
+import { ProblemModule } from '@island.is/nest/problem'
+
+import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { messageModuleConfig } from '@island.is/judicial-system/message'
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import {
-  caseModuleConfig,
-  notificationModuleConfig,
+  awsS3ModuleConfig,
   CaseModule,
+  caseModuleConfig,
+  courtModuleConfig,
   DefendantModule,
-  UserModule,
-  InstitutionModule,
+  EventLogModule,
+  eventModuleConfig,
   FileModule,
+  IndictmentCountModule,
+  InstitutionModule,
   NotificationModule,
+  notificationModuleConfig,
   PoliceModule,
   policeModuleConfig,
-  IndictmentCountModule,
+  UserModule,
+  userModuleConfig,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -41,6 +47,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     FileModule,
     NotificationModule,
     PoliceModule,
+    EventLogModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -51,6 +58,10 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         caseModuleConfig,
         notificationModuleConfig,
         policeModuleConfig,
+        userModuleConfig,
+        awsS3ModuleConfig,
+        eventModuleConfig,
+        courtModuleConfig,
       ],
     }),
   ],

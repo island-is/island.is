@@ -1,13 +1,6 @@
-import { RelatedCase, Stakeholder } from '../../types/interfaces'
-
-interface ArrOfValueAndLabel {
-  value: string
-  label: string
-}
-
-interface Props {
-  list: Array<Stakeholder> | Array<RelatedCase> | Array<ArrOfValueAndLabel>
-  sortOption: 'name' | 'caseNumber' | 'label'
+interface Props<ListItem> {
+  list: ListItem[]
+  sortOption: 'name' | 'caseNumber' | 'label' | 'fileOrLink'
 }
 
 const IS_ALPHABET = [
@@ -45,7 +38,26 @@ const IS_ALPHABET = [
   'ö',
 ]
 
-export const sortLocale = ({ list, sortOption }: Props) => {
+export const sortLocale = <ListItem>({
+  list,
+  sortOption,
+}: Props<ListItem>): ListItem[] => {
+  const getSortOption = (listItem: ListItem) => {
+    if (sortOption !== 'fileOrLink') {
+      return listItem[sortOption]
+    }
+
+    if (listItem['link']) {
+      return listItem['description']
+        ? listItem['description']
+        : listItem['link']
+    }
+
+    return listItem['description']
+      ? listItem['description']
+      : listItem['fileName']
+  }
+
   if (list.length < 1) {
     return []
   }
@@ -55,10 +67,13 @@ export const sortLocale = ({ list, sortOption }: Props) => {
       a[sortOption].localeCompare(b[sortOption], 'is'),
     )
   }
+
   return [...list].sort(
     (a, b) => {
-      const lowerCaseA = a[sortOption].toLowerCase()
-      const lowerCaseB = b[sortOption].toLowerCase()
+      const aSortOption = getSortOption(a)
+      const bSortOption = getSortOption(b)
+      const lowerCaseA = aSortOption.toLowerCase()
+      const lowerCaseB = bSortOption.toLowerCase()
       const minLen = Math.min(lowerCaseA.length, lowerCaseB.length)
 
       if (a === b) return 0

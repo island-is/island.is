@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Contentful Role Permissions
 
 ## What

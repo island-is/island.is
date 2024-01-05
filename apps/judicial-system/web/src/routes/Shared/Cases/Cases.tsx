@@ -1,53 +1,58 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
-import {
-  CaseState,
-  CaseTransition,
-  isIndictmentCase,
-  completedCaseStates,
-} from '@island.is/judicial-system/types'
-import { capitalize } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  isCompletedCase,
+  isDistrictCourtUser,
+  isIndictmentCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
+import {
+  core,
+  errors,
+  tables,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   DropdownMenu,
   Logo,
-  SectionHeading,
-  UserContext,
-  PastCasesTable,
-  SharedPageLayout,
   PageHeader,
+  SectionHeading,
+  SharedPageLayout,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import {
-  core,
-  tables,
-  titles,
-  errors,
-} from '@island.is/judicial-system-web/messages'
+  PastCasesTable,
+  TableSkeleton,
+} from '@island.is/judicial-system-web/src/components/Table'
 import {
+  CaseListEntry,
+  CaseState,
+  CaseTransition,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ActiveCases from './ActiveCases'
+import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-const CreateCaseButton: React.FC<{
-  user: User
-}> = ({ user }) => {
+const CreateCaseButton: React.FC<
+  React.PropsWithChildren<{
+    user: User
+  }>
+> = ({ user }) => {
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
-    if (user.role === UserRole.REPRESENTATIVE) {
+    if (user.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -94,24 +99,15 @@ const CreateCaseButton: React.FC<{
 }
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
-export const Cases: React.FC = () => {
+export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
+  const { transitionCase, isTransitioningCase, isSendingNotification } =
+    useCase()
 
-  const {
-    transitionCase,
-    isTransitioningCase,
-    isSendingNotification,
-    getCaseToOpen,
-  } = useCase()
-
-  const { data, error, loading, refetch } = useQuery<{
-    cases?: CaseListEntry[]
-  }>(CasesQuery, {
+  const { data, error, loading, refetch } = useCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -128,10 +124,7 @@ export const Cases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(() => {
+  const [allActiveCases, allPastCases] = useMemo(() => {
     if (!resCases) {
       return [[], []]
     }
@@ -141,13 +134,13 @@ export const Cases: React.FC = () => {
     })
 
     return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type)) {
-        return !completedCaseStates.includes(c.state)
+      if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
+        return !isCompletedCase(c.state)
       } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingDate)
+        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
       }
     })
-  }, [resCases])
+  }, [resCases, user])
 
   const {
     filter,
@@ -169,22 +162,15 @@ export const Cases: React.FC = () => {
     }
   }
 
-  const handleRowClick = (id: string) => {
-    getCaseToOpen({
-      variables: { input: { id } },
-    })
-  }
-
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={styles.logoContainer}>
         <Logo />
-        {isProsecutor || isRepresentative ? (
+        {user && isProsecutionUser(user) ? (
           <CreateCaseButton user={user} />
         ) : null}
       </div>
-
       <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
         <Select
           name="filter-cases"
@@ -197,7 +183,6 @@ export const Cases: React.FC = () => {
           value={filter}
         />
       </Box>
-
       {error ? (
         <div
           className={styles.infoContainer}
@@ -218,7 +203,6 @@ export const Cases: React.FC = () => {
             ) : activeCases.length > 0 ? (
               <ActiveCases
                 cases={activeCases}
-                onRowClick={handleRowClick}
                 isDeletingCase={isTransitioningCase || isSendingNotification}
                 onDeleteCase={deleteCase}
               />
@@ -239,7 +223,6 @@ export const Cases: React.FC = () => {
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
           cases={pastCases}
-          onRowClick={handleRowClick}
           loading={loading || isFiltering}
           testid="pastCasesTable"
         />

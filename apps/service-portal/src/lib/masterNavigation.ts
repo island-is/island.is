@@ -1,5 +1,5 @@
 import { PortalNavigationItem, m } from '@island.is/portals/core'
-import { ServicePortalPaths } from './paths'
+import { restrictionsNavigation } from '@island.is/service-portal/restrictions'
 import { documentsNavigation } from '@island.is/service-portal/documents'
 import { financeNavigation } from '@island.is/service-portal/finance'
 import { applicationsNavigation } from '@island.is/service-portal/applications'
@@ -10,9 +10,7 @@ import {
   informationNavigation,
 } from '@island.is/service-portal/information'
 import { licenseNavigation } from '@island.is/service-portal/licenses'
-import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
-import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
-import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
+import { occupationalLicensesNavigation } from '@island.is/service-portal/occupational-licenses'
 import { airDiscountNavigation } from '@island.is/service-portal/air-discount'
 import { healthNavigation } from '@island.is/service-portal/health'
 import {
@@ -21,13 +19,14 @@ import {
 } from '@island.is/portals/shared-modules/delegations'
 import { sessionsNavigation } from '@island.is/service-portal/sessions'
 import { consentNavigation } from '@island.is/service-portal/consent'
+import { ServicePortalPaths } from '@island.is/service-portal/core'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
   systemRoute: true,
   path: ServicePortalPaths.Root,
   icon: {
-    icon: 'home',
+    icon: 'dots',
   },
 }
 
@@ -36,24 +35,23 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
   children: [
     documentsNavigation,
     applicationsNavigation,
-    personalInformationNavigation,
-    informationNavigation,
-    companyNavigation,
-    licenseNavigation,
-    educationLicenseNavigation,
-    educationNavigation,
-    assetsNavigation,
-    financeNavigation,
-    vehiclesNavigation,
-    airDiscountNavigation,
-    healthNavigation,
     {
       ...delegationsNavigation,
       children: [
         ...delegationsNavigationChildren,
         sessionsNavigation,
         consentNavigation,
+        restrictionsNavigation,
       ],
     },
+    companyNavigation,
+    informationNavigation,
+    assetsNavigation,
+    financeNavigation,
+    licenseNavigation,
+    healthNavigation,
+    occupationalLicensesNavigation,
+    airDiscountNavigation,
+    educationNavigation,
   ],
 }

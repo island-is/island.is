@@ -1,9 +1,12 @@
 import React from 'react'
-import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+
 import {
   LiveChatIncChatPanel,
   WatsonChatPanel,
 } from '@island.is/web/components'
+import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+
 import { liveChatIncConfig, watsonConfig } from './config'
 
 interface ProjectChatPanelProps {
@@ -11,11 +14,17 @@ interface ProjectChatPanelProps {
 }
 
 export const ProjectChatPanel = ({ projectPage }: ProjectChatPanelProps) => {
-  if (projectPage.id in liveChatIncConfig) {
-    return <LiveChatIncChatPanel {...liveChatIncConfig[projectPage.id]} />
+  const { activeLocale } = useI18n()
+
+  if (projectPage.id in liveChatIncConfig[activeLocale]) {
+    return (
+      <LiveChatIncChatPanel
+        {...liveChatIncConfig[activeLocale][projectPage.id]}
+      />
+    )
   }
-  if (projectPage.id in watsonConfig) {
-    return <WatsonChatPanel {...watsonConfig[projectPage.id]} />
+  if (projectPage.id in watsonConfig[activeLocale]) {
+    return <WatsonChatPanel {...watsonConfig[activeLocale][projectPage.id]} />
   }
   return null
 }

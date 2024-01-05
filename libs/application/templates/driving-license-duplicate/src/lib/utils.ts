@@ -34,7 +34,7 @@ export const requirementsMet = (
   return !!photo && !!signature
 }
 
-export const allowFakeCondition = (result: string | undefined) => (
-  answers: FormValue,
-) =>
-  getValueViaPath<string>(answers, 'fakeData.useFakeData', undefined) === result
+export const allowFakeCondition =
+  (result: string | undefined) => (answers: FormValue) =>
+    getValueViaPath<string>(answers, 'fakeData.useFakeData', undefined) ===
+    result

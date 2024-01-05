@@ -2,7 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from '../components/Layout/ContentWrapper'
 
-const ErrorPage: React.FC = () => {
+const ErrorPage: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   const toMainPage = () => {

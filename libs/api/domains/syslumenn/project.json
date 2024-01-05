@@ -1,22 +1,23 @@
 {
-  "root": "libs/api/domains/syslumenn",
+  "name": "api-domains-syslumenn",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/syslumenn/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api/domains/syslumenn/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/syslumenn/jest.config.js",
+        "jestConfig": "libs/api/domains/syslumenn/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/syslumenn"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/syslumenn"]
     }
   },
   "tags": ["lib:api", "scope:api"]

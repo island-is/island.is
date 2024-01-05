@@ -5,10 +5,12 @@ import { KeyValueField, Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 
-export const KeyValueFormField: FC<{
-  field: KeyValueField
-  application: Application
-}> = ({ field, application }) => {
+export const KeyValueFormField: FC<
+  React.PropsWithChildren<{
+    field: KeyValueField
+    application: Application
+  }>
+> = ({ field, application }) => {
   const { formatMessage } = useLocale()
   const values = formatText(field.value, application, formatMessage)
 

@@ -8,7 +8,7 @@ import { DomainDTO } from './../../../entities/dtos/domain.dto'
 import { ResourcesService } from './../../../services/ResourcesService'
 import DomainCreateForm from './../../../components/Admin/form/DomainCreateForm'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const domainName = query.domainName
   const router = useRouter()

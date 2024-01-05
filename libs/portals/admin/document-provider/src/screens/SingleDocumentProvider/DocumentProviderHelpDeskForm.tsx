@@ -25,20 +25,17 @@ interface UseFormProps {
   organisationNationalId: string
 }
 
-export const DocumentProviderHelpDeskForm: FC<Props> = ({
-  helpDesk,
-  organisationId,
-  organisationNationalId,
-}) => {
+export const DocumentProviderHelpDeskForm: FC<
+  React.PropsWithChildren<Props>
+> = ({ helpDesk, organisationId, organisationNationalId }) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<UseFormProps>()
-  const { updateHelpDesk, loading: loadingUpdate } = useUpdateHelpDesk(
-    organisationId,
-  )
+  const { updateHelpDesk, loading: loadingUpdate } =
+    useUpdateHelpDesk(organisationId)
   const { createHelpDesk, loading: loadingCreate } = useCreateHelpDesk(
     organisationId,
     organisationNationalId,

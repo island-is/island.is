@@ -1,13 +1,17 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { composePlugins, withNx } = require('@nx/webpack')
+const { withReact } = require('@nx/react')
 const nrwlConfig = require('./../../../libs/shared/webpack/nrwl-config')
 
-module.exports = (config) => {
-  // Add our common webpack config
-  nrwlConfig(config)
+const isDev = process.env.NODE_ENV === 'development'
 
+module.exports = composePlugins(withNx(), withReact(), nrwlConfig, (config) => {
   // App specific config
   config.stats.chunks = false
   config.stats.modules = false
+
+  if (isDev) {
+    config.devtool = 'eval-cheap-module-source-map'
+  }
 
   return {
     ...config,
@@ -18,4 +22,4 @@ module.exports = (config) => {
       global: true,
     },
   }
-}
+})

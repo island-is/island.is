@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-export const Company: FC = () => (
+export const Company: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="100%"

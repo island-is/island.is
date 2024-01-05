@@ -31,8 +31,7 @@ export const ruling = {
     }),
     courtLegalArguments: defineMessages({
       prefill: {
-        id:
-          'judicial.system.core:ruling.sections.court_legal_arguments.prefill',
+        id: 'judicial.system.core:ruling.sections.court_legal_arguments.prefill',
         defaultMessage:
           'Í greinargerð er krafa sóknaraðila rökstudd þannig: {legalArguments}',
         description:
@@ -44,29 +43,25 @@ export const ruling = {
     sections: {
       decision: defineMessages({
         acceptLabel: {
-          id:
-            'judicial.system.core:ruling.investigation_cases.sections.decision.accept_label',
+          id: 'judicial.system.core:ruling.investigation_cases.sections.decision.accept_label',
           defaultMessage: 'Krafa samþykkt',
           description:
             'Notaður sem texti við radio takka með vali um að samþykkja rannsóknarheimild á úrskurðar skrefi í rannsóknarheimildum.',
         },
         rejectLabel: {
-          id:
-            'judicial.system.core:ruling.investigation_cases.sections.decision.reject_label',
+          id: 'judicial.system.core:ruling.investigation_cases.sections.decision.reject_label',
           defaultMessage: 'Kröfu hafnað',
           description:
             'Notaður sem texti við radio takka með vali um að hafna rannsóknarheimild á úrskurðar skrefi í rannsóknarheimildum.',
         },
         partiallyAcceptLabel: {
-          id:
-            'judicial.system.core:ruling.investigation_cases.sections.decision.partially_accept_label',
+          id: 'judicial.system.core:ruling.investigation_cases.sections.decision.partially_accept_label',
           defaultMessage: 'Krafa tekin til greina að hluta',
           description:
             'Notaður sem texti við radio takka með vali um að samþykkja rannsóknarheimild að hluta á úrskurðar skrefi í rannsóknarheimildum.',
         },
         dismissLabel: {
-          id:
-            'judicial.system.core:ruling.investigation_cases.sections.ruling.decision.dismiss_label',
+          id: 'judicial.system.core:ruling.investigation_cases.sections.ruling.decision.dismiss_label',
           defaultMessage: 'Kröfu vísað frá',
           description:
             'Notaður sem texti við radio takka með vali um að vísa máli frá á úrskurðar skrefi í rannsóknarheimildum.',
@@ -79,44 +74,38 @@ export const ruling = {
     sections: {
       decision: defineMessages({
         caseType: {
-          id:
-            'judicial.system.core:ruling.restriction_cases.sections.decision.case_type',
+          id: 'judicial.system.core:ruling.restriction_cases.sections.decision.case_type',
           defaultMessage:
             '{caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} other {gæsluvarðhald}}',
           description:
             'Notaður sem texti við radio takka með vali um að samþykkja/hafna/vísa frá kröfu á úrskurðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
         },
         acceptLabel: {
-          id:
-            'judicial.system.core:ruling.restriction_cases.sections.decision.accept_label',
+          id: 'judicial.system.core:ruling.restriction_cases.sections.decision.accept_label',
           defaultMessage: 'Krafa um {caseType} samþykkt',
           description:
             'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         partiallyAcceptLabel: {
-          id:
-            'judicial.system.core:ruling.restriction_cases.sections.decision.partially_accept_label',
+          id: 'judicial.system.core:ruling.restriction_cases.sections.decision.partially_accept_label',
           defaultMessage: 'Krafa um {caseType} tekin til greina að hluta',
           description:
             'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald að hluta á úrskurðar skrefi í gæsluvarðhalds- og vistunarmálum.',
         },
         rejectLabel: {
-          id:
-            'judicial.system.core:ruling.restriction_cases.sections.decision.reject_label',
+          id: 'judicial.system.core:ruling.restriction_cases.sections.decision.reject_label',
           defaultMessage: 'Kröfu um {caseType} hafnað',
           description:
             'Notaður sem texti við radio takka með vali um að hafna gæsluvarðhaldi á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         dismissLabel: {
-          id:
-            'judicial.system.core:ruling.restriction_cases.sections.decision.dismiss_label',
+          id: 'judicial.system.core:ruling.restriction_cases.sections.decision.dismiss_label',
           defaultMessage: 'Kröfu um {caseType} vísað frá',
           description:
             'Notaður sem texti við radio takka með vali um að vísa máli frá á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         acceptingAlternativeTravelBanLabel: {
-          id:
-            'judicial.system.core:ruling.restriction_cases.sections.decision.accepting_alternative_travel_ban_label',
+          id: 'judicial.system.core:ruling.restriction_cases.sections.decision.accepting_alternative_travel_ban_label',
           defaultMessage: 'Kröfu um {caseType} hafnað en úrskurðað í farbann',
           description:
             'Notaður sem texti við radio takka með vali um að hafna gæsluvarðhaldi en úrskurða í farbann á úrskurðar skrefi í gæsluvarðhalds- og vistunarfálum.',

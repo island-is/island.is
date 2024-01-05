@@ -26,6 +26,7 @@ const provideApi = <T>(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'consultation-portal',
+          organizationSlug: 'stjornarrad-islands',
           logErrorResponseBody: true,
           autoAuth: idsClientConfig.isConfigured
             ? {

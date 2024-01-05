@@ -4,7 +4,9 @@ import { Text } from '@island.is/island-ui/core'
 import { complaint } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-export const ComplaintDocumentHeading: FC<FieldBaseProps> = () => {
+export const ComplaintDocumentHeading: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   const { formatMessage } = useLocale()
 
   return (

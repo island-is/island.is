@@ -17,7 +17,7 @@ interface Props extends FieldBaseProps {
   field: AsyncSelectField
 }
 
-export const AsyncSelectFormField: FC<Props> = ({
+export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   application,
   error,
   field,

@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   JwtAuthGuard,
   RolesGuard,
@@ -22,25 +23,26 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { defenderRule } from '../../guards'
+import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import {
-  LimitedAccessCaseExistsGuard,
-  CaseDefenderGuard,
-  CaseCompletedGuard,
-  CurrentCase,
   Case,
+  CaseCompletedGuard,
+  CaseReadGuard,
   CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+  LimitedAccessCaseExistsGuard,
 } from '../case'
+import { CreateFileDto } from './dto/createFile.dto'
+import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
+import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
-import { CurrentCaseFile } from './guards/caseFile.decorator'
-import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
-import { CreateFileDto } from './dto/createFile.dto'
-import { PresignedPost } from './models/presignedPost.model'
-import { SignedUrl } from './models/signedUrl.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
+import { PresignedPost } from './models/presignedPost.model'
+import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
 @UseGuards(
@@ -48,7 +50,6 @@ import { FileService } from './file.service'
   RolesGuard,
   LimitedAccessCaseExistsGuard,
   CaseCompletedGuard,
-  CaseDefenderGuard,
 )
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
@@ -58,7 +59,10 @@ export class LimitedAccessFileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(new CaseTypeGuard([...restrictionCases, ...investigationCases]))
+  @UseGuards(
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
+  )
   @RolesRules(defenderRule)
   @Post('file/url')
   @ApiCreatedResponse({
@@ -77,6 +81,7 @@ export class LimitedAccessFileController {
 
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
     LimitedAccessWriteCaseFileGuard,
   )
   @RolesRules(defenderRule)
@@ -95,8 +100,8 @@ export class LimitedAccessFileController {
     return this.fileService.createCaseFile(theCase, createFile)
   }
 
-  @UseGuards(CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
-  @RolesRules(defenderRule)
+  @UseGuards(CaseReadGuard, CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
+  @RolesRules(prisonSystemStaffRule, defenderRule)
   @Get('file/:fileId/url')
   @ApiOkResponse({
     type: SignedUrl,
@@ -116,6 +121,7 @@ export class LimitedAccessFileController {
 
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
     CaseFileExistsGuard,
     LimitedAccessWriteCaseFileGuard,
   )

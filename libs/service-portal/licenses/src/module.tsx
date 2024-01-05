@@ -17,7 +17,7 @@ const PassportDetail = lazy(() =>
 export const licensesModule: PortalModule = {
   name: m.licenseNavTitle,
   enabled: ({ isCompany }) => !isCompany,
-  routes: ({ userInfo, client }) => [
+  routes: ({ userInfo, ...rest }) => [
     {
       name: defineMessage({
         id: 'sp.license:main-your-licenses',
@@ -25,7 +25,7 @@ export const licensesModule: PortalModule = {
       }),
       path: LicensePaths.LicensesRoot,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
-      loader: translationLoader({ userInfo, client }),
+      loader: translationLoader({ userInfo, ...rest }),
       element: <LicensesOverview />,
     },
     {

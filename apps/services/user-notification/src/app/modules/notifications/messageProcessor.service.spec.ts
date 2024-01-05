@@ -4,12 +4,14 @@ import { LoggingModule } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { CacheModule } from '@island.is/cache'
+import { CacheModule } from '@nestjs/cache-manager'
 import { NotificationsService } from './notifications.service'
 import {
   UserProfile,
   UserProfileLocaleEnum,
 } from '@island.is/clients/user-profile'
+import { getModelToken } from '@nestjs/sequelize'
+import { Notification } from './notification.model'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
@@ -45,6 +47,7 @@ const mockProfile: UserProfile = {
   profileImageUrl: '',
   emailStatus: 'VERIFIED',
   mobileStatus: 'VERIFIED',
+  lastNudge: new Date(),
 }
 
 describe('MessageProcessorService', () => {
@@ -54,6 +57,7 @@ describe('MessageProcessorService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [CacheModule.register({}), LoggingModule],
+
       providers: [
         MessageProcessorService,
         NotificationsService,
@@ -61,13 +65,16 @@ describe('MessageProcessorService', () => {
           provide: LOGGER_PROVIDER,
           useValue: logger,
         },
+        {
+          provide: getModelToken(Notification),
+          useClass: jest.fn(() => ({})),
+        },
       ],
     }).compile()
 
     service = module.get<MessageProcessorService>(MessageProcessorService)
-    notificationsService = module.get<NotificationsService>(
-      NotificationsService,
-    )
+    notificationsService =
+      module.get<NotificationsService>(NotificationsService)
   })
 
   it('should be defined', () => {

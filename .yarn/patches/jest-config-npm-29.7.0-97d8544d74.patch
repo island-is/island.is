@@ -1,0 +1,12 @@
+diff --git a/build/ValidConfig.js b/build/ValidConfig.js
+index 0c1250c4da55984ef3ef0befb3bbf3c2133fe912..67e586e0f664629e18553927325f912c1b25a409 100644
+--- a/build/ValidConfig.js
++++ b/build/ValidConfig.js
+@@ -331,6 +331,7 @@ const initialProjectOptions = {
+     ['/__tests__/\\.test\\.[jt]sx?$', '/__tests__/\\.spec\\.[jt]sx?$']
+   ),
+   testRunner: 'circus',
++  testTimeout: 5000,
+   transform: {
+     '\\.js$': '<rootDir>/preprocessor.js'
+   },

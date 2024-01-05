@@ -1,7 +1,10 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { messages as m } from '@island.is/service-portal/documents/messages'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { label } from '../../../../support/i18n'
 import { helpers } from '../../../../support/locator-helpers'
+import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -24,7 +27,7 @@ test.describe('Service portal', () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
     await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
-    await expect(findByRole('link', 'Pósthólf')).toBeVisible()
+    await expect(findByRole('link', 'Pósthólf').first()).toBeVisible()
   })
   test('should have user Gervimaður Afríka logged in', async () => {
     const page = await context.newPage()
@@ -34,10 +37,11 @@ test.describe('Service portal', () => {
   })
   test('should have Pósthólf', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
     const { findByRole } = helpers(page)
     await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
     await findByRole('link', 'Pósthólf').click()
-    await expect(page.locator('text=Hér getur þú fundið skjöl')).toBeVisible()
+    await expect(page.getByText(label(m.pickDocument))).toBeVisible()
   })
   test('should change language', async () => {
     const page = await context.newPage()

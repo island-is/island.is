@@ -26,7 +26,9 @@ interface RealEstateAgentsListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
+const RealEstateAgentsList: FC<
+  React.PropsWithChildren<RealEstateAgentsListProps>
+> = ({ slice }) => {
   const t = useLocalization(slice.json)
 
   const [listState, setListState] = useState<ListState>('loading')

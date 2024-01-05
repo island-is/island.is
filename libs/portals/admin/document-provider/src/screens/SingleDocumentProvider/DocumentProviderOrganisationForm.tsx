@@ -16,10 +16,9 @@ interface Props {
   setOrganisationName: (name: string) => void
 }
 
-export const DocumentProviderOrganisationForm: FC<Props> = ({
-  organisation,
-  setOrganisationName,
-}) => {
+export const DocumentProviderOrganisationForm: FC<
+  React.PropsWithChildren<Props>
+> = ({ organisation, setOrganisationName }) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,

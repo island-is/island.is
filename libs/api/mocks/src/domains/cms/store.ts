@@ -5,7 +5,7 @@ import {
   menu as createMenu,
   groupedMenu as createGroupedMenu,
   news,
-  lifeEvent,
+  anchorPage,
   articleGroup,
   articleSubgroup,
   genericPage,
@@ -49,7 +49,7 @@ export const store = createStore(() => {
 
   const newsList = orderBy(news.list(12), ['date'], ['desc'])
 
-  const lifeEvents = lifeEvent.list(6, {
+  const anchorPages = anchorPage.list(6, {
     category: () => faker.random.arrayElement(articleCategories),
   })
 
@@ -62,7 +62,7 @@ export const store = createStore(() => {
 
   return {
     frontpage,
-    lifeEvents,
+    anchorPages,
     newsList,
     alertBanner,
     menu,

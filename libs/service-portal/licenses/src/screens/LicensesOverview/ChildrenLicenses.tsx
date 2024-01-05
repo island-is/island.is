@@ -16,7 +16,10 @@ interface Props {
   data?: IdentityDocumentModelChild[] | null
 }
 
-export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
+export const ChildrenLicenses: FC<React.PropsWithChildren<Props>> = ({
+  data,
+  loading,
+}) => {
   useNamespaces('sp.license')
 
   return (
@@ -40,7 +43,7 @@ export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
       ))}
 
       {!loading && !data && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState />
         </Box>
       )}

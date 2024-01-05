@@ -2,19 +2,20 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
 import { CaseService } from '../../case'
-import { IndictmentCount } from '../models/indictmentCount.model'
-import { IndictmentCountService } from '../indictmentCount.service'
 import { IndictmentCountController } from '../indictmentCount.controller'
+import { IndictmentCountService } from '../indictmentCount.service'
+import { IndictmentCount } from '../models/indictmentCount.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')
 
 export const createTestingIndictmentCountModule = async () => {
-  const defendantModule = await Test.createTestingModule({
+  const indictmentCountModule = await Test.createTestingModule({
     imports: [
       SharedAuthModule.register({
         jwtSecret: environment.auth.jwtSecret,
@@ -47,17 +48,19 @@ export const createTestingIndictmentCountModule = async () => {
     ],
   }).compile()
 
-  const indictmentCountModel = await defendantModule.resolve<
+  const indictmentCountModel = await indictmentCountModule.resolve<
     typeof IndictmentCount
   >(getModelToken(IndictmentCount))
 
-  const indictmentCountService = defendantModule.get<IndictmentCountService>(
-    IndictmentCountService,
-  )
+  const indictmentCountService =
+    indictmentCountModule.get<IndictmentCountService>(IndictmentCountService)
 
-  const indictmentCountController = defendantModule.get<IndictmentCountController>(
-    IndictmentCountController,
-  )
+  const indictmentCountController =
+    indictmentCountModule.get<IndictmentCountController>(
+      IndictmentCountController,
+    )
+
+  indictmentCountModule.close()
 
   return {
     indictmentCountModel,

@@ -1,28 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
-import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
+import { isCompletedCase } from '@island.is/judicial-system/types'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  CaseListEntry,
-  completedCaseStates,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
-
-import { PageHeader } from '@island.is/judicial-system-web/src/components'
-import { titles, errors } from '@island.is/judicial-system-web/messages'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
+  PageHeader,
+  SharedPageLayout,
+} from '@island.is/judicial-system-web/src/components'
 
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
-
+import { useDefenderCasesQuery } from './defenderCases.generated'
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-export const Cases: React.FC = () => {
+export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
 
   const availableTabs = ['active', 'completed']
@@ -37,30 +32,19 @@ export const Cases: React.FC = () => {
     window.localStorage.setItem('CASE_ACTIVE_TAB', activeTab)
   }, [activeTab])
 
-  const { data, error, loading } = useQuery<{
-    cases?: CaseListEntry[]
-  }>(CasesQuery, {
+  const { data, error, loading } = useDefenderCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
   const cases = data?.cases
 
-  const [activeCases, completedCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(() => {
+  const [activeCases, completedCases] = useMemo(() => {
     if (!cases) {
       return [[], []]
     }
 
-    return partition(cases, (c) => {
-      if (isIndictmentCase(c.type)) {
-        return !completedCaseStates.includes(c.state)
-      } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingDate)
-      }
-    })
+    return partition(cases, (c) => !isCompletedCase(c.state))
   }, [cases])
 
   const {
@@ -115,33 +99,55 @@ export const Cases: React.FC = () => {
             id: 'active',
             label: formatMessage(m.activeCasesTabLabel),
             content: (
-              <Box>
-                <FilterCheckboxes
-                  filters={filters}
-                  toggleFilter={toggleFilters}
-                />
-                <DefenderCasesTable
-                  cases={activeFilteredCases}
-                  loading={loading}
-                />
-              </Box>
+              <div>
+                {activeCases.length > 0 || loading ? (
+                  <Box>
+                    <FilterCheckboxes
+                      filters={filters}
+                      toggleFilter={toggleFilters}
+                    />
+                    <DefenderCasesTable
+                      cases={activeFilteredCases}
+                      loading={loading}
+                    />
+                  </Box>
+                ) : (
+                  <Box className={styles.infoContainer} marginTop={3}>
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.noActiveCases)}
+                    />
+                  </Box>
+                )}
+              </div>
             ),
           },
           {
             id: 'completed',
             label: formatMessage(m.completedCasesTabLabel),
             content: (
-              <Box>
-                <FilterCheckboxes
-                  filters={filters}
-                  toggleFilter={toggleFilters}
-                />
-                <DefenderCasesTable
-                  cases={completedFilteredCases}
-                  showingCompletedCases={true}
-                  loading={loading}
-                />
-              </Box>
+              <div>
+                {completedCases.length > 0 || loading ? (
+                  <Box>
+                    <FilterCheckboxes
+                      filters={filters}
+                      toggleFilter={toggleFilters}
+                    />
+                    <DefenderCasesTable
+                      cases={completedFilteredCases}
+                      showingCompletedCases={true}
+                      loading={loading}
+                    />
+                  </Box>
+                ) : (
+                  <Box className={styles.infoContainer} marginTop={3}>
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.noCompletedCases)}
+                    />
+                  </Box>
+                )}
+              </div>
             ),
           },
         ]}

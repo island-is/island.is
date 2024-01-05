@@ -1,9 +1,9 @@
-import DeviceInfo from 'react-native-device-info';
-import {Platform} from 'react-native';
+import { Platform } from 'react-native'
+import DeviceInfo from 'react-native-device-info'
 import {
   environmentStore,
   useEnvironmentStore,
-} from './stores/environment-store';
+} from './stores/environment-store'
 
 // Initial environment
 export const environments = {
@@ -31,12 +31,12 @@ export const environments = {
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
-};
+}
 
-export const bundleId = DeviceInfo.getBundleId();
+export const bundleId = DeviceInfo.getBundleId()
 
 export const isTestingApp =
-  bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
+  bundleId.endsWith('.staging') || bundleId.endsWith('.dev')
 
 export const config = {
   bundleId,
@@ -55,6 +55,9 @@ export const config = {
     '@island.is/licenses',
     '@island.is/vehicles',
     '@island.is/assets',
+    '@island.is/finance:overview',
+    '@island.is/finance/salary',
+    '@island.is/finance/schedule:read',
   ],
   cognitoUrl: 'https://cognito.shared.devland.is/login',
   cognitoClientId: 'bre6r7d5e7imkcgbt7et1kqlc',
@@ -63,19 +66,19 @@ export const config = {
     ios: '8And8KYL9BWRsUAhEBFFUxbVfVTdSM4QBQsr6',
     android: '4sXtRa8Q7CWLTrTxKjvcH7g8WJYIDMCENhvYz',
   }),
-};
+}
 
 export function useConfig() {
-  const {environment} = useEnvironmentStore();
+  const { environment } = useEnvironmentStore()
   return {
     ...config,
     ...environment,
-  };
+  }
 }
 
 export function getConfig() {
   return {
     ...config,
     ...environmentStore.getState().environment,
-  };
+  }
 }

@@ -47,7 +47,9 @@ interface AdgerdirArticlesProps {
   startingIds?: Array<string>
 }
 
-export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
+export const AdgerdirArticles: FC<
+  React.PropsWithChildren<AdgerdirArticlesProps>
+> = ({
   title,
   items,
   tags,
@@ -81,6 +83,8 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 
   useEffect(() => {
     setUsableFilters(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       items.reduce((all, cur) => {
         const ids = cur.tags.map((x) => x.id)
 
@@ -92,14 +96,15 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
       }, []),
     )
   }, [])
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const handleChange = (e) => {
     e.preventDefault()
     setFilterString(e.target.value)
   }
 
   const onFilterStringChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ title, description }, index) => {
       const str = `${title} ${description}`.trim()
@@ -116,7 +121,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }, [visibleItems, filterString])
 
   const onFilterTagChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ tags }, index) => {
       const ids = tags.map((x) => x.id)
@@ -136,17 +141,23 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }, [onFilterStringChange, onFilterTagChange])
 
   const onUpdateFilters = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     clearTimeout(timerRef.current)
     setIsLoading(true)
 
     if (!filterString) {
       doUpdate()
     } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       timerRef.current = setTimeout(doUpdate, FILTER_TIMER)
     }
   }, [filterString, doUpdate])
 
   const onTagClick = (id: string) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     clearTimeout(timerRef.current)
 
     const arr = [...tagIds]
@@ -163,7 +174,11 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 
   useEffect(() => {
     onUpdateFilters()
-    return () => clearTimeout(timerRef.current)
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      clearTimeout(timerRef.current)
+    }
   }, [onUpdateFilters])
 
   const filteredItems = visibleItems.filter((_, index) => {
@@ -174,6 +189,8 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 
   const batches = [...filteredItems].splice(
     0,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     showAll ? filteredItems.length : showCount,
   )
 
@@ -215,7 +232,11 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
                     active={tagIds.includes(id)}
                     bordered
                   >
-                    {dividerRenames[title] ?? title}
+                    {
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      dividerRenames[title] ?? title
+                    }
                   </Tag>
                 )
               })}

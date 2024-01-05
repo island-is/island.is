@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
+import { ErrorMessage } from '@hookform/error-message'
 import { useFormContext, Controller } from 'react-hook-form'
 import {
   formatText,
@@ -23,7 +24,9 @@ export const updateEndpointMutation = gql`
   }
 `
 
-const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
+const ProdEndPoint: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   interface Variable {
@@ -181,7 +184,11 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
         {errors['productionEndPointObject.prodEndPointExists'] && (
           <Box color="red600" paddingY={2}>
             <Text fontWeight="semiBold" color="red600">
-              {errors['productionEndPointObject.prodEndPointExists']}
+              <ErrorMessage
+                as="span"
+                errors={errors}
+                name="productionEndPointObject.prodEndPointExists"
+              />
             </Text>
           </Box>
         )}

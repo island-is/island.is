@@ -18,7 +18,7 @@ class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
     const domain = process.env.TRACKING_DOMAIN ?? ''
-    const lang = getLocaleFromPath(ctx.req.url)
+    const lang = getLocaleFromPath(ctx?.req?.url)
 
     return { ...initialProps, lang, domain }
   }

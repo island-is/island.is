@@ -12,10 +12,9 @@ interface HiddenInformationProps {
   }
 }
 
-export const HiddenInformation: FC<FieldBaseProps & HiddenInformationProps> = ({
-  application,
-  field,
-}) => {
+export const HiddenInformation: FC<
+  React.PropsWithChildren<FieldBaseProps & HiddenInformationProps>
+> = ({ application, field }) => {
   const { register, setValue } = useFormContext()
   const { id } = field.props
 

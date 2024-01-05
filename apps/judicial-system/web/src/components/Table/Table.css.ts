@@ -1,4 +1,5 @@
-import { style, globalStyle } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
+
 import { theme } from '@island.is/island-ui/theme'
 
 export const header = style({
@@ -110,4 +111,8 @@ export const sortAsc = style({
 export const sortDes = style({
   opacity: 1,
   transform: 'rotate(0deg)',
+})
+
+export const loadingContainer = style({
+  minWidth: '67px',
 })

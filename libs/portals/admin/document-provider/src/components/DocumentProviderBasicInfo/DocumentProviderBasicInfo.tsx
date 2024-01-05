@@ -59,7 +59,7 @@ interface UseFormProps {
   helpDeskContact: HelpDeskContact
 }
 
-export const DocumentProviderBasicInfo: FC<Props> = ({
+export const DocumentProviderBasicInfo: FC<React.PropsWithChildren<Props>> = ({
   data,
   onSubmit,
   isFetching,

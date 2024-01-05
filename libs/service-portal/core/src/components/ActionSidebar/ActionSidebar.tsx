@@ -8,7 +8,11 @@ interface Props {
   onClose: () => void
 }
 
-export const ActionSidebar: FC<Props> = ({ isActive, onClose, children }) => {
+export const ActionSidebar: FC<React.PropsWithChildren<Props>> = ({
+  isActive,
+  onClose,
+  children,
+}) => {
   const [show, setShow] = useState(false)
 
   useEffect(() => {

@@ -4,7 +4,9 @@ import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './SharedPageLayout.css'
 
-const SharedPageLayout: React.FC = ({ children }) => {
+const SharedPageLayout: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   return (
     <Box paddingX={[2, 2, 4]}>
       <Box

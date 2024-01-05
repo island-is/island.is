@@ -1,0 +1,6 @@
+mutation RequestRulingSignature($input: RequestSignatureInput!) {
+  requestRulingSignature(input: $input) {
+    controlCode
+    documentToken
+  }
+}

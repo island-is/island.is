@@ -3,10 +3,11 @@ import { gql, useQuery } from '@apollo/client'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
-import { ServicePortalPath, EmptyState } from '@island.is/service-portal/core'
+import { EmptyState } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionCard } from '@island.is/service-portal/core'
+import { EducationStudentAssessmentPaths } from '@island.is/service-portal/education-student-assessment'
 
 const EducationExamFamilyOverviewsQuery = gql`
   query EducationExamFamilyOverviewsQuery {
@@ -49,7 +50,7 @@ const CareerCards = () => {
                 id: 'sp.education-career:education-more',
                 defaultMessage: 'Skoða nánar',
               }),
-              url: ServicePortalPath.EducationStudentAssessment.replace(
+              url: EducationStudentAssessmentPaths.EducationStudentAssessment.replace(
                 ':familyIndex',
                 member.familyIndex.toString(),
               ),
@@ -67,7 +68,7 @@ const CareerCards = () => {
         </Box>
       ))}
       {educationExamFamilyOverviews.length === 0 && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState
             title={defineMessage({
               id: 'sp.education-career:education-no-data',

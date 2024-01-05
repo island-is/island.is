@@ -7,7 +7,7 @@ import {
 
 export const useLazyQuery = <
   TData,
-  TVariables extends OperationVariables = OperationVariables
+  TVariables extends OperationVariables = OperationVariables,
 >(
   query: DocumentNode,
 ) => {

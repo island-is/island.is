@@ -52,7 +52,9 @@ export interface FilterMultiChoiceProps {
   onClear: (categoryId: string) => void
 }
 
-export const FilterMultiChoice: FC<FilterMultiChoiceProps> = ({
+export const FilterMultiChoice: FC<
+  React.PropsWithChildren<FilterMultiChoiceProps>
+> = ({
   labelClear,
   categories,
   singleExpand,

@@ -50,9 +50,8 @@ const useImageLoader = (url: string): boolean => {
 }
 
 export const Image = (image: AnyImageType) => {
-  const { src, thumbnail, alt, originalWidth, originalHeight } = normalizeImage(
-    image,
-  )
+  const { src, thumbnail, alt, originalWidth, originalHeight } =
+    normalizeImage(image)
 
   const thumbLoaded = useImageLoader(thumbnail)
   const imageLoaded = useImageLoader(src)

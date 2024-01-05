@@ -1,22 +1,23 @@
-import { Query, Resolver, Context, Args } from '@nestjs/graphql'
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Args, Context, Query, Resolver } from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
-import { CaseListEntry } from './models/caseList.model'
-import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CaseListQueryInput } from './dto/caseList.input'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
+import { CaseListEntry } from './models/caseList.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => [CaseListEntry])

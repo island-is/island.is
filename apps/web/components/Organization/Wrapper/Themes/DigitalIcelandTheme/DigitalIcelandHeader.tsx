@@ -17,7 +17,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const DigitalIcelandHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -31,7 +33,7 @@ const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
             <GridColumn span={'9/12'} className={styles.imageBg}>
               <SidebarLayout
                 sidebarContent={
-                  !!organizationPage.organization.logo && (
+                  !!organizationPage.organization?.logo && (
                     <Link
                       href={
                         linkResolver('organizationpage', [
@@ -67,7 +69,7 @@ const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       </Box>
 
       <Box display={['block', 'block', 'none']} textAlign="center">
-        {!!organizationPage.organization.logo && (
+        {!!organizationPage.organization?.logo && (
           <Link
             href={
               linkResolver('organizationpage', [organizationPage.slug]).href

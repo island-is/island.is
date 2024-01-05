@@ -1,51 +1,47 @@
-import { style } from '@vanilla-extract/css'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
-import {
-  SERVICE_PORTAL_HEADER_HEIGHT_LG,
-  SERVICE_PORTAL_SIDEBAR_WIDTH,
-  SERVICE_PORTAL_SIDEBAR_WIDTH_COLLAPSED,
-} from '@island.is/service-portal/constants'
+import { theme } from '@island.is/island-ui/theme'
+import { globalStyle, style } from '@vanilla-extract/css'
 
-export const layoutWrapper = style({
-  minHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_LG}px)`,
-  maxWidth: theme.contentWidth.large,
-  marginLeft: 'unset',
-  ...themeUtils.responsiveStyle({
-    md: {
-      maxWidth: `calc(100vw - ${SERVICE_PORTAL_SIDEBAR_WIDTH}px)`,
-      marginLeft: SERVICE_PORTAL_SIDEBAR_WIDTH,
+export const wrap = style({
+  marginBottom: -theme.spacing[1],
+})
+
+export const breadIcon = style({
+  position: 'relative',
+  display: 'inline-block',
+  top: '3px',
+})
+
+export const lock = style({
+  position: 'absolute',
+  margin: 'auto',
+  right: 20,
+  top: 0,
+  bottom: 0,
+})
+
+export const btn = style({})
+
+globalStyle(`${btn} > span`, {
+  boxShadow: 'none',
+})
+
+export const fullWidthSplit = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      background:
+        'linear-gradient( to right, white 0%, white 45%, #F8F8FA 45%, #F8F8FA 100% );',
     },
-  }),
-})
-
-export const layoutWrapperWide = style({
-  maxWidth: theme.contentWidth.large,
-  marginLeft: 'unset',
-  ...themeUtils.responsiveStyle({
-    md: {
-      maxWidth: `calc(100vw - ${SERVICE_PORTAL_SIDEBAR_WIDTH_COLLAPSED}px)`,
-      marginLeft: SERVICE_PORTAL_SIDEBAR_WIDTH_COLLAPSED,
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+      background:
+        'linear-gradient( to right, white 0%, white 45.5%, #F8F8FA 45%, #F8F8FA 100% );',
     },
-  }),
-})
-
-export const layoutContainer = style({
-  paddingLeft: theme.grid.gutter.mobile * 2,
-  paddingRight: theme.grid.gutter.mobile * 2,
-  ...themeUtils.responsiveStyle({
-    md: {
-      paddingLeft: theme.grid.gutter.desktop * 2,
-      paddingRight: theme.grid.gutter.desktop * 2,
+    [`screen and (min-width: 2000px)`]: {
+      background:
+        'linear-gradient( to right, white 0%, white 46%, #F8F8FA 45%, #F8F8FA 100% );',
     },
-  }),
-})
-
-export const layoutGrid = style({
-  transition: 'margin 150ms ease-in-out, flex-basis 150ms ease-in-out',
-  willChange: 'margin, flex-basis',
-})
-
-export const mainWrapper = style({
-  width: '100%',
-  maxWidth: theme.contentWidth.large,
+    [`screen and (min-width: 2600px)`]: {
+      background:
+        'linear-gradient( to right, white 0%, white 47.5%, #F8F8FA 45%, #F8F8FA 100% );',
+    },
+  },
 })

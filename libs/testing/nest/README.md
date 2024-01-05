@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Nest" -->
-
 # Testing Nest
 
 This library is supposed to help developers setup a nest.js application for

@@ -9,7 +9,7 @@ import ClientBasicCreateForm from './../../components/Client/form/ClientBasicCre
 import { Client } from './../../entities/models/client.model'
 import LocalizationUtils from '../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<ClientTab>(ClientTab.BasicForm)
   const handleCancel = () => {

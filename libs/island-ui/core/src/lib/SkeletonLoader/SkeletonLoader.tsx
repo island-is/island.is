@@ -3,6 +3,7 @@ import * as styles from './SkeletonLoader.css'
 import { Stack, StackProps } from '../Stack/Stack'
 import { Box } from '../Box/Box'
 import type { BoxProps } from '../Box/types'
+import { Colors } from '@island.is/island-ui/theme'
 
 export interface SkeletonLoaderProps {
   /**
@@ -29,6 +30,10 @@ export interface SkeletonLoaderProps {
    * Change the display style of the loader
    */
   display?: BoxProps['display']
+  /**
+   * Background
+   */
+  background?: 'purple100' | 'purple200'
 }
 /**
  * Animated content placeholder to manage user expectations
@@ -40,6 +45,7 @@ export const SkeletonLoader = ({
   space = 0,
   borderRadius,
   display = 'inlineBlock',
+  background = 'purple100',
 }: SkeletonLoaderProps) => {
   if (repeat === 1) {
     return (
@@ -49,7 +55,7 @@ export const SkeletonLoader = ({
         position="relative"
         overflow="hidden"
         width="full"
-        background="purple100"
+        background={background}
         className={styles.loader}
         style={{
           ...(height && { height }),

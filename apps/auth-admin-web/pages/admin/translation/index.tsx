@@ -7,7 +7,7 @@ import { TranslationDTO } from './../../../entities/dtos/translation.dto'
 import { Translation } from './../../../entities/models/translation.model'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   useEffect(() => {

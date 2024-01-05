@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 
+import { courtClientModuleConfig } from './courtClient.config'
 import {
   CourtClientService,
   CourtClientServiceImplementation,
   CourtClientServiceUnavailableImplementation,
 } from './courtClient.service'
-import { courtClientModuleConfig } from './courtClient.config'
 
 const courtClientProvider = {
   provide: CourtClientService,

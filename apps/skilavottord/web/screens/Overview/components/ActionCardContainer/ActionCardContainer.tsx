@@ -11,7 +11,7 @@ interface Props {
   onContinue: (permno: string, actionType: RecycleActionTypes) => void
 }
 
-export const ActionCardContainer: FC<Props> = ({
+export const ActionCardContainer: FC<React.PropsWithChildren<Props>> = ({
   cars,
   actionType,
   onContinue,

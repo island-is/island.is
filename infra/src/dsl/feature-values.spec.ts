@@ -94,7 +94,7 @@ describe('Feature-deployment support', () => {
       DB_NAME: 'feature_feature_A_graphql',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
-      NODE_OPTIONS: '--max-old-space-size=208',
+      NODE_OPTIONS: '--max-old-space-size=230',
       SERVERSIDE_FEATURES_ON: '',
       DB_EXTENSIONS: 'foo',
     })
@@ -141,6 +141,7 @@ describe('Feature-deployment support', () => {
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [
           {

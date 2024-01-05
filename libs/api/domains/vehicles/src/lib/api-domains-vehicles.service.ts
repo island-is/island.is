@@ -1,131 +1,382 @@
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common'
 import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
-  PdfApi,
-  VehicleSearchDto,
-  PersidnoLookupDto,
   PublicVehicleSearchApi,
+  VehicleDtoListPagedResponse,
+  VehicleSearchDto,
+  PersidnoLookupResultDto,
 } from '@island.is/clients/vehicles'
-import { VehiclesDetail } from '../models/getVehicleDetail.model'
-import { ApolloError } from 'apollo-server-express'
+import {
+  CanregistermileagePermnoGetRequest,
+  GetMileageReadingRequest,
+  MileageReadingApi,
+  PostMileageReadingModel,
+  PutMileageReadingModel,
+  RequiresmileageregistrationPermnoGetRequest,
+  RootPostRequest,
+  RootPutRequest,
+} from '@island.is/clients/vehicles-mileage'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
+import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
+import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
+import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
+import isSameDay from 'date-fns/isSameDay'
 
-/** Category to attach each log message to */
-const LOG_CATEGORY = 'vehicles-service'
+const ORIGIN_CODE = 'ISLAND.IS'
+const LOG_CATEGORY = 'vehicle-service'
+const UNAUTHORIZED_LOG = 'Vehicle user authorization failed'
+const UNAUTHORIZED_OWNERSHIP_LOG =
+  'Vehicle user ownership does not allow registration'
+
+const isReadDateToday = (d?: Date) => {
+  if (!d) {
+    return false
+  }
+
+  const today = new Date()
+  const inputDate = new Date(d)
+
+  return isSameDay(today, inputDate)
+}
 
 @Injectable()
 export class VehiclesService {
   constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(VehicleSearchApi) private vehiclesApi: VehicleSearchApi,
-    @Inject(PdfApi) private vehiclesPDFApi: PdfApi,
+    private vehiclesApi: VehicleSearchApi,
+    private mileageReadingApi: MileageReadingApi,
+    private readonly featureFlagService: FeatureFlagService,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
-
-  handleError(error: any, detail?: string): ApolloError | null {
-    this.logger.error(detail || 'Vehicles error', {
-      error: JSON.stringify(error),
-      category: LOG_CATEGORY,
-    })
-    throw new ApolloError('Failed to resolve request', error.status)
-  }
-
-  private handle4xx(error: any, detail?: string): ApolloError | null {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    return this.handleError(error, detail)
-  }
 
   private getVehiclesWithAuth(auth: Auth) {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private getPdfWithAuth(auth: Auth) {
-    return this.vehiclesPDFApi.withMiddleware(new AuthMiddleware(auth))
+  private getMileageWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
+
   async getVehiclesForUser(
+    auth: User,
+    input: GetVehiclesForUserInput,
+  ): Promise<VehicleDtoListPagedResponse> {
+    return await this.getVehiclesWithAuth(
+      auth,
+    ).vehicleHistoryRequestedPersidnoGet({
+      requestedPersidno: auth.nationalId,
+      showDeregistered: input.showDeregeristered,
+      showHistory: input.showHistory,
+      page: input.page,
+      pageSize: input.pageSize,
+      type: input.type,
+      dtFrom: input.dateFrom,
+      dtTo: input.dateTo,
+      permno: input.permno
+        ? input.permno.length < 5
+          ? `${input.permno}*`
+          : `${input.permno}`
+        : undefined,
+    })
+  }
+
+  async getVehiclesForUserOldService(
     auth: User,
     showDeregistered: boolean,
     showHistory: boolean,
-  ): Promise<PersidnoLookupDto | null | ApolloError> {
-    try {
-      const res = await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
-        requestedPersidno: auth.nationalId,
-        showDeregistered: showDeregistered,
-        showHistory: showHistory,
-      })
-      const { data } = res
-      if (!data) return {}
-      return data
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle list')
-    }
+  ): Promise<PersidnoLookupResultDto> {
+    return await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+      requestedPersidno: auth.nationalId,
+      showDeregistered: showDeregistered,
+      showHistory: showHistory,
+    })
   }
 
-  async getVehiclesSearch(
-    auth: User,
-    search: string,
-  ): Promise<VehicleSearchDto | null | ApolloError> {
-    try {
-      const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
-        search,
-      })
-      const { data } = res
-      if (!data) return null
-      return data[0]
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle search')
+  async getExcelVehiclesForUser(auth: User): Promise<VehiclesExcel> {
+    const res = await this.getVehiclesWithAuth(auth).ownershipReportDataGet({
+      ssn: auth.nationalId,
+    })
+
+    return {
+      persidno: res.persidno ?? undefined,
+      name: res.name ?? undefined,
+      vehicles: res.vehicles?.map((item) =>
+        basicVehicleInformationMapper(item),
+      ),
     }
   }
 
   async getPublicVehicleSearch(search: string) {
-    try {
-      const data = await this.publicVehiclesApi.publicVehicleSearchGet({
-        search,
-      })
-      return data
-    } catch (e) {
-      return this.handle4xx(e)
-    }
+    const data = await this.publicVehiclesApi.publicVehicleSearchGet({
+      search,
+    })
+    return data
   }
 
-  async getSearchLimit(auth: User): Promise<number | null | ApolloError> {
-    try {
-      const res = await this.getVehiclesWithAuth(auth).searchesRemainingGet()
-      if (!res) return null
-      return res
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle search limit')
-    }
+  async getSearchLimit(auth: User): Promise<number | null> {
+    const res = await this.getVehiclesWithAuth(auth).searchesRemainingGet()
+    if (!res) return null
+    return res
   }
 
   async getVehicleDetail(
     auth: User,
     input: BasicVehicleInformationGetRequest,
-  ): Promise<VehiclesDetail | null | ApolloError> {
-    try {
-      const res = await this.getVehiclesWithAuth(
-        auth,
-      ).basicVehicleInformationGet({
+  ): Promise<VehiclesDetail | null> {
+    const res = await this.getVehiclesWithAuth(auth).basicVehicleInformationGet(
+      {
         clientPersidno: input.clientPersidno,
         permno: input.permno,
         regno: input.regno,
         vin: input.vin,
+      },
+    )
+
+    if (!res) return null
+
+    return basicVehicleInformationMapper(res)
+  }
+
+  private async hasVehicleServiceAuth(
+    auth: User,
+    permno: string,
+  ): Promise<void> {
+    try {
+      await this.getVehicleDetail(auth, {
+        clientPersidno: auth.nationalId,
+        permno,
       })
-
-      if (!res) return null
-
-      return basicVehicleInformationMapper(res, auth.nationalId)
     } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle details')
+      if (e.status === 401 || e.status === 403) {
+        this.logger.error(UNAUTHORIZED_LOG, {
+          category: LOG_CATEGORY,
+          error: e,
+        })
+        throw new UnauthorizedException(UNAUTHORIZED_LOG)
+      }
+      throw e as Error
     }
+  }
+
+  // This is a temporary solution until we can get this information from the SGS API.
+  private async isAllowedMileageRegistration(
+    auth: User,
+    permno: string,
+  ): Promise<boolean> {
+    const res = await this.getVehicleDetail(auth, {
+      clientPersidno: auth.nationalId,
+      permno,
+    })
+
+    // String of owners where owner can delegate registration.
+    const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(
+      ',',
+    ).map((i) => i.trim())
+
+    const owner = res?.currentOwnerInfo?.nationalId
+    const operators = res?.operators?.filter((person) => person.mainOperator)
+    const mainOperator = operators?.map((mainOp) => mainOp.nationalId)
+    const isCreditInstitutionOwner = owner
+      ? allowedCoOwners?.includes(owner)
+      : false
+
+    // If owner is authenticated
+    if (owner === auth.nationalId) {
+      // If owner is credit institution and car has operators
+      if (isCreditInstitutionOwner && operators?.length) {
+        return false
+      }
+      return true
+    }
+
+    // If main operator is authenticated and owner is credit institution
+    if (
+      mainOperator &&
+      mainOperator.includes(auth.nationalId) &&
+      isCreditInstitutionOwner
+    ) {
+      return true
+    }
+
+    return false
+  }
+
+  async getVehiclesSearch(
+    auth: User,
+    search: string,
+  ): Promise<VehicleSearchDto | null> {
+    const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
+      search,
+    })
+    const { data } = res
+    if (!data) return null
+    return data[0]
+  }
+
+  async getVehicleMileage(
+    auth: User,
+    input: GetMileageReadingRequest,
+  ): Promise<VehicleMileageOverview | null> {
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return null
+    }
+
+    await this.hasVehicleServiceAuth(auth, input.permno)
+
+    const res = await this.getMileageWithAuth(auth).getMileageReading({
+      permno: input.permno,
+    })
+
+    const latestDate = res?.[0]?.readDate
+    const isIslandIsReading = res?.[0]?.originCode === ORIGIN_CODE
+    const isEditing =
+      isReadDateToday(latestDate ?? undefined) && isIslandIsReading
+
+    return {
+      data: res,
+      permno: input.permno,
+      editing: isEditing,
+    }
+  }
+
+  async postMileageReading(
+    auth: User,
+    input: RootPostRequest['postMileageReadingModel'],
+  ): Promise<PostMileageReadingModel | null> {
+    if (!input) return null
+
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'postMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
+
+    const res = await this.getMileageWithAuth(auth).rootPost({
+      postMileageReadingModel: input,
+    })
+
+    return res
+  }
+
+  async putMileageReading(
+    auth: User,
+    input: RootPutRequest['putMileageReadingModel'],
+  ): Promise<PutMileageReadingModel | null> {
+    if (!input) return null
+
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'putMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
+
+    const res = await this.getMileageWithAuth(auth).rootPut({
+      putMileageReadingModel: input,
+    })
+    return res
+  }
+
+  async canRegisterMileage(
+    auth: User,
+    input: CanregistermileagePermnoGetRequest,
+  ): Promise<boolean> {
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return false
+    }
+
+    const res = await this.getMileageWithAuth(auth).canregistermileagePermnoGet(
+      {
+        permno: input.permno,
+      },
+    )
+
+    if (typeof res === 'string') {
+      return res === 'true'
+    }
+    return res
+  }
+
+  async canUserRegisterMileage(
+    auth: User,
+    input: CanregistermileagePermnoGetRequest,
+  ): Promise<boolean> {
+    if (!input) return false
+
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return false
+    }
+
+    const res = await this.isAllowedMileageRegistration(auth, input.permno)
+
+    return res
+  }
+
+  async requiresMileageRegistration(
+    auth: User,
+    input: RequiresmileageregistrationPermnoGetRequest,
+  ): Promise<boolean> {
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return false
+    }
+
+    const res = await this.getMileageWithAuth(
+      auth,
+    ).requiresmileageregistrationPermnoGet({
+      permno: input.permno,
+    })
+
+    if (typeof res === 'string') {
+      return res === 'true'
+    }
+    return res
   }
 }

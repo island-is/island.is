@@ -23,10 +23,7 @@ module.exports = {
       for (const { client_id: clientId } of clients) {
         let domainId = clientId.split('/')[0]
         if (domainId && domainId.startsWith('@')) {
-          const [
-            domains,
-            _,
-          ] = await queryInterface.sequelize.query(
+          const [domains, _] = await queryInterface.sequelize.query(
             `SELECT name FROM domain WHERE name = '${domainId}'`,
             { transaction },
           )

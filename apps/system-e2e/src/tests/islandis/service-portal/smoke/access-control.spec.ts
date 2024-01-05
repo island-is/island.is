@@ -1,20 +1,10 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { switchUser } from '../../../../support/login'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur/`
 test.use({ baseURL: urls.islandisBaseUrl })
-
-const switchUser = async (page: Page, name?: string) => {
-  await page.locator('data-testid=user-menu >> visible=true').click()
-  await page.locator('role=button[name="Skipta um notanda"]').click()
-  if (name) {
-    await page.locator(`role=button[name*="${name}"]`).click()
-    await page.waitForURL(new RegExp(homeUrl), {
-      waitUntil: 'domcontentloaded',
-    })
-  }
-}
 
 test.describe('Service portal, in access control', () => {
   let contextGranter: BrowserContext
@@ -89,7 +79,7 @@ test.describe('Service portal, in access control', () => {
 
     await test.step('Verify removed delegation', async () => {
       // Act
-      await switchUser(receiverPage)
+      await switchUser(receiverPage, homeUrl)
       await expect(
         receiverPage.locator('role=button[name*="Gervimaður Ameríku"]'),
       ).toBeVisible()
@@ -132,13 +122,13 @@ test.describe('Service portal, in access control', () => {
 
     await test.step('Verify new delegation', async () => {
       // Act
-      await switchUser(receiverPage, 'Gervimaður Færeyjar')
+      await switchUser(receiverPage, homeUrl, 'Gervimaður Færeyjar')
       await expect(
         receiverPage.getByRole('heading', { name: 'Gervimaður Færeyjar' }),
       ).toBeVisible()
 
       // Assert
-      await receiverPage.getByRole('link', { name: 'Pósthólf' }).click()
+      await receiverPage.getByRole('link', { name: 'Pósthólf' }).first().click()
       await expect(
         receiverPage.getByRole('heading', { name: 'Pósthólf' }),
       ).toBeVisible()
@@ -176,7 +166,7 @@ test.describe('Service portal, in access control', () => {
 
     await test.step('Verify edited delegation', async () => {
       // Act
-      await switchUser(receiverPage, 'Gervimaður Færeyjar')
+      await switchUser(receiverPage, homeUrl, 'Gervimaður Færeyjar')
       await expect(
         receiverPage.getByRole('heading', { name: 'Gervimaður Færeyjar' }),
       ).toBeVisible()

@@ -1,0 +1,44 @@
+{
+  "name": "clients-national-registry-v3",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/national-registry/v3/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/national-registry/v3/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/national-registry/v3"],
+      "options": {
+        "jestConfig": "libs/clients/national-registry/v3/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://midlun-dev.skra.is/swagger/v1/swagger.json -H \"Authorization:Bearer $(curl -X POST https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token -d grant_type='client_credentials&client_id=${NAT_REG_CLIENT_ID}&client_secret=${NAT_REG_CLIENT_SECRET}&scope=https://skraidentitydev.onmicrosoft.com/midlun/.default' | jq .access_token -r  )\" > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/national-registry/v3"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/national-registry/v3/gen/fetch -i libs/clients/national-registry/v3/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

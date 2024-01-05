@@ -1,15 +1,19 @@
-import { FC } from 'react'
-import { RightsPortalHealthCenterHistoryEntry } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import { formatDate, m } from '@island.is/service-portal/core'
+import {
+  DownloadFileButtons,
+  formatDate,
+  m,
+} from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
+import { RightsPortalHealthCenterRecord } from '@island.is/api/schema'
+import { exportHealthCenterFile } from '../../utils/FileBreakdown'
 
 interface Props {
-  history: Array<RightsPortalHealthCenterHistoryEntry>
+  history: Array<RightsPortalHealthCenterRecord>
 }
 
-const HistoryTable: FC<Props> = ({ history }: Props) => {
+const HistoryTable = ({ history }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
@@ -23,12 +27,12 @@ const HistoryTable: FC<Props> = ({ history }: Props) => {
           <T.Row>
             <T.HeadData>
               <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.dateFromShort)}
+                {formatMessage(messages.from)}
               </Text>
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.dateToShort)}
+                {formatMessage(messages.to)}
               </Text>
             </T.HeadData>
             <T.HeadData>
@@ -48,28 +52,41 @@ const HistoryTable: FC<Props> = ({ history }: Props) => {
             <T.Row key={index}>
               <T.Data>
                 <Text variant="medium">
-                  {rowItem.dateFrom ? formatDate(rowItem.dateFrom) : '-'}
+                  {rowItem.dateFrom ? formatDate(rowItem.dateFrom) : ''}
                 </Text>
               </T.Data>
               <T.Data>
                 <Text variant="medium">
-                  {rowItem.dateTo ? formatDate(rowItem.dateTo) : '-'}
+                  {rowItem.dateTo ? formatDate(rowItem.dateTo) : ''}
                 </Text>
               </T.Data>
               <T.Data>
-                <Text variant="medium">
-                  {rowItem.healthCenter?.name ?? '-'}
-                </Text>
+                <Text variant="medium">{rowItem.healthCenterName ?? ''}</Text>
               </T.Data>
               <T.Data>
                 <Text variant="medium">
-                  {rowItem.healthCenter?.doctor ?? '-'}
+                  {rowItem.doctor ??
+                    formatMessage(messages.healthCenterNoDoctor)}
                 </Text>
               </T.Data>
             </T.Row>
           ))}
         </T.Body>
       </T.Table>
+      <DownloadFileButtons
+        BoxProps={{
+          paddingTop: 2,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'flexEnd',
+        }}
+        buttons={[
+          {
+            text: formatMessage(m.getAsExcel),
+            onClick: () => exportHealthCenterFile(history ?? [], 'xlsx'),
+          },
+        ]}
+      />
     </Box>
   )
 }

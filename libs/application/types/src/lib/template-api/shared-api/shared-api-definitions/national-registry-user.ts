@@ -6,6 +6,8 @@ export interface NationalRegistryParameters {
   legalDomicileIceland?: boolean
   ageToValidateError?: ProviderErrorReason
   icelandicCitizenship?: boolean
+  validateAlreadyHasIcelandicCitizenship?: boolean
+  allowPassOnChild?: boolean
 }
 
 export interface ChildrenCustodyInformationParameters {
@@ -13,10 +15,13 @@ export interface ChildrenCustodyInformationParameters {
   validateHasJointCustody?: boolean
 }
 
-export const NationalRegistryUserApi = defineTemplateApi<NationalRegistryParameters>(
-  {
+export interface BirthplaceParameters {
+  validateNotEmpty: boolean
+}
+
+export const NationalRegistryUserApi =
+  defineTemplateApi<NationalRegistryParameters>({
     action: 'nationalRegistry',
     namespace: 'NationalRegistry',
     externalDataId: 'nationalRegistry',
-  },
-)
+  })

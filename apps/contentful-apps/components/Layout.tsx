@@ -3,7 +3,7 @@ import { SDKProvider } from '@contentful/react-apps-toolkit'
 import { GlobalStyles } from '@contentful/f36-components'
 import LocalhostWarning from './LocalhostWarning'
 
-export const Layout: FC = ({ children }) => {
+export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const [isMounted, setIsMounted] = useState(false)
   useEffect(() => setIsMounted(true), [])
 

@@ -69,6 +69,7 @@ export class ApplicationService {
         locale,
         typeId: input?.typeId?.join(','),
         status: input?.status?.join(','),
+        scopeCheck: input?.scopeCheck,
       },
     )
   }

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
-import { AxiosRequestConfig, Method } from 'axios'
+import { AxiosRequestConfig } from 'axios'
 import {
   CategoriesResponse,
   DocumentDTO,
@@ -16,6 +16,8 @@ import { lastValueFrom } from 'rxjs'
 import { GetDocumentListInput } from './models/DocumentInput'
 import { PaperMailResponse } from './models/PaperMailRes'
 import { RequestPaperDTO } from './models/RequestPaperDTO'
+import { MessageActionDTO } from './models/MessageActionDTO'
+import { BulkMailActionDTO } from './models/BulkMailActionDTO'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -77,7 +79,7 @@ export class DocumentClient {
       const errMsg = 'Failed to get from Postholf'
       const error = e.toJSON()
       const description = error.message
-      const message = [errMsg, error, description].filter(Boolean).join(' - ')
+      const message = [errMsg, description].filter(Boolean).join(' - ')
       throw new Error(message)
     }
   }
@@ -106,7 +108,7 @@ export class DocumentClient {
       const errMsg = 'Failed to POST to Postholf'
       const error = e.toJSON()
       const description = error.message
-      const message = [errMsg, error, description].filter(Boolean).join(' - ')
+      const message = [errMsg, description].filter(Boolean).join(' - ')
       throw new Error(message)
     }
   }
@@ -127,6 +129,8 @@ export class DocumentClient {
       opened,
       page,
       pageSize,
+      archived,
+      bookmarked,
     } = input ?? {}
 
     type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
@@ -142,8 +146,10 @@ export class DocumentClient {
       categoryId && `categoryId=${categoryId}`,
       typeId && `typeId=${typeId}`,
       subjectContains && `subjectContains=${subjectContains}`,
+      bookmarked && `bookmarked=${bookmarked}`,
       `opened=${opened}`,
-    ].filter((Boolean as unknown) as ExcludesFalse)
+      `archived=${archived}`,
+    ].filter(Boolean as unknown as ExcludesFalse)
 
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?${inputs.join(
       '&',
@@ -189,5 +195,22 @@ export class DocumentClient {
   ): Promise<PaperMailResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${body.kennitala}/paper`
     return await this.postRequest<PaperMailResponse>(requestRoute, body)
+  }
+
+  async postMailAction(
+    body: MessageActionDTO,
+    action: 'archive' | 'unarchive' | 'bookmark' | 'unbookmark',
+  ): Promise<null> {
+    const requestRoute = `/api/mail/v1/customers/${body.nationalId}/messages/${body.messageId}/${action}`
+    return await this.postRequest(requestRoute, body)
+  }
+
+  async bulkMailAction(
+    body: BulkMailActionDTO,
+    nationalId: string,
+  ): Promise<null> {
+    const { action, ...postBody } = body
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/batch${action}`
+    return await this.postRequest(requestRoute, postBody)
   }
 }

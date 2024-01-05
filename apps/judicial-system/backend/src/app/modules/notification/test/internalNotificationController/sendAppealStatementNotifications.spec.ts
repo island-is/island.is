@@ -1,15 +1,17 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
+
 import {
   NotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: DeliverResponse
@@ -46,10 +48,8 @@ describe('InternalNotificationController - Send appeal statement notifications',
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      emailService,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
 
@@ -91,7 +91,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
     expect.objectContaining({
       to: [{ name, address }],
       subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
-      html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+      html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
     })
   }
 
@@ -111,7 +111,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
-          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -161,7 +161,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
           subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
-          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -180,7 +180,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Ný greinargerð í máli ${courtCaseNumber}`,
-          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -218,7 +218,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
           subject: `Ný greinargerð í máli ${courtCaseNumber}`,
-          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

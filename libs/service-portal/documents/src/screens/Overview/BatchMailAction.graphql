@@ -1,0 +1,6 @@
+mutation PostBulkMailAction($input: PostBulkMailActionResolverInput!) {
+  postBulkMailAction(input: $input) {
+    success
+    messageId
+  }
+}

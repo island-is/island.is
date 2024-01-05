@@ -19,6 +19,42 @@ export const textSearch = (
   )
 }
 
+export const getSortedAndFilteredList = <
+  T extends Record<string, string | null>,
+>(
+  list: T[],
+  searchTerms: string[],
+  keys: (keyof T)[],
+): T[] => {
+  const fullSearchString: string = searchTerms.join(' ')
+
+  const startsWithFullSearchString = (item: T): boolean => {
+    return keys.some((key) =>
+      item[key]?.trim().toLowerCase().startsWith(fullSearchString),
+    )
+  }
+
+  const containsAllTerms = (item: T): boolean => {
+    return searchTerms.every((searchTerm) =>
+      keys.some((key) => item[key]?.trim().toLowerCase().includes(searchTerm)),
+    )
+  }
+
+  const itemsStartingWithFullSearchString: T[] = []
+  const itemsContainingAllTerm: T[] = []
+
+  for (const item of list) {
+    if (startsWithFullSearchString(item)) {
+      itemsStartingWithFullSearchString.push(item)
+    } else if (containsAllTerms(item)) {
+      itemsContainingAllTerm.push(item)
+    }
+  }
+
+  // Items that start with the full search string are fist in the list and then comes the rest
+  return itemsStartingWithFullSearchString.concat(itemsContainingAllTerm)
+}
+
 /**
  * Splits a given search string into normalized search terms.
  * @param searchString A string that will be normalized and split into terms.

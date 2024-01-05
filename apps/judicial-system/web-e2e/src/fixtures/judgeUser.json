@@ -4,11 +4,11 @@
       "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
       "name": "Dóra Dómari",
       "title": "dómari",
-      "role": "JUDGE",
+      "role": "DISTRICT_COURT_JUDGE",
       "institution": {
         "name": "Bráðabirgðadómstóllinn",
         "id": "",
-        "type": "COURT",
+        "type": "DISTRICT_COURT",
         "__typename": "Institution"
       },
       "__typename": "User"

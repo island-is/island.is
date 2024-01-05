@@ -8,8 +8,7 @@ export const noChildren = defineMessages({
     description: 'Title displayed in modal when there are no children found',
   },
   description: {
-    id:
-      'crc.application:section.backgroundInformation.noChildren.description#markdown',
+    id: 'crc.application:section.backgroundInformation.noChildren.description#markdown',
     defaultMessage:
       'Samkvæmt gögnum úr Þjóðskrá Ísland eru engin börn skráð í þinni forsjá. Þessi umsókn er aðeins fyrir foreldra með sameiginlega forsjá. Við bendum á að hægt er að senda beiðni um breytt lögheimili barna til Sýslumanna.',
     description:

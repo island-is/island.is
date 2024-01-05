@@ -8,7 +8,7 @@ interface Props {
   activeStep: ApiResourceStep
 }
 
-const ApiResourceStepNav: React.FC<Props> = ({
+const ApiResourceStepNav: React.FC<React.PropsWithChildren<Props>> = ({
   handleStepChange,
   activeStep,
   children,

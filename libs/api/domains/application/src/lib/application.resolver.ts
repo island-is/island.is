@@ -51,14 +51,12 @@ export class ApplicationResolver {
     locale: Locale = 'is',
     @Args('applicationId') applicationId: string,
   ): Promise<ApplicationPayment | null> {
-    const {
-      fulfilled,
-      paymentUrl,
-    } = await this.applicationService.getPaymentStatus(
-      applicationId,
-      user,
-      locale,
-    )
+    const { fulfilled, paymentUrl } =
+      await this.applicationService.getPaymentStatus(
+        applicationId,
+        user,
+        locale,
+      )
     return {
       fulfilled,
       paymentUrl,

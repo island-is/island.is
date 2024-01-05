@@ -124,7 +124,11 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
                 ]}
                 renderLink={(link) => {
                   return (
-                    <NextLink {...linkResolver('opendatapage')} passHref>
+                    <NextLink
+                      {...linkResolver('opendatapage')}
+                      passHref
+                      legacyBehavior
+                    >
                       {link}
                     </NextLink>
                   )
@@ -168,7 +172,12 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
               <GridColumn span={'12/12'}>
                 {graphCards.map((item, index) => (
                   <Box marginBottom={3} key={index}>
-                    <ChartsCard chart={item} subPage />
+                    <ChartsCard
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      chart={item}
+                      subPage
+                    />
                   </Box>
                 ))}
               </GridColumn>
@@ -180,7 +189,7 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
   )
 }
 
-OpenDataSubPage.getInitialProps = async ({ apolloClient, locale }) => {
+OpenDataSubPage.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOpenDataSubpage: page },

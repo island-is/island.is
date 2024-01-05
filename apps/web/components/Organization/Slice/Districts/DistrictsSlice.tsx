@@ -15,7 +15,9 @@ interface SliceProps {
   slice: Districts
 }
 
-export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
+export const DistrictsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   const boxProps: BoxProps = slice.hasBorderAbove
     ? {
         borderTopWidth: 'standard',

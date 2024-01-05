@@ -1,78 +1,101 @@
 {
-  "root": "apps/auth-admin-web",
+  "name": "auth-admin-web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/auth-admin-web",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/auth-admin-web",
-        "commands": [
-          "yarn nx build-next auth-admin-web",
-          "yarn nx build-server auth-admin-web"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      }
-    },
-    "build-next": {
-      "executor": "@nrwl/next:build",
-      "options": {
-        "root": "apps/auth-admin-web",
         "outputPath": "dist/apps/auth-admin-web"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/auth-admin-web"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": ["build-custom-server"]
     },
-    "build-server": {
-      "executor": "@nrwl/node:webpack",
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/auth-admin-web",
         "main": "apps/auth-admin-web/server.ts",
-        "tsConfig": "apps/auth-admin-web/tsconfig.json",
+        "tsConfig": "apps/auth-admin-web/tsconfig.server.json",
         "maxWorkers": 2,
-        "assets": []
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "auth-admin-web:build-server"
+        "buildTarget": "auth-admin-web:build",
+        "dev": true,
+        "customServerTarget": "auth-admin-web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "auth-admin-web:build:development",
+          "dev": true,
+          "customServerTarget": "auth-admin-web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "auth-admin-web:build:production",
+          "dev": false,
+          "customServerTarget": "auth-admin-web:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "auth-admin-web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "auth-admin-web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "auth-admin-web:build-custom-server:production"
+        }
       }
     },
     "export": {
-      "executor": "@nrwl/next:export",
+      "executor": "@nx/next:export",
       "options": {
         "buildTarget": "auth-admin-web:build:production"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/auth-admin-web/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/auth-admin-web/jest.config.js",
+        "jestConfig": "apps/auth-admin-web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/auth-admin-web"]
+      "outputs": ["{workspaceRoot}/coverage/apps/auth-admin-web"]
     },
     "docker-next": {}
   },

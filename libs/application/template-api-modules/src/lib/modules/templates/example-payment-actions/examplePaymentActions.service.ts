@@ -4,7 +4,10 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 
 @Injectable()
 export class ExamplePaymentActionsService extends BaseTemplateApiService {
@@ -19,7 +22,7 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     // Performing organization ID
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+    const SYSLUMADUR_NATIONAL_ID = InstitutionNationalIds.SYSLUMENN
 
     // This is where you'd pick and validate that you are going to create a charge for a
     // particular charge item code. Note that creating these charges creates an actual "krafa"

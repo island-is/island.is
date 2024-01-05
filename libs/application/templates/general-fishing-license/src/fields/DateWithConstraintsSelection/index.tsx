@@ -8,10 +8,9 @@ import { fishingLicenseFurtherInformation } from '../../lib/messages'
 import { DATE_FIELD_ID, DATE_CONSTRAINTS_FIELD_ID } from '../../utils/fields'
 
 type DateConstraint = { dateFrom?: string | null; dateTo?: string | null }
-export const DateWithContraintsSelection: FC<FieldBaseProps> = ({
-  application,
-  errors,
-}) => {
+export const DateWithContraintsSelection: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, errors }) => {
   const { formatMessage, lang } = useLocale()
 
   const dateConstraints = getValueViaPath(

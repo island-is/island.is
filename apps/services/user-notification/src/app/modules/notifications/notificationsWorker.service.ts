@@ -6,6 +6,8 @@ import { UserProfileApi } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { InjectModel } from '@nestjs/sequelize'
+import { Notification } from './notification.model'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 
@@ -21,6 +23,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private logger: Logger,
     @Inject(IS_RUNNING_AS_WORKER)
     private isRunningAsWorker: boolean,
+    @InjectModel(Notification)
+    private readonly notificationModel: typeof Notification,
   ) {}
 
   onApplicationBootstrap() {
@@ -33,13 +37,44 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
-        this.logger.info('Message received by worker ... ...', { messageId })
+        this.logger.info('Message received by worker', { messageId })
 
-        const profile = await this.userProfileApi.userTokenControllerFindOneByNationalId(
-          {
+        const notification = { messageId, ...message }
+        const messageIdExists = await this.notificationModel.count({
+          where: { messageId },
+        })
+
+        if (messageIdExists > 0) {
+          // messageId exists do nothing
+          this.logger.debug(
+            'notification with messageId already exists in db',
+            {
+              messageId,
+            },
+          )
+        } else {
+          // messageId does not exist
+          // write to db
+          try {
+            const res = await this.notificationModel.create(notification)
+            if (res) {
+              this.logger.info('notification written to db', {
+                notification,
+                messageId,
+              })
+            }
+          } catch (e) {
+            this.logger.error('error writing notification to db', {
+              e,
+              messageId,
+            })
+          }
+        }
+
+        const profile =
+          await this.userProfileApi.userTokenControllerFindOneByNationalId({
             nationalId: message.recipient,
-          },
-        )
+          })
 
         // can't send message if user has no user profile
         if (!profile) {
@@ -63,10 +98,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         if (profile.documentNotifications) {
-          const notification = await this.messageProcessor.convertToNotification(
-            message,
-            profile,
-          )
+          const notification =
+            await this.messageProcessor.convertToNotification(message, profile)
 
           await this.notificationDispatch.sendPushNotification({
             nationalId: profile.nationalId,

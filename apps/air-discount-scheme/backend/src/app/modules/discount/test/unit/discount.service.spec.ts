@@ -1,6 +1,6 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Test } from '@nestjs/testing'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 
 import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
 import { createTestUser } from '../../../../../../test/createTestUser'
@@ -224,12 +224,13 @@ describe('DiscountService', () => {
         comment,
         numberOfDaysUntilExpiration,
         unConnectedFlights,
+        false,
       )
 
       // We're simply tracking the `discount_id_${uuid}` access key to the cache
       // along with the explicit discount code as key
       const uuid = cacheManagerSpy.mock.calls[0][0]
-      const discountCode = result?.discountCode
+      const discountCode = result?.at(0)?.discountCode
       expect(cacheManagerSpy.mock.calls[1][1]).toBe(uuid)
       expect(cacheManagerSpy.mock.calls[2][1]).toBe(uuid)
       expect(cacheManagerSpy.mock.calls[3][1]).toBe(discountCode)
@@ -251,6 +252,7 @@ describe('DiscountService', () => {
         comment,
         numberOfDaysUntilExpiration,
         unConnectedFlights,
+        false,
       )
       expect(explicitCodeSpy).toBeCalledTimes(1)
     })
@@ -267,13 +269,15 @@ describe('DiscountService', () => {
         comment,
         numberOfDaysUntilExpiration,
         unConnectedFlights,
+        false,
       )
       expect(result).toBe(null)
     })
 
     it('should override postalcodes', async () => {
-      jest.spyOn(nationalRegistryService, 'getUser').mockImplementation(
-        (): Promise<NationalRegistryUser> => {
+      jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation((): Promise<NationalRegistryUser> => {
           return Promise.resolve({
             address: '',
             city: '',
@@ -284,8 +288,7 @@ describe('DiscountService', () => {
             nationalId: customerId,
             postalcode: 100, // This shall be overridden
           })
-        },
-      )
+        })
 
       const result = await discountService.createExplicitDiscountCode(
         getAuthUser(employeeId),
@@ -295,9 +298,10 @@ describe('DiscountService', () => {
         comment,
         numberOfDaysUntilExpiration,
         unConnectedFlights,
+        false,
       )
 
-      expect(result?.user?.postalcode).toBe(600)
+      expect(result?.at(0)?.user?.postalcode).toBe(600)
     })
   })
 

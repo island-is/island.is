@@ -21,9 +21,9 @@ import { CopyLink } from '@island.is/application/ui-components'
 import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 import { coreMessages } from '@island.is/application/core'
 
-export const ReviewConclusion: FC<FieldBaseProps & ReviewScreenProps> = (
-  props,
-) => {
+export const ReviewConclusion: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = (props) => {
   const {
     refetch,
     reviewerNationalId = '',

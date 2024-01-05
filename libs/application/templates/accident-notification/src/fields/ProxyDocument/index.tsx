@@ -4,7 +4,9 @@ import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { powerOfAttorney } from '../../lib/messages'
 
-export const ProxyDocument: FC<FieldBaseProps> = () => {
+export const ProxyDocument: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={2}>

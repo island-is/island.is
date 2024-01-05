@@ -2,7 +2,12 @@ import {
   RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import {
   makeCourt,
@@ -23,6 +28,7 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
   describe('Happy path', () => {
     beforeEach(() => {
+      cy.login(UserRole.PROSECUTOR)
       cy.stubAPIResponses()
       intercept(caseDataAddition)
       cy.visit(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
@@ -32,14 +38,17 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       // should require a valid arrest time
       cy.getByTestid('datepicker').first().type('01.01.2020')
       cy.clickOutside()
-      cy.getByTestid('arrestDate-time').type('13:').blur()
+      cy.getByTestid('arrestDate-time').type('13:')
+      cy.getByTestid('arrestDate-time').blur()
       cy.getByTestid('inputErrorMessage').contains('Dæmi: 12:34 eða 1:23')
-      cy.getByTestid('arrestDate-time').clear().blur()
+      cy.getByTestid('arrestDate-time').clear()
+      cy.getByTestid('arrestDate-time').blur()
       cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-      cy.getByTestid('arrestDate-time').clear().type('1333')
+      cy.getByTestid('arrestDate-time').clear()
+      cy.getByTestid('arrestDate-time').type('1333')
       cy.getByTestid('inputErrorMessage').should('not.exist')
 
-      // should have a info bubble that explains the what the requested court date means
+      // should have an info bubble that explains what the requested court date means
       cy.getByTestid('requested-court-date-tooltip').trigger('mouseover')
       cy.contains(
         'Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma.',
@@ -48,11 +57,14 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       cy.getByTestid('datepicker').last().click()
       cy.getByTestid('datepickerIncreaseMonth').dblclick()
       cy.contains('15').click()
-      cy.getByTestid('reqCourtDate-time').type('13:').blur()
+      cy.getByTestid('reqCourtDate-time').type('13:')
+      cy.getByTestid('reqCourtDate-time').blur()
       cy.getByTestid('inputErrorMessage').contains('Dæmi: 12:34 eða 1:23')
-      cy.getByTestid('reqCourtDate-time').clear().blur()
+      cy.getByTestid('reqCourtDate-time').clear()
+      cy.getByTestid('reqCourtDate-time').blur()
       cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-      cy.getByTestid('reqCourtDate-time').clear().type('1333')
+      cy.getByTestid('reqCourtDate-time').clear()
+      cy.getByTestid('reqCourtDate-time').type('1333')
       cy.getByTestid('inputErrorMessage').should('not.exist')
     })
 
@@ -73,11 +85,13 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
       cy.getByTestid('datepicker').first().type('01.01.2020')
       cy.clickOutside()
-      cy.getByTestid('arrestDate-time').clear().type('1333')
+      cy.getByTestid('arrestDate-time').clear()
+      cy.getByTestid('arrestDate-time').type('1333')
       cy.getByTestid('datepicker').last().click()
       cy.getByTestid('datepickerIncreaseMonth').dblclick()
       cy.contains('15').click()
-      cy.getByTestid('reqCourtDate-time').clear().type('1333')
+      cy.getByTestid('reqCourtDate-time').clear()
+      cy.getByTestid('reqCourtDate-time').type('1333')
       cy.getByTestid('continueButton').click()
       cy.url().should('include', RESTRICTION_CASE_POLICE_DEMANDS_ROUTE)
     })
@@ -86,6 +100,7 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   describe('Sending notification fails', () => {
     beforeEach(() => {
       const shouldFail = Operation.SendNotificationMutation
+      cy.login(UserRole.PROSECUTOR)
       cy.stubAPIResponses()
       intercept({ ...caseDataAddition, state: CaseState.DRAFT }, shouldFail)
       cy.visit(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
@@ -94,11 +109,13 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     it('should show an error message', () => {
       cy.getByTestid('datepicker').first().type('01.01.2020')
       cy.clickOutside()
-      cy.getByTestid('arrestDate-time').clear().type('1333')
+      cy.getByTestid('arrestDate-time').clear()
+      cy.getByTestid('arrestDate-time').type('1333')
       cy.getByTestid('datepicker').last().click()
       cy.getByTestid('datepickerIncreaseMonth').dblclick()
       cy.contains('15').click()
-      cy.getByTestid('reqCourtDate-time').clear().type('1333')
+      cy.getByTestid('reqCourtDate-time').clear()
+      cy.getByTestid('reqCourtDate-time').type('1333')
       cy.getByTestid('continueButton').click()
       cy.getByTestid('modalPrimaryButton').click()
       cy.getByTestid('modalErrorMessage').should('exist')

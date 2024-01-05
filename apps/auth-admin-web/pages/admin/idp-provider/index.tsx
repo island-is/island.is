@@ -7,7 +7,7 @@ import { IdpProviderDTO } from './../../../entities/dtos/idp-provider.dto'
 import { AdminTab } from './../../../entities/common/AdminTab'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   useEffect(() => {

@@ -153,10 +153,8 @@ export class MunicipalityController {
     @Param('id') id: string,
     @Body() municipalityToUpdate: MunicipalityActivityDto,
   ): Promise<MunicipalityModel> {
-    const {
-      numberOfAffectedRows,
-      updatedMunicipality,
-    } = await this.municipalityService.update(id, municipalityToUpdate)
+    const { numberOfAffectedRows, updatedMunicipality } =
+      await this.municipalityService.update(id, municipalityToUpdate)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Municipality ${id} does not exist`)

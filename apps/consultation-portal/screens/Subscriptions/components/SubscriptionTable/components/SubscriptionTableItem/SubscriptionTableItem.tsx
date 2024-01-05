@@ -11,14 +11,14 @@ import * as styles from '../../SubscriptionTable.css'
 import { Area } from '../../../../../../types/enums'
 import {
   SubscriptionArray,
-  SubscriptionTableItem,
+  SubscriptionTableItem as SubscriptionTableItemType,
 } from '../../../../../../types/interfaces'
 import localization from '../../../../Subscriptions.json'
 import { tableRowBackgroundColor } from '../../../../utils'
 import cn from 'classnames'
 
 interface Props {
-  item: SubscriptionTableItem
+  item: SubscriptionTableItemType
   idx: number
   currentTab: Area
   mdBreakpoint: boolean
@@ -117,8 +117,8 @@ const SubscriptionTableItem = ({
   const Stacked = () => {
     return (
       <Stack space={1}>
-        <Text variant="h5">
-          {isGeneralSubscription ? loc.allCases : item.caseNumber}
+        <Text variant="medium" fontWeight="semiBold">
+          {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
         </Text>
         <Text variant="medium" fontWeight="light">
           {item.name}
@@ -136,21 +136,25 @@ const SubscriptionTableItem = ({
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <Text variant="h5">{loc.allCases}</Text>
+              <Text variant="medium" fontWeight="semiBold">
+                {loc.allCases}
+              </Text>
               <Text variant="medium" fontWeight="light">
                 {item.name}
               </Text>
             </Data>
           ) : (
             <Data>
-              <Text variant="h5">{item.name}</Text>
+              <Text variant="medium" fontWeight="semiBold">
+                {item.name}
+              </Text>
             </Data>
           )
         ) : mdBreakpoint ? (
           <>
             <Data>
-              <Text variant="h5">
-                {isGeneralSubscription ? loc.allCases : item.caseNumber}
+              <Text variant="medium" fontWeight="semiBold">
+                {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
               </Text>
             </Data>
             <Data>

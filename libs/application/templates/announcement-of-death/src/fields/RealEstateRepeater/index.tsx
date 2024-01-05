@@ -24,11 +24,9 @@ import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
-export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const RealEstateRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors }) => {
   const error = (errors as any)?.assets?.assets
   const { id } = field
   const { formatMessage } = useLocale()
@@ -155,28 +153,26 @@ const Item = ({
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const [
-    getProperty,
-    { loading: queryLoading, error: _queryError },
-  ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
-    SEARCH_FOR_PROPERTY_QUERY,
-    {
-      onCompleted: (data) => {
-        setValue(
-          addressField,
-          data.searchForProperty?.defaultAddress?.display ?? '',
-        )
+  const [getProperty, { loading: queryLoading, error: _queryError }] =
+    useLazyQuery<Query, { input: SearchForPropertyInput }>(
+      SEARCH_FOR_PROPERTY_QUERY,
+      {
+        onCompleted: (data) => {
+          setValue(
+            addressField,
+            data.searchForProperty?.defaultAddress?.display ?? '',
+          )
+        },
+        fetchPolicy: 'network-only',
       },
-      fetchPolicy: 'network-only',
-    },
-  )
+    )
 
   useEffect(() => {
     // According to Skra.is:
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
     // The property number is a seven digit informationless sequence.
     // Has the prefix F.
-    if (/[Ff]{0,1}\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
+    if (/^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(propertyNumberInput.trim())) {
       getProperty({
         variables: {
           input: {

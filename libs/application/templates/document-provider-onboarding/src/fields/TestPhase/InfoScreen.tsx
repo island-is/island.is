@@ -5,7 +5,9 @@ import { Box, Link, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
 
-const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
+const TestPhaseInfoScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   return (
     <Box marginTop={[2, 3]}>

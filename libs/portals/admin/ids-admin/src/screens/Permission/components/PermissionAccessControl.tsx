@@ -10,14 +10,12 @@ import { PermissionFormTypes } from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 
-const commonProps: Pick<
-  CheckboxProps,
-  'backgroundColor' | 'large' | 'value'
-> = {
-  backgroundColor: 'blue',
-  large: true,
-  value: 'true',
-}
+const commonProps: Pick<CheckboxProps, 'backgroundColor' | 'large' | 'value'> =
+  {
+    backgroundColor: 'blue',
+    large: true,
+    value: 'true',
+  }
 
 export const PermissionAccessControl = () => {
   const { formatMessage } = useLocale()

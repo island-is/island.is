@@ -5,7 +5,9 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { applicant } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-export const QualitySignature: FC<FieldBaseProps> = ({ application }) => {
+export const QualitySignature: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const src = getValueViaPath(

@@ -38,9 +38,9 @@ type ConfirmationFieldProps = {
   }
 }
 
-export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
-  application,
-}) => {
+export const ConfirmationField: FC<
+  React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
+> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
@@ -168,7 +168,6 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
 
       <Box marginBottom={3}>
         <TopicCard
-          href="/"
           onClick={() => setViewCriminalRecord(true)}
           tag="Pdf"
           colorScheme="blue"

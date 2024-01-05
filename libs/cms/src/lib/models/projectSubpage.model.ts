@@ -28,6 +28,9 @@ export class ProjectSubpage {
   @CacheField(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
 
+  @Field(() => Boolean)
+  showTableOfContents?: boolean
+
   @CacheField(() => [SliceUnion], { nullable: true })
   bottomSlices?: Array<typeof SliceUnion | null> | null
 }
@@ -44,6 +47,7 @@ export const mapProjectSubpage = ({
     : [],
   renderSlicesAsTabs: fields.renderSlicesAsTabs ?? false,
   slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+  showTableOfContents: fields.showTableOfContents ?? false,
   bottomSlices: (fields.bottomSlices ?? [])
     .map(safelyMapSliceUnion)
     .filter(Boolean),

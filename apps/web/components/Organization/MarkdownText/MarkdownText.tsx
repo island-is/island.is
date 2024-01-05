@@ -9,11 +9,9 @@ interface MarkdownTextProps {
   variant?: TextProps['variant']
 }
 
-export const MarkdownText: React.FC<MarkdownTextProps> = ({
-  children,
-  color = null,
-  variant = 'default',
-}) => {
+export const MarkdownText: React.FC<
+  React.PropsWithChildren<MarkdownTextProps>
+> = ({ children, color = null, variant = 'default' }) => {
   return (
     <div className={styles.markdownText}>
       <Markdown

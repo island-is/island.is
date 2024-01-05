@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 
 import { FileController } from './file.controller'
-import { LimitedAccessFileController } from './limitedAccessFile.controller'
 import { FileResolver } from './file.resolver'
-import { LimitedAccessFileResolver } from './limitedAccessFile.resolver'
 import { FileService } from './file.service'
+import { LimitedAccessFileController } from './limitedAccessFile.controller'
+import { LimitedAccessFileResolver } from './limitedAccessFile.resolver'
 
 @Module({
   controllers: [FileController, LimitedAccessFileController],

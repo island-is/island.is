@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
@@ -7,31 +7,106 @@ import {
   Button,
   GridColumn,
   GridRow,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
-import { Answers } from '../../types'
+import * as kennitala from 'kennitala'
+import { EstateRegistrant } from '@island.is/clients/syslumenn'
+import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
+import {
+  EstateTypes,
+  heirAgeValidation,
+  relationWithApplicant,
+} from '../../lib/constants'
+import intervalToDuration from 'date-fns/intervalToDuration'
 
-export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const EstateMembersRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove, update } = useFieldArray({
+  const { getValues, setError } = useFormContext()
+  const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
+  const values = getValues()
+  const selectedEstate = application.answers.selectedEstate
+
+  const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
+    (member: EstateMember) => {
+      const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
+      const birthDate = member?.dateOfBirth
+      const memberAge =
+        hasForeignCitizenship && birthDate
+          ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
+              ?.years
+          : kennitala.info(member.nationalId)?.age
+      return (
+        (memberAge ?? 0) < 18 &&
+        (member?.nationalId || birthDate) &&
+        member.enabled
+      )
+    },
+  )
+
+  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
+    (member: EstateMember) => {
+      const advocateAge =
+        member.advocate && kennitala.info(member.advocate.nationalId)?.age
+      return (
+        hasEstateMemberUnder18 &&
+        member?.advocate?.nationalId &&
+        advocateAge &&
+        advocateAge < 18
+      )
+    },
+  )
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      if (
+        hasEstateMemberUnder18withoutRep &&
+        selectedEstate !== EstateTypes.divisionOfEstateByHeirs
+      ) {
+        setError(heirAgeValidation, {
+          type: 'custom',
+        })
+        return [false, 'invalid advocate age']
+      }
+
+      if (
+        hasEstateMemberUnder18 &&
+        selectedEstate === EstateTypes.divisionOfEstateByHeirs
+      ) {
+        setError(heirAgeValidation, {
+          type: 'custom',
+        })
+        return [false, 'invalid member age']
+      }
+
+      return [true, null]
+    })
+
+  const { clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
     estate: EstateRegistrant
   }
+
+  const relationsWithApplicant = relationWithApplicant.map((relation) => ({
+    value: relation,
+    label: relation,
+  }))
+
   const relations =
     externalData.relationOptions?.map((relation) => ({
       value: relation,
@@ -48,8 +123,28 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
     })
 
   useEffect(() => {
+    if (
+      !hasEstateMemberUnder18 &&
+      selectedEstate !== EstateTypes.divisionOfEstateByHeirs
+    ) {
+      clearErrors(heirAgeValidation)
+    }
+    if (!hasEstateMemberUnder18withoutRep) {
+      clearErrors(heirAgeValidation)
+    }
+  }, [
+    fields,
+    hasEstateMemberUnder18withoutRep,
+    hasEstateMemberUnder18,
+    clearErrors,
+  ])
+
+  useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
-      append(externalData.estate.estateMembers)
+      // ran into a problem with "append", as it appeared to be getting called multiple times
+      // despite checking on the length of the fields
+      // so now using "replace" instead, for the initial setup
+      replace(externalData.estate.estateMembers)
     }
   }, [])
 
@@ -84,6 +179,10 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       enabled: !member.enabled,
                     }
                     update(index, updatedMember)
+                    clearErrors(`${id}[${index}].phone`)
+                    clearErrors(`${id}[${index}].email`)
+                    clearErrors(`${id}[${index}].advocate.phone`)
+                    clearErrors(`${id}[${index}].advocate.email`)
                   }}
                 >
                   {member.enabled
@@ -98,7 +197,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   id={`${id}[${index}].nationalId`}
                   name={`${id}[${index}].nationalId`}
                   label={formatMessage(m.inheritanceKtLabel)}
-                  readOnly
                   defaultValue={formatNationalId(member.nationalId || '')}
                   backgroundColor="white"
                   disabled={!member.enabled}
@@ -123,34 +221,59 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   name={`${id}[${index}].relation`}
                   label={formatMessage(m.inheritanceRelationLabel)}
                   readOnly
-                  defaultValue={member.relation || ''}
+                  defaultValue={member.relation}
                   backgroundColor="white"
                   disabled={!member.enabled}
                 />
               </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].phone`}
-                  name={`${id}[${index}].phone`}
-                  label={m.phone.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  format="###-####"
-                  defaultValue={member.phone || ''}
-                  error={error && error[index] && error[index].phone}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].email`}
-                  name={`${id}[${index}].email`}
-                  label={m.email.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  defaultValue={member.email || ''}
-                  error={error && error[index] && error[index].email}
-                />
-              </GridColumn>
+              {application.answers.selectedEstate ===
+                EstateTypes.permitForUndividedEstate &&
+                member.relation !== 'Maki' && (
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <SelectController
+                      id={`${id}[${index}].relationWithApplicant`}
+                      name={`${id}[${index}].relationWithApplicant`}
+                      label={formatMessage(
+                        m.inheritanceRelationWithApplicantLabel,
+                      )}
+                      defaultValue={member.relationWithApplicant}
+                      options={relationsWithApplicant}
+                      error={error?.relationWithApplicant}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      required
+                    />
+                  </GridColumn>
+                )}
+              {!member.advocate && (
+                <>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].email`}
+                      name={`${id}[${index}].email`}
+                      label={formatMessage(m.email)}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      defaultValue={member.email || ''}
+                      error={error && error[index] && error[index].email}
+                      required
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].phone`}
+                      name={`${id}[${index}].phone`}
+                      label={formatMessage(m.phone)}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      format="###-####"
+                      defaultValue={member.phone || ''}
+                      error={error && error[index] && error[index].phone}
+                      required
+                    />
+                  </GridColumn>
+                </>
+              )}
             </GridRow>
 
             {/* ADVOCATE */}
@@ -164,7 +287,10 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
               >
                 <GridRow>
                   <GridColumn span={['1/1']} paddingBottom={2}>
-                    <Text variant="h4">
+                    <Text
+                      variant="h4"
+                      color={member.enabled ? 'dark400' : 'dark300'}
+                    >
                       {formatMessage(m.inheritanceAdvocateLabel)}
                     </Text>
                   </GridColumn>
@@ -199,29 +325,31 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                     <InputController
                       id={`${id}[${index}].advocate.phone`}
                       name={`${id}[${index}].advocate.phone`}
-                      label={m.phone.defaultMessage}
+                      label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       format="###-####"
                       defaultValue={member.advocate?.phone || ''}
                       error={
-                        error && error[index] && error[index].advocate.phone
+                        error && error[index] && error[index].advocate?.phone
                       }
                       size="sm"
+                      required
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
                       id={`${id}[${index}].advocate.email`}
                       name={`${id}[${index}].advocate.email`}
-                      label={m.email.defaultMessage}
+                      label={formatMessage(m.email)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       defaultValue={member.advocate?.email || ''}
                       error={
-                        error && error[index] && error[index].advocate.email
+                        error && error[index] && error[index].advocate?.email
                       }
                       size="sm"
+                      required
                     />
                   </GridColumn>
                 </GridRow>
@@ -230,18 +358,23 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
           </Box>,
         ]
       }, [] as JSX.Element[])}
-      {fields.map((member: GenericFormField<EstateMember>, index) => (
-        <Box key={member.id} hidden={member.initial}>
-          <AdditionalEstateMember
-            field={member}
-            fieldName={id}
-            index={index}
-            relationOptions={relations}
-            remove={remove}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
+      {fields.map((member: GenericFormField<EstateMember>, index) => {
+        return (
+          <Box key={member.id} hidden={member.initial}>
+            <AdditionalEstateMember
+              application={application}
+              field={member}
+              fieldName={id}
+              index={index}
+              relationOptions={relations}
+              relationWithApplicantOptions={relationsWithApplicant}
+              remove={remove}
+              error={error && error[index] ? error[index] : null}
+            />
+          </Box>
+        )
+      })}
+
       <Box marginTop={3}>
         <Button
           variant="text"
@@ -253,6 +386,17 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
           {formatMessage(m.inheritanceAddMember)}
         </Button>
       </Box>
+      {errors && errors[heirAgeValidation] ? (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={
+              selectedEstate === EstateTypes.divisionOfEstateByHeirs
+                ? formatMessage(m.inheritanceAgeValidation)
+                : formatMessage(m.heirAdvocateAgeValidation)
+            }
+          />
+        </Box>
+      ) : null}
     </Box>
   )
 }

@@ -1,2 +1,4 @@
-export const amountFormat = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+import { numberFormat } from './numberFormat'
+
+export const amountFormat = (value?: number | null): string =>
+  typeof value === 'number' ? numberFormat(value) + ' kr.' : ''

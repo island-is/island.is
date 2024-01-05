@@ -1,6 +1,7 @@
 import {
   buildCacheControl,
   createEnhancedFetch,
+  defaultCacheKeyWithHeader,
 } from '@island.is/clients/middlewares'
 import {
   ConfigType,
@@ -24,6 +25,7 @@ export const RskRelationshipsConfigurationProvider = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-rsk-relationships',
+        organizationSlug: 'skatturinn',
         cache:
           config.redis.nodes.length === 0
             ? undefined
@@ -35,6 +37,7 @@ export const RskRelationshipsConfigurationProvider = {
                   noPrefix: true,
                   ttl: 0,
                 }),
+                cacheKey: defaultCacheKeyWithHeader('X-Param-National-Id'),
                 shared: false,
                 overrideCacheControl: buildCacheControl({ maxAge: 60 * 10 }),
               },

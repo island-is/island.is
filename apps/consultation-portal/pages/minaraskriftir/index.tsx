@@ -1,9 +1,9 @@
+import { QueryConsultationPortalGetCasesArgs } from '@island.is/api/schema'
 import initApollo from '../../graphql/client'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
 } from '../../types/interfaces'
-import { QueryConsultationPortalGetCasesArgs } from '@island.is/api/schema'
 import { SUB_GET_CASES, SUB_GET_TYPES } from '../../graphql/queries.graphql'
 import {
   SubGetCasesQuery,
@@ -11,6 +11,7 @@ import {
 } from '../../graphql/queries.graphql.generated'
 import UserSubscriptions from '../../screens/Subscriptions/UserSubscriptions'
 import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
+import { withApollo } from '../../graphql/withApollo'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -76,4 +77,4 @@ export const Index = ({ cases, types, isNotAuthorized }: SubProps) => {
     />
   )
 }
-export default Index
+export default withApollo(Index)

@@ -1,19 +1,20 @@
 {
-  "root": "libs/auth/react",
+  "name": "auth-react",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth/react/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/auth/react/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/auth/react"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/auth/react"],
       "options": {
-        "jestConfig": "libs/auth/react/jest.config.js",
+        "jestConfig": "libs/auth/react/jest.config.ts",
         "passWithNoTests": true
       }
     }

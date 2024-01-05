@@ -14,8 +14,8 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
-  CACHE_MANAGER,
 } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import {
   ApiOkResponse,
   ApiBearerAuth,
@@ -58,6 +58,8 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { uuid } from 'uuidv4'
+import { ExplicitFlightLeg } from '../discount/dto/ExplicitFlight.dto'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -77,10 +79,11 @@ export class PublicFlightController {
     flightLegs: FlightLeg[],
   ): Promise<string> {
     const flightLegCount = flightLegs.length
-    const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
-      discount.connectionDiscountCodes,
-      discountCode,
-    )
+    const connectionDiscountCode =
+      this.discountService.filterConnectionDiscountCodes(
+        discount.connectionDiscountCodes,
+        discountCode,
+      )
 
     if (!connectionDiscountCode) {
       throw new ForbiddenException(
@@ -114,18 +117,20 @@ export class PublicFlightController {
       return adate.getTime() - bdate.getTime()
     })
 
-    let incomingLeg = {
+    let incomingLeg: ExplicitFlightLeg = {
       origin: chronoLogicallegs[0].origin,
       destination: chronoLogicallegs[0].destination,
       date: new Date(Date.parse(chronoLogicallegs[0].date.toString())),
     }
 
     // Validate the first chronological flightLeg of the connection flight
-    let isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
-      connectingId,
-      incomingLeg as FlightLeg, // must have date, destination and origin
-    )
-
+    let isConnectingFlight =
+      connectingId === 'explicit'
+        ? true
+        : await this.flightService.isFlightLegConnectingFlight(
+            connectingId,
+            incomingLeg, // must have date, destination and origin
+          )
     // If round-trip
     if (
       chronoLogicallegs[0].origin ===
@@ -141,11 +146,12 @@ export class PublicFlightController {
       }
       // Lazy evaluation makes this cheap
       isConnectingFlight =
-        isConnectingFlight &&
-        (await this.flightService.isFlightLegConnectingFlight(
-          connectingId,
-          incomingLeg as FlightLeg,
-        ))
+        isConnectingFlight && connectingId === 'explicit'
+          ? true
+          : await this.flightService.isFlightLegConnectingFlight(
+              connectingId,
+              incomingLeg,
+            )
     }
 
     if (!isConnectingFlight) {
@@ -185,6 +191,13 @@ export class PublicFlightController {
       throw new BadRequestException('Discount code is invalid')
     }
 
+    if (
+      discount.connectionDiscountCodes.find(
+        (item) => item.code === params.discountCode,
+      )?.flightId === 'explicit'
+    ) {
+      return
+    }
     await this.validateConnectionFlights(
       discount,
       params.discountCode,
@@ -218,7 +231,6 @@ export class PublicFlightController {
         'Flight cannot be booked outside the current year',
       )
     }
-
     let connectingFlight = false
     let isConnectable = true
     let connectingId = undefined
@@ -247,11 +259,10 @@ export class PublicFlightController {
           'This discount code is only intended for connecting flights',
         )
       }
-      const {
-        unused: flightLegsLeft,
-      } = await this.flightService.countThisYearsFlightLegsByNationalId(
-        discount.nationalId,
-      )
+      const { unused: flightLegsLeft } =
+        await this.flightService.countThisYearsFlightLegsByNationalId(
+          discount.nationalId,
+        )
       if (flightLegsLeft < flight.flightLegs.length) {
         throw new ForbiddenException('Flight leg quota is exceeded')
       }
@@ -274,7 +285,7 @@ export class PublicFlightController {
       discount.user,
       request.airline,
       isConnectable,
-      connectingId,
+      connectingId === 'explicit' ? uuid() : connectingId,
     )
     await this.discountService.useDiscount(
       params.discountCode,

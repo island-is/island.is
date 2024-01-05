@@ -9,7 +9,7 @@ import { downloadCSV } from '../../../utils/csv.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const ClientsList: React.FC = () => {
+const ClientsList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [clients, setClients] = useState<Client[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)
@@ -98,14 +98,13 @@ const ClientsList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="clients__container__options">
               <div className="clients__container__options__button">
-                <Link href={'/client'}>
-                  <a
-                    className="clients__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/client'}
+                  className="clients__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -156,6 +155,7 @@ const ClientsList: React.FC = () => {
                             href={`client/${encodeURIComponent(
                               client.clientId,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

@@ -40,9 +40,10 @@ export class CompanyRegistryResolver {
     user: User,
   ): Promise<RskCompany | null> {
     this.logger.debug(`Getting company information`)
-    const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      input ? input.nationalId : user.nationalId,
-    )
+    const company =
+      await this.rskCompanyInfoService.getCompanyInformationWithExtra(
+        input ? input.nationalId : user.nationalId,
+      )
     this.logger.debug(`Company in resolver ${company}`)
     if (!company) {
       return null
@@ -72,9 +73,10 @@ export class CompanyRegistryResolver {
     this.logger.debug('Resolving companyInfo')
     if (rskCompanyItem.companyInfo) return rskCompanyItem.companyInfo
 
-    const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      rskCompanyItem.nationalId,
-    )
+    const company =
+      await this.rskCompanyInfoService.getCompanyInformationWithExtra(
+        rskCompanyItem.nationalId,
+      )
     return company ? company.companyInfo : undefined
   }
 }

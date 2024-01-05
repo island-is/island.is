@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class RegistrationTypeStatistic {
@@ -35,12 +36,12 @@ export class BrokenDownRegistrationStatistic {
   @Field()
   totalElectronicRegistrationsForCurrentPeriodInterval?: number
 
-  @Field(() => [RegistrationTypeStatistic])
+  @CacheField(() => [RegistrationTypeStatistic])
   registrationTypes?: RegistrationTypeStatistic[]
 }
 
 @ObjectType()
 export class BrokenDownRegistrationStatisticResponse {
-  @Field(() => [BrokenDownRegistrationStatistic], { nullable: true })
+  @CacheField(() => [BrokenDownRegistrationStatistic], { nullable: true })
   electronicRegistrationStatisticBreakdown?: BrokenDownRegistrationStatistic[]
 }

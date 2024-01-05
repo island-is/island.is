@@ -1,5 +1,10 @@
 import React, { forwardRef, SyntheticEvent, useRef, useState } from 'react'
-import { AriaError, InputBackgroundColor, InputProps } from '../Input/types'
+import {
+  AriaError,
+  InputBackgroundColor,
+  InputIcon,
+  InputProps,
+} from '../Input/types'
 import * as styles from './PhoneInput.css'
 import cn from 'classnames'
 import { Box } from '../Box/Box'
@@ -8,8 +13,7 @@ import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { useMergeRefs } from '../../hooks/useMergeRefs'
 import { Icon } from '../IconRC/Icon'
-import { ValueType } from 'react-select'
-import { Option, Option as OptionType } from '../Select/Select'
+import { StringOption } from '../Select/Select.types'
 import { CountryCodeSelect } from './CountryCodeSelect/CountryCodeSelect'
 import NumberFormat, { NumberFormatValues } from 'react-number-format'
 import { countryCodes as countryCodeList } from './countryCodes'
@@ -18,7 +22,7 @@ import { useEffectOnce } from 'react-use'
 
 const DEFAULT_COUNTRY_CODE = '+354'
 
-const getCountryCodes = (allowedCountryCodes?: string[]) => {
+const getCountryCodes = (allowedCountryCodes?: string[]): StringOption[] => {
   return countryCodeList
     .filter((x) =>
       allowedCountryCodes ? allowedCountryCodes.includes(x.code) : true,
@@ -70,7 +74,7 @@ const getDefaultCountryCode = (phoneNumber?: string) => {
   return DEFAULT_COUNTRY_CODE
 }
 
-type PhoneInputProps = Omit<
+export type PhoneInputProps = Omit<
   InputProps,
   | 'rows'
   | 'type'
@@ -88,6 +92,7 @@ type PhoneInputProps = Omit<
   format?: string
   onFormatValueChange?: (...event: any[]) => void
   disableDropdown?: boolean
+  icon?: InputIcon
 }
 
 export const PhoneInput = forwardRef(
@@ -117,6 +122,7 @@ export const PhoneInput = forwardRef(
       loading,
       allowedCountryCodes,
       disableDropdown,
+      icon,
       onFormatValueChange,
       onFocus,
       onBlur,
@@ -133,10 +139,13 @@ export const PhoneInput = forwardRef(
     // Extract default country code from value, with value from form context having priority
     const defaultCountryCode = getDefaultCountryCode(value || defaultValue)
     const countryCodes = getCountryCodes(allowedCountryCodes)
-    const [selectedCountryCode, setSelectedCountryCode] = useState<
-      ValueType<Option>
-    >(countryCodes.find((x) => x.value === defaultCountryCode))
-    const cc = (selectedCountryCode as Option)?.value?.toString()
+
+    const selected = countryCodes.find(
+      (x) => x.value === defaultCountryCode,
+    ) as StringOption
+
+    const [selectedCountryCode, setSelectedCountryCode] = useState(selected)
+    const cc = selectedCountryCode?.value
 
     const errorId = `${id}-error`
     const selectId = `country-code-select-${id}`
@@ -166,18 +175,9 @@ export const PhoneInput = forwardRef(
         e.currentTarget.value = e.currentTarget.value.replace(updatedCC, '')
         if (!disableDropdown) {
           setSelectedCountryCode(
-            countryCodes.find((x) => x.value === updatedCC),
+            countryCodes.find((x) => x.value === updatedCC) as StringOption,
           )
         }
-      }
-    }
-
-    const handleSelectChange = (option: ValueType<OptionType>) => {
-      const newCc = (option as Option)?.value?.toString()
-      setSelectedCountryCode(option)
-      onFormatValueChange?.(value?.replace(cc, newCc))
-      if (inputRef.current) {
-        inputRef.current.focus()
       }
     }
 
@@ -202,10 +202,13 @@ export const PhoneInput = forwardRef(
           {size === 'xs' && label && (
             <label
               htmlFor={id}
-              className={cn(styles.label, styles.labelSizes[size], {
-                [styles.labelDisabledEmptyInput]:
-                  disabled && !value && !defaultValue,
-              })}
+              className={cn(
+                styles.label({
+                  readOnly,
+                  labelDisabledEmpty: disabled && !value && !defaultValue,
+                }),
+                styles.labelSizes[size],
+              )}
             >
               {label}
               {required && (
@@ -239,10 +242,13 @@ export const PhoneInput = forwardRef(
               {size !== 'xs' && label && (
                 <label
                   htmlFor={id}
-                  className={cn(styles.label, styles.labelSizes[size], {
-                    [styles.labelDisabledEmptyInput]:
-                      disabled && !value && !defaultValue,
-                  })}
+                  className={cn(
+                    styles.label({
+                      readOnly,
+                      labelDisabledEmpty: disabled && !value && !defaultValue,
+                    }),
+                    styles.labelSizes[size],
+                  )}
                 >
                   {label}
                   {required && (
@@ -259,16 +265,30 @@ export const PhoneInput = forwardRef(
                 </label>
               )}
               <Box display="flex">
+                {/**
+                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict*/}
                 <CountryCodeSelect
                   id={selectId}
                   name={selectId}
-                  onChange={handleSelectChange}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  onChange={(option) => {
+                    if (option) {
+                      const newCc = option.value
+                      setSelectedCountryCode(option)
+                      onFormatValueChange?.(value?.replace(cc, newCc))
+                      if (inputRef.current) {
+                        inputRef.current.focus()
+                      }
+                    }
+                  }}
                   value={selectedCountryCode}
                   defaultValue={countryCodes.find(
                     (x) => x.value === defaultCountryCode,
                   )}
                   options={countryCodes}
-                  disabled={disabled || readOnly || disableDropdown}
+                  isDisabled={disabled || readOnly || disableDropdown}
                   backgroundColor={backgroundColor}
                   inputHasLabel={!!label}
                   size={size}
@@ -280,7 +300,9 @@ export const PhoneInput = forwardRef(
                 />
                 <NumberFormat
                   className={cn(
-                    styles.input,
+                    styles.input({
+                      xs: size === 'xs',
+                    }),
                     resolveResponsiveProp(
                       backgroundColor,
                       styles.inputBackgroundXs,
@@ -359,8 +381,26 @@ export const PhoneInput = forwardRef(
               <Icon
                 icon="warning"
                 skipPlaceholderSize
-                className={cn(styles.icon, styles.iconError)}
+                className={cn(
+                  styles.icon({
+                    size,
+                  }),
+                  styles.iconError,
+                )}
                 ariaHidden
+              />
+            )}
+            {icon && !(!loading && hasError) && (
+              <Icon
+                icon={icon.name}
+                type={icon.type}
+                ariaHidden
+                className={cn(
+                  styles.icon({
+                    size,
+                    noLabel: !label,
+                  }),
+                )}
               />
             )}
           </Box>

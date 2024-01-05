@@ -1,7 +1,8 @@
 import { uuid } from 'uuidv4'
 
-import { IndictmentCount } from '../models/indictmentCount.model'
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
+
+import { IndictmentCount } from '../models/indictmentCount.model'
 
 interface Then {
   result: IndictmentCount
@@ -15,10 +16,8 @@ describe('IndictmentCountController - Create', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      indictmentCountModel,
-      indictmentCountController,
-    } = await createTestingIndictmentCountModule()
+    const { indictmentCountModel, indictmentCountController } =
+      await createTestingIndictmentCountModule()
 
     mockIndictmentCountModel = indictmentCountModel
 

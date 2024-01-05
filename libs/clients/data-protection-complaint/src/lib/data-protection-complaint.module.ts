@@ -6,7 +6,7 @@ import {
   DocumentApi,
   MemoApi,
   SecurityApi,
-} from '../gen/fetch/dev'
+} from '../gen/fetch'
 
 import { logger } from '@island.is/logging'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -53,6 +53,7 @@ export class ClientsDataProtectionComplaintModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'data-protection-complaint-client',
+                  organizationSlug: 'personuvernd',
                   logErrorResponseBody: true,
                   timeout: 60 * 1000, // 60 sec
                 }),

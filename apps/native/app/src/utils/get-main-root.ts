@@ -1,18 +1,18 @@
-import {Platform, DynamicColorIOS} from 'react-native';
-import {Layout, OptionsTopBarButton} from 'react-native-navigation';
-import {notificationsStore} from '../stores/notifications-store';
-import {preferencesStore} from '../stores/preferences-store';
-import {getThemeWithPreferences} from './get-theme-with-preferences';
+import { Layout, OptionsTopBarButton } from 'react-native-navigation'
+import { notificationsStore } from '../stores/notifications-store'
+import { preferencesStore } from '../stores/preferences-store'
 import {
   ButtonRegistry,
   ComponentRegistry,
   MainBottomTabs,
   StackRegistry,
-} from './component-registry';
-import {testIDs} from './test-ids';
+} from './component-registry'
+import { getThemeWithPreferences } from './get-theme-with-preferences'
+import { testIDs } from './test-ids'
 
 export const getRightButtons = ({
   unreadCount = notificationsStore.getState().unreadCount,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = getThemeWithPreferences(preferencesStore.getState()),
 } = {}): OptionsTopBarButton[] => {
   return [
@@ -43,15 +43,15 @@ export const getRightButtons = ({
         height: 32,
       },
     },
-  ];
-};
+  ]
+}
 
 /**
  * Main root layout, with tabbar
  * @returns Layout
  */
 export function getMainRoot(): Layout {
-  const rightButtons = getRightButtons();
+  const rightButtons = getRightButtons()
   return {
     bottomTabs: {
       id: MainBottomTabs,
@@ -137,12 +137,12 @@ export function getMainRoot(): Layout {
         },
         {
           stack: {
-            id: StackRegistry.ProfileStack,
+            id: StackRegistry.MoreStack,
             children: [
               {
                 component: {
-                  id: ComponentRegistry.ProfileScreen,
-                  name: ComponentRegistry.ProfileScreen,
+                  id: ComponentRegistry.MoreScreen,
+                  name: ComponentRegistry.MoreScreen,
                   options: {
                     topBar: {
                       rightButtons,
@@ -155,5 +155,5 @@ export function getMainRoot(): Layout {
         },
       ],
     },
-  };
+  }
 }

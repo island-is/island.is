@@ -32,12 +32,12 @@ export const createMockApplication = (data = {}) => ({
 
 ### Usage in a template
 
-You can create a AlertMessageFormField using the following function `AlertMessageFormField`.
+You can create a AlertMessageFormField using the following function `buildAlertMessageField`.
 
 <Source
   language="typescript"
   code={dedent(`
-    AlertMessageFormField({
+    buildAlertMessageField({
       id: 'field.id',
       title: 'Field title',
       alertType: 'success',
@@ -53,7 +53,7 @@ The previous configuration object will result in the following component:
       application={createMockApplication()}
       field={{
         id: 'field.id',
-        title: '',
+        title: 'Field title',
         alertType: 'success',
         message: 'field.message',
       }}
@@ -61,6 +61,85 @@ The previous configuration object will result in the following component:
   </Story>
 </Canvas>
 
+### AlertMessageField supports links
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildAlertMessageFormField({
+      id: 'field.id',
+      title: 'Alert with links',
+      alertType: 'success',
+      message: 'field.message with a link',
+      links: [{
+        title: 'Demo link',
+        isExternal: false,
+        url: '/'
+      }]
+    })`)}
+/>
+
+The previous configuration object will result in the following component:
+
+<Canvas>
+  <Story name="Links">
+    <AlertMessageFormField
+      application={createMockApplication()}
+      field={{
+        id: 'field.id',
+        title: 'Alert with links',
+        alertType: 'warning',
+        message: 'field.message with a link',
+        links: [
+          {
+            title: 'Demo link',
+            isExternal: false,
+            url: '/',
+          },
+        ],
+      }}
+    />
+  </Story>
+</Canvas>
+
+### You can also use markdown for the message.
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildAlertMessageFormField({
+      id: 'field.id',
+      title: 'Alert with Markdown',
+      alertType: 'error',
+      message: 'This is a **basic** markdown demo',
+      links: [{
+        title: 'Demo link',
+        isExternal: false,
+        url: '/'
+      }]
+    })`)}
+/>
+
+The previous configuration object will result in the following component:
+
+<Canvas>
+  <Story name="Markdown">
+    <AlertMessageFormField
+      application={createMockApplication()}
+      field={{
+        title: 'Alert with Markdown',
+        alertType: 'error',
+        message: 'This is a **basic** markdown demo',
+        links: [{
+          title: 'Demo link',
+          isExternal: false,
+          url: '/'
+        }]
+      }}
+/>
+
+  </Story>
+</Canvas>
 You can also use this field into a custom component by using `<AlertMessageFormField field={...} />` with the configuration object defined above.
 
 # Props

@@ -11,7 +11,9 @@ interface Props {
   repeat?: number
 }
 
-export const ActionCardLoader: FC<Props> = ({ repeat }) => (
+export const ActionCardLoader: FC<React.PropsWithChildren<Props>> = ({
+  repeat,
+}) => (
   <Stack space={2}>
     {[...Array(repeat || 1)].map((_key, index) => (
       <Box

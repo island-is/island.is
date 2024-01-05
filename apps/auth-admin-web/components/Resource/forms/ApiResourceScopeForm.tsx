@@ -20,7 +20,9 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
+const ApiResourceScopeForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<ApiResourceScopeDTO>()
   const { isSubmitting, errors } = formState
   const [scopes, setScopes] = useState<ApiScope[]>([])

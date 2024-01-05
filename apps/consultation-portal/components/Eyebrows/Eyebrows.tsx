@@ -1,5 +1,6 @@
 import { Inline, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
+import { Fragment } from 'react'
 
 interface Props {
   instances: Array<string>
@@ -12,12 +13,12 @@ interface Props {
 const Eyebrows = ({ instances, color, style, wrap, truncate }: Props) => {
   const mapInstances = instances.map((item, index) => {
     return (
-      <>
-        <Text variant="eyebrow" color={color} truncate={truncate} key={index}>
+      <Fragment key={index}>
+        <Text variant="eyebrow" color={color} truncate={truncate}>
           {item}
         </Text>
         {instances[index + 1] && <div className={style} />}
-      </>
+      </Fragment>
     )
   })
 

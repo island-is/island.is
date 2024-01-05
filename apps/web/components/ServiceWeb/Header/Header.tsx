@@ -1,19 +1,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import NextLink from 'next/link'
 import cn from 'classnames'
+import NextLink from 'next/link'
+
 import {
   Box,
+  Button,
   Column,
   Columns,
+  getTextStyles,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
+  Link,
   Logo,
   ResponsiveSpace,
-  Link,
-  getTextStyles,
-  Button,
 } from '@island.is/island-ui/core'
 import {
   LanguageToggler,
@@ -22,8 +23,8 @@ import {
 } from '@island.is/web/components'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import { TextModes } from '../types'
 
+import { TextModes } from '../types'
 import * as styles from './Header.css'
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -45,7 +46,7 @@ export const Header = ({
   namespace,
 }: HeaderProps) => {
   const { linkResolver } = useLinkResolver()
-  const { t } = useI18n()
+  const { t, activeLocale } = useI18n()
 
   const n = useNamespace(namespace)
 
@@ -106,22 +107,19 @@ export const Header = ({
                                       ]).href
                                     : linkResolver('serviceweb').href
                                 }
+                                className={cn(
+                                  getTextStyles({
+                                    variant: 'h4',
+                                    color: dark
+                                      ? 'dark400'
+                                      : textMode === 'blueberry'
+                                      ? 'blueberry600'
+                                      : 'white',
+                                  }),
+                                  styles.headingLink,
+                                )}
                               >
-                                <a
-                                  className={cn(
-                                    getTextStyles({
-                                      variant: 'h4',
-                                      color: dark
-                                        ? 'dark400'
-                                        : textMode === 'blueberry'
-                                        ? 'blueberry600'
-                                        : 'white',
-                                    }),
-                                    styles.headingLink,
-                                  )}
-                                >
-                                  {title}
-                                </a>
+                                {title}
                               </NextLink>
                             </div>
                           </Hidden>
@@ -143,7 +141,9 @@ export const Header = ({
                               placeholder={searchPlaceholder}
                               nothingFoundText={n(
                                 'nothingFoundText',
-                                'Ekkert fannst',
+                                activeLocale === 'is'
+                                  ? 'Ekkert fannst'
+                                  : 'Nothing found',
                               )}
                             />
                           </Box>

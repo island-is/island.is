@@ -2,11 +2,11 @@ import fetch from 'node-fetch'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
 import { logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 
-import { now } from './date.factory'
 import { appModuleConfig } from './app.config'
+import { now } from './date.factory'
 
 function minutesBetween(startTime: Date, endTime: Date) {
   return Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60))

@@ -85,3 +85,12 @@ export class AdminPatchScopeDto {
   })
   grantToPersonalRepresentatives?: boolean
 }
+
+export const superUserScopeFields = [
+  'grantToAuthenticatedUser',
+  'grantToLegalGuardians',
+  'grantToProcuringHolders',
+  'allowExplicitDelegationGrant',
+  'isAccessControlled',
+  'grantToPersonalRepresentatives',
+]

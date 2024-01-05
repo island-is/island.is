@@ -6,7 +6,11 @@ import { Box, Checkbox } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
 
-const ConfirmCheckbox: FC<FieldBaseProps> = ({ error, field, application }) => {
+const ConfirmCheckbox: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  error,
+  field,
+  application,
+}) => {
   const { id, disabled } = field
   const { setValue } = useFormContext()
   const defaultValue = getValueViaPath(

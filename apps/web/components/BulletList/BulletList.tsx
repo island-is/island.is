@@ -32,7 +32,9 @@ export interface BulletListProps {
   bullets: Entry[]
 }
 
-export const BulletList: FC<BulletListProps> = ({ bullets }) => (
+export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
+  bullets,
+}) => (
   <div>
     {bullets.map((bullet, index) => {
       return bullet.type === 'IconBullet' ? (
@@ -61,7 +63,10 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
   </div>
 )
 
-const Row: FC<{ left: ReactNode }> = ({ left, children }) => (
+const Row: FC<React.PropsWithChildren<{ left: ReactNode }>> = ({
+  left,
+  children,
+}) => (
   <Box
     alignItems="stretch"
     display="flex"

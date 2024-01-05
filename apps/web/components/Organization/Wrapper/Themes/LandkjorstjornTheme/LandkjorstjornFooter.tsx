@@ -15,6 +15,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './LandskjorstjornFooter.css'
+import { ReactNode } from 'react'
 
 interface LandskjorstjornFooterProps {
   footerItems: FooterItem[]
@@ -54,7 +55,7 @@ const LandskjorstjornFooter = ({
                 </Text>
                 {webRichText(footerItems[0].content as SliceType[], {
                   renderNode: {
-                    [BLOCKS.PARAGRAPH]: (_node, children) => (
+                    [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                       <Text
                         fontWeight="semiBold"
                         color="white"
@@ -96,7 +97,7 @@ const LandskjorstjornFooter = ({
                 </Box>
                 {webRichText(item.content as SliceType[], {
                   renderNode: {
-                    [BLOCKS.PARAGRAPH]: (_node, children) => (
+                    [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                       <Text color="white" variant="medium" marginBottom={2}>
                         {children}
                       </Text>

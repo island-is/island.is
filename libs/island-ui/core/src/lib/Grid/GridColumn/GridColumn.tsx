@@ -26,7 +26,7 @@ export interface GridColumnProps {
   position?: position | 'none'
 }
 
-export const GridColumn: FC<GridColumnProps> = ({
+export const GridColumn: FC<React.PropsWithChildren<GridColumnProps>> = ({
   children,
   span,
   offset,
@@ -44,13 +44,8 @@ export const GridColumn: FC<GridColumnProps> = ({
     pos.position = position
   }
 
-  const [
-    hiddenOnXs,
-    hiddenOnSm,
-    hiddenOnMd,
-    hiddenOnLg,
-    hiddenOnXl,
-  ] = resolveResponsiveRangeProps({ above, below })
+  const [hiddenOnXs, hiddenOnSm, hiddenOnMd, hiddenOnLg, hiddenOnXl] =
+    resolveResponsiveRangeProps({ above, below })
 
   return (
     <Box

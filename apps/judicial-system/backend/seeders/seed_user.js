@@ -18,7 +18,7 @@ const userSeeds = `[
     "title": "fulltrúi",
     "mobile_number": "6666666",
     "email": "finnur@dummy.dd",
-    "role": "REPRESENTATIVE",
+    "role": "PROSECUTOR_REPRESENTATIVE",
     "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
   },
   {
@@ -28,7 +28,7 @@ const userSeeds = `[
     "title": "dómritari",
     "mobile_number": "1111111",
     "email": "dalli@dummy.dd",
-    "role": "REGISTRAR",
+    "role": "DISTRICT_COURT_REGISTRAR",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   },
   {
@@ -38,7 +38,7 @@ const userSeeds = `[
     "title": "dómari",
     "mobile_number": "2222222",
     "email": "dora@dummy.dd",
-    "role": "JUDGE",
+    "role": "DISTRICT_COURT_JUDGE",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   },
   {
@@ -48,7 +48,7 @@ const userSeeds = `[
     "title": "landsréttardómari",
     "mobile_number": "3333333",
     "email": "lalli@dummy.dd",
-    "role": "JUDGE",
+    "role": "COURT_OF_APPEALS_JUDGE",
     "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
   },
   {
@@ -58,7 +58,7 @@ const userSeeds = `[
     "title": "aðstoðarmaður dómara",
     "mobile_number": "7777777",
     "email": "adalheidur@dummy.dd",
-    "role": "ASSISTANT",
+    "role": "DISTRICT_COURT_ASSISTANT",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   },
   {
@@ -68,7 +68,7 @@ const userSeeds = `[
     "title": "starfsmaður",
     "mobile_number": "4444444",
     "email": "petur@dummy.dd",
-    "role": "STAFF",
+    "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b124-2a85-11ec-8d3d-0242ac130003"
   },
   {
@@ -78,7 +78,7 @@ const userSeeds = `[
     "title": "starfsmaður",
     "mobile_number": "5555555",
     "email": "valgard@dummy.dd",
-    "role": "STAFF",
+    "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b3ae-2a85-11ec-8d3d-0242ac130003"
   }
 ]`

@@ -57,7 +57,7 @@ export enum CaseStatuses {
 
 export enum MapCaseStatuses {
   'Til umsagnar' = 'Til umsagnar',
-  'Niðurstöður í vinnslu' = 'Í vinnslu frá',
+  'Niðurstöður í vinnslu' = 'Í vinnslu',
   'Niðurstöður birtar' = 'Samráði lokið',
 }
 

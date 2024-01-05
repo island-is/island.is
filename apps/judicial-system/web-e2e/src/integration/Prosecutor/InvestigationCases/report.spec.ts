@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType, UserRole } from '@island.is/judicial-system/types'
 import {
   INVESTIGATION_CASE_CASE_FILES_ROUTE,
   INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
@@ -18,6 +18,7 @@ describe(`${INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
       demands,
     }
 
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/test_id`)
@@ -28,14 +29,16 @@ describe(`${INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   })
 
   it('should require a valid case facts value', () => {
-    cy.getByTestid('caseFacts').click().blur()
+    cy.getByTestid('caseFacts').click()
+    cy.getByTestid('caseFacts').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('caseFacts').type(faker.lorem.words(5))
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should require a valid legal arguments value', () => {
-    cy.getByTestid('legalArguments').click().blur()
+    cy.getByTestid('legalArguments').click()
+    cy.getByTestid('legalArguments').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('legalArguments').type(faker.lorem.words(5))
     cy.getByTestid('inputErrorMessage').should('not.exist')

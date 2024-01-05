@@ -34,6 +34,8 @@ const getSortedAndFilteredBrokers = (
   const brokersContainingAllTerm: Query['getBrokers'] = []
 
   const startsWithFullSearchString = (broker: Broker): boolean => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     return (
       broker.name?.trim().toLowerCase().startsWith(fullSearchString) ||
       broker.nationalId?.trim().toLowerCase().startsWith(fullSearchString)
@@ -61,7 +63,9 @@ const getSortedAndFilteredBrokers = (
   return brokersStartingWithFullSearchString.concat(brokersContainingAllTerm)
 }
 
-const BrokersList: FC<BrokersListProps> = ({ slice }) => {
+const BrokersList: FC<React.PropsWithChildren<BrokersListProps>> = ({
+  slice,
+}) => {
   const n = useNamespace(slice.json ?? {})
 
   const [listState, setListState] = useState<ListState>('loading')

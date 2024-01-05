@@ -41,7 +41,7 @@ export const IframeModalDiv = forwardRef(
   },
 )
 
-export const IframeModal: FC<IframeModalProps> = ({
+export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
   title,
   label,
   closeWindowLabel = 'Loka glugga',
@@ -59,6 +59,8 @@ export const IframeModal: FC<IframeModalProps> = ({
 
   useEffect(() => {
     if (dialog.visible && initialFocusedRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       initialFocusedRef.current.focus()
     }
   }, [dialog.visible, initialFocusedRef])

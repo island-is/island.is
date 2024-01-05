@@ -19,7 +19,11 @@ interface Props extends FieldBaseProps {
   field: SelectField
 }
 
-export const SelectFormField: FC<Props> = ({ application, error, field }) => {
+export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
+  application,
+  error,
+  field,
+}) => {
   const {
     id,
     title,
@@ -50,11 +54,9 @@ export const SelectFormField: FC<Props> = ({ application, error, field }) => {
         <SelectController
           required={required}
           defaultValue={
-            ((getValueViaPath(application.answers, id) as string[]) ??
+            (getValueViaPath(application.answers, id) ??
               getDefaultValue(field, application)) ||
-            required
-              ? ''
-              : undefined
+            (required ? '' : undefined)
           }
           label={formatText(title, application, formatMessage)}
           name={id}

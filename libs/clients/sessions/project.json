@@ -1,29 +1,31 @@
 {
-  "root": "libs/clients/sessions",
+  "name": "clients-sessions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/sessions/src",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/clients/sessions/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/sessions"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/sessions"],
       "options": {
-        "jestConfig": "libs/clients/sessions/jest.config.js",
+        "jestConfig": "libs/clients/sessions/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/clients/sessions/gen",
         "command": "yarn openapi-generator -o libs/clients/sessions/gen/fetch -i apps/services/sessions/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-sessions"],
   "tags": ["lib:client"]
 }

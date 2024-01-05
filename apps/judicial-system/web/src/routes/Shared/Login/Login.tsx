@@ -2,11 +2,11 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { login, titles } from '@island.is/judicial-system-web/messages'
+import { PageHeader } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
-import { login, titles } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 
 import * as styles from './Login.css'
 

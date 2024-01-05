@@ -15,10 +15,9 @@ type WarningSectionProps = {
   step: Step
 }
 
-export const WarningSection: FC<WarningSectionProps> = ({
-  application,
-  step: { description, title },
-}) => {
+export const WarningSection: FC<
+  React.PropsWithChildren<WarningSectionProps>
+> = ({ application, step: { description, title } }) => {
   const { formatMessage } = useLocale()
 
   return (

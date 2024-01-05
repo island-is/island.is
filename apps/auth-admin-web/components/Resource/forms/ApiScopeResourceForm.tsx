@@ -15,7 +15,9 @@ interface Props {
   apiScope: ApiScope
 }
 
-const ApiScopeResourceForm: React.FC<Props> = (props) => {
+const ApiScopeResourceForm: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     register,
     handleSubmit,

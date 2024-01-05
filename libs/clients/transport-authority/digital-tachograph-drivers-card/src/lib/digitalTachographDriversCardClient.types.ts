@@ -16,6 +16,13 @@ export interface NewestDriversCard {
   isValid?: boolean
 }
 
+export enum CardType {
+  FIRST_EDITION = 'firstEdition',
+  REISSUE = 'reissue',
+  RENEWAL = 'renewal',
+  REPRINT = 'reprint',
+}
+
 export interface DriversCardApplicationRequest {
   ssn: string
   fullName: string
@@ -27,9 +34,14 @@ export interface DriversCardApplicationRequest {
   emailAddress?: string
   phoneNumber?: string
   deliveryMethodIsSend: boolean
+  cardType: CardType
   paymentReceivedAt: Date
   photo: string
   signature: string
+  driverslicenceNumber: string
+  driverslicencePlaceOfPublication: string
+  driverslicenceValidFrom: Date
+  driverslicenceValidTo: Date
 }
 
 export interface IndividualPhotoAndSignature {

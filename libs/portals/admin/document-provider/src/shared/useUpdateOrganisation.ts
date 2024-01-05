@@ -32,10 +32,10 @@ export type OnCompletedArgumentsType = {
 type OnCompletedFunctionType = (data: OnCompletedArgumentsType) => void
 
 export function useUpdateOrganisation(onCompleted?: OnCompletedFunctionType) {
-  const [
-    updateOrganisationMutation,
-    { called, loading, error },
-  ] = useMutation(UPDATE_ORGANISATION_MUTATION, { onCompleted })
+  const [updateOrganisationMutation, { called, loading, error }] = useMutation(
+    UPDATE_ORGANISATION_MUTATION,
+    { onCompleted },
+  )
 
   const { formatMessage } = useLocale()
   const errorMsg = formatMessage(m.SingleProviderUpdateInformationError)

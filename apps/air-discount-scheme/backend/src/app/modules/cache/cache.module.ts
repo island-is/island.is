@@ -1,5 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import { CacheModule as NestCacheModule } from '@island.is/cache'
+import { CacheModule as NestCacheModule } from '@nestjs/cache-manager'
 import { redisInsStore } from 'cache-manager-ioredis-yet'
 import { createRedisCluster } from '@island.is/cache'
 import { environment } from '../../../environments'

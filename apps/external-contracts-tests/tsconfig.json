@@ -4,5 +4,6 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "types": ["jest", "node"]
-  }
+  },
+  "exclude": ["jest.config.ts"]
 }

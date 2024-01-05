@@ -1,24 +1,26 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
-} from '@island.is/judicial-system/auth'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import {
+  CurrentGraphQlUser,
+  JwtGraphQlAuthGuard,
+} from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
-import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseQueryInput } from './dto/case.input'
-import { Case } from './models/case.model'
-import { UpdateCaseInput } from './dto/updateCase.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
+import { UpdateCaseInput } from './dto/updateCase.input'
+import { CaseInterceptor } from './interceptors/case.interceptor'
+import { LimitedAccessCaseInterceptor } from './interceptors/limitedAccessCase.interceptor'
+import { Case } from './models/case.model'
 
 @UseGuards(new JwtGraphQlAuthGuard(true))
 @Resolver(() => Case)
@@ -30,7 +32,7 @@ export class LimitedAccessCaseResolver {
   ) {}
 
   @Query(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(CaseInterceptor, LimitedAccessCaseInterceptor)
   async limitedAccessCase(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,

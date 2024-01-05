@@ -45,7 +45,8 @@ const checkIfStringIsListOfUrls = (urls: string) => {
 
   for (const url of urlsArray) {
     try {
-      new URL(url)
+      // Firefox does not support wildcard subdomains, so we need to remove it before validating the url
+      new URL(url.replace('*.', ''))
     } catch (e) {
       return false
     }
@@ -191,9 +192,10 @@ export const schema = {
     .merge(defaultEnvironmentSchema),
 }
 
-export type MergedFormDataSchema = typeof schema[ClientFormTypes.advancedSettings] &
-  typeof schema[ClientFormTypes.applicationUrls] &
-  typeof schema[ClientFormTypes.delegations] &
-  typeof schema[ClientFormTypes.lifeTime] &
-  typeof schema[ClientFormTypes.permissions] &
-  typeof schema[ClientFormTypes.translations]
+export type MergedFormDataSchema =
+  typeof schema[ClientFormTypes.advancedSettings] &
+    typeof schema[ClientFormTypes.applicationUrls] &
+    typeof schema[ClientFormTypes.delegations] &
+    typeof schema[ClientFormTypes.lifeTime] &
+    typeof schema[ClientFormTypes.permissions] &
+    typeof schema[ClientFormTypes.translations]

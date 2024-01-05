@@ -14,26 +14,29 @@ export const EmptyState = ({ title, description }: Props) => {
   const { formatMessage } = useLocale()
   return (
     <Box paddingTop={[0, 3]}>
-      <GridRow>
+      <GridRow rowGap={3}>
         <GridColumn
-          span={['12/12', '4/12', '4/12', '3/12', '3/12']}
-          order={[2, 1]}
+          span={['12/12', '12/12', '12/12', '3/12', '3/12']}
+          order={[2, 2, 2, 1, 1]}
         >
-          <Box marginTop={[3, 0]} paddingLeft="containerGutter">
+          <Box
+            paddingLeft={[0, 0, 0, 'containerGutter']}
+            display="flex"
+            justifyContent="center"
+          >
             <EmptyImageSmall style={{ maxHeight: 229 }} />
           </Box>
         </GridColumn>
         <GridColumn
-          span={['10/12', '4/12']}
+          span={['12/12', '12/12', '10/12', '4/12']}
           offset={['0', '1/12', '1/12', '1/12', '0']}
-          order={[1, 2]}
+          order={[1, 1, 1, 2, 2]}
         >
           <Box
             height="full"
             display="flex"
             justifyContent="center"
             flexDirection="column"
-            paddingTop={[3, 0]}
           >
             <Text marginBottom={1} variant="h3">
               {title ? formatMessage(title) : formatMessage(m.noDataFound)}

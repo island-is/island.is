@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Driving License" -->
-
 # Driving License Book Client
 
 ## About
@@ -20,7 +18,7 @@ yarn nx run clients-driving-license-book:update-openapi-document
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-driving-license-book:schemas/external-openapi-generator
+yarn nx run clients-driving-license-book:codegen/backend-client
 ```
 
 ### Import into other NestJS modules

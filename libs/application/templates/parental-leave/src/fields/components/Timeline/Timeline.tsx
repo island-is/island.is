@@ -30,7 +30,7 @@ interface TimelineProps {
   onDeletePeriod?: (startDate: string) => void
 }
 
-export const Timeline: FC<TimelineProps> = ({
+export const Timeline: FC<React.PropsWithChildren<TimelineProps>> = ({
   editable = true,
   initDate,
   periods,

@@ -5,7 +5,9 @@ import { Box, BulletList, Bullet } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { definitionOfApplicant } from '../../lib/messages'
 
-export const DefinitionOfApplicant: FC<FieldBaseProps> = ({ application }) => {
+export const DefinitionOfApplicant: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (

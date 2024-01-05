@@ -1,10 +1,11 @@
 {
-  "root": "libs/application/templates/funding-government-projects",
+  "name": "application-templates-funding-government-projects",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/funding-government-projects/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/funding-government-projects/**/*.{ts,tsx,js,jsx}"
@@ -12,17 +13,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/application/templates/funding-government-projects"
+        "{workspaceRoot}/coverage/libs/application/templates/funding-government-projects"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/funding-government-projects/jest.config.js",
+        "jestConfig": "libs/application/templates/funding-government-projects/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/funding-government-projects/src/**/*.{js,ts,tsx}'"
       }

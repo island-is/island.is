@@ -42,7 +42,7 @@ const FindStudentModal = ({
   )
 
   const viewStudent = useCallback(
-    (id) => {
+    (id: string) => {
       setShowStudentOverview(false)
       setStudentId(id)
     },

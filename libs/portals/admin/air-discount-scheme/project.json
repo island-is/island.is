@@ -1,11 +1,12 @@
 {
-  "root": "libs/portals/admin/air-discount-scheme",
+  "name": "portals-admin-air-discount-scheme",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/air-discount-scheme/src",
   "projectType": "library",
   "tags": ["scope:portals-admin", "lib:portals-admin"],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -14,15 +15,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/portals/admin/air-discount-scheme"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/admin/air-discount-scheme"
+      ],
       "options": {
-        "jestConfig": "libs/portals/admin/air-discount-scheme/jest.config.js",
+        "jestConfig": "libs/portals/admin/air-discount-scheme/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "output": "libs/portals/admin/air-discount-scheme/src/**/*.codegen.ts",
         "command": "graphql-codegen --config libs/portals/admin/air-discount-scheme/codegen.yml"

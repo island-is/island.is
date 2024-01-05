@@ -30,8 +30,9 @@ export const renderSecrets = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks'))
-          .services,
+        (
+          await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks')
+        ).services,
     ),
   )
 

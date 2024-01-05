@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Ehic Client V1
 
 This library was generated with [Nx](https://nx.dev).

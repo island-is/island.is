@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -24,9 +25,11 @@ export const personalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) =>
-        (application.externalData.nationalRegistry?.data as {
-          fullName?: string
-        })?.fullName ?? '',
+        (
+          application.externalData.nationalRegistry?.data as {
+            fullName?: string
+          }
+        )?.fullName ?? '',
     }),
     buildTextField({
       id: 'personalInfo.nationalId',
@@ -36,9 +39,11 @@ export const personalInfo = buildMultiField({
       readOnly: true,
       defaultValue: (application: Application) => {
         const nationalId =
-          (application.externalData.nationalRegistry?.data as {
-            nationalId?: string
-          })?.nationalId ?? ''
+          (
+            application.externalData.nationalRegistry?.data as {
+              nationalId?: string
+            }
+          )?.nationalId ?? ''
 
         return formatKennitala(nationalId)
       },
@@ -49,9 +54,11 @@ export const personalInfo = buildMultiField({
       width: 'half',
       required: true,
       defaultValue: (application: Application) =>
-        (application.externalData.userProfile?.data as {
-          email?: string
-        })?.email ?? '',
+        (
+          application.externalData.userProfile?.data as {
+            email?: string
+          }
+        )?.email ?? '',
     }),
     buildTextField({
       id: 'personalInfo.phoneNumber',
@@ -62,9 +69,11 @@ export const personalInfo = buildMultiField({
       required: true,
       defaultValue: (application: Application) => {
         const phone =
-          (application.externalData.userProfile?.data as {
-            mobilePhoneNumber?: string
-          })?.mobilePhoneNumber ?? ''
+          (
+            application.externalData.userProfile?.data as {
+              mobilePhoneNumber?: string
+            }
+          )?.mobilePhoneNumber ?? ''
 
         return removeCountryCode(phone)
       },
@@ -75,7 +84,7 @@ export const personalInfo = buildMultiField({
       space: 'containerGutter',
     }),
     buildCheckboxField({
-      id: 'personalInfo.hasDisabilityDiscount',
+      id: 'personalInfo.disabilityCheckbox',
       title: '',
       large: false,
       backgroundColor: 'white',
@@ -88,13 +97,15 @@ export const personalInfo = buildMultiField({
       ],
     }),
     buildCustomField({
-      id: 'noDisabilityInfo',
+      id: 'personalInfo.disabilityAlertMessage',
       title: '',
-      component: 'NoDisabilityRecordInfo',
+      component: 'HasDisabilityLicenseMessage',
       doesNotRequireAnswer: true,
-      condition: (answers) =>
-        (answers.personalInfo as PersonalInfo)?.hasDisabilityDiscount[0] ===
-        YES,
+      condition: (answers) => {
+        return (
+          (answers.personalInfo as PersonalInfo)?.disabilityCheckbox[0] === YES
+        )
+      },
     }),
   ],
 })

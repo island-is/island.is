@@ -5,14 +5,12 @@ on:
     branches:
       - 'main'
       - 'release/**'
+      - 'pre-release/**'
     paths:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
   workflow_dispatch: {}
-  create:
-    branches:
-      - 'release/**'
   pull_request:
     paths:
       - 'charts/**'
@@ -24,7 +22,6 @@ defaults:
     shell: bash
 
 env:
-  DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
   AWS_MAX_ATTEMPTS: 10
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
 
@@ -59,6 +56,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
       - uses: actions/checkout@v3
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -97,7 +95,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           ./infra/scripts/generate-chart-values.sh
-          ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts"
+          ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
 
   check-secrets:
     needs:

@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # skilavottord-types
 
 This library was generated with [Nx](https://nx.dev).

@@ -17,7 +17,9 @@ export type TagVariant =
   | 'blueberry'
   | 'dark'
   | 'mint'
+  | 'yellow'
   | 'disabled'
+  | 'warn'
 
 export interface TagProps {
   onClick?: () => void
@@ -33,7 +35,7 @@ export interface TagProps {
   truncate?: boolean
   hyphenate?: boolean
   textLeft?: boolean
-  CustomLink?: FC
+  CustomLink?: FC<React.PropsWithChildren<unknown>>
 }
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
@@ -60,7 +62,6 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.outlined]: outlined,
       [styles.attention]: attention,
       [styles.focusable]: !disabled,
-      [styles.truncate]: truncate,
       [styles.hyphenate]: hyphenate,
       [styles.textLeft]: textLeft,
       [styles.disabled]: disabled,

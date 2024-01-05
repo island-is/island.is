@@ -1,8 +1,7 @@
-import type { User } from '@island.is/auth-nest-tools'
 import { rest } from 'msw'
 import { DriverLicenseDto } from '../../v5'
 
-export enum MOCK_NATIONAL_IDS {
+export enum MOCK_TOKEN {
   'STUDENT' = '1',
   'TEACHER' = '2',
   'DEPRIVED' = '3',
@@ -22,23 +21,23 @@ export const XROAD_DRIVING_LICENSE_PATH_V1 =
   'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1/api'
 
 const MOCK_HAS_QUALITY_PHOTO = {
-  [MOCK_NATIONAL_IDS.STUDENT]: true,
-  [MOCK_NATIONAL_IDS.TEACHER]: true,
-  [MOCK_NATIONAL_IDS.DEPRIVED]: false,
-  [MOCK_NATIONAL_IDS.NO_LICENSE]: false,
-  [MOCK_NATIONAL_IDS.MANY_CATEGORIES]: true,
-  [MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
-  [MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY]: true,
+  [MOCK_TOKEN.STUDENT]: true,
+  [MOCK_TOKEN.TEACHER]: true,
+  [MOCK_TOKEN.DEPRIVED]: false,
+  [MOCK_TOKEN.NO_LICENSE]: false,
+  [MOCK_TOKEN.MANY_CATEGORIES]: true,
+  [MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
+  [MOCK_TOKEN.LICENSE_B_CATEGORY]: true,
 }
 
 const MOCK_HAS_SIGNATURE = {
-  [MOCK_NATIONAL_IDS.STUDENT]: true,
-  [MOCK_NATIONAL_IDS.TEACHER]: true,
-  [MOCK_NATIONAL_IDS.DEPRIVED]: false,
-  [MOCK_NATIONAL_IDS.NO_LICENSE]: false,
-  [MOCK_NATIONAL_IDS.MANY_CATEGORIES]: true,
-  [MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
-  [MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY]: true,
+  [MOCK_TOKEN.STUDENT]: true,
+  [MOCK_TOKEN.TEACHER]: true,
+  [MOCK_TOKEN.DEPRIVED]: false,
+  [MOCK_TOKEN.NO_LICENSE]: false,
+  [MOCK_TOKEN.MANY_CATEGORIES]: true,
+  [MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
+  [MOCK_TOKEN.LICENSE_B_CATEGORY]: true,
 }
 
 const url = (path: string) => {
@@ -46,28 +45,35 @@ const url = (path: string) => {
 }
 
 export const requestHandlers = [
-  rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH_V1}/okuskirteini/:ssn/hasqualityphoto`),
-    (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json(
-          MOCK_HAS_QUALITY_PHOTO[req.params.ssn as MOCK_NATIONAL_IDS] ? 1 : 0,
-        ),
-      )
-    },
-  ),
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_PATH_V1}/okuskirteini/:ssn/hasqualitysignature`,
-    ),
-    (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json(
-          MOCK_HAS_SIGNATURE[req.params.ssn as MOCK_NATIONAL_IDS] ? 1 : 0,
-        ),
-      )
-    },
-  ),
+  rest.get(/api\/drivinglicense\/v5\/hasqualityphoto/, (req, res, ctx) => {
+    const jwttoken = req.headers.get('jwttoken')
+
+    let mock_token: MOCK_TOKEN
+    if (jwttoken) {
+      mock_token = jwttoken as MOCK_TOKEN
+    } else {
+      return res(ctx.status(401))
+    }
+
+    return res(
+      ctx.status(200),
+      ctx.json(MOCK_HAS_QUALITY_PHOTO[mock_token] ? 1 : 0),
+    )
+  }),
+
+  rest.get(/api\/drivinglicense\/v5\/hasqualitysignature/, (req, res, ctx) => {
+    const jwttoken = req.headers.get('jwttoken')
+
+    let mock_token: MOCK_TOKEN
+    if (jwttoken) {
+      mock_token = jwttoken as MOCK_TOKEN
+    } else {
+      return res(ctx.status(401))
+    }
+
+    return res(
+      ctx.status(200),
+      ctx.json(MOCK_HAS_SIGNATURE[mock_token] ? 1 : 0),
+    )
+  }),
 ]

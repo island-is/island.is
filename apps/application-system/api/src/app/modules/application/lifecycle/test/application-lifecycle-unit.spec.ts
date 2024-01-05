@@ -1,24 +1,13 @@
-import { Test } from '@nestjs/testing'
-import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '@island.is/application/api/core'
+import { createApplication } from '@island.is/application/testing'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { AwsService } from '@island.is/nest/aws'
-import {
-  ApplicationFilesConfig,
-  ApplicationFilesModule,
-  AttachmentDeleteResult,
-  FileService,
-} from '@island.is/application/api/files'
-import {
-  ApplicationConfig,
-  APPLICATION_CONFIG,
-} from '../../application.configuration'
-import { LoggingModule } from '@island.is/logging'
+import { TestApp } from '@island.is/testing/nest'
+
+import { setup } from '../../../../../../test/setup'
 import { ApplicationChargeService } from '../../charge/application-charge.service'
-import { ConfigModule } from '@nestjs/config'
-import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
-import { FileStorageConfig, FileStorageService } from '@island.is/file-storage'
-import { createApplication } from '@island.is/application/testing'
+import { ApplicationLifecycleModule } from '../application-lifecycle.module'
+import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 
 let lifeCycleService: ApplicationLifeCycleService
 let awsService: AwsService
@@ -90,38 +79,17 @@ class ApplicationChargeServiceMock {
 
 describe('ApplicationLifecycleService Unit tests', () => {
   beforeAll(async () => {
-    const config: ApplicationConfig = {
-      presignBucket: 'bucket',
-      attachmentBucket: 'bucket2',
-    }
-    const module = await Test.createTestingModule({
-      imports: [
-        LoggingModule,
-        ApplicationFilesModule,
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [
-            signingModuleConfig,
-            ApplicationFilesConfig,
-            FileStorageConfig,
-          ],
-        }),
-      ],
-      providers: [
-        {
-          provide: ApplicationService,
-          useClass: ApplicationServiceMock,
-        },
-        {
-          provide: ApplicationChargeService,
-          useClass: ApplicationChargeServiceMock,
-        },
-        ApplicationLifeCycleService,
-      ],
-    }).compile()
+    const app = await setup(ApplicationLifecycleModule, {
+      override: (builder) =>
+        builder
+          .overrideProvider(ApplicationService)
+          .useClass(ApplicationServiceMock)
+          .overrideProvider(ApplicationChargeService)
+          .useClass(ApplicationChargeServiceMock),
+    })
 
-    awsService = module.get<AwsService>(AwsService)
-    lifeCycleService = module.get<ApplicationLifeCycleService>(
+    awsService = app.get<AwsService>(AwsService)
+    lifeCycleService = app.get<ApplicationLifeCycleService>(
       ApplicationLifeCycleService,
     )
   })

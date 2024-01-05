@@ -52,7 +52,7 @@ const mocks = [
   },
 ]
 
-const wrapper: FC = ({ children }) => (
+const wrapper: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
     <BrowserRouter>
       <LocaleProvider skipPolyfills>{children}</LocaleProvider>
@@ -186,7 +186,7 @@ describe('UserMenu', () => {
     // Arrange
     renderAuthenticated(
       <>
-        <UserMenu fullscreen />
+        <UserMenu fullscreen showLanguageSwitcher />
         <LocaleContext.Consumer>
           {({ lang }) => <span>Current: {lang}</span>}
         </LocaleContext.Consumer>

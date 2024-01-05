@@ -47,8 +47,7 @@ export const information = {
         description: 'Pick vehicle has an error title',
       },
       isNotDebtLessTag: {
-        id:
-          'ta.cov.application:information.labels.pickVehicle.isNotDebtLessTag',
+        id: 'ta.cov.application:information.labels.pickVehicle.isNotDebtLessTag',
         defaultMessage: 'Ógreidd bifreiðagjöld',
         description: 'Pick vehicle is not debt less tag',
       },
@@ -216,10 +215,42 @@ export const information = {
         description: 'Main operator description',
       },
       radioFieldLabel: {
-        id:
-          'ta.cov.application:information.labels.mainOperator.radioFieldLabel',
+        id: 'ta.cov.application:information.labels.mainOperator.radioFieldLabel',
         defaultMessage: 'Skráðir umráðamenn',
         description: 'Main operator radio field label',
+      },
+    }),
+    vehicle: defineMessages({
+      sectionTitle: {
+        id: 'ta.cov.application:information.labels.vehicle.sectionTitle',
+        defaultMessage: 'Ökutæki',
+        description: 'Vehicle section title',
+      },
+      title: {
+        id: 'ta.cov.application:information.labels.vehicle.title',
+        defaultMessage: 'Ökutæki',
+        description: 'Vehicle title',
+      },
+      description: {
+        id: 'ta.cov.application:information.labels.vehicle.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        description: 'Vehicle description',
+      },
+      plate: {
+        id: 'ta.cov.application:information.labels.vehicle.plate',
+        defaultMessage: 'Númer ökutækis',
+        description: 'Vehicle plate number label',
+      },
+      type: {
+        id: 'ta.cov.application:information.labels.vehicle.type',
+        defaultMessage: 'Tegund ökutækis',
+        description: 'Vehicle type label',
+      },
+      mileage: {
+        id: 'ta.cov.application:information.labels.vehicle.mileage',
+        defaultMessage: 'Kílómetrar',
+        description: 'Mileage for vehicle label',
       },
     }),
   },

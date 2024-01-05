@@ -48,14 +48,12 @@ export const Overview = ({
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
 
-  const [
-    submitApplication,
-    { error: submitError, loading },
-  ] = useSubmitApplication({
-    application,
-    refetch,
-    event: DefaultEvents.SUBMIT,
-  })
+  const [submitApplication, { error: submitError, loading }] =
+    useSubmitApplication({
+      application,
+      refetch,
+      event: DefaultEvents.SUBMIT,
+    })
 
   const onBackButtonClick = () => {
     const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')

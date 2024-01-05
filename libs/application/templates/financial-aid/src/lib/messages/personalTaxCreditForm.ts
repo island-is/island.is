@@ -13,8 +13,7 @@ export const personalTaxCreditForm = {
       description: 'Student form page title',
     },
     descriptionTitle: {
-      id:
-        'fa.application:section.personalTaxCreditForm.general.descriptionTitle',
+      id: 'fa.application:section.personalTaxCreditForm.general.descriptionTitle',
       defaultMessage: 'Nánar um persónuafslátt',
       description: 'Student form description title',
     },
@@ -25,8 +24,7 @@ export const personalTaxCreditForm = {
       description: 'Student form description of tax credit ',
     },
     recommendedChoice: {
-      id:
-        'fa.application:section.personalTaxCreditForm.general.recommendedChoice',
+      id: 'fa.application:section.personalTaxCreditForm.general.recommendedChoice',
       defaultMessage:
         'Langflestir sem fá fjárhagsaðstoð kjósa að nýta sér persónuafsláttinn. Almennt má segja að „Já“ sé besti kostur nema þú vitir sérstaklega um annað sem þú vilt nýta hann í.',
       description:
@@ -35,14 +33,12 @@ export const personalTaxCreditForm = {
   }),
   radioChoices: defineMessages({
     useTaxCredit: {
-      id:
-        'fa.application:section.personalTaxCreditForm.radioChoices.useTaxCredit',
+      id: 'fa.application:section.personalTaxCreditForm.radioChoices.useTaxCredit',
       defaultMessage: 'Já, nýta persónuafslátt',
       description: 'Student form radio button choice to use tax credit',
     },
     wontUseTaxCredit: {
-      id:
-        'fa.application:section.personalTaxCreditForm.radioChoices.notToUseTaxCredit',
+      id: 'fa.application:section.personalTaxCreditForm.radioChoices.notToUseTaxCredit',
       defaultMessage: 'Nei, ekki nýta persónuafslátt',
       description: 'Student form radio button choice to not use tax credit',
     },

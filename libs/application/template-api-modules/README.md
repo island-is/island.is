@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Template API Modules" -->
-
 # Application Template API Modules
 
 When applications in the application system require API business logic they can invoke template API modules.

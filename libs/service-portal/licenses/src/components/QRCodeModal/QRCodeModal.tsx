@@ -12,7 +12,7 @@ interface Props {
   expires?: string
 }
 
-export const QRCodeModal: FC<Props> = ({
+export const QRCodeModal: FC<React.PropsWithChildren<Props>> = ({
   id,
   toggleClose,
   expires,

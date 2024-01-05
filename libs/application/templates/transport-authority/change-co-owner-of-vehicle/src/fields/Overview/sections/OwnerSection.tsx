@@ -12,10 +12,9 @@ import {
 import kennitala from 'kennitala'
 import { ReviewScreenProps } from '../../../shared'
 
-export const OwnerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
-  reviewerNationalId = '',
-}) => {
+export const OwnerSection: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({ application, reviewerNationalId = '' }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
   const phone = getValueViaPath(answers, 'owner.phone', '') as string

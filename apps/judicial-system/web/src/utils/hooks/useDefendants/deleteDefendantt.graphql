@@ -1,0 +1,5 @@
+mutation DeleteDefendant($input: DeleteDefendantInput!) {
+  deleteDefendant(input: $input) {
+    deleted
+  }
+}

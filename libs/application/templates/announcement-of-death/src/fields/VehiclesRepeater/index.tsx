@@ -17,11 +17,9 @@ import { EstateAsset } from '@island.is/clients/syslumenn'
 import * as styles from './styles.css'
 import { m } from '../../lib/messages'
 
-export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const VehiclesRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors }) => {
   const error = (errors as any)?.vehicles?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()

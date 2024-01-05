@@ -14,22 +14,76 @@ export const overviewConfirmAction = [
     condition: (answers) =>
       getValueViaPath(answers, 'selectedEstate') ===
       EstateTypes.estateWithoutAssets,
-    options: (application) =>
-      getValueViaPath(
-        application.answers,
-        'estateWithoutAssets.estateAssetsExist',
-      ) === NO
-        ? [
-            {
-              value: YES,
-              label: m.acceptNoAssets.defaultMessage,
-            },
-          ]
-        : [
-            {
-              value: YES,
-              label: m.acceptAssets.defaultMessage,
-            },
-          ],
+    options: (application) => {
+      const hasAssets =
+        getValueViaPath(
+          application.answers,
+          'estateWithoutAssets.estateAssetsExist',
+        ) === YES
+      const hasDebt =
+        getValueViaPath(
+          application.answers,
+          'estateWithoutAssets.estateDebtsExist',
+        ) === YES
+
+      if ((hasAssets && hasDebt) || (hasAssets && !hasDebt)) {
+        return [
+          {
+            value: YES,
+            label: m.acceptAssets,
+          },
+        ]
+      } else if (!hasAssets && !hasDebt) {
+        return [
+          {
+            value: YES,
+            label: m.acceptNoAssetsNoDebts,
+          },
+        ]
+      } else return []
+    },
+  }),
+  buildCheckboxField({
+    id: 'confirmActionAssetsAndDebt',
+    title: '',
+    backgroundColor: 'blue',
+    defaultValue: [],
+    condition: (answers) => {
+      const hasAssets =
+        getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist') ===
+        YES
+      const hasDebt =
+        getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
+
+      const estateWithoutAssetsSelected =
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+
+      return estateWithoutAssetsSelected && hasDebt && hasAssets
+    },
+
+    options: () => {
+      return [
+        {
+          value: YES,
+          label: m.acceptNoAssets,
+        },
+      ]
+    },
+  }),
+  buildCheckboxField({
+    id: 'confirmActionUndividedEstate',
+    title: '',
+    backgroundColor: 'blue',
+    defaultValue: [],
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.permitForUndividedEstate,
+    options: () => [
+      {
+        value: YES,
+        label: m.acceptCorrectAssets,
+      },
+    ],
   }),
 ]

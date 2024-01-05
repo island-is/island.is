@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/consultation-portal",
+  "name": "clients-consultation-portal",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/consultation-portal/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/consultation-portal/**/*.{ts,tsx,js,jsx}"
@@ -12,18 +13,19 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/consultation-portal"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/consultation-portal"],
       "options": {
-        "jestConfig": "libs/clients/consultation-portal/jest.config.js",
+        "jestConfig": "libs/clients/consultation-portal/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/consultation-portal/gen/fetch -i libs/clients/consultation-portal/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

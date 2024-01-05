@@ -77,8 +77,8 @@ export const SearchInput = ({
     GetSupportSearchResultsQuery,
     GetSupportSearchResultsQueryVariables
   >(GET_SUPPORT_SEARCH_RESULTS_QUERY, {
-    onCompleted: () => {
-      updateOptions()
+    onCompleted: (newData) => {
+      updateOptions(newData)
     },
   })
 
@@ -134,15 +134,17 @@ export const SearchInput = ({
     }
   }
 
-  const updateOptions = () => {
-    const options = ((data?.searchResults?.items as Array<SupportQna>) || [])
+  const updateOptions = (newData?: GetSupportSearchResultsQuery) => {
+    const options = (
+      ((newData ?? data)?.searchResults?.items as Array<SupportQna>) || []
+    )
       .filter(
         (item) => item.category?.slug && item.organization?.slug && item.slug,
       )
       .map((item, index) => ({
         label: item.title,
         value: item.slug,
-        component: ({ active }) => {
+        component: ({ active }: { active: boolean }) => {
           if (active) {
             setActiveItem(item)
           }
@@ -167,6 +169,8 @@ export const SearchInput = ({
       }))
 
     setOptions(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       options.length
         ? options
         : [

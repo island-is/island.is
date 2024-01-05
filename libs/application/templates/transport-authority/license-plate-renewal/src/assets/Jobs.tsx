@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-export const Jobs: FC = () => (
+export const Jobs: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="796"
     height="311"

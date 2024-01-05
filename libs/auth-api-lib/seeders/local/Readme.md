@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Local setup of development database
 
 ## 1. If first install/empty db skip this step, otherwise clear all definitions

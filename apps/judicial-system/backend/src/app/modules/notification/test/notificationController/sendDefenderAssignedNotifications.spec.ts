@@ -1,10 +1,10 @@
 import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { NotificationType, User } from '@island.is/judicial-system/types'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
-
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { SendNotificationResponse } from '../../models/sendNotification.response'
 
@@ -25,14 +25,13 @@ describe('NotificationController - Send defender assigned notification', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageService,
-      notificationController,
-    } = await createTestingNotificationModule()
+    const { messageService, notificationController } =
+      await createTestingNotificationModule()
 
     mockMessageService = messageService
 
-    const mockSendMessagesToQueue = messageService.sendMessagesToQueue as jest.Mock
+    const mockSendMessagesToQueue =
+      messageService.sendMessagesToQueue as jest.Mock
     mockSendMessagesToQueue.mockResolvedValue(undefined)
 
     givenWhenThen = async (caseId) => {

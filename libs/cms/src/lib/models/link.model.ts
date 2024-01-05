@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ILink } from '../generated/contentfulTypes'
+import { getRelativeUrl } from './utils'
 
 @ObjectType()
 export class Link {
@@ -26,7 +27,7 @@ export const mapLink = ({ sys, fields }: ILink): Link => {
   return {
     id: sys.id,
     text: fields?.text ?? '',
-    url: fields?.url?.trim() ?? '',
+    url: getRelativeUrl(fields?.url?.trim() ?? ''),
     intro: fields?.intro ?? '',
     labels: fields?.labels ?? [],
     date: fields?.date ?? '',

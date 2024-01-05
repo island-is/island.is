@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # clients-vehicle-service-fjs-v1
 
 This library was generated with [Nx](https://nx.dev).

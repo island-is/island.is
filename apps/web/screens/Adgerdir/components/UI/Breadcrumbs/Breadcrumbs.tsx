@@ -23,7 +23,7 @@ interface BreadcrumbsProps {
   renderLink?: (link: ReactNode, item: BreadCrumbItem) => ReactNode
 }
 
-export const Breadcrumbs: FC<BreadcrumbsProps> = ({
+export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
   items,
   label = 'breadcrumb',
   color = 'blue400',

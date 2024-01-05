@@ -31,7 +31,7 @@ export class CaseListEntry {
   @ApiProperty({ enum: CaseType })
   type!: CaseType
 
-  @ApiPropertyOptional({ type: Defendant, isArray: true })
+  @ApiPropertyOptional({ type: () => Defendant, isArray: true })
   defendants?: Defendant[]
 
   @ApiPropertyOptional()
@@ -53,6 +53,9 @@ export class CaseListEntry {
   rulingDate?: Date
 
   @ApiPropertyOptional()
+  rulingSignatureDate?: Date
+
+  @ApiPropertyOptional()
   courtEndTime?: Date
 
   @ApiPropertyOptional({ enum: CaseAppealDecision })
@@ -70,25 +73,25 @@ export class CaseListEntry {
   @ApiPropertyOptional()
   judgeId?: string
 
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   judge?: User
 
   @ApiPropertyOptional()
   prosecutorId?: string
 
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   prosecutor?: User
 
   @ApiPropertyOptional()
   registrarId?: string
 
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   registrar?: User
 
   @ApiPropertyOptional()
   creatingProsecutorId?: string
 
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   creatingProsecutor?: User
 
   @ApiPropertyOptional()

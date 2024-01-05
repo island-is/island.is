@@ -7,15 +7,17 @@ import * as styles from './Section.css'
 import * as types from './types'
 import { Hidden } from '../Hidden/Hidden'
 
-export const HistorySection: FC<{
-  theme?: types.FormStepperThemes
-  section: string
-  sectionIndex: number
-  isComplete?: boolean
-  isLast?: boolean
-  date?: string
-  description?: React.ReactNode
-}> = ({
+export const HistorySection: FC<
+  React.PropsWithChildren<{
+    theme?: types.FormStepperThemes
+    section: string
+    sectionIndex: number
+    isComplete?: boolean
+    isLast?: boolean
+    date?: string
+    description?: React.ReactNode
+  }>
+> = ({
   theme = types.FormStepperThemes.PURPLE,
   section,
   sectionIndex,

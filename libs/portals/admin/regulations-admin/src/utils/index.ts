@@ -1,9 +1,8 @@
 import { getHolidays } from 'fridagar'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { startOfDay, addDays } from 'date-fns/esm'
-import { OptionTypeBase, ValueType } from 'react-select'
 
-import { Option } from '@island.is/island-ui/core'
+import { StringOption as Option } from '@island.is/island-ui/core'
 
 // ---------------------------------------------------------------------------
 
@@ -103,43 +102,8 @@ export const workingDaysUntil = (date: Date | ISODate) => {
 
 // ---------------------------------------------------------------------------
 
-/** Icky utility function to handle the buggy typing of react-select
- *
- * See: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/32553
- */
-export const getRSValue = (option: ValueType<OptionTypeBase>) => {
-  const opt: OptionTypeBase | undefined | null = Array.isArray(option)
-    ? (option as Array<OptionTypeBase>)[0]
-    : option
-  return opt ? opt['value'] : undefined
-}
-
 export const emptyOption = (label?: string, disabled?: boolean): Option => ({
   value: '',
   label: label ? `– ${label} –` : '—',
   disabled,
 })
-
-/** Looks through a list of `Option`s for one with a matching
- * `value` and returns a copy of it with its label trimmed for nicer
- * display by `react-select`
- *
- * If a match is not found it returns `null` because that's the
- * magic value that tricks `react-select` to show the "placeholder" value
- */
-export const findValueOption = (
-  options: ReadonlyArray<Option>,
-  value?: string,
-): Option | null => {
-  if (!value) {
-    return null
-  }
-  const opt = options.find((opt) => value === opt.value || value === opt.label)
-  return (
-    (opt && {
-      value: opt.value,
-      label: opt.label.trim(),
-    }) ||
-    null
-  )
-}

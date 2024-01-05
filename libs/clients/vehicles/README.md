@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Driving License" -->
-
 # Vehicles Client
 
 ## About
@@ -26,7 +24,7 @@ It has been modified manually so be careful when overwriting.
 This regenerates the client from clientConfig.json file.
 
 ```sh
-yarn nx run clients-vehicles:schemas/external-openapi-generator
+yarn nx run clients-vehicles:codegen/backend-client
 ```
 
 ## Code owners and maintainers

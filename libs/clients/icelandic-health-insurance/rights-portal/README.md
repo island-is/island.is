@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Rights Portal" -->
-
 # Clients Rights Portal
 
 This library was generated with [Nx](https://nx.dev).

@@ -5,7 +5,8 @@ import { YES, NO } from './constants'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 import { m } from './messages'
 
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)
 
 const isValidPhoneNumber = (phoneNumber: string) => {

@@ -25,7 +25,6 @@ import {
   Link,
   Stack,
   LoadingDots,
-  Checkbox,
 } from '@island.is/island-ui/core'
 import { Organizations, SupportCategory } from '@island.is/api/schema'
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
@@ -34,7 +33,6 @@ import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
-  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -67,10 +65,6 @@ interface StandardFormProps {
   formNamespace: FormNamespace
 }
 
-const mannaudstorgTag = [
-  { key: 'mannaudstorg', type: SearchableTags.Organization },
-]
-
 const labels: Record<string, string> = {
   syslumadur: 'Sýslumannsembætti',
   nafn: 'Nafn',
@@ -93,6 +87,7 @@ const labels: Record<string, string> = {
   rikisadili: 'Ríkisaðili',
   kennitala: 'Kennitala',
   malsnumer_ef_til_stadar: 'Málsnúmer (ef til staðar)',
+  faedingardagur_eda_kennitala_malsadila: 'Fæðingardagur/Kennitala málsaðila',
 }
 
 // these should be skipped in the message itself
@@ -102,13 +97,15 @@ const skippedLabelsInMessage: Array<keyof typeof labels> = [
   'erindi',
 ]
 
-const useFormNamespace = (namespace: FormNamespace) => (
-  key: string,
-  type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
-  fallback?: string,
-) => {
-  return namespace?.[key]?.[type] ?? fallback
-}
+const useFormNamespace =
+  (namespace: FormNamespace) =>
+  (
+    key: string,
+    type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
+    fallback?: string,
+  ) => {
+    return namespace?.[key]?.[type] ?? fallback
+  }
 
 interface BasicInputProps {
   name: keyof typeof labels
@@ -147,7 +144,7 @@ const BasicInput = ({
       }}
       // The docs tell us to spread the response of the register function even though it's return type is void
       // https://react-hook-form.com/api/useformcontext/
-      {...((register(name) as unknown) as object)}
+      {...(register(name) as unknown as object)}
     />
   )
 }
@@ -185,7 +182,8 @@ export const StandardForm = ({
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
   const categoryDescription = useMemo(
-    () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
+    () =>
+      supportCategories?.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
 
@@ -199,15 +197,18 @@ export const StandardForm = ({
     GetSupportSearchResultsQuery,
     GetSupportSearchResultsQueryVariables
   >(GET_SUPPORT_SEARCH_RESULTS_QUERY, {
-    onCompleted: () => {
+    onCompleted: (updatedData) => {
       setIsChangingSubject(false)
-      updateSuggestions()
+      updateSuggestions(updatedData)
     },
   })
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
+
+  const institutionSligBelongsToDirectorateOfImmigration =
+    institutionSlug === 'utlendingastofnun' ||
+    institutionSlug === 'directorate-of-immigration'
 
   useDebounce(
     () => {
@@ -254,8 +255,11 @@ export const StandardForm = ({
     }
   }, [subject])
 
-  const updateSuggestions = () => {
-    setSuggestions((data?.searchResults?.items as Array<SupportQna>) || [])
+  const updateSuggestions = (updatedData?: GetSupportSearchResultsQuery) => {
+    setSuggestions(
+      ((updatedData?.searchResults?.items ??
+        data?.searchResults?.items) as Array<SupportQna>) || [],
+    )
   }
 
   useEffect(() => {
@@ -476,6 +480,53 @@ export const StandardForm = ({
       )
     }
 
+    if (institutionSligBelongsToDirectorateOfImmigration) {
+      fields = (
+        <>
+          <GridColumn span="12/12" paddingBottom={3}>
+            <Text>
+              {n(
+                '',
+                activeLocale === 'is'
+                  ? 'Til þess að flýta fyrir máttu endilega gefa okkur upp eftirfarandi upplýsingar ef það á við:'
+                  : 'In order to speed things up, please provide us with the following information if applicable:',
+              )}
+            </Text>
+          </GridColumn>
+          <GridColumn span="12/12" paddingBottom={3}>
+            <BasicInput
+              name="nafn_malsadila"
+              label={fn(
+                'nafn_malsadila',
+                'label',
+                activeLocale === 'is'
+                  ? 'Nafn málsaðila'
+                  : 'Name of applicant/litigant',
+              )}
+            />
+          </GridColumn>
+          <GridColumn span="12/12" paddingBottom={3}>
+            <BasicInput
+              name="faedingardagur_eda_kennitala_malsadila"
+              label={fn(
+                'faedingardagur_eda_kennitala_malsadila',
+                'label',
+                activeLocale === 'is'
+                  ? 'Fæðingardagur/Kennitala málsaðila'
+                  : 'Date of birth - ID number of the applicant/litigant',
+              )}
+            />
+          </GridColumn>
+          <GridColumn span="12/12">
+            <BasicInput
+              name="malsnumer"
+              label={fn('malsnumer', 'label', 'Málsnúmer')}
+            />
+          </GridColumn>
+        </>
+      )
+    }
+
     setAddonFields(
       fields ? (
         <GridRow marginBottom={5} marginTop={5}>
@@ -527,7 +578,7 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
-  const categoryOptions = supportCategories
+  const categoryOptions = (supportCategories ?? [])
     .map((x) => ({
       label: x.title?.trim(),
       value: x.id,
@@ -545,10 +596,14 @@ export const StandardForm = ({
               isSearchable
               label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ label, value }: Option) => {
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
@@ -572,9 +627,9 @@ export const StandardForm = ({
                 label={fn('vidfangsefni', 'label', 'Viðfangsefni')}
                 error={errors?.vidfangsefni?.message as string}
                 onChange={(e) => {
-                  if (e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH) {
-                    setIsChangingSubject(true)
-                  }
+                  setIsChangingSubject(
+                    e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH,
+                  )
                   setSubject(e.target.value)
                 }}
                 rules={{
@@ -603,7 +658,12 @@ export const StandardForm = ({
           >
             {!!suggestions.length && (
               <Text variant="h5" marginBottom={3}>
-                {n('weThinkThisMightHelp', 'Við höldum að þetta gæti hjálpað')}
+                {n(
+                  'weThinkThisMightHelp',
+                  activeLocale === 'is'
+                    ? 'Við höldum að þetta gæti hjálpað'
+                    : 'Related topics',
+                )}
               </Text>
             )}
             {isBusy ? (
@@ -635,7 +695,11 @@ export const StandardForm = ({
                           <a
                             href={
                               linkResolver('supportqna', [
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
                                 organizationSlug,
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
                                 categorySlug,
                                 slug,
                               ]).href
@@ -654,13 +718,19 @@ export const StandardForm = ({
                     size="small"
                     icon="arrowDown"
                   >
-                    {n('seeMore', 'Sjá meira')}
+                    {n(
+                      'seeMore',
+                      activeLocale === 'is' ? 'Sjá meira' : 'See more',
+                    )}
                   </Button>
                 )}
               </Stack>
             ) : (
               <Text variant="small">
-                {n('nothingWasFound', 'Ekkert fannst')}
+                {n(
+                  'nothingWasFound',
+                  activeLocale === 'is' ? 'Ekkert fannst' : 'Nothing was found',
+                )}
               </Text>
             )}
           </Box>
@@ -700,11 +770,13 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           onChange={({ label }: Option) => {
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
-                          errorMessage={errors?.rikisadili?.message.toString()}
+                          errorMessage={errors?.rikisadili?.message?.toString()}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -830,27 +902,6 @@ export const StandardForm = ({
                     </GridColumn>
                   </GridRow>
                   <GridRow marginTop={8}>
-                    <GridColumn>
-                      <Controller
-                        name="storageAllowed"
-                        defaultValue={false}
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field: { onChange, value } }) => (
-                          <Checkbox
-                            label={n(
-                              'serviceWebFormStorageAllowedCheckboxText',
-                              'Ég gef leyfi fyrir því að erindi mitt sé vistað í póstumsjónarkerfi',
-                            )}
-                            checked={value}
-                            onChange={(e) => onChange(e.target.checked)}
-                            hasError={errors?.storageAllowed !== undefined}
-                          />
-                        )}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                  <GridRow marginTop={8}>
                     <GridColumn
                       span={['12/12', '12/12', '6/12', '6/12']}
                       paddingBottom={3}
@@ -881,15 +932,17 @@ export const StandardForm = ({
                                 'Þinn sýslumaður',
                               )}
                               name="syslumadur"
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
                               onChange={({ label, value }: Option) => {
                                 onChange(label)
-                                setSyslumadurId(value as string)
+                                setSyslumadurId(value)
                               }}
                               hasError={errors?.syslumadur !== undefined}
                               errorMessage={
                                 errors?.syslumadur?.message as string
                               }
-                              options={syslumenn.map((x) => ({
+                              options={(syslumenn ?? []).map((x) => ({
                                 label: x.title,
                                 value: x.id,
                               }))}
@@ -919,7 +972,12 @@ export const StandardForm = ({
                           loading={loading}
                           disabled={!canSubmit}
                         >
-                          {n('submitServiceWebForm', 'Senda fyrirspurn')}
+                          {n(
+                            'submitServiceWebForm',
+                            activeLocale === 'is'
+                              ? 'Senda fyrirspurn'
+                              : 'Submit inquiry',
+                          )}
                         </Button>
                       </Box>
                     </GridColumn>

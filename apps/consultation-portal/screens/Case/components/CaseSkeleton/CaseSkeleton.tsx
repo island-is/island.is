@@ -19,7 +19,7 @@ const CaseSkeleton = ({
   return (
     <Layout
       seo={{
-        title: `${loc.seo.title}: ${caseNumber}`,
+        title: `${loc.seo.title}: S-${caseNumber}`,
         url: `${loc.seo.url}${caseId}`,
         description: caseDescription,
       }}
@@ -31,7 +31,7 @@ const CaseSkeleton = ({
             href: loc.breadcrumbs.parent.href,
           },
           {
-            title: `${loc.breadcrumbs.current.title} ${caseNumber}`,
+            title: `${loc.breadcrumbs.current.title} S-${caseNumber}`,
           },
         ]}
       />

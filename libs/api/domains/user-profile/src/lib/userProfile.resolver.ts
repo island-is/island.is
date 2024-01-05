@@ -20,12 +20,13 @@ import { UseGuards } from '@nestjs/common'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
-import { UserProfileStatus } from './models/userProfileStatus.model'
+import { UserProfileLocale } from './models/userProfileLocale.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class UserProfileResolver {
   constructor(private readonly userUserProfileService: UserProfileService) {}
+
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(
     @CurrentUser() user: User,
@@ -33,11 +34,11 @@ export class UserProfileResolver {
     return this.userUserProfileService.getUserProfile(user)
   }
 
-  @Query(() => UserProfileStatus, { nullable: true })
-  getUserProfileStatus(
+  @Query(() => UserProfileLocale, { nullable: true })
+  getUserProfileLocale(
     @CurrentUser() user: User,
-  ): Promise<UserProfileStatus | undefined> {
-    return this.userUserProfileService.getUserProfileStatus(user)
+  ): Promise<UserProfileLocale | undefined> {
+    return this.userUserProfileService.getUserProfileLocale(user)
   }
 
   @Mutation(() => UserProfile, { nullable: true })

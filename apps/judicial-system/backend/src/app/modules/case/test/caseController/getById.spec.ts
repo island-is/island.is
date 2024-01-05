@@ -1,7 +1,8 @@
 import { uuid } from 'uuidv4'
 
-import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
+import { Case } from '../../models/case.model'
 
 interface Then {
   result: Case
@@ -34,7 +35,7 @@ describe('CaseController - Get by id', () => {
     const theCase = { id: caseId } as Case
     let then: Then
 
-    beforeEach(async () => {
+    beforeEach(() => {
       then = givenWhenThen(caseId, theCase)
     })
 

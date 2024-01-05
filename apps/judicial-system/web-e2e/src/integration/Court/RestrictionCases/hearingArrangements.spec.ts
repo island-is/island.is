@@ -1,6 +1,11 @@
 import * as faker from 'faker'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
   RESTRICTION_CASE_RULING_ROUTE,
@@ -22,6 +27,7 @@ describe(`${RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       state: CaseState.RECEIVED,
     }
 
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(
@@ -34,9 +40,8 @@ describe(`${RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should display a warning if the user enters a lawyer that is not in the lawyer registry', () => {
-    cy.get('#react-select-defenderName-input')
-      .type('click', { force: true })
-      .type('{enter}')
+    cy.get('#react-select-defenderName-input').type('click', { force: true })
+    cy.get('#react-select-defenderName-input').type('{enter}')
     cy.getByTestid('defenderNotFound').should('exist')
   })
 

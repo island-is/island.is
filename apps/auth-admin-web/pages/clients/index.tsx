@@ -3,7 +3,7 @@ import ContentWrapper from './../../components/Layout/ContentWrapper'
 import ClientsList from '../../components/Client/lists/ClientsList'
 import LocalizationUtils from '../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   useEffect(() => {
     document.title = LocalizationUtils.getPageTitle('clients.index')
   }, [])

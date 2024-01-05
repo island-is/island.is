@@ -5,20 +5,21 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import { CaseState, Defendant } from '@island.is/judicial-system/types'
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
-  CaseType,
   CaseOrigin,
+  CaseState,
+  CaseType,
+  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
-import LimitedAccessCaseQuery from './limitedAccessCaseGql'
-import CaseQuery from './caseGql'
+import { useCaseLazyQuery } from './case.generated'
+import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
 
 type ProviderState =
   | 'fetch'
@@ -74,9 +75,9 @@ const MaybeFormProvider = ({ children }: Props) => {
 }
 
 const FormProvider = ({ children }: Props) => {
-  const { limitedAccess } = useContext(UserContext)
+  const { isAuthenticated, limitedAccess } = useContext(UserContext)
   const router = useRouter()
-  const id = router.query.id
+  const id = typeof router.query.id === 'string' ? router.query.id : undefined
 
   const caseType = router.pathname.includes('farbann')
     ? CaseType.TRAVEL_BAN
@@ -118,14 +119,29 @@ const FormProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
-  const caseQuery = limitedAccess ? LimitedAccessCaseQuery : CaseQuery
-  const resultProperty = limitedAccess ? 'limitedAccessCase' : 'case'
-
-  const [getCase] = useLazyQuery<CaseData & LimitedAccessCaseData>(caseQuery, {
+  const [getCase] = useCaseLazyQuery({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted: (caseData) => {
-      if (caseData && caseData[resultProperty]) {
-        setWorkingCase(caseData[resultProperty] as Case)
+      if (caseData && caseData.case) {
+        setWorkingCase(caseData.case)
+
+        // The case has been loaded from the server
+        setState('up-to-date')
+      }
+    },
+    onError: () => {
+      // The case was not found
+      setState('not-found')
+    },
+  })
+
+  const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+    onCompleted: (caseData) => {
+      if (caseData && caseData.limitedAccessCase) {
+        setWorkingCase(caseData.limitedAccessCase)
 
         // The case has been loaded from the server
         setState('up-to-date')
@@ -138,10 +154,30 @@ const FormProvider = ({ children }: Props) => {
   })
 
   useEffect(() => {
-    if (state === 'fetch' || state === 'refresh') {
-      getCase({ variables: { input: { id } } })
+    if (!isAuthenticated && router.pathname !== '/') {
+      window.location.assign(
+        `${api.apiUrl}/api/auth/login?redirectRoute=${router.pathname}`,
+      )
+    } else if (
+      limitedAccess !== undefined && // Wait until limitedAccess is defined
+      id &&
+      (state === 'fetch' || state === 'refresh')
+    ) {
+      if (limitedAccess) {
+        getLimitedAccessCase({ variables: { input: { id } } })
+      } else {
+        getCase({ variables: { input: { id } } })
+      }
     }
-  }, [getCase, id, state])
+  }, [
+    getCase,
+    getLimitedAccessCase,
+    id,
+    isAuthenticated,
+    limitedAccess,
+    router.pathname,
+    state,
+  ])
 
   useEffect(() => {
     let timeout: undefined | NodeJS.Timeout

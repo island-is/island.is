@@ -11,47 +11,47 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
-  FormFooter,
-  PageLayout,
-  CourtCaseInfo,
+  closedCourt,
+  core,
+  rcCourtRecord as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import {
   BlueBox,
-  FormContentContainer,
-  DateTime,
-  HideableText,
-  PdfButton,
+  CourtCaseInfo,
   CourtDocuments,
+  DateTime,
+  FormContentContainer,
   FormContext,
+  FormFooter,
+  HideableText,
+  PageHeader,
+  PageLayout,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  validateAndSendToServer,
   removeTabsValidateAndSet,
+  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
+  useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  rcCourtRecord as m,
-  closedCourt,
-  core,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { formatCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { isCourtRecordStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { isCourtRecordStepValidRC } from '../../../../utils/validate'
-import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 import AppealSections from '../../components/AppealSections/AppealSections'
 
-export const CourtRecord: React.FC = () => {
+export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -60,13 +60,10 @@ export const CourtRecord: React.FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [courtLocationErrorMessage, setCourtLocationMessage] = useState<string>(
-    '',
-  )
-  const [
-    sessionBookingsErrorMessage,
-    setSessionBookingsErrorMessage,
-  ] = useState<string>('')
+  const [courtLocationErrorMessage, setCourtLocationMessage] =
+    useState<string>('')
+  const [sessionBookingsErrorMessage, setSessionBookingsErrorMessage] =
+    useState<string>('')
 
   const router = useRouter()
   const { updateCase, setAndSendCaseToServer } = useCase()
@@ -204,7 +201,7 @@ export const CourtRecord: React.FC = () => {
         {
           courtStartDate: workingCase.courtDate,
           courtLocation:
-            workingCase.court &&
+            workingCase.court?.name &&
             `í ${
               workingCase.court.name.indexOf('dómur') > -1
                 ? workingCase.court.name.replace('dómur', 'dómi')

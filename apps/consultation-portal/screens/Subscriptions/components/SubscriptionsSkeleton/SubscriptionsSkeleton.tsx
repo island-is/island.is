@@ -14,6 +14,7 @@ import { Area } from '../../../../types/enums'
 import Link from 'next/link'
 import { useUser } from '../../../../hooks/useUser'
 import localization from '../../Subscriptions.json'
+import { useFetchEmail, useIsMobile } from '../../../../hooks'
 
 interface Props {
   children: ReactNode
@@ -63,11 +64,17 @@ const SubscriptionsSkeleton = ({
   getUserSubsLoading,
 }: Props) => {
   const { isAuthenticated, userLoading } = useUser()
+  const { isMobile } = useIsMobile()
+  const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
+    isAuthenticated,
+  })
 
   return (
     <Layout
       seo={isMySubscriptions ? MY_SUBSCRIPTIONS : SUBSCRIPTIONS}
-      justifyContent={isAuthenticated ? 'flexStart' : 'spaceBetween'}
+      justifyContent={
+        isAuthenticated && isMobile ? 'flexStart' : 'spaceBetween'
+      }
     >
       <Divider />
       <Box background="blue100">
@@ -92,19 +99,25 @@ const SubscriptionsSkeleton = ({
                   </Text>
                   {!isMySubscriptions && (
                     <Link href={loc.unsubscribeLink.href}>
-                      <a>{loc.unsubscribeLink.text}</a>
+                      {loc.unsubscribeLink.text}
                     </Link>
                   )}
                 </Stack>
               </Stack>
-              {!isMySubscriptions && <EmailBox />}
+              {!isMySubscriptions && (
+                <EmailBox
+                  email={email}
+                  emailVerified={emailVerified}
+                  getUserEmailLoading={getUserEmailLoading}
+                />
+              )}
             </Stack>
             {children}
           </Box>
         </GridContainer>
       </Box>
       <Divider />
-      {isAuthenticated && !userLoading && (
+      {isAuthenticated && !userLoading && emailVerified && (
         <GridContainer>
           <Box paddingTop={[3, 3, 3, 5, 5]}>
             {isMySubscriptions && getUserSubsLoading ? (

@@ -1,22 +1,23 @@
 {
-  "root": "libs/application/graphql",
+  "name": "application-graphql",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/graphql/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/application/graphql/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/graphql/jest.config.js",
+        "jestConfig": "libs/application/graphql/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/graphql"]
+      "outputs": ["{workspaceRoot}/coverage/libs/application/graphql"]
     }
   },
   "tags": ["lib:application-system", "scope:application-system"]

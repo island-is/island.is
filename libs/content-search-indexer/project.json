@@ -1,22 +1,23 @@
 {
-  "root": "libs/content-search-indexer",
+  "name": "content-search-indexer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/content-search-indexer/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/content-search-indexer/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/content-search-indexer/jest.config.js",
+        "jestConfig": "libs/content-search-indexer/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/content-search-indexer"]
+      "outputs": ["{workspaceRoot}/coverage/libs/content-search-indexer"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

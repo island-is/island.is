@@ -13,7 +13,7 @@ import {
 import { SamgongustofaService } from '../samgongustofa.service'
 import { MockData } from './mock-data'
 
-const recyclingRequestModel = ({
+const recyclingRequestModel = {
   id: '1234',
   vehicleId: 'ZUG18',
   recyclingPartnerId: '1',
@@ -22,22 +22,18 @@ const recyclingRequestModel = ({
   nameOfRequestor: '',
   createdAt: new Date('2021-10-05T14:48:00.000Z'),
   updatedAt: new Date('2021-10-05T14:48:00.000Z'),
-} as unknown) as RecyclingRequestModel
+} as unknown as RecyclingRequestModel
 
-const getAllVehilceResp: AxiosResponse = {
+const getAllVehicleResp = {
   data: MockData.allVehiclesForPersidnoResponse,
   status: 200,
   statusText: 'OK',
-  headers: {},
-  config: {},
-}
-const getBasicVehicleResp: AxiosResponse = {
+} as AxiosResponse
+const getBasicVehicleResp = {
   data: MockData.basicVehicleInformationResponse,
   status: 200,
   statusText: 'OK',
-  headers: {},
-  config: {},
-}
+} as AxiosResponse
 
 describe('skilavottordApiTest', () => {
   describe('getUserVehiclesInformationTest', () => {
@@ -62,9 +58,8 @@ describe('skilavottordApiTest', () => {
           },
         ],
       }).compile()
-      samgongustofaService = moduleRef.get<SamgongustofaService>(
-        SamgongustofaService,
-      )
+      samgongustofaService =
+        moduleRef.get<SamgongustofaService>(SamgongustofaService)
       recyclingRequestService = moduleRef.get<RecyclingRequestService>(
         RecyclingRequestService,
       )
@@ -76,7 +71,7 @@ describe('skilavottordApiTest', () => {
         const kennitala = '1234567890'
         jest
           .spyOn(httpService, 'post')
-          .mockImplementationOnce(() => of(getAllVehilceResp))
+          .mockImplementationOnce(() => of(getAllVehicleResp))
           .mockImplementationOnce(() => of(getBasicVehicleResp))
         jest
           .spyOn(
@@ -84,9 +79,8 @@ describe('skilavottordApiTest', () => {
             'findAllWithPermno',
           )
           .mockImplementation(() => Promise.resolve([recyclingRequestModel]))
-        const checkVehileResp = await samgongustofaService.getUserVehiclesInformation(
-          kennitala,
-        )
+        const checkVehileResp =
+          await samgongustofaService.getUserVehiclesInformation(kennitala)
         expect(checkVehileResp[0].permno).toBe('BAT01')
       })
     })

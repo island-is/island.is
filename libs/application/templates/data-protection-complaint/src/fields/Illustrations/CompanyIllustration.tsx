@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 // TODO: Use illustration for library when available
-export const CompanyIllustration: FC = () => {
+export const CompanyIllustration: FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <svg viewBox="0 0 798 333" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path

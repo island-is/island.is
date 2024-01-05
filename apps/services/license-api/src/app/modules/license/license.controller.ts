@@ -16,6 +16,7 @@ import {
   UpdateLicenseResponse,
   UpdateLicenseRequest,
   RevokeLicenseResponse,
+  RevokeLicenseRequest,
   VerifyLicenseRequest,
   VerifyLicenseResponse,
 } from './dto'
@@ -98,6 +99,7 @@ export class UserLicensesController {
   @Delete(':licenseId')
   async revoke(
     @NationalId() nationalId: string,
+    @Body() data: RevokeLicenseRequest,
     @Param(
       'licenseId',
       new ParseEnumPipe(LicenseId, {
@@ -110,6 +112,7 @@ export class UserLicensesController {
     const response = await this.licenseService.revokeLicense(
       licenseId,
       nationalId,
+      data,
     )
     return response
   }

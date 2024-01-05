@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { ILinkUrl } from '../generated/contentfulTypes'
 import { PageTypes } from '../unions/page.union'
+import { getRelativeUrl } from './utils'
 
 @ObjectType()
 export class ReferenceLink {
@@ -20,10 +21,20 @@ const typeMap: { [key: string]: string } = {
 export const mapReferenceLink = ({
   sys,
   fields,
-}: PageTypes | ILinkUrl): ReferenceLink => ({
-  slug:
-    (fields as PageTypes['fields']).slug ??
-    (fields as ILinkUrl['fields']).url ??
-    '',
-  type: typeMap[sys.contentType.sys.id] ?? sys.contentType.sys.id,
-})
+}: PageTypes | ILinkUrl): ReferenceLink => {
+  let slugValue = ''
+
+  const slugField = (fields as PageTypes['fields']).slug
+  const urlField = (fields as ILinkUrl['fields']).url
+
+  if (slugField) {
+    slugValue = slugField
+  } else if (urlField) {
+    slugValue = getRelativeUrl(urlField)
+  }
+
+  return {
+    slug: slugValue,
+    type: typeMap[sys.contentType.sys.id] ?? sys.contentType.sys.id,
+  }
+}

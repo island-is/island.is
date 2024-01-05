@@ -12,7 +12,7 @@ module.exports = {
     )
   },
 
-  dow: (queryInterface) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.renameColumn(
         'case',

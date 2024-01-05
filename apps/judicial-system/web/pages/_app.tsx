@@ -3,18 +3,18 @@ import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
-import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
-import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
+import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { ToastContainer } from '@island.is/island-ui/core'
+import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
 
-import { client } from '../graphql'
+import client from '../graphql/client'
 import {
-  UserProvider,
   FeatureProvider,
-  ServiceInterruptionBanner,
   FormProvider,
-  ViewportProvider,
   Header as HeaderContainer,
+  ServiceInterruptionBanner,
+  UserProvider,
+  ViewportProvider,
 } from '../src/components'
 
 const getTranslationStrings = (apolloClient: typeof client) => {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   SyslumennService,
@@ -20,6 +20,8 @@ import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
@@ -59,6 +61,7 @@ const YES = 'yes'
 export class PSignSubmissionService extends BaseTemplateApiService {
   s3: S3
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
@@ -71,6 +74,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<CertificateInfoResponse> {
     const note = await this.syslumennService.getCertificateInfo(auth.nationalId)
     if (!note) {
+      this.logger.warn('[p-sign]: Failed to get doctors note')
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
@@ -158,6 +162,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(persons, attachments, extraData, uploadDataName, uploadDataId)
       .catch((e) => {
+        this.logger.error('[p-sign]: Failed to upload data - ', e)
         return {
           success: false,
           errorMessage: e.message,
@@ -165,6 +170,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       })
 
     if (!result.success) {
+      this.logger.error('[p-sign]: Failed to upload data - ', result.message)
       throw new Error(`Application submission failed`)
     }
     return { success: result.success, id: result.caseNumber }
@@ -192,9 +198,11 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     }
 
     const attachmentKey = attachments[0].key
-    const fileName = (application.attachments as {
-      [key: string]: string
-    })[attachmentKey]
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
 
     const { bucket, key } = AmazonS3URI(fileName)
 

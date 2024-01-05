@@ -7,7 +7,8 @@ import {
 import {
   CaseState,
   completedCaseStates,
-  extendedCourtRoles,
+  districtCourtRoles,
+  InstitutionType,
   prosecutionRoles,
   User,
   UserRole,
@@ -32,9 +33,9 @@ describe('View Case File Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = guard.canActivate(({
+        then.result = guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }
@@ -51,7 +52,10 @@ describe('View Case File Guard', () => {
 
         beforeEach(() => {
           mockRequest.mockImplementationOnce(() => ({
-            user: { role },
+            user: {
+              role,
+              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+            },
             case: { state },
           }))
 
@@ -65,7 +69,7 @@ describe('View Case File Guard', () => {
     )
   })
 
-  describe.each(extendedCourtRoles)('role %s', (role) => {
+  describe.each(districtCourtRoles)('role %s', (role) => {
     describe.each([
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
@@ -75,7 +79,7 @@ describe('View Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role },
+          user: { role, institution: { type: InstitutionType.DISTRICT_COURT } },
           case: { state },
         }))
 
@@ -101,7 +105,7 @@ describe('View Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role },
+          user: { role, institution: { type: InstitutionType.DISTRICT_COURT } },
           case: { state },
           caseFile: {},
         }))
@@ -120,7 +124,7 @@ describe('View Case File Guard', () => {
     describe.each(
       Object.keys(UserRole).filter(
         (role) =>
-          ![...prosecutionRoles, ...extendedCourtRoles].includes(
+          ![...prosecutionRoles, ...districtCourtRoles].includes(
             role as UserRole,
           ),
       ),

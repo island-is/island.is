@@ -19,7 +19,9 @@ interface FormOutput {
   language: LanguageDTO
 }
 
-const LanguageCreateForm: React.FC<Props> = (props: Props) => {
+const LanguageCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<FormOutput>()
   const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)

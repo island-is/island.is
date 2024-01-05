@@ -32,7 +32,12 @@ interface Props {
   assetId?: string | number | null
 }
 
-const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
+const AssetGrid: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  units,
+  assetId,
+  locationData,
+}) => {
   const { formatMessage } = useLocale()
   const [getUnitsOfUseQuery, { fetchMore, data }] = useLazyQuery<Query>(
     GET_UNITS_OF_USE_QUERY,

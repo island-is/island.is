@@ -1,19 +1,22 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  InternalServerErrorException,
   ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
   CaseFileCategory,
+  defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  isCompletedCase,
+  isDefenceUser,
+  isIndictmentCase,
+  isInvestigationCase,
+  isPrisonSystemUser,
+  isRestrictionCase,
   User,
-  UserRole,
-  completedCaseStates,
-  indictmentCases,
-  investigationCases,
-  restrictionCases,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
@@ -35,45 +38,37 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
     }
+
     const caseFile: CaseFile = request.caseFile
 
     if (!caseFile) {
       throw new InternalServerErrorException('Missing case file')
     }
 
-    if (
-      user.role === UserRole.DEFENDER &&
-      completedCaseStates.includes(theCase.state) &&
-      caseFile.category
-    ) {
-      if (
-        [...restrictionCases, ...investigationCases].includes(theCase.type) &&
-        [
-          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-          CaseFileCategory.APPEAL_RULING,
-        ].includes(caseFile.category)
-      ) {
-        return true
-      }
+    if (isCompletedCase(theCase.state) && caseFile.category) {
+      if (isDefenceUser(user)) {
+        if (
+          (isRestrictionCase(theCase.type) ||
+            isInvestigationCase(theCase.type)) &&
+          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+            caseFile.category,
+          )
+        ) {
+          return true
+        }
 
-      if (
-        indictmentCases.includes(theCase.type) &&
-        [
-          CaseFileCategory.COURT_RECORD,
-          CaseFileCategory.RULING,
-          CaseFileCategory.COVER_LETTER,
-          CaseFileCategory.INDICTMENT,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE,
-        ].includes(caseFile.category)
-      ) {
-        return true
+        if (
+          isIndictmentCase(theCase.type) &&
+          defenderCaseFileCategoriesForIndictmentCases.includes(
+            caseFile.category,
+          )
+        ) {
+          return true
+        }
+      } else if (isPrisonSystemUser(user)) {
+        if (caseFile.category === CaseFileCategory.APPEAL_RULING) {
+          return true
+        }
       }
     }
 

@@ -12,7 +12,10 @@ import { getEstimatedPayments } from './estimatedPaymentsQuery'
 
 import * as styles from './PaymentSchedule.css'
 
-const PaymentSchedule: FC<FieldBaseProps> = ({ field, application }) => {
+const PaymentSchedule: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { description } = field
   const { formatMessage } = useLocale()
 

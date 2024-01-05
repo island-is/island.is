@@ -21,7 +21,10 @@ type Field = {
   message: string
 }
 
-export const Alert: FC<Props> = ({ application, field }) => {
+export const Alert: FC<React.PropsWithChildren<Props>> = ({
+  application,
+  field,
+}) => {
   const { formatMessage } = useLocale()
   const { title, type, message, heading } = field.props as Field
   console.log('message', formatText(message, application, formatMessage))

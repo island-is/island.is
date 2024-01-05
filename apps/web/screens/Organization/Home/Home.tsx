@@ -10,22 +10,22 @@ import {
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import {
   getThemeConfig,
-  SliceMachine,
-  OrganizationWrapper,
   IconTitleCard,
+  OrganizationWrapper,
+  SliceMachine,
 } from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../../types'
 import {
@@ -52,12 +52,15 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   organization,
   namespace,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const navList: NavigationItem[] =
-    organizationPage.menuLinks.map(({ primaryLink, childrenLinks }) => ({
+    organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
       active: false,
@@ -84,19 +87,23 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   return (
     <OrganizationWrapper
       showExternalLinks={true}
-      pageTitle={organizationPage.title}
-      pageDescription={organizationPage.description}
+      pageTitle={organizationPage?.title ?? ''}
+      pageDescription={organizationPage?.description}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
-      pageFeaturedImage={organizationPage.featuredImage}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageFeaturedImage={organizationPage?.featuredImage}
       fullWidthContent={true}
-      minimal={organizationPage.theme === 'landing_page'}
+      minimal={organizationPage?.theme === 'landing_page'}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
       mainContent={
         <Box>
-          {organizationPage.theme === 'landing_page' && (
+          {organizationPage?.theme === 'landing_page' && (
             <GridContainer>
               <Box marginBottom={3}>
                 <Breadcrumbs
@@ -115,7 +122,9 @@ const OrganizationHomePage: Screen<HomeProps> = ({
                   ]}
                   renderLink={(link, item) => {
                     return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
                     ) : (
                       link
                     )
@@ -124,16 +133,16 @@ const OrganizationHomePage: Screen<HomeProps> = ({
               </Box>
               <Box marginBottom={5}>
                 <Inline space={1} alignY="center">
-                  {organization.logo?.url && (
+                  {organization?.logo?.url && (
                     <img
                       width={70}
                       height={70}
-                      src={organization.logo.url}
+                      src={organization?.logo.url}
                       alt="organization-logo"
                     />
                   )}
                   <Text variant="h1" color="blueberry600">
-                    {organization.title}
+                    {organization?.title}
                   </Text>
                 </Inline>
               </Box>
@@ -141,6 +150,8 @@ const OrganizationHomePage: Screen<HomeProps> = ({
               <Box marginBottom={8}>
                 <IconTitleCard
                   heading={linkTitle}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   href={organization?.link}
                   imgSrc={o(
                     'landingPageTitleCardImageSrc',
@@ -161,24 +172,18 @@ const OrganizationHomePage: Screen<HomeProps> = ({
             </GridContainer>
           )}
           {organizationPage?.slices?.map((slice, index) => {
-            const digitalIcelandDetailPageLinkType: LinkType =
-              'digitalicelandservicesdetailpage'
             return (
               <SliceMachine
                 key={slice.id}
                 slice={slice}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 namespace={namespace}
                 slug={organizationPage.slug}
                 fullWidth={organizationPage.theme === 'landing_page'}
                 marginBottom={
                   index === organizationPage.slices.length - 1 ? 5 : 0
                 }
-                params={{
-                  anchorPageLinkType:
-                    organizationPage.theme === 'digital_iceland'
-                      ? digitalIcelandDetailPageLinkType
-                      : undefined,
-                }}
                 paddingTop={
                   !organizationPage.description && index === 0 ? 0 : 6
                 }
@@ -188,10 +193,12 @@ const OrganizationHomePage: Screen<HomeProps> = ({
         </Box>
       }
     >
-      {organizationPage.bottomSlices.map((slice) => (
+      {organizationPage?.bottomSlices.map((slice) => (
         <SliceMachine
           key={slice.id}
           slice={slice}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           namespace={namespace}
           slug={organizationPage.slug}
           fullWidth={true}
@@ -203,7 +210,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
           }}
         />
       ))}
-      {organizationPage.theme === 'landing_page' && (
+      {organizationPage?.theme === 'landing_page' && (
         <LandingPageFooter
           footerItems={organizationPage.organization?.footerItems}
         />
@@ -226,7 +233,14 @@ const Home: Screen<HomeProps> = ({
   const isLandingPage =
     !organizationPage && !!organization && organization?.hasALandingPage
   if (isLandingPage)
-    return <LandingPage namespace={namespace} organization={organization} />
+    return (
+      <LandingPage
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        namespace={namespace}
+        organization={organization}
+      />
+    )
   return (
     <OrganizationHomePage
       namespace={namespace}
@@ -236,7 +250,7 @@ const Home: Screen<HomeProps> = ({
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale, query }) => {
+Home.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
@@ -292,7 +306,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     showSearchInHeader: false,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
-      getOrganizationPage?.slug ?? getOrganization?.slug,
+      getOrganization ?? getOrganizationPage?.organization,
     ),
   }
 }

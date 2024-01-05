@@ -1,22 +1,23 @@
 {
-  "root": "libs/api/domains/payment",
+  "name": "api-domains-payment",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/payment/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api/domains/payment/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/payment/jest.config.js",
+        "jestConfig": "libs/api/domains/payment/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/payment"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/payment"]
     }
   },
   "tags": ["lib:api", "scope:api"]

@@ -1,3 +1,6 @@
 export * from './fiskistofa'
 export * from './syslumenn'
 export * from './vehicles'
+export * from './DrivingInstructorList'
+export * from './HousingBenefitCalculator'
+export * from './AdministrationOfOccupationalSafetyAndHealthCourses'

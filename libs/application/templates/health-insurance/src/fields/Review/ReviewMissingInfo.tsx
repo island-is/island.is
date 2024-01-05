@@ -11,7 +11,7 @@ interface Props extends ReviewFieldProps {
   missingInfo: MissingInfoType
 }
 
-const ReviewMissingInfo: FC<Props> = ({
+const ReviewMissingInfo: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
   isEditable,

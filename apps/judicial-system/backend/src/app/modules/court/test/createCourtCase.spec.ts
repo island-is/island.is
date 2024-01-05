@@ -12,10 +12,11 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { randomBoolean, randomDate, randomEnum } from '../../../test'
-import { nowFactory } from '../../../factories'
-import { courtSubtypes, Subtype } from '../court.service'
 import { createTestingCourtModule } from './createTestingCourtModule'
+
+import { nowFactory } from '../../../factories'
+import { randomBoolean, randomDate, randomEnum } from '../../../test'
+import { courtSubtypes, Subtype } from '../court.service'
 
 jest.mock('../../../factories')
 
@@ -40,10 +41,8 @@ describe('CourtService - Create court case', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      courtClientService,
-      courtService,
-    } = await createTestingCourtModule()
+    const { courtClientService, courtService } =
+      await createTestingCourtModule()
 
     mockCourtClientService = courtClientService
 

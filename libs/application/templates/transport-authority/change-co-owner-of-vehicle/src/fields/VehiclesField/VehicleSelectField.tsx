@@ -3,12 +3,12 @@ import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useState } from 'react'
 import {
   Box,
-  CategoryCard,
   SkeletonLoader,
   AlertMessage,
   Bullet,
   BulletList,
   InputError,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import {
   VehiclesCurrentVehicle,
@@ -26,7 +26,7 @@ interface VehicleSearchFieldProps {
 }
 
 export const VehicleSelectField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
+  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -39,21 +39,19 @@ export const VehicleSelectField: FC<
   const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [
-    selectedVehicle,
-    setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
-    currentVehicle && currentVehicle.permno
-      ? {
-          permno: currentVehicle.permno,
-          make: currentVehicle?.make || '',
-          color: currentVehicle?.color || '',
-          role: currentVehicle?.role,
-          isDebtLess: true,
-          validationErrorMessages: [],
-        }
-      : null,
-  )
+  const [selectedVehicle, setSelectedVehicle] =
+    useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
+      currentVehicle && currentVehicle.permno
+        ? {
+            permno: currentVehicle.permno,
+            make: currentVehicle?.make || '',
+            color: currentVehicle?.color || '',
+            role: currentVehicle?.role,
+            isDebtLess: true,
+            validationErrorMessages: [],
+          }
+        : null,
+    )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
@@ -92,14 +90,15 @@ export const VehicleSelectField: FC<
             !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
             !!response?.vehicleOwnerchangeChecksByPermno
               ?.validationErrorMessages?.length
-          setPlate(disabled ? '' : currentVehicle.permno || '')
+          const permno = disabled ? '' : currentVehicle.permno || ''
 
-          setValue(
-            'pickVehicle.plate',
-            disabled ? '' : currentVehicle.permno || '',
-          )
+          setPlate(permno)
+          setValue('pickVehicle.plate', permno)
           setValue('pickVehicle.color', currentVehicle.color || undefined)
           setValue('pickVehicle.type', currentVehicle.make || undefined)
+          if (permno) setValue('vehicleInfo.plate', permno)
+          if (permno) setValue('vehicleInfo.type', currentVehicle.make)
+
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -133,10 +132,11 @@ export const VehicleSelectField: FC<
         ) : (
           <Box>
             {selectedVehicle && (
-              <CategoryCard
-                colorScheme={disabled ? 'red' : 'blue'}
+              <ActionCard
+                backgroundColor={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
+                focused={true}
               />
             )}
             {selectedVehicle && disabled && (
@@ -190,7 +190,7 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
+      {!isLoading && plate.length === 0 && (errors as any)?.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </Box>

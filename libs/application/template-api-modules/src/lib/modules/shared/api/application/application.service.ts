@@ -31,9 +31,10 @@ export class ApplicationService extends BaseTemplateApiService {
     }
     const { states, where } = params
 
-    const findExistingApplications = this.applicationApiService.customTemplateFindQuery(
-      application.typeId,
-    ) as CustomTemplateFindQuery
+    const findExistingApplications =
+      this.applicationApiService.customTemplateFindQuery(
+        application.typeId,
+      ) as CustomTemplateFindQuery
 
     const existingApplications = await findExistingApplications({
       [where.applicant]: application.applicant,

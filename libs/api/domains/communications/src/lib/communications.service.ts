@@ -160,6 +160,7 @@ export class CommunicationsService {
           {
             headers: {
               lykill: this.config.hsnWebFormResponseSecret,
+              'Content-Type': 'application/json',
             },
           },
         )

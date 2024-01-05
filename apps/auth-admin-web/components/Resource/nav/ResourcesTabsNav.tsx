@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { Localization } from '../../../entities/common/Localization'
 
-const ResourcesTabsNav: React.FC = () => {
+const ResourcesTabsNav: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [localization] = useState<Localization>(
     LocalizationUtils.getLocalization(),
@@ -18,17 +18,16 @@ const ResourcesTabsNav: React.FC = () => {
             router?.pathname.includes('api-resource') ? 'active' : ''
           }`}
         >
-          <Link href="/resources/api-resources">
-            <a
-              className={
-                router?.pathname.includes('api-resource') ? 'active' : ''
-              }
-            >
-              {
-                localization.navigations['resourcesTabs'].items['apiResource']
-                  .text
-              }
-            </a>
+          <Link
+            href="/resources/api-resources"
+            className={
+              router?.pathname.includes('api-resource') ? 'active' : ''
+            }
+          >
+            {
+              localization.navigations['resourcesTabs'].items['apiResource']
+                .text
+            }
           </Link>
         </li>
         <li
@@ -36,12 +35,11 @@ const ResourcesTabsNav: React.FC = () => {
             router?.pathname.includes('api-scope') ? 'active' : ''
           }`}
         >
-          <Link href="/resources/api-scopes">
-            <a
-              className={router?.pathname.includes('api-scope') ? 'active' : ''}
-            >
-              {localization.navigations['resourcesTabs'].items['apiScope'].text}
-            </a>
+          <Link
+            href="/resources/api-scopes"
+            className={router?.pathname.includes('api-scope') ? 'active' : ''}
+          >
+            {localization.navigations['resourcesTabs'].items['apiScope'].text}
           </Link>
         </li>
         <li
@@ -49,18 +47,17 @@ const ResourcesTabsNav: React.FC = () => {
             router?.pathname.includes('identity-resource') ? 'active' : ''
           }`}
         >
-          <Link href="/resources/identity-resources">
-            <a
-              className={
-                router?.pathname.includes('identity-resource') ? 'active' : ''
-              }
-            >
-              {
-                localization.navigations['resourcesTabs'].items[
-                  'identityResource'
-                ].text
-              }
-            </a>
+          <Link
+            href="/resources/identity-resources"
+            className={
+              router?.pathname.includes('identity-resource') ? 'active' : ''
+            }
+          >
+            {
+              localization.navigations['resourcesTabs'].items[
+                'identityResource'
+              ].text
+            }
           </Link>
         </li>
       </ul>
