@@ -4,7 +4,7 @@ This library was generated with [Nx](https://nx.dev).
 
 ## Running unit tests
 
-Run `nx test clients-icelandic-government-institution-vacancies` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test clients-icelandic-government-institution-vacancies-v2` to execute the unit tests via [Jest](https://jestjs.io).
 
 ### Updating the open api definition (clientConfig.yaml)
 

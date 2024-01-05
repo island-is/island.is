@@ -1,30 +1,301 @@
 {
-  "openapi": "3.0.1",
+  "components": {
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication information is missing or invalid",
+        "headers": { "WWW_Authenticate": { "schema": { "type": "string" } } }
+      }
+    },
+    "schemas": {
+      "collectionquery": {
+        "properties": {
+          "count": { "type": "number" },
+          "hasMore": { "type": "boolean" },
+          "items": {
+            "items": {
+              "properties": {
+                "lookup_code": { "type": "string" },
+                "meaning": { "type": "string" }
+              },
+              "required": ["lookup_code", "meaning"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "limit": { "type": "number" },
+          "links": {
+            "items": {
+              "properties": {
+                "href": { "type": "string" },
+                "rel": { "type": "string" }
+              },
+              "required": ["rel", "href"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "offset": { "type": "number" }
+        },
+        "required": ["items", "hasMore", "limit", "offset", "count", "links"],
+        "type": "object"
+      },
+      "openvacaniesv2": {
+        "properties": {
+          "attributes": {
+            "properties": {
+              "fetchSize": {
+                "description": "Applied fetch size",
+                "type": "integer"
+              },
+              "numberOfRows": {
+                "description": "The number of rows returned",
+                "type": "integer"
+              },
+              "rowOffset": {
+                "description": "The zero based row offset",
+                "type": "integer"
+              },
+              "serviceName": {
+                "description": "The name of the web service",
+                "type": "string"
+              },
+              "totalRows": {
+                "description": "The total number of rows available, can be omitted if calculating total rows is too expensive",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "serviceName",
+              "rowOffset",
+              "fetchSize",
+              "numberOfRows"
+            ],
+            "type": "object"
+          },
+          "starfsauglysingar": {
+            "items": {
+              "properties": {
+                "birt": {
+                  "description": "Birt á vef, gamalt - ekki notað lengur J/N",
+                  "type": "string"
+                },
+                "fyrirsogn": {
+                  "description": "Heiti starfsauglýsingar",
+                  "type": "string"
+                },
+                "haefnikrofur": {
+                  "description": "Hæfniskröfur",
+                  "type": "string"
+                },
+                "heimilisfang": {
+                  "description": "Heimilisfang deildar/stofnunar",
+                  "type": "string"
+                },
+                "id": { "type": "integer" },
+                "inngangur": {
+                  "description": "Lýsing - inngangur",
+                  "type": "string"
+                },
+                "language": {
+                  "description": "Tungumál auglýsingar",
+                  "type": "string"
+                },
+                "languages": {
+                  "description": "Tungumál sem auglýsing hefur verið þýdd á",
+                  "type": "string"
+                },
+                "launaskilmali": {
+                  "description": "Launaskilmáli, stéttarfélag",
+                  "type": "string"
+                },
+                "launaskilmaliFull": {
+                  "description": "Launaskilmáli, samsettur texti til birtingar.",
+                  "type": "string"
+                },
+                "logoURL": {
+                  "description": "Slóð á táknmynd/logo stofnunar",
+                  "format": "url",
+                  "type": "string"
+                },
+                "other_languages": {
+                  "description": "Önnur tungumál sem auglýsing hefur veruð þýdd á",
+                  "type": "string"
+                },
+                "postfang": {
+                  "description": "Póstfang deildar/stofnunar",
+                  "type": "string"
+                },
+                "skipulagseining": {
+                  "description": "Skipulagseining innan stofnunar",
+                  "type": "string"
+                },
+                "stadsetningar": {
+                  "description": "Staðsetningar starfs, landssvæði eða án staðsetningar",
+                  "items": {
+                    "description": "Staðsetning",
+                    "properties": {
+                      "@kodi": {
+                        "description": "Kóði staðsetningar",
+                        "type": "integer"
+                      },
+                      "@text": {
+                        "description": "Heiti staðsetningar",
+                        "type": "string"
+                      }
+                    },
+                    "required": ["@kodi", "@text"],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "starfshlutfall": {
+                  "description": "Starfshlutfall, til/frá eða föst prósenta",
+                  "type": "string"
+                },
+                "starfssvid": {
+                  "description": "Starfssvið, starfaflokkun",
+                  "type": "string"
+                },
+                "starfssvid_code": {
+                  "description": "Starfssvið, starfaflokkun - kóði",
+                  "type": "integer"
+                },
+                "stettarfelagHeiti": {
+                  "description": "Heiti stéttarfélags",
+                  "type": "string"
+                },
+                "stofnunHeiti": {
+                  "description": "Heiti stofnunar",
+                  "type": "string"
+                },
+                "stofnunNr": {
+                  "description": "Númer stofnunar, fimm stafa númer með 0 padding. Ath þegar númer er ekki með 0 í fremsta staf þá skilar þjónustan þessu sem number ekki string",
+                  "type": "string"
+                },
+                "tengilidir": {
+                  "description": "Tengiliðir, nánari upplýsingar veita",
+                  "items": {
+                    "description": "Tengiliður",
+                    "properties": {
+                      "@nr": {
+                        "description": "Númer tengiliðs, 1 eða 2, fyrir röðun",
+                        "type": "integer"
+                      },
+                      "nafn": {
+                        "description": "Nafn tengiliðs, nánari upplýsingar veitir",
+                        "type": "string"
+                      },
+                      "netfang": {
+                        "description": "Netfang tengiliðs",
+                        "type": "string"
+                      },
+                      "simi": {
+                        "description": "Sími tengiliðs",
+                        "type": "integer"
+                      }
+                    },
+                    "required": ["@nr", "nafn", "netfang"],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "umsoknarfrestur_fra": {
+                  "description": "umsóknarfrestur frá og með",
+                  "format": "dd.mm.yyyy",
+                  "type": "string"
+                },
+                "umsoknarfrestur_til": {
+                  "description": "umsóknarfrestur til og með",
+                  "type": "string"
+                },
+                "undirtexti": {
+                  "description": "Frekari upplýsingar um starfið",
+                  "type": "string"
+                },
+                "verkefni": {
+                  "description": "Helstu verkefni og ábyrgð",
+                  "type": "string"
+                },
+                "vinnutimaskipulag": {
+                  "description": "Vinnutímaskipulag",
+                  "type": "string"
+                },
+                "weblink": {
+                  "description": "Slóð og texti á vefhlekk til að sækja um starfið",
+                  "properties": {
+                    "text": {
+                      "description": "Texti til að setja á vefhlekk.",
+                      "type": "string"
+                    },
+                    "url": {
+                      "description": "Slóð í ráðningarkerfi, smelltu hér til að sækja um",
+                      "format": "url",
+                      "type": "string"
+                    }
+                  },
+                  "required": ["url", "text"],
+                  "type": "object"
+                },
+                "weblink_extra": {
+                  "description": "Aukahlekkur, ekki notað lengur.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "fyrirsogn",
+                "umsoknarfrestur_fra",
+                "umsoknarfrestur_til",
+                "inngangur",
+                "verkefni",
+                "haefnikrofur",
+                "stofnunHeiti",
+                "skipulagseining",
+                "heimilisfang",
+                "postfang",
+                "tengilidir",
+                "undirtexti",
+                "weblink",
+                "weblink_extra",
+                "vinnutimaskipulag",
+                "starfshlutfall",
+                "starfssvid",
+                "starfssvid_code",
+                "birt",
+                "launaskilmali",
+                "stettarfelagHeiti",
+                "launaskilmaliFull",
+                "logoURL",
+                "language",
+                "languages",
+                "other_languages",
+                "stadsetningar"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": ["attributes", "starfsauglysingar"],
+        "type": "object"
+      }
+    },
+    "securitySchemes": { "basicAuth": { "scheme": "basic", "type": "http" } }
+  },
   "info": { "title": "Open Job Positions, vacancies", "version": "2.0.0" },
-  "servers": [
-    {
-      "url": "/ords/oebs/api/umsokn/v2",
-      "description": "Development server 1"
-    },
-    {
-      "url": "/ords/oebs/api/umsokn/v2",
-      "description": "Development server 2"
-    },
-    { "url": "/ords/oebs/api/umsokn/v2", "description": "Test server" },
-    { "url": "/ords/oebs/api/umsokn/v2", "description": "Production server" }
-  ],
+  "openapi": "3.0.1",
   "paths": {
-    "/locations": {
+    "/jobtypes": {
       "get": {
-        "description": "Job locations",
+        "description": "Job types",
         "responses": {
           "200": {
-            "description": "The queried records.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/collectionquery" }
               }
-            }
+            },
+            "description": "The queried records."
           },
           "400": { "description": "Bad request." },
           "401": {
@@ -34,17 +305,17 @@
         }
       }
     },
-    "/jobtypes": {
+    "/locations": {
       "get": {
-        "description": "Job types",
+        "description": "Job locations",
         "responses": {
           "200": {
-            "description": "The queried records.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/collectionquery" }
               }
-            }
+            },
+            "description": "The queried records."
           },
           "400": { "description": "Bad request." },
           "401": {
@@ -59,12 +330,12 @@
         "description": "Organizations",
         "responses": {
           "200": {
-            "description": "The queried records.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/collectionquery" }
               }
-            }
+            },
+            "description": "The queried records."
           },
           "400": { "description": "Bad request." },
           "401": {
@@ -79,78 +350,78 @@
         "description": "Return open vacancies from the icelandic state recruitment system",
         "parameters": [
           {
-            "name": "language",
-            "in": "query",
             "description": "Return vacancies in selected language. Vacancies that have not been translated are returned in icelandic unless ONLYEN is used, then only vacancies that have been translated to english are returned.",
+            "in": "query",
+            "name": "language",
             "schema": {
-              "type": "string",
+              "default": "IS",
               "enum": ["IS", "EN", "ONLYEN", "ONLYIS"],
-              "default": "IS"
+              "type": "string"
             }
           },
           {
-            "name": "stofnun",
-            "in": "query",
             "description": "Institution abbrevation, fetch only vacancies for that institution",
-            "schema": { "type": "string", "maxLength": 10, "pattern": "\\p{L}" }
+            "in": "query",
+            "name": "stofnun",
+            "schema": { "maxLength": 10, "pattern": "\\p{L}", "type": "string" }
           },
           {
-            "name": "query",
-            "in": "query",
             "description": "Query parameter filters by fyrirsogn, inngangur and stofnunHeiti",
+            "in": "query",
+            "name": "query",
             "schema": { "type": "string" }
           },
           {
-            "name": "location",
             "description": "filter by location (stadsetning), comma delimited id list. Valid ids are found by the /locations endpoint",
+            "example": "100,900",
             "in": "query",
+            "name": "location",
             "required": false,
-            "schema": { "type": "string" },
-            "example": "100,900"
+            "schema": { "type": "string" }
           },
           {
-            "name": "jobtype",
             "description": "filter by jobtype. Comma delimited id list. Valid ids are found by the /jobtypes endpoint",
+            "example": "101,102",
             "in": "query",
+            "name": "jobtype",
             "required": false,
-            "schema": { "type": "string" },
-            "example": "101,102"
+            "schema": { "type": "string" }
           },
           {
-            "name": "fetch_offset",
             "description": "Fetch offset",
+            "example": 0,
             "in": "query",
+            "name": "fetch_offset",
             "required": false,
-            "schema": { "type": "number" },
-            "example": 0
+            "schema": { "type": "number" }
           },
           {
-            "name": "fetch_size",
             "description": "Fetch size",
+            "example": 25,
             "in": "query",
+            "name": "fetch_size",
             "required": false,
-            "schema": { "type": "number" },
-            "example": 25
+            "schema": { "type": "number" }
           },
           {
-            "name": "Accept",
             "in": "header",
+            "name": "Accept",
             "schema": {
-              "type": "string",
+              "default": "application/xml",
               "enum": ["application/xml", "application/json"],
-              "default": "application/xml"
+              "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "The queried records.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/openvacaniesv2" }
               },
               "application/xml": { "schema": { "type": "object" } }
-            }
+            },
+            "description": "The queried records."
           },
           "401": { "$ref": "#/components/responses/UnauthorizedError" }
         }
@@ -161,340 +432,58 @@
         "description": "Retrieve a record from /api/umsokn/v1/",
         "parameters": [
           {
-            "name": "vacancy_id",
-            "in": "path",
             "description": "the vacancy id to retrieve",
+            "in": "path",
+            "name": "vacancy_id",
             "required": true,
             "schema": { "type": "integer" }
           },
           {
-            "name": "language",
-            "in": "query",
             "description": "Return vacancies in selected language. Vacancies that have not been translated are returned in icelandic unless ONLYEN is used, then only vacancies that have been translated to english are returned.",
+            "in": "query",
+            "name": "language",
             "schema": {
-              "type": "string",
+              "default": "IS",
               "enum": ["IS", "EN", "ONLYEN", "ONLYIS"],
-              "default": "IS"
+              "type": "string"
             }
           },
           {
-            "name": "Accept",
             "in": "header",
+            "name": "Accept",
             "schema": {
-              "type": "string",
+              "default": "application/xml",
               "enum": ["application/xml", "application/json"],
-              "default": "application/xml"
+              "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "The queried record.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/openvacaniesv2" }
               },
               "application/xml": { "schema": { "type": "object" } }
-            }
+            },
+            "description": "The queried record."
           },
           "401": { "$ref": "#/components/responses/UnauthorizedError" }
         }
       }
     }
   },
-  "components": {
-    "responses": {
-      "UnauthorizedError": {
-        "description": "Authentication information is missing or invalid",
-        "headers": { "WWW_Authenticate": { "schema": { "type": "string" } } }
-      }
+  "security": [{ "basicAuth": [] }],
+  "servers": [
+    {
+      "description": "Development server 1",
+      "url": "/ords/oebs/api/umsokn/v2"
     },
-    "securitySchemes": { "basicAuth": { "type": "http", "scheme": "basic" } },
-    "schemas": {
-      "collectionquery": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "lookup_code": { "type": "string" },
-                "meaning": { "type": "string" }
-              },
-              "required": ["lookup_code", "meaning"]
-            }
-          },
-          "hasMore": { "type": "boolean" },
-          "limit": { "type": "number" },
-          "offset": { "type": "number" },
-          "count": { "type": "number" },
-          "links": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "rel": { "type": "string" },
-                "href": { "type": "string" }
-              },
-              "required": ["rel", "href"]
-            }
-          }
-        },
-        "required": ["items", "hasMore", "limit", "offset", "count", "links"]
-      },
-      "openvacaniesv2": {
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "object",
-            "properties": {
-              "serviceName": {
-                "type": "string",
-                "description": "The name of the web service"
-              },
-              "rowOffset": {
-                "type": "integer",
-                "description": "The zero based row offset"
-              },
-              "fetchSize": {
-                "type": "integer",
-                "description": "Applied fetch size"
-              },
-              "numberOfRows": {
-                "type": "integer",
-                "description": "The number of rows returned"
-              },
-              "totalRows": {
-                "type": "integer",
-                "description": "The total number of rows available, can be omitted if calculating total rows is too expensive"
-              }
-            },
-            "required": [
-              "serviceName",
-              "rowOffset",
-              "fetchSize",
-              "numberOfRows"
-            ],
-            "additionalProperties": false
-          },
-          "starfsauglysing": {
-            "type": "object",
-            "properties": {
-              "id": { "type": "integer" },
-              "fyrirsogn": {
-                "type": "string",
-                "description": "Heiti starfsauglýsingar"
-              },
-              "umsoknarfrestur_fra": {
-                "type": "string",
-                "format": "dd.mm.yyyy",
-                "description": "umsóknarfrestur frá og með"
-              },
-              "umsoknarfrestur_til": {
-                "type": "string",
-                "description": "umsóknarfrestur til og með"
-              },
-              "inngangur": {
-                "type": "string",
-                "description": "Lýsing - inngangur"
-              },
-              "verkefni": {
-                "type": "string",
-                "description": "Helstu verkefni og ábyrgð"
-              },
-              "haefnikrofur": {
-                "type": "string",
-                "description": "Hæfniskröfur"
-              },
-              "stofnunHeiti": {
-                "type": "string",
-                "description": "Heiti stofnunar"
-              },
-              "stofnunNr": {
-                "type": "string",
-                "description": "Númer stofnunar, fimm stafa númer með 0 padding. Ath þegar númer er ekki með 0 í fremsta staf þá skilar þjónustan þessu sem number ekki string"
-              },
-              "skipulagseining": {
-                "type": "string",
-                "description": "Skipulagseining innan stofnunar"
-              },
-              "heimilisfang": {
-                "type": "string",
-                "description": "Heimilisfang deildar/stofnunar"
-              },
-              "postfang": {
-                "type": "string",
-                "description": "Póstfang deildar/stofnunar"
-              },
-              "tengilidir": {
-                "type": "object",
-                "description": "Tengiliðir, nánari upplýsingar veita",
-                "properties": {
-                  "tengilidur": {
-                    "type": "object",
-                    "description": "Tengiliður",
-                    "properties": {
-                      "@nr": {
-                        "type": "integer",
-                        "description": "Númer tengiliðs, 1 eða 2, fyrir röðun"
-                      },
-                      "nafn": {
-                        "type": "string",
-                        "description": "Nafn tengiliðs, nánari upplýsingar veitir"
-                      },
-                      "netfang": {
-                        "type": "string",
-                        "description": "Netfang tengiliðs"
-                      },
-                      "simi": {
-                        "type": "integer",
-                        "description": "Sími tengiliðs"
-                      }
-                    },
-                    "required": ["@nr", "nafn", "netfang"],
-                    "additionalProperties": false
-                  }
-                },
-                "required": ["tengilidur"],
-                "additionalProperties": false
-              },
-              "undirtexti": {
-                "type": "string",
-                "description": "Frekari upplýsingar um starfið"
-              },
-              "weblink": {
-                "type": "object",
-                "description": "Slóð og texti á vefhlekk til að sækja um starfið",
-                "properties": {
-                  "url": {
-                    "type": "string",
-                    "format": "url",
-                    "description": "Slóð í ráðningarkerfi, smelltu hér til að sækja um"
-                  },
-                  "text": {
-                    "type": "string",
-                    "description": "Texti til að setja á vefhlekk."
-                  }
-                },
-                "required": ["url", "text"],
-                "additionalProperties": false
-              },
-              "weblink_extra": {
-                "type": "string",
-                "description": "Aukahlekkur, ekki notað lengur."
-              },
-              "vinnutimaskipulag": {
-                "type": "string",
-                "description": "Vinnutímaskipulag"
-              },
-              "starfshlutfall": {
-                "type": "string",
-                "description": "Starfshlutfall, til/frá eða föst prósenta"
-              },
-              "starfssvid": {
-                "type": "string",
-                "description": "Starfssvið, starfaflokkun"
-              },
-              "starfssvid_code": {
-                "type": "integer",
-                "description": "Starfssvið, starfaflokkun - kóði"
-              },
-              "birt": {
-                "type": "string",
-                "description": "Birt á vef, gamalt - ekki notað lengur J/N"
-              },
-              "launaskilmali": {
-                "type": "string",
-                "description": "Launaskilmáli, stéttarfélag"
-              },
-              "stettarfelagHeiti": {
-                "type": "string",
-                "description": "Heiti stéttarfélags"
-              },
-              "launaskilmaliFull": {
-                "type": "string",
-                "description": "Launaskilmáli, samsettur texti til birtingar."
-              },
-              "logoURL": {
-                "type": "string",
-                "format": "url",
-                "description": "Slóð á táknmynd/logo stofnunar"
-              },
-              "language": {
-                "type": "string",
-                "description": "Tungumál auglýsingar"
-              },
-              "languages": {
-                "type": "string",
-                "description": "Tungumál sem auglýsing hefur verið þýdd á"
-              },
-              "other_languages": {
-                "type": "string",
-                "description": "Önnur tungumál sem auglýsing hefur veruð þýdd á"
-              },
-              "stadsetningar": {
-                "type": "object",
-                "description": "Staðsetningar starfs, landssvæði eða án staðsetningar",
-                "properties": {
-                  "stadsetning": {
-                    "type": "object",
-                    "description": "Staðsetning",
-                    "properties": {
-                      "@kodi": {
-                        "type": "integer",
-                        "description": "Kóði staðsetningar"
-                      },
-                      "@text": {
-                        "type": "string",
-                        "description": "Heiti staðsetningar"
-                      }
-                    },
-                    "required": ["@kodi", "@text"],
-                    "additionalProperties": false
-                  }
-                },
-                "required": ["stadsetning"],
-                "additionalProperties": false
-              }
-            },
-            "required": [
-              "id",
-              "fyrirsogn",
-              "umsoknarfrestur_fra",
-              "umsoknarfrestur_til",
-              "inngangur",
-              "verkefni",
-              "haefnikrofur",
-              "stofnunHeiti",
-              "skipulagseining",
-              "heimilisfang",
-              "postfang",
-              "tengilidir",
-              "undirtexti",
-              "weblink",
-              "weblink_extra",
-              "vinnutimaskipulag",
-              "starfshlutfall",
-              "starfssvid",
-              "starfssvid_code",
-              "birt",
-              "launaskilmali",
-              "stettarfelagHeiti",
-              "launaskilmaliFull",
-              "logoURL",
-              "language",
-              "languages",
-              "other_languages",
-              "stadsetningar"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "additionalProperties": false,
-        "required": ["attributes", "starfsauglysing"]
-      }
-    }
-  },
-  "security": [{ "basicAuth": [] }]
+    {
+      "description": "Development server 2",
+      "url": "/ords/oebs/api/umsokn/v2"
+    },
+    { "description": "Test server", "url": "/ords/oebs/api/umsokn/v2" },
+    { "description": "Production server", "url": "/ords/oebs/api/umsokn/v2" }
+  ]
 }

@@ -99,6 +99,14 @@ export const routesTemplate = {
     is: '/starfatorg/[id]',
     en: '',
   },
+  'vacancies-v2': {
+    is: '/starfatorg-v2',
+    en: '',
+  },
+  'vacancydetails-v2': {
+    is: '/starfatorg-v2/[id]',
+    en: '',
+  },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
     en: '/en/o/digital-iceland/island-services',
