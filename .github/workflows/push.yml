@@ -72,8 +72,14 @@ jobs:
             GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
           fi
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
-          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
+          echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
+
+      - name: Set env for label
+        if: "contains(github.event.pull_request.labels.*.name, 'test everything') && (contains(github.event.sender.login, '@island-is/core') || contains(github.event.sender.login, '@island-is/devops'))"
+        run: |
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_OUTPUT
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
 
       - name: Check if we want to run workflow
         id: should-run
@@ -150,7 +156,7 @@ jobs:
       - pre-checks
 
     env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      AFFECTED_ALL: ${{ needs.pre-checks.outputs.AFFECTED_ALL || secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
       SERVERSIDE_FEATURES_ON: ''
 
@@ -496,7 +502,7 @@ jobs:
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      AFFECTED_ALL: ${{ needs.pre-checks.outputs.AFFECTED_ALL || secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       PUBLISH: true
