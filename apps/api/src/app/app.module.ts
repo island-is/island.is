@@ -123,7 +123,6 @@ import {
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
-import { InsurancePaymentsClientConfig } from '@island.is/clients-insurance-payments'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
@@ -153,6 +152,7 @@ import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 
 const environment = getConfig
@@ -315,7 +315,6 @@ const environment = getConfig
         AssetsClientConfig,
         PCardClientConfig,
         AdrAndMachineLicenseClientConfig,
-        InsurancePaymentsClientConfig,
         NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
@@ -346,6 +345,7 @@ const environment = getConfig
         FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
+        SocialInsuranceAdministrationClientConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
         FinancialStatementsInaoClientConfig,

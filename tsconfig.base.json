@@ -42,9 +42,6 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
-      "@island.is/api/domains/social-insurance": [
-        "libs/api/domains/social-insurance/src/index.ts"
-      ],
       "@island.is/api/domains/administration-of-occupational-safety-and-health": [
         "libs/api/domains/administration-of-occupational-safety-and-health/src/index.ts"
       ],
@@ -203,6 +200,9 @@
       ],
       "@island.is/api/domains/signature-collection": [
         "libs/api/domains/signature-collection/src/index.ts"
+      ],
+      "@island.is/api/domains/social-insurance": [
+        "libs/api/domains/social-insurance/src/index.ts"
       ],
       "@island.is/api/domains/statistics": [
         "libs/api/domains/statistics/src/index.ts"
@@ -495,9 +495,6 @@
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
-      "@island.is/clients-insurance-payments": [
-        "libs/clients/insurance-payments/src/index.ts"
-      ],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],

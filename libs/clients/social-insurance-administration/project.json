@@ -23,10 +23,22 @@
         "{workspaceRoot}/coverage/libs/clients/social-insurance-administration"
       ]
     },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10008/TR-Protected/getOpenAPI?serviceCode=external-v1 > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/insurance-payments"
+      }
+    },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch -i libs/clients/social-insurance-administration/src/clientConfig.yaml"
+        "command": "yarn openapi-generator -o libs/clients/insurance-payments/gen/fetch -i libs/clients/insurance-payments/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
