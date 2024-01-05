@@ -10,11 +10,11 @@ import {
   confirmation,
   externalData,
   information,
-  personal,
   review,
 } from '../../lib/messages'
 import {
   NationalRegistryIndividualApi,
+  UniversityApi,
   UserProfileApi,
 } from '../../dataProviders'
 import { formerEducation } from '../../lib/messages/formerEducation'
@@ -59,6 +59,11 @@ export const Prerequisites: Form = buildForm({
               provider: UserProfileApi,
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: UniversityApi,
+              title: '',
+              subTitle: '',
             }),
           ],
         }),

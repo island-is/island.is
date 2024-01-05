@@ -21,7 +21,11 @@ import { application as applicationMessage } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { UniversitySchema } from './dataSchema'
-import { UserProfileApi, NationalRegistryIndividualApi } from '../dataProviders'
+import {
+  UserProfileApi,
+  NationalRegistryIndividualApi,
+  UniversityApi,
+} from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes } from '../utils'
 
@@ -73,7 +77,11 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryIndividualApi, UserProfileApi],
+              api: [
+                NationalRegistryIndividualApi,
+                UserProfileApi,
+                UniversityApi,
+              ],
             },
           ],
         },

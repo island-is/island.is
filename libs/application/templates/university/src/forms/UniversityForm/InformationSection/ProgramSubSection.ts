@@ -76,6 +76,7 @@ export const ProgramSubSection = buildSubSection({
         }),
         buildRadioField({
           id: `${Routes.PROGRAMINFORMATION}.modeOfDelivery`,
+          space: 'gutter',
           title:
             information.labels.programSelection.checkboxModeOfDeliveryLabel,
           options: [
