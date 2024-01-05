@@ -18,6 +18,7 @@ import {
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { survivorsBenefitsFormMessage } from './messages'
+import { SocialInsuranceAdministrationApplicantApi } from '../dataProviders'
 
 const SurvivorsBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -54,7 +55,11 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi, NationalRegistrySpouseApi],
+              api: [
+                NationalRegistryUserApi, 
+                NationalRegistrySpouseApi,
+                SocialInsuranceAdministrationApplicantApi,
+              ],
               delete: true,
             },
           ],

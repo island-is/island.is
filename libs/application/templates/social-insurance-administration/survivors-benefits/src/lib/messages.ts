@@ -73,6 +73,17 @@ export const survivorsBenefitsFormMessage: MessageDir = {
         'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd).',
       description: 'english translation',
     },
+    socialInsuranceAdministrationInformationTitle: {
+      id: 'sb.application:prerequisites.socialInsuranceAdministration.title',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Information about income and circumstances',
+    },
+    socialInsuranceAdministrationInformationDescription: {
+      id: 'sb.application:prerequisites.socialInsuranceAdministration.description#markdown',
+      defaultMessage:
+        'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. Tryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
+      description: 'english translation',
+    },
     startApplication: {
       id: 'sb.application.start.application',
       defaultMessage: 'Hefja umsókn',
@@ -85,6 +96,27 @@ export const survivorsBenefitsFormMessage: MessageDir = {
       id: 'sb.application:info.section',
       defaultMessage: 'Almennar upplýsingar',
       description: 'General information',
+    },
+    subSectionTitle: {
+      id: 'sb.application:info.sub.section.title',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email and phone number',
+    },
+    subSectionDescription: {
+      id: 'sb.application:info.sub.section.description',
+      defaultMessage:
+        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
+      description: 'translation',
+    },
+    applicantEmail: {
+      id: 'sb.application:info.applicant.email',
+      defaultMessage: 'Netfang',
+      description: 'Email address',
+    },
+    applicantPhonenumber: {
+      id: 'sb.application:info.applicant.phonenumber',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
     },
     deceasedSpouseSubSection: {
       id: 'sb.application:deceased.spouse.sub.section',

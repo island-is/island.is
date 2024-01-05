@@ -32,46 +32,45 @@ export const SurvivorsBenefitsForm: Form = buildForm({
       id: 'infoSection',
       title: survivorsBenefitsFormMessage.info.section,
       children: [
-        // buildSubSection({
-        //   id: 'info',
-        //   title: survivorsBenefitsFormMessage.info.subSectionTitle,
-        //   children: [
-        //     buildMultiField({
-        //       id: 'applicantInfo',
-        //       title: survivorsBenefitsFormMessage.info.subSectionTitle,
-        //       description:
-        //       survivorsBenefitsFormMessage.info.subSectionDescription,
-        //       children: [
-        //         buildTextField({
-        //           id: 'applicantInfo.email',
-        //           title: survivorsBenefitsFormMessage.info.applicantEmail,
-        //           width: 'half',
-        //           variant: 'email',
-        //           disabled: true,
-        //           defaultValue: (application: Application) => {
-        //             console.log('application: ', application.externalData.socialInsuranceAdministrationApplicant)
-        //             const data = application.externalData
-        //               .socialInsuranceAdministrationApplicant
-        //               .data as ApplicantInfo
-        //             return data.emailAddress
-        //           },
-        //         }),
-        //         buildPhoneField({
-        //           id: 'applicantInfo.phonenumber',
-        //           title:
-        //           survivorsBenefitsFormMessage.info.applicantPhonenumber,
-        //           width: 'half',
-        //           defaultValue: (application: Application) => {
-        //             const data = application.externalData
-        //               .socialInsuranceAdministrationApplicant
-        //               .data as ApplicantInfo
-        //             return data.phoneNumber
-        //           },
-        //         }),
-        //       ],
-        //     }),
-        //   ],
-        // }),
+        buildSubSection({
+          id: 'info',
+          title: survivorsBenefitsFormMessage.info.subSectionTitle,
+          children: [
+            buildMultiField({
+              id: 'applicantInfo',
+              title: survivorsBenefitsFormMessage.info.subSectionTitle,
+              description:
+              survivorsBenefitsFormMessage.info.subSectionDescription,
+              children: [
+                buildTextField({
+                  id: 'applicantInfo.email',
+                  title: survivorsBenefitsFormMessage.info.applicantEmail,
+                  width: 'half',
+                  variant: 'email',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+                    return data.emailAddress
+                  },
+                }),
+                buildPhoneField({
+                  id: 'applicantInfo.phonenumber',
+                  title:
+                  survivorsBenefitsFormMessage.info.applicantPhonenumber,
+                  width: 'half',
+                  defaultValue: (application: Application) => {
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+                    return data.phoneNumber
+                  },
+                }),
+              ],
+            }),
+          ],
+        }),
         buildSubSection({
           id: 'deceasedSpouse',
           title: survivorsBenefitsFormMessage.info.deceasedSpouseSubSection,
