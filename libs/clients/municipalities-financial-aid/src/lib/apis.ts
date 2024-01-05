@@ -26,7 +26,7 @@ export const exportedApis = [
           name: Api.name,
         }),
         // headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
-        basePath: `http://localhost:3344`,
+        // basePath: `http://localhost:3344`,
       }),
     )
   },
