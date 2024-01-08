@@ -32,12 +32,11 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
-import { STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
+import { SLICE_SPACING, STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
 import {
   Image,
   Organization,
   OrganizationPage,
-  OrganizationTheme,
 } from '@island.is/web/graphql/schema'
 import {
   useLinkResolver,
@@ -793,7 +792,7 @@ export const OrganizationWrapper: React.FC<
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
-          paddingBottom={[4, 4, 4]}
+          paddingBottom={[4, 4, 9]}
           isSticky={false}
           fullWidthContent={fullWidthContent}
           sidebarContent={
@@ -957,7 +956,7 @@ export const OrganizationWrapper: React.FC<
                   <Box
                     className="rs_read"
                     paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}
-                    paddingBottom={6}
+                    paddingBottom={SLICE_SPACING}
                   >
                     <Text variant="default">{pageDescription}</Text>
                   </Box>
