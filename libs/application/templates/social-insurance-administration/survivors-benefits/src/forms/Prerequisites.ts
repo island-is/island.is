@@ -4,7 +4,6 @@ import {
   buildForm,
   buildSection,
   buildSubmitField,
-  buildSubSection,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -26,64 +25,61 @@ export const PrerequisitesForm: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'prerequisites',
+      id: 'externalData',
       title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [
-        buildSubSection({
-          id: 'externalData',
-          title: survivorsBenefitsFormMessage.pre.externalDataSection,
-          children: [
-            buildExternalDataProvider({
-              id: 'approveExternalData',
-              title: socialInsuranceAdministrationMessage.pre.externalDataSection,
-              subTitle: socialInsuranceAdministrationMessage.pre.externalDataDescription,
-              checkboxLabel: socialInsuranceAdministrationMessage.pre.checkboxProvider,
-              submitField: buildSubmitField({
-                id: 'submit',
-                placement: 'footer',
-                title: socialInsuranceAdministrationMessage.pre.startApplication,
-                refetchApplicationAfterSubmit: true,
-                actions: [
-                  {
-                    event: DefaultEvents.SUBMIT,
-                    name: socialInsuranceAdministrationMessage.pre.startApplication,
-                    type: 'primary',
-                  },
-                ],
-              }),
-              dataProviders: [
-                buildDataProviderItem({
-                  provider: NationalRegistryUserApi,
-                  title: socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-                  subTitle:
-                    survivorsBenefitsFormMessage.pre.registryIcelandDescription,
-                }),
-                buildDataProviderItem({
-                  provider: NationalRegistrySpouseApi,
-                  title: '',
-                }),
-                buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationApplicantApi,
-                  title:
-                    survivorsBenefitsFormMessage.pre
-                      .socialInsuranceAdministrationInformationTitle,
-                  subTitle:
-                    survivorsBenefitsFormMessage.pre
-                      .socialInsuranceAdministrationInformationDescription,
-                }),
-              ],
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre.externalDataDescription,
+          checkboxLabel:
+            socialInsuranceAdministrationMessage.pre.checkboxProvider,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: socialInsuranceAdministrationMessage.pre.startApplication,
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: socialInsuranceAdministrationMessage.pre.startApplication,
+                type: 'primary',
+              },
+            ],
+          }),
+          dataProviders: [
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title:
+                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
+              subTitle:
+                survivorsBenefitsFormMessage.pre.registryIcelandDescription,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationApplicantApi,
+              title:
+                survivorsBenefitsFormMessage.pre
+                  .socialInsuranceAdministrationInformationTitle,
+              subTitle:
+                survivorsBenefitsFormMessage.pre
+                  .socialInsuranceAdministrationInformationDescription,
             }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'info',
+      id: 'infoSection',
       title: socialInsuranceAdministrationMessage.info.section,
       children: [],
     }),
     buildSection({
-      id: 'comment',
+      id: 'additionalInfo',
       title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [],
     }),

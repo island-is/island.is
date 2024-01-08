@@ -4,12 +4,11 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import get from 'lodash/get'
 import has from 'lodash/has'
-import { States } from '../../lib/constants'
-import { survivorsBenefitsFormMessage } from '../../lib/messages'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
 import { getApplicationAnswers } from '../../lib/survivorsBenefitsUtils'
-
 
 interface ReviewScreenProps {
   application: Application
@@ -20,7 +19,7 @@ interface ReviewScreenProps {
   editable?: boolean
 }
 
-export const Review: FC<ReviewScreenProps> = ({ 
+export const Review: FC<ReviewScreenProps> = ({
   application,
   field,
   goToScreen,
@@ -29,15 +28,13 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
 
-  const { comment } = getApplicationAnswers(
-    application.answers,
-  )
+  const { comment } = getApplicationAnswers(application.answers)
   const { state } = application
-  
+
   const hasError = (id: string) => get(errors, id) as string
 
   const groupHasNoErrors = (ids: string[]) =>
-  ids.every((id) => !has(errors, id))
+    ids.every((id) => !has(errors, id))
 
   const childProps = {
     application,
@@ -46,7 +43,7 @@ export const Review: FC<ReviewScreenProps> = ({
     hasError,
     goToScreen,
   }
-  
+
   return (
     <>
       {state === `${States.DRAFT}` && (
@@ -54,13 +51,16 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(survivorsBenefitsFormMessage.confirm.title)}
+                {formatMessage(
+                  socialInsuranceAdministrationMessage.confirm.overviewTitle,
+                )}
               </Text>
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
                 {formatMessage(
-                  survivorsBenefitsFormMessage.confirm.description,
+                  socialInsuranceAdministrationMessage.confirm
+                    .overviewDescription,
                 )}
               </Text>
             </Box>
