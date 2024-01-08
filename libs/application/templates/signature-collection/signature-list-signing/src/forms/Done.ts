@@ -45,6 +45,11 @@ export const Done: Form = buildForm({
               title: '',
               component: 'ListSigned',
             }),
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              space: 'containerGutter',
+            }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
               title: 'Gott að vita',
@@ -53,12 +58,12 @@ export const Done: Form = buildForm({
               message: m.linkFieldMessage,
             }),
             buildDescriptionField({
-              id: 'space',
+              id: 'space1',
               title: '',
               space: 'containerGutter',
             }),
             buildDescriptionField({
-              id: 'space1',
+              id: 'space2',
               title: '',
               space: 'containerGutter',
             }),
