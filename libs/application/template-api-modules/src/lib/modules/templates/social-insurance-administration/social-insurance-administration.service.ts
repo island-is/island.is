@@ -25,6 +25,8 @@ import {
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import {
   Document as Attachment,
+  ApplicationDTO,
+  DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
@@ -96,7 +98,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'other',
+          DocumentTypeEnum.OTHER,
           additionalAttachmentsRequired,
         )),
       )
@@ -124,7 +126,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'other',
+          DocumentTypeEnum.OTHER,
           additionalAttachments,
         )),
       )
@@ -134,7 +136,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'pension',
+          DocumentTypeEnum.PENSION,
           pensionAttachments,
         )),
       )
@@ -148,7 +150,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'sailor',
+          DocumentTypeEnum.SAILOR,
           fishermenAttachments,
         )),
       )
@@ -162,7 +164,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'selfEmployed',
+          DocumentTypeEnum.SELF_EMPLOYED,
           selfEmployedAttachments,
         )),
       )
@@ -176,7 +178,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'retirement',
+          DocumentTypeEnum.RETIREMENT,
           earlyRetirementAttachments,
         )),
       )
@@ -202,7 +204,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'other',
+          DocumentTypeEnum.OTHER,
           additionalAttachments,
         )),
       )
@@ -216,7 +218,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'schoolConfirmation',
+          DocumentTypeEnum.SCHOOL_CONFIRMATION,
           schoolConfirmationAttachments,
         )),
       )
@@ -230,7 +232,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'rentalAgreement',
+          DocumentTypeEnum.RENTAL_AGREEMENT,
           leaseAgreementAttachments,
         )),
       )
