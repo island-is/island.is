@@ -64,10 +64,10 @@ export const PrerequisitesForm: Form = buildForm({
               provider: SocialInsuranceAdministrationApplicantApi,
               title:
                 survivorsBenefitsFormMessage.pre
-                  .socialInsuranceAdministrationInformationTitle,
+                  .socialInsuranceAdministrationTitle,
               subTitle:
                 survivorsBenefitsFormMessage.pre
-                  .socialInsuranceAdministrationInformationDescription,
+                  .socialInsuranceAdministrationDescription,
             }),
           ],
         }),
