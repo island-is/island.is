@@ -1,12 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, YesOrNo } from '@island.is/application/types'
 import { AttachmentLabel } from './constants'
 import {
   FileType,
   Attachments,
   AdditionalInformation,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { BankAccountType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { BankInfo, PaymentInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 enum AttachmentTypes {
@@ -48,6 +48,20 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
+  const personalAllowance = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowance',
+  ) as YesOrNo
+
+  const personalAllowanceUsage = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowanceUsage',
+  ) as string
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
 
   const additionalAttachmentsRequired = getValueViaPath(
     answers,
@@ -71,6 +85,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankAddress,
     currency,
     paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
     additionalAttachmentsRequired,
     tempAnswers,
   }
@@ -88,6 +105,11 @@ export function getApplicationExternalData(
     externalData,
     'nationalRegistry.data.nationalId',
   ) as string
+
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
 
   const email = getValueViaPath(
     externalData,
@@ -107,6 +129,7 @@ export function getApplicationExternalData(
   return {
     applicantName,
     applicantNationalId,
+    hasSpouse,
     email,
     bankInfo,
     currencies,

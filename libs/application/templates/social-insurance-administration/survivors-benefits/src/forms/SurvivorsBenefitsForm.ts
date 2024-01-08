@@ -12,12 +12,17 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { Application, FormValue, DefaultEvents } from '@island.is/application/types'
+import { 
+  Application, 
+  FormValue, 
+  DefaultEvents,
+  YES,
+} from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { BankAccountType, fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { BankAccountType, TaxLevelOptions, fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
@@ -28,6 +33,8 @@ import {
   getBankIsk,
   typeOfBankInfo,
   getCurrencies,
+  getTaxOptions,
+  getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 
 export const SurvivorsBenefitsForm: Form = buildForm({
@@ -284,6 +291,57 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                       typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.personalAllowance',
+                  title:
+                    socialInsuranceAdministrationMessage.payment
+                      .personalAllowance,
+                  options: getYesNoOptions(),
+                  width: 'half',
+                  largeButtons: true,
+                  required: true,
+                  space: 'containerGutter',
+                }),
+                buildTextField({
+                  id: 'paymentInfo.personalAllowanceUsage',
+                  title:
+                    socialInsuranceAdministrationMessage.payment
+                      .personalAllowancePercentage,
+                  suffix: '%',
+                  condition: (answers) => {
+                    const { personalAllowance } = getApplicationAnswers(answers)
+                    return personalAllowance === YES
+                  },
+                  placeholder: '1%',
+                  defaultValue: '100',
+                  variant: 'number',
+                  width: 'half',
+                  maxLength: 4,
+                }),
+                buildAlertMessageField({
+                  id: 'payment.spouseAllowance.alert',
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
+                  message:
+                    socialInsuranceAdministrationMessage.payment
+                      .alertSpouseAllowance,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  // condition: (_, externalData) => {
+                  //   const { hasSpouse } =
+                  //     getApplicationExternalData(externalData)
+                  //   if (hasSpouse) return true
+                  //   return false
+                  // },
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.taxLevel',
+                  title: socialInsuranceAdministrationMessage.payment.taxLevel,
+                  options: getTaxOptions(),
+                  width: 'full',
+                  largeButtons: true,
+                  space: 'containerGutter',
+                  defaultValue: TaxLevelOptions.INCOME,
                 }),
               ],
             }),
