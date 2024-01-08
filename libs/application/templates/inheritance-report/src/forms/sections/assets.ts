@@ -1,8 +1,6 @@
 import {
   buildCustomField,
   buildDescriptionField,
-  buildDividerField,
-  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubSection,
@@ -442,6 +440,7 @@ export const assets = buildSection({
               id: 'assets.otherAssets.total',
               title: '',
             }),
+    
             buildCustomField(
               {
                 title: '',

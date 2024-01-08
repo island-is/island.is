@@ -10,7 +10,13 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { format as formatNationalId } from 'kennitala'
 
 import { m } from '../../lib/messages'
-import { ClaimsData, EstateAssets, StocksData } from '../../types'
+import {
+  ClaimsData,
+  EstateAssets,
+  OtherAssets,
+  StocksData,
+  otherassetsData,
+} from '../../types'
 
 export const overviewAssets = [
   buildDescriptionField({
@@ -222,8 +228,7 @@ export const overviewAssets = [
     },
     {
       cards: ({ answers }: Application) => {
-        const claims = (answers.assets as unknown as EstateAssets).claims
-          .data
+        const claims = (answers.assets as unknown as EstateAssets).claims.data
         return (
           claims.map((asset: ClaimsData) => ({
             title: asset.issuer,
@@ -263,13 +268,12 @@ export const overviewAssets = [
     {
       cards: ({ answers }: Application) => {
         console.log(answers)
-        const stocks = (answers.assets as unknown as EstateAssets).stocks
-          .data
+        const stocks = (answers.assets as unknown as EstateAssets).stocks.data
         return (
           stocks.map((stock: StocksData) => ({
             title: stock.organization,
             description: [
-              `${m.stocksNationalId.defaultMessage}: ${formatNationalId (
+              `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
                 stock.nationalId ?? '',
               )}`,
               `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(
@@ -330,15 +334,36 @@ export const overviewAssets = [
     marginBottom: 'gutter',
     space: 'gutter',
   }),
-
+  buildCustomField(
+    {
+      title: '',
+      id: 'estateAssetsCards',
+      component: 'Cards',
+      doesNotRequireAnswer: true,
+    },
+    {
+      cards: ({ answers }: Application) => {
+        console.log(answers)
+        const otherAssets = (answers.assets as unknown as EstateAssets)
+          .otherAssets.data
+        return (
+          otherAssets.map((asset: otherassetsData) => ({
+            title: asset.otherAssets,
+            description: [
+              `${m.otherAssetsValue.defaultMessage}: ${formatCurrency(
+                asset.otherAssetsValue ?? '',
+              )}`,
+            ],
+          })) ?? []
+        )
+      },
+    },
+  ),
   buildKeyValueField({
     label: m.otherAssetsTotal,
     display: 'flex',
     value: ({ answers }) => {
-      const total = getValueViaPath(
-        answers,
-        'assets.otherAssets.total',
-      )
+      const total = getValueViaPath(answers, 'assets.otherAssets.total')
       return formatCurrency(String(total))
     },
   }),
