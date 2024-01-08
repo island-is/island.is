@@ -1,7 +1,11 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { AttachmentLabel } from './constants'
-import { FileType, Attachments, AdditionalInformation } from '../types'
+import {
+  FileType,
+  Attachments,
+  AdditionalInformation,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
@@ -12,16 +16,30 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'applicantInfo.phonenumber',
   ) as string
+
   const comment = getValueViaPath(answers, 'comment') as string
+
   const additionalAttachments = getValueViaPath(
     answers,
     'fileUploadAdditionalFiles.additionalDocuments',
   ) as FileType[]
 
+  const additionalAttachmentsRequired = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+  ) as FileType[]
+
+  const tempAnswers = getValueViaPath(
+    answers,
+    'tempAnswers',
+  ) as Application['answers']
+
   return {
     applicantPhonenumber,
     comment,
     additionalAttachments,
+    additionalAttachmentsRequired,
+    tempAnswers,
   }
 }
 

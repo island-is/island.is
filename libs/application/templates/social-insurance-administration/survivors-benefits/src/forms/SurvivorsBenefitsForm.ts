@@ -6,9 +6,10 @@ import {
   buildPhoneField,
   buildSection,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
@@ -16,6 +17,8 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { getApplicationAnswers } from '../lib/survivorsBenefitsUtils'
+
 export const SurvivorsBenefitsForm: Form = buildForm({
   id: 'SurvivorsBenefitsDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
@@ -158,6 +161,29 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 editable: true,
               },
             ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: socialInsuranceAdministrationMessage.confirm.submitButton,
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .cancelButton,
+                  type: 'reject',
+                  condition: (answers) => {
+                    const { tempAnswers } = getApplicationAnswers(answers)
+                    return !!tempAnswers
+                  },
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .submitButton,
+                  type: 'primary',
+                },
+              ],
+            }),
           ],
         }),
       ],
