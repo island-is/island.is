@@ -79,8 +79,10 @@ export const AdditionalEstateMember = ({
           ?.years
       : kennitala.info(currentEstateMember.nationalId)?.age
 
-  const hideContactInfo = kennitala.isPerson(currentEstateMember.nationalId) &&
-  memberAge !== undefined && memberAge < 18
+  const hideContactInfo =
+    kennitala.isPerson(currentEstateMember.nationalId) &&
+    memberAge !== undefined &&
+    memberAge < 18
 
   useEffect(() => {
     clearErrors(nameField)
