@@ -1,15 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-} from '@island.is/application/types'
-import {
-  AttachmentLabel,
-} from './constants'
-import {
-  FileType,
-  Attachments,
-  AdditionalInformation,
-} from '../types'
+import { Application } from '@island.is/application/types'
+import { AttachmentLabel } from './constants'
+import { FileType, Attachments, AdditionalInformation } from '../types'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',

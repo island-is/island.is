@@ -60,7 +60,7 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi, 
+                NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
               ],

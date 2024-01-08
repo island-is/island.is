@@ -8,14 +8,12 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  Application,
-} from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { FILE_SIZE_LIMIT, fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 export const SurvivorsBenefitsForm: Form = buildForm({
@@ -45,7 +43,8 @@ export const SurvivorsBenefitsForm: Form = buildForm({
               children: [
                 buildTextField({
                   id: 'applicantInfo.email',
-                  title: socialInsuranceAdministrationMessage.info.applicantEmail,
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   disabled: true,
@@ -59,7 +58,8 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                    socialInsuranceAdministrationMessage.info.applicantPhonenumber,
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const data = application.externalData
