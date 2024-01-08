@@ -57,7 +57,7 @@ const Signees = () => {
       <Box
         display={['block', 'flex']}
         justifyContent="spaceBetween"
-        marginTop={3}
+        marginTop={2}
       >
         <Box className={styles.searchWidth} marginBottom={[2, 0]}>
           <FilterInput
@@ -79,46 +79,31 @@ const Signees = () => {
                   <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
                   <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
                   <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
-                  <T.HeadData></T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
                 {signees.map((s: Signature) => {
-                  const boxColor = s.isDigital ? 'white' : 'purple100'
                   return (
                     <T.Row key={s.id}>
                       <T.Data
-                        box={{ background: boxColor }}
                         text={{ variant: 'medium' }}
                       >
                         {format(new Date(), 'dd.MM.yyyy')}
                       </T.Data>
                       <T.Data
-                        box={{ background: boxColor }}
                         text={{ variant: 'medium' }}
                       >
                         {s.signee.name}
                       </T.Data>
                       <T.Data
-                        box={{ background: boxColor }}
                         text={{ variant: 'medium' }}
                       >
                         {formatNationalId(s.signee.nationalId)}
                       </T.Data>
                       <T.Data
-                        box={{ background: boxColor }}
                         text={{ variant: 'medium' }}
                       >
                         {s.signee.address}
-                      </T.Data>
-                      <T.Data box={{ background: boxColor }}>
-                        {!s.isDigital && (
-                          <Icon
-                            icon="document"
-                            type="outline"
-                            color="blue400"
-                          />
-                        )}
                       </T.Data>
                     </T.Row>
                   )

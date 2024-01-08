@@ -41,12 +41,12 @@ export const m = defineMessages({
   /* Signee View */
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
-    defaultMessage: 'Hér eru þeir frambjóðendur sem þú hefur mælt með',
+    defaultMessage: 'Frambjóðandi sem þú hefur mælt með',
     description: '',
   },
   mySigneeListsByAreaHeader: {
     id: 'sp.signatureCollection:mySigneeListsByAreaHeader',
-    defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með',
+    defaultMessage: 'Frambjóðandur á þínu svæði sem hægt er að mæla með',
     description: '',
   },
   signList: {

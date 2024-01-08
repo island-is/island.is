@@ -1,10 +1,4 @@
-import {
-  ActionCard,
-  Box,
-  Button,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { SignatureCollectionPaths } from '../../lib/paths'
@@ -51,9 +45,14 @@ const OwnerView = () => {
               {listsForUser.map((list) => {
                 return (
                   <ActionCard
+                    key={list.id}
                     backgroundColor="white"
                     heading={list.candidate.name + ' - ' + list.area.name}
-                    eyebrow={formatMessage(m.endTime) + ' - ' + format(new Date(list.endTime), 'dd.MM.yyyy')}
+                    eyebrow={
+                      formatMessage(m.endTime) +
+                      ' ' +
+                      format(new Date(list.endTime), 'dd.MM.yyyy')
+                    }
                     text={formatMessage(m.collectionTitle)}
                     cta={{
                       label: formatMessage(m.viewList),

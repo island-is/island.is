@@ -88,6 +88,11 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: '',
   },
+  candidateInformationHeader: {
+    id: 'sls.application:candidateInformationHeader',
+    defaultMessage: 'Frambjóðandi',
+    description: '',
+  },
   signeeInformationHeader: {
     id: 'sls.application:signeeInformationHeader',
     defaultMessage: 'Meðmælandi',
@@ -95,7 +100,7 @@ export const m = defineMessages({
   },
   listName: {
     id: 'sls.application:listName',
-    defaultMessage: 'TBD: Nafn frambjóðanda',
+    defaultMessage: 'Mæla með frambjóðanda',
     description: '',
   },
   listDateTil: {

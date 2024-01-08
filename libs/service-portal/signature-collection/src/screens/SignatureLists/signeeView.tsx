@@ -42,8 +42,12 @@ const SigneeView = () => {
     return (
       <>
         <ActionCard
-          heading={signedList.title}
-          eyebrow={format(new Date(signedList.endTime), 'dd.MM.yyyy')}
+          heading={signedList.candidate.name + ' - ' + signedList.area.name}
+          eyebrow={
+            formatMessage(m.endTime) +
+            ' ' +
+            format(new Date(signedList.endTime), 'dd.MM.yyyy')
+          }
           text={formatMessage(m.collectionTitle)}
           cta={{
             label: formatMessage(m.unSignList),
