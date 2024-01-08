@@ -438,7 +438,7 @@ export const assets = buildSection({
               id: 'assets.otherAssets.total',
               title: '',
             }),
-    
+
             buildCustomField(
               {
                 title: '',
@@ -479,10 +479,7 @@ export const assets = buildSection({
           id: 'assetOverview',
           title: m.assetOverview,
           description: m.assetOverviewDescription,
-          children: [
-            ...overviewAssets,
- 
-          ],
+          children: [...overviewAssets],
         }),
       ],
     }),

@@ -598,8 +598,7 @@ export const m = defineMessages({
   },
   notFilledOut: {
     id: 'ir.application:notFilledOut',
-    defaultMessage:
-      'Ekki fyllt út',
+    defaultMessage: 'Ekki fyllt út',
     description: '',
   },
   assetOverview: {

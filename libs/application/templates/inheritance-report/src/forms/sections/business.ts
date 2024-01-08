@@ -11,7 +11,12 @@ import {
 import { Application } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import { Buisness, BuisnessAssets, BuisnessAssetsData, BuisnessDebtData } from '../../types'
+import {
+  Buisness,
+  BuisnessAssets,
+  BuisnessAssetsData,
+  BuisnessDebtData,
+} from '../../types'
 import { unknown } from 'zod'
 
 export const business = buildSection({
@@ -145,14 +150,18 @@ export const business = buildSection({
               },
               {
                 cards: ({ answers }: Application) => {
-                  const buisnessProperty = (answers.business as unknown as Buisness).businessAssets.data
+                  const buisnessProperty = (
+                    answers.business as unknown as Buisness
+                  ).businessAssets.data
                   return (
                     buisnessProperty.map((asset: BuisnessAssetsData) => ({
                       title: asset.businessAsset,
                       description: [
                         m.businessAssetAmount.defaultMessage +
                           ': ' +
-                          (asset.businessAssetValue ? formatCurrency(asset.businessAssetValue) : '0 kr.'),
+                          (asset.businessAssetValue
+                            ? formatCurrency(asset.businessAssetValue)
+                            : '0 kr.'),
                       ],
                     })) ?? []
                   )
@@ -186,7 +195,9 @@ export const business = buildSection({
               },
               {
                 cards: ({ answers }: Application) => {
-                  const buisnessDebts = (answers.business as unknown as Buisness).businessDebts.data
+                  const buisnessDebts = (
+                    answers.business as unknown as Buisness
+                  ).businessDebts.data
                   return (
                     buisnessDebts.map((debt: BuisnessDebtData) => ({
                       title: debt.businessDebt,
@@ -194,7 +205,9 @@ export const business = buildSection({
                         `${m.creditorsNationalId.defaultMessage}: ${debt.nationalId}`,
                         m.businessAssetAmount.defaultMessage +
                           ': ' +
-                          (debt.debtValue ? formatCurrency(debt.debtValue) : '0 kr.'),
+                          (debt.debtValue
+                            ? formatCurrency(debt.debtValue)
+                            : '0 kr.'),
                       ],
                     })) ?? []
                   )

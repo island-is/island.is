@@ -1,6 +1,6 @@
 import { FormValue } from '@island.is/application/types'
 import { EstateAsset } from '@island.is/clients/syslumenn'
-import e from 'express';
+import e from 'express'
 
 export enum RoleConfirmationEnum {
   CONTINUE = 'continue',
@@ -205,36 +205,36 @@ export interface BankAccounts {
 }
 
 export interface AllDebts {
-  balance: string;
-  nationalId: string;
-  creditorName: string;
-  taxFreeInheritance: number;
+  balance: string
+  nationalId: string
+  creditorName: string
+  taxFreeInheritance: number
 }
 
 export interface ApplicationDebts {
-  publicCharges: PublicCharges;
-  domesticAndForeignDebts: DomesticAndForeignDebts;
+  publicCharges: PublicCharges
+  domesticAndForeignDebts: DomesticAndForeignDebts
 }
 
 export interface PublicChargesData {
-  taxFreeInheritance: number;
-  publicChargesAmount: string;
+  taxFreeInheritance: number
+  publicChargesAmount: string
 }
 
 interface DomesticAndForeignDebtsData {
-  balance: string;
-  nationalId: string;
-  creditorName: string;
-  taxFreeInheritance: number;
+  balance: string
+  nationalId: string
+  creditorName: string
+  taxFreeInheritance: number
 }
 interface DomesticAndForeignDebts {
-  data: DomesticAndForeignDebtsData[];
-  total: number;
+  data: DomesticAndForeignDebtsData[]
+  total: number
 }
 
 export interface PublicCharges {
-  data: PublicChargesData[];
-  total: number;
+  data: PublicChargesData[]
+  total: number
 }
 
 export interface BuisnessAssetsData {
