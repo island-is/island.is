@@ -2,20 +2,12 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import {
-  ApplicationTypes,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
-import { TemplateApiError } from '@island.is/nest/problem'
-import {
-  UniversityAnswers,
-  error as errorMessages,
-} from '@island.is/application/templates/university'
+import { ApplicationTypes } from '@island.is/application/types'
+
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { YES } from '@island.is/application/core'
+
 import {
   ProgramApi,
-  University,
   UniversityApi,
 } from '@island.is/clients/university-gateway-api'
 @Injectable()
