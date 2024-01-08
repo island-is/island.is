@@ -40,7 +40,10 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch -i libs/clients/social-insurance-administration/src/clientConfig.json"
+        "commands": [
+          "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch -i libs/clients/social-insurance-administration/src/clientConfig.json",
+          "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch -i libs/clients/social-insurance-administration/src/generateBackwardsCompatibleModels.yaml"
+        ]
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

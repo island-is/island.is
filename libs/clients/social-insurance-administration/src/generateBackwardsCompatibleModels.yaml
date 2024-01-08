@@ -1,0 +1,152 @@
+openapi: 3.0.0
+info:
+  title: Social Insurance Administration API
+  version: 1.2.0
+  description: 'Deprecated'
+  contact:
+    name: Social Insurance Administration (Tryggingastofnun)
+servers:
+  - url: https://xroad-dev.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/
+    description: Optional server description, XROAD-DEV
+  - url: https://xroad.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/
+    description: Optional server description, XROAD-PROD
+paths:
+  /placeholder:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    ApplicationDTO:
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        comment:
+          type: string
+        applicationId:
+          type: string
+        domesticBankInfo:
+          $ref: '#/components/schemas/DomesticBankInfo'
+        foreignBankInfo:
+          $ref: '#/components/schemas/ForeignBankInfo'
+        taxInfo:
+          $ref: '#/components/schemas/TaxInfo'
+        applicantInfo:
+          $ref: '#/components/schemas/ApplicantInfo'
+        hasAbroadResidence:
+          type: boolean
+        hasOneTimePayment:
+          type: boolean
+        isSailorPension:
+          type: boolean
+        isRental:
+          type: boolean
+        hasAStudyingAdolescenceResident:
+          type: boolean
+        uploads:
+          $ref: '#/components/schemas/Uploads'
+    Period:
+      type: object
+      additionalProperties: false
+      required:
+        - year
+        - month
+      properties:
+        year:
+          type: integer
+          format: int32e
+        month:
+          type: integer
+          format: int32e
+    ApplicantInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - phonenumber
+      properties:
+        email:
+          type: string
+        phonenumber:
+          type: string
+    Uploads:
+      type: array
+      items:
+        $ref: '#/components/schemas/Attachment'
+    Attachment:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+        - file
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - pension
+            - other
+            - retirement
+            - sailor
+            - selfEmployed
+            - rentalAgreement
+            - schoolConfirmation
+        file:
+          type: string
+    DomesticBankInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - bank
+      properties:
+        bank:
+          type: string
+    ForeignBankInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - iban
+        - swift
+        - foreignBankName
+        - foreignBankAddress
+        - foreignCurrency
+      properties:
+        iban:
+          type: string
+        swift:
+          type: string
+        foreignBankName:
+          type: string
+        foreignBankAddress:
+          type: string
+        foreignCurrency:
+          type: string
+    TaxInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - personalAllowance
+        - taxLevel
+      properties:
+        personalAllowance:
+          type: boolean
+        personalAllowanceUsage:
+          type: number
+          format: float
+        taxLevel:
+          type: number
+
+security:
+  - bearerAuth: []
