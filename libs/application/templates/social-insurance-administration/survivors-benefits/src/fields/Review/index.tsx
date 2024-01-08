@@ -8,7 +8,7 @@ import { States } from '@island.is/application/templates/social-insurance-admini
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
-import { getApplicationAnswers } from '../../lib/survivorsBenefitsUtils'
+import { BaseInformation } from './review-groups/BaseInformation'
 
 interface ReviewScreenProps {
   application: Application
@@ -28,7 +28,6 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
 
-  const { comment } = getApplicationAnswers(application.answers)
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
@@ -77,7 +76,8 @@ export const Review: FC<ReviewScreenProps> = ({
           </Box>
         </Box>
       )}
-      {comment && <Comment {...childProps} />}
+      <BaseInformation {...childProps} />
+      <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
   )
