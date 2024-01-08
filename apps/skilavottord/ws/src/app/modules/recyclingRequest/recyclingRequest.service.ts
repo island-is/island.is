@@ -171,7 +171,7 @@ export class RecyclingRequestService {
     const errors = new RequestErrors()
     try {
       // nameOfRequestor and partnerId are not required arguments
-      // But partnerId and partnerId could not both be null at the same time
+      // But nameOfRequestor and partnerId could not both be null at the same time
       if (!nameOfRequestor && !partnerId) {
         if (!nameOfRequestor) {
           this.logger.error(`nameOfRequestor is missing`)
@@ -309,7 +309,7 @@ export class RecyclingRequestService {
             `Degregistering vehicle ${permno} from Samgongustofa`,
             {
               permno,
-              mileage: vehicle.mileage,
+              mileage: vehicle.mileage ?? 0,
               partnerId,
             },
           )
