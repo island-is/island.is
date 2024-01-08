@@ -1,15 +1,11 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-} from '@island.is/application/types'
-import {
-  AttachmentLabel,
-} from './constants'
+import { Application } from '@island.is/application/types'
+import { AttachmentLabel } from './constants'
 import {
   FileType,
   Attachments,
   AdditionalInformation,
-} from '../types'
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { BankInfo, PaymentInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
@@ -53,6 +49,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
 
+  const additionalAttachmentsRequired = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+  ) as FileType[]
+
+  const tempAnswers = getValueViaPath(
+    answers,
+    'tempAnswers',
+  ) as Application['answers']
+
   return {
     applicantPhonenumber,
     comment,
@@ -65,6 +71,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankAddress,
     currency,
     paymentInfo,
+    additionalAttachmentsRequired,
+    tempAnswers,
   }
 }
 

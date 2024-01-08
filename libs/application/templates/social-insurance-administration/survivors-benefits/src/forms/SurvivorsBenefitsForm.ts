@@ -9,11 +9,10 @@ import {
   buildSection,
   buildSelectField,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  Application, FormValue,
-} from '@island.is/application/types'
+import { Application, FormValue, DefaultEvents } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
@@ -58,7 +57,8 @@ export const SurvivorsBenefitsForm: Form = buildForm({
               children: [
                 buildTextField({
                   id: 'applicantInfo.email',
-                  title: socialInsuranceAdministrationMessage.info.applicantEmail,
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   disabled: true,
@@ -72,7 +72,8 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                    socialInsuranceAdministrationMessage.info.applicantPhonenumber,
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const data = application.externalData
@@ -374,6 +375,29 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 editable: true,
               },
             ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: socialInsuranceAdministrationMessage.confirm.submitButton,
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .cancelButton,
+                  type: 'reject',
+                  condition: (answers) => {
+                    const { tempAnswers } = getApplicationAnswers(answers)
+                    return !!tempAnswers
+                  },
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .submitButton,
+                  type: 'primary',
+                },
+              ],
+            }),
           ],
         }),
       ],

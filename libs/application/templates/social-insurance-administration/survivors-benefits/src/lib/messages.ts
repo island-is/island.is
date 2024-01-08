@@ -86,3 +86,16 @@ export const survivorsBenefitsFormMessage: MessageDir = {
     },
   }),
 }
+
+export const statesMessages = defineMessages({
+  applicationRejectedDescription: {
+    id: 'sb.application:applicationRejectedDescription',
+    defaultMessage: 'Umsókn vegna dánarbóta hefur verið hafnað',
+    description: 'The application for survivors benefits has been rejected',
+  },
+  applicationApprovedDescription: {
+    id: 'sb.application:applicationApprovedDescription',
+    defaultMessage: 'Umsókn vegna dánarbóta hefur verið samþykkt',
+    description: 'The application for survivors benefits has been approved',
+  },
+})

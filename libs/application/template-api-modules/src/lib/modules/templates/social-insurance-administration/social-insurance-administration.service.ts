@@ -22,6 +22,7 @@ import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import { getApplicationAnswers as getSBApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   Attachment,
@@ -86,6 +87,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
     if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
       additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (application.typeId === ApplicationTypes.SURVIVORS_BENEFITS) {
+      additionalAttachmentsRequired = getSBApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
@@ -285,6 +291,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       )
 
       return response
+    }
+
+    if (application.typeId === ApplicationTypes.SURVIVORS_BENEFITS) {
+      // TODO: Implement sendApplication for SURVIVORS_BENEFITS
+      console.log(
+        '------- sendApplication SURVIVORS_BENEFITS not implemented -------',
+      )
     }
   }
 
