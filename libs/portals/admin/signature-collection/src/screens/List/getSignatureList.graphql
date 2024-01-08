@@ -26,5 +26,6 @@ query listbyid($input: SignatureCollectionIdInput!) {
     collectionId
     link
     numberOfSignatures
+    maxReached
   }
 }
