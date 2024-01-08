@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { survivorsBenefitsFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/survivorsBenefitsUtils'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const Comment = ({
   application,
@@ -24,7 +25,7 @@ export const Comment = ({
         <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>
           <DataValue
             label={formatMessage(
-              survivorsBenefitsFormMessage.comment.commentSection,
+              socialInsuranceAdministrationMessage.additionalInfo.commentSection,
             )}
             value={comment}
           />

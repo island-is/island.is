@@ -13,11 +13,6 @@ export const survivorsBenefitsFormMessage: MessageDir = {
       defaultMessage: 'Umsókn um dánarbætur',
       description: 'Application for survivors benefits',
     },
-    formTitle: {
-      id: 'sb.application:form.title',
-      defaultMessage: 'Umsókn',
-      description: 'Application',
-    },
     yes: {
       id: 'sb.application:yes',
       defaultMessage: 'Já',
@@ -31,32 +26,6 @@ export const survivorsBenefitsFormMessage: MessageDir = {
   }),
 
   pre: defineMessages({
-    prerequisitesSection: {
-      id: 'sb.application:prerequisites.section',
-      defaultMessage: 'Forsendur',
-      description: 'Prerequisites',
-    },
-    externalDataSection: {
-      id: 'sb.application:externalData.section',
-      defaultMessage: 'Gagnaöflun',
-      description: 'External Data',
-    },
-    externalDataSubTitle: {
-      id: 'sb.application:externalData.sub.title',
-      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt:',
-      description: 'english translation',
-    },
-    checkboxProvider: {
-      id: 'sb.application:checkbox.provider',
-      defaultMessage:
-        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
-      description: 'english translation',
-    },
-    registryIcelandTitle: {
-      id: 'sb.application:registry.iceland.title',
-      defaultMessage: 'Upplýsingar frá þjóðskrá',
-      description: 'english translation',
-    },
     registryIcelandDescription: {
       id: 'sb.application:registry.iceland.description',
       defaultMessage: 'Upplýsingar um þig, maka og börn.',
@@ -92,32 +61,6 @@ export const survivorsBenefitsFormMessage: MessageDir = {
   }),
 
   info: defineMessages({
-    section: {
-      id: 'sb.application:info.section',
-      defaultMessage: 'Almennar upplýsingar',
-      description: 'General information',
-    },
-    subSectionTitle: {
-      id: 'sb.application:info.sub.section.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone number',
-    },
-    subSectionDescription: {
-      id: 'sb.application:info.sub.section.description',
-      defaultMessage:
-        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
-      description: 'translation',
-    },
-    applicantEmail: {
-      id: 'sb.application:info.applicant.email',
-      defaultMessage: 'Netfang',
-      description: 'Email address',
-    },
-    applicantPhonenumber: {
-      id: 'sb.application:info.applicant.phonenumber',
-      defaultMessage: 'Símanúmer',
-      description: 'Phone number',
-    },
     deceasedSpouseSubSection: {
       id: 'sb.application:deceased.spouse.sub.section',
       defaultMessage: 'Látinn maki/sambúðaraðili',
@@ -141,20 +84,7 @@ export const survivorsBenefitsFormMessage: MessageDir = {
     },
   }),
 
-  additionalInfo: defineMessages({
-    section: {
-      id: 'sb.application:additional.info.section',
-      defaultMessage: 'Viðbótarupplýsingar',
-      description: 'Additional information',
-    },
-  }),
-
   confirm: defineMessages({
-    section: {
-      id: 'sb.application:confirmation.section',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirmation',
-    },
     title: {
       id: 'sb.application:confirmation.title',
       defaultMessage: 'Senda inn umsókn',
@@ -217,28 +147,4 @@ export const survivorsBenefitsFormMessage: MessageDir = {
         'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
     },
   }),
-
-  comment: defineMessages({
-    additionalInfoTitle: {
-      id: 'sb.application:comment.additional.info.title',
-      defaultMessage: 'Viðbótarupplýsingar',
-      description: 'Additional Information',
-    },
-    commentSection: {
-      id: 'sb.application:comment.section',
-      defaultMessage: 'Athugasemd',
-      description: 'Comment',
-    },
-    description: {
-      id: 'sb.application:comment.description',
-      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
-      description: 'If you have any comments, leave them here.',
-    },
-    placeholder: {
-      id: 'sb.application:comment.placeholder',
-      defaultMessage: 'Skrifaðu athugasemd hér',
-      description: 'Your comment',
-    },
-  }),
-
 }

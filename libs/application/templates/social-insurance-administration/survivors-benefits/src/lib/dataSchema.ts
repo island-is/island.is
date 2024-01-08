@@ -1,6 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

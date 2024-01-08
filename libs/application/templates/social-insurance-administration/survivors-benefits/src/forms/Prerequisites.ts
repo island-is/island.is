@@ -16,17 +16,18 @@ import {
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
 import { SocialInsuranceAdministrationApplicantApi } from '../dataProviders'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'SurvivorsBenefitsPrerequisites',
-  title: survivorsBenefitsFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'prerequisites',
-      title: survivorsBenefitsFormMessage.pre.prerequisitesSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [
         buildSubSection({
           id: 'externalData',
@@ -34,18 +35,18 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildExternalDataProvider({
               id: 'approveExternalData',
-              title: survivorsBenefitsFormMessage.pre.externalDataSection,
-              subTitle: survivorsBenefitsFormMessage.pre.externalDataSubTitle,
-              checkboxLabel: survivorsBenefitsFormMessage.pre.checkboxProvider,
+              title: socialInsuranceAdministrationMessage.pre.externalDataSection,
+              subTitle: socialInsuranceAdministrationMessage.pre.externalDataDescription,
+              checkboxLabel: socialInsuranceAdministrationMessage.pre.checkboxProvider,
               submitField: buildSubmitField({
                 id: 'submit',
                 placement: 'footer',
-                title: survivorsBenefitsFormMessage.pre.startApplication,
+                title: socialInsuranceAdministrationMessage.pre.startApplication,
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
                     event: DefaultEvents.SUBMIT,
-                    name: survivorsBenefitsFormMessage.pre.startApplication,
+                    name: socialInsuranceAdministrationMessage.pre.startApplication,
                     type: 'primary',
                   },
                 ],
@@ -53,7 +54,7 @@ export const PrerequisitesForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   provider: NationalRegistryUserApi,
-                  title: survivorsBenefitsFormMessage.pre.registryIcelandTitle,
+                  title: socialInsuranceAdministrationMessage.pre.skraInformationTitle,
                   subTitle:
                     survivorsBenefitsFormMessage.pre.registryIcelandDescription,
                 }),
@@ -78,17 +79,22 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'info',
-      title: survivorsBenefitsFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [],
     }),
     buildSection({
       id: 'comment',
-      title: survivorsBenefitsFormMessage.additionalInfo.section,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [],
     }),
     buildSection({
-      id: 'confirmation',
-      title: survivorsBenefitsFormMessage.confirm.section,
+      id: 'confirm',
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
+      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
       children: [],
     }),
   ],

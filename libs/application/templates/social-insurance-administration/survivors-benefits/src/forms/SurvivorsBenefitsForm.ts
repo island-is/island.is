@@ -14,37 +14,38 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
-import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { FILE_SIZE_LIMIT, fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const SurvivorsBenefitsForm: Form = buildForm({
   id: 'SurvivorsBenefitsDraft',
-  title: survivorsBenefitsFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'prerequisites',
-      title: survivorsBenefitsFormMessage.pre.prerequisitesSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataDescription,
       children: [],
     }),
     buildSection({
       id: 'infoSection',
-      title: survivorsBenefitsFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [
         buildSubSection({
           id: 'info',
-          title: survivorsBenefitsFormMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: survivorsBenefitsFormMessage.info.subSectionTitle,
+              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
               description:
-              survivorsBenefitsFormMessage.info.subSectionDescription,
+                socialInsuranceAdministrationMessage.info.subSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.email',
-                  title: survivorsBenefitsFormMessage.info.applicantEmail,
+                  title: socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
                   disabled: true,
@@ -58,7 +59,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                  survivorsBenefitsFormMessage.info.applicantPhonenumber,
+                    socialInsuranceAdministrationMessage.info.applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
                     const data = application.externalData
@@ -94,44 +95,41 @@ export const SurvivorsBenefitsForm: Form = buildForm({
     }),
     buildSection({
       id: 'additionalInformation',
-      title: survivorsBenefitsFormMessage.comment.additionalInfoTitle,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
-          title: survivorsBenefitsFormMessage.fileUpload.additionalFileTitle,
+          title: socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFiles.additionalDocuments',
-              title: survivorsBenefitsFormMessage.fileUpload.additionalFileTitle,
+              title:
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileTitle,
               description:
                 survivorsBenefitsFormMessage.fileUpload.additionalFileDescription,
               introduction:
                 survivorsBenefitsFormMessage.fileUpload.additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                survivorsBenefitsFormMessage.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                survivorsBenefitsFormMessage.fileUpload.attachmentHeader,
-              uploadDescription:
-                survivorsBenefitsFormMessage.fileUpload.attachmentDescription,
-              uploadButtonLabel:
-                survivorsBenefitsFormMessage.fileUpload.attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
         buildSubSection({
           id: 'commentSection',
-          title: survivorsBenefitsFormMessage.comment.commentSection,
+          title: socialInsuranceAdministrationMessage.additionalInfo.commentSection,
           children: [
             buildTextField({
               id: 'comment',
-              title: survivorsBenefitsFormMessage.comment.commentSection,
+              title:
+                socialInsuranceAdministrationMessage.additionalInfo.commentSection,
               variant: 'textarea',
               rows: 10,
-              description: survivorsBenefitsFormMessage.comment.description,
-              placeholder: survivorsBenefitsFormMessage.comment.placeholder,
+              description:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentDescription,
+              placeholder:
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentPlaceholder,
             }),
           ],
         }),
@@ -139,7 +137,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: survivorsBenefitsFormMessage.confirm.section,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [
         buildSubSection({
           title: '',
@@ -152,7 +150,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 buildCustomField(
                   {
                     id: 'confirmScreen',
-                    title: survivorsBenefitsFormMessage.confirm.title,
+                    title: socialInsuranceAdministrationMessage.confirm.submitButton,
                     component: 'Review',
                   },
                   {
