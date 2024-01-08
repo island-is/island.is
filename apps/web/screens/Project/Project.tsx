@@ -258,8 +258,9 @@ const ProjectPage: Screen<PageProps> = ({
         )}
         {!renderSlicesAsTabs && (
           <Stack space={SLICE_SPACING}>
-            {(subpage ?? projectPage)?.slices.map((slice: Slice) =>
-              slice.__typename === 'OneColumnText' ? (
+            {(subpage ?? projectPage)?.slices.map((slice: Slice, index) => {
+              const sliceCount = (subpage ?? projectPage)?.slices?.length
+              return (
                 <Box className="rs_read">
                   <SliceMachine
                     key={slice.id}
@@ -267,20 +268,15 @@ const ProjectPage: Screen<PageProps> = ({
                     namespace={namespace}
                     fullWidth={true}
                     slug={projectPage?.slug}
+                    marginBottom={
+                      typeof sliceCount === 'number' && index === sliceCount - 1
+                        ? 8
+                        : 0
+                    }
                   />
                 </Box>
-              ) : (
-                <Box className="rs_read">
-                  <SliceMachine
-                    key={slice.id}
-                    slice={slice}
-                    namespace={namespace}
-                    fullWidth={true}
-                    slug={projectPage?.slug}
-                  />
-                </Box>
-              ),
-            )}
+              )
+            })}
           </Stack>
         )}
       </ProjectWrapper>
