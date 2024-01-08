@@ -6,6 +6,7 @@ export const tab = style({
   padding: '10px',
   width: '100%',
   outline: 0,
+  fontWeight: 'lighter',
   backgroundColor: theme.color.white,
   ':after': {
     content: '""',
