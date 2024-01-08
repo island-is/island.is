@@ -8,6 +8,7 @@ import {
   ApplicantInfoReturn,
   Document,
   IsEligibleForApplicationReturn,
+  PaymentPlanApi,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -15,6 +16,7 @@ export class SocialInsuranceAdministrationClientService {
   constructor(
     private readonly applicationApi: ApplicationApi,
     private readonly applicantApi: ApplicantApi,
+    private readonly paymentPlanApi: PaymentPlanApi,
     private readonly currencyApi: GeneralApi,
   ) {}
 
@@ -26,6 +28,16 @@ export class SocialInsuranceAdministrationClientService {
 
   private currencyApiWithAuth = (user: User) =>
     this.currencyApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private paymentPlanApiWithAuth = (user: User) =>
+    this.paymentPlanApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  getPaymentPlan(user: User, year?: number) {
+    const inputYear = year ?? new Date().getFullYear()
+    return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
+      year: inputYear.toString(),
+    })
+  }
 
   sendApplication(
     user: User,
