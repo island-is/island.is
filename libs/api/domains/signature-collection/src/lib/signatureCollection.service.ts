@@ -15,6 +15,7 @@ import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInpu
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionSlug } from './models/slug.model'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -79,7 +80,7 @@ export class SignatureCollectionService {
   async create(
     user: User,
     input: SignatureCollectionListInput,
-  ): Promise<string> {
+  ): Promise<SignatureCollectionSlug> {
     return await this.signatureCollectionClientService.createLists(input)
   }
 

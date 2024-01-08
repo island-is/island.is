@@ -23,6 +23,7 @@ import { SignatureCollectionAreaInput } from './dto/area.input'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { Audit } from '@island.is/nest/audit'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionSlug } from './models/slug.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -103,12 +104,12 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.signee(user.nationalId)
   }
 
-  @Mutation(() => String)
+  @Mutation(() => SignatureCollectionSlug)
   @Audit()
   async signatureCollectionCreate(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListInput,
-  ): Promise<string> {
+  ): Promise<SignatureCollectionSlug> {
     return this.signatureCollectionService.create(user, input)
   }
 
