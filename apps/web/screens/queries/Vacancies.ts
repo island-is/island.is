@@ -22,6 +22,39 @@ export const GET_VACANCIES = gql`
   }
 `
 
+export const GET_INSTITUTIONS = gql`
+  query GetInstitutions {
+    institutions {
+      options {
+        label
+        value
+      }
+    }
+  }
+`
+
+export const GET_VACANCY_TYPES = gql`
+  query GetVacancyTypes {
+    vacancyTypes {
+      options {
+        label
+        value
+      }
+    }
+  }
+`
+
+export const GET_VACANCY_LOCATIONS = gql`
+  query GetVacancyLocations {
+    locations {
+      options {
+        label
+        value
+      }
+    }
+  }
+`
+
 export const GET_VACANCY_DETAILS = gql`
   query GetVacancyById($input: VacancyByIdInput!) {
     vacancyById(input: $input) {

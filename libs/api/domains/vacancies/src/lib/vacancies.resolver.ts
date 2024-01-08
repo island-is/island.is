@@ -6,6 +6,7 @@ import { VacanciesResponse } from './dto/vacancies.response'
 import { VacanciesInput } from './dto/vacancies.input'
 import { VacancyByIdInput } from './dto/vacancy.input'
 import { VacancyByIdResponse } from './dto/vacancy.response'
+import { FilterOptionListResponse } from './dto/filter-option-list.response'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -17,6 +18,33 @@ export class VacanciesResolver {
   @Query(() => VacanciesResponse)
   vacancies(@Args('input') input: VacanciesInput): Promise<VacanciesResponse> {
     return this.vacanciesService.getVacancies(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => FilterOptionListResponse)
+  async institutions(): Promise<FilterOptionListResponse> {
+    const response = await this.vacanciesService.getInstitutions()
+    return {
+      options: response,
+    }
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => FilterOptionListResponse)
+  async locations(): Promise<FilterOptionListResponse> {
+    const response = await this.vacanciesService.getLocations()
+    return {
+      options: response,
+    }
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => FilterOptionListResponse)
+  async vacancyTypes(): Promise<FilterOptionListResponse> {
+    const response = await this.vacanciesService.getVacancyTypes()
+    return {
+      options: response,
+    }
   }
 
   @CacheControl(defaultCache)

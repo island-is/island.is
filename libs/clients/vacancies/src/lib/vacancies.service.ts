@@ -34,35 +34,41 @@ export class VacanciesClientService {
 
     return {
       total: response.attributes.totalRows,
-      vacancies: await mapVacancies(response.starfsauglysingar),
+      vacancies: await mapVacancies(response.starfsauglysingar ?? []),
     }
   }
 
   async getInstitutions() {
     const institutions = await this.api.stofnanirGet()
     // TODO: perhaps fetch all items (check to see if there are more)
-    return institutions.items.map((institution) => ({
-      id: institution.lookupCode,
-      label: institution.meaning,
-    }))
+    return institutions.items
+      .filter((type) => type?.lookupCode && type?.meaning)
+      .map((institution) => ({
+        value: institution.lookupCode,
+        label: institution.meaning,
+      }))
   }
 
   async getVacancyTypes() {
     const types = await this.api.jobtypesGet()
     // TODO: perhaps fetch all items (check to see if there are more)
-    return types.items.map((type) => ({
-      id: type.lookupCode,
-      label: type.meaning,
-    }))
+    return types.items
+      .filter((type) => type?.lookupCode && type?.meaning)
+      .map((type) => ({
+        value: type.lookupCode,
+        label: type.meaning,
+      }))
   }
 
   async getLocations() {
     const locations = await this.api.locationsGet()
     // TODO: perhaps fetch all locatiitemsons (check to see if there are more)
-    return locations.items.map((location) => ({
-      id: location.lookupCode,
-      label: location.meaning,
-    }))
+    return locations.items
+      .filter((type) => type?.lookupCode && type?.meaning)
+      .map((location) => ({
+        value: location.lookupCode,
+        label: location.meaning,
+      }))
   }
 
   async getVacancyById(

@@ -28,6 +28,19 @@ export class VacanciesService {
     private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
+  async getInstitutions() {
+    // TODO: fetch from cms as well
+    return this.externalVacanciesV2Service.getInstitutions()
+  }
+
+  async getVacancyTypes() {
+    return this.externalVacanciesV2Service.getVacancyTypes()
+  }
+
+  async getLocations() {
+    return this.externalVacanciesV2Service.getLocations()
+  }
+
   async getVacancies(input: VacanciesInput) {
     const vacanciesFromExternalSystem =
       await this.getVacanciesFromExternalSystem(input)

@@ -1,4 +1,9 @@
-import { useQueryState } from 'next-usequerystate'
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  useQueryStates,
+} from 'next-usequerystate'
 
 import {
   Box,
@@ -24,10 +29,17 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
+  FilterOptionListResponse,
+  GetInstitutionsQuery,
+  GetInstitutionsQueryVariables,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetVacanciesQuery,
   GetVacanciesQueryVariables,
+  GetVacancyLocationsQuery,
+  GetVacancyLocationsQueryVariables,
+  GetVacancyTypesQuery,
+  GetVacancyTypesQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -36,38 +48,83 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { shortenText } from '@island.is/web/utils/shortenText'
 
+import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
 import { GET_NAMESPACE_QUERY } from '../queries'
-import { GET_VACANCIES } from '../queries/Vacancies'
+import {
+  GET_INSTITUTIONS,
+  GET_VACANCIES,
+  GET_VACANCY_LOCATIONS,
+  GET_VACANCY_TYPES,
+} from '../queries/Vacancies'
 import { VACANCY_INTRO_MAX_LENGTH } from './utils'
 import * as styles from './VacanciesList.css'
+
+type NullableKeys<T> = { [K in keyof T]: T[K] | null }
 
 const ITEMS_PER_PAGE = 8
 
 interface VacanciesListProps {
   vacancies: GetVacanciesQuery['vacancies']['vacancies']
   namespace: Record<string, string>
+  institutionOptions: FilterOptionListResponse['options']
+  locationOptions: FilterOptionListResponse['options']
+  fieldOfWorkOptions: FilterOptionListResponse['options']
 }
 
 const VacanciesList: Screen<VacanciesListProps> = ({
   namespace,
   vacancies,
+  institutionOptions,
+  locationOptions,
+  fieldOfWorkOptions,
 }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const [searchTerm, setSearchTerm] = useQueryState('q')
-  const [selectedPage, setSelectedPage] = useQueryState('page', {
-    scroll: true,
+
+  const [parameters, setParameters] = useQueryStates({
+    fieldOfWork: parseAsArrayOf(parseAsString).withDefault([]),
+    institution: parseAsArrayOf(parseAsString).withDefault([]),
+    location: parseAsArrayOf(parseAsString).withDefault([]),
+    q: parseAsString.withDefault(''),
+    page: {
+      ...parseAsInteger.withDefault(1),
+      scroll: true,
+    },
   })
 
+  const filterCategories = [
+    {
+      id: 'location',
+      label: n('location', 'Staðsetning') as string,
+      selected: parameters.location,
+      filters: locationOptions,
+    },
+    {
+      id: 'fieldOfWork',
+      label: n('fieldOfWork', 'Störf') as string,
+      selected: parameters.fieldOfWork,
+      filters: fieldOfWorkOptions,
+    },
+    {
+      id: 'institution',
+      label: n('institution', 'Stofnun/ráðuneyti') as string,
+      selected: parameters.institution,
+      filters: institutionOptions,
+    },
+  ]
+
+  const selectedFilters = extractFilterTags(filterCategories)
+
   const clearSearch = () => {
-    // setParameters({
-    //   fieldOfWork: [],
-    //   location: [],
-    //   institution: [],
-    // })
-    // setSearchTerm('')
+    setParameters({
+      fieldOfWork: null,
+      institution: null,
+      location: null,
+      page: null,
+      q: null,
+    })
   }
 
   const mainTitle = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
@@ -125,10 +182,13 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                   'Leita í Starfatorgi',
                 )}
                 name="filterInput"
-                value={searchTerm || ''}
+                value={parameters.q}
                 onChange={(value) => {
-                  setSelectedPage(null)
-                  setSearchTerm(value)
+                  setParameters((prevParams) => ({
+                    ...prevParams,
+                    q: value || null,
+                    page: null,
+                  }))
                 }}
               />
             </Box>
@@ -152,10 +212,13 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                     'Leita í Starfatorgi',
                   )}
                   name="filterInput"
-                  value={searchTerm || ''}
+                  value={parameters.q}
                   onChange={(value) => {
-                    setSelectedPage(null)
-                    setSearchTerm(value || null)
+                    setParameters((prevParams) => ({
+                      ...prevParams,
+                      q: value || null,
+                      page: null,
+                    }))
                   }}
                 />
               </Box>
@@ -164,44 +227,56 @@ const VacanciesList: Screen<VacanciesListProps> = ({
             <FilterMultiChoice
               labelClear={n('clearSelection', 'Hreinsa val')}
               onChange={({ categoryId, selected }) => {
-                setSelectedPage(null)
-                // setParameters((prevParameters) => ({
-                //   ...prevParameters,
-                //   [categoryId]: selected,
-                // }))
+                setParameters((prevParams) => ({
+                  ...prevParams,
+                  [categoryId]: selected?.length > 0 ? selected : null,
+                  page: null,
+                }))
               }}
               onClear={(categoryId) => {
-                setSelectedPage(null)
-                // setParameters((prevParameters) => ({
-                //   ...prevParameters,
-                //   [categoryId]: [],
-                // }))
+                console.log(categoryId)
+                setParameters((prevParams) => ({
+                  ...prevParams,
+                  [categoryId]: null,
+                  page: null,
+                }))
               }}
-              categories={[]}
+              categories={filterCategories}
             />
           </Filter>
 
           <GridRow className={styles.filterTagRow} alignItems="center">
             <GridColumn span="8/12">
-              {/* <Inline space={1}>
+              <Inline space={1}>
                 {selectedFilters.map(({ label, value, category }) => (
                   <FilterTag
                     key={value}
                     onClick={() => {
-                      setParameters((prevParameters) => ({
-                        ...prevParameters,
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        [category]: (prevParameters[category] ?? []).filter(
-                          (prevValue: string) => prevValue !== value,
-                        ),
-                      }))
+                      setParameters((prevParams) => {
+                        const updatedParams = {
+                          ...prevParams,
+                          [category]: (
+                            prevParams[category as 'fieldOfWork'] ?? []
+                          ).filter((prevValue) => prevValue !== value),
+                          page: null,
+                        }
+
+                        if (
+                          !(updatedParams[category as 'fieldOfWork'] ?? [])
+                            ?.length
+                        ) {
+                          ;(
+                            updatedParams as NullableKeys<typeof updatedParams>
+                          )[category as 'fieldOfWork'] = null
+                        }
+                        return updatedParams
+                      })
                     }}
                   >
                     {label}
                   </FilterTag>
                 ))}
-              </Inline> */}
+              </Inline>
             </GridColumn>
           </GridRow>
         </Box>
@@ -350,14 +425,17 @@ const VacanciesList: Screen<VacanciesListProps> = ({
             <Box paddingTop={8}>
               <Pagination
                 variant="blue"
-                page={!selectedPage ? 1 : Number(selectedPage)}
+                page={parameters.page}
                 itemsPerPage={ITEMS_PER_PAGE}
                 totalItems={vacancies.length}
                 // totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button
                     onClick={() => {
-                      setSelectedPage(page === 1 ? null : String(page))
+                      setParameters((prevParams) => ({
+                        ...prevParams,
+                        page,
+                      }))
                     }}
                   >
                     <span className={className}>{children}</span>
@@ -372,7 +450,10 @@ const VacanciesList: Screen<VacanciesListProps> = ({
   )
 }
 
-VacanciesList.getProps = async ({ apolloClient, locale }) => {
+VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
+  const queryString = parseAsString.withDefault('').parseServerSide(query.q)
+  const page = parseAsInteger.withDefault(1).parseServerSide(query.page)
+
   // TODO: fetch vacancies with a given page number read from query params using usequerystate somehow (see /umsokn page)
 
   const namespaceResponse = await apolloClient.query<
@@ -396,20 +477,40 @@ VacanciesList.getProps = async ({ apolloClient, locale }) => {
     throw new CustomNextError(404, 'Vacancies V2 on Ísland.is are turned off')
   }
 
-  const vacanciesResponse = await apolloClient.query<
-    GetVacanciesQuery,
-    GetVacanciesQueryVariables
-  >({
-    query: GET_VACANCIES,
-    variables: {
-      input: {
-        page: 1,
+  const [
+    vacanciesResponse,
+    locationsResponse,
+    typesResponse,
+    institutionsResponse,
+  ] = await Promise.all([
+    apolloClient.query<GetVacanciesQuery, GetVacanciesQueryVariables>({
+      query: GET_VACANCIES,
+      variables: {
+        input: {
+          page,
+          query: queryString,
+        },
       },
-    },
-  })
+    }),
+    apolloClient.query<
+      GetVacancyLocationsQuery,
+      GetVacancyLocationsQueryVariables
+    >({
+      query: GET_VACANCY_LOCATIONS,
+    }),
+    apolloClient.query<GetVacancyTypesQuery, GetVacancyTypesQueryVariables>({
+      query: GET_VACANCY_TYPES,
+    }),
+    apolloClient.query<GetInstitutionsQuery, GetInstitutionsQueryVariables>({
+      query: GET_INSTITUTIONS, // TODO: rename to GET_VACANCY_INSTITUTIONS
+    }),
+  ])
 
   return {
     vacancies: vacanciesResponse.data.vacancies.vacancies,
+    institutionOptions: institutionsResponse.data.institutions.options,
+    locationOptions: locationsResponse.data.locations.options,
+    fieldOfWorkOptions: typesResponse.data.vacancyTypes.options,
     namespace,
     customAlertBanner: namespace['customAlertBanner'],
   }
