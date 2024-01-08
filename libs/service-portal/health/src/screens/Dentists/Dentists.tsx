@@ -112,9 +112,9 @@ const Dentists = () => {
             label={formatMessage(messages.yourDentistBills)}
             labelColumnSpan={['12/12']}
           />
-          <Inline space={4}>
+          <Inline space={2}>
             <DatePicker
-              size="sm"
+              size="xs"
               backgroundColor="blue"
               label={formatMessage(m.dateFrom)}
               placeholderText={undefined}
@@ -125,7 +125,7 @@ const Dentists = () => {
               })}
             />
             <DatePicker
-              size="sm"
+              size="xs"
               backgroundColor="blue"
               label={formatMessage(m.dateTo)}
               placeholderText={undefined}
