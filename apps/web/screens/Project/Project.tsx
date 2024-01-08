@@ -226,8 +226,8 @@ const ProjectPage: Screen<PageProps> = ({
             </Text>
           </Box>
         )}
-        {content && (
-          <Box className="rs_read" paddingBottom={6}>
+        {content?.length > 0 && (
+          <Box className="rs_read" paddingBottom={SLICE_SPACING}>
             {webRichText(content, {
               renderComponent: {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
