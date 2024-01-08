@@ -1,8 +1,8 @@
 # clients-social-insurance-administration
 
-This library was generated with [Nx](https://nx.dev)
+This library was generated with [Nx](https://nx.dev).
 
-There is a backwards compability hack in the `generateBackwardsCompatibleModel.yaml`. The updated api doesn't provide any input DTO's so we create our own with the `.yaml`
+There is a backwards compability hack in the types. DO NOT USE except if absolutely necessary
 
 ## Running unit tests
 

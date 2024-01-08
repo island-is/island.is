@@ -55,7 +55,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   private async initAttachments(
     application: Application,
-    type: string,
+    type: DocumentTypeEnum,
     attachments: FileType[],
   ): Promise<Attachment[]> {
     const result: Attachment[] = []
@@ -66,7 +66,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       result.push({
         name: attachment.name,
-        type: type,
+        type,
         file: pdf,
       })
     }
