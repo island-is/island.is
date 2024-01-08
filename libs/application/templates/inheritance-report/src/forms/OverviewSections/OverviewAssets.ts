@@ -267,7 +267,6 @@ export const overviewAssets = [
     },
     {
       cards: ({ answers }: Application) => {
-        console.log(answers)
         const stocks = (answers.assets as unknown as EstateAssets).stocks.data
         return (
           stocks.map((stock: StocksData) => ({
@@ -343,7 +342,6 @@ export const overviewAssets = [
     },
     {
       cards: ({ answers }: Application) => {
-        console.log(answers)
         const otherAssets = (answers.assets as unknown as EstateAssets)
           .otherAssets.data
         return (

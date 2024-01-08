@@ -144,7 +144,6 @@ export const debts = buildSection({
               },
               {
                 cards: ({ answers }: Application) => {
-                  console.log(answers)
                   const allDebts = (
                     answers.debts as unknown as ApplicationDebts
                   ).domesticAndForeignDebts.data
@@ -194,7 +193,6 @@ export const debts = buildSection({
               },
               {
                 cards: ({ answers }: Application) => {
-                  console.log(answers)
                   const puclicCharges = (
                     answers.debts as unknown as ApplicationDebts
                   ).publicCharges.data
