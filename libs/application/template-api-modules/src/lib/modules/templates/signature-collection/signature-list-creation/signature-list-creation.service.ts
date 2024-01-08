@@ -77,7 +77,7 @@ export class SignatureListCreationService extends BaseTemplateApiService {
           return errorMessages.deniedByService
       }
     })
-    throw new TemplateApiError(errors, 400)
+    throw new TemplateApiError(errors, 405)
   }
 
   async currentCollection() {

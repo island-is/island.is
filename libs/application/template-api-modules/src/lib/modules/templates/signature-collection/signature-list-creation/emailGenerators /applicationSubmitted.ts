@@ -13,7 +13,7 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
   } = props
 
   // Temp until LKS has email ready
-  const adminEmail = 'alex@juni'
+  const adminEmail = 'postur@landskjorstjorn.is'
   const answers = application.answers as CreateListSchema
 
   const owner: OwnerInput = answers.applicant
@@ -52,6 +52,12 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
           },
         },
         ...lists,
+        {
+          component: 'Copy',
+          context: {
+            copy: `Samskiptaupplýsingar framboðs. SímiÆ ${owner.phone} Netfang: ${owner.email} `,
+          },
+        },
       ],
     },
   }
