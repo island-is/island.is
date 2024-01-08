@@ -235,13 +235,13 @@ test.describe.serial('Custody tests', () => {
       .locator('button')
       .click()
 
-    const statementBuffer = await createPdf('Greinargerð sækjanda')
+    const statementPdfBuffer = await createPdf('Greinargerð sækjanda')
     const statementFileChooser = await statementFileChooserPromise
 
     await statementFileChooser.setFiles({
       name: 'TestGreinargerd.pdf',
       mimeType: 'application/pdf',
-      buffer: statementBuffer,
+      buffer: statementPdfBuffer,
     })
 
     await Promise.all([
@@ -311,13 +311,13 @@ test.describe.serial('Custody tests', () => {
     const rulingFileChooserPromise = page.waitForEvent('filechooser')
     await page.getByText('Velja gögn til að hlaða upp').click()
 
-    const rulingBuffer = await createPdf('Niðurstaða Landsréttar')
+    const rulingPdfBuffer = await createPdf('Niðurstaða Landsréttar')
     const rulingFileChooser = await rulingFileChooserPromise
 
     await rulingFileChooser.setFiles({
       name: 'TestNidurstada.pdf',
       mimeType: 'application/pdf',
-      buffer: rulingBuffer,
+      buffer: rulingPdfBuffer,
     })
 
     await Promise.all([
