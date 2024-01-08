@@ -20,7 +20,7 @@ export const IconTitleCard = ({
   dataTestId,
 }: IconTitleCardProps) => (
   <FocusableBox
-    href={href}
+    href={href ?? undefined}
     display="flex"
     flexDirection="row"
     alignItems="center"
