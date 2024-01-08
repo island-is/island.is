@@ -453,8 +453,9 @@ const VacanciesList: Screen<VacanciesListProps> = ({
 VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = parseAsString.withDefault('').parseServerSide(query.q)
   const page = parseAsInteger.withDefault(1).parseServerSide(query.page)
-
-  // TODO: fetch vacancies with a given page number read from query params using usequerystate somehow (see /umsokn page)
+  const institution = parseAsString.parseServerSide(query.institution)
+  const location = parseAsString.parseServerSide(query.location)
+  const vacancyType = parseAsString.parseServerSide(query.fieldOfWork)
 
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
@@ -489,6 +490,9 @@ VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           page,
           query: queryString,
+          institution,
+          location,
+          vacancyType,
         },
       },
     }),
