@@ -53,8 +53,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   organization,
   namespace,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
@@ -151,8 +149,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
               <Box marginBottom={8}>
                 <IconTitleCard
                   heading={linkTitle}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
                   href={organization?.link}
                   imgSrc={o(
                     'landingPageTitleCardImageSrc',
@@ -178,16 +174,11 @@ const OrganizationHomePage: Screen<HomeProps> = ({
                 <SliceMachine
                   key={slice.id}
                   slice={slice}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
                   namespace={namespace}
                   slug={organizationPage.slug}
                   fullWidth={organizationPage.theme === 'landing_page'}
                   marginBottom={
                     index === organizationPage.slices.length - 1 ? 5 : 0
-                  }
-                  paddingTop={
-                    !organizationPage.description && index === 0 ? 0 : 6
                   }
                 />
               )
@@ -229,7 +220,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
 interface HomeProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
 }
 
 const Home: Screen<HomeProps> = ({

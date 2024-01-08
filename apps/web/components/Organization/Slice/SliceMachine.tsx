@@ -186,6 +186,7 @@ export const SliceMachine = ({
     <GridContainer>
       <GridRow>
         <GridColumn
+          paddingBottom={0}
           span={
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
