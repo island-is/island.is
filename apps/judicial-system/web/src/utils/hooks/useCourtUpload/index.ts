@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 
 import {
-  CaseFile as TCaseFile,
+  CaseFile,
   CaseFileState,
-} from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
@@ -29,8 +29,8 @@ export type CaseFileStatus =
   | 'case-not-found'
   | 'unsupported'
 
-export interface CaseFile extends TCaseFile {
-  status: CaseFileStatus
+export interface CaseFileWithStatus extends CaseFile {
+  status?: CaseFileStatus
 }
 
 export const useCourtUpload = (
@@ -41,8 +41,8 @@ export const useCourtUpload = (
   const [uploadFileToCourtMutation] = useUploadFileToCourtMutation()
 
   const setFileUploadStatus = useCallback(
-    (theCase: Case, file: CaseFile, status: CaseFileStatus) => {
-      const files = theCase.caseFiles as CaseFile[]
+    (theCase: Case, file: CaseFileWithStatus, status: CaseFileStatus) => {
+      const files = theCase.caseFiles as CaseFileWithStatus[]
 
       if (files) {
         const fileIndexToUpdate = files.findIndex((f) => f.id === file.id)
@@ -59,7 +59,7 @@ export const useCourtUpload = (
 
   useEffect(() => {
     const files = (workingCase.caseFiles?.filter((f) => !f.category) ??
-      []) as CaseFile[]
+      []) as CaseFileWithStatus[]
 
     files
       .filter((file) => !file.status)
@@ -100,9 +100,9 @@ export const useCourtUpload = (
     )
   }, [setFileUploadStatus, workingCase])
 
-  const uploadFilesToCourt = async (files?: TCaseFile[]) => {
+  const uploadFilesToCourt = async (files?: CaseFile[]) => {
     if (files) {
-      const xFiles = files as CaseFile[]
+      const xFiles = files as CaseFileWithStatus[]
       xFiles.forEach(async (file) => {
         try {
           if (file.state === CaseFileState.STORED_IN_RVG && file.key) {

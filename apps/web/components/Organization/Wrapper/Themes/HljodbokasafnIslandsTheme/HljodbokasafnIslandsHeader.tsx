@@ -25,6 +25,10 @@ const HljodbokasafnIslandsHeader: React.FC<
   return (
     <DefaultHeader
       title={organizationPage.title}
+      underTitle={n(
+        'hljodbokasafnIslandsHeaderUnderTitle',
+        'Fyrir blinda, sjónskerta og fólk með lestrarhömlun',
+      )}
       image={n(
         'hljodbokasafnIslandsHeaderImage',
         'https://images.ctfassets.net/8k0h54kbe6bj/3tzrR4b3oS4x84sAfGfOlk/7a69079d123471048e6ef9130d962313/mynd_HBS_1.png',

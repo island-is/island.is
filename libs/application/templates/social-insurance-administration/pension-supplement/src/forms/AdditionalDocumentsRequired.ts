@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -7,59 +6,49 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import {
-  inReviewFormMessages,
-  pensionSupplementFormMessage,
-} from '../lib/messages'
+import { inReviewFormMessages } from '../lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'PensionSupplementInReviewUpload',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'reviewUpload',
-      title: pensionSupplementFormMessage.fileUpload.additionalFileTitle,
+      title:
+        socialInsuranceAdministrationMessage.fileUpload
+          .additionalDocumentRequiredTitle,
       children: [
         buildMultiField({
           id: 'additionalDocumentsScreen',
-          title: pensionSupplementFormMessage.fileUpload.additionalFileTitle,
+          title:
+            socialInsuranceAdministrationMessage.fileUpload
+              .additionalDocumentRequiredTitle,
+          description:
+            socialInsuranceAdministrationMessage.fileUpload
+              .additionalDocumentRequiredDescription,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
-              title:
-                pensionSupplementFormMessage.fileUpload.additionalFileTitle,
-              description:
-                pensionSupplementFormMessage.fileUpload
-                  .additionalFileDescription,
-              introduction:
-                pensionSupplementFormMessage.fileUpload
-                  .additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                pensionSupplementFormMessage.fileUpload.attachmentHeader,
-              uploadDescription:
-                pensionSupplementFormMessage.fileUpload.attachmentDescription,
-              uploadButtonLabel:
-                pensionSupplementFormMessage.fileUpload.attachmentButton,
-              uploadMultiple: true,
+              title: '',
+              ...fileUploadSharedProps,
             }),
             buildSubmitField({
               id: 'additionalDocumentsSubmit',
               title:
-                pensionSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalDocumentsEditSubmit,
               placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  name: pensionSupplementFormMessage.fileUpload
+                  name: socialInsuranceAdministrationMessage.fileUpload
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
                   event: DefaultEvents.SUBMIT,
@@ -67,11 +56,6 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),

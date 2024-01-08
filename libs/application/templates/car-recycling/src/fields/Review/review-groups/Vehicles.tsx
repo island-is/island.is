@@ -1,5 +1,5 @@
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
-import { Box } from '@island.is/island-ui/core'
+import { ActionCard, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { carRecyclingMessages } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
@@ -14,7 +14,9 @@ export const Vehicles = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
 
-  const { selectedVehicles } = getApplicationAnswers(application.answers)
+  const { selectedVehicles, canceledVehicles } = getApplicationAnswers(
+    application.answers,
+  )
 
   const { state } = application
 
@@ -58,6 +60,25 @@ export const Vehicles = ({
                 {vehicle.mileage} km
               </Box>
             )}
+          </Box>
+        )
+      })}
+
+      {canceledVehicles.map((vehicle) => {
+        return (
+          <Box paddingBottom={'gutter'}>
+            <ActionCard
+              backgroundColor="red"
+              headingVariant="h4"
+              key={vehicle.permno}
+              heading={vehicle.permno || ''}
+              text={`${vehicle.make}, ${vehicle.color}`}
+              tag={{
+                label: formatMessage(carRecyclingMessages.review.canceled),
+                variant: 'red',
+                outlined: false,
+              }}
+            />
           </Box>
         )
       })}

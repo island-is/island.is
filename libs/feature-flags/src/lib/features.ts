@@ -25,6 +25,7 @@ export enum Features {
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
   pensionSupplementApplication = 'isPensionSupplementEnable',
+  transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -62,6 +63,9 @@ export enum Features {
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
+
+  // Disable new login restrictions
+  disableNewDeviceLogins = 'disableNewDeviceLogins',
 }
 
 export enum ServerSideFeature {

@@ -1,7 +1,7 @@
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { pensionSupplementFormMessage } from '../../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/pensionSupplementUtils'
 
@@ -24,7 +24,8 @@ export const Comment = ({
           <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>
             <DataValue
               label={formatMessage(
-                pensionSupplementFormMessage.additionalInfo.commentSection,
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentSection,
               )}
               value={comment}
             />

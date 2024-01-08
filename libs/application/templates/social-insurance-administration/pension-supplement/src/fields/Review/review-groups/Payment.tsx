@@ -6,14 +6,14 @@ import {
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import { pensionSupplementFormMessage } from '../../../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/pensionSupplementUtils'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 
 export const Payment = ({
   application,
@@ -41,7 +41,9 @@ export const Payment = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
-              label={formatMessage(pensionSupplementFormMessage.payment.bank)}
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.payment.bank,
+              )}
               value={formatBankInfo(bank)}
             />
           </GridColumn>
@@ -51,7 +53,9 @@ export const Payment = ({
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <DataValue
-                label={formatMessage(pensionSupplementFormMessage.payment.iban)}
+                label={formatMessage(
+                  socialInsuranceAdministrationMessage.payment.iban,
+                )}
                 value={friendlyFormatIBAN(iban)}
               />
             </GridColumn>
@@ -63,7 +67,7 @@ export const Payment = ({
             >
               <DataValue
                 label={formatMessage(
-                  pensionSupplementFormMessage.payment.swift,
+                  socialInsuranceAdministrationMessage.payment.swift,
                 )}
                 value={friendlyFormatSWIFT(swift)}
               />
@@ -74,7 +78,7 @@ export const Payment = ({
             >
               <DataValue
                 label={formatMessage(
-                  pensionSupplementFormMessage.payment.currency,
+                  socialInsuranceAdministrationMessage.payment.currency,
                 )}
                 value={currency}
               />
@@ -88,7 +92,7 @@ export const Payment = ({
             >
               <DataValue
                 label={formatMessage(
-                  pensionSupplementFormMessage.payment.bankName,
+                  socialInsuranceAdministrationMessage.payment.bankName,
                 )}
                 value={bankName}
               />
@@ -96,7 +100,7 @@ export const Payment = ({
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
-                  pensionSupplementFormMessage.payment.bankAddress,
+                  socialInsuranceAdministrationMessage.payment.bankAddress,
                 )}
                 value={bankAddress}
               />

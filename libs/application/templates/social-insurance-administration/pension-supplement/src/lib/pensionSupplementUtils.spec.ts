@@ -1,7 +1,7 @@
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import { getAvailableYears, getAvailableMonths } from './pensionSupplementUtils'
-import { MONTHS } from './constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 describe('getAvailableYears', () => {
   it('should return available years', () => {

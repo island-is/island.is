@@ -1,10 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useGetSignedUrlLazyQuery } from './getSigendUrl.generated'
 import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSigendUrl.generated'

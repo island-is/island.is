@@ -40,7 +40,9 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.fuelCode && parseInt(x.fuelCode) === 3,
     )
 
-    if (onlyElectricVehicles.length < 5) {
+    let onlyElectricVehiclesWithGrant = onlyElectricVehicles
+
+    if (onlyElectricVehicles.length < 6) {
       onlyElectricVehicles = await Promise.all(
         onlyElectricVehicles.map(async (vehicle: VehicleMiniDto) => {
           const vehicleGrant =
@@ -50,16 +52,15 @@ export class EnergyFundsService extends BaseTemplateApiService {
             )
           return {
             ...vehicle,
-            vehicleGrant: vehicleGrant?.priceAmount,
-            vehicleGrantItemCode: vehicleGrant?.itemCode,
+            vehicleGrant: vehicleGrant[0]?.priceAmount,
+            vehicleGrantItemCode: vehicleGrant[0]?.itemCode,
           }
         }),
       )
+      onlyElectricVehiclesWithGrant = onlyElectricVehicles.filter(
+        (x) => x.vehicleGrant !== undefined,
+      )
     }
-
-    const onlyElectricVehiclesWithGrant = onlyElectricVehicles.filter(
-      (x) => x.vehicleGrant !== undefined,
-    )
 
     // Validate that user has at least 1 vehicle that fulfills requirements
     if (
@@ -79,8 +80,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
       onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
         let hasReceivedSubsidy: boolean | undefined
 
-        // Only validate if fewer than 5 items
-        if (onlyElectricVehiclesWithGrant.length < 5) {
+        // Only validate if fewer than 6 items
+        if (onlyElectricVehiclesWithGrant.length < 6) {
           // Get subsidy status
           hasReceivedSubsidy =
             await this.energyFundsClientService.checkVehicleSubsidyAvilability(
@@ -119,26 +120,57 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.permno === applicationAnswers.selectVehicle.plate,
     )
 
+    try {
+      const vehicleApiDetails = await this.vehiclesApiWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
+        vin: currentvehicleDetails?.vin || '',
+      })
+      if (
+        !vehicleApiDetails.owners?.find((x) => x.persidno === auth.nationalId)
+      ) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.vehicleNotOwner,
+            summary: coreErrorMessages.vehicleNotOwner,
+          },
+          400,
+        )
+      }
+    } catch (error) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.applicationSubmitFailed,
+          summary: coreErrorMessages.applicationSubmitFailed,
+        },
+        400,
+      )
+    }
+
     const answers = {
       nationalId: auth.nationalId,
-      vIN: applicationAnswers?.selectVehicle.vin,
+      vIN: currentvehicleDetails?.vin || '',
       carNumber: applicationAnswers?.selectVehicle.plate,
       carType: (currentvehicleDetails && currentvehicleDetails.make) || '',
-      itemcode:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrantItemCode) ||
-        '',
+      itemcode: applicationAnswers?.selectVehicle.grantItemCode || '',
+      vehicleGroup: currentvehicleDetails?.vehicleRegistrationCode || '',
       purchasePrice:
         (applicationAnswers?.vehicleDetails.price &&
           parseInt(applicationAnswers?.vehicleDetails.price)) ||
         0,
       registrationDate: currentvehicleDetails
         ? format(
+            new Date(currentvehicleDetails.newRegistrationDate || ''),
+            'yyyy-MM-dd',
+          )
+        : '',
+      firstRegDate: currentvehicleDetails
+        ? format(
             new Date(currentvehicleDetails.firstRegistrationDate || ''),
             'yyyy-MM-dd',
           )
         : '',
-      subsidyAmount:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrant) || 0,
+      subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
