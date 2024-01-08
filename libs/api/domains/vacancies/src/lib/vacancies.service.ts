@@ -76,6 +76,10 @@ export class VacanciesService {
       location: input.location,
     })
 
+    for (const vacancy of vacancyResponse.vacancies) {
+      vacancy.id = `${EXTERNAL_SYSTEM_ID_PREFIX}${vacancy.id}`
+    }
+
     // Extract institution/organization reference identifiers from the vacancies
     const referenceIdentifierSet = new Set<string>()
     for (const vacancy of vacancyResponse.vacancies) {

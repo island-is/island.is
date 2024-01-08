@@ -154,7 +154,7 @@ const VacancyDetails: Screen<VacancyDetailsProps> = ({
       <SidebarLayout
         sidebarContent={
           <Stack space={3}>
-            <LinkV2 {...linkResolver('vacancies-v2')} skipTab>
+            <LinkV2 {...linkResolver('vacanciesv2')} skipTab>
               <Button
                 preTextIcon="arrowBack"
                 preTextIconType="filled"
@@ -176,12 +176,12 @@ const VacancyDetails: Screen<VacancyDetailsProps> = ({
               { title: 'Ísland.is', href: '/' },
               {
                 title: n('breadcrumbTitle', 'Starfatorg'),
-                href: linkResolver('vacancies-v2').href,
+                href: linkResolver('vacanciesv2').href,
               },
             ]}
           />
           <Hidden above="sm">
-            <LinkV2 {...linkResolver('vacancies-v2')} skipTab>
+            <LinkV2 {...linkResolver('vacanciesv2')} skipTab>
               <Button
                 preTextIcon="arrowBack"
                 preTextIconType="filled"

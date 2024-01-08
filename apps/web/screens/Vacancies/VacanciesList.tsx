@@ -239,11 +239,11 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                 >
                   <FocusableBox
                     height="full"
-                    href={`${
-                      linkResolver('vacancydetails-v2', [
+                    href={
+                      linkResolver('vacancydetailsv2', [
                         vacancy.id?.toString() as string,
                       ]).href
-                    }`}
+                    }
                     background="white"
                     borderRadius="large"
                     borderColor="blue200"

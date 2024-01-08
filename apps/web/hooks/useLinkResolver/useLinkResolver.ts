@@ -91,20 +91,20 @@ export const routesTemplate = {
     is: '/handbaekur/[slug]/[chapterSlug]',
     en: '/en/manuals/[slug]/[chapterSlug]',
   },
+  vacanciesv2: {
+    is: '/starfatorg-v2',
+    en: '',
+  },
+  vacancydetailsv2: {
+    is: '/starfatorg-v2/[id]',
+    en: '',
+  },
   vacancies: {
     is: '/starfatorg',
     en: '',
   },
   vacancydetails: {
     is: '/starfatorg/[id]',
-    en: '',
-  },
-  'vacancies-v2': {
-    is: '/starfatorg-v2',
-    en: '',
-  },
-  'vacancydetails-v2': {
-    is: '/starfatorg-v2/[id]',
     en: '',
   },
   digitalicelandservices: {
