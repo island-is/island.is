@@ -68,14 +68,19 @@ export const AdditionalEstateMember = ({
 
   const values = getValues()
   const currentEstateMember = values?.estate?.estateMembers?.[index]
+
   const hasForeignCitizenship =
     currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
   const birthDate = currentEstateMember?.dateOfBirth
+
   const memberAge =
     hasForeignCitizenship && birthDate
       ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
           ?.years
       : kennitala.info(currentEstateMember.nationalId)?.age
+
+  const hideContactInfo = kennitala.isPerson(currentEstateMember.nationalId) &&
+  memberAge !== undefined && memberAge < 18
 
   useEffect(() => {
     clearErrors(nameField)
@@ -192,29 +197,33 @@ export const AdditionalEstateMember = ({
             />
           </GridColumn>
         )}
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-          <InputController
-            id={emailField}
-            name={emailField}
-            label={formatMessage(m.email)}
-            defaultValue={field.email || ''}
-            backgroundColor="blue"
-            error={error?.email}
-            required
-          />
-        </GridColumn>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-          <InputController
-            id={phoneField}
-            name={phoneField}
-            label={formatMessage(m.phone)}
-            defaultValue={field.phone || ''}
-            backgroundColor="blue"
-            format={'###-####'}
-            error={error?.phone}
-            required
-          />
-        </GridColumn>
+        {!hideContactInfo && (
+          <>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <InputController
+                id={emailField}
+                name={emailField}
+                label={formatMessage(m.email)}
+                defaultValue={field.email || ''}
+                backgroundColor="blue"
+                error={error?.email}
+                required
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <InputController
+                id={phoneField}
+                name={phoneField}
+                label={formatMessage(m.phone)}
+                defaultValue={field.phone || ''}
+                backgroundColor="blue"
+                format={'###-####'}
+                error={error?.phone}
+                required
+              />
+            </GridColumn>
+          </>
+        )}
       </GridRow>
       {/* ADVOCATE */}
       {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
