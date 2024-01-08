@@ -591,8 +591,8 @@ export class NotificationService {
         this.config.email.fromName,
       )
     } catch (error) {
-      // Tolerate failure, but log error
-      this.logger.error(
+      // Tolerate failure, but log warning - use warning instead of error to avoid monitoring alerts
+      this.logger.warn(
         `Failed to upload email to court for case ${theCase.id}`,
         { error },
       )
