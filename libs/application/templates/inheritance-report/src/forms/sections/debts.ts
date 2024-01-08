@@ -8,8 +8,11 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { format as formatNationalId } from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
+import { AllDebts, ApplicationDebts } from '../../types'
 
 export const debts = buildSection({
   id: 'debts',
@@ -127,6 +130,33 @@ export const debts = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'estateAssetsCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) => {
+                  const allDebts = (answers.debts as unknown as ApplicationDebts)
+                    .domesticAndForeignDebts.data
+                  return (
+                    allDebts.map((debt: AllDebts) => ({
+                      title: debt.creditorName,
+                      description: [
+                        `${m.nationalId.defaultMessage}: ${formatNationalId (
+                          debt.nationalId ?? '',
+                        )}`,
+                        `${m.debtsBalance.defaultMessage}: ${formatCurrency(
+                          debt.balance ?? '0',
+                        )}`,
+                      ],
+                    })) ?? []
+                  )
+                },
+              },
+            ),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',

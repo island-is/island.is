@@ -202,3 +202,36 @@ export interface BankAccounts {
   data: BankAccountsData[]
   total: number
 }
+
+export interface AllDebts {
+  balance: string;
+  nationalId: string;
+  creditorName: string;
+  taxFreeInheritance: number;
+}
+
+export interface ApplicationDebts {
+  publicCharges: PublicCharges;
+  domesticAndForeignDebts: DomesticAndForeignDebts;
+}
+
+interface PublicChargesData {
+  taxFreeInheritance: number;
+  publicChargesAmount: string;
+}
+
+interface DomesticAndForeignDebtsData {
+  balance: string;
+  nationalId: string;
+  creditorName: string;
+  taxFreeInheritance: number;
+}
+interface DomesticAndForeignDebts {
+  data: DomesticAndForeignDebtsData[];
+  total: number;
+}
+
+interface PublicCharges {
+  data: PublicChargesData[];
+  total: number;
+}

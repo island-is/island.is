@@ -5,9 +5,7 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { overviewAssets } from '../OverviewSections/OverviewAssets'
 
