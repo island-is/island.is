@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationName: {
     id: 'sls.application:applicationName',
-    defaultMessage: 'Mæla með lista',
+    defaultMessage: 'Mæla með framboði',
     description: '',
   },
   institution: {
@@ -106,14 +106,14 @@ export const m = defineMessages({
   },
   signList: {
     id: 'sls.application:signList',
-    defaultMessage: 'Mæla með lista',
+    defaultMessage: 'Mæla með framboði',
     description: '',
   },
 
   /* List Signed */
   listSigned: {
     id: 'sls.application:listSigned',
-    defaultMessage: 'Þú hefur mælt með lista',
+    defaultMessage: 'Þú hefur mælt með framboði',
     description: '',
   },
   listSignedDescription: {

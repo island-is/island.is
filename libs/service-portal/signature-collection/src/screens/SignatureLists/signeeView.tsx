@@ -136,7 +136,11 @@ const SigneeView = () => {
                     key={list.id}
                     backgroundColor="white"
                     heading={list.owner.name + ' - ' + list.area.name}
-                    eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
+                    eyebrow={
+                      formatMessage(m.endTime) +
+                      ' ' +
+                      format(new Date(list.endTime), 'dd.MM.yyyy')
+                    }
                     text={formatMessage(m.collectionTitle)}
                     cta={{
                       label: formatMessage(m.signList),

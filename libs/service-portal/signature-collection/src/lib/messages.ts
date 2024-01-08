@@ -14,7 +14,7 @@ export const m = defineMessages({
   },
   createListButton: {
     id: 'sp.signatureCollection:createListButton',
-    defaultMessage: 'Stofna meðmælalista',
+    defaultMessage: 'Stofna',
     description: '',
   },
   myListsHeader: {
@@ -25,6 +25,11 @@ export const m = defineMessages({
   collectionTitle: {
     id: 'sp.signatureCollection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  endTime: {
+    id: 'sp.signatureCollection:endTime',
+    defaultMessage: 'Lokadagur:',
     description: '',
   },
   viewList: {

@@ -29,31 +29,22 @@ const OwnerView = () => {
           <IntroHeader
             title={formatMessage(m.pageTitle)}
             intro={formatMessage(m.pageDescription)}
-          >
-            {listsForUser.length === 0 && (
-              <GridColumn span={['8/8', '3/8']}>
-                <Box
-                  display={'flex'}
-                  justifyContent={['flexStart', 'flexEnd']}
-                  paddingTop={[2]}
-                >
-                  <Button
-                    icon="open"
-                    iconType="outline"
-                    onClick={() =>
-                      window.open(
-                        `${document.location.origin}/umsoknir/medmaelalisti/`,
-                      )
-                    }
-                    size="small"
-                  >
-                    {formatMessage(m.createListButton)}
-                  </Button>
-                </Box>
-              </GridColumn>
-            )}
-          </IntroHeader>
-          <Box marginTop={10}>
+          />
+          {listsForUser.length === 0 && (
+            <Button
+              icon="open"
+              iconType="outline"
+              onClick={() =>
+                window.open(
+                  `${document.location.origin}/umsoknir/medmaelalisti/`,
+                )
+              }
+              size="small"
+            >
+              {formatMessage(m.createListButton)}
+            </Button>
+          )}
+          <Box marginTop={7}>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myListsHeader)}
             </Text>
@@ -63,7 +54,11 @@ const OwnerView = () => {
                   <ActionCard
                     backgroundColor="white"
                     heading={list.owner.name + ' - ' + list.area.name}
-                    eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
+                    eyebrow={
+                      formatMessage(m.endTime) +
+                      ' ' +
+                      format(new Date(list.endTime), 'dd.MM.yyyy')
+                    }
                     text={formatMessage(m.collectionTitle)}
                     cta={{
                       label: formatMessage(m.viewList),

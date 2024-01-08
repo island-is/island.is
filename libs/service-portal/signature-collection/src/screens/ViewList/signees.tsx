@@ -4,6 +4,7 @@ import {
   Table as T,
   Pagination,
   FilterInput,
+  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -82,8 +83,8 @@ const Signees = () => {
                 </T.Row>
               </T.Head>
               <T.Body>
-                {signees.map((s) => {
-                  const boxColor = /*person.paper ? 'purple100' : */ 'white'
+                {signees.map((s: Signature) => {
+                  const boxColor = s.isDigital ? 'white' : 'purple100'
                   return (
                     <T.Row key={s.id}>
                       <T.Data
@@ -108,14 +109,17 @@ const Signees = () => {
                         box={{ background: boxColor }}
                         text={{ variant: 'medium' }}
                       >
-                        {formatMessage(m.tempMessage)}
+                        {s.signee.address}
                       </T.Data>
-                      <T.Data></T.Data>
-                      {/*<T.Data box={{ background: boxColor }}>
-                        {person.paper && (
-                          <Icon icon="document" type="outline" color="blue400" />
+                      <T.Data box={{ background: boxColor }}>
+                        {!s.isDigital && (
+                          <Icon
+                            icon="document"
+                            type="outline"
+                            color="blue400"
+                          />
                         )}
-                        </T.Data>*/}
+                      </T.Data>
                     </T.Row>
                   )
                 })}
