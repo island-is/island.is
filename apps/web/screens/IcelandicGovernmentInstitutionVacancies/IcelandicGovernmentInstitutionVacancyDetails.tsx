@@ -129,6 +129,17 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
 
   const ogTitlePostfix = n('ogTitlePrefixForDetailsPage', ' | Ísland.is')
 
+  const getSocialImageUrl = (url: string | undefined | null) => {
+    const isSvg = url ? url.trim().toLocaleLowerCase().endsWith('svg') : false
+
+    return isSvg
+      ? n(
+          'ogImageUrl',
+          'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+        )
+      : url
+  }
+
   return (
     <Box>
       <HeadWithSocialSharing
@@ -137,7 +148,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
           vacancy?.plainTextIntro ?? '',
           VACANCY_INTRO_MAX_LENGTH,
         )}
-        imageUrl={n('ogDetailsImageUrl', vacancy?.logoUrl)}
+        imageUrl={getSocialImageUrl(vacancy?.logoUrl) ?? ''}
       >
         <meta name="robots" content="noindex, nofollow" />
       </HeadWithSocialSharing>

@@ -1,3 +1,5 @@
+import { UploadFile, fileToObject } from '@island.is/island-ui/core'
+import { uuid } from 'uuidv4'
 import XLSX from 'xlsx'
 
 export const pageSize = 10
@@ -15,15 +17,9 @@ export type Filters = {
   input: string
 }
 
-export const resultsForComparison = {
-  nationalId: '010130-2989',
-  name: 'Guðmundur Guðmundsson',
-  list: 'Gervimaður Útlönd - Sunnlendingafjórðungur',
-}
-
 export const downloadFile = () => {
   const name = 'meðmæli.xlsx'
-  const sheetData = [['Kennitala'], []]
+  const sheetData = [['Kennitala', 'Bls'], []]
 
   const getFile = (name: string, output: string | undefined) => {
     const uri =
@@ -48,4 +44,31 @@ export const downloadFile = () => {
     type: 'base64',
   })
   getFile(name, excelBuffer)
+}
+
+// Bulk upload and compare
+export const createFileList = (files: File[], fileList: UploadFile[]) => {
+  const uploadFiles = files.map((file) => fileToObject(file))
+  const uploadFilesWithKey = uploadFiles.map((f) => ({
+    ...f,
+    key: uuid(),
+  }))
+  return [...fileList, ...uploadFilesWithKey]
+}
+
+export const getFileData = async (newFile: File[]) => {
+  const buffer = await newFile[0].arrayBuffer()
+  const file = XLSX.read(buffer, { type: 'buffer' })
+
+  const data = [] as any
+  const sheets = file.SheetNames
+
+  for (let i = 0; i < sheets.length; i++) {
+    const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
+    temp.forEach((res) => {
+      data.push(res)
+    })
+  }
+
+  return data
 }

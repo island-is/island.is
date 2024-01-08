@@ -5,14 +5,16 @@ import { useRouter } from 'next/router'
 import { AlertBanner, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Skeleton } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  PageHeader,
+  Skeleton,
+} from '@island.is/judicial-system-web/src/components'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import UserForm from '../UserForm/UserForm'
-import { useUserQuery } from './getUser.generated'
 import { useUpdateUserMutation } from './updateUser.generated'
+import { useUserQuery } from './user.generated'
 import { adminStrings as strings } from '../Admin.strings'
 import * as styles from '../Users/Users.css'
 
@@ -35,7 +37,16 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
     useUpdateUserMutation()
 
   const saveUser = async (user: User) => {
-    if (!userUpdating && user && user.institution) {
+    if (
+      !userUpdating &&
+      user.name &&
+      user.role &&
+      user.title &&
+      user.mobileNumber &&
+      user.email &&
+      user.active &&
+      user.institution
+    ) {
       await updateUserMutation({
         variables: {
           input: {

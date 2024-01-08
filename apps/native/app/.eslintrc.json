@@ -1,6 +1,6 @@
 {
   "extends": ["plugin:@nx/react", "../../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*", "node_modules"],
+  "ignorePatterns": ["!**/*", "node_modules", "**/*.stories.tsx"],
   "rules": {},
   "overrides": [
     {
@@ -14,7 +14,7 @@
         ]
       }
     },
-    {"files": ["*.ts", "*.tsx"], "rules": {}},
-    {"files": ["*.js", "*.jsx"], "rules": {}}
+    { "files": ["*.ts", "*.tsx"], "rules": {} },
+    { "files": ["*.js", "*.jsx"], "rules": {} }
   ]
 }

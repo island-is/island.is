@@ -1,4 +1,9 @@
-import { Inject, UseGuards, forwardRef } from '@nestjs/common'
+import {
+  Inject,
+  NotFoundException,
+  UseGuards,
+  forwardRef,
+} from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import parse from 'date-fns/parse'
 
@@ -25,6 +30,11 @@ export class VehicleAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateVehicleInput,
   ) {
+    logger.info(`Creating Vehicle ${input.permno}`, {
+      permno: input.permno,
+      mileage: input.mileage,
+    })
+
     const vehicle = await this.samgongustofaService.getUserVehicle(
       user.nationalId,
       input.permno,
@@ -34,7 +44,9 @@ export class VehicleAppSysResolver {
         `User ${user.nationalId} does not own the requested vehicle`,
         { permno: input.permno, user },
       )
-      return null
+      throw new NotFoundException(
+        `User ${user.nationalId} does not own the requested vehicle`,
+      )
     }
 
     const newVehicle = new VehicleModel()

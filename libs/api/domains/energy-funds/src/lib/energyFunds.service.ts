@@ -48,8 +48,8 @@ export class EnergyFundsService {
       )
 
     return {
-      vehicleGrant: vehicleGrantItem.priceAmount,
-      vehicleGrantItemCode: vehicleGrantItem.itemCode,
+      vehicleGrant: vehicleGrantItem[0]?.priceAmount,
+      vehicleGrantItemCode: vehicleGrantItem[0]?.itemCode,
       hasReceivedSubsidy,
     }
   }

@@ -6,9 +6,9 @@ import {
   Box,
   Bullet,
   BulletList,
-  CategoryCard,
   SkeletonLoader,
   InputError,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { information, applicationCheck, error } from '../../lib/messages'
@@ -81,11 +81,15 @@ export const VehicleSelectField: FC<
             !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
             !!response?.vehicleOwnerchangeChecksByPermno
               ?.validationErrorMessages?.length
-          const plate = disabled ? '' : currentVehicle.permno || ''
-          setPlate(plate)
+          const permno = disabled ? '' : currentVehicle.permno || ''
+
+          setPlate(permno)
           setValue('pickVehicle.type', currentVehicle.make)
-          setValue('pickVehicle.plate', plate)
+          setValue('pickVehicle.plate', permno)
           setValue('pickVehicle.color', currentVehicle.color || undefined)
+          if (permno) setValue('vehicleInfo.plate', permno)
+          if (permno) setValue('vehicleInfo.type', currentVehicle.make)
+
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -133,10 +137,11 @@ export const VehicleSelectField: FC<
         ) : (
           <Box>
             {selectedVehicle && (
-              <CategoryCard
-                colorScheme={disabled ? 'red' : 'blue'}
+              <ActionCard
+                backgroundColor={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
+                focused={true}
               />
             )}
             {selectedVehicle && disabled && (
