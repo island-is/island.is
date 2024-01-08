@@ -103,6 +103,16 @@ export const m = defineMessages({
     defaultMessage: 'Mæla með frambjóðanda',
     description: '',
   },
+  selectCandidate: {
+    id: 'sls.application:selectCandidate',
+    defaultMessage: 'Veldu frambjóðanda',
+    description: '',
+  },
+  selectCandidateDescription: {
+    id: 'sls.application:selectCandidate',
+    defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með',
+    description: '',
+  },
   listDateTil: {
     id: 'slc.application:listDateTil',
     defaultMessage: 'Lokadagur',

@@ -2,131 +2,127 @@ import {
   ActionCard,
   Box,
   Button,
-  GridColumn,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader, Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import { useGetListsForUser, useGetSignedList } from '../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../Skeletons'
 import { useMutation } from '@apollo/client'
 import { unSignList } from '../mutations'
-import { Modal } from '@island.is/react/components'
+import { SignatureCollectionSuccess } from '@island.is/api/schema'
 
 const SigneeView = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-
   const { signedList, loadingSignedList, refetchSignedList } =
     useGetSignedList()
-  const { listsForUser, loadingUserLists } = useGetListsForUser()
+  const { listsForUser, loadingUserLists, refetchListsForUser } =
+    useGetListsForUser()
 
-  const [unSign] = useMutation(unSignList, {
-    onCompleted: (res) => {
-      refetchSignedList()
-      if (res?.signatureCollectionUnsign.success) {
-        toast.success(formatMessage(m.unSignSuccess))
-      } else {
-        toast.error(formatMessage(m.unSignError))
-      }
+  const [unSign, { loading }] = useMutation(unSignList, {
+    variables: {
+      input: {
+        id: signedList?.id,
+      },
     },
   })
 
-  const SignedList = () => {
-    return (
-      <>
-        <ActionCard
-          heading={signedList.candidate.name + ' - ' + signedList.area.name}
-          eyebrow={
-            formatMessage(m.endTime) +
-            ' ' +
-            format(new Date(signedList.endTime), 'dd.MM.yyyy')
+  const onUnSignList = async () => {
+    await unSign().then(({ data }) => {
+      if (
+        (
+          data as any as {
+            signatureCollectionUnsign: SignatureCollectionSuccess
           }
-          text={formatMessage(m.collectionTitle)}
-          cta={{
-            label: formatMessage(m.unSignList),
-            buttonType: {
-              variant: 'text',
-              colorScheme: 'destructive',
-            },
-            onClick: () => setModalIsOpen(true),
-            icon: undefined,
-          }}
-        />
-        <Modal
-          label=""
-          closeButtonLabel=""
-          title={formatMessage(m.unSignModalMessage)}
-          id="unSignList"
-          isVisible={modalIsOpen}
-          onClose={() => setModalIsOpen(false)}
-        >
-          <Box marginTop={10} display="flex" justifyContent="center">
-            <Button
-              onClick={() => {
-                unSign({
-                  variables: {
-                    input: {
-                      id: signedList.id,
-                    },
-                  },
-                })
-                setModalIsOpen(false)
-              }}
-            >
-              {formatMessage(m.unSignModalConfirmButton)}
-            </Button>
-          </Box>
-        </Modal>
-      </>
-    )
+        ).signatureCollectionUnsign.success
+      ) {
+        toast.success(formatMessage(m.unSignSuccess))
+        setModalIsOpen(false)
+        refetchSignedList()
+        refetchListsForUser()
+      } else {
+        toast.error(formatMessage(m.unSignError))
+        setModalIsOpen(false)
+      }
+    })
   }
+
   return (
-    <div>
+    <Box>
       {!loadingSignedList && !loadingUserLists ? (
         <Box>
           <IntroHeader
             title={formatMessage(m.pageTitle)}
             intro={formatMessage(m.pageDescription)}
-          >
-            {listsForUser.length === 0 && (
-              <GridColumn span={['8/8', '3/8']}>
-                <Box
-                  display={'flex'}
-                  justifyContent={['flexStart', 'flexEnd']}
-                  paddingTop={[2]}
-                >
-                  <Button
-                    icon="open"
-                    iconType="outline"
-                    onClick={() =>
-                      window.open(
-                        `${document.location.origin}/umsoknir/medmaelalisti/`,
-                      )
-                    }
-                    size="small"
-                  >
-                    {formatMessage(m.createListButton)}
-                  </Button>
-                </Box>
-              </GridColumn>
-            )}
-          </IntroHeader>
+          />
+          {listsForUser.length === 0 && (
+            <Button
+              icon="open"
+              iconType="outline"
+              onClick={() =>
+                window.open(
+                  `${document.location.origin}/umsoknir/medmaelalisti/`,
+                )
+              }
+              size="small"
+            >
+              {formatMessage(m.createListButton)}
+            </Button>
+          )}
+          {/* Signed list */}
           {!!signedList && (
             <Box marginTop={10}>
               <Text variant="h4" marginBottom={3}>
                 {formatMessage(m.mySigneeListsHeader)}
               </Text>
-              <SignedList />
+              <ActionCard
+                heading={
+                  signedList?.candidate.name + ' - ' + signedList?.area.name
+                }
+                eyebrow={
+                  formatMessage(m.endTime) +
+                  ' ' +
+                  format(new Date(signedList?.endTime), 'dd.MM.yyyy')
+                }
+                text={formatMessage(m.collectionTitle)}
+                cta={{
+                  label: formatMessage(m.unSignList),
+                  buttonType: {
+                    variant: 'text',
+                    colorScheme: 'destructive',
+                  },
+                  onClick: () => setModalIsOpen(true),
+                  icon: undefined,
+                }}
+              />
+              <Modal
+                id="unSignList"
+                isVisible={modalIsOpen}
+                toggleClose={false}
+                initialVisibility={false}
+              >
+                <Text variant="h2">{formatMessage(m.unSignModalMessage)}</Text>
+                <Box marginTop={10} display="flex" justifyContent="center">
+                  <Button
+                    loading={loading}
+                    onClick={() => {
+                      onUnSignList()
+                    }}
+                  >
+                    {formatMessage(m.unSignModalConfirmButton)}
+                  </Button>
+                </Box>
+              </Modal>
             </Box>
           )}
-
+          {/* Other available lists */}
           <Box marginTop={10}>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.mySigneeListsByAreaHeader)}
@@ -163,7 +159,7 @@ const SigneeView = () => {
       ) : (
         <Skeleton />
       )}
-    </div>
+    </Box>
   )
 }
 

@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import { useIsOwner } from '../hooks'
+import { useGetListsForUser, useIsOwner } from '../hooks'
 import { useMutation } from '@apollo/client'
 import { SignatureCollectionSuccess } from '../../types/schema'
 import { cancelCollectionMutation } from '../mutations'
@@ -13,15 +13,13 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const { refetchIsOwner } = useIsOwner()
-  const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
-    cancelCollectionMutation,
-    {
+  const { refetchListsForUser } = useGetListsForUser()
+  const [cancelCollection, { loading }] =
+    useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {
       variables: { input: { id: collectionId } },
-    },
-  )
+    })
 
-  const onUnSignList = async () => {
-    setModalIsOpen(false)
+  const onCancelCollection = async () => {
     await cancelCollection().then(({ data }) => {
       if (
         (
@@ -30,9 +28,13 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
           }
         ).signatureCollectionCancel.success
       ) {
+        toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
+        setModalIsOpen(false)
         refetchIsOwner()
+        refetchListsForUser()
       } else {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
+        setModalIsOpen(false)
       }
     })
   }
@@ -54,11 +56,11 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
           </Button>
         }
       >
-        <Text variant="h1" paddingTop={5}>
+        <Text variant="h2">
           {formatMessage(m.cancelCollectionModalMessage)}
         </Text>
         <Box marginTop={10} display="flex" justifyContent="center">
-          <Button onClick={() => onUnSignList()}>
+          <Button onClick={() => onCancelCollection()} loading={loading}>
             {formatMessage(m.cancelCollectionModalConfirmButton)}
           </Button>
         </Box>

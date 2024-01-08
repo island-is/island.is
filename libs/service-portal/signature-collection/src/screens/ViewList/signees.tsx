@@ -4,7 +4,6 @@ import {
   Table as T,
   Pagination,
   FilterInput,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -85,24 +84,16 @@ const Signees = () => {
                 {signees.map((s: Signature) => {
                   return (
                     <T.Row key={s.id}>
-                      <T.Data
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {format(new Date(), 'dd.MM.yyyy')}
                       </T.Data>
-                      <T.Data
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {s.signee.name}
                       </T.Data>
-                      <T.Data
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {formatNationalId(s.signee.nationalId)}
                       </T.Data>
-                      <T.Data
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {s.signee.address}
                       </T.Data>
                     </T.Row>

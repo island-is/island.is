@@ -101,6 +101,11 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
     description: '',
   },
+  cancelCollectionModalToastSuccess: {
+    id: 'sp.signatureCollection:cancelCollectionModalToastSuccess',
+    defaultMessage: 'Tókst að hætta við söfnun meðmæla',
+    description: '',
+  },
 
   /* Skoða lista */
   listPeriod: {

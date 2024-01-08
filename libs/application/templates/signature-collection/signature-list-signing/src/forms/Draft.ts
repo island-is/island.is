@@ -2,8 +2,8 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
-  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
@@ -37,8 +37,8 @@ export const Draft: Form = buildForm({
       title: m.information,
       children: [
         buildSubSection({
-          id: 'listInfo',
-          title: m.listName,
+          id: 'selectCandidate',
+          title: m.selectCandidate,
           condition: (_, externalData) => {
             const lists = getValueViaPath(
               externalData,
@@ -48,27 +48,34 @@ export const Draft: Form = buildForm({
             return lists.length > 1
           },
           children: [
-            buildSelectField({
-              id: 'listId',
-              title: m.listName,
-              defaultValue: ({ externalData }: Application) => {
-                const lists = getValueViaPath(
-                  externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
-                return lists[0].id
-              },
-              options: ({
-                externalData: {
-                  getList: { data },
-                },
-              }) => {
-                return (data as SignatureCollectionList[]).map((list) => ({
-                  value: list.id,
-                  label: list.title,
-                }))
-              },
+            buildMultiField({
+              id: 'selectCandidate',
+              title: m.selectCandidate,
+              description: m.selectCandidateDescription,
+              children: [
+                buildRadioField({
+                  id: 'listId',
+                  title: '',
+                  defaultValue: ({ externalData }: Application) => {
+                    const lists = getValueViaPath(
+                      externalData,
+                      'getList.data',
+                      [],
+                    ) as SignatureCollectionList[]
+                    return lists[0].id
+                  },
+                  options: ({
+                    externalData: {
+                      getList: { data },
+                    },
+                  }) => {
+                    return (data as SignatureCollectionList[]).map((list) => ({
+                      value: list.id,
+                      label: list.title,
+                    }))
+                  },
+                }),
+              ],
             }),
           ],
         }),
