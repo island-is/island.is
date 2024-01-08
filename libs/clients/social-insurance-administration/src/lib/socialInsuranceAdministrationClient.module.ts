@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
-import {
-  ApiConfiguration,
-} from './apiConfiguration'
+import { ApiConfiguration } from './apiConfiguration'
 import { exportedApis } from './apis'
 
 @Module({
