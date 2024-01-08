@@ -47,7 +47,7 @@ export const SignatureLists: FC<
                     }
                     key={list.title}
                     backgroundColor="white"
-                    heading={list.owner.name}
+                    heading={list.title}
                     text={t('collectionTitle', 'Forsetakosningar 2024')}
                     cta={{
                       label: t('sign', 'Mæla með framboði'),

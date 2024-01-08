@@ -2,7 +2,6 @@ import {
   ActionCard,
   Box,
   Button,
-  GridColumn,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -53,12 +52,8 @@ const OwnerView = () => {
                 return (
                   <ActionCard
                     backgroundColor="white"
-                    heading={list.owner.name + ' - ' + list.area.name}
-                    eyebrow={
-                      formatMessage(m.endTime) +
-                      ' ' +
-                      format(new Date(list.endTime), 'dd.MM.yyyy')
-                    }
+                    heading={list.candidate.name + ' - ' + list.area.name}
+                    eyebrow={formatMessage(m.endTime) + ' - ' + format(new Date(list.endTime), 'dd.MM.yyyy')}
                     text={formatMessage(m.collectionTitle)}
                     cta={{
                       label: formatMessage(m.viewList),

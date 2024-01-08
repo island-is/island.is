@@ -8,13 +8,15 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { Events, Roles, States } from './constants'
+import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { StateLifeCycle } from '@island.is/application/types'
+import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -31,6 +33,7 @@ const SignListTemplate: ApplicationTemplate<
   name: m.applicationName,
   institution: m.institution,
   featureFlag: Features.signatureListCreation,
+  allowInitialQueryParameter: true,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -58,7 +61,12 @@ const SignListTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                CanSignApi,
+                GetListApi,
+              ],
             },
           ],
         },
@@ -110,12 +118,11 @@ const SignListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: WeekLifeCycle,
-          /* Add when ready
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          })*/
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

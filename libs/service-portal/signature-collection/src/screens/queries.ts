@@ -13,7 +13,8 @@ export const GetListById = gql`
       }
       endTime
       startTime
-      owner {
+      candidate {
+        id
         nationalId
         name
         phone
@@ -22,12 +23,10 @@ export const GetListById = gql`
       collectors {
         nationalId
         name
-        phone
-        email
       }
       active
       collectionId
-      link
+      slug
       numberOfSignatures
     }
   }
@@ -63,7 +62,8 @@ export const GetSignedList = gql`
       }
       endTime
       startTime
-      owner {
+      candidate {
+        id
         nationalId
         name
         phone
@@ -72,12 +72,10 @@ export const GetSignedList = gql`
       collectors {
         nationalId
         name
-        phone
-        email
       }
       active
       collectionId
-      link
+      slug
     }
   }
 `
@@ -103,7 +101,8 @@ export const GetListsForUser = gql`
       }
       endTime
       startTime
-      owner {
+      candidate {
+        id
         nationalId
         name
         phone
@@ -112,12 +111,10 @@ export const GetListsForUser = gql`
       collectors {
         nationalId
         name
-        phone
-        email
       }
       active
       collectionId
-      link
+      slug
       numberOfSignatures
     }
   }
