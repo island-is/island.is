@@ -17,6 +17,7 @@ import {
   OrganizationWrapper,
   SliceMachine,
 } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   Query,
@@ -146,7 +147,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
                 </Inline>
               </Box>
 
-              <Box marginBottom={8}>
+              <Box marginBottom={SLICE_SPACING}>
                 <IconTitleCard
                   heading={linkTitle}
                   href={organization?.link}
@@ -168,7 +169,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
               )}
             </GridContainer>
           )}
-          <Stack space={8}>
+          <Stack space={SLICE_SPACING}>
             {organizationPage?.slices?.map((slice, index) => {
               return (
                 <SliceMachine
@@ -187,7 +188,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
         </Box>
       }
     >
-      <Stack space={8}>
+      <Stack space={SLICE_SPACING}>
         {organizationPage?.bottomSlices.map((slice) => (
           <SliceMachine
             key={slice.id}

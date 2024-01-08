@@ -14,7 +14,6 @@ import Link from 'next/link'
 import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
-  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -27,6 +26,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { BorderAbove } from '@island.is/web/components'
 import {
   TimelineEvent,
   TimelineSlice as Timeline,
@@ -227,14 +227,6 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
 
   const monthEvents = eventMap.get(months[month].year)?.get(months[month].month)
 
-  const borderProps: BoxProps = slice.hasBorderAbove
-    ? {
-        borderTopWidth: 'standard',
-        borderColor: 'standard',
-        paddingTop: 6,
-      }
-    : {}
-
   const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -316,7 +308,8 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                 span={['9/9', '9/9', '7/9']}
                 offset={['0', '0', '1/9']}
               >
-                <Box {...borderProps}>
+                {slice.hasBorderAbove && <BorderAbove />}
+                <Box>
                   <Text variant="h2" paddingBottom={3}>
                     {slice.title}
                   </Text>
