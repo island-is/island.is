@@ -8,7 +8,7 @@ import { FC } from 'react'
 
 export const ListCreated: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const slug = application.externalData.createLists.data as string
+  const {slug} = application.externalData.createLists.data as {slug: string}
   return (
     <>
       <Box>
