@@ -215,7 +215,7 @@ export interface ApplicationDebts {
   domesticAndForeignDebts: DomesticAndForeignDebts;
 }
 
-interface PublicChargesData {
+export interface PublicChargesData {
   taxFreeInheritance: number;
   publicChargesAmount: string;
 }
@@ -231,7 +231,7 @@ interface DomesticAndForeignDebts {
   total: number;
 }
 
-interface PublicCharges {
+export interface PublicCharges {
   data: PublicChargesData[];
   total: number;
 }
