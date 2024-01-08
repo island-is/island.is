@@ -12,6 +12,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { BorderAbove } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import { OverviewLinks } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -34,7 +35,7 @@ export const OverviewLinksSlice: React.FC<
       <GridContainer>
         {slice.hasBorderAbove && <BorderAbove />}
         <Box>
-          <Stack space={6}>
+          <Stack space={SLICE_SPACING}>
             {slice.overviewLinks.map(
               (
                 {
