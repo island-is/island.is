@@ -266,7 +266,7 @@ export const PaymentOverview = () => {
                   />
                 </>
               ) : (
-                <Problem type="no_data" />
+                <Problem type="no_data" noBorder />
               )}
             </Box>
           </Stack>

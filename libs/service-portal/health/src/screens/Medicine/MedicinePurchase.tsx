@@ -113,11 +113,6 @@ export const MedicinePurchase = () => {
       )}
       {!!data?.rightsPortalDrugPeriods?.length && (
         <Box display="flex" flexDirection="column">
-          <Box marginBottom={1}>
-            <Text color="blue400" variant="eyebrow" as="h3">
-              {formatMessage(messages.medicinePaymentPeriod)}
-            </Text>
-          </Box>
           <Box
             display="flex"
             marginBottom={SECTION_GAP}
@@ -125,11 +120,13 @@ export const MedicinePurchase = () => {
           >
             <Select
               name="paymentPeroid"
-              size="sm"
+              size="xs"
+              label={formatMessage(messages.medicinePaymentPeriod)}
               options={data.rightsPortalDrugPeriods.map((period) => ({
                 label: formatDatePeriod(period.dateFrom, period.dateTo),
                 value: period.id,
               }))}
+              backgroundColor="blue"
               value={
                 selectedPeriod &&
                 selectedPeriod?.id &&
