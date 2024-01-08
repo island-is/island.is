@@ -80,6 +80,19 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
     },
+    isNotEligibleLabel: {
+      id: 'ul.application:is.not.eligible.label',
+      defaultMessage: 'Því miður hefur þú ekki rétt á uppbót á lífeyri',
+      description:
+        'Unfortunately, you are not entitled to pension supplement',
+    },
+    isNotEligibleDescription: {
+      id: 'ul.application:is.not.eligible.description#markdown',
+      defaultMessage:
+        'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ekki lífeyrisþegi.\n* Þú ert ekki með lögheimili á Íslandi.\n* Þú ert yfir tekjuviðmiðum.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reasons for this could be the following.\n* You are not a pensioner.\n* You do not have a legal residence in Iceland.\n* Your income is above the income threshold.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+    },
   }),
 
   info: defineMessages({

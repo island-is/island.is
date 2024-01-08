@@ -27,8 +27,9 @@ import { pensionSupplementFormMessage, statesMessages } from './messages'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
-import { getApplicationAnswers } from './pensionSupplementUtils'
+import { getApplicationAnswers, getApplicationExternalData } from './pensionSupplementUtils'
 import {
   BankAccountType,
   Events,
@@ -37,6 +38,14 @@ import {
   Actions,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { Features } from '@island.is/feature-flags'
+
+function isEligible(context: ApplicationContext) {
+  const { application } = context
+  const { externalData } = application
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
+}
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -79,13 +88,22 @@ const PensionSupplementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
             },
           ],
         },
         on: {
-          SUBMIT: States.DRAFT,
+          SUBMIT: [
+            {
+            target: States.DRAFT,
+            cond: isEligible,
+            },
+            {
+              actions: 'setApproveExternalData',
+            },
+          ],  
         },
       },
       [States.DRAFT]: {
@@ -326,6 +344,13 @@ const PensionSupplementTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      setApproveExternalData: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'approveExternalData', true)
+        return context
+      }),
       /**
        * Copy the current answers to temp. If the user cancels the edits,
        * we will restore the answers to their original state from temp.
