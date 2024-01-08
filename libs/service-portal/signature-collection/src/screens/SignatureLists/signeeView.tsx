@@ -78,7 +78,7 @@ const SigneeView = () => {
           )}
           {/* Signed list */}
           {!!signedList && (
-            <Box marginTop={10}>
+            <Box marginTop={[0, 7]}>
               <Text variant="h4" marginBottom={3}>
                 {formatMessage(m.mySigneeListsHeader)}
               </Text>
@@ -108,7 +108,9 @@ const SigneeView = () => {
                 toggleClose={false}
                 initialVisibility={false}
               >
-                <Text variant="h2">{formatMessage(m.unSignModalMessage)}</Text>
+                <Text variant="h2" marginTop={[5, 0]}>
+                  {formatMessage(m.unSignModalMessage)}
+                </Text>
                 <Box marginTop={10} display="flex" justifyContent="center">
                   <Button
                     loading={loading}
@@ -123,7 +125,7 @@ const SigneeView = () => {
             </Box>
           )}
           {/* Other available lists */}
-          <Box marginTop={10}>
+          <Box marginTop={[5, 10]}>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.mySigneeListsByAreaHeader)}
             </Text>

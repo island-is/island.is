@@ -51,7 +51,7 @@ const Signees = () => {
   }, [listSignees])
 
   return (
-    <Box marginTop={[0, 5]}>
+    <Box marginTop={5}>
       <Text variant="h5">{formatMessage(m.signeesHeader)}</Text>
       <Box
         display={['block', 'flex']}
@@ -70,7 +70,7 @@ const Signees = () => {
       </Box>
       {!loadingSignees ? (
         signees.length > 0 ? (
-          <Box marginTop={5}>
+          <Box marginTop={[2, 5]}>
             <T.Table>
               <T.Head>
                 <T.Row>

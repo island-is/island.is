@@ -37,11 +37,11 @@ const OwnerView = () => {
               {formatMessage(m.createListButton)}
             </Button>
           )}
-          <Box marginTop={7}>
+          <Box marginTop={[0, 7]}>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myListsHeader)}
             </Text>
-            <Stack space={5}>
+            <Stack space={[3, 5]}>
               {listsForUser.map((list) => {
                 return (
                   <ActionCard
