@@ -319,20 +319,32 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                   width: 'half',
                   maxLength: 4,
                 }),
-                buildAlertMessageField({
-                  id: 'payment.spouseAllowance.alert',
-                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
-                  message:
-                    socialInsuranceAdministrationMessage.payment
-                      .alertSpouseAllowance,
-                  doesNotRequireAnswer: true,
-                  alertType: 'info',
-                  // condition: (_, externalData) => {
-                  //   const { hasSpouse } =
-                  //     getApplicationExternalData(externalData)
-                  //   if (hasSpouse) return true
-                  //   return false
-                  // },
+                buildRadioField({
+                  id: 'paymentInfo.spouseAllowance',
+                  title: survivorsBenefitsFormMessage.payment
+                    .spouseAllowance,
+                  description: survivorsBenefitsFormMessage.payment
+                    .spouseAllowanceDescription,
+                  options: getYesNoOptions(),
+                  width: 'half',
+                  largeButtons: true,
+                  required: true,
+                  space: 'containerGutter',
+                }),
+                buildTextField({
+                  id: 'paymentInfo.spouseAllowanceUsage',
+                  title: survivorsBenefitsFormMessage.payment
+                    .spouseAllowancePercentage,
+                  suffix: '%',
+                  condition: (answers) => {
+                    const { spouseAllowance } = getApplicationAnswers(answers)
+                    return spouseAllowance === YES
+                  },
+                  placeholder: '1%',
+                  defaultValue: '100',
+                  variant: 'number',
+                  width: 'half',
+                  maxLength: 4,
                 }),
                 buildRadioField({
                   id: 'paymentInfo.taxLevel',
