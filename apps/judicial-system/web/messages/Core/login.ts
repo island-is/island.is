@@ -78,7 +78,7 @@ export const login = {
       message: {
         id: 'judicial.system.core:login.error.deprecated_login.message',
         defaultMessage:
-          'Þú reyndir að skrá þig inn með eldri innskráningarþjónustu Ísland.is. Vinsamlegast reynið aftur með því að smella á takkann hér fyrir neðan.',
+          'Þú reyndir að skrá þig inn með eldri innskráningarþjónustu Ísland.is. Vinsamlegast reyndu aftur með því að smella á takkann hér fyrir neðan.',
         description:
           'Notaður sem texti í villuskilaboðum þegar reynt er að skrá sig inn með gömlu innskráningunni',
       },
