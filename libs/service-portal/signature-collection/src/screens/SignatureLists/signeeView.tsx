@@ -30,8 +30,7 @@ const SigneeView = () => {
   const [unSign] = useMutation(unSignList, {
     onCompleted: (res) => {
       refetchSignedList()
-
-      if (res.data?.signatureCollectionUnsign.success) {
+      if (res?.signatureCollectionUnsign.success) {
         toast.success(formatMessage(m.unSignSuccess))
       } else {
         toast.error(formatMessage(m.unSignError))
@@ -43,7 +42,7 @@ const SigneeView = () => {
     return (
       <>
         <ActionCard
-          heading={signedList.owner.name + ' - ' + signedList.area.name}
+          heading={signedList.title}
           eyebrow={format(new Date(signedList.endTime), 'dd.MM.yyyy')}
           text={formatMessage(m.collectionTitle)}
           cta={{
@@ -70,7 +69,7 @@ const SigneeView = () => {
                 unSign({
                   variables: {
                     input: {
-                      id: signedList.collectionId,
+                      id: signedList.id,
                     },
                   },
                 })
@@ -135,7 +134,7 @@ const SigneeView = () => {
                   <ActionCard
                     key={list.id}
                     backgroundColor="white"
-                    heading={list.owner.name + ' - ' + list.area.name}
+                    heading={list.title}
                     eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
                     text={formatMessage(m.collectionTitle)}
                     cta={{
@@ -144,9 +143,7 @@ const SigneeView = () => {
                       icon: 'arrowForward',
                       disabled: signedList !== null,
                       onClick: () => {
-                        window.open(
-                          `${document.location.origin}/umsoknir/maela-med-lista/`,
-                        )
+                        window.open(`${document.location.origin}${list.slug}`)
                       },
                     }}
                   />
