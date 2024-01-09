@@ -33,7 +33,7 @@ const SignListTemplate: ApplicationTemplate<
   name: m.applicationName,
   institution: m.institution,
   featureFlag: Features.signatureListCreation,
-  allowInitialQueryParameter: true,
+  initialQueryParameter: 'candidate',
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
