@@ -24,6 +24,7 @@ import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForC
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { overview as strings } from './Overview.strings'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -57,7 +58,19 @@ const CourtOfAppealOverview: React.FC<
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CaseOverviewHeader />
+          <CaseOverviewHeader
+            alerts={
+              workingCase.requestAppealRulingNotToBePublished
+                ? [
+                    {
+                      message: formatMessage(
+                        strings.requestAppealRulingNotToBePublished,
+                      ),
+                    },
+                  ]
+                : undefined
+            }
+          />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
