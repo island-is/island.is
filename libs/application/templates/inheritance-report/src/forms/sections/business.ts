@@ -11,11 +11,7 @@ import {
 import { Application } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import {
-  Buisness,
-  BuisnessAssetsData,
-  BuisnessDebtData,
-} from '../../types'
+import { Buisness, BuisnessAssetsData, BuisnessDebtData } from '../../types'
 
 export const business = buildSection({
   id: 'business',
