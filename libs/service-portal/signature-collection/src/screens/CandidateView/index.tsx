@@ -3,10 +3,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { IntroHeader } from '@island.is/service-portal/core'
-import CancelCollection from './cancelCollection'
-import { useGetListsForUser } from '../hooks'
+import CancelCollection from './CancelCollection'
+import { useGetListsForUser } from '../../hooks'
 import format from 'date-fns/format'
-import { Skeleton } from '../Skeletons'
+import { Skeleton } from '../skeletons'
 import { useNavigate } from 'react-router-dom'
 
 const OwnerView = () => {

@@ -6,14 +6,14 @@ import {
   FilterInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
-import * as styles from '../styles.css'
-import { useGetListSignees } from '../hooks'
+import * as styles from '../../styles.css'
+import { useGetListSignees } from '../../../hooks'
 import { useLocation } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
-import { SkeletonTable } from '../Skeletons'
+import { SkeletonTable } from '../../skeletons'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 
 const Signees = () => {
