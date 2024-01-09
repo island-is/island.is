@@ -1,12 +1,11 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
-import path from 'path'
-
 import { test } from '../utils/judicialSystemTest'
 import {
   randomPoliceCaseNumber,
   randomCourtCaseNumber,
   randomAppealCaseNumber,
+  createPdf,
 } from '../utils/helpers'
 
 import { urls } from '../../../support/urls'
@@ -195,7 +194,7 @@ test.describe.serial('Custody tests', () => {
 
     // Send appeal
     await expect(page).toHaveURL(/.*\/kaera\/.*/)
-    const fileChooserPromise = page.waitForEvent('filechooser')
+    const appealFileChooserPromise = page.waitForEvent('filechooser')
     await page
       .locator('section')
       .filter({
@@ -204,8 +203,14 @@ test.describe.serial('Custody tests', () => {
       })
       .locator('button')
       .click()
-    const fileChooser = await fileChooserPromise
-    await fileChooser.setFiles(path.join(__dirname, 'TestAppeal.pdf'))
+    const appealPdfBuffer = await createPdf('Kæra sækjanda')
+    const appealFileChooser = await appealFileChooserPromise
+
+    await appealFileChooser.setFiles({
+      name: 'TestKaera.pdf',
+      mimeType: 'application/pdf',
+      buffer: appealPdfBuffer,
+    })
 
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
@@ -229,8 +234,16 @@ test.describe.serial('Custody tests', () => {
       })
       .locator('button')
       .click()
+
+    const statementPdfBuffer = await createPdf('Greinargerð sækjanda')
     const statementFileChooser = await statementFileChooserPromise
-    await statementFileChooser.setFiles(path.join(__dirname, 'TestAppeal.pdf'))
+
+    await statementFileChooser.setFiles({
+      name: 'TestGreinargerd.pdf',
+      mimeType: 'application/pdf',
+      buffer: statementPdfBuffer,
+    })
+
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
       verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
@@ -295,10 +308,18 @@ test.describe.serial('Custody tests', () => {
       .getByPlaceholder('Hver eru úrskurðarorð Landsréttar?')
       .press('Tab')
 
-    const fileChooserPromise = page.waitForEvent('filechooser')
+    const rulingFileChooserPromise = page.waitForEvent('filechooser')
     await page.getByText('Velja gögn til að hlaða upp').click()
-    const fileChooser = await fileChooserPromise
-    await fileChooser.setFiles(path.join(__dirname, 'TestAppeal.pdf'))
+
+    const rulingPdfBuffer = await createPdf('Niðurstaða Landsréttar')
+    const rulingFileChooser = await rulingFileChooserPromise
+
+    await rulingFileChooser.setFiles({
+      name: 'TestNidurstada.pdf',
+      mimeType: 'application/pdf',
+      buffer: rulingPdfBuffer,
+    })
+
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
       verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
