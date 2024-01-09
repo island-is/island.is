@@ -11,6 +11,8 @@ import {
   VehicleDtoListPagedResponse,
   VehicleSearchDto,
   PersidnoLookupResultDto,
+  CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
+  CurrentvehicleswithmileageandinspGetRequest,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
@@ -33,6 +35,7 @@ import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 
+const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
 const UNAUTHORIZED_LOG = 'Vehicle user authorization failed'
 const UNAUTHORIZED_OWNERSHIP_LOG =
@@ -67,6 +70,22 @@ export class VehiclesService {
 
   private getMileageWithAuth(auth: Auth) {
     return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getVehiclesListV2(
+    auth: User,
+    input: CurrentvehicleswithmileageandinspGetRequest,
+  ): Promise<CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse> {
+    return await this.getVehiclesWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
+      ...input,
+      permno: input.permno
+        ? input.permno.length < 5
+          ? `${input.permno}*`
+          : `${input.permno}`
+        : undefined,
+    })
   }
 
   async getVehiclesForUser(
@@ -246,11 +265,14 @@ export class VehiclesService {
     })
 
     const latestDate = res?.[0]?.readDate
+    const isIslandIsReading = res?.[0]?.originCode === ORIGIN_CODE
+    const isEditing =
+      isReadDateToday(latestDate ?? undefined) && isIslandIsReading
 
     return {
       data: res,
       permno: input.permno,
-      editing: isReadDateToday(latestDate ?? undefined),
+      editing: isEditing,
     }
   }
 

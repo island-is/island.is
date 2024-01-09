@@ -221,5 +221,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealValidToDate
     isAppealCustodyIsolation
     appealIsolationToDate
+    requestAppealRulingNotToBePublished
   }
 }
