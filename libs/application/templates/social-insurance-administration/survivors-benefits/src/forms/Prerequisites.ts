@@ -14,7 +14,10 @@ import {
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
-import { SocialInsuranceAdministrationApplicantApi } from '../dataProviders'
+import {
+  SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationChildrenApi,
+} from '../dataProviders'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -68,6 +71,10 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle:
                 survivorsBenefitsFormMessage.pre
                   .socialInsuranceAdministrationDescription,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationChildrenApi,
+              title: '',
             }),
           ],
         }),

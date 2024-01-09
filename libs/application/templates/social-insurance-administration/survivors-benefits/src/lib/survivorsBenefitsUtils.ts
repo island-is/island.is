@@ -6,6 +6,7 @@ import {
   Attachments,
   AdditionalInformation,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { ChildInformation } from '../types'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
@@ -61,10 +62,16 @@ export function getApplicationExternalData(
     'socialInsuranceAdministrationApplicant.data.emailAddress',
   ) as string
 
+  const children = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationChildren.data',
+  ) as ChildInformation[]
+
   return {
     applicantName,
     applicantNationalId,
     email,
+    children,
   }
 }
 

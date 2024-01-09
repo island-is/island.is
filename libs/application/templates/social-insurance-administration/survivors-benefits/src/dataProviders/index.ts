@@ -10,3 +10,9 @@ export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationApplicant',
   namespace: 'SocialInsuranceAdministration',
 })
+
+export const SocialInsuranceAdministrationChildrenApi = defineTemplateApi({
+  action: 'getChildrenWithSameDomicile',
+  externalDataId: 'socialInsuranceAdministrationChildren',
+  namespace: 'SocialInsuranceAdministration',
+})

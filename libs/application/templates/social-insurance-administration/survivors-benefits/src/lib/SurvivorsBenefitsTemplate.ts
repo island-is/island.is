@@ -37,7 +37,10 @@ import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { SocialInsuranceAdministrationApplicantApi } from '../dataProviders'
+import {
+  SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationChildrenApi,
+} from '../dataProviders'
 import { getApplicationAnswers } from './survivorsBenefitsUtils'
 
 const SurvivorsBenefitsTemplate: ApplicationTemplate<
@@ -79,6 +82,7 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
+                SocialInsuranceAdministrationChildrenApi,
               ],
               delete: true,
             },

@@ -53,6 +53,17 @@ export const survivorsBenefitsFormMessage: MessageDir = {
       defaultMessage: 'Nafn',
       description: 'Name',
     },
+    childrenTitle: {
+      id: 'sb.application:children.title',
+      defaultMessage: 'Barn/börn',
+      description: 'Child/children',
+    },
+    childrenDescription: {
+      id: 'sb.application:children.description',
+      defaultMessage:
+        'Samkvæmt uppflettingu í Þjóðskrá ert þú með eftirfarandi barn/börn skráð á lögheimili hjá þér.',
+      description: 'english translation',
+    },
   }),
 
   fileUpload: defineMessages({

@@ -22,7 +22,10 @@ import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
-import { getApplicationAnswers as getSBApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
+import {
+  getApplicationAnswers as getSBApplicationAnswers,
+  ChildInformation,
+} from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   Attachment,
@@ -37,6 +40,8 @@ import {
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import * as kennitala from 'kennitala'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -49,6 +54,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     private siaClientService: SocialInsuranceAdministrationClientService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -363,5 +369,42 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCurrencies(auth)
+  }
+
+  async getChildrenWithSameDomicile({ auth }: TemplateApiModuleActionProps) {
+    const cohabitants = await this.nationalRegistryApi.getCohabitants(
+      auth.nationalId,
+    )
+
+    const children: Array<ChildInformation | null> = await Promise.all(
+      cohabitants.map(async (cohabitantsNationalId) => {
+        if (
+          cohabitantsNationalId !== auth.nationalId &&
+          kennitala.info(cohabitantsNationalId).age < 18
+        ) {
+          const child = await this.nationalRegistryApi.getIndividual(
+            cohabitantsNationalId,
+          )
+
+          if (!child) {
+            return null
+          }
+
+          return (
+            child && {
+              nationalId: child.nationalId,
+              fullName: child.name,
+            }
+          )
+        } else {
+          return null
+        }
+      }),
+    )
+
+    const filteredChildren = children.filter(
+      (child): child is ChildInformation => child != null,
+    )
+    return filteredChildren
   }
 }

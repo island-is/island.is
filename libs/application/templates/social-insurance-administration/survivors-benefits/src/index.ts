@@ -8,3 +8,4 @@ export default template
 export * from './lib/survivorsBenefitsUtils'
 export * from './lib/messages'
 export * from './lib/constants'
+export * from './types'

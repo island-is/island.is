@@ -10,6 +10,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
+import { Children } from './review-groups/Children'
 import { getApplicationAnswers } from '../../lib/survivorsBenefitsUtils'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
@@ -157,6 +158,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <Children {...childProps} />
       {comment && <Comment {...childProps} />}
       <Attachments {...childProps} />
     </>

@@ -17,7 +17,10 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { getApplicationAnswers } from '../lib/survivorsBenefitsUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../lib/survivorsBenefitsUtils'
 
 export const SurvivorsBenefitsForm: Form = buildForm({
   id: 'SurvivorsBenefitsDraft',
@@ -89,6 +92,32 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                   id: 'deceasedSpouseInfo.name',
                   title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
                   width: 'half',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'childrenSection',
+          title: survivorsBenefitsFormMessage.info.childrenTitle,
+          condition: (_, externalData) => {
+            const { children } = getApplicationExternalData(externalData)
+            // if no children returned, dont show the table
+            if (children.length === 0) return false
+            return true
+          },
+          children: [
+            buildMultiField({
+              id: 'children',
+              title: survivorsBenefitsFormMessage.info.childrenTitle,
+              description:
+                survivorsBenefitsFormMessage.info.childrenDescription,
+              children: [
+                buildCustomField({
+                  id: 'children.table',
+                  doesNotRequireAnswer: true,
+                  title: '',
+                  component: 'Children',
                 }),
               ],
             }),
