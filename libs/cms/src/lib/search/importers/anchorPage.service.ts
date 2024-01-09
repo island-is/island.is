@@ -11,8 +11,6 @@ import { createTerms, extractStringsFromObject } from './utils'
 @Injectable()
 export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
   processSyncData(entries: processSyncDataInput<IAnchorPage>) {
-    logger.info('Processing sync data for anchor pages')
-
     // only process anchor pages that we consider not to be empty and dont have circular structures
     return entries.filter(
       (entry: Entry<any>): entry is IAnchorPage =>
@@ -23,7 +21,9 @@ export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
   }
 
   doMapping(entries: IAnchorPage[]) {
-    logger.info('Mapping anchor pages', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping anchor pages', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
