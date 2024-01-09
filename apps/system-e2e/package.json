@@ -14,7 +14,8 @@
     "playwright-tesults-reporter": "^1.0.1",
     "react": "^18.2.0",
     "react-intl": "^6.3.0",
-    "slack-notify": "^2.0.3"
+    "slack-notify": "^2.0.3",
+    "pdfkit": "0.11.0"
   },
   "volta": {
     "node": "16.17.0"
