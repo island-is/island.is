@@ -51,7 +51,6 @@ export const useCourtUpload = (
           status,
         }
 
-        console.log(files[fileIndexToUpdate])
 
         setWorkingCase({ ...theCase })
       }
