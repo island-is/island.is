@@ -12,7 +12,7 @@ const SignatureLists = () => {
   return (
     <div>
       {!loadingIsOwner && (
-        <Box>{!isOwner.success ? <OwnerView /> : <SigneeView />}</Box>
+        <Box>{isOwner.success ? <OwnerView /> : <SigneeView />}</Box>
       )}
     </div>
   )

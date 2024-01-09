@@ -10,6 +10,7 @@ import { ContentfulService } from './contentful.service'
 import { ArticleSyncService } from './importers/article.service'
 import { CmsSyncService } from './cmsSync.service'
 import { AnchorPageSyncService } from './importers/anchorPage.service'
+import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
@@ -44,6 +45,7 @@ import { ManualChapterItemSyncService } from './importers/manualChapterItem.serv
     ArticleSyncService,
     SubArticleSyncService,
     AnchorPageSyncService,
+    LifeEventPageSyncService,
     ArticleCategorySyncService,
     NewsSyncService,
     AdgerdirPageSyncService,
