@@ -31,6 +31,7 @@ import {
   getApplicationType,
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToOldAgePensionDTO,
+  transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
@@ -243,6 +244,61 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
+  // Pension suppliment attachments
+  private async getPSAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const {
+      additionalAttachments,
+      schoolConfirmationAttachments,
+      leaseAgreementAttachments,
+      householdSupplementChildren,
+      householdSupplementHousing,
+    } = getHSApplicationAnswers(application.answers)
+
+    const attachments: Attachment[] = []
+
+    if (additionalAttachments && additionalAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.Other,
+          additionalAttachments,
+        )),
+      )
+    }
+
+    if (
+      schoolConfirmationAttachments &&
+      schoolConfirmationAttachments.length > 0 &&
+      householdSupplementChildren === YES
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.SchoolConfirmation,
+          schoolConfirmationAttachments,
+        )),
+      )
+    }
+
+    if (
+      leaseAgreementAttachments &&
+      leaseAgreementAttachments.length > 0 &&
+      householdSupplementHousing === HouseholdSupplementHousing.RENTER
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.RentalAgreement,
+          leaseAgreementAttachments,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
   async getPdf(key: string) {
     const file = await this.s3
       .getObject({ Bucket: this.attachmentBucket, Key: key })
@@ -284,6 +340,22 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const response = await this.siaClientService.sendApplication(
         auth,
         householdSupplementDTO,
+        application.typeId.toLowerCase(),
+      )
+
+      return response
+    }
+
+    if (application.typeId === ApplicationTypes.PENSION_SUPPLEMENT) {
+      const attachments = await this.getPSAttachments(application)
+      const pensionSupplemenhtDTO = transformApplicationToPensionSupplementDTO(
+        application,
+        attachments,
+      )
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        pensionSupplemenhtDTO,
         application.typeId.toLowerCase(),
       )
 
