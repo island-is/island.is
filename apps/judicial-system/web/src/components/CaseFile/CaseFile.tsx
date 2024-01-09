@@ -25,7 +25,6 @@ interface Props {
 const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { name, size, color, id, icon, onClick } = props
 
-  console.log(icon)
   return (
     <Box
       className={cn(styles.caseFileWrapper, {
