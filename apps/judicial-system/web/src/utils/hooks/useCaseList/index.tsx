@@ -144,13 +144,15 @@ const useCaseList = () => {
     (id: string) => {
       Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
 
-      setClickedCase([id, false])
+      if (clickedCase[0] !== id) {
+        setClickedCase([id, false])
 
-      timeouts.push(
-        setTimeout(() => {
-          setClickedCase([id, true])
-        }, 2000),
-      )
+        timeouts.push(
+          setTimeout(() => {
+            setClickedCase([id, true])
+          }, 2000),
+        )
+      }
 
       const getCaseToOpen = (id: string) => {
         limitedAccess
