@@ -160,7 +160,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <PaymentInformation {...childProps} />
       <Children {...childProps} />
-      {comment && <Comment {...childProps} />}
+      <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
   )
