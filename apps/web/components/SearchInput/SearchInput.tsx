@@ -32,6 +32,7 @@ import {
   AnchorPage,
   News,
   OrganizationSubpage,
+  LifeEventPage,
 } from '@island.is/web/graphql/schema'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -391,6 +392,7 @@ export const SearchInput = forwardRef<
 type SearchResultItem =
   | Article
   | AnchorPage
+  | LifeEventPage
   | News
   | SubArticle
   | OrganizationSubpage
@@ -447,7 +449,9 @@ const Results = ({
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
               .map((item: SearchResultItem, i) => {
-                const typename = item.__typename?.toLowerCase() as LinkType
+                const typename = item.__typename?.toLowerCase() as
+                  | LinkType
+                  | 'anchorpage'
                 let variables = item.slug?.split('/')
 
                 if (typename === 'organizationsubpage') {
@@ -461,7 +465,7 @@ const Results = ({
                   item: {
                     type: 'link',
                     string: linkResolver(
-                      typename === 'lifeeventpage' || typename === 'anchorpage'
+                      typename === 'anchorpage'
                         ? extractAnchorPageLinkType(item as AnchorPage)
                         : typename,
                       variables,

@@ -9,7 +9,7 @@ mutation BulkUpload($input: SignatureCollectionListBulkUploadInput!) {
 
         address
       }
-      signatureType
+      isDigital
       active
       created
     }
