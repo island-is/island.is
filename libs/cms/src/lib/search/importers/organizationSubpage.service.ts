@@ -21,7 +21,9 @@ export class OrganizationSubpageSyncService
   }
 
   doMapping(entries: IOrganizationSubpage[]) {
-    logger.info('Mapping organization subpage', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping organization subpage', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

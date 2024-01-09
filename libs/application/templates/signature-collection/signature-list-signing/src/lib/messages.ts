@@ -61,6 +61,26 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
     description: '',
   },
+  userProfileProviderTitle: {
+    id: 'sls.application:userProfileProviderTitle',
+    defaultMessage: 'Stillingar frá Ísland.is',
+    description: '',
+  },
+  userProfileProviderSubtitle: {
+    id: 'sls.application:userProfileProviderSubtitle',
+    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
+    description: '',
+  },
+  canSignProviderTitle: {
+    id: 'sls.application:canSignProviderTitle',
+    defaultMessage: 'Kjörskrá',
+    description: '',
+  },
+  canSignProviderSubtitle: {
+    id: 'sls.application:canSignProviderSubtitle',
+    defaultMessage: 'Skilyrði fyrir að mæla með lista',
+    description: '',
+  },
 
   /* Signee Information */
   information: {
@@ -76,6 +96,11 @@ export const m = defineMessages({
   listName: {
     id: 'sls.application:listName',
     defaultMessage: 'TBD: Nafn frambjóðanda',
+    description: '',
+  },
+  listDateTil: {
+    id: 'slc.application:listDateTil',
+    defaultMessage: 'Lokadagur',
     description: '',
   },
   listDescription: {

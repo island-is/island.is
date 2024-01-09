@@ -15,6 +15,7 @@ import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInpu
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionSlug } from './models/slug.model'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -22,16 +23,8 @@ export class SignatureCollectionService {
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
 
-  async canCreate(nationalId: string): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.canCreate(nationalId)
-  }
-
   async isOwner(nationalId: string): Promise<SignatureCollectionSuccess> {
     return await this.signatureCollectionClientService.isOwner(nationalId)
-  }
-
-  async canSign(nationalId: string): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionClientService.canSign(nationalId)
   }
 
   async current(): Promise<SignatureCollection> {
@@ -87,8 +80,8 @@ export class SignatureCollectionService {
   async create(
     user: User,
     input: SignatureCollectionListInput,
-  ): Promise<SignatureCollectionList[]> {
-    return await this.signatureCollectionClientService.createLists(input, user)
+  ): Promise<SignatureCollectionSlug> {
+    return await this.signatureCollectionClientService.createLists(input)
   }
 
   async sign(
@@ -102,11 +95,11 @@ export class SignatureCollectionService {
   }
 
   async unsign(
-    signatureId: string,
+    listId: string,
     nationalId: string,
   ): Promise<SignatureCollectionSuccess> {
     return await this.signatureCollectionClientService.unsignList(
-      signatureId,
+      listId,
       nationalId,
     )
   }

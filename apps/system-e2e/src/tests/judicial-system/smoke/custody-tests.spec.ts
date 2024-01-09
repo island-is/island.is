@@ -49,14 +49,14 @@ test.describe.serial('Custody tests', () => {
       .fill('jl-auto-defender@kolibri.is')
     await page.locator('input[name=defender-access-no]').click()
     await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
-    Promise.all([
+    await Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase'),
     ]).then((values) => {
       const createCaseResult = values[1]
       caseId = createCaseResult.data.createCase.id
     })
-    await expect(page).toHaveURL(/.*\/krafa\/fyrirtaka\/.*/)
+    await expect(page).toHaveURL(`/krafa/fyrirtaka/${caseId}`)
 
     // Court date request
     const today = new Date().toLocaleDateString('is-IS')
@@ -68,7 +68,9 @@ test.describe.serial('Custody tests', () => {
     await page.locator('input[id=reqCourtDate-time]').fill('15:00')
     await page.getByRole('button', { name: 'Halda áfram' }).click()
     await page.getByRole('button', { name: 'Halda áfram með kröfu' }).click()
-    await expect(page).toHaveURL(/.*\/krafa\/domkrofur-og-lagagrundvollur\/.*/)
+    await expect(page).toHaveURL(
+      `/krafa/domkrofur-og-lagagrundvollur/${caseId}`,
+    )
 
     // Prosecutor demands
     await page.locator('input[id=reqValidToDate]').fill(today)
@@ -81,7 +83,7 @@ test.describe.serial('Custody tests', () => {
     await page.keyboard.type('Einhver lög voru brotin', { delay: 50 })
     await page.getByTestId('checkbox').first().click()
     await page.getByRole('button', { name: 'Halda áfram' }).click()
-    await expect(page).toHaveURL(/.*\/krafa\/greinargerd\/.*/)
+    await expect(page).toHaveURL(`/krafa/greinargerd/${caseId}`)
 
     // Prosecutor statement
     await page.waitForResponse((response) => {
@@ -94,18 +96,18 @@ test.describe.serial('Custody tests', () => {
     await page.locator('textarea[name=comments]').click()
     await page.keyboard.type('Sakborningur er hættulegur')
     await page.getByRole('button', { name: 'Halda áfram' }).click()
-    await expect(page).toHaveURL(/.*\/krafa\/rannsoknargogn\/.*/)
+    await expect(page).toHaveURL(`/krafa/rannsoknargogn/${caseId}`)
 
     // Case files
     await page.locator('textarea[name=caseFilesComments]').click()
     await page.keyboard.type('Engin gögn fylgja')
     await page.getByRole('button', { name: 'Halda áfram' }).click()
-    await expect(page).toHaveURL(/.*\/krafa\/stadfesta\/.*/)
+    await expect(page).toHaveURL(`/krafa/stadfesta/${caseId}`)
 
     // Submit to court
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
-    await expect(page).toHaveURL(/.*\/krofur/)
+    await expect(page).toHaveURL('/krofur')
   })
 
   test('court should submit decision in case', async ({ judgePage }) => {
@@ -113,7 +115,7 @@ test.describe.serial('Custody tests', () => {
     await page.goto(`/domur/mottaka/${caseId}`)
 
     // Reception and assignment
-    await expect(page).toHaveURL(/.*\/domur\/mottaka\/.*/)
+    await expect(page).toHaveURL(`/domur/mottaka/${caseId}`)
     await page.getByTestId('courtCaseNumber').fill(randomCourtCaseNumber())
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
@@ -124,12 +126,12 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('continueButton').click()
 
     // Overview
-    await expect(page).toHaveURL(/.*\/domur\/krafa\/.*/)
+    await expect(page).toHaveURL(`/domur/krafa/${caseId}`)
     await page.getByTestId('continueButton').isVisible()
     await page.getByTestId('continueButton').click()
 
     // Hearing arrangements
-    await expect(page).toHaveURL(/.*\/domur\/fyrirtokutimi\/.*/)
+    await expect(page).toHaveURL(`/domur/fyrirtokutimi/${caseId}`)
     const date = new Date()
     const today = date.toLocaleDateString('is-IS')
     await page.locator('input[id=courtDate]').fill(today)
@@ -151,7 +153,7 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('modalSecondaryButton').click()
 
     // Ruling
-    await expect(page).toHaveURL(/.*\/domur\/urskurdur\/.*/)
+    await expect(page).toHaveURL(`/domur/urskurdur/${caseId}`)
     date.setDate(date.getDate() + 5)
     const custodyEndDate = date.toLocaleDateString('is-IS')
     await page.getByText('Krafa um gæsluvarðhald samþykkt').click()
@@ -165,7 +167,7 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('continueButton').click()
 
     // Court record
-    await expect(page).toHaveURL(/.*\/domur\/thingbok\/.*/)
+    await expect(page).toHaveURL(`/domur/thingbok/${caseId}`)
     await page.getByText('Varnaraðili tekur sér lögboðinn frest').click()
     await page.getByText('Sækjandi tekur sér lögboðinn frest').click()
     await page.locator('input[id=courtEndTime]').fill(today)
@@ -178,7 +180,7 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('continueButton').click()
 
     // Confirmation
-    await expect(page).toHaveURL(/.*\/domur\/stadfesta\/.*/)
+    await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'RequestRulingSignature'),
       page.getByTestId('continueButton').click(),
@@ -189,11 +191,11 @@ test.describe.serial('Custody tests', () => {
     const page = prosecutorPage
     await page.goto(`krafa/yfirlit/${caseId}`)
 
-    await expect(page).toHaveURL(/.*\/krafa\/yfirlit\/.*/)
+    await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
     await page.getByRole('button', { name: 'Senda inn kæru' }).click()
 
     // Send appeal
-    await expect(page).toHaveURL(/.*\/kaera\/.*/)
+    await expect(page).toHaveURL(`/kaera/${caseId}`)
     const appealFileChooserPromise = page.waitForEvent('filechooser')
     await page
       .locator('section')
@@ -220,11 +222,11 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('modalSecondaryButton').click()
 
     // Overview
-    await expect(page).toHaveURL(/.*\/krafa\/yfirlit\/.*/)
+    await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
     await page.getByRole('button', { name: 'Senda greinargerð' }).click()
 
     // Send statement
-    await expect(page).toHaveURL(/.*\/greinargerd\/.*/)
+    await expect(page).toHaveURL(`/greinargerd/${caseId}`)
     const statementFileChooserPromise = page.waitForEvent('filechooser')
     await page
       .locator('section')
@@ -257,7 +259,9 @@ test.describe.serial('Custody tests', () => {
 
     await page.goto(`krafa/yfirlit/${caseId}`)
     await page
-      .getByRole('button', { name: 'Senda tilkynningu um móttöku' })
+      .getByRole('button', {
+        name: 'Senda tilkynningu um kæru til Landsréttar',
+      })
       .click()
     await page.getByTestId('modalPrimaryButton').click()
   })
@@ -269,11 +273,11 @@ test.describe.serial('Custody tests', () => {
     await page.goto(`/landsrettur/yfirlit/${caseId}`)
 
     // Overview
-    await expect(page).toHaveURL(/.*\/landsrettur\/yfirlit\/.*/)
+    await expect(page).toHaveURL(`/landsrettur/yfirlit/${caseId}`)
     await page.getByTestId('continueButton').click()
 
     // Appeal case reception
-    await expect(page).toHaveURL(/.*\/landsrettur\/kaera\/.*/)
+    await expect(page).toHaveURL(`/landsrettur/kaera/${caseId}`)
     await page.getByText('Mál nr. *').fill(randomAppealCaseNumber())
 
     await Promise.all([
@@ -295,7 +299,7 @@ test.describe.serial('Custody tests', () => {
     await page.getByTestId('modalPrimaryButton').click()
 
     // Ruling
-    await expect(page).toHaveURL(/.*\/landsrettur\/urskurdur\/.*/)
+    await expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`)
     await Promise.all([
       page.locator('label').filter({ hasText: 'Staðfesting' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
@@ -326,7 +330,7 @@ test.describe.serial('Custody tests', () => {
     ])
 
     await page.getByTestId('continueButton').click()
-    await expect(page).toHaveURL(/.*\/landsrettur\/samantekt\/.*/)
+    await expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`)
     await page.getByTestId('continueButton').click()
   })
 })
