@@ -19,7 +19,7 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MunicipalitiesFinancialAidResolver {
   constructor(
@@ -86,6 +86,15 @@ export class MunicipalitiesFinancialAidResolver {
     return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidGetSignedUrl(
       user,
       input,
+    )
+  }
+
+  @Query(() => [ApplicationModel], { nullable: true })
+  async municipalitiesFinancialAidGetApplicationForPeriod(
+    @CurrentUser() user: User,
+  ): Promise<ApplicationModel[] | null> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidGetApplicationsForPeriod(
+      user,
     )
   }
 }

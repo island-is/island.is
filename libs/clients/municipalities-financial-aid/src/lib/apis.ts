@@ -1,4 +1,8 @@
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+import {
+  ConfigType,
+  LazyDuringDevScope,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ApplicationApi,
@@ -16,6 +20,7 @@ export const exportedApis = [
   PersonalTaxReturnApi,
 ].map((Api) => ({
   provide: Api,
+  scope: LazyDuringDevScope,
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof MunicipalitiesFinancialAidConfig>,
@@ -24,9 +29,11 @@ export const exportedApis = [
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: Api.name,
+          organizationSlug: 'samband-islenskra-sveitafelaga',
         }),
         headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
-        basePath: `http://localhost:3344`,
+        basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        // basePath: `http://localhost:3344`,
       }),
     )
   },

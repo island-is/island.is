@@ -84,4 +84,14 @@ export class MunicipalitiesFinancialAidService {
       id,
     )
   }
+
+  async municipalitiesFinancialAidGetApplicationsForPeriod(auth: Auth) {
+    console.log('HELLOOOOOOOO')
+    return await this.applicationApiWithAuth(auth)
+      .applicationControllerGetAllForPeriod({
+        dateFrom: '2021-01-01',
+        dateTo: '2021-12-31',
+      })
+      .catch(this.handle404)
+  }
 }
