@@ -27,7 +27,9 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
   }
 
   processSyncData(entries: processSyncDataInput<ISubArticle>) {
-    logger.info('Processing sync data for subarticles')
+    if (entries.length > 0) {
+      logger.info('Processing sync data for subarticles')
+    }
     return entries.reduce(
       (processedEntries: ISubArticle[], entry: Entry<any>) => {
         if (this.validateSubArticle(entry)) {
