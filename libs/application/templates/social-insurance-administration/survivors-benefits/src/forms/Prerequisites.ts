@@ -17,6 +17,7 @@ import { survivorsBenefitsFormMessage } from '../lib/messages'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationChildrenApi,
+  SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
@@ -74,6 +75,10 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationChildrenApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCurrenciesApi,
               title: '',
             }),
           ],

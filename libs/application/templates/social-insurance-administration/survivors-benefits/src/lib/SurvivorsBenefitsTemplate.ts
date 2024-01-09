@@ -40,6 +40,7 @@ import {
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationChildrenApi,
+  SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { getApplicationAnswers } from './survivorsBenefitsUtils'
 
@@ -83,6 +84,7 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
                 NationalRegistrySpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationChildrenApi,
+                SocialInsuranceAdministrationCurrenciesApi,
               ],
               delete: true,
             },

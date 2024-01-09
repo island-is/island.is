@@ -16,3 +16,9 @@ export const SocialInsuranceAdministrationChildrenApi = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationChildren',
   namespace: 'SocialInsuranceAdministration',
 })
+
+export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
+  action: 'getCurrencies',
+  externalDataId: 'socialInsuranceAdministrationCurrencies',
+  namespace: 'SocialInsuranceAdministration',
+})
