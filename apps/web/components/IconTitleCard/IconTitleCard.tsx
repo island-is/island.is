@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { FocusableBox, Text } from '@island.is/island-ui/core'
 
 import * as styles from './IconTitleCard.css'
@@ -7,7 +8,7 @@ type IconTitleCardProps = {
   heading: string
   imgSrc: string
   alt: string
-  href: string
+  href?: string | null
   dataTestId?: string
 }
 
@@ -19,7 +20,7 @@ export const IconTitleCard = ({
   dataTestId,
 }: IconTitleCardProps) => (
   <FocusableBox
-    href={href}
+    href={href ?? undefined}
     display="flex"
     flexDirection="row"
     alignItems="center"
