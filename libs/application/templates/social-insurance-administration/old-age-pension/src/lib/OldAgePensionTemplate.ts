@@ -35,7 +35,10 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
-import { getApplicationAnswers } from './oldAgePensionUtils'
+import {
+  determineNameFromApplicationAnswers,
+  getApplicationAnswers,
+} from './oldAgePensionUtils'
 import {
   Actions,
   BankAccountType,
@@ -50,7 +53,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.OLD_AGE_PENSION,
-  name: oldAgePensionFormMessage.shared.applicationTitle,
+  name: determineNameFromApplicationAnswers,
   institution: oldAgePensionFormMessage.shared.institution,
   featureFlag: Features.oldAgePensionApplication,
   translationNamespaces: [

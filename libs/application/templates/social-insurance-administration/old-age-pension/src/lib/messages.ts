@@ -11,7 +11,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     applicationTitle: {
       id: 'oap.application:applicationTitle',
       defaultMessage: 'Umsókn um ellilífeyri',
-      description: 'Application for old age pension',
+      description: 'Application for old-age pension',
     },
     formTitle: {
       id: 'oap.application:form.title',
@@ -154,12 +154,37 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Því miður hefur þú ekki rétt á ellilífeyri',
       description: 'Unfortunately, you are not entitled to old-age pension',
     },
+    isNotEligibleHalfLabel: {
+      id: 'oap.application:is.not.eligible.half.label',
+      defaultMessage: 'Því miður hefur þú ekki rétt á hálfum ellilífeyri',
+      description:
+        'Unfortunately, you are not entitled to half old-age pension',
+    },
+    isNotEligibleSailorLabel: {
+      id: 'oap.application:is.not.eligible.sailor.label',
+      defaultMessage: 'Því miður hefur þú ekki rétt á ellilífeyri sjómanna',
+      description: "Unfortunately, you are not entitled to fisherman's pension",
+    },
     isNotEligibleDescription: {
       id: 'oap.application:is.not.eligible.description#markdown',
       defaultMessage:
-        'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ellilífeyrisþegi eða með umsókn um ellilífeyri í vinnslu.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæður fyrir því gætu verið eftirfarandi:\n* Þú ert ellilífeyrisþegi.\n* Þú ert með umsókn um ellilífeyri í vinnslu.\n* Þú ert yngri en 65 ára.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
       description:
-        'The reasons for this could be the following.\n* You are a pensioner or have an application for a old-age pension in progress.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+        'The reasons for this could be the following:\n* You are already receiving an old-age pension.\n* You have an application for old-age pension in progress.\n* You are younger than 65 years old.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+    },
+    isNotEligibleHalfDescription: {
+      id: 'oap.application:is.not.eligible.half.description#markdown',
+      defaultMessage:
+        'Ástæður fyrir því gætu verið eftirfarandi:\n* Þú ert hálfur ellilífeyrisþegi.\n* Þú ert með umsókn um hálfan ellilífeyri í vinnslu.\n* Þú ert yngri en 65 ára.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reasons for this could be the following:\n* You are already receiving an half old-age pension.\n* You have an application for half old-age pension in progress.\n* You are younger than 65 years old.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+    },
+    isNotEligibleSailorDescription: {
+      id: 'oap.application:is.not.eligible.sailor.description#markdown',
+      defaultMessage:
+        'Ástæður fyrir því gætu verið eftirfarandi:\n* Þú ert ellilífeyrisþegi sjómanna.\n* Þú ert með umsókn um ellilífeyri sjómanna í vinnslu.\n* Þú ert yngri en 60 ára.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        "The reasons for this could be the following:\n* You are already receiving an fisherman's pension.\n* You have an application for fisherman's pension in progress.\n* You are younger than 60 years old.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)",
     },
   }),
 

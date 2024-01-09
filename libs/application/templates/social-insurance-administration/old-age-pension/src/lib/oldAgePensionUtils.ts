@@ -10,6 +10,7 @@ import {
   MONTHS,
   AttachmentLabel,
   AttachmentTypes,
+  RatioType,
 } from './constants'
 import {
   Option,
@@ -20,7 +21,10 @@ import {
   NO,
 } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
-
+import {
+  EmployersInfo,
+  Months,
+} from '@island.is/clients/social-insurance-administration'
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
@@ -599,4 +603,97 @@ export const filterValidEmployers = (
     })
 
   return filtered as Employer[]
+}
+
+export const getEmployers = (employers: Employer[]): EmployersInfo[] => {
+  const employersInfo: EmployersInfo[] = []
+
+  for (const employer of employers) {
+    const employerInfo = {
+      email: employer.email,
+      ...(employer.phoneNumber && {
+        phoneNumber: employer.phoneNumber,
+      }),
+      ratio:
+        employer.ratioType === RatioType.MONTHLY
+          ? Number(employer.ratioMonthlyAvg)
+          : Number(employer.ratioYearly),
+      ...(employer.ratioType === RatioType.MONTHLY && {
+        ratioMonthly: {
+          ...(employer.ratioMonthly?.january && {
+            january: Number(employer.ratioMonthly?.january),
+          }),
+          ...(employer.ratioMonthly?.february && {
+            february: Number(employer.ratioMonthly?.february),
+          }),
+          ...(employer.ratioMonthly?.march && {
+            march: Number(employer.ratioMonthly?.march),
+          }),
+          ...(employer.ratioMonthly?.april && {
+            april: Number(employer.ratioMonthly?.april),
+          }),
+          ...(employer.ratioMonthly?.may && {
+            may: Number(employer.ratioMonthly?.may),
+          }),
+          ...(employer.ratioMonthly?.june && {
+            june: Number(employer.ratioMonthly?.june),
+          }),
+          ...(employer.ratioMonthly?.july && {
+            july: Number(employer.ratioMonthly?.july),
+          }),
+          ...(employer.ratioMonthly?.august && {
+            august: Number(employer.ratioMonthly?.august),
+          }),
+          ...(employer.ratioMonthly?.september && {
+            september: Number(employer.ratioMonthly?.september),
+          }),
+          ...(employer.ratioMonthly?.october && {
+            october: Number(employer.ratioMonthly?.october),
+          }),
+          ...(employer.ratioMonthly?.november && {
+            november: Number(employer.ratioMonthly?.november),
+          }),
+          ...(employer.ratioMonthly?.december && {
+            december: Number(employer.ratioMonthly?.december),
+          }),
+        } as Months,
+      }),
+    }
+
+    employersInfo.push(...[employerInfo])
+  }
+
+  return employersInfo
+}
+
+export const getEligibleDesc = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleDescription
+    : applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleHalfDescription
+    : oldAgePensionFormMessage.pre.isNotEligibleSailorDescription
+}
+
+export const getEligibleLabel = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleLabel
+    : applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleHalfLabel
+    : oldAgePensionFormMessage.pre.isNotEligibleSailorLabel
+}
+
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.halfRetirementPensionApplicationTitle
+    : applicationType === ApplicationType.SAILOR_PENSION
+    ? oldAgePensionFormMessage.pre.fishermenApplicationTitle
+    : oldAgePensionFormMessage.shared.applicationTitle
 }

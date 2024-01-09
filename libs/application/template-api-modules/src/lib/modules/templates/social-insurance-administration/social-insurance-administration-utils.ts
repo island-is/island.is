@@ -6,6 +6,9 @@ import {
 } from '@island.is/clients/social-insurance-administration'
 import {
   ApplicationType,
+  Employment,
+  RatioType,
+  getEmployers,
   getApplicationAnswers as getOAPApplicationAnswers,
   getApplicationExternalData as getOAPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
@@ -43,6 +46,8 @@ export const transformApplicationToOldAgePensionDTO = (
     bankAddress,
     currency,
     paymentInfo,
+    employmentStatus,
+    employers,
   } = getOAPApplicationAnswers(application.answers)
   const { bankInfo, email } = getOAPApplicationExternalData(
     application.externalData,
@@ -92,6 +97,12 @@ export const transformApplicationToOldAgePensionDTO = (
     hasAbroadResidence: YES === residenceHistoryQuestion,
     hasOneTimePayment: YES === onePaymentPerYear,
     isSailorPension: applicationType === ApplicationType.SAILOR_PENSION,
+    ...(applicationType == ApplicationType.HALF_OLD_AGE_PENSION && {
+      employment: employmentStatus,
+      ...(employmentStatus === Employment.EMPLOYEE && {
+        employers: getEmployers(employers),
+      }),
+    }),
     uploads,
   }
 
