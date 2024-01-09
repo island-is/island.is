@@ -30,7 +30,10 @@ export class VehicleAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateVehicleInput,
   ) {
-    logger.info(`Creating Vehicle ${input.permno}`, { permno: input.permno })
+    logger.info(`Creating Vehicle ${input.permno}`, {
+      permno: input.permno,
+      mileage: input.mileage,
+    })
 
     const vehicle = await this.samgongustofaService.getUserVehicle(
       user.nationalId,

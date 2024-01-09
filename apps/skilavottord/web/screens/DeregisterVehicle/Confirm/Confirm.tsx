@@ -250,7 +250,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 <BulletList type="ul">
                   <Bullet>
                     {t.info.notfound}
-                    <Text variant="h5">skilavottord.island.is/my-cars</Text>
+                    <Text variant="h5">island.is/umsoknir/skilavottord</Text>
                   </Bullet>
                 </BulletList>
               </Stack>
