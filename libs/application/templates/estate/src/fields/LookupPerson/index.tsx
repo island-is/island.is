@@ -36,7 +36,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   const { formatMessage } = useLocale()
   const { id, props } = field
   const { setValue, watch, clearErrors, getValues } = useFormContext()
-  console.log(getValues())
+
   const personNationalId: string = watch(`${id}.nationalId`)
   const personName: string = watch(`${id}.name`)
 
