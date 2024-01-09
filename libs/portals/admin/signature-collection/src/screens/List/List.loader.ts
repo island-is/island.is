@@ -1,9 +1,18 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { ListbyidDocument, ListbyidQuery } from './getSignatureList.generated'
 import { SignaturesDocument, SignaturesQuery } from './getListSignees.generated'
+import {
+  SignatureCollectionList,
+  SignatureCollectionSignature,
+} from '@island.is/api/schema'
 
 export const listLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params }): Promise<any> => {
+  return async ({
+    params,
+  }): Promise<{
+    list: SignatureCollectionList
+    allSignees: SignatureCollectionSignature[]
+  }> => {
     const { data } = await client.query<ListbyidQuery>({
       query: ListbyidDocument,
       fetchPolicy: 'network-only',
@@ -25,8 +34,8 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
     })
 
     const list = data?.signatureCollectionList ?? {}
-    const signees = signeesData?.signatureCollectionSignatures ?? []
+    const allSignees = signeesData?.signatureCollectionSignatures ?? []
 
-    return { list, signees }
+    return { list, allSignees }
   }
 }

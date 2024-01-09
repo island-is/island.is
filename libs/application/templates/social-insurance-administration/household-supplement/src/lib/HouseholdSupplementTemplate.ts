@@ -28,6 +28,10 @@ import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { householdSupplementFormMessage, statesMessages } from './messages'
 import {
+  socialInsuranceAdministrationMessage,
+  statesMessages as coreSIAStatesMessages,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
@@ -39,7 +43,8 @@ import {
   Roles,
   States,
   Actions,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+  BankAccountType,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -60,11 +65,10 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
-  institution: householdSupplementFormMessage.shared.institution,
+  institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.householdSupplementApplication,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.HouseholdSupplement.translation,
-  ],
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
@@ -114,16 +118,21 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearFileUpload', 'clearTemp', 'restoreAnswersFromTemp'],
+        exit: [
+          'clearBankAccountInfo',
+          'clearFileUpload',
+          'clearTemp',
+          'restoreAnswersFromTemp',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            description: statesMessages.draftDescription,
+            description: coreSIAStatesMessages.draftDescription,
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
-              logMessage: statesMessages.applicationSent,
+              logMessage: coreSIAStatesMessages.applicationSent,
             },
           },
           onExit: defineTemplateApi({
@@ -164,17 +173,17 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
-              label: statesMessages.pendingTag,
+              label: coreSIAStatesMessages.pendingTag,
             },
             pendingAction: {
-              title: statesMessages.tryggingastofnunSubmittedTitle,
-              content: statesMessages.tryggingastofnunSubmittedContent,
+              title: coreSIAStatesMessages.tryggingastofnunSubmittedTitle,
+              content: coreSIAStatesMessages.tryggingastofnunSubmittedContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.applicationEdited,
+                logMessage: coreSIAStatesMessages.applicationEdited,
               },
             ],
           },
@@ -219,14 +228,14 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
-              title: statesMessages.tryggingastofnunInReviewTitle,
-              content: statesMessages.tryggingastofnunInReviewContent,
+              title: coreSIAStatesMessages.tryggingastofnunInReviewTitle,
+              content: coreSIAStatesMessages.tryggingastofnunInReviewContent,
               displayStatus: 'info',
             },
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.additionalDocumentsAdded,
+                logMessage: coreSIAStatesMessages.additionalDocumentsAdded,
               },
             ],
           },
@@ -269,8 +278,9 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               variant: 'red',
             },
             pendingAction: {
-              title: statesMessages.additionalDocumentRequired,
-              content: statesMessages.additionalDocumentRequiredDescription,
+              title: coreSIAStatesMessages.additionalDocumentRequired,
+              content:
+                coreSIAStatesMessages.additionalDocumentRequiredDescription,
               displayStatus: 'warning',
             },
           },
@@ -311,7 +321,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationApproved,
+              title: coreSIAStatesMessages.applicationApproved,
               content: statesMessages.applicationApprovedDescription,
               displayStatus: 'success',
             },
@@ -338,7 +348,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               {
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
                 onEvent: States.REJECTED,
-                logMessage: statesMessages.applicationRejected,
+                logMessage: coreSIAStatesMessages.applicationRejected,
               },
             ],
           },
@@ -448,6 +458,24 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 
         if (householdSupplementHousing !== HouseholdSupplementHousing.RENTER) {
           unset(answers, 'fileUpload.leaseAgreement')
+        }
+
+        return context
+      }),
+      clearBankAccountInfo: assign((context) => {
+        const { application } = context
+        const { bankAccountType } = getApplicationAnswers(application.answers)
+
+        if (bankAccountType === BankAccountType.ICELANDIC) {
+          unset(application.answers, 'paymentInfo.iban')
+          unset(application.answers, 'paymentInfo.swift')
+          unset(application.answers, 'paymentInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.currency')
+        }
+
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          unset(application.answers, 'paymentInfo.bank')
         }
 
         return context

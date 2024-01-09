@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../../lib/messages'
@@ -19,15 +19,30 @@ import { pageSize } from '../../../lib/utils'
 
 const Signees = () => {
   const { formatMessage } = useLocale()
+  const { allSignees } = useLoaderData() as { allSignees: Signature[] }
+  const [signees, setSignees] = useState(allSignees)
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
-  const { signees } = useLoaderData() as { signees: Signature[] }
+
+  useEffect(() => {
+    let filteredSignees: Signature[] = allSignees
+
+    filteredSignees = filteredSignees.filter((s) => {
+      return (
+        s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        formatNationalId(s.signee.nationalId).includes(searchTerm)
+      )
+    })
+
+    setPage(1)
+    setSignees(filteredSignees)
+  }, [searchTerm])
 
   return (
-    <Box marginTop={5}>
+    <Box marginTop={7}>
       <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
 
-      <GridRow marginBottom={5} marginTop={3}>
+      <GridRow marginTop={3} marginBottom={5}>
         <GridColumn span={['12/12', '12/12', '7/12']}>
           <FilterInput
             name="searchSignee"
@@ -43,8 +58,9 @@ const Signees = () => {
             justifyContent="flexEnd"
             alignItems="flexEnd"
             height="full"
+            marginTop={[1, 1, 0]}
           >
-            {searchTerm.length > 0
+            {searchTerm.length > 0 && signees.length > 0
               ? signees.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">
                     {formatMessage(m.uploadResultsHeader)}: {signees.length}
@@ -59,8 +75,8 @@ const Signees = () => {
         </GridColumn>
       </GridRow>
 
-      {signees && signees.length > 0 && (
-        <Box marginTop={5}>
+      {signees && signees.length > 0 ? (
+        <Box marginTop={3}>
           <T.Table>
             <T.Head>
               <T.Row>
@@ -119,7 +135,7 @@ const Signees = () => {
             </T.Body>
           </T.Table>
 
-          <Box marginTop={5}>
+          <Box marginTop={3}>
             <Pagination
               totalItems={signees.length}
               itemsPerPage={pageSize}
@@ -137,6 +153,15 @@ const Signees = () => {
             />
           </Box>
         </Box>
+      ) : searchTerm.length > 0 ? (
+        <Box display="flex">
+          <Text>{formatMessage(m.noSigneesFoundBySearch)}</Text>
+          <Box marginLeft={1}>
+            <Text variant="h5">{searchTerm}</Text>
+          </Box>
+        </Box>
+      ) : (
+        <Text>{formatMessage(m.noSignees)}</Text>
       )}
     </Box>
   )

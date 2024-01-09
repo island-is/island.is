@@ -57,6 +57,13 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
               ? 'cover'
               : 'contain'
           }
+          imageObjectPosition={
+            projectPage.themeProperties?.imageObjectPosition === 'left'
+              ? 'left'
+              : projectPage.themeProperties?.imageObjectPosition === 'right'
+              ? 'right'
+              : 'center'
+          }
         />
       )
     default: {

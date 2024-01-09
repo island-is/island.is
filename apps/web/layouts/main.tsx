@@ -563,24 +563,26 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
-    item.menuLinks.map((x) => {
-      const href = LinkResolver(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        x.link.type as LinkType,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        [x.link.slug],
-        lang as Locale,
-      ).href.trim()
+    item.menuLinks
+      .filter((x) => x?.link?.slug && x?.link?.type)
+      .map((x) => {
+        // These will be strings due to the .filter()
+        const type = x.link?.type as string
+        const slug = x.link?.slug as string
 
-      // If a link type is an url string and the url has the same origin, strip the origin part out
-      // so that the Link component does not treat it as an external url.
-      return {
-        title: x.title,
-        href: href.startsWith(origin) ? href.replace(origin, '') : href,
-      }
-    })
+        const href = LinkResolver(
+          type as LinkType,
+          [slug],
+          lang as Locale,
+        ).href.trim()
+
+        // If a link type is an url string and the url has the same origin, strip the origin part out
+        // so that the Link component does not treat it as an external url.
+        return {
+          title: x.title,
+          href: href.startsWith(origin) ? href.replace(origin, '') : href,
+        }
+      })
 
   const initialFooterMenu = {
     footerUpperInfo: [],

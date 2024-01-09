@@ -253,7 +253,6 @@ components:
             - selfEmployed
             - rentalAgreement
             - schoolConfirmation
-            - undefined
         file:
           type: string
     Response:
@@ -321,6 +320,8 @@ components:
       properties:
         isEligible:
           type: boolean
+        reason:
+          type: string
     DomesticBankInfo:
       type: object
       additionalProperties: false

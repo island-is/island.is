@@ -1,7 +1,9 @@
 import { CREATE_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
+import { UserRole } from '@island.is/judicial-system/types'
 
 describe(CREATE_INDICTMENT_ROUTE, () => {
   beforeEach(() => {
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     cy.visit(CREATE_INDICTMENT_ROUTE)
   })

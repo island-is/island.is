@@ -38,6 +38,7 @@ import {
 } from '@island.is/web/components'
 import {
   AdgerdirPage,
+  AnchorPage,
   Article,
   ContentLanguage,
   GetNamespaceQuery,
@@ -46,7 +47,6 @@ import {
   GetSearchResultsNewsQuery,
   GetSearchResultsTotalQuery,
   Image,
-  AnchorPage,
   LifeEventPage,
   Link as LinkItem,
   Manual,
@@ -347,13 +347,10 @@ const Search: Screen<CategoryProps> = ({
     }
 
     if (item.__typename === 'ManualChapterItem') {
-      return linkResolver('manualchapter', [
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+      return linkResolver('manualchapteritem', [
         item.manual.slug,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         item.manualChapter.slug,
+        item.id,
       ])
     }
 

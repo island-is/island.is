@@ -43,7 +43,7 @@ export class PaymentResolver {
   @Query(() => CopaymentStatusResponse, {
     name: 'rightsPortalCopaymentStatus',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getCopaymentStatus(
     @CurrentUser() user: User,
@@ -54,7 +54,7 @@ export class PaymentResolver {
   @Query(() => CopaymentPeriodResponse, {
     name: 'rightsPortalCopaymentPeriods',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getCopaymentPeriods(
     @CurrentUser() user: User,
@@ -66,7 +66,7 @@ export class PaymentResolver {
   @Query(() => CopaymentBillResponse, {
     name: 'rightsPortalCopaymentBills',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getCopaymentBills(
     @CurrentUser() user: User,
@@ -78,7 +78,7 @@ export class PaymentResolver {
   @Query(() => PaymentOverviewServiceTypeResponse, {
     name: 'rightsPortalPaymentOverviewServiceTypes',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getPaymentOverviewServiceTypes(
     @CurrentUser() user: User,
@@ -89,7 +89,7 @@ export class PaymentResolver {
   @Query(() => PaymentOverviewResponse, {
     name: 'rightsPortalPaymentOverview',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getPaymentOverview(
     @CurrentUser() user: User,
@@ -114,7 +114,7 @@ export class PaymentResolver {
   @Query(() => PaymentOverviewDocumentResponse, {
     name: 'rightsPortalPaymentOverviewDocument',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getPaymentOverviewDocument(
     @CurrentUser() user: User,

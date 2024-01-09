@@ -28,12 +28,15 @@ export class SignatureCollectionList {
   @Field(() => Boolean, { nullable: true })
   active?: boolean
 
-  @Field({ nullable: true })
-  collectionId?: string
+  @Field()
+  collectionId!: string
 
   @Field({ nullable: true })
   link?: string
 
   @Field({ nullable: true })
   numberOfSignatures?: number
+
+  @Field()
+  maxReached!: boolean
 }

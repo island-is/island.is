@@ -5,10 +5,7 @@ import { useRouter } from 'next/router'
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import {
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   core,
   rcDemands,
@@ -22,12 +19,13 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseType,
   Defendant,
   Gender,
@@ -39,14 +37,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
+  UpdateCase,
   useCase,
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  autofillEntry,
-  formatDateForServer,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   legalProvisions,
   travelBanProvisions,
@@ -61,11 +57,11 @@ import * as styles from './PoliceDemands.css'
 
 export interface DemandsAutofillProps {
   defendant: Defendant
-  caseType: CaseType
-  requestedValidToDate?: string | Date
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  parentCaseDecision?: CaseDecision
-  courtName?: string
+  caseType?: CaseType | null
+  requestedValidToDate?: string | Date | null
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null
+  parentCaseDecision?: CaseDecision | null
+  courtName?: string | null
 }
 
 export const getDemandsAutofill = (
@@ -143,10 +139,10 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const onDemandsChange = React.useCallback(
     (
-      entry: autofillEntry,
-      caseType: CaseType,
-      requestedValidToDate: Date | string | undefined,
-      requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
+      entry: UpdateCase,
+      caseType?: CaseType | null,
+      requestedValidToDate?: Date | string | null,
+      requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
     ) => {
       setAndSendCaseToServer(
         [

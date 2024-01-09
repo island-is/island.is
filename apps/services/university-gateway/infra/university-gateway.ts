@@ -3,6 +3,10 @@ import {
   Base,
   Client,
   UniversityGatewayUniversityOfIceland,
+  UniversityGatewayUniversityOfAkureyri,
+  UniversityGatewayIcelandUniversityOfTheArts,
+  UniversityGatewayAgriculturalUniversityOfIceland,
+  UniversityGatewayHolarUniversity,
 } from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-university-gateway'
@@ -40,7 +44,15 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/IDENTITY_SERVER_CLIENT_SECRET`,
     })
-    .xroad(Base, Client, UniversityGatewayUniversityOfIceland)
+    .xroad(
+      Base,
+      Client,
+      UniversityGatewayUniversityOfIceland,
+      UniversityGatewayUniversityOfAkureyri,
+      UniversityGatewayIcelandUniversityOfTheArts,
+      UniversityGatewayAgriculturalUniversityOfIceland,
+      UniversityGatewayHolarUniversity,
+    )
     .postgres(postgresInfo)
     .initContainer({
       containers: [
@@ -74,13 +86,13 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
       max: 10,
     })
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/liveness')
     .grantNamespaces('islandis', 'nginx-ingress-internal')
 }
 
 export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
-  return service(typeof serviceWorkerName)
-    .serviceAccount(typeof serviceWorkerName)
+  return service(serviceWorkerName)
+    .serviceAccount(serviceWorkerName)
     .namespace(namespace)
     .image(imageName)
     .command('node')
@@ -101,7 +113,15 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/IDENTITY_SERVER_CLIENT_SECRET`,
     })
-    .xroad(Base, Client, UniversityGatewayUniversityOfIceland)
+    .xroad(
+      Base,
+      Client,
+      UniversityGatewayUniversityOfIceland,
+      UniversityGatewayUniversityOfAkureyri,
+      UniversityGatewayIcelandUniversityOfTheArts,
+      UniversityGatewayAgriculturalUniversityOfIceland,
+      UniversityGatewayHolarUniversity,
+    )
     .postgres(postgresInfo)
     .extraAttributes({
       // Schedule to run hourly at minute :00 (while testing)

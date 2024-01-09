@@ -38,8 +38,18 @@ export const m = defineMessages({
     defaultMessage: 'Landsfjórðungur',
     description: '',
   },
-  clearFilters: {
-    id: 'admin-portal.signature-collection:clearFilters',
+  candidate: {
+    id: 'admin-portal.signature-collection:candidate',
+    defaultMessage: 'Frambjóðandi',
+    description: '',
+  },
+  clearFilter: {
+    id: 'admin-portal.signature-collection:clearFilter',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
+  clearAllFilters: {
+    id: 'admin-portal.signature-collection:clearAllFilters',
     defaultMessage: 'Hreinsa allar síur',
     description: '',
   },
@@ -73,6 +83,16 @@ export const m = defineMessages({
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
     defaultMessage: 'Meðmælalisti',
+    description: '',
+  },
+  noSignees: {
+    id: 'admin-portal.signature-collection:noLists',
+    defaultMessage: 'Engin meðmæli',
+    description: '',
+  },
+  noSigneesFoundBySearch: {
+    id: 'admin-portal.signature-collection:noSigneesFoundBySearch',
+    defaultMessage: 'Engin meðmæli fundust þegar leitað var að',
     description: '',
   },
   listSigneesNumberHeader: {
@@ -120,9 +140,14 @@ export const m = defineMessages({
     defaultMessage: 'Lorem ipsum',
     description: '',
   },
-  updateListEndTimeButton: {
-    id: 'admin-portal.signature-collection:updateListEndTimeButton',
+  updateListEndTime: {
+    id: 'admin-portal.signature-collection:updateListEndTime',
     defaultMessage: 'Framlengja lokadag',
+    description: '',
+  },
+  updateListEndTimeSuccess: {
+    id: 'admin-portal.signature-collection:updateListEndTimeSuccess',
+    defaultMessage: 'Tókst að framlengja lokadag',
     description: '',
   },
   confirmListReviewed: {
@@ -152,6 +177,11 @@ export const m = defineMessages({
     defaultMessage: 'Tekið er við skjölum með endingu: .xlsx, .xls',
     description: '',
   },
+  downloadTemplate: {
+    id: 'admin-portal.signature-collection:downloadTemplate',
+    defaultMessage: 'Sækja template',
+    description: '',
+  },
   uploadButton: {
     id: 'admin-portal.signature-collection:uploadButton',
     defaultMessage: 'Velja skjöl',
@@ -160,6 +190,12 @@ export const m = defineMessages({
   uploadResultsHeader: {
     id: 'admin-portal.signature-collection:uploadResultsHeader',
     defaultMessage: 'Niðurstöður',
+    description: '',
+  },
+  noUploadResults: {
+    id: 'admin-portal.signature-collection:uploadResultsHeader',
+    defaultMessage:
+      'Engar niðurstöður komu upp úr skjalinu sem hlaðið var upp.',
     description: '',
   },
   totalListResults: {
@@ -181,7 +217,7 @@ export const m = defineMessages({
   // Compare lists
   compareLists: {
     id: 'admin-portal.signature-collection:compareLists',
-    defaultMessage: 'Bera saman',
+    defaultMessage: 'Bera saman lista',
     description: '',
   },
   compareListsDescription: {
@@ -199,6 +235,12 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:compareListsResultsDescription',
     defaultMessage:
       'Eftirfarandi aðilar eru í yfirkjörstjórn eða landskjörstjórn og ættu ekki að vera skráðir á lista.',
+    description: '',
+  },
+  compareListsNoResultsDescription: {
+    id: 'admin-portal.signature-collection:compareListsNoResultsDescription',
+    defaultMessage:
+      'Enginn fannst í yfirkjörstjórn eða landskjörstjórn sem er skráður á lista.',
     description: '',
   },
   deleteFromList: {
