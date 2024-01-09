@@ -58,7 +58,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OLD_AGE_PENSION,
   name: determineNameFromApplicationAnswers,
-  institution: oldAgePensionFormMessage.shared.institution,
+  institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.oldAgePensionApplication,
   translationNamespaces: ApplicationConfigurations.OldAgePension.translation,
   dataSchema,
