@@ -66,6 +66,24 @@ export const survivorsBenefitsFormMessage: MessageDir = {
     },
   }),
 
+  payment: defineMessages({
+    spouseAllowance: {
+      id: 'sb.application:payment.spouse.allowance',
+      defaultMessage: 'Viltu nýta persónuafslátt látins maka/sambúðaraðila?',
+      description: 'Would you like to use your deceased spouse\'s personal tax-free allowance?',
+    },
+    spouseAllowanceDescription: {
+      id: 'sb.application:payment.spouse.allowance.description',
+      defaultMessage: 'Þú getur nýtt þér skattkort maka/sambúðaraðila í átta mánuði eftir andlát hans',
+      description: 'You can use your spouse\'s personal tax-free allowance for eight months after their passing',
+    },
+    spouseAllowancePercentage: {
+      id: 'sb.application:payment.spouse.allowance.percentage',
+      defaultMessage: 'Skráðu tölu á bilinu 1-100',
+      description: 'Enter a number between 1 and 100',
+    },
+  }),
+
   fileUpload: defineMessages({
     additionalFileDescription: {
       id: 'sb.application:fileUpload.additionalFile.description',
@@ -73,6 +91,14 @@ export const survivorsBenefitsFormMessage: MessageDir = {
         'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
+    },
+  }),
+
+  confirm: defineMessages ({
+    spouseAllowance: {
+      id: 'sb.application:confirm.spouse.allowance',
+      defaultMessage: 'Persónuafsláttur maka',
+      description: 'Spouse\'s personal tax-free allowance',
     },
   }),
 

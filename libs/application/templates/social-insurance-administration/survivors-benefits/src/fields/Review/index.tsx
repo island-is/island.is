@@ -10,6 +10,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
+import { PaymentInformation } from './review-groups/PaymentInformation'
 import { Children } from './review-groups/Children'
 import { getApplicationAnswers } from '../../lib/survivorsBenefitsUtils'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
@@ -33,7 +34,6 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const { comment } = getApplicationAnswers(application.answers)
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
@@ -158,6 +158,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <PaymentInformation {...childProps} />
       <Children {...childProps} />
       {comment && <Comment {...childProps} />}
       <Attachments {...childProps} />
