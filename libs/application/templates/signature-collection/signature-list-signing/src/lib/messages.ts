@@ -109,7 +109,7 @@ export const m = defineMessages({
     description: '',
   },
   selectCandidateDescription: {
-    id: 'sls.application:selectCandidate',
+    id: 'sls.application:selectCandidateDescription',
     defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með',
     description: '',
   },
@@ -157,7 +157,7 @@ export const m = defineMessages({
     description: '',
   },
   listSignedDescription: {
-    id: 'sls.application:listSignedDescription',
+    id: 'sls.application:listSignedDescription#markdown',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
     description: '',

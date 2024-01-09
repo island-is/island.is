@@ -71,7 +71,7 @@ export const Draft: Form = buildForm({
                   }) => {
                     return (data as SignatureCollectionList[]).map((list) => ({
                       value: list.id,
-                      label: list.title,
+                      label: list.candidate.name + ' - ' + list.area.name,
                     }))
                   },
                 }),
