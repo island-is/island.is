@@ -52,7 +52,7 @@ import { createNavigation } from '@island.is/web/utils/navigation'
 
 interface LifeEventPageProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
-  newLayout?: boolean;
+  newLayout?: boolean
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
@@ -79,7 +79,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
 
   const navigation = useMemo(() => {
     if (lifeEvent) {
-      const { content, title } = lifeEvent;
+      const { content, title } = lifeEvent
       return createNavigation(content, { title })
     }
   }, [lifeEvent])
@@ -133,10 +133,18 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
           </Box>
         </GridRow>
         <GridRow>
-          <GridColumn span={newLayout ? ['12/12'] : ['12/12', '12/12', '12/12', '8/12', '9/12']}>
+          <GridColumn
+            span={
+              newLayout
+                ? ['12/12']
+                : ['12/12', '12/12', '12/12', '8/12', '9/12']
+            }
+          >
             <GridRow>
               <GridColumn
-                span={newLayout ? ['12/12'] : ['9/9', '9/9', '9/9', '9/9', '7/9']}
+                span={
+                  newLayout ? ['12/12'] : ['9/9', '9/9', '9/9', '9/9', '7/9']
+                }
                 offset={newLayout ? undefined : ['0', '0', '0', '0', '1/9']}
               >
                 <Box paddingBottom={[2, 2, 4]}>
@@ -252,7 +260,9 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                           return (
                             <SectionWithImage
                               {...slice}
-                              reverse={sectionCountRef.current % 2 === 0 && newLayout}
+                              reverse={
+                                sectionCountRef.current % 2 === 0 && newLayout
+                              }
                               variant={newLayout ? 'even' : 'default'}
                               contain={newLayout}
                             />
@@ -290,7 +300,9 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
 }
 
 LifeEventPage.getProps = async ({ apolloClient, locale, query }) => {
-  const newLayout = parseAsBoolean.withDefault(false).parseServerSide(query.newLayout)
+  const newLayout = parseAsBoolean
+    .withDefault(false)
+    .parseServerSide(query.newLayout)
   const [
     {
       data: { getLifeEventPage: lifeEvent },
