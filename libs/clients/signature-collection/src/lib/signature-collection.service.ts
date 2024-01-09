@@ -295,6 +295,11 @@ export class SignatureCollectionClientService {
   }
 
   //   TODO: DelegateList
+
+async delegateList(listId: string, nationalId: string): Promise<Success> {
+  
+  return {success: true}
+}
   //   TODO: UndelegateList
 
   async extendDeadline(listId: string, newEndDate: Date): Promise<List> {
