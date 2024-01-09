@@ -21,9 +21,11 @@ import {
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
+  AnchorNavigation,
   BackgroundImage,
   Form,
   HeadWithSocialSharing,
+  Sticky,
   WatsonChatPanel,
 } from '@island.is/web/components'
 import {
@@ -45,9 +47,12 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { useI18n } from '@island.is/web/i18n'
 import { Webreader } from '@island.is/web/components'
 import { watsonConfig } from '../AnchorPage/config'
+import { parseAsBoolean } from 'next-usequerystate'
+import { createNavigation } from '@island.is/web/utils/navigation'
 
 interface LifeEventPageProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
+  newLayout?: boolean;
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
@@ -56,6 +61,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   lifeEvent,
+  newLayout = false,
   namespace,
   locale,
 }) => {
@@ -70,6 +76,13 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
   const { linkResolver } = useLinkResolver()
   const sectionCountRef = useRef<number>(0)
   const overviewUrl = router.asPath.slice(0, router.asPath.lastIndexOf('/'))
+
+  const navigation = useMemo(() => {
+    if (lifeEvent) {
+      const { content, title } = lifeEvent;
+      return createNavigation(content, { title })
+    }
+  }, [lifeEvent])
 
   const breadcrumbItems = useMemo(() => {
     const items: BreadCrumbItem[] = [
@@ -120,9 +133,12 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
           </Box>
         </GridRow>
         <GridRow>
-          <GridColumn span={['12/12']}>
+          <GridColumn span={newLayout ? ['12/12'] : ['12/12', '12/12', '12/12', '8/12', '9/12']}>
             <GridRow>
-              <GridColumn span={['12/12']}>
+              <GridColumn
+                span={newLayout ? ['12/12'] : ['9/9', '9/9', '9/9', '9/9', '7/9']}
+                offset={newLayout ? undefined : ['0', '0', '0', '0', '1/9']}
+              >
                 <Box paddingBottom={[2, 2, 4]}>
                   <Breadcrumbs
                     items={breadcrumbItems}
@@ -236,9 +252,9 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                           return (
                             <SectionWithImage
                               {...slice}
-                              reverse={sectionCountRef.current % 2 === 0}
-                              variant="even"
-                              contain
+                              reverse={sectionCountRef.current % 2 === 0 && newLayout}
+                              variant={newLayout ? 'even' : 'default'}
+                              contain={newLayout}
                             />
                           )
                         },
@@ -250,6 +266,19 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
               </GridColumn>
             </GridRow>
           </GridColumn>
+          {!newLayout && navigation && (
+            <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12', '3/12']}>
+              <Box printHidden height="full" marginTop={10} paddingLeft={4}>
+                <Sticky>
+                  <AnchorNavigation
+                    title={n('categoryOverview', 'Á þessari síðu')}
+                    navigation={navigation}
+                    position="right"
+                  />
+                </Sticky>
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
       </GridContainer>
       {watsonConfig[locale] && ( // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -261,6 +290,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
 }
 
 LifeEventPage.getProps = async ({ apolloClient, locale, query }) => {
+  const newLayout = parseAsBoolean.withDefault(false).parseServerSide(query.newLayout)
   const [
     {
       data: { getLifeEventPage: lifeEvent },
@@ -296,7 +326,7 @@ LifeEventPage.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'LifeEvent Page not found')
   }
 
-  return { lifeEvent, namespace, locale: locale as Locale }
+  return { lifeEvent, newLayout, namespace, locale: locale as Locale }
 }
 
 export default withMainLayout(LifeEventPage)
