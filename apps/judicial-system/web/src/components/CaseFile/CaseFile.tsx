@@ -36,6 +36,7 @@ const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
       borderRadius="large"
       borderWidth="standard"
       onClick={onClick ? () => onClick(id) : undefined}
+      aria-label={onClick ? `Opna ${name}` : undefined}
     >
       <Box>
         <Text fontWeight="semiBold" as="span">
