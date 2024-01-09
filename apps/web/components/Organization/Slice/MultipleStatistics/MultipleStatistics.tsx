@@ -1,7 +1,7 @@
 import React from 'react'
+
 import {
   Box,
-  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -9,6 +9,7 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
+import { BorderAbove } from '@island.is/web/components'
 import { MultipleStatistics as MultipleStatisticsSchema } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
@@ -18,25 +19,14 @@ interface SliceProps {
 export const MultipleStatistics: React.FC<
   React.PropsWithChildren<SliceProps>
 > = ({ slice }) => {
-  const boxProps: BoxProps = slice.hasBorderAbove
-    ? {
-        borderTopWidth: 'standard',
-        borderColor: 'standard',
-        paddingTop: [4, 4, 6],
-        paddingBottom: [4, 4, 6],
-      }
-    : {
-        paddingTop: 2,
-        paddingBottom: 2,
-      }
-
   return (
     <section
       key={slice.id}
       id={slice.id}
       aria-labelledby={'sliceTitle-' + slice.id}
     >
-      <Box {...boxProps}>
+      {slice.hasBorderAbove && <BorderAbove />}
+      <Box>
         {!!slice.title && (
           <Text variant="h2" as="h2" marginBottom={4}>
             {slice.title}
