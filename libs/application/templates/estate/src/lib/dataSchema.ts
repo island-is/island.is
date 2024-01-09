@@ -484,9 +484,7 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return !!phone || !!email || !!nationalId
-          ? isValidString(name)
-          : true
+        return !!phone || !!email || !!nationalId ? isValidString(name) : true
       },
       {
         path: ['name'],
