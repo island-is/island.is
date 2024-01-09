@@ -27,12 +27,20 @@ export const assetsNavigation: PortalNavigationItem = {
         {
           name: m.myVehicles,
           path: AssetsPaths.AssetsMyVehicles,
+          breadcrumbHide: true,
           children: [
             {
               // Path param reference
               name: 'id',
               navHide: true,
               path: AssetsPaths.AssetsVehiclesDetail,
+              children: [
+                {
+                  name: m.vehicleMileage,
+                  navHide: true,
+                  path: AssetsPaths.AssetsVehiclesDetailMileage,
+                },
+              ],
             },
           ],
         },
@@ -43,6 +51,27 @@ export const assetsNavigation: PortalNavigationItem = {
         {
           name: m.vehiclesHistory,
           path: AssetsPaths.AssetsVehiclesHistory,
+        },
+      ],
+    },
+    {
+      name: m.intellectualProperties,
+      path: AssetsPaths.AssetsIntellectualProperties,
+      children: [
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesDesign,
+        },
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
+        },
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsIntellectualPropertiesPatent,
         },
       ],
     },

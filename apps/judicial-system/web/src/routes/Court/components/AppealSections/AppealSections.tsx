@@ -3,10 +3,12 @@ import { useIntl } from 'react-intl'
 
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealDecision,
+  SessionArrangements,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,

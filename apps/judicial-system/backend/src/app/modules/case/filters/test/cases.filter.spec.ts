@@ -2,13 +2,13 @@ import { Op } from 'sequelize'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  appealsCourtRoles,
   CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
   completedCaseStates,
-  courtRoles,
+  courtOfAppealsRoles,
+  districtCourtRoles,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -124,7 +124,10 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe.each(courtRoles)('given %s role', (role) => {
+  describe.each([
+    UserRole.DISTRICT_COURT_JUDGE,
+    UserRole.DISTRICT_COURT_REGISTRAR,
+  ])('given %s role', (role) => {
     it(`should get ${role} filter`, () => {
       // Arrange
       const user = {
@@ -183,11 +186,19 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe('given ASSISTANT role', () => {
+  describe.each(
+    districtCourtRoles.filter(
+      (role) =>
+        ![
+          UserRole.DISTRICT_COURT_JUDGE,
+          UserRole.DISTRICT_COURT_REGISTRAR,
+        ].includes(role as UserRole),
+    ),
+  )('given %s role', (role) => {
     it(`should get assistant filter`, () => {
       // Arrange
       const user = {
-        role: UserRole.ASSISTANT,
+        role,
         institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
       }
 
@@ -219,7 +230,7 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe.each(appealsCourtRoles)('given %s role', (role) => {
+  describe.each(courtOfAppealsRoles)('given %s role', (role) => {
     it('should get court of appeals filter', () => {
       // Arrange
       const user = {

@@ -14,7 +14,11 @@ import { ConfigType } from '@nestjs/config'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { type User, UserRole } from '@island.is/judicial-system/types'
+import {
+  EventType,
+  type User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { DefenderService } from '../defender/defender.service'
 import { authModuleConfig } from './auth.config'
@@ -160,7 +164,22 @@ export class AuthService {
     }
   }
 
-  validateUser(user: User): boolean {
-    return user.active
+  async logLogin(
+    eventType: EventType,
+    nationalId: string,
+    userRole?: UserRole,
+  ) {
+    await fetch(`${this.config.backendUrl}/api/event-log/log-event`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${this.config.secretToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        eventType,
+        nationalId,
+        userRole,
+      }),
+    })
   }
 }

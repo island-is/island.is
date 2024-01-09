@@ -4,7 +4,12 @@ query GetInnaDiplomas {
       diplomaDate
       diplomaId
       diplomaName
+      diplomaLongName
+      diplomaCode
+      diplomaCreditsTotal
+      diplomaCredits
       organisation
+      organisationId
       organisationShort
     }
   }

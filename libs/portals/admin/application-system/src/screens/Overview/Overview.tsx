@@ -52,6 +52,8 @@ const Overview = () => {
     defaultMultiChoiceFilters,
   )
 
+  const nationalId = filters.nationalId?.replace('-', '') ?? ''
+
   const { data: orgData, loading: orgsLoading } = useGetOrganizationsQuery({
     ssr: false,
   })
@@ -59,11 +61,7 @@ const Overview = () => {
   const { data, loading: queryLoading } = useGetApplicationsQuery({
     ssr: false,
     variables: {
-      input: {
-        nationalId: filters.nationalId
-          ? filters.nationalId.replace('-', '')
-          : '',
-      },
+      input: { nationalId },
     },
     onCompleted: (q) => {
       // Initialize available applications from the initial response
@@ -92,7 +90,7 @@ const Overview = () => {
   })
 
   const handleSearchChange = (nationalId: string) => {
-    if (nationalId.length === 11) {
+    if (nationalId.replace('-', '').length === 10) {
       setFilters((prev) => ({
         ...prev,
         nationalId,
@@ -126,8 +124,8 @@ const Overview = () => {
 
   const clearFilters = (categoryId?: string) => {
     if (!categoryId) {
-      // Clear all filters
-      setFilters(defaultFilters)
+      // Clear all filters (except nationalId)
+      setFilters((prev) => ({ ...prev, period: {} }))
       setMultiChoiceFilters(defaultMultiChoiceFilters)
       setInstitutionFilters(undefined)
       return
@@ -173,14 +171,14 @@ const Overview = () => {
         organizations={availableOrganizations ?? []}
         numberOfDocuments={applicationAdminList?.length}
       />
-      {isLoading && filters.nationalId?.length === 11 ? (
+      {isLoading && nationalId.length === 10 ? (
         <SkeletonLoader
           height={60}
           repeat={10}
           space={2}
           borderRadius="large"
         />
-      ) : filters.nationalId === '' ? (
+      ) : nationalId === '' ? (
         <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
           <Text variant="h4">
             {formatMessage(m.pleaseEnterValueToBeingSearch)}

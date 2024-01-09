@@ -27,6 +27,7 @@ export const DynamicWrapper: FC<React.PropsWithChildren<Props>> = ({
   }, [loading, matches])
 
   if (matches) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>
   }
 

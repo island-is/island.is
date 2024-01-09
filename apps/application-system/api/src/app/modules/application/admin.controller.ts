@@ -92,6 +92,7 @@ export class AdminController {
       typeId,
       status,
       nationalId,
+      true, // Show pruned applications
     )
   }
   @Scopes(AdminPortalScope.applicationSystem)

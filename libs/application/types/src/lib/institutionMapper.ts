@@ -195,4 +195,40 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
   },
+  [ApplicationTypes.OLD_AGE_PENSION]: {
+    nationalId: '',
+    slug: InstitutionTypes.TRYGGINGASTOFNUN,
+  },
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
+    nationalId: '',
+    slug: InstitutionTypes.TRYGGINGASTOFNUN,
+  },
+  [ApplicationTypes.CAR_RECYCLING]: {
+    nationalId: '',
+    slug: InstitutionTypes.URVINNSLUSJODUR,
+  },
+  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+  },
+  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+  },
+  [ApplicationTypes.CITIZENSHIP]: {
+    nationalId: InstitutionNationalIds.UTLENDINGASTOFNUN,
+    slug: InstitutionTypes.UTLENDINGASTOFNUN,
+  },
+  [ApplicationTypes.ENERGY_FUNDS]: {
+    nationalId: '',
+    slug: InstitutionTypes.ORKUSTOFNUN,
+  },
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
+    nationalId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
+    slug: InstitutionTypes.EMBAETTI_LANDLAEKNIS,
+  },
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+  },
 }

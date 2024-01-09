@@ -31,6 +31,7 @@ type ActionCardProps = {
     variant?: TagVariant
     outlined?: boolean
   }
+  secondaryTag?: ActionCardProps['tag']
   cta: {
     url?: string
     internalUrl?: string
@@ -84,6 +85,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   cta: _cta,
   secondaryCta,
   tag: _tag,
+  secondaryTag,
   image,
   translateLabel = 'yes',
 }) => {
@@ -168,7 +170,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         <Text variant="eyebrow" color="purple400">
           {eyebrow}
         </Text>
-        {renderTag()}
+        {renderTag(tag)}
       </Box>
     )
   }
@@ -199,20 +201,20 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           </Box>
         </Box>
         <Inline alignY="center" space={1}>
-          {!eyebrow && renderTag()}
+          {!eyebrow && renderTag(tag)}
         </Inline>
       </Box>
     )
   }
 
-  const renderTag = () => {
-    if (!tag.label) {
+  const renderTag = (actionTag: ActionCardProps['tag']) => {
+    if (!actionTag?.label) {
       return null
     }
 
     return (
-      <Tag outlined={tag.outlined} variant={tag.variant} disabled>
-        {tag.label}
+      <Tag outlined={actionTag.outlined} variant={actionTag.variant} disabled>
+        {actionTag.label}
       </Tag>
     )
   }
@@ -285,6 +287,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       </Box>
     )
   }
+
   return (
     <Box
       display="flex"
@@ -341,7 +344,12 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                 </Text>
               </Box>
               <Hidden above="xs">
-                <Box>{!date && !eyebrow && renderTag()}</Box>
+                {secondaryTag && (
+                  <Box marginRight="smallGutter">
+                    {!date && !eyebrow && renderTag(secondaryTag)}
+                  </Box>
+                )}
+                <Box>{!date && !eyebrow && renderTag(tag)}</Box>
               </Hidden>
             </Box>
           )}
@@ -370,7 +378,23 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             tag?.label ? styles.tag : cta.centered ? undefined : styles.button
           }
         >
-          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
+          <Hidden below="sm">
+            <Box
+              display="flex"
+              flexDirection={[
+                'columnReverse',
+                'columnReverse',
+                'columnReverse',
+                'row',
+              ]}
+            >
+              <>
+                {!date && !eyebrow && renderTag(secondaryTag)}
+                <Box marginRight="smallGutter" marginBottom="smallGutter" />
+                {!date && !eyebrow && renderTag(tag)}
+              </>
+            </Box>
+          </Hidden>
           {renderDefault()}
         </Box>
       </Box>

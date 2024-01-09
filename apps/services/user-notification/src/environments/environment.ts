@@ -11,6 +11,7 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
     SQS_ACCESS_KEY: 'testing',
     SQS_SECRET_ACCESS_KEY: 'testing',
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev',
+
     ...env,
   }
 }
@@ -46,6 +47,9 @@ export const environment = {
       }),
   },
   contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+  auth: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+  },
 }
 
 export type Config = typeof environment

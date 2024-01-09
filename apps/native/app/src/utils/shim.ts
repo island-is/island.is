@@ -7,4 +7,4 @@
 
 export const shim = () => {
   // noop
-};
+}

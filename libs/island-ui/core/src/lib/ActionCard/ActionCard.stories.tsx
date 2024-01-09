@@ -66,19 +66,11 @@ export const WithProgressMeter = () => (
       variant: 'blue',
     }}
     text="Toyota CHR"
-    cta={{ label: 'Continue process', variant: 'text' }}
-  />
-)
-
-export const RoseColoredProgressMeter = () => (
-  <ActionCard
-    heading="DB-J90"
-    tag={{
-      label: 'Take to recycling company',
-      variant: 'rose',
+    progressMeter={{
+      currentProgress: 30,
+      maxProgress: 100,
+      withLabel: true,
     }}
-    text="Toyota CHR"
-    cta={{ label: 'Continue process', variant: 'text' }}
   />
 )
 

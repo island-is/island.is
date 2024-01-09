@@ -16,4 +16,5 @@ export interface Auth {
   act?: JwtAct
   ip?: string
   userAgent?: string
+  audkenniSimNumber?: string
 }

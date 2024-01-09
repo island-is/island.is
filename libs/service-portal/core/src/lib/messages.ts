@@ -73,18 +73,12 @@ export const m = defineMessages({
     id: 'service.portal:action-category',
     defaultMessage: 'Aðgerðarflokkur',
   },
-  feeCategory: {
-    id: 'service.portal:fee-category',
-    defaultMessage: 'Gjaldflokkur / stofnun',
-  },
-  feeBase: {
-    id: 'service.portal:fee-base',
-    defaultMessage: 'Gjaldgrunnur',
-  },
+
   period: {
     id: 'service.portal:period',
     defaultMessage: 'Tímabil',
   },
+
   guardian: {
     id: 'service.portal:guardian',
     defaultMessage: 'Þjónustuaðili',
@@ -92,6 +86,10 @@ export const m = defineMessages({
   status: {
     id: 'service.portal:status',
     defaultMessage: 'Staða',
+  },
+  statusTotal: {
+    id: 'service.portal:status-total',
+    defaultMessage: 'Uppsöfnuð staða',
   },
   total: {
     id: 'service.portal:total',
@@ -104,6 +102,10 @@ export const m = defineMessages({
   date: {
     id: 'service.portal:date',
     defaultMessage: 'Dagsetning',
+  },
+  dateShort: {
+    id: 'service.portal:date-short',
+    defaultMessage: 'Dags.',
   },
   transactionType: {
     id: 'service.portal:transaction-type',
@@ -125,10 +127,7 @@ export const m = defineMessages({
     id: 'service.portal:view',
     defaultMessage: 'Skoða',
   },
-  transactionsLabel: {
-    id: 'service.portal:transactions-label',
-    defaultMessage: 'Veldu gjaldflokk',
-  },
+
   chooseDate: {
     id: 'service.portal:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -269,6 +268,10 @@ export const m = defineMessages({
   myVehicles: {
     id: 'service.portal:my-vehicles',
     defaultMessage: 'Ökutækin mín',
+  },
+  vehicleMileage: {
+    id: 'service.portal:my-vehicles-mileage',
+    defaultMessage: 'Kílómetrastaða',
   },
   incoming: {
     id: 'service.portal:incoming',
@@ -432,7 +435,6 @@ export const m = defineMessages({
     id: 'service.portal:base-info',
     defaultMessage: 'Grunnupplýsingar',
   },
-
   family: {
     id: 'service.portal:family',
     defaultMessage: 'Fjölskyldan',
@@ -456,6 +458,14 @@ export const m = defineMessages({
   viewPetition: {
     id: 'service.portal:viewPetition',
     defaultMessage: 'Nánar um lista',
+  },
+  signatureCollectionLists: {
+    id: 'service.portal:signatureCollectionLists',
+    defaultMessage: 'Meðmælalistar',
+  },
+  viewSignatureList: {
+    id: 'service.portal:viewSignatureList',
+    defaultMessage: 'Skoða nánar',
   },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',
@@ -563,6 +573,14 @@ export const m = defineMessages({
     id: 'service.portal:finance-transactions',
     defaultMessage: 'Hreyfingar',
   },
+  financeTransactionsCategories: {
+    id: 'service.portal:finance-transactions-categories',
+    defaultMessage: 'Gjaldflokkar',
+  },
+  financeTransactionPeriods: {
+    id: 'service.portal:finance-transaction-periods',
+    defaultMessage: 'Gjaldtímabil',
+  },
   financeBills: {
     id: 'service.portal:finance-bills',
     defaultMessage: 'Greiðsluseðlar og -kvittanir',
@@ -578,6 +596,10 @@ export const m = defineMessages({
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
+  },
+  financeLoans: {
+    id: 'service.portal:finance-loans',
+    defaultMessage: 'Lán',
   },
   searchLabel: {
     id: 'service.portal:search-label',
@@ -756,6 +778,10 @@ export const m = defineMessages({
     id: 'service.portal:go-back-to-dashboard',
     defaultMessage: 'Til baka í yfirlit',
   },
+  goBackToDashboardShort: {
+    id: 'service.portal:go-back-to-dashboard-short',
+    defaultMessage: 'Yfirlit',
+  },
   viewDetail: {
     id: 'service.portal:view-detail',
     defaultMessage: 'Skoða nánar',
@@ -890,6 +916,18 @@ export const m = defineMessages({
   saveInfo: {
     id: 'service.portal:saveInfo',
     defaultMessage: 'Vista upplýsingar',
+  },
+  save: {
+    id: 'service.portal:save',
+    defaultMessage: 'Vista',
+  },
+  register: {
+    id: 'service.portal:register',
+    defaultMessage: 'Skrá',
+  },
+  update: {
+    id: 'service.portal:update',
+    defaultMessage: 'Uppfæra',
   },
   startPage: {
     id: 'service.portal:start-page',
@@ -1074,6 +1112,15 @@ export const m = defineMessages({
     id: 'service.portal:health-description',
     defaultMessage: 'Hér eru heilsugögn um þig',
   },
+  intellectualProperties: {
+    id: 'service.portal:intellectual-property',
+    defaultMessage: 'Hugverkaréttindi',
+  },
+  intellectualPropertiesTooltip: {
+    id: 'service.portal:intellectual-property-tooltip',
+    defaultMessage:
+      'Hugverkastofan hefur umsjón með gögnum um hugverkaréttindi.',
+  },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',
     defaultMessage: 'Sundurliðun',
@@ -1087,11 +1134,7 @@ export const m = defineMessages({
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
   },
-  healthTooltip: {
-    id: 'service.portal:health-tooltip',
-    defaultMessage:
-      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
-  },
+
   universityOfIcelandTooltip: {
     id: 'service.portal:uni-iceland-tooltip',
     defaultMessage:
@@ -1186,5 +1229,25 @@ export const m = defineMessages({
   totalPrice: {
     id: 'service.portal:total-price',
     defaultMessage: 'Heildarverð',
+  },
+  replayAudio: {
+    id: 'service.portal:replay-audio',
+    defaultMessage: 'Spila aftur',
+  },
+  pauseAudio: {
+    id: 'service.portal:pause-audio',
+    defaultMessage: 'Gera hlé',
+  },
+  playAudio: {
+    id: 'service.portal:play-audio',
+    defaultMessage: 'Spila',
+  },
+  muteAudio: {
+    id: 'service.portal:mute-audio',
+    defaultMessage: 'Hljóð af',
+  },
+  unmuteAudio: {
+    id: 'service.portal:unmute-audio',
+    defaultMessage: 'Hljóð á',
   },
 })

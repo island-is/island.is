@@ -732,13 +732,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       const actualDaysFromPercentage = Math.floor(
         periodLength / (Number(period.ratio) / 100),
       )
-      const additionalMonths = Math.floor(
-        actualDaysFromPercentage / DAYS_IN_MONTH,
-      )
-      const additionalDays = actualDaysFromPercentage % DAYS_IN_MONTH
 
-      const startDateAddMonths = addMonths(startDate, additionalMonths)
-      const endDate = addDays(startDateAddMonths, additionalDays)
+      const endDate = addDays(startDate, actualDaysFromPercentage)
 
       return {
         ...periodObj,

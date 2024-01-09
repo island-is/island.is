@@ -11,6 +11,7 @@ import {
 import {
   Base,
   ChargeFjsV2,
+  EnergyFunds,
   Client,
   CriminalRecord,
   DataProtectionComplaint,
@@ -30,6 +31,10 @@ import {
   TransportAuthority,
   Vehicles,
   VehicleServiceFjsV1,
+  WorkMachines,
+  DirectorateOfImmigration,
+  SocialInsuranceAdministration,
+  OccupationalLicenses,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -110,10 +115,15 @@ export const workerSetup =
         staging: { schedule: '*/30 * * * *' },
         prod: { schedule: '*/30 * * * *' },
       })
+      .resources({
+        limits: { cpu: '400m', memory: '768Mi' },
+        requests: { cpu: '100m', memory: '384Mi' },
+      })
 
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  skilavottordWs: ServiceBuilder<'skilavottord-ws'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -213,7 +223,6 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
-      NO_UPDATE_NOTIFIER: 'true',
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {
         dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
@@ -229,6 +238,12 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
+      RECYCLING_FUND_GQL_BASE_PATH: ref(
+        (h) =>
+          `http://${h.svc(
+            services.skilavottordWs,
+          )}/app/skilavottord/api/graphql`,
+      ),
     })
     .xroad(
       Base,
@@ -244,6 +259,7 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      EnergyFunds,
       Finance,
       Properties,
       RskCompanyInfo,
@@ -252,6 +268,10 @@ export const serviceSetup = (services: {
       Vehicles,
       Passports,
       EHIC,
+      DirectorateOfImmigration,
+      SocialInsuranceAdministration,
+      OccupationalLicenses,
+      WorkMachines,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -287,13 +307,16 @@ export const serviceSetup = (services: {
       VMST_ID: '/k8s/application-system/VMST_ID',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+      ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH',
+      ALTHINGI_OMBUDSMAN_XROAD_USERNAME:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
+      ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
     })
     .postgres(postgresInfo)
     .liveness('/liveness')

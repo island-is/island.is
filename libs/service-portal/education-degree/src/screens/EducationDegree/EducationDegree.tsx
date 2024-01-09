@@ -1,11 +1,13 @@
-import React from 'react'
 import { defineMessage } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { FootNote, IntroHeader } from '@island.is/service-portal/core'
+import {
+  FootNote,
+  IntroHeader,
+  MENNTAMALASTOFNUN_SLUG,
+} from '@island.is/service-portal/core'
 import { DegreeCards } from './components/DegreeCards'
-import { MENNTAMALASTOFNUN_ID } from '@island.is/service-portal/core'
 
 function EducationDegree() {
   useNamespaces('sp.education-degree')
@@ -23,10 +25,10 @@ function EducationDegree() {
             'Hér getur þú fundið yfirlit yfir prófskírteini og lokapróf á öllum námsstigum.',
         })}
         img="./assets/images/educationGrades.svg"
-        serviceProviderID={MENNTAMALASTOFNUN_ID}
+        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
       />
       <DegreeCards />
-      <FootNote serviceProviderID={MENNTAMALASTOFNUN_ID} />
+      <FootNote serviceProviderSlug={MENNTAMALASTOFNUN_SLUG} />
     </Box>
   )
 }

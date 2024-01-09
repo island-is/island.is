@@ -62,11 +62,11 @@ export const ApplicationsTable = ({
     const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)
 
     if (copied) {
-      toast.success(formatMessage(m.copySuccessful))
+      toast.success(formatMessage(m.copyLinkSuccessful))
     }
   }
 
-  const handleCopyButtonClick = (
+  const handleCopyApplicationLink = (
     e: MouseEvent<HTMLButtonElement>,
     application: AdminApplication,
   ) => {
@@ -103,6 +103,7 @@ export const ApplicationsTable = ({
             .map((application, index) => {
               const tag = statusMapper[application.status]
               const logo = getLogo(application.typeId, organizations)
+              const cellText = application.pruned ? 'dark300' : 'currentColor'
 
               return (
                 <Drawer
@@ -113,19 +114,30 @@ export const ApplicationsTable = ({
                     <tr
                       role="button"
                       aria-label={formatMessage(m.openApplication)}
-                      className={styles.focusableTableRow}
+                      className={
+                        styles.focusableTableRow[
+                          application.pruned ? 'pruned' : 'normal'
+                        ]
+                      }
                     >
-                      <T.Data>
+                      <T.Data text={{ color: cellText }}>
                         {format(new Date(application.created), 'dd.MM.yyyy')}
                       </T.Data>
                       <T.Data>
-                        <Text variant="eyebrow" color="blue400">
+                        <Text
+                          variant="eyebrow"
+                          color={application.pruned ? 'dark300' : 'blue400'}
+                        >
                           {application.name}
                         </Text>
                       </T.Data>
-                      <T.Data>{application.applicantName ?? ''}</T.Data>
-                      <T.Data>{application.applicant}</T.Data>
-                      <T.Data>
+                      <T.Data text={{ color: cellText }}>
+                        {application.applicantName ?? ''}
+                      </T.Data>
+                      <T.Data text={{ color: cellText }}>
+                        {application.applicant}
+                      </T.Data>
+                      <T.Data text={{ color: cellText }}>
                         {format(new Date(application.modified), 'dd.MM.yyyy')}
                       </T.Data>
                       <T.Data>
@@ -136,7 +148,7 @@ export const ApplicationsTable = ({
                         </Box>
                       </T.Data>
                       <T.Data>
-                        <Tag disabled variant={tag.variant}>
+                        <Tag disabled variant={tag.variant} truncate>
                           {formatMessage(tag.label)}
                         </Tag>
                       </T.Data>
@@ -154,7 +166,7 @@ export const ApplicationsTable = ({
                                 m.copyLinkToApplication,
                               )}
                               onClick={(e) =>
-                                handleCopyButtonClick(e, application)
+                                handleCopyApplicationLink(e, application)
                               }
                             >
                               <Icon
@@ -171,8 +183,7 @@ export const ApplicationsTable = ({
                 >
                   <ApplicationDetails
                     application={application}
-                    organizations={organizations}
-                    onCopyButtonClick={copyApplicationLink}
+                    onCopyApplicationLink={copyApplicationLink}
                     shouldShowCardButtons={shouldShowCardButtons}
                   />
                 </Drawer>

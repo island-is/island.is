@@ -20,10 +20,10 @@ import { Documentation } from '@island.is/nest/swagger'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
-import { UserProfileDto } from './dto/user-profileDto'
+import { CreateVerificationDto } from './dto/create-verification.dto'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
-import { PatchUserProfileDto } from './dto/patch-user-profileDto'
-import { CreateVerificationDto } from './dto/create-verificationDto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -57,17 +57,25 @@ export class MeUserProfileController {
   @Patch()
   @Documentation({
     description: 'Update user profile for the current user.',
-    response: { status: 201, type: UserProfileDto },
-  })
-  @Audit<UserProfileDto>({
-    resources: (profile) => profile.nationalId,
+    response: { status: 200, type: UserProfileDto },
   })
   @Scopes(UserProfileScope.write)
   patchUserProfile(
     @CurrentUser() user: User,
     @Body() userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
-    return this.userProfileService.patch(user.nationalId, userProfile)
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'patch',
+        resources: user.nationalId,
+        meta: {
+          fields: Object.keys(userProfile),
+        },
+      },
+      this.userProfileService.patch(user, userProfile),
+    )
   }
 
   @Post('/create-verification')
@@ -75,7 +83,7 @@ export class MeUserProfileController {
   @Documentation({
     description:
       'Creates a verification code for the user for either email or sms',
-    response: { status: 201 },
+    response: { status: 200 },
   })
   async createVerification(
     @CurrentUser() user: User,
@@ -102,9 +110,8 @@ export class MeUserProfileController {
       {
         auth: user,
         namespace,
-        action: 'verify',
+        action: 'createVerification',
         resources: user.nationalId,
-        alsoLog: true,
       },
       validateInputs(),
     )
@@ -114,16 +121,15 @@ export class MeUserProfileController {
   @Scopes(UserProfileScope.write)
   @Documentation({
     description: 'Confirms that the user has seen the nudge',
-    response: { status: 201 },
+    response: { status: 200 },
   })
   confirmNudge(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
         auth: user,
         namespace,
-        action: 'confirmNudge',
+        action: 'nudge',
         resources: user.nationalId,
-        alsoLog: true,
       },
       this.userProfileService.confirmNudge(user.nationalId),
     )
