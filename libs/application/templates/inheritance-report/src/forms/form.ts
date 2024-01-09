@@ -16,6 +16,7 @@ import { applicant } from './sections/applicant'
 import { dataCollection } from './sections/dataCollection'
 import { deceased } from './sections/deceased'
 import { YES } from '../lib/constants'
+import { applicationDescription } from './sections/applicationDescription'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',
@@ -26,6 +27,7 @@ export const form: Form = buildForm({
   children: [
     deceased,
     dataCollection,
+    applicationDescription,
     applicant,
     assets,
     debts,
