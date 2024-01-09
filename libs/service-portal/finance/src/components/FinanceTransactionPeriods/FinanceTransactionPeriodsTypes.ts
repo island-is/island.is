@@ -30,4 +30,5 @@ export type SelectedPeriod = {
   period: string
   subject: string
   chargeType: string
+  details?: ChargeTypePeriodSubjects
 }

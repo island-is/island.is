@@ -6,12 +6,10 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import {
-  inReviewFormMessages,
-  householdSupplementFormMessage,
-} from '../lib/messages'
-import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { inReviewFormMessages } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'HouseholdSupplementInReviewUpload',
@@ -24,47 +22,36 @@ export const AdditionalDocumentsRequired: Form = buildForm({
     buildSection({
       id: 'reviewUpload',
       title:
-        householdSupplementFormMessage.fileUpload
+        socialInsuranceAdministrationMessage.fileUpload
           .additionalDocumentRequiredTitle,
       children: [
         buildMultiField({
           id: 'additionalDocumentsScreen',
           title:
-            householdSupplementFormMessage.fileUpload
+            socialInsuranceAdministrationMessage.fileUpload
               .additionalDocumentRequiredTitle,
           description:
-            householdSupplementFormMessage.fileUpload
+            socialInsuranceAdministrationMessage.fileUpload
               .additionalDocumentRequiredDescription,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
               title: '',
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                householdSupplementFormMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                householdSupplementFormMessage.fileUpload.attachmentHeader,
-              uploadDescription:
-                householdSupplementFormMessage.fileUpload.attachmentDescription,
-              uploadButtonLabel:
-                householdSupplementFormMessage.fileUpload.attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
             buildSubmitField({
               id: 'additionalDocumentsSubmit',
-              title:
-                householdSupplementFormMessage.fileUpload
-                  .additionalDocumentsEditSubmit,
               placement: 'footer',
+              title:
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalDocumentsEditSubmit,
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  name: householdSupplementFormMessage.fileUpload
+                  event: DefaultEvents.SUBMIT,
+                  name: socialInsuranceAdministrationMessage.fileUpload
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
-                  event: DefaultEvents.SUBMIT,
                 },
               ],
             }),
