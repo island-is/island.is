@@ -54,16 +54,16 @@ const Lists = () => {
         ((filters.area.length === 0 || filters.area.includes(list.area.name)) &&
           // Filter by candidate
           (filters.candidate.length === 0 ||
-            filters.candidate.includes(list.owner.name)) &&
+            filters.candidate.includes(list.candidate.name)) &&
           // Filter by input
           (filters.input.length === 0 ||
-            list.owner.name
+            list.candidate.name
               .toLowerCase()
               .includes(filters.input.toLowerCase()) ||
             list.area.name
               .toLowerCase()
               .includes(filters.input.toLowerCase()))) ||
-        formatNationalId(list.owner.nationalId).includes(filters.input)
+        formatNationalId(list.candidate.nationalId).includes(filters.input)
       )
     })
 
@@ -75,7 +75,7 @@ const Lists = () => {
     // set candidates on initial load of lists
     if (lists.length > 0) {
       const candidates = lists
-        .map((list) => list.owner.name)
+        .map((list) => list.candidate.name)
         .filter((value, index, self) => self.indexOf(value) === index)
         .map((candidate) => {
           return {
@@ -212,7 +212,7 @@ const Lists = () => {
                         ': ' +
                         format(new Date(list.endTime), 'dd.MM.yyyy')
                       }
-                      heading={list.owner.name + ' - ' + list.area.name}
+                      heading={list.title}
                       text={formatMessage(m.collectionTitle)}
                       progressMeter={{
                         currentProgress: list.numberOfSignatures ?? 0,

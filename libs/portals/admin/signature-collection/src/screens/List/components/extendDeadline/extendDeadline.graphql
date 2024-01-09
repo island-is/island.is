@@ -10,7 +10,8 @@ mutation ExtendDeadline($input: SignatureCollectionExtendDeadlineInput!) {
     }
     endTime
     startTime
-    owner {
+    candidate {
+      id
       nationalId
       name
       phone
@@ -19,11 +20,9 @@ mutation ExtendDeadline($input: SignatureCollectionExtendDeadlineInput!) {
     collectors {
       nationalId
       name
-      phone
-      email
     }
     active
     collectionId
-    link
+    slug
   }
 }
