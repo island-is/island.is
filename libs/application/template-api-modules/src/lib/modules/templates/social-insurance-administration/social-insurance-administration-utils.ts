@@ -184,7 +184,7 @@ export const transformApplicationToPensionSupplementDTO = (
   } = getPSApplicationAnswers(application.answers)
   const { email } = getPSApplicationExternalData(application.externalData)
 
-  const householdSupplementDTO: ApplicationDTO = {
+  const pensionSupplementDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
       email: email,
@@ -216,7 +216,7 @@ export const transformApplicationToPensionSupplementDTO = (
     comment: comment,
   }
 
-  return householdSupplementDTO
+  return pensionSupplementDTO
 }
 
 export const getMonthNumber = (monthName: string): number => {
