@@ -40,7 +40,7 @@ export const getEmploymentStatus: KeyMapping<Employment, string> = {
 
 export const getState: KeyMapping<ApplicationState, string> = {
   New: 'Ný umsókn',
-  DataNeeded: 'Vantar gögn',
+  DataNeeded: 'Vantar upplýsingar',
   InProgress: 'Í vinnslu',
   Rejected: 'Synjað',
   Approved: 'Samþykkt',
@@ -86,8 +86,8 @@ export const getEventData = (
       }
     case ApplicationEventType.DATANEEDED:
       return {
-        header: 'Vantar gögn',
-        text: 'óskaði eftir gögnum',
+        header: 'Vantar upplýsingar',
+        text: 'óskaði eftir upplýsingum',
         prefix: event.staffName ?? 'Starfsmaður',
       }
     case ApplicationEventType.INPROGRESS:

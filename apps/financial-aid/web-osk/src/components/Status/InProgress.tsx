@@ -45,8 +45,8 @@ const InProgress = ({ application, isApplicant = true }: Props) => {
       {application.state === ApplicationState.DATANEEDED && (
         <Box marginBottom={[4, 4, 5]}>
           <ActionCard
-            heading="Vantar gögn"
-            text="Við þurfum að fá gögn frá þér áður en við getum haldið áfram með umsóknina."
+            heading="Vantar upplýsingar"
+            text="Við þurfum að fá upplýsingar frá þér áður en við getum haldið áfram með umsóknina."
             cta={{
               label: 'Hlaða upp gögnum',
               onClick: () => {
