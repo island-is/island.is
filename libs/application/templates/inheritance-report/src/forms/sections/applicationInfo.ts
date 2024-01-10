@@ -6,13 +6,13 @@ import {
 import { m } from '../../lib/messages'
 
 export const applicationInfo = buildSection({
-  id: 'applicationInfo',
+  id: 'applicationInfoSection',
   title: m.applicationInfoSectionTitle,
   children: [
     buildDescriptionField({
-      id: 'applicationDescription',
+      id: 'applicationInfo',
       space: 2,
-      title: m.applicationInfoSectionTitle,
+      title: m.applicationInfoTitle,
       description: m.applicationInfoText,
     }),
   ],

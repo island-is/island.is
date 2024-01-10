@@ -61,8 +61,8 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: 'Titill fyrir hliðastiku',
   },
-  applicationDescriptionTitle: {
-    id: 'es.application:applicationDescriptionTitle',
+  applicationInfoTitle: {
+    id: 'es.application:applicationInfoTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Upplýsinga skjár titill',
   },
