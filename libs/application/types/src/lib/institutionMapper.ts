@@ -196,15 +196,15 @@ export const institutionMapper = {
     slug: InstitutionTypes.STAFRAENT_ISLAND,
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
-    nationalId: '',
+    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
-    nationalId: '',
+    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
   },
   [ApplicationTypes.CAR_RECYCLING]: {
-    nationalId: '',
+    nationalId: InstitutionNationalIds.URVINNSLUSJODUR,
     slug: InstitutionTypes.URVINNSLUSJODUR,
   },
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
@@ -220,7 +220,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.UTLENDINGASTOFNUN,
   },
   [ApplicationTypes.ENERGY_FUNDS]: {
-    nationalId: '',
+    nationalId: InstitutionNationalIds.ORKUSTOFNUN,
     slug: InstitutionTypes.ORKUSTOFNUN,
   },
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
@@ -232,7 +232,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUEFTIRLITID,
   },
   [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
-    nationalId: '',
+    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
   },
 }
