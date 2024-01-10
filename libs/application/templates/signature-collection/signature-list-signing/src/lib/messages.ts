@@ -114,12 +114,7 @@ export const m = defineMessages({
     description: '',
   },
   listDateTil: {
-    id: 'slc.application:listDateTil',
-    defaultMessage: 'Lokadagur',
-    description: '',
-  },
-  listDateTil: {
-    id: 'slc.application:listDateTil',
+    id: 'sls.application:listDateTil',
     defaultMessage: 'Lokadagur',
     description: '',
   },
