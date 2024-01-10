@@ -1,16 +1,16 @@
 import {
+  buildAlertMessageField,
+  buildCustomField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildPhoneField,
+  buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
-  buildCustomField,
-  buildRadioField,
-  buildFileUploadField,
-  buildAlertMessageField,
-  buildSelectField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -20,23 +20,6 @@ import {
   FormValue,
   YES,
 } from '@island.is/application/types'
-import { householdSupplementFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { HouseholdSupplementHousing } from '../lib/constants'
-import {
-  isExistsCohabitantOlderThan25,
-  getApplicationAnswers,
-  getApplicationExternalData,
-  getAvailableYears,
-} from '../lib/householdSupplementUtils'
-import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
-import {
-  BankAccountType,
-  MONTHS,
-  fileUploadSharedProps,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import isEmpty from 'lodash/isEmpty'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -44,17 +27,34 @@ import {
   typeOfBankInfo,
   getCurrencies,
   getYesNoOptions,
+  getTaxOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  BankAccountType,
+  fileUploadSharedProps,
+  MONTHS,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  getApplicationExternalData,
+  getAvailableYears,
+} from '../lib/additionalSupportForTheElderlyUtils'
+import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { getApplicationAnswers } from '../lib/additionalSupportForTheElderlyUtils'
+import isEmpty from 'lodash/isEmpty'
 
-export const HouseholdSupplementForm: Form = buildForm({
-  id: 'HouseholdSupplementDraft',
+export const AdditionalSupportForTheElderlyForm: Form = buildForm({
+  id: 'AdditionalSupportForTheElderlyDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'externalData',
+      id: 'prerequisites',
       title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [],
     }),
@@ -302,65 +302,58 @@ export const HouseholdSupplementForm: Form = buildForm({
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
+                buildRadioField({
+                  id: 'paymentInfo.personalAllowance',
+                  title:
+                    socialInsuranceAdministrationMessage.payment
+                      .personalAllowance,
+                  options: getYesNoOptions(),
+                  width: 'half',
+                  largeButtons: true,
+                  required: true,
+                  space: 'containerGutter',
+                }),
+                buildTextField({
+                  id: 'paymentInfo.personalAllowanceUsage',
+                  title:
+                    socialInsuranceAdministrationMessage.payment
+                      .personalAllowancePercentage,
+                  suffix: '%',
+                  condition: (answers) => {
+                    const { personalAllowance } = getApplicationAnswers(answers)
+                    return personalAllowance === YES
+                  },
+                  placeholder: '1%',
+                  defaultValue: '100',
+                  variant: 'number',
+                  width: 'half',
+                  maxLength: 4,
+                }),
+                buildAlertMessageField({
+                  id: 'payment.spouseAllowance.alert',
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
+                  message:
+                    socialInsuranceAdministrationMessage.payment
+                      .alertSpouseAllowance,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  condition: (_, externalData) => {
+                    const { hasSpouse } =
+                      getApplicationExternalData(externalData)
+                    if (hasSpouse) return true
+                    return false
+                  },
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.taxLevel',
+                  title: socialInsuranceAdministrationMessage.payment.taxLevel,
+                  options: getTaxOptions(),
+                  width: 'full',
+                  largeButtons: true,
+                  space: 'containerGutter',
+                  defaultValue: TaxLevelOptions.INCOME,
+                }),
               ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'householdSupplementSection',
-      title: householdSupplementFormMessage.shared.householdSupplement,
-      children: [
-        buildMultiField({
-          id: 'householdSupplement',
-          title: householdSupplementFormMessage.shared.householdSupplement,
-          description:
-            householdSupplementFormMessage.info.householdSupplementDescription,
-          children: [
-            buildAlertMessageField({
-              id: 'householdSupplement.alert',
-              title:
-                householdSupplementFormMessage.info
-                  .householdSupplementAlertTitle,
-              message:
-                householdSupplementFormMessage.info
-                  .householdSupplementAlertDescription,
-              doesNotRequireAnswer: true,
-              alertType: 'warning',
-              condition: (_, externalData) => {
-                return isExistsCohabitantOlderThan25(externalData)
-              },
-            }),
-            buildRadioField({
-              id: 'householdSupplement.housing',
-              title:
-                householdSupplementFormMessage.info.householdSupplementHousing,
-              options: [
-                {
-                  value: HouseholdSupplementHousing.HOUSEOWNER,
-                  label:
-                    householdSupplementFormMessage.info
-                      .householdSupplementHousingOwner,
-                },
-                {
-                  value: HouseholdSupplementHousing.RENTER,
-                  label:
-                    householdSupplementFormMessage.info
-                      .householdSupplementHousingRenter,
-                },
-              ],
-              width: 'half',
-              required: true,
-            }),
-            buildRadioField({
-              id: 'householdSupplement.children',
-              title:
-                householdSupplementFormMessage.info
-                  .householdSupplementChildrenBetween18And25,
-              options: getYesNoOptions(),
-              width: 'half',
-              required: true,
             }),
           ],
         }),
@@ -373,7 +366,8 @@ export const HouseholdSupplementForm: Form = buildForm({
         buildMultiField({
           id: 'periodField',
           title: socialInsuranceAdministrationMessage.period.title,
-          description: householdSupplementFormMessage.info.periodDescription,
+          description:
+            additionalSupportForTheElderyFormMessage.info.periodDescription,
           children: [
             buildSelectField({
               id: 'period.year',
@@ -396,67 +390,7 @@ export const HouseholdSupplementForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'fileUpload',
-      title: socialInsuranceAdministrationMessage.fileUpload.title,
-      condition: (answers) => {
-        const { householdSupplementHousing, householdSupplementChildren } =
-          getApplicationAnswers(answers)
-        return (
-          householdSupplementHousing === HouseholdSupplementHousing.RENTER ||
-          householdSupplementChildren === YES
-        )
-      },
-      children: [
-        buildSubSection({
-          id: 'fileUploadLeaseAgreement',
-          title: householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
-          condition: (answers) => {
-            const { householdSupplementHousing } =
-              getApplicationAnswers(answers)
-            return (
-              householdSupplementHousing === HouseholdSupplementHousing.RENTER
-            )
-          },
-          children: [
-            buildFileUploadField({
-              id: 'fileUpload.leaseAgreement',
-              title:
-                householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
-              description:
-                householdSupplementFormMessage.fileUpload.leaseAgreement,
-              introduction:
-                householdSupplementFormMessage.fileUpload.leaseAgreement,
-              ...fileUploadSharedProps,
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'fileUploadSchoolConfirmation',
-          title:
-            householdSupplementFormMessage.fileUpload.schoolConfirmationTitle,
-          condition: (answers) => {
-            const { householdSupplementChildren } =
-              getApplicationAnswers(answers)
-            return householdSupplementChildren === YES
-          },
-          children: [
-            buildFileUploadField({
-              id: 'fileUpload.schoolConfirmation',
-              title:
-                householdSupplementFormMessage.fileUpload
-                  .schoolConfirmationTitle,
-              description:
-                householdSupplementFormMessage.fileUpload.schoolConfirmation,
-              introduction:
-                householdSupplementFormMessage.fileUpload.schoolConfirmation,
-              ...fileUploadSharedProps,
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'additionalInfo',
+      id: 'additionalInformation',
       title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
@@ -470,10 +404,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-                householdSupplementFormMessage.fileUpload
+                additionalSupportForTheElderyFormMessage.fileUpload
                   .additionalFileDescription,
               introduction:
-                householdSupplementFormMessage.fileUpload
+                additionalSupportForTheElderyFormMessage.fileUpload
                   .additionalFileDescription,
               ...fileUploadSharedProps,
             }),
@@ -550,15 +484,26 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildFormConclusionSection({
       multiFieldTitle:
-        socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle,
       alertTitle:
-        socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle,
       alertMessage:
-        householdSupplementFormMessage.conclusionScreen.alertMessage,
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .incomePlanAlertMessage,
+      alertType: 'warning',
       expandableDescription:
-        householdSupplementFormMessage.conclusionScreen.bulletList,
+        additionalSupportForTheElderyFormMessage.conclusionScreen.bulletList,
       expandableIntro:
-        householdSupplementFormMessage.conclusionScreen.nextStepsText,
+        additionalSupportForTheElderyFormMessage.conclusionScreen.nextStepsText,
+      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+      bottomButtonLabel:
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .incomePlanCardLabel,
+      bottomButtonMessage:
+        socialInsuranceAdministrationMessage.conclusionScreen
+          .incomePlanCardText,
     }),
   ],
 })
