@@ -1,6 +1,4 @@
-import { useMutation } from '@apollo/client'
 import { getErrorViaPath } from '@island.is/application/core'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   InputController,
@@ -10,17 +8,12 @@ import { useState } from 'react'
 import { FormWrap } from '../../components/FormWrap/FormWrap'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
-import { error, newCase } from '../../lib/messages'
+import { newCase } from '../../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../../lib/types'
-export const NewCase = ({
-  application,
-  errors,
-  setBeforeSubmitCallback,
-}: OJOIFieldBaseProps) => {
+export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
-  const { f, locale } = useFormatMessage(application)
+  const { f } = useFormatMessage(application)
   const [modalToggle, setModalToggle] = useState(false)
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
 
   const [state, setState] = useState({
     department: answers?.case?.department ?? '',
@@ -34,26 +27,26 @@ export const NewCase = ({
 
   const { data: options } = application.externalData.options
 
-  setBeforeSubmitCallback &&
-    setBeforeSubmitCallback(async () => {
-      await updateApplication({
-        variables: {
-          locale,
-          input: {
-            id: application.id,
-            answers: {
-              ...application.answers,
-              case: {
-                ...state,
-              },
-            },
-          },
-        },
-      }).catch(() => {
-        return [false, f(error.dataSubmissionErrorTitle)]
-      })
-      return [true, null]
-    })
+  // setBeforeSubmitCallback &&
+  //   setBeforeSubmitCallback(async () => {
+  //     await updateApplication({
+  //       variables: {
+  //         locale,
+  //         input: {
+  //           id: application.id,
+  //           answers: {
+  //             ...application.answers,
+  //             case: {
+  //               ...state,
+  //             },
+  //           },
+  //         },
+  //       },
+  //     }).catch(() => {
+  //       return [false, f(error.dataSubmissionErrorTitle)]
+  //     })
+  //     return [true, null]
+  //   })
 
   return (
     <>

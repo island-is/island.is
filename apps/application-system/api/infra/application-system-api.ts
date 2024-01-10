@@ -27,7 +27,6 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   WorkMachines,
-  WorkMachines,
   SignatureCollection,
 } from '../../../../infra/src/dsl/xroad'
 

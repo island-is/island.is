@@ -81,6 +81,7 @@ export const AddChannel = ({
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 onSave()
+                e.stopPropagation()
               }
             }}
           />

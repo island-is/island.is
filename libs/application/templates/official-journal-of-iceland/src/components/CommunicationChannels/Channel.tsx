@@ -1,5 +1,5 @@
 import { Icon, Table as T } from '@island.is/island-ui/core'
-import { CommunicationChannel } from '../../fields/PublishingPreferences/PublishingPreferences'
+import { CommunicationChannel } from './CommunicationChannels'
 
 type Props = {
   channel: CommunicationChannel

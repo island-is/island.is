@@ -4,7 +4,7 @@ import { CheckboxController } from '@island.is/shared/form-fields'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { useFormatMessage } from '../../hooks'
 import { prerequisites } from '../../lib/messages'
-import { BooleanValue, InputFields, OJOIFieldBaseProps } from '../../lib/types'
+import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
 
 export const Prerequisites = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
@@ -23,12 +23,13 @@ export const Prerequisites = ({ application }: OJOIFieldBaseProps) => {
         })}
       />
       <CheckboxController
+        large
         backgroundColor="blue"
         id={InputFields.prerequisites.approveExternalData}
         name={InputFields.prerequisites.approveExternalData}
         options={[
           {
-            value: BooleanValue.YES,
+            value: AnswerOption.YES,
             label: f(prerequisites.checkbox.label),
           },
         ]}

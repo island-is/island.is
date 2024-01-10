@@ -1,7 +1,5 @@
 import {
-  buildCheckboxField,
   buildCustomField,
-  buildDateField,
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
@@ -10,7 +8,6 @@ import {
   buildRadioField,
   buildSection,
   buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Routes, UPLOAD_ACCEPT } from '../lib/constants'
@@ -24,7 +21,7 @@ import {
   publishingPreferences,
   summary,
 } from '../lib/messages'
-import { BooleanValue, InputFields } from '../lib/types'
+import { InputFields } from '../lib/types'
 import { answerSchemas } from '../lib/dataSchema'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
@@ -144,50 +141,55 @@ export const Draft: Form = buildForm({
       id: Routes.PUBLISHING_PREFERENCES,
       title: publishingPreferences.general.sectionTitle,
       children: [
-        buildMultiField({
-          id: 'PublishingPreferencesField',
+        // buildMultiField({
+        //   id: 'PublishingPreferencesField',
+        //   title: '',
+        //   space: 2,
+        //   children: [
+        //     buildDescriptionField({
+        //       id: 'publishingPreferencesIntro',
+        //       title: publishingPreferences.general.formTitle,
+        //       description: publishingPreferences.general.formIntro,
+        //     }),
+        //     buildDateField({
+        //       id: InputFields.publishingPreferences.date,
+        //       description: publishingPreferences.dateChapter.title,
+        //       title: publishingPreferences.inputs.datepicker.label,
+        //       backgroundColor: 'blue',
+        //       width: 'half',
+        //     }),
+        //     buildCheckboxField({
+        //       id: InputFields.publishingPreferences.fastTrack,
+        //       title: '',
+        //       large: false,
+        //       backgroundColor: 'white',
+        //       // defaultValue: BooleanValue.NO,
+        //       options: [
+        //         {
+        //           value: AnswerOption.YES,
+        //           label: publishingPreferences.inputs.fastTrack.label,
+        //         },
+        //       ],
+        //     }),
+        //     buildCustomField({
+        //       id: 'communicationChannels',
+        //       title: '',
+        //       component: 'PublishingPreferences',
+        //     }),
+        //     buildTextField({
+        //       id: InputFields.publishingPreferences.message,
+        //       title: publishingPreferences.messagesChapter.title,
+        //       description: publishingPreferences.messagesChapter.intro,
+        //       variant: 'textarea',
+        //       rows: 4,
+        //       backgroundColor: 'white',
+        //     }),
+        //   ],
+        // }),
+        buildCustomField({
+          id: 'communicationChannels',
           title: '',
-          space: 2,
-          children: [
-            buildDescriptionField({
-              id: Routes.PUBLISHING_PREFERENCES,
-              title: publishingPreferences.general.formTitle,
-              description: publishingPreferences.general.formIntro,
-            }),
-            buildDateField({
-              id: InputFields.publishingPreferences.date,
-              description: publishingPreferences.dateChapter.title,
-              title: publishingPreferences.inputs.datepicker.label,
-              backgroundColor: 'blue',
-              width: 'half',
-            }),
-            buildCheckboxField({
-              id: InputFields.publishingPreferences.fastTrack,
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: BooleanValue.NO,
-              options: [
-                {
-                  value: BooleanValue.YES,
-                  label: publishingPreferences.inputs.fastTrack.label,
-                },
-              ],
-            }),
-            buildCustomField({
-              id: Routes.PUBLISHING_PREFERENCES,
-              title: '',
-              component: 'PublishingPreferences',
-            }),
-            buildTextField({
-              id: InputFields.publishingPreferences.message,
-              title: publishingPreferences.messagesChapter.title,
-              description: publishingPreferences.messagesChapter.intro,
-              variant: 'textarea',
-              rows: 4,
-              backgroundColor: 'white',
-            }),
-          ],
+          component: 'PublishingPreferences',
         }),
       ],
     }),
@@ -239,20 +241,20 @@ export const Draft: Form = buildForm({
               paddingX: 4,
               value: format(new Date(), 'dd.MM.yyyy'),
             }),
-            buildKeyValueField({
-              display: 'flex',
-              label: summary.properties.fastTrack,
-              divider: true,
-              paddingY: 3,
-              paddingX: 4,
-              value: ({ answers }) => {
-                console.log(answers)
-                return (answers as answerSchemas).publishingPreferences
-                  .fastTrack === BooleanValue.YES
-                  ? general.yes
-                  : general.no
-              },
-            }),
+            // buildKeyValueField({
+            //   display: 'flex',
+            //   label: summary.properties.fastTrack,
+            //   divider: true,
+            //   paddingY: 3,
+            //   paddingX: 4,
+            //   value: ({ answers }) => {
+            //     console.log(answers)
+            //     return (answers as answerSchemas).publishingPreferences
+            //       .fastTrack === AnswerOption.YES
+            //       ? general.yes
+            //       : general.no
+            //   },
+            // }),
             buildKeyValueField({
               display: 'flex',
               label: summary.properties.fastTrack,

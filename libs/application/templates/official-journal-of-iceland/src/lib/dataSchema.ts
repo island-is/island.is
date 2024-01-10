@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { error } from './messages'
-import { BooleanValue } from './types'
+import { AnswerOption } from './types'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -8,7 +8,7 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 export const dataSchema = z.object({
-  approveExternalData: z.string().refine((v) => v === BooleanValue.YES, {
+  approveExternalData: z.string().refine((v) => v === AnswerOption.YES, {
     params: error.dataGathering,
   }),
   case: z.object({
@@ -31,7 +31,7 @@ export const dataSchema = z.object({
   }),
   publishingPreferences: z.object({
     date: z.string(),
-    fastTrack: z.enum([BooleanValue.YES, BooleanValue.NO]),
+    fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]).refine((v) => v),
     communicationChannels: z.array(
       z.object({
         email: z.string(),

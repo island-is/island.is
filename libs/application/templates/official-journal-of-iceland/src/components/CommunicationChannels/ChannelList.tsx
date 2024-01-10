@@ -1,8 +1,9 @@
 import { Box, Table as T } from '@island.is/island-ui/core'
-import { CommunicationChannel } from '../../fields/PublishingPreferences/PublishingPreferences'
 import { Channel } from './Channel'
-
+import { useLocale } from '@island.is/localization'
+import { general } from '../../lib/messages'
 import * as styles from './ChannelList.css'
+import { CommunicationChannel } from './CommunicationChannels'
 type Props = {
   channels: CommunicationChannel[]
   onEditChannel: (channel: CommunicationChannel) => void
@@ -14,6 +15,7 @@ export const ChannelList = ({
   onEditChannel,
   onRemoveChannel,
 }: Props) => {
+  const { formatMessage } = useLocale()
   if (channels.length === 0) return null
 
   return (
@@ -21,8 +23,8 @@ export const ChannelList = ({
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>Email</T.HeadData>
-            <T.HeadData>Phone</T.HeadData>
+            <T.HeadData>{formatMessage(general.email)}</T.HeadData>
+            <T.HeadData>{formatMessage(general.phoneNumber)}</T.HeadData>
             <T.HeadData></T.HeadData>
             <T.HeadData></T.HeadData>
           </T.Row>
