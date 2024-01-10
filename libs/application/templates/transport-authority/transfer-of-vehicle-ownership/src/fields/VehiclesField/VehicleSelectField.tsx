@@ -6,9 +6,9 @@ import {
   Box,
   Bullet,
   BulletList,
-  CategoryCard,
   SkeletonLoader,
   InputError,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { information, applicationCheck, error } from '../../lib/messages'
@@ -137,10 +137,11 @@ export const VehicleSelectField: FC<
         ) : (
           <Box>
             {selectedVehicle && (
-              <CategoryCard
-                colorScheme={disabled ? 'red' : 'blue'}
+              <ActionCard
+                backgroundColor={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
+                focused={true}
               />
             )}
             {selectedVehicle && disabled && (

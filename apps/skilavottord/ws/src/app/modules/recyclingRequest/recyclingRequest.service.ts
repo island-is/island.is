@@ -171,7 +171,7 @@ export class RecyclingRequestService {
     const errors = new RequestErrors()
     try {
       // nameOfRequestor and partnerId are not required arguments
-      // But partnerId and partnerId could not both be null at the same time
+      // But nameOfRequestor and partnerId could not both be null at the same time
       if (!nameOfRequestor && !partnerId) {
         if (!nameOfRequestor) {
           this.logger.error(`nameOfRequestor is missing`)
@@ -305,6 +305,15 @@ export class RecyclingRequestService {
         try {
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
+          this.logger.info(
+            `Degregistering vehicle ${permno} from Samgongustofa`,
+            {
+              permno,
+              mileage: vehicle.mileage ?? 0,
+              partnerId,
+            },
+          )
+
           await this.deRegisterVehicle(permno, partnerId, vehicle.mileage ?? 0)
         } catch (err) {
           // Saved requestType back to 'pendingRecycle'
@@ -368,6 +377,12 @@ export class RecyclingRequestService {
           if (getGuId?.id) {
             guid = getGuId.id
           }
+
+          this.logger.info(`Payment for vehicle ${permno} from Fjarsyslan`, {
+            permno,
+            guid,
+          })
+
           await this.fjarsyslaService.getFjarsysluRest(
             vehicle.ownerNationalId,
             permno,

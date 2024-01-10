@@ -598,6 +598,7 @@ application-system-api:
     XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
+    XROAD_SIGNATURE_COLLECTION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'

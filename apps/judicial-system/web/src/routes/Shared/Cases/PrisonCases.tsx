@@ -7,11 +7,11 @@ import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   Logo,
   PageHeader,
-  PastCasesTable,
   SectionHeading,
   SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { usePrisonCasesQuery } from './prisonCases.generated'

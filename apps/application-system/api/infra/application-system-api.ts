@@ -27,6 +27,8 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   WorkMachines,
+  WorkMachines,
+  SignatureCollection,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -263,6 +265,8 @@ export const serviceSetup = (services: {
       DirectorateOfImmigration,
       SocialInsuranceAdministration,
       OccupationalLicenses,
+      SignatureCollection,
+      WorkMachines,
       WorkMachines,
     )
     .secrets({

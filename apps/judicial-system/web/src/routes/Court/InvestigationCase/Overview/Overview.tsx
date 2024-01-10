@@ -13,7 +13,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
@@ -138,7 +138,7 @@ const Overview = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },
@@ -162,7 +162,7 @@ const Overview = () => {
               },
               {
                 title: formatMessage(core.caseType),
-                value: capitalize(caseTypes[workingCase.type]),
+                value: capitalize(formatCaseType(workingCase.type)),
               },
             ]}
             defendants={
@@ -179,7 +179,7 @@ const Overview = () => {
             }
             defenders={[
               {
-                name: workingCase.defenderName ?? '',
+                name: workingCase.defenderName,
                 defenderNationalId: workingCase.defenderNationalId,
                 sessionArrangement: workingCase.sessionArrangements,
                 email: workingCase.defenderEmail,

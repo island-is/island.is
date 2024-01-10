@@ -2,7 +2,6 @@ import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import Signees from './signees'
-import PaperUpload from './paperUpload'
 import { useLocation } from 'react-router-dom'
 import { useGetSignatureList } from '../hooks'
 import format from 'date-fns/format'
@@ -20,7 +19,7 @@ const ViewList = () => {
         <Stack space={5}>
           <Box>
             <Text variant="h3">
-              {listInfo.owner.name + ' - ' + listInfo.area.name}
+              {listInfo.candidate.name + ' - ' + listInfo.area.name}
             </Text>
           </Box>
           <Box display={['block', 'flex']} justifyContent="spaceBetween">
@@ -53,7 +52,6 @@ const ViewList = () => {
             </Box>
           </Box>
           <Signees />
-          <PaperUpload />
         </Stack>
       )}
     </>

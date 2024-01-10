@@ -47,6 +47,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.healthTherapies,
   ApiScope.healthHealthcare,
   ApiScope.healthDentists,
+  ApiScope.signatureCollection,
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'

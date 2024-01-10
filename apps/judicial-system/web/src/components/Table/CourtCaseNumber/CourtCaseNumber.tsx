@@ -7,7 +7,7 @@ import * as styles from './CourtCaseNumber.css'
 
 interface Props {
   courtCaseNumber?: string | null
-  policeCaseNumbers: string[]
+  policeCaseNumbers?: string[] | null
   appealCaseNumber?: string | null
 }
 
@@ -41,13 +41,13 @@ const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = ({
         as="span"
         variant="small"
         color="dark400"
-        title={policeCaseNumbers.join(', ')}
+        title={policeCaseNumbers?.join(', ')}
       >
         {displayFirstPlusRemaining(policeCaseNumbers)}
       </Text>
     </>
   ) : (
-    <Text as="span" title={policeCaseNumbers.join(', ')}>
+    <Text as="span" title={policeCaseNumbers?.join(', ')}>
       {displayFirstPlusRemaining(policeCaseNumbers) || '-'}
     </Text>
   )

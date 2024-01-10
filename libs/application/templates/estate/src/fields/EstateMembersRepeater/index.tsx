@@ -7,11 +7,13 @@ import {
   Button,
   GridColumn,
   GridRow,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
-import { Answers } from '../../types'
+import * as kennitala from 'kennitala'
+import { EstateRegistrant } from '@island.is/clients/syslumenn'
+import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -19,16 +21,79 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
-import { EstateTypes, relationWithApplicant } from '../../lib/constants'
+import {
+  EstateTypes,
+  heirAgeValidation,
+  relationWithApplicant,
+} from '../../lib/constants'
+import intervalToDuration from 'date-fns/intervalToDuration'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
-> = ({ application, field, errors }) => {
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { id } = field
   const { formatMessage } = useLocale()
+  const { getValues, setError } = useFormContext()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
+  const values = getValues()
+  const selectedEstate = application.answers.selectedEstate
+
+  const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
+    (member: EstateMember) => {
+      const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
+      const birthDate = member?.dateOfBirth
+      const memberAge =
+        hasForeignCitizenship && birthDate
+          ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
+              ?.years
+          : kennitala.info(member.nationalId)?.age
+      return (
+        (memberAge ?? 0) < 18 &&
+        (member?.nationalId || birthDate) &&
+        member.enabled
+      )
+    },
+  )
+
+  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
+    (member: EstateMember) => {
+      const advocateAge =
+        member.advocate && kennitala.info(member.advocate.nationalId)?.age
+      return (
+        hasEstateMemberUnder18 &&
+        member?.advocate?.nationalId &&
+        advocateAge &&
+        advocateAge < 18
+      )
+    },
+  )
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      if (
+        hasEstateMemberUnder18withoutRep &&
+        selectedEstate !== EstateTypes.divisionOfEstateByHeirs
+      ) {
+        setError(heirAgeValidation, {
+          type: 'custom',
+        })
+        return [false, 'invalid advocate age']
+      }
+
+      if (
+        hasEstateMemberUnder18 &&
+        selectedEstate === EstateTypes.divisionOfEstateByHeirs
+      ) {
+        setError(heirAgeValidation, {
+          type: 'custom',
+        })
+        return [false, 'invalid member age']
+      }
+
+      return [true, null]
+    })
 
   const { clearErrors } = useFormContext()
 
@@ -56,6 +121,23 @@ export const EstateMembersRepeater: FC<
       enabled: true,
       name: undefined,
     })
+
+  useEffect(() => {
+    if (
+      !hasEstateMemberUnder18 &&
+      selectedEstate !== EstateTypes.divisionOfEstateByHeirs
+    ) {
+      clearErrors(heirAgeValidation)
+    }
+    if (!hasEstateMemberUnder18withoutRep) {
+      clearErrors(heirAgeValidation)
+    }
+  }, [
+    fields,
+    hasEstateMemberUnder18withoutRep,
+    hasEstateMemberUnder18,
+    clearErrors,
+  ])
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
@@ -115,7 +197,6 @@ export const EstateMembersRepeater: FC<
                   id={`${id}[${index}].nationalId`}
                   name={`${id}[${index}].nationalId`}
                   label={formatMessage(m.inheritanceKtLabel)}
-                  readOnly
                   defaultValue={formatNationalId(member.nationalId || '')}
                   backgroundColor="white"
                   disabled={!member.enabled}
@@ -206,7 +287,10 @@ export const EstateMembersRepeater: FC<
               >
                 <GridRow>
                   <GridColumn span={['1/1']} paddingBottom={2}>
-                    <Text variant="h4">
+                    <Text
+                      variant="h4"
+                      color={member.enabled ? 'dark400' : 'dark300'}
+                    >
                       {formatMessage(m.inheritanceAdvocateLabel)}
                     </Text>
                   </GridColumn>
@@ -290,6 +374,7 @@ export const EstateMembersRepeater: FC<
           </Box>
         )
       })}
+
       <Box marginTop={3}>
         <Button
           variant="text"
@@ -301,6 +386,17 @@ export const EstateMembersRepeater: FC<
           {formatMessage(m.inheritanceAddMember)}
         </Button>
       </Box>
+      {errors && errors[heirAgeValidation] ? (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={
+              selectedEstate === EstateTypes.divisionOfEstateByHeirs
+                ? formatMessage(m.inheritanceAgeValidation)
+                : formatMessage(m.heirAdvocateAgeValidation)
+            }
+          />
+        </Box>
+      ) : null}
     </Box>
   )
 }

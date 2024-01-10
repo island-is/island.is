@@ -107,6 +107,10 @@ import { OfficialJournalOfIcelandModule } from './official-journal-of-iceland/of
 import { OfficialJournalOfIcelandService } from './official-journal-of-iceland/official-journal-of-iceland.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
+import { SignatureListCreationModule } from './signature-collection/signature-list-creation/signature-list-creation.module'
+import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
+import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
+import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -162,6 +166,8 @@ export const modules = [
   CitizenshipModule,
   EnergyFundsModule,
   HealthcareLicenseCertificateModule,
+  SignatureListCreationModule,
+  SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
   OfficialJournalOfIcelandModule,
 ]
@@ -220,6 +226,8 @@ export const services = [
   CitizenshipService,
   EnergyFundsService,
   HealthcareLicenseCertificateService,
+  SignatureListCreationService,
+  SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
   OfficialJournalOfIcelandService,
 ]
