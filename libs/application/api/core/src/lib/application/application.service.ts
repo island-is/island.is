@@ -128,9 +128,17 @@ export class ApplicationService {
     const toDate = to ? endOfDay(new Date(to)) : undefined
     const fromDate = from ? startOfDay(new Date(from)) : undefined
 
+    // No applications for this institution ID
+    if (typeIds.length < 1) {
+      return {
+        rows: [],
+        count: 0,
+      }
+    }
+
     return this.applicationModel.findAndCountAll({
       where: {
-        ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
+        ...{ typeId: { [Op.in]: typeIds } },
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
           applicantNationalId
