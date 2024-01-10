@@ -23,6 +23,7 @@ import { SignatureCollectionAreaInput } from './dto/area.input'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { Audit } from '@island.is/nest/audit'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionSlug } from './models/slug.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -36,22 +37,6 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.isOwner(user.nationalId)
-  }
-
-  @Query(() => SignatureCollectionSuccess)
-  @Audit()
-  async signatureCollectionCanCreate(
-    @CurrentUser() user: User,
-  ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.canCreate(user.nationalId)
-  }
-
-  @Query(() => SignatureCollectionSuccess)
-  @Audit()
-  async signatureCollectionCanSign(
-    @CurrentUser() user: User,
-  ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.canSign(user.nationalId)
   }
 
   @Query(() => SignatureCollection)
@@ -119,12 +104,12 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.signee(user.nationalId)
   }
 
-  @Mutation(() => [SignatureCollectionList])
+  @Mutation(() => SignatureCollectionSlug)
   @Audit()
   async signatureCollectionCreate(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListInput,
-  ): Promise<SignatureCollectionList[]> {
+  ): Promise<SignatureCollectionSlug> {
     return this.signatureCollectionService.create(user, input)
   }
 
