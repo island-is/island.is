@@ -11,7 +11,10 @@ export class SocialInsuranceService {
     private readonly socialInsuranceApi: SocialInsuranceAdministrationClientService,
   ) {}
 
-  async getPaymentPlan(user: User): Promise<void> {
-    return await this.socialInsuranceApi.getPaymentPlan(user, 2023)
+  async getPaymentPlan(user: User, year?: number): Promise<void> {
+    const paymentPlan = await this.socialInsuranceApi.getPaymentPlan(
+      user,
+      year ?? 2023,
+    )
   }
 }
