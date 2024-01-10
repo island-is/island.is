@@ -21,12 +21,9 @@ export function randomAppealCaseNumber() {
 // }
 
 export async function createFakePdf(title: string) {
-  const blob = new Blob([''], { type: 'application/pdf' })
-  const arrayBuffer = await blob.arrayBuffer()
-
   return {
     name: title,
     mimeType: 'application/pdf',
-    buffer: Buffer.from(arrayBuffer),
+    buffer: Buffer.from(new ArrayBuffer(0)),
   }
 }
