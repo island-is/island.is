@@ -1,4 +1,4 @@
-query getPaymentPlan($year: Number) {
+query getPaymentPlan($year: Int) {
   socialInsurancePaymentPlan {
     nextPayment
     previousPayment

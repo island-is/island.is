@@ -45,6 +45,10 @@ export const m = defineMessages({
     id: 'service.portal:final-due-date',
     defaultMessage: 'Eindagi',
   },
+  year: {
+    id: 'service.portal:year',
+    defaultMessage: 'Ár',
+  },
   yearAndSeason: {
     id: 'service.portal:year-and-season',
     defaultMessage: 'Ár og tímabil',
@@ -1248,5 +1252,18 @@ export const m = defineMessages({
   unmuteAudio: {
     id: 'service.portal:unmute-audio',
     defaultMessage: 'Hljóð á',
+  },
+  socialInsuranceMaintenance: {
+    id: 'service-portal:social-insurance-maintenance',
+    defaultMessage: 'Framfærsla',
+  },
+  socialInsuranceMaintenanceDescription: {
+    id: 'service-portal:social-insurance-maintenance-description',
+    defaultMessage:
+      'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
+  },
+  paymentPlan: {
+    id: 'service-portal:payment-plan',
+    defaultMessage: 'Greiðsluáætlun',
   },
 })

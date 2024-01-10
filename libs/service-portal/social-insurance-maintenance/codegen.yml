@@ -1,9 +1,9 @@
 schema:
   - apps/api/src/api.graphql
 documents:
-  - libs/service-portal/social-insurance/src/screens/**/*.graphql
+  - libs/service-portal/social-insurance-maintenance/src/screens/**/*.graphql
 generates:
-  libs/service-portal/social-insurance/src/:
+  libs/service-portal/social-insurance-maintenance/src/:
     preset: 'near-operation-file'
     presetConfig:
       baseTypesPath: '~@island.is/api/schema'
