@@ -862,6 +862,9 @@
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
+      "@island.is/service-portal/social-insurance": [
+        "libs/service-portal/social-insurance/src/index.ts"
+      ],
       "@island.is/service-portal/air-discount": [
         "libs/service-portal/air-discount/src/index.ts"
       ],
