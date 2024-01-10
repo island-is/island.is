@@ -19,6 +19,7 @@ import {
   GetNamespaceQueryVariables,
   GetVacancyByIdQuery,
   GetVacancyByIdQueryVariables,
+  VacancyByIdResponse,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -33,7 +34,7 @@ import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_VACANCY_DETAILS } from '../queries/Vacancies'
 import { VACANCY_INTRO_MAX_LENGTH } from './utils'
 
-type Vacancy = GetVacancyByIdQuery['vacancyById']['vacancy']
+type Vacancy = VacancyByIdResponse['vacancy']
 
 interface InformationPanelProps {
   vacancy: Vacancy
@@ -378,7 +379,7 @@ VacancyDetails.getProps = async ({ apolloClient, query, locale }) => {
     }),
   ])
 
-  const vacancy = vacancyResponse?.data?.vacancyById?.vacancy
+  const vacancy = vacancyResponse?.data?.vacancy?.vacancy
 
   if (!vacancy) {
     throw new CustomNextError(404, 'Vacancy was not found')

@@ -4,7 +4,6 @@ import {
   parseAsInteger,
   parseAsString,
   useQueryState,
-  useQueryStates,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
@@ -66,8 +65,6 @@ import {
 import { VACANCY_INTRO_MAX_LENGTH } from './utils'
 import * as styles from './VacanciesList.css'
 
-type NullableKeys<T> = { [K in keyof T]: T[K] | null }
-
 const ITEMS_PER_PAGE = 8
 
 interface VacanciesListProps {
@@ -127,10 +124,8 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     },
   }
 
-  const [queryVariables, setQueryVariables] = useState<{
-    variables: GetExternalVacanciesQueryVariables
-  }>({
-    variables: {
+  const [queryVariables, setQueryVariables] =
+    useState<GetExternalVacanciesQueryVariables>({
       input: {
         page,
         query,
@@ -138,13 +133,17 @@ const VacanciesList: Screen<VacanciesListProps> = ({
         institution: parameters.institution.state,
         location: parameters.location.state,
       },
+    })
+
+  const [fetchMore] = useLazyQuery<
+    GetExternalVacanciesQuery,
+    GetExternalVacanciesQueryVariables
+  >(GET_EXTERNAL_VACANCIES, {
+    variables: queryVariables,
+    onCompleted(data) {
+      console.log(data)
     },
   })
-
-  useLazyQuery<GetExternalVacanciesQuery, GetExternalVacanciesQueryVariables>(
-    GET_EXTERNAL_VACANCIES,
-    queryVariables,
-  )
 
   const filterCategories = [
     {
@@ -230,7 +229,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                   'Leita í Starfatorgi',
                 )}
                 name="filterInput"
-                value={query}
+                value={query || ''}
                 onChange={(value) => {
                   setPage(null)
                   setQuery(value || null)
@@ -257,7 +256,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                     'Leita í Starfatorgi',
                   )}
                   name="filterInput"
-                  value={query}
+                  value={query || ''}
                   onChange={(value) => {
                     setPage(null)
                     setQuery(value || null)
@@ -269,17 +268,15 @@ const VacanciesList: Screen<VacanciesListProps> = ({
             <FilterMultiChoice
               labelClear={n('clearSelection', 'Hreinsa val')}
               onChange={({ categoryId, selected }) => {
-                setParameters((prevParams) => ({
-                  ...prevParams,
-                  [categoryId]: selected?.length > 0 ? selected : null,
-                }))
+                parameters[categoryId as keyof typeof parameters]?.setState(
+                  selected?.length > 0 ? [...selected] : null,
+                )
                 setPage(null)
               }}
               onClear={(categoryId) => {
-                setParameters((prevParams) => ({
-                  ...prevParams,
-                  [categoryId]: null,
-                }))
+                parameters[categoryId as keyof typeof parameters]?.setState(
+                  null,
+                )
                 setPage(null)
               }}
               categories={filterCategories}
@@ -291,27 +288,18 @@ const VacanciesList: Screen<VacanciesListProps> = ({
               <Inline space={1}>
                 {selectedFilters.map(({ label, value, category }) => (
                   <FilterTag
-                    key={value}
+                    key={`${label}-${value}-${category}`}
                     onClick={() => {
-                      setParameters((prevParams) => {
-                        const updatedParams = {
-                          ...prevParams,
-                          [category]: (
-                            prevParams[category as 'fieldOfWork'] ?? []
-                          ).filter((prevValue) => prevValue !== value),
-                          page: null,
-                        }
-
-                        if (
-                          !(updatedParams[category as 'fieldOfWork'] ?? [])
-                            ?.length
-                        ) {
-                          ;(
-                            updatedParams as NullableKeys<typeof updatedParams>
-                          )[category as 'fieldOfWork'] = null
-                        }
-                        return updatedParams
-                      })
+                      parameters[category as keyof typeof parameters]?.setState(
+                        (prevState) => {
+                          const newState =
+                            prevState?.filter(
+                              (prevValue) => prevValue !== value,
+                            ) ?? null
+                          if (!newState || newState?.length === 0) return null
+                          return newState
+                        },
+                      )
                     }}
                   >
                     {label}
