@@ -6,14 +6,14 @@ import {
   FilterInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
-import * as styles from '../styles.css'
-import { useGetListSignees } from '../hooks'
+import * as styles from '../../styles.css'
+import { useGetListSignees } from '../../../hooks'
 import { useLocation } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
-import { SkeletonTable } from '../Skeletons'
+import { SkeletonTable } from '../../skeletons'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 
 const Signees = () => {
@@ -51,12 +51,12 @@ const Signees = () => {
   }, [listSignees])
 
   return (
-    <Box marginTop={[0, 5]}>
+    <Box marginTop={5}>
       <Text variant="h5">{formatMessage(m.signeesHeader)}</Text>
       <Box
         display={['block', 'flex']}
         justifyContent="spaceBetween"
-        marginTop={3}
+        marginTop={2}
       >
         <Box className={styles.searchWidth} marginBottom={[2, 0]}>
           <FilterInput
@@ -70,7 +70,7 @@ const Signees = () => {
       </Box>
       {!loadingSignees ? (
         signees.length > 0 ? (
-          <Box marginTop={5}>
+          <Box marginTop={[2, 5]}>
             <T.Table>
               <T.Head>
                 <T.Row>
@@ -78,44 +78,24 @@ const Signees = () => {
                   <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
                   <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
                   <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
-                  <T.HeadData></T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
-                {signees.map((s) => {
-                  const boxColor = /*person.paper ? 'purple100' : */ 'white'
+                {signees.map((s: Signature) => {
                   return (
                     <T.Row key={s.id}>
-                      <T.Data
-                        box={{ background: boxColor }}
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {format(new Date(), 'dd.MM.yyyy')}
                       </T.Data>
-                      <T.Data
-                        box={{ background: boxColor }}
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {s.signee.name}
                       </T.Data>
-                      <T.Data
-                        box={{ background: boxColor }}
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {formatNationalId(s.signee.nationalId)}
                       </T.Data>
-                      <T.Data
-                        box={{ background: boxColor }}
-                        text={{ variant: 'medium' }}
-                      >
-                        {formatMessage(m.tempMessage)}
+                      <T.Data text={{ variant: 'medium' }}>
+                        {s.signee.address}
                       </T.Data>
-                      <T.Data></T.Data>
-                      {/*<T.Data box={{ background: boxColor }}>
-                        {person.paper && (
-                          <Icon icon="document" type="outline" color="blue400" />
-                        )}
-                        </T.Data>*/}
                     </T.Row>
                   )
                 })}
