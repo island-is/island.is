@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('VacanciesFilterOption')
 export class FilterOption {
   @Field(() => String)
   label!: string

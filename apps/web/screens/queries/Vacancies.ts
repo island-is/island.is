@@ -1,8 +1,30 @@
 import gql from 'graphql-tag'
 
-export const GET_VACANCIES = gql`
-  query GetVacancies($input: VacanciesInput!) {
-    vacancies(input: $input) {
+export const GET_CMS_VACANCIES = gql`
+  query GetCmsVacancies($input: CmsVacanciesInput!) {
+    cmsVacancies(input: $input) {
+      vacancies {
+        id
+        fieldOfWork
+        title
+        intro
+        applicationDeadlineFrom
+        applicationDeadlineTo
+        institutionName
+        logoUrl
+        locations {
+          title
+          postalCode
+        }
+      }
+    }
+  }
+`
+
+// TODO: perhaps use the input that's returned
+export const GET_EXTERNAL_VACANCIES = gql`
+  query GetExternalVacancies($input: ExternalVacanciesInput!) {
+    externalVacancies(input: $input) {
       total
       vacancies {
         id
@@ -22,9 +44,9 @@ export const GET_VACANCIES = gql`
   }
 `
 
-export const GET_INSTITUTIONS = gql`
-  query GetInstitutions {
-    institutions {
+export const GET_EXTERNAL_VACANCY_INSTITUTIONS = gql`
+  query GetExternalVacancyInstitutions {
+    externalVacancyInstitutions {
       options {
         label
         value
@@ -33,9 +55,9 @@ export const GET_INSTITUTIONS = gql`
   }
 `
 
-export const GET_VACANCY_TYPES = gql`
-  query GetVacancyTypes {
-    vacancyTypes {
+export const GET_EXTERNAL_VACANCY_FIELDS_OF_WORK = gql`
+  query GetExternalVacancyFieldsOfWork {
+    externalVacancyFieldsOfWork {
       options {
         label
         value
@@ -44,9 +66,9 @@ export const GET_VACANCY_TYPES = gql`
   }
 `
 
-export const GET_VACANCY_LOCATIONS = gql`
-  query GetVacancyLocations {
-    locations {
+export const GET_EXTERNAL_VACANCY_LOCATIONS = gql`
+  query GetExternalVacancyLocations {
+    externalVacancyLocations {
       options {
         label
         value
@@ -57,7 +79,7 @@ export const GET_VACANCY_LOCATIONS = gql`
 
 export const GET_VACANCY_DETAILS = gql`
   query GetVacancyById($input: VacancyByIdInput!) {
-    vacancyById(input: $input) {
+    vacancy(input: $input) {
       vacancy {
         id
         fieldOfWork

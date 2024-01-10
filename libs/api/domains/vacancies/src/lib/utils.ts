@@ -1,14 +1,13 @@
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { Html, Vacancy } from '@island.is/cms'
-import { VacanciesResponse } from './dto/vacancies.response'
 import { VacancyByIdResponse } from './dto/vacancy.response'
+import { VacancyListItem } from './models/vacancy.model'
+import { CmsVacanciesResponse } from './dto/vacancies.response'
 
 export const CMS_ID_PREFIX = 'c-'
 export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
-export const sortVacancyList = (
-  vacancyList: VacanciesResponse['vacancies'],
-) => {
+export const sortVacancyList = (vacancyList: VacancyListItem[]) => {
   vacancyList.sort((a, b) => {
     if (!a?.applicationDeadlineFrom || !b?.applicationDeadlineFrom) return 0
 
@@ -88,7 +87,7 @@ export const mapSingleVacancyFromCms = (
 
 export const mapVacancyListItemFromCms = (
   vacancy: Vacancy,
-): VacanciesResponse['vacancies'][number] => {
+): CmsVacanciesResponse['vacancies'][number] => {
   return {
     id: (vacancy.id ? `${CMS_ID_PREFIX}${vacancy.id}` : vacancy.id) as string,
     title: vacancy.title,

@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { VacancyListItem } from '../models/vacancy.model'
 import { CacheField } from '@island.is/nest/graphql'
-import { VacanciesInput } from './vacancies.input'
+import { ExternalVacanciesInput } from './vacancies.input'
 
 @ObjectType()
-export class VacanciesResponse {
+export class ExternalVacanciesResponse {
   @CacheField(() => [VacancyListItem])
   vacancies!: VacancyListItem[]
 
@@ -12,6 +12,12 @@ export class VacanciesResponse {
   total?: number
 
   // So the frontend can match the request with the response
-  @CacheField(() => VacanciesInput)
-  input!: VacanciesInput
+  @CacheField(() => ExternalVacanciesInput)
+  input!: ExternalVacanciesInput
+}
+
+@ObjectType()
+export class CmsVacanciesResponse {
+  @CacheField(() => [VacancyListItem])
+  vacancies!: VacancyListItem[]
 }

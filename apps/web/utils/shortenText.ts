@@ -1,4 +1,7 @@
-export const shortenText = (text: string, maxLength: number) => {
+export const shortenText = (
+  text: string | null | undefined,
+  maxLength: number,
+) => {
   if (!text) return text
 
   if (text.length <= maxLength) {

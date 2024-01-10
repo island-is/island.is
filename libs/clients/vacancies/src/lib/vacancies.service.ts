@@ -15,21 +15,21 @@ export class VacanciesClientService {
   async getVacancies(input: {
     page: number
     pageSize: number
-    location?: string
     language?: VacanciesGetLanguageEnum
     query?: string
-    institution?: string
-    vacancyType?: string
+    location?: string[]
+    institution?: string[]
+    fieldOfWork?: string[]
   }) {
     const response = await this.api.vacanciesGet({
       accept: VacanciesGetAcceptEnum.Json,
       fetchSize: input.pageSize,
       fetchOffset: (input.page - 1) * input.pageSize,
-      jobtype: input.vacancyType,
-      language: input.language,
-      location: input.location,
       query: input.query,
-      stofnun: input.institution,
+      language: input.language,
+      jobtype: input.fieldOfWork?.join(','),
+      location: input.location?.join(','),
+      stofnun: input.institution?.join(','),
     })
 
     return {

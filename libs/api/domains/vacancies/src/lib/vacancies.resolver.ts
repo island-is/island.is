@@ -2,8 +2,14 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import { VacanciesService } from './vacancies.service'
-import { VacanciesResponse } from './dto/vacancies.response'
-import { VacanciesInput } from './dto/vacancies.input'
+import {
+  CmsVacanciesResponse,
+  ExternalVacanciesResponse,
+} from './dto/vacancies.response'
+import {
+  CmsVacanciesInput,
+  ExternalVacanciesInput,
+} from './dto/vacancies.input'
 import { VacancyByIdInput } from './dto/vacancy.input'
 import { VacancyByIdResponse } from './dto/vacancy.response'
 import { FilterOptionListResponse } from './dto/filter-option-list.response'
@@ -15,15 +21,36 @@ export class VacanciesResolver {
   constructor(private readonly vacanciesService: VacanciesService) {}
 
   @CacheControl(defaultCache)
-  @Query(() => VacanciesResponse)
-  vacancies(@Args('input') input: VacanciesInput): Promise<VacanciesResponse> {
-    return this.vacanciesService.getVacancies(input)
+  @Query(() => CmsVacanciesResponse)
+  async cmsVacancies(
+    @Args('input') input: CmsVacanciesInput,
+  ): Promise<CmsVacanciesResponse> {
+    const response = await this.vacanciesService.getVacanciesFromCms(input)
+    return {
+      vacancies: response.vacancies,
+    }
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => ExternalVacanciesResponse)
+  async externalVacancies(
+    @Args('input') input: ExternalVacanciesInput,
+  ): Promise<ExternalVacanciesResponse> {
+    const response = await this.vacanciesService.getVacanciesFromExternalSystem(
+      input,
+    )
+    return {
+      vacancies: response.vacancies,
+      total: response.total,
+      input,
+    }
   }
 
   @CacheControl(defaultCache)
   @Query(() => FilterOptionListResponse)
-  async institutions(): Promise<FilterOptionListResponse> {
-    const response = await this.vacanciesService.getInstitutions()
+  async externalVacancyInstitutions(): Promise<FilterOptionListResponse> {
+    const response =
+      await this.vacanciesService.getVacancyInstitutionsFromExternalSystem()
     return {
       options: response,
     }
@@ -31,8 +58,9 @@ export class VacanciesResolver {
 
   @CacheControl(defaultCache)
   @Query(() => FilterOptionListResponse)
-  async locations(): Promise<FilterOptionListResponse> {
-    const response = await this.vacanciesService.getLocations()
+  async externalVacancyLocations(): Promise<FilterOptionListResponse> {
+    const response =
+      await this.vacanciesService.getVacancyLocationsFromExternalSystem()
     return {
       options: response,
     }
@@ -40,8 +68,9 @@ export class VacanciesResolver {
 
   @CacheControl(defaultCache)
   @Query(() => FilterOptionListResponse)
-  async vacancyTypes(): Promise<FilterOptionListResponse> {
-    const response = await this.vacanciesService.getVacancyTypes()
+  async externalVacancyFieldsOfWork(): Promise<FilterOptionListResponse> {
+    const response =
+      await this.vacanciesService.getVacancyFieldOfWorkFromExternalSystem()
     return {
       options: response,
     }
@@ -49,7 +78,7 @@ export class VacanciesResolver {
 
   @CacheControl(defaultCache)
   @Query(() => VacancyByIdResponse)
-  vacancyById(
+  vacancy(
     @Args('input') input: VacancyByIdInput,
   ): Promise<VacancyByIdResponse | null> {
     return this.vacanciesService.getVacancyById(input)

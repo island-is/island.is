@@ -7,18 +7,21 @@ import {
 } from '@island.is/clients/vacancies'
 
 import {
+  CMS_ID_PREFIX,
+  EXTERNAL_SYSTEM_ID_PREFIX,
   mapSingleVacancyFromCms,
   mapVacancyListItemFromCms,
   sortVacancyList,
 } from './utils'
 import { VacancyByIdInput } from './dto/vacancy.input'
-import { VacanciesInput } from './dto/vacancies.input'
+import {
+  CmsVacanciesInput,
+  ExternalVacanciesInput,
+} from './dto/vacancies.input'
 import { VacancyListItem } from './models/vacancy.model'
 
 const DEFAULT_LANGUAGE = 'is'
 const DEFAULT_PAGE_SIZE = 8
-const CMS_ID_PREFIX = 'c-'
-const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
 @Injectable()
 export class VacanciesService {
@@ -28,34 +31,16 @@ export class VacanciesService {
     private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
-  async getInstitutions() {
-    // TODO: fetch from cms as well
+  async getVacancyInstitutionsFromExternalSystem() {
     return this.externalVacanciesV2Service.getInstitutions()
   }
 
-  async getVacancyTypes() {
+  async getVacancyFieldOfWorkFromExternalSystem() {
     return this.externalVacanciesV2Service.getVacancyTypes()
   }
 
-  async getLocations() {
+  async getVacancyLocationsFromExternalSystem() {
     return this.externalVacanciesV2Service.getLocations()
-  }
-
-  async getVacancies(input: VacanciesInput) {
-    const vacanciesFromExternalSystem =
-      await this.getVacanciesFromExternalSystem(input)
-    const vacanciesFromCms = await this.getVacanciesFromCms()
-
-    const allVacancies = vacanciesFromExternalSystem.vacancies.concat(
-      vacanciesFromCms.vacancies,
-    )
-    sortVacancyList(allVacancies)
-
-    return {
-      vacancies: allVacancies,
-      total: vacanciesFromCms.total + (vacanciesFromExternalSystem.total ?? 0), // TODO: verify that this works
-      input,
-    }
   }
 
   async getVacancyById(input: VacancyByIdInput) {
@@ -78,16 +63,18 @@ export class VacanciesService {
     return this.getVacancyByIdFromExternalSystem(numericId)
   }
 
-  private async getVacanciesFromExternalSystem(input: VacanciesInput) {
+  async getVacanciesFromExternalSystem(input: ExternalVacanciesInput) {
     const vacancyResponse = await this.externalVacanciesV2Service.getVacancies({
       page: input.page,
       pageSize: DEFAULT_PAGE_SIZE,
       institution: input.institution,
       language: input.language,
       query: input.query,
-      vacancyType: input.vacancyType,
+      fieldOfWork: input.fieldOfWork,
       location: input.location,
     })
+
+    sortVacancyList(vacancyResponse.vacancies)
 
     for (const vacancy of vacancyResponse.vacancies) {
       vacancy.id = `${EXTERNAL_SYSTEM_ID_PREFIX}${vacancy.id}`
@@ -153,13 +140,15 @@ export class VacanciesService {
     }
   }
 
-  private async getVacanciesFromCms() {
+  async getVacanciesFromCms(input: CmsVacanciesInput) {
     const response = await this.cmsElasticService.getVacancies(
-      getElasticsearchIndex(DEFAULT_LANGUAGE),
+      getElasticsearchIndex(input.language),
     )
+    const mappedVacancies = response.vacancies.map(mapVacancyListItemFromCms)
+    sortVacancyList(mappedVacancies)
     return {
       ...response,
-      vacancies: response.vacancies.map(mapVacancyListItemFromCms),
+      vacancies: mappedVacancies,
     }
   }
 
