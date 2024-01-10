@@ -136,7 +136,7 @@ const SigneeView = () => {
                   <ActionCard
                     key={list.id}
                     backgroundColor="white"
-                    heading={list.candidate.name + ' - ' + list.area.name}
+                    heading={list.title}
                     eyebrow={
                       formatMessage(m.endTime) +
                       ' ' +

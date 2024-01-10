@@ -45,14 +45,14 @@ export const errorMessages = {
     },
     summary: {
       id: 'slc.application:error.active.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   owner: defineMessages({
     title: {
       id: 'slc.application:error.owner.title',
-      defaultMessage: 'Þú átt núþegar lista í öllum söfnunarsvæðum',
+      defaultMessage: 'Þú átt nú þegar lista í öllum söfnunarsvæðum',
       description: '',
     },
     summary: {
@@ -69,7 +69,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'slc.application:error.deniedByService.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),

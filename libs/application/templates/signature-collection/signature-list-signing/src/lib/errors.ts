@@ -52,24 +52,24 @@ export const errorMessages = {
   signer: defineMessages({
     title: {
       id: 'sls.application:error.signer.title',
-      defaultMessage: 'Þú hefur núþegar skrifað undir lista í þessari söfnun',
+      defaultMessage: 'Þú hefur nú þegar skrifað undir lista í þessari söfnun',
       description: '',
     },
     summary: {
-      id: 'sls.application:error.signer.summary',
-      defaultMessage: 'Hægt er að draga meðmæli tilbaka á mínum síðum',
+      id: 'sls.application:error.signer.summary#markdown',
+      defaultMessage: 'Hægt er að draga meðmæli tilbaka inni á Mínum Síðum.',
       description: '',
     },
   }),
   owner: defineMessages({
     title: {
       id: 'sls.application:error.owner.title',
-      defaultMessage: 'Þú átt núþegar lista í öllum söfnunarsvæðum',
+      defaultMessage: 'Þú átt nú þegar lista í öllum söfnunarsvæðum',
       description: '',
     },
     summary: {
       id: 'sls.application:error.owner.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
