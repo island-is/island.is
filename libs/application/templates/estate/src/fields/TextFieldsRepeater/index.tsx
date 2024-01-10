@@ -171,46 +171,6 @@ export const TextFieldsRepeater: FC<
               {props.fields.map((field: Field) => {
                 const key = `${id}.${field.id}`
 
-                if (key === 'stocks.faceValue') {
-                  const value =
-                    getValues(fieldIndex)?.faceValue?.replace('.', ',') ?? ''
-
-                  const errorMessage =
-                    errors && errors[id] && (errors[id] as any)[index]
-                      ? (errors[id] as any)[index][field.id]
-                      : undefined
-
-                  const hasError = !!errorMessage
-
-                  return (
-                    <GridColumn
-                      span={['1/1', '1/2']}
-                      paddingBottom={2}
-                      key={field.id}
-                    >
-                      <InputController
-                        id={`${fieldIndex}.${field.id}`}
-                        name={`${fieldIndex}.${field.id}`}
-                        defaultValue={repeaterField[field.id] || ''}
-                        format={field.format}
-                        label={formatMessage(field.title)}
-                        placeholder={field.placeholder}
-                        backgroundColor={
-                          field.backgroundColor ? field.backgroundColor : 'blue'
-                        }
-                        currency={field.currency}
-                        readOnly={field.readOnly}
-                        type={field.type}
-                        error={
-                          !!errors && errors[id] && (errors[id] as any)[index]
-                            ? (errors[id] as any)[index][field.id]
-                            : undefined
-                        }
-                      />
-                    </GridColumn>
-                  )
-                }
-
                 if (key === 'stocks.value') {
                   const value = getValues(fieldIndex)?.value ?? ''
                   const newValue = parseFloat(value)
