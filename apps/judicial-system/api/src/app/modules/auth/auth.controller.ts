@@ -184,6 +184,15 @@ export class AuthController {
     return res.redirect('/?villa=innskraning-ogild')
   }
 
+  @Get('callback')
+  async deprecatedAuth(@Res() res: Response) {
+    this.logger.debug(
+      'Received login request through a deprecated authentication system',
+    )
+
+    res.redirect('/?villa=innskraning-gomul')
+  }
+
   @Get('logout')
   logout(@Res() res: Response, @Req() req: Request) {
     this.logger.debug('Received logout request')
