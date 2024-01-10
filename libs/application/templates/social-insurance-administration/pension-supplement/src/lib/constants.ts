@@ -7,8 +7,8 @@ export enum ApplicationReason {
   HOUSE_RENT = 'houseRent', // Húsaleiga sem fellur utan húsaleigubóta frá sveitafélagi
   ASSISTED_CARE_AT_HOME = 'assistedCareAtHome', // Umönnun í heimahúsi
   ASSISTED_LIVING = 'assistedLiving', // Dvöl á sambýli eða áfangaheimili
-  PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids', // Kaup á heyrnartækjum
-  OXYGEN_FILTER_COST = 'oxygenFilterCost', // Rafmagn á súrefnissíu
+  HELPING_EQUIPMENT = 'helpingEquipment', // Kaup á heyrnartækjum
+  OXYGEN_FILTER_ELECTRICITY_COST = 'oxygenFilterElectricityCost', // Rafmagn á súrefnissíu
   HALFWAY_HOUSE = 'halfwayHouse', // Dvöl á áfangaheimili
 }
 

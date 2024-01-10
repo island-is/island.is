@@ -358,7 +358,7 @@ export const PensionSupplementForm: Form = buildForm({
 
         const reasons = [
           ApplicationReason.ASSISTED_CARE_AT_HOME,
-          ApplicationReason.PURCHASE_OF_HEARING_AIDS,
+          ApplicationReason.HELPING_EQUIPMENT,
           ApplicationReason.ASSISTED_LIVING,
           ApplicationReason.HALFWAY_HOUSE,
           ApplicationReason.HOUSE_RENT,
@@ -406,9 +406,7 @@ export const PensionSupplementForm: Form = buildForm({
 
             return (
               applicationReason &&
-              applicationReason.includes(
-                ApplicationReason.PURCHASE_OF_HEARING_AIDS,
-              )
+              applicationReason.includes(ApplicationReason.HELPING_EQUIPMENT)
             )
           },
           children: [

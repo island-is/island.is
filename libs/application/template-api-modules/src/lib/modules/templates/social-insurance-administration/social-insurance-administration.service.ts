@@ -250,11 +250,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   ): Promise<Attachment[]> {
     const {
       additionalAttachments,
-      schoolConfirmationAttachments,
-      leaseAgreementAttachments,
-      householdSupplementChildren,
-      householdSupplementHousing,
-    } = getHSApplicationAnswers(application.answers)
+      assistedCareAtHomeAttachments,
+      houseRentAttachments,
+      houseRentAllowanceAttachments,
+      assistedLivingAttachments,
+      purchaseOfHearingAidsAttachments,
+      halfwayHouseAttachments,
+    } = getPSApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
 
@@ -269,29 +271,70 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
 
     if (
-      schoolConfirmationAttachments &&
-      schoolConfirmationAttachments.length > 0 &&
-      householdSupplementChildren === YES
+      assistedCareAtHomeAttachments &&
+      assistedCareAtHomeAttachments.length > 0
     ) {
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.SchoolConfirmation,
-          schoolConfirmationAttachments,
+          AttachmentTypeEnum.AssistedCareAtHome,
+          assistedCareAtHomeAttachments,
+        )),
+      )
+    }
+
+    if (houseRentAttachments && houseRentAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.HouseRentAgreement,
+          houseRentAttachments,
         )),
       )
     }
 
     if (
-      leaseAgreementAttachments &&
-      leaseAgreementAttachments.length > 0 &&
-      householdSupplementHousing === HouseholdSupplementHousing.RENTER
+      houseRentAllowanceAttachments &&
+      houseRentAllowanceAttachments.length > 0
     ) {
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.RentalAgreement,
-          leaseAgreementAttachments,
+          AttachmentTypeEnum.HouseRentAllowance,
+          houseRentAllowanceAttachments,
+        )),
+      )
+    }
+
+    if (assistedLivingAttachments && assistedLivingAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.AssistedLiving,
+          assistedLivingAttachments,
+        )),
+      )
+    }
+
+    if (
+      purchaseOfHearingAidsAttachments &&
+      purchaseOfHearingAidsAttachments.length > 0
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.PurchaseOfHearingAids,
+          purchaseOfHearingAidsAttachments,
+        )),
+      )
+    }
+
+    if (halfwayHouseAttachments && halfwayHouseAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.HalfwayHouse,
+          halfwayHouseAttachments,
         )),
       )
     }

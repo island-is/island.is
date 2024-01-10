@@ -68,7 +68,7 @@ export const fileUploadValidationSection = (
   }
 
   if (
-    applicationReason.includes(ApplicationReason.PURCHASE_OF_HEARING_AIDS) &&
+    applicationReason.includes(ApplicationReason.HELPING_EQUIPMENT) &&
     obj.purchaseOfHearingAids
   ) {
     if (

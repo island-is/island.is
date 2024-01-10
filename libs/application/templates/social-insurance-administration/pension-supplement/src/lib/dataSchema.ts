@@ -103,8 +103,8 @@ export const dataSchema = z.object({
       z.enum([
         ApplicationReason.MEDICINE_COST,
         ApplicationReason.ASSISTED_CARE_AT_HOME,
-        ApplicationReason.OXYGEN_FILTER_COST,
-        ApplicationReason.PURCHASE_OF_HEARING_AIDS,
+        ApplicationReason.OXYGEN_FILTER_ELECTRICITY_COST,
+        ApplicationReason.HELPING_EQUIPMENT,
         ApplicationReason.ASSISTED_LIVING,
         ApplicationReason.HALFWAY_HOUSE,
         ApplicationReason.HOUSE_RENT,
