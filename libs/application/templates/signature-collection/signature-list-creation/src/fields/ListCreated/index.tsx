@@ -21,7 +21,7 @@ export const ListCreated: FC<FieldBaseProps> = ({ application }) => {
         />
       </Box>
 
-      <Box display="flex" justifyContent="center" marginY={5}>
+      <Box display="flex" justifyContent="center" marginY={7}>
         <Illustration />
       </Box>
     </>

@@ -31,11 +31,13 @@ export const SignatureLists: FC<
       {!loading && lists?.length > 0 && (
         <Box>
           <Box marginBottom={3}>
-            <Text variant="h4">{t('title', 'Virkir listar')}</Text>
+            <Text variant="h4">
+              {t('title', 'Frambjóðendur sem hægt er að mæla með')}
+            </Text>
           </Box>
           <Stack space={4}>
             {lists?.length > 0 &&
-              lists?.map((list: SignatureCollectionList) => {
+              lists.map((list: SignatureCollectionList) => {
                 return (
                   <ActionCard
                     eyebrow={
@@ -48,14 +50,14 @@ export const SignatureLists: FC<
                     heading={list.title}
                     text={t('collectionTitle', 'Forsetakosningar 2024')}
                     cta={{
-                      label: t('sign', 'Mæla með lista'),
+                      label: t('sign', 'Mæla með framboði'),
                       variant: 'text',
                       icon: 'open',
                       iconType: 'outline',
                       size: 'small',
                       onClick: () =>
                         window.open(
-                          'https://island.is/umsoknir/maela-med-lista',
+                          `${window.location.origin}/umsoknir/maela-med-lista`,
                           '_blank',
                         ),
                     }}
