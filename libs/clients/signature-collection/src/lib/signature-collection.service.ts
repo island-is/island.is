@@ -154,7 +154,7 @@ export class SignatureCollectionClientService {
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: area.id,
-          listiNafn: `${owner.name} ${area.name}`,
+          listiNafn: `${owner.name} - ${area.name}`,
         })),
       },
     })
