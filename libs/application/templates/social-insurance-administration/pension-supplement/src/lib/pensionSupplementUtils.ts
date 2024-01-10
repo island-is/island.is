@@ -71,6 +71,36 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'tempAnswers',
   ) as Application['answers']
 
+  const assistedCareAtHomeAttachments = getValueViaPath(
+    answers,
+    'fileUpload.assistedCareAtHome',
+  ) as FileType[]
+
+  const houseRentAttachments = getValueViaPath(
+    answers,
+    'fileUpload.houseRentAgreement',
+  ) as FileType[]
+
+  const houseRentAllowanceAttachments = getValueViaPath(
+    answers,
+    'fileUpload.houseRentAllowance',
+  ) as FileType[]
+
+  const assistedLivingAttachments = getValueViaPath(
+    answers,
+    'fileUpload.assistedLiving',
+  ) as FileType[]
+
+  const purchaseOfHearingAidsAttachments = getValueViaPath(
+    answers,
+    'fileUpload.purchaseOfHearingAids',
+  ) as FileType[]
+
+  const halfwayHouseAttachments = getValueViaPath(
+    answers,
+    'fileUpload.halfwayHouse',
+  ) as FileType[]
+
   return {
     applicantPhonenumber,
     applicationReason,
@@ -87,6 +117,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankAddress,
     currency,
     tempAnswers,
+    assistedCareAtHomeAttachments,
+    houseRentAttachments,
+    houseRentAllowanceAttachments,
+    assistedLivingAttachments,
+    purchaseOfHearingAidsAttachments,
+    halfwayHouseAttachments,
   }
 }
 
@@ -163,11 +199,11 @@ export function getApplicationReasonOptions() {
       label: pensionSupplementFormMessage.applicationReason.assistedCareAtHome,
     },
     {
-      value: ApplicationReason.OXYGEN_FILTER_COST,
+      value: ApplicationReason.OXYGEN_FILTER_ELECTRICITY_COST,
       label: pensionSupplementFormMessage.applicationReason.oxygenFilterCost,
     },
     {
-      value: ApplicationReason.PURCHASE_OF_HEARING_AIDS,
+      value: ApplicationReason.HELPING_EQUIPMENT,
       label:
         pensionSupplementFormMessage.applicationReason.purchaseOfHearingAids,
     },
@@ -240,7 +276,7 @@ export function getAttachments(application: Application) {
         AttachmentTypes.ASSISTED_LIVING,
       )
     }
-    if (reason === ApplicationReason.PURCHASE_OF_HEARING_AIDS) {
+    if (reason === ApplicationReason.HELPING_EQUIPMENT) {
       getAttachmentDetails(
         pensionSupplementAttachments?.purchaseOfHearingAids,
         AttachmentTypes.PURCHASE_OF_HEARING_AIDS,
