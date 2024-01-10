@@ -1,4 +1,5 @@
 import type {
+  ActionCardProps,
   BoxProps,
   DatePickerBackgroundColor,
   IconProps,
@@ -7,7 +8,6 @@ import type {
   SpanType,
 } from '@island.is/island-ui/core/types'
 import { FormItem, FormText, FormTextArray, StaticText } from './Form'
-
 import { ApolloClient } from '@apollo/client'
 import { Application } from './Application'
 import { CallToAction } from './StateMachine'
@@ -121,6 +121,7 @@ export enum FieldTypes {
   IMAGE = 'IMAGE',
   PDF_LINK_BUTTON = 'PDF_LINK_BUTTON',
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
+  ACTION_CARD_LIST = 'ACTION_CARD_LIST',
 }
 
 export enum FieldComponents {
@@ -147,6 +148,7 @@ export enum FieldComponents {
   IMAGE = 'ImageFormField',
   PDF_LINK_BUTTON = 'PdfLinkButtonFormField',
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
+  ACTION_CARD_LIST = 'ActionCardListFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -402,6 +404,15 @@ export interface NationalIdWithNameField extends BaseField {
   minAgePerson?: number
 }
 
+export type ActionCardListField = BaseField & {
+  readonly type: FieldTypes.ACTION_CARD_LIST
+  component: FieldComponents.ACTION_CARD_LIST
+  items: (application: Application) => ActionCardProps[]
+  space?: BoxProps['paddingTop']
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -427,3 +438,4 @@ export type Field =
   | ImageField
   | PdfLinkButtonField
   | NationalIdWithNameField
+  | ActionCardListField

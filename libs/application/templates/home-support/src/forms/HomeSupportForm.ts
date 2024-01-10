@@ -7,6 +7,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildActionCardListField,
   buildSubmitField,
   buildTextField,
   buildSelectField,
@@ -17,6 +18,7 @@ import {
   FormModes,
   Comparators,
   FormValue,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 
 import {
@@ -24,6 +26,7 @@ import {
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
+import { mapIndividualToActionCard } from '../utils'
 
 export const HomeSupportForm: Form = buildForm({
   id: 'HomeSupportDraft',
@@ -34,28 +37,31 @@ export const HomeSupportForm: Form = buildForm({
       id: 'applicantInfoSection',
       title: m.application.applicant.infoSectionTitle,
       children: [applicantInformationMultiField()],
-      condition: (_, externalData) => {
-        console.log('externalData', externalData)
-        return true
-      },
     }),
     buildSection({
       id: 'legalDomicilePersonsSection',
       title: m.application.applicant.legalDomicilePersonsSectionTitle,
       children: [
-        buildDescriptionField({
-          id: 'test',
+        buildActionCardListField({
+          id: 'ActionCardListTest',
           title: m.application.applicant.legalDomicilePersonsSectionSubtitle,
-          description: ({ externalData }) => {
-            const cohabitants = externalData.nationalRegistryCohabitants
-              .data as any[] | null
-            return (
-              cohabitants
-                ?.map((x) => `${x.fullName} (${x.nationalId})`)
-                .join('\n\n') ?? ''
-            )
+          items: (application) => {
+            const cohabitants = application.externalData
+              .nationalRegistryCohabitants.data as NationalRegistryIndividual[]
+
+            return cohabitants.map((x) => mapIndividualToActionCard(x))
           },
-          space: 2,
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'blabala',
+      title: 'Tengiliðir',
+      children: [
+        buildDescriptionField({
+          id: 'hallooo',
+          title: 'Blabla',
+          description: 'Hellooo',
         }),
       ],
     }),
