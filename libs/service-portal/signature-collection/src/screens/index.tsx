@@ -1,7 +1,7 @@
 import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import OwnerView from './ownerView'
-import SigneeView from './signeeView'
+import OwnerView from './CandidateView'
+import SigneeView from './SigneeView'
 import { useIsOwner } from '../hooks'
 
 const SignatureLists = () => {
