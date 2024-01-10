@@ -83,13 +83,11 @@ const SigneeView = () => {
                 {formatMessage(m.mySigneeListsHeader)}
               </Text>
               <ActionCard
-                heading={
-                  signedList?.candidate.name + ' - ' + signedList?.area.name
-                }
+                heading={signedList.title}
                 eyebrow={
                   formatMessage(m.endTime) +
                   ' ' +
-                  format(new Date(signedList?.endTime), 'dd.MM.yyyy')
+                  format(new Date(signedList.endTime), 'dd.MM.yyyy')
                 }
                 text={formatMessage(m.collectionTitle)}
                 cta={{
@@ -107,6 +105,7 @@ const SigneeView = () => {
                 isVisible={modalIsOpen}
                 toggleClose={false}
                 initialVisibility={false}
+                onCloseModal={() => setModalIsOpen(false)}
               >
                 <Text variant="h2" marginTop={[5, 0]}>
                   {formatMessage(m.unSignModalMessage)}
