@@ -1,7 +1,6 @@
 import { EstateAsset, EstateInfo } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
-import { filterEmptyObjects } from './filters'
 
 type InheritanceReportSchema = zinfer<typeof inheritanceReportSchema>
 type InheritanceData = InheritanceReportSchema['assets']
@@ -73,6 +72,7 @@ export const expandAnswers = (
           return {
             issuer: claim.issuer ?? '',
             value: claim.value ?? '',
+            nationalId: claim.nationalId ?? '',
           }
         }),
         total: answers.assets.claims?.total ?? 0,
@@ -88,21 +88,12 @@ export const expandAnswers = (
         total: answers.assets.guns?.total ?? 0,
       },
       inventory: {
-        data: (answers.assets.inventory?.data ?? []).map((item) => {
-          return {
-            inventory: item.inventory ?? '',
-            inventoryValue: item.inventoryValue ?? '',
-          }
-        }),
-        total: answers.assets.inventory?.total ?? 0,
+        info: answers.assets.inventory?.info ?? '',
+        value: answers.assets.inventory?.value ?? '',
       },
       money: {
-        data: (answers.assets.money?.data ?? []).map((money) => {
-          return {
-            moneyValue: money.moneyValue ?? '',
-          }
-        }),
-        total: answers.assets.money?.total ?? 0,
+        info: answers.assets.money?.info ?? '',
+        value: answers.assets.money?.value ?? '',
       },
       otherAssets: {
         data: (answers.assets.otherAssets?.data ?? []).map((asset) => {
@@ -168,6 +159,7 @@ export const expandAnswers = (
       },
       businessTotal: answers.business.businessTotal ?? 0,
     },
+    confirmAction: answers.confirmAction,
     debts: {
       debtsTotal: answers.debts.debtsTotal ?? 0,
       domesticAndForeignDebts: {

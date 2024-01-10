@@ -54,7 +54,6 @@ export class InheritanceReportService extends BaseTemplateApiService {
     ])
     const estate = estateTransformer(estateResponse[0])
 
-
     return {
       success: true,
       estate,
