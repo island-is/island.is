@@ -48,10 +48,39 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description:
         'I understand that the above information will be collected during the application process',
     },
+    contactInfoTitle: {
+      id: 'sia.application:prerequisites.contact.info.title',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email and phone number',
+    },
     skraInformationTitle: {
       id: 'sia.application:prerequisites.national.registry.title',
       defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'Information from Registers Iceland',
+    },
+    socialInsuranceAdministrationInformationDescription: {
+      id: 'sia.application:prerequisites.socialInsuranceAdministration.description',
+      defaultMessage:
+        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun.',
+      description: 'english translation',
+    },
+    socialInsuranceAdministrationDataDescription: {
+      id: 'sia.application:prerequisites.socialInsuranceAdministration.data.description',
+      defaultMessage:
+        'Tryggingastofnun sækir nauðsynlegar upplýsingar til úrvinnslu umsókna, varðandi tekjur og aðrar ástæður.',
+      description: 'english translation',
+    },
+    socialInsuranceAdministrationPrivacyTitle: {
+      id: 'sia.application:prerequisites.socialInsuranceAdministration.privacy.title',
+      defaultMessage:
+        'Gagnaöflun og meðferð persónuupplýsinga',
+      description: 'english translation',
+    },
+    socialInsuranceAdministrationPrivacyDescription: {
+      id: 'sia.application:prerequisites.socialInsuranceAdministration.privacy.description#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna hér (https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
+      description: 'english translation',
     },
     startApplication: {
       id: 'sia.application:prerequisites.start.application',
