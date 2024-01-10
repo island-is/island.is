@@ -17,7 +17,6 @@ import {
   getApplicationExternalData,
   isEarlyRetirement,
   filterValidEmployers,
-  getEmployers,
 } from './oldAgePensionUtils'
 import { ApplicationType } from './constants'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -308,76 +307,5 @@ describe('filterValidEmployers', () => {
 
     expect(employers).toEqual(filteredList)
     expect(res).toEqual(filteredList)
-  })
-})
-
-describe('getEmployers', () => {
-  it('should return ratio and ratioMonthly as numbers, only phoneNumber if there is any and only the months that where put in in ratioMontly', () => {
-    const application = buildApplication({
-      answers: {
-        applicationType: {
-          option: ApplicationType.OLD_AGE_PENSION,
-        },
-        employers: [
-          {
-            email: 'vinnuveitandi@mail.is',
-            rawIndex: 0,
-            ratioType: 'yearly',
-            phoneNumber: '',
-            ratioYearly: '23',
-            ratioMonthly: {},
-          },
-          {
-            email: 'vinna@mail.is',
-            rawIndex: 0,
-            ratioType: 'yearly',
-            phoneNumber: '7777777',
-            ratioYearly: '10',
-            ratioMonthly: {},
-          },
-          {
-            email: 'fajefja@bs.is',
-            ratioType: 'monthly',
-            phoneNumber: '8888888',
-            ratioYearly: '',
-            ratioMonthly: {
-              april: '12',
-              march: '12',
-              january: '12',
-              february: '12',
-            },
-            ratioMonthlyAvg: '4',
-          },
-        ],
-      },
-    })
-
-    const employerInfo = [
-      {
-        email: 'vinnuveitandi@mail.is',
-        ratio: 23,
-      },
-      {
-        email: 'vinna@mail.is',
-        phoneNumber: '7777777',
-        ratio: 10,
-      },
-      {
-        email: 'fajefja@bs.is',
-        phoneNumber: '8888888',
-        ratio: 4,
-        ratioMonthly: {
-          january: 12,
-          february: 12,
-          march: 12,
-          april: 12,
-        },
-      },
-    ]
-
-    const { employers } = getApplicationAnswers(application.answers)
-    const res = getEmployers(employers)
-
-    expect(res).toEqual(employerInfo)
   })
 })
