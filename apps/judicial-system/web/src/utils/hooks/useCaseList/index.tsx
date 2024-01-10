@@ -7,7 +7,12 @@ import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
@@ -69,7 +74,13 @@ const useCaseList = () => {
     let routeTo = null
     const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
-    if (
+    if (isDefenceUser(user)) {
+      if (isIndictmentCase(caseToOpen.type)) {
+        routeTo = DEFENDER_INDICTMENT_ROUTE
+      } else {
+        routeTo = DEFENDER_ROUTE
+      }
+    } else if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
@@ -133,13 +144,15 @@ const useCaseList = () => {
     (id: string) => {
       Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
 
-      setClickedCase([id, false])
+      if (clickedCase[0] !== id) {
+        setClickedCase([id, false])
 
-      timeouts.push(
-        setTimeout(() => {
-          setClickedCase([id, true])
-        }, 2000),
-      )
+        timeouts.push(
+          setTimeout(() => {
+            setClickedCase([id, true])
+          }, 2000),
+        )
+      }
 
       const getCaseToOpen = (id: string) => {
         limitedAccess
