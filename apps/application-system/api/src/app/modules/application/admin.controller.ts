@@ -95,6 +95,7 @@ export class AdminController {
       true, // Show pruned applications
     )
   }
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
   @Scopes(AdminPortalScope.applicationSystem)
   @BypassDelegation()
   @Get('admin/institution/:nationalId/applications/:page/:count')

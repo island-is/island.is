@@ -21,11 +21,11 @@ import { ApplicationService } from '../application.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationAdmin)
-@Scopes(AdminPortalScope.applicationSystem)
 export class ApplicationAdminResolver {
   constructor(private applicationService: ApplicationService) {}
 
   @Query(() => [ApplicationAdmin], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystem)
   async applicationApplicationsAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
@@ -37,6 +37,7 @@ export class ApplicationAdminResolver {
   }
 
   @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
   async applicationApplicationsInstitutionAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
