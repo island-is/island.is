@@ -8,8 +8,16 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { format as formatNationalId } from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
+import {
+  AllDebts,
+  ApplicationDebts,
+  PublicCharges,
+  PublicChargesData,
+} from '../../types'
 
 export const debts = buildSection({
   id: 'debts',
@@ -127,6 +135,34 @@ export const debts = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'estateDebtsCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) => {
+                  const allDebts = (
+                    answers.debts as unknown as ApplicationDebts
+                  ).domesticAndForeignDebts.data
+                  return (
+                    allDebts.map((debt: AllDebts) => ({
+                      title: debt.creditorName,
+                      description: [
+                        `${m.nationalId.defaultMessage}: ${formatNationalId(
+                          debt.nationalId ?? '',
+                        )}`,
+                        `${m.debtsBalance.defaultMessage}: ${formatCurrency(
+                          debt.balance ?? '0',
+                        )}`,
+                      ],
+                    })) ?? []
+                  )
+                },
+              },
+            ),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',
@@ -148,6 +184,29 @@ export const debts = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'chargesCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) => {
+                  const puclicCharges = (
+                    answers.debts as unknown as ApplicationDebts
+                  ).publicCharges.data
+                  return (
+                    puclicCharges.map((charge: PublicChargesData) => ({
+                      title: m.amount.defaultMessage,
+                      description: [
+                        `${formatCurrency(charge.publicChargesAmount ?? '0')}`,
+                      ],
+                    })) ?? []
+                  )
+                },
+              },
+            ),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',

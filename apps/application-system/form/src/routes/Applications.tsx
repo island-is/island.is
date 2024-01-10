@@ -62,6 +62,10 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     | undefined
   >(undefined)
 
+  const queryParam = template?.initialQueryParameter
+    ? query.get(template?.initialQueryParameter)
+    : null
+
   useApplicationNamespaces(type)
 
   const {
@@ -93,6 +97,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       variables: {
         input: {
           typeId: type,
+          initialQuery: queryParam,
         },
       },
     })

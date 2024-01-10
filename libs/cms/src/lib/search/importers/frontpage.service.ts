@@ -35,7 +35,9 @@ export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
   }
 
   doMapping(entries: IFrontpage[]) {
-    logger.info('Mapping frontpage', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping frontpage', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

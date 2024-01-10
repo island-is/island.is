@@ -107,6 +107,10 @@ import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
 import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
 import { ChangeMachineSupervisorTemplateService } from './aosh/change-machine-supervisor/change-machine-supervisor.service'
+import { SignatureListCreationModule } from './signature-collection/signature-list-creation/signature-list-creation.module'
+import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
+import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
+import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -162,6 +166,8 @@ export const modules = [
   CitizenshipModule,
   EnergyFundsModule,
   HealthcareLicenseCertificateModule,
+  SignatureListCreationModule,
+  SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
   ChangeMachineSupervisorTemplateModule,
 ]
@@ -220,6 +226,8 @@ export const services = [
   CitizenshipService,
   EnergyFundsService,
   HealthcareLicenseCertificateService,
+  SignatureListCreationService,
+  SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
   ChangeMachineSupervisorTemplateService,
 ]

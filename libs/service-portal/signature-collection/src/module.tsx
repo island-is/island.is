@@ -4,8 +4,8 @@ import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from './lib/paths'
 import { Features } from '@island.is/feature-flags'
 
-const SignatureLists = lazy(() => import('./screens/SignatureLists'))
-const ViewList = lazy(() => import('./screens/ViewList'))
+const SignatureLists = lazy(() => import('./screens'))
+const ViewList = lazy(() => import('./screens/CandidateView/ViewList'))
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollectionLists,

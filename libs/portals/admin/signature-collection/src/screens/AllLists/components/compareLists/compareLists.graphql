@@ -7,7 +7,7 @@ mutation BulkCompare($input: SignatureCollectionNationalIdsInput!) {
       nationalId
       address
     }
-    signatureType
+    isDigital
     active
     created
   }
