@@ -159,7 +159,7 @@ export const m = defineMessages({
   listSignedDescription: {
     id: 'sls.application:listSignedDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
+      'Þú hefur mælt með **{name}**. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
     description: '',
   },
   linkFieldButtonTitle: {

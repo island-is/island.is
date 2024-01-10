@@ -56,7 +56,7 @@ export const Draft: Form = buildForm({
               description: m.selectCandidateDescription,
               children: [
                 buildRadioField({
-                  id: 'listId',
+                  id: 'candidate.name',
                   title: '',
                   defaultValue: ({ externalData }: Application) => {
                     const lists = getValueViaPath(
@@ -72,7 +72,7 @@ export const Draft: Form = buildForm({
                     },
                   }) => {
                     return (data as SignatureCollectionList[]).map((list) => ({
-                      value: list.id,
+                      value: list.title,
                       label: list.title,
                     }))
                   },
