@@ -1,14 +1,16 @@
 import React from 'react'
-import { Districts } from '@island.is/web/graphql/schema'
+
 import {
   Box,
-  BoxProps,
   Button,
   GridColumn,
   GridRow,
   Link,
   Text,
 } from '@island.is/island-ui/core'
+import { BorderAbove } from '@island.is/web/components'
+import { Districts } from '@island.is/web/graphql/schema'
+
 import * as styles from './DistrictsSlice.css'
 
 interface SliceProps {
@@ -18,18 +20,6 @@ interface SliceProps {
 export const DistrictsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slice,
 }) => {
-  const boxProps: BoxProps = slice.hasBorderAbove
-    ? {
-        borderTopWidth: 'standard',
-        borderColor: 'standard',
-        paddingTop: [8, 6],
-        paddingBottom: [4, 5],
-      }
-    : {
-        paddingTop: 2,
-        paddingBottom: 2,
-      }
-
   return (
     !!slice.links.length && (
       <section
@@ -37,7 +27,8 @@ export const DistrictsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
         id={slice.id}
         aria-labelledby={'sliceTitle-' + slice.id}
       >
-        <Box {...boxProps}>
+        {slice.hasBorderAbove && <BorderAbove />}
+        <Box>
           <GridRow>
             <GridColumn span="12/12">
               <Text variant="h3" as="h2" id={'sliceTitle-' + slice.id}>

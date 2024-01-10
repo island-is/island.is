@@ -24,7 +24,7 @@ export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
   area?: SignatureCollectionAreaBase
 
   @Field(() => SignatureCollectionSignature, { nullable: true })
-  singature?: SignatureCollectionSignature
+  signature?: SignatureCollectionSignature
 
   @Field(() => [SignatureCollectionList], { nullable: true })
   ownedLists?: SignatureCollectionList[]

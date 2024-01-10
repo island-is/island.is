@@ -8,8 +8,10 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
+import { Buisness, BuisnessAssetsData, BuisnessDebtData } from '../../types'
 
 export const business = buildSection({
   id: 'business',
@@ -133,6 +135,33 @@ export const business = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'buisnessAssetsCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) => {
+                  const buisnessProperty = (
+                    answers.business as unknown as Buisness
+                  ).businessAssets.data
+                  return (
+                    buisnessProperty.map((asset: BuisnessAssetsData) => ({
+                      title: asset.businessAsset,
+                      description: [
+                        m.businessAssetAmount.defaultMessage +
+                          ': ' +
+                          (asset.businessAssetValue
+                            ? formatCurrency(asset.businessAssetValue)
+                            : '0 kr.'),
+                      ],
+                    })) ?? []
+                  )
+                },
+              },
+            ),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',
@@ -151,6 +180,34 @@ export const business = buildSection({
               marginBottom: 'gutter',
               space: 'gutter',
             }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'buisnessDebtsCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ answers }: Application) => {
+                  const buisnessDebts = (
+                    answers.business as unknown as Buisness
+                  ).businessDebts.data
+                  return (
+                    buisnessDebts.map((debt: BuisnessDebtData) => ({
+                      title: debt.businessDebt,
+                      description: [
+                        `${m.creditorsNationalId.defaultMessage}: ${debt.nationalId}`,
+                        m.businessAssetAmount.defaultMessage +
+                          ': ' +
+                          (debt.debtValue
+                            ? formatCurrency(debt.debtValue)
+                            : '0 kr.'),
+                      ],
+                    })) ?? []
+                  )
+                },
+              },
+            ),
             buildKeyValueField({
               label: m.totalAmount,
               display: 'flex',
