@@ -41,7 +41,7 @@ export const List = () => {
           {!!list && (
             <>
               <IntroHeader
-                title={list.owner.name + ' - ' + list.area.name}
+                title={list.title}
                 intro={formatMessage(m.signatureListsIntro)}
                 img={header}
                 imgPosition="right"

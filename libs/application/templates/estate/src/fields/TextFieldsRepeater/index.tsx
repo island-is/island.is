@@ -124,7 +124,7 @@ export const TextFieldsRepeater: FC<
     }
 
     const total = aVal * bVal
-    const totalString = total.toFixed(2)
+    const totalString = total.toFixed(0)
 
     setValue(`${fieldIndex}.value`, totalString)
 
@@ -198,7 +198,7 @@ export const TextFieldsRepeater: FC<
                         type="text"
                         decimalScale={2}
                         decimalSeparator=","
-                        backgroundColor="white"
+                        backgroundColor="blue"
                         thousandSeparator="."
                         suffix=" kr."
                         autoComplete="off"
@@ -225,7 +225,6 @@ export const TextFieldsRepeater: FC<
                 if (key === 'stocks.value') {
                   const value = getValues(fieldIndex)?.value ?? ''
                   const newValue = parseFloat(value)
-
                   return (
                     <GridColumn
                       span={['1/1', '1/2']}
@@ -243,7 +242,7 @@ export const TextFieldsRepeater: FC<
                         type="text"
                         decimalScale={6}
                         decimalSeparator=","
-                        backgroundColor="white"
+                        backgroundColor="blue"
                         thousandSeparator="."
                         suffix=" kr."
                         autoComplete="off"

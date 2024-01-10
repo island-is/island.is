@@ -91,8 +91,7 @@ const Signees = () => {
               {signees
                 .slice(pageSize * (page - 1), pageSize * page)
                 .map((s) => {
-                  const boxColor =
-                    s.signatureType === 'Paper' ? 'purple100' : 'white'
+                  const boxColor = s.isDigital ? 'purple100' : 'white'
 
                   return (
                     <T.Row key={s.id}>
@@ -121,7 +120,7 @@ const Signees = () => {
                         {formatMessage(m.tempMessage)}
                       </T.Data>
                       <T.Data box={{ background: boxColor }}>
-                        {s.signatureType === 'Paper' && (
+                        {s.isDigital && (
                           <Icon
                             icon="document"
                             type="outline"

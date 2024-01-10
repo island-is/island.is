@@ -6,11 +6,11 @@ import {
   amountFormat,
   periodFormat,
   formatDate,
+  NestedTable,
 } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { CustomerRecordsDetails } from '../../screens/FinanceTransactions/FinanceTransactionsData.types'
-import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
 import { m as messages } from '../../lib/messages'
 
 const ITEMS_ON_PAGE = 20
@@ -59,7 +59,7 @@ const FinanceTransactionsTable = ({ recordsArray }: Props) => {
                   { value: amountFormat(record.amount), align: 'right' },
                 ]}
               >
-                <FinanceTransactionsDetail
+                <NestedTable
                   data={[
                     {
                       title: formatMessage(m.effectiveDate),

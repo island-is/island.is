@@ -231,4 +231,8 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
   },
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
+    nationalId: '',
+    slug: InstitutionTypes.TRYGGINGASTOFNUN,
+  },
 }
