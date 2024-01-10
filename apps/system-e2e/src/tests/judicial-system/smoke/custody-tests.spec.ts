@@ -239,13 +239,10 @@ test.describe.serial('Custody tests', () => {
     await statementFileChooser.setFiles(
       await createFakePdf('TestGreinargerd.pdf'),
     )
-
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
       verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
     ])
-    await page.waitForTimeout(1000)
-
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalSecondaryButton').click()
   })
