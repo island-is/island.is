@@ -101,6 +101,5 @@ export const sendNotificationsToRecipients = async (
 }
 
 export const cleanPhoneNumber = (phoneNumber: string) => {
-  // Remove hyphens and plus signs using regular expressions
   return phoneNumber.replace(/[-+]/g, '')
 }

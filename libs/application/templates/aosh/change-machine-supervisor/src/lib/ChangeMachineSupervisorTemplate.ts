@@ -195,17 +195,8 @@ const template: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    const buyerNationalId = getValueViaPath(
-      application.answers,
-      'buyer.nationalId',
-      '',
-    ) as string
-
     if (id === application.applicant) {
       return Roles.APPLICANT
-    }
-    if (id === buyerNationalId && application.assignees.includes(id)) {
-      return Roles.BUYER
     }
 
     return undefined
