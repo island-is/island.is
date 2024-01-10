@@ -122,14 +122,14 @@ export const getEventData = (
       }
     case ApplicationEventType.SPOUSEFILEUPLOAD:
       return {
-        header: 'Ný gögn',
-        text: 'sendi inn gögn',
+        header: 'Nýjar upplýsingar',
+        text: 'sendi inn upplýsingar',
         prefix: `Maki ${spouseName}`,
       }
     case ApplicationEventType.FILEUPLOAD:
       return {
-        header: 'Ný gögn',
-        text: 'sendi inn gögn',
+        header: 'Nýjar upplýsingar',
+        text: 'sendi inn upplýsingar',
         prefix: `Umsækjandi ${applicantName}`,
       }
     case ApplicationEventType.ASSIGNCASE:
