@@ -60,3 +60,11 @@ export type MachineLocation = {
   postCode?: number
   moreInfo?: string
 }
+
+export type Supervisor = {
+  nationalId: string
+  name: string
+  email: string
+  phone: string
+  isOwner: string[]
+}

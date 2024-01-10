@@ -23,14 +23,8 @@ import { MachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import {
-  IdentityApi,
-  UserProfileApi,
-  VinnueftirlitidPaymentCatalogApi,
-  MachinesApi,
-} from '../dataProviders'
+import { IdentityApi, UserProfileApi, MachinesApi } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -52,9 +46,8 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.CHANGE_MACHINE_SUPERVISOR,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  featureFlag: Features.transferOfMachineOwnership,
   translationNamespaces: [
-    ApplicationConfigurations.TransferOfMachineOwnership.translation,
+    ApplicationConfigurations.ChangeMachineSupervisor.translation,
   ],
   dataSchema: MachineAnswersSchema,
   allowedDelegations: [
@@ -103,12 +96,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [
-                IdentityApi,
-                UserProfileApi,
-                VinnueftirlitidPaymentCatalogApi,
-                MachinesApi,
-              ],
+              api: [IdentityApi, UserProfileApi, MachinesApi],
             },
           ],
         },
@@ -127,7 +115,7 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.paymentStarted,
+                logMessage: coreHistoryMessages.applicationSent,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -138,24 +126,31 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/TransferOfMachineOwnershipForm/index').then(
+                import('../forms/ChangeMachineSupervisorForm/index').then(
                   (module) =>
                     Promise.resolve(module.TransferOfMachineOwnershipForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
           status: 'completed',
-          lifecycle: pruneAfterDays(3 * 30),
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
@@ -173,8 +168,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((module) =>
-                  Promise.resolve(module.Approved),
+                import('../forms/Conclusion').then((module) =>
+                  Promise.resolve(module.Conclusion),
                 ),
               read: 'all',
             },

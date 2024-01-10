@@ -6,12 +6,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
-import {
-  IdentityApi,
-  UserProfileApi,
-  VinnueftirlitidPaymentCatalogApi,
-  MachinesApi,
-} from '../../dataProviders'
+import { IdentityApi, UserProfileApi, MachinesApi } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const prerequisitesSection = buildSection({
@@ -51,10 +46,6 @@ export const prerequisitesSection = buildSection({
           provider: MachinesApi,
           title: externalData.myMachines.title,
           subTitle: externalData.myMachines.subTitle,
-        }),
-        buildDataProviderItem({
-          provider: VinnueftirlitidPaymentCatalogApi,
-          title: '',
         }),
       ],
     }),

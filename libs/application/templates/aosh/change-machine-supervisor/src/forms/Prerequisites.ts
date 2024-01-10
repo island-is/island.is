@@ -1,8 +1,8 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { prerequisitesSection } from './TransferOfMachineOwnershipForm/prerequisitesSection'
+import { prerequisitesSection } from './ChangeMachineSupervisorForm/prerequisitesSection'
 import { Logo } from '../assets/Logo'
-import { conclusion, information, payment } from '../lib/messages'
+import { conclusion, information } from '../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
