@@ -167,11 +167,11 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.undelegateList(input)
   }
 
-  @Mutation(() => SignatureCollectionList)
+  @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionExtendDeadline(
     @Args('input') input: SignatureCollectionExtendDeadlineInput,
-  ): Promise<SignatureCollectionList> {
+  ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.extendDeadline(input)
   }
 
