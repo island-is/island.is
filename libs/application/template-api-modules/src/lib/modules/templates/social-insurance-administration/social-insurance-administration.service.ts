@@ -83,11 +83,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         application.answers,
       ).additionalAttachmentsRequired
     }
+
     if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
       additionalAttachmentsRequired = getHSApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
+
     if (application.typeId === ApplicationTypes.PENSION_SUPPLEMENT) {
       additionalAttachmentsRequired = getPSApplicationAnswers(
         application.answers,

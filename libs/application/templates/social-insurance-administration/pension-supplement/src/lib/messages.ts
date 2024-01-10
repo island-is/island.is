@@ -36,8 +36,7 @@ export const pensionSupplementFormMessage: MessageDir = {
     isNotEligibleLabel: {
       id: 'ul.application:is.not.eligible.label',
       defaultMessage: 'Því miður hefur þú ekki rétt á uppbót á lífeyri',
-      description:
-        'Unfortunately, you are not entitled to pension supplement',
+      description: 'Unfortunately, you are not entitled to pension supplement',
     },
     isNotEligibleDescription: {
       id: 'ul.application:is.not.eligible.description#markdown',

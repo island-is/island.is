@@ -1,5 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, Option } from '@island.is/application/types'
+import { Application, ExternalData, Option } from '@island.is/application/types'
 import {
   ApplicationReason,
   AttachmentLabel,
@@ -347,4 +347,10 @@ export function getAvailableMonths(selectedYear: string) {
   }
 
   return months
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
 }

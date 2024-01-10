@@ -190,7 +190,6 @@ export const transformApplicationToPensionSupplementDTO = (
       email: email,
       phonenumber: applicantPhonenumber,
     },
-
     ...((bankAccountType === undefined ||
       bankAccountType === BankAccountType.ICELANDIC) && {
       domesticBankInfo: {
@@ -206,7 +205,6 @@ export const transformApplicationToPensionSupplementDTO = (
         foreignCurrency: currency,
       },
     }),
-
     reasons: applicationReason,
     period: {
       year: +selectedYear,

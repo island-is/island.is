@@ -21,7 +21,7 @@ import {
 } from '../dataProviders'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { getApplicationExternalData } from '../lib/pensionSupplementUtils'
+import { isEligible } from '../lib/pensionSupplementUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
@@ -86,9 +86,8 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'isNotEligible',
           title: pensionSupplementFormMessage.pre.isNotEligibleLabel,
           condition: (_, externalData) => {
-            const { isEligible } = getApplicationExternalData(externalData)
             // Show if applicant is not eligible
-            return !isEligible
+            return !isEligible(externalData)
           },
           children: [
             buildDescriptionField({

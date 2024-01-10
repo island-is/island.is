@@ -29,7 +29,10 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
-import { getApplicationAnswers, getApplicationExternalData } from './pensionSupplementUtils'
+import {
+  getApplicationAnswers,
+  isEligible,
+} from './pensionSupplementUtils'
 import {
   BankAccountType,
   Events,
@@ -42,14 +45,6 @@ import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-
-function isEligible(context: ApplicationContext) {
-  const { application } = context
-  const { externalData } = application
-  const { isEligible } = getApplicationExternalData(externalData)
-
-  return isEligible
-}
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -100,13 +95,14 @@ const PensionSupplementTemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             {
-            target: States.DRAFT,
-            cond: isEligible,
+              target: States.DRAFT,
+              cond: (application) =>
+                isEligible(application?.application?.externalData),
             },
             {
               actions: 'setApproveExternalData',
             },
-          ],  
+          ],
         },
       },
       [States.DRAFT]: {
