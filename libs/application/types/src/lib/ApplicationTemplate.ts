@@ -32,6 +32,7 @@ export interface ApplicationTemplate<
   readonly institution?: StaticText
   readonly translationNamespaces?: string[]
   readonly allowMultipleApplicationsInDraft?: boolean
+  readonly initialQueryParameter?: string
   readonly allowedDelegations?: AllowedDelegation[]
   readonly requiredScopes?: string[]
   readonly dataSchema: Schema

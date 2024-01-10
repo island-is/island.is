@@ -7,7 +7,7 @@ query Signatures($input: SignatureCollectionIdInput!) {
       nationalId
       address
     }
-    signatureType
+    isDigital
     active
     created
   }
