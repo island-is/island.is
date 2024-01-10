@@ -34,7 +34,7 @@ const ActionExtendDeadline = ({
           },
         },
       })
-
+      console.log(res)
       if (res.data) {
         toast.success(formatMessage(m.updateListEndTimeSuccess))
       }

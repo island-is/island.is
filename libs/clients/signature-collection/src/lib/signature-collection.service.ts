@@ -376,12 +376,17 @@ export class SignatureCollectionClientService {
   //   TODO: DelegateList
   //   TODO: UndelegateList
 
-  async extendDeadline(listId: string, newEndDate: Date): Promise<List> {
+  async extendDeadline(listId: string, newEndDate: Date): Promise<Success> {
     const list = await this.listsApi.medmaelalistarIDExtendTimePatch({
       iD: parseInt(listId),
       newEndDate: newEndDate,
     })
-    return mapList(list)
+    const { dagsetningLokar } = list
+    return {
+      success: dagsetningLokar
+        ? new Date(newEndDate) === new Date(dagsetningLokar)
+        : false,
+    }
   }
 
   async bulkUploadSignatures({
