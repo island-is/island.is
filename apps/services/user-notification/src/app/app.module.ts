@@ -5,6 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { environment } from '../environments/environment'
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { environment } from '../environments/environment'
     }),
 
     NotificationsModule,
+    ScheduleModule.forRoot()
   ],
 })
 export class AppModule {}
