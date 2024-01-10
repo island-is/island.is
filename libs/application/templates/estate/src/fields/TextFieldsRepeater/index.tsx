@@ -188,35 +188,24 @@ export const TextFieldsRepeater: FC<
                       paddingBottom={2}
                       key={field.id}
                     >
-                      <NumberFormat
-                        customInput={Input}
+                      <InputController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
+                        defaultValue={repeaterField[field.id] || ''}
+                        format={field.format}
                         label={formatMessage(field.title)}
                         placeholder={field.placeholder}
-                        value={value}
-                        type="text"
-                        decimalScale={2}
-                        decimalSeparator=","
-                        backgroundColor="blue"
-                        thousandSeparator="."
-                        suffix=" kr."
-                        autoComplete="off"
-                        hasError={hasError}
-                        errorMessage={errorMessage}
-                        onChange={(e: { target: { value: string } }) => {
-                          // now change it back to the right format (e.g.: "1.123.123,123 kr." -> "1123123.123")
-                          const val =
-                            e.target.value
-                              ?.replace(/[^\d,]/g, '')
-                              .replace(',', '.') ?? ''
-
-                          setValue(`${fieldIndex}.faceValue`, val)
-
-                          if (valueKeys.includes(field.id)) {
-                            updateValue(fieldIndex)
-                          }
-                        }}
+                        backgroundColor={
+                          field.backgroundColor ? field.backgroundColor : 'blue'
+                        }
+                        currency={field.currency}
+                        readOnly={field.readOnly}
+                        type={field.type}
+                        error={
+                          !!errors && errors[id] && (errors[id] as any)[index]
+                            ? (errors[id] as any)[index][field.id]
+                            : undefined
+                        }
                       />
                     </GridColumn>
                   )
