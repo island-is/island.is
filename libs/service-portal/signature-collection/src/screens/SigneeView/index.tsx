@@ -83,13 +83,11 @@ const SigneeView = () => {
                 {formatMessage(m.mySigneeListsHeader)}
               </Text>
               <ActionCard
-                heading={
-                  signedList?.candidate.name + ' - ' + signedList?.area.name
-                }
+                heading={signedList.title}
                 eyebrow={
                   formatMessage(m.endTime) +
                   ' ' +
-                  format(new Date(signedList?.endTime), 'dd.MM.yyyy')
+                  format(new Date(signedList.endTime), 'dd.MM.yyyy')
                 }
                 text={formatMessage(m.collectionTitle)}
                 cta={{
