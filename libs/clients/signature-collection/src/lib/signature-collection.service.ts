@@ -28,6 +28,7 @@ import { BulkUpload } from './types/bulkUpload.dto'
 
 import { Success, mapReasons } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
+import { Slug } from './types/slug.dto'
 
 @Injectable()
 export class SignatureCollectionClientService {
@@ -130,7 +131,7 @@ export class SignatureCollectionClientService {
     collectionId,
     owner,
     areas,
-  }: CreateListInput): Promise<string> {
+  }: CreateListInput): Promise<Slug> {
     const { id, isActive } = await this.currentCollectionInfo()
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
@@ -161,7 +162,7 @@ export class SignatureCollectionClientService {
       throw new Error('Not all lists created')
     }
     const { slug } = mapList(lists[0])
-    return slug
+    return { slug }
   }
 
   async signList(listId: string, nationalId: string): Promise<Signature> {
