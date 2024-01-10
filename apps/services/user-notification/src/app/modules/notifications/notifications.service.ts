@@ -23,7 +23,7 @@ import {
   ExtendedPaginationDto,
 } from './dto/notification.dto'
 import { NoContentException } from '@island.is/nest/problem'
-import { Cron } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule'
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
@@ -290,7 +290,9 @@ export class NotificationsService {
   @Cron('5 * * * * *')
   async handleCron() {
     const rowCountBeforeCleanup = await this.notificationModel.count()
-    const sixMonthsAgo = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 180) // 180 days
+    const sixMonthsAgo = new Date(
+      new Date().getTime() - 1000 * 60 * 60 * 24 * 180,
+    ) // 180 days
     await this.notificationModel.destroy({
       where: {
         created: {
@@ -300,14 +302,14 @@ export class NotificationsService {
     })
     const rowCountAfterCleanup = await this.notificationModel.count()
     this.logger.info(
-      'Notification cleanup job row count before: ' + rowCountBeforeCleanup
+      'Notification cleanup job row count before: ' + rowCountBeforeCleanup,
     )
     this.logger.info(
       'Notification cleanup job completed. Rows deleted: ' +
         (rowCountBeforeCleanup - rowCountAfterCleanup),
     )
     this.logger.info(
-      'Notification cleanup job row count after: ' + rowCountAfterCleanup
+      'Notification cleanup job row count after: ' + rowCountAfterCleanup,
     )
   }
 }
