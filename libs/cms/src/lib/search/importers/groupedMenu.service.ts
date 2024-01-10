@@ -17,7 +17,9 @@ export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
   }
 
   doMapping(entries: IGroupedMenu[]) {
-    logger.info('Mapping grouped menu', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping grouped menu', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

@@ -8,7 +8,7 @@ import {
   ReasonKey,
   OwnerInput,
 } from '@island.is/clients/signature-collection'
-import { generateApplicationApprovedEmail } from './emailGenerators '
+import { generateApplicationSubmittedEmail } from './emailGenerators '
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import {
   CreateListSchema,
@@ -42,12 +42,11 @@ export class SignatureListCreationService extends BaseTemplateApiService {
       owner,
     })
 
-    // TODO: when template ready connect mail service
     // Use the shared service to send an email using a custom email generator
-    // await this.sharedTemplateAPIService.sendEmail(
-    //   generateApplicationApprovedEmail,
-    //   application,
-    // )
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationSubmittedEmail,
+      application,
+    )
 
     return slug
   }
@@ -78,7 +77,7 @@ export class SignatureListCreationService extends BaseTemplateApiService {
           return errorMessages.deniedByService
       }
     })
-    throw new TemplateApiError(errors, 400)
+    throw new TemplateApiError(errors, 405)
   }
 
   async currentCollection() {

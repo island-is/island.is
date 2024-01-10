@@ -14,6 +14,7 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
+import { List } from '../lib/constants'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
@@ -35,6 +36,7 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'signeeInfo',
       title: m.information,
+
       children: [
         buildSubSection({
           id: 'selectCandidate',

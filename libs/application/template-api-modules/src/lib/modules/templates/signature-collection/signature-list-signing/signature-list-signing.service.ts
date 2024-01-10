@@ -65,23 +65,16 @@ export class SignatureListSigningService extends BaseTemplateApiService {
           return errorMessages.deniedByService
       }
     })
-    throw new TemplateApiError(errors, 400)
+    throw new TemplateApiError(errors, 405)
   }
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
-    const areaId = (
-      (application.externalData.canSign.data as any)?.area as { id: string }
-    )?.id
-    // If canSign failed then area will not be defined but should not thorw an error here since canSign will throw
-    if (!areaId) {
-      return
-    }
+    // Returns the list user is trying to sign, in the apporiate area
     const ownerId = application.answers.initialQuery as string
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
       nationalId: auth.nationalId,
       candidateId: ownerId,
-      areaId,
     })
     return lists
   }

@@ -1,2 +1,1 @@
-export * from './applicationApproved'
-export * from './assignEmail'
+export * from './applicationSubmitted'
