@@ -146,7 +146,7 @@ export class ApplicationService {
                 [Op.or]: [[{ applicant: { [Op.eq]: applicantNationalId } }]],
               }
             : {},
-          // applicationIsNotSetToBePruned(),
+          applicationIsNotSetToBePruned(),
           fromDate && toDate
             ? {
                 [Op.and]: [
