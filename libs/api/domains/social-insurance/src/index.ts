@@ -1,1 +1,1 @@
-export * from './lib/api-domains-social-insurance.module'
+export * from './lib/socialInsurance.module'

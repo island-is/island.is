@@ -10,6 +10,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { SocialInsuranceService } from './socialInsurance.service'
+import { PaymentPlan } from './models/paymentPlan.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -18,7 +19,7 @@ import { SocialInsuranceService } from './socialInsurance.service'
 export class SocialInsuranceResolver {
   constructor(private readonly service: SocialInsuranceService) {}
 
-  @Query(() => String, {
+  @Query(() => PaymentPlan, {
     name: 'socialInsurancePaymentPlan',
     nullable: true,
   })

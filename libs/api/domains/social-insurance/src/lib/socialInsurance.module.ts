@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common'
 import { SocialInsuranceAdministrationClientModule } from '@island.is/clients/social-insurance-administration'
+import { SocialInsuranceResolver } from './socialInsurance.resolver'
+import { SocialInsuranceService } from './socialInsurance.service'
 
 @Module({
   imports: [SocialInsuranceAdministrationClientModule],
+  providers: [SocialInsuranceResolver, SocialInsuranceService],
 })
-export class SyslumennModule {}
+export class SocialInsuranceModule {}

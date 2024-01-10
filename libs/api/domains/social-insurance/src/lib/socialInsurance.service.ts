@@ -3,6 +3,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
 import { User } from '@island.is/auth-nest-tools'
+import { PaymentPlan } from './models/paymentPlan.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -11,10 +12,15 @@ export class SocialInsuranceService {
     private readonly socialInsuranceApi: SocialInsuranceAdministrationClientService,
   ) {}
 
-  async getPaymentPlan(user: User, year?: number): Promise<void> {
+  async getPaymentPlan(user: User, year?: number): Promise<PaymentPlan> {
     const paymentPlan = await this.socialInsuranceApi.getPaymentPlan(
       user,
       year ?? 2023,
     )
+
+    return {
+      nextPayment: paymentPlan.nextPayment ?? undefined,
+      previousPayment: paymentPlan.previousPayment ?? undefined,
+    }
   }
 }

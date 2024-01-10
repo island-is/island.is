@@ -22,6 +22,7 @@ import { DocumentModule } from '@island.is/api/domains/documents'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
+import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
 import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import {
   EmailSignupModule,
@@ -255,6 +256,7 @@ const environment = getConfig
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
+    SocialInsuranceModule,
     HealthDirectorateClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,

@@ -1,0 +1,6 @@
+query getPaymentPlan($year: Number) {
+  socialInsurancePaymentPlan {
+    nextPayment
+    previousPayment
+  }
+}
