@@ -1,6 +1,6 @@
 import { Audit } from '@island.is/nest/audit'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Resolver } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import {
   IdsUserGuard,
   ScopesGuard,
