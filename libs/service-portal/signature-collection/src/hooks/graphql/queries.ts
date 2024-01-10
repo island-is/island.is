@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const GetListById = gql`
-  query listbyid($input: SignatureCollectionIdInput!) {
+  query ListById($input: SignatureCollectionIdInput!) {
     signatureCollectionList(input: $input) {
       id
       title

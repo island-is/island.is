@@ -5,45 +5,28 @@ import {
   GetListSignatures,
   GetListsForUser,
   GetSignedList,
-} from './queries'
+} from './graphql/queries'
 import {
   SignatureCollectionList,
   SignatureCollectionSignature,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
 
-interface SignatureListInfo {
-  signatureCollectionList?: SignatureCollectionList
-}
-
-interface ListSignees {
-  signatureCollectionSignatures?: SignatureCollectionSignature[]
-}
-
-interface ListsForUser {
-  signatureCollectionListsForUser?: SignatureCollectionList[]
-}
-
-interface IsOwner {
-  signatureCollectionIsOwner?: SignatureCollectionSuccess
-}
-
-interface SignedList {
-  signatureCollectionSignedList?: SignatureCollectionList
-}
-
 export const useGetSignatureList = (listId: string) => {
   const {
     data: signatureList,
     refetch: refetchSignatureList,
     loading: loadingList,
-  } = useQuery<SignatureListInfo>(GetListById, {
-    variables: {
-      input: {
-        id: listId,
+  } = useQuery<{ signatureCollectionList?: SignatureCollectionList }>(
+    GetListById,
+    {
+      variables: {
+        input: {
+          id: listId,
+        },
       },
     },
-  })
+  )
   const listInfo =
     (signatureList?.signatureCollectionList as SignatureCollectionList) ?? {}
   return { listInfo, refetchSignatureList, loadingList }
@@ -54,7 +37,9 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
     data: listSignatures,
     refetch: refetchListSignees,
     loading: loadingSignees,
-  } = useQuery<ListSignees>(GetListSignatures, {
+  } = useQuery<{
+    signatureCollectionSignatures?: SignatureCollectionSignature[]
+  }>(GetListSignatures, {
     variables: {
       input: {
         id: listId,
@@ -72,7 +57,9 @@ export const useGetSignedList = () => {
     data: getSignedList,
     loading: loadingSignedList,
     refetch: refetchSignedList,
-  } = useQuery<SignedList>(GetSignedList)
+  } = useQuery<{ signatureCollectionSignedList?: SignatureCollectionList }>(
+    GetSignedList,
+  )
   const signedList =
     (getSignedList?.signatureCollectionSignedList as SignatureCollectionList) ??
     null
@@ -84,7 +71,9 @@ export const useGetListsForUser = () => {
     data: getListsForUser,
     loading: loadingUserLists,
     refetch: refetchListsForUser,
-  } = useQuery<ListsForUser>(GetListsForUser)
+  } = useQuery<{ signatureCollectionListsForUser?: SignatureCollectionList[] }>(
+    GetListsForUser,
+  )
 
   const listsForUser =
     (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionList[]) ??
@@ -97,7 +86,9 @@ export const useIsOwner = () => {
     data: getIsOwner,
     loading: loadingIsOwner,
     refetch: refetchIsOwner,
-  } = useQuery<IsOwner>(GetIsOwner)
+  } = useQuery<{ signatureCollectionIsOwner?: SignatureCollectionSuccess }>(
+    GetIsOwner,
+  )
 
   const isOwner =
     (getIsOwner?.signatureCollectionIsOwner as SignatureCollectionSuccess) ??
