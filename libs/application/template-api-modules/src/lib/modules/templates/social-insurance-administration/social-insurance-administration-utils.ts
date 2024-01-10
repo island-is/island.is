@@ -2,7 +2,7 @@ import { Application, YES, YesOrNo } from '@island.is/application/types'
 import parse from 'date-fns/parse'
 import {
   ApplicationDTO,
-  Document as Attachment,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
 } from '@island.is/clients/social-insurance-administration'
 import {
   ApplicationType,

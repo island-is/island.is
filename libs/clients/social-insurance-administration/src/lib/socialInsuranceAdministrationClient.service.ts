@@ -4,11 +4,12 @@ import {
   ApplicationApi,
   ApplicantApi,
   GeneralApi,
-  CreateApplicationFromPaperReturn,
-  ApplicantInfoReturn,
-  Document,
-  IsEligibleForApplicationReturn,
   PaymentPlanApi,
+  TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
+  TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
+  TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -32,7 +33,10 @@ export class SocialInsuranceAdministrationClientService {
   private paymentPlanApiWithAuth = (user: User) =>
     this.paymentPlanApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  getPaymentPlan(user: User, year?: number) {
+  getPaymentPlan(
+    user: User,
+    year?: number,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
     const inputYear = year ?? new Date().getFullYear()
     return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
       year: inputYear.toString(),
@@ -43,7 +47,7 @@ export class SocialInsuranceAdministrationClientService {
     user: User,
     applicationDTO: object,
     applicationType: string,
-  ): Promise<CreateApplicationFromPaperReturn> {
+  ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
     return this.applicationApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationTypePost({
@@ -55,24 +59,26 @@ export class SocialInsuranceAdministrationClientService {
   sendAdditionalDocuments(
     user: User,
     applicationId: string,
-    document: Array<Document>,
+    documents: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>,
   ): Promise<void> {
     return this.applicationApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationGuidDocumentsPost({
       applicationGuid: applicationId,
-      document,
+      trWebCommonsExternalPortalsApiModelsDocumentsDocument: documents,
     })
   }
 
-  async getApplicant(user: User): Promise<ApplicantInfoReturn> {
+  async getApplicant(
+    user: User,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn> {
     return this.applicantApiWithAuth(user).apiProtectedV1ApplicantGet()
   }
 
   async getIsEligible(
     user: User,
     applicationType: string,
-  ): Promise<IsEligibleForApplicationReturn> {
+  ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantApplicationTypeEligibleGet({ applicationType })

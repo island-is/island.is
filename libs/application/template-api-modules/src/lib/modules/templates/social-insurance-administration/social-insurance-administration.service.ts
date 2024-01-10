@@ -24,8 +24,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import {
-  Document as Attachment,
-  ApplicationDTO,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'

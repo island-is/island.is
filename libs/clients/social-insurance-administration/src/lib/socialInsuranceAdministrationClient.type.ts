@@ -1,4 +1,4 @@
-import { Document } from '../../gen/fetch'
+import { TrWebCommonsExternalPortalsApiModelsDocumentsDocument } from '../../gen/fetch'
 
 export interface Period {
   year: number
@@ -41,7 +41,7 @@ export interface ApplicationDTO {
   isSailorPension?: boolean
   isRental?: boolean
   hasAStudyingAdolescenceResident?: boolean
-  uploads?: Array<Document>
+  uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
 }
 
 export enum DocumentTypeEnum {
