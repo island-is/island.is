@@ -1,10 +1,9 @@
 import gql from 'graphql-tag'
+import { slices } from './fragments'
 
-import { nestedFields, slices } from './fragments'
-
-export const GET_ANCHOR_PAGE_QUERY = gql`
-  query GetAnchorPage($input: GetAnchorPageInput!) {
-    getAnchorPage(input: $input) {
+export const GET_LIFE_EVENT_QUERY = gql`
+  query GetLifeEvent($input: GetLifeEventPageInput!) {
+    getLifeEventPage(input: $input) {
       id
       title
       slug
@@ -14,7 +13,14 @@ export const GET_ANCHOR_PAGE_QUERY = gql`
       }
       content {
         ...AllSlices
-        ${nestedFields}
+      }
+      featured {
+        title
+        attention
+        thing {
+          slug
+          type
+        }
       }
       featuredImage {
         ...ImageFields
@@ -24,9 +30,9 @@ export const GET_ANCHOR_PAGE_QUERY = gql`
   ${slices}
 `
 
-export const GET_ANCHOR_PAGES_QUERY = gql`
-  query GetAnchorPages($input: GetAnchorPagesInput!) {
-    getAnchorPages(input: $input) {
+export const GET_LIFE_EVENTS_QUERY = gql`
+  query GetLifeEvents($input: GetLifeEventsInput!) {
+    getLifeEvents(input: $input) {
       id
       title
       slug
@@ -43,9 +49,9 @@ export const GET_ANCHOR_PAGES_QUERY = gql`
   }
 `
 
-export const GET_ANCHOR_PAGES_IN_CATEGORY_QUERY = gql`
-  query GetAnchorPagesInCategory($input: GetAnchorPagesInCategoryInput!) {
-    getAnchorPagesInCategory(input: $input) {
+export const GET_LIFE_EVENTS_IN_CATEGORY_QUERY = gql`
+  query GetLifeEventsInCategory($input: GetLifeEventsInCategoryInput!) {
+    getLifeEventsInCategory(input: $input) {
       id
       title
       slug

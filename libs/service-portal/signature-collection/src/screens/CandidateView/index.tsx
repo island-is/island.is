@@ -1,19 +1,12 @@
-import {
-  ActionCard,
-  Box,
-  Button,
-  GridColumn,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { IntroHeader } from '@island.is/service-portal/core'
-import CancelCollection from './cancelCollection'
-import { useGetListsForUser } from '../hooks'
+import CancelCollection from './CancelCollection'
+import { useGetListsForUser } from '../../hooks'
 import format from 'date-fns/format'
-import { Skeleton } from '../Skeletons'
+import { Skeleton } from '../skeletons'
 import { useNavigate } from 'react-router-dom'
 
 const OwnerView = () => {
@@ -29,41 +22,37 @@ const OwnerView = () => {
           <IntroHeader
             title={formatMessage(m.pageTitle)}
             intro={formatMessage(m.pageDescription)}
-          >
-            {listsForUser.length === 0 && (
-              <GridColumn span={['8/8', '3/8']}>
-                <Box
-                  display={'flex'}
-                  justifyContent={['flexStart', 'flexEnd']}
-                  paddingTop={[2]}
-                >
-                  <Button
-                    icon="open"
-                    iconType="outline"
-                    onClick={() =>
-                      window.open(
-                        `${document.location.origin}/umsoknir/medmaelalisti/`,
-                      )
-                    }
-                    size="small"
-                  >
-                    {formatMessage(m.createListButton)}
-                  </Button>
-                </Box>
-              </GridColumn>
-            )}
-          </IntroHeader>
-          <Box marginTop={10}>
+          />
+          {listsForUser.length === 0 && (
+            <Button
+              icon="open"
+              iconType="outline"
+              onClick={() =>
+                window.open(
+                  `${document.location.origin}/umsoknir/medmaelalisti/`,
+                )
+              }
+              size="small"
+            >
+              {formatMessage(m.createListButton)}
+            </Button>
+          )}
+          <Box marginTop={[0, 7]}>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myListsHeader)}
             </Text>
-            <Stack space={5}>
+            <Stack space={[3, 5]}>
               {listsForUser.map((list) => {
                 return (
                   <ActionCard
+                    key={list.id}
                     backgroundColor="white"
-                    heading={list.owner.name + ' - ' + list.area.name}
-                    eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
+                    heading={list.title}
+                    eyebrow={
+                      formatMessage(m.endTime) +
+                      ' ' +
+                      format(new Date(list.endTime), 'dd.MM.yyyy')
+                    }
                     text={formatMessage(m.collectionTitle)}
                     cta={{
                       label: formatMessage(m.viewList),
