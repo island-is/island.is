@@ -30,23 +30,15 @@ export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
           const mapped = mapAnchorPage(entry)
           const content = extractStringsFromObject(mapped.content)
 
-          // TODO - this needs to be removed after successful migration
-          let type = 'webLifeEventPage'
-
-          if (entry.fields?.pageType === 'Digital Iceland Service') {
-            type = 'webDigitalIcelandService'
-          } else if (
-            entry.fields?.pageType === 'Digital Iceland Community Page'
-          ) {
-            type = 'webDigitalIcelandCommunityPage'
-          }
-
           return {
             _id: mapped.id,
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
-            type,
+            type:
+              entry.fields?.pageType === 'Digital Iceland Community Page'
+                ? 'webDigitalIcelandCommunityPage'
+                : 'webDigitalIcelandService',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'AnchorPage' }),
             tags: [],
