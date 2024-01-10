@@ -14,7 +14,7 @@ import { verifyRequestCompletion } from '../../../support/api-tools'
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
 test.describe.serial('Custody tests', () => {
-  let caseId = 'c075f6a1-03d6-46ef-9d09-22127778c687'
+  let caseId = ''
 
   test('prosecutor should submit a custody request to court', async ({
     prosecutorPage,
