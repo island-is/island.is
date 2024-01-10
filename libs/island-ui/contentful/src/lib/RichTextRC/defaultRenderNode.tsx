@@ -185,6 +185,14 @@ export const defaultRenderNodeObject: RenderNode = {
       postfix = 'króna'
     }
 
+    // For other than icelandic locales display 'ISK' as a postfix
+    if (
+      node?.data?.target?.sys?.locale &&
+      node.data.target.sys.locale !== 'is-IS'
+    ) {
+      postfix = 'ISK'
+    }
+
     // Format the amount so it displays dots (Example of a displayed value: 2.700 krónur)
     const formatter = new Intl.NumberFormat('de-DE')
 

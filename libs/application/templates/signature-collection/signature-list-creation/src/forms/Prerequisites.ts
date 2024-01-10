@@ -16,6 +16,7 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
+import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
@@ -73,6 +74,16 @@ export const Prerequisites: Form = buildForm({
               provider: UserProfileApi,
               title: m.userProfileProviderTitle,
               subTitle: m.userProfileProviderSubtitle,
+            }),
+            buildDataProviderItem({
+              provider: OwnerRequirementsApi,
+              title: m.canCreateProviderTitle,
+              subTitle: m.canCreateProviderSubtitle,
+            }),
+            buildDataProviderItem({
+              provider: CurrentCollectionApi,
+              title: '',
+              subTitle: '',
             }),
           ],
         }),

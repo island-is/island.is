@@ -11,6 +11,8 @@ import {
   VehicleDtoListPagedResponse,
   VehicleSearchDto,
   PersidnoLookupResultDto,
+  CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
+  CurrentvehicleswithmileageandinspGetRequest,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
@@ -68,6 +70,22 @@ export class VehiclesService {
 
   private getMileageWithAuth(auth: Auth) {
     return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getVehiclesListV2(
+    auth: User,
+    input: CurrentvehicleswithmileageandinspGetRequest,
+  ): Promise<CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse> {
+    return await this.getVehiclesWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
+      ...input,
+      permno: input.permno
+        ? input.permno.length < 5
+          ? `${input.permno}*`
+          : `${input.permno}`
+        : undefined,
+    })
   }
 
   async getVehiclesForUser(
