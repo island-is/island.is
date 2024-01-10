@@ -251,16 +251,15 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.DATANEEDED:
       return {
-        subject:
-          'Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina',
+        subject: 'Upplýsingar vantar vegna umsóknar um fjárhagsaðstoð',
         data: {
-          title: 'Fjárhagsaðstoð Umsókn vantar gögn',
-          header: `Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina`,
+          title: 'Fjárhagsaðstoð Umsókn vantar upplýsingar',
+          header: `Upplýsingar vantar vegna umsóknar um fjárhagsaðstoð`,
           content:
             typeOfDataNeeded ??
             `Þú getur sent okkur upplýsingar og/eða gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
-          applicationLinkText: 'Bæta við gögnum',
-          applicationChange: 'Umsóknin bíður eftir gögnum',
+          applicationLinkText: 'Bæta við upplýsingum',
+          applicationChange: '',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
           applicationLink,
