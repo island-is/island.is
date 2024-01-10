@@ -102,6 +102,7 @@ const GenericLicenseQuery = gql`
           links {
             type
             label
+            name
             value
           }
         }
@@ -334,6 +335,7 @@ const DataFields = ({
 type UseParams = {
   type: string | undefined
   provider: string
+  id: string
 }
 
 const LicenseDetail = () => {
@@ -342,7 +344,7 @@ const LicenseDetail = () => {
   const { data: userProfile } = useUserProfile()
   const { pathname } = useLocation()
   const locale = userProfile?.locale ?? 'is'
-  const { type } = useParams() as UseParams
+  const { type, id } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined
 
   const {
@@ -353,6 +355,7 @@ const LicenseDetail = () => {
     variables: {
       locale,
       input: {
+        licenseId: id,
         licenseType: licenseType,
       },
     },
@@ -421,9 +424,16 @@ const LicenseDetail = () => {
                       href={link.value}
                       target="_blank"
                       rel="noreferrer"
+                      download={
+                        link.type === GenericUserLicenseMetaLinksType.Download
+                          ? link.name
+                          : false
+                      }
                       key={licenseType + '_link_' + index}
                     >
                       <Button
+                        as="span"
+                        unfocusable
                         variant="utility"
                         size="small"
                         icon={

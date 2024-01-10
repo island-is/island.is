@@ -61,7 +61,8 @@ export const ResidenceGrant: Form = buildForm({
           maxSizeErrorText: '',
           uploadAccept: '.pdf',
           uploadHeader: '',
-          uploadDescription: '',
+          uploadDescription:
+            parentalLeaveFormMessages.selfEmployed.uploadDescription,
           uploadButtonLabel:
             parentalLeaveFormMessages.selfEmployed.attachmentButton,
         }),

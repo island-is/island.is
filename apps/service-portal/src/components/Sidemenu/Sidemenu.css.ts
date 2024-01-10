@@ -1,12 +1,8 @@
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
-import {
-  globalStyle,
-  keyframes,
-  style,
-  styleVariants,
-} from '@vanilla-extract/css'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const wrapperAnimation = keyframes({
   '0%': {
     transform: 'scale(1.05)',

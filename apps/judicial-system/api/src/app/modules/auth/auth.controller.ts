@@ -24,7 +24,11 @@ import {
   IDS_ID_TOKEN,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import {
+  EventType,
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { authModuleConfig } from './auth.config'
@@ -180,6 +184,15 @@ export class AuthController {
     return res.redirect('/?villa=innskraning-ogild')
   }
 
+  @Get('callback')
+  async deprecatedAuth(@Res() res: Response) {
+    this.logger.debug(
+      'Received login request through a deprecated authentication system',
+    )
+
+    res.redirect('/?villa=innskraning-gomul')
+  }
+
   @Get('logout')
   logout(@Res() res: Response, @Req() req: Request) {
     this.logger.debug('Received logout request')
@@ -207,24 +220,30 @@ export class AuthController {
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
 
-    if (user && this.authService.validateUser(user)) {
+    if (user) {
       return {
         userId: user.id,
+        userNationalId: user.nationalId,
+        userRole: user.role,
         jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
-        redirectRoute: requestedRedirectRoute
-          ? requestedRedirectRoute
-          : user.role === UserRole.ADMIN
-          ? USERS_ROUTE
-          : user.institution?.type === InstitutionType.COURT_OF_APPEALS
-          ? COURT_OF_APPEAL_CASES_ROUTE
-          : CASES_ROUTE,
+        redirectRoute:
+          requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
+            ? requestedRedirectRoute
+            : user.role === UserRole.ADMIN
+            ? USERS_ROUTE
+            : user.role === UserRole.DEFENDER
+            ? DEFENDER_CASES_ROUTE
+            : user.institution?.type === InstitutionType.COURT_OF_APPEALS
+            ? COURT_OF_APPEAL_CASES_ROUTE
+            : CASES_ROUTE,
       }
     } else {
       const defender = await this.authService.findDefender(authUser.nationalId)
 
-      if (defender && this.authService.validateUser(defender)) {
+      if (defender) {
         return {
           userId: defender.id,
+          userNationalId: defender.nationalId,
           jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
           redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
         }
@@ -250,10 +269,24 @@ export class AuthController {
     if (!authorization) {
       this.logger.info('Blocking login attempt from an unauthorized user')
 
+      this.authService.logLogin(
+        idToken
+          ? EventType.LOGIN_UNAUTHORIZED
+          : EventType.LOGIN_BYPASS_UNAUTHORIZED,
+        authUser.nationalId,
+      )
+
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }
 
-    const { userId, jwtToken, redirectRoute } = authorization
+    const { userId, userNationalId, userRole, jwtToken, redirectRoute } =
+      authorization
+
+    this.authService.logLogin(
+      idToken ? EventType.LOGIN : EventType.LOGIN_BYPASS,
+      userNationalId,
+      userRole,
+    )
 
     this.auditTrailService.audit(
       userId,

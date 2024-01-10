@@ -1,0 +1,14 @@
+query Signatures($input: SignatureCollectionIdInput!) {
+  signatureCollectionSignatures(input: $input) {
+    id
+    listId
+    signee {
+      name
+      nationalId
+      address
+    }
+    isDigital
+    active
+    created
+  }
+}

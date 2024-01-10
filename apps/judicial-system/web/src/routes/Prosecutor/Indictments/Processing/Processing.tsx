@@ -4,21 +4,24 @@ import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import {
   processing as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CommentsInput,
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  CaseTransition,
+  Institution,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useInstitution,
@@ -33,7 +36,7 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
   const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
-  const { courts } = useInstitution()
+  const { districtCourts } = useInstitution()
   const router = useRouter()
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
@@ -95,7 +98,7 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
         <Box component="section" marginBottom={5}>
           <SelectCourt
             workingCase={workingCase}
-            courts={courts}
+            courts={districtCourts}
             onChange={handleCourtChange}
           />
         </Box>

@@ -1,7 +1,9 @@
-import { CaseState } from '@island.is/judicial-system/types'
-import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
+import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
+  CaseAppealState,
   CaseOrigin,
+  CaseState,
+  CaseTransition,
   CaseType,
   Gender,
   InstitutionType,
@@ -9,6 +11,8 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
+import { TransitionCaseDocument } from './hooks/useCase/transitionCase.generated'
 
 export const mockCourt = {
   id: 'court_id',
@@ -34,13 +38,14 @@ export const mockProsecutor = {
   title: 'saksóknari',
   institution: {
     id: '1337',
+    type: InstitutionType.PROSECUTORS_OFFICE,
     name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
   },
 } as User
 
 export const mockJudge = {
   id: 'judge_1',
-  role: UserRole.JUDGE,
+  role: UserRole.DISTRICT_COURT_JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: mockCourt,
@@ -48,7 +53,7 @@ export const mockJudge = {
 
 export const mockCourtOfAppealsUser = {
   id: 'hc_1',
-  role: UserRole.JUDGE,
+  role: UserRole.COURT_OF_APPEALS_JUDGE,
   name: 'Lalli Landsréttardómari',
   title: 'dómari',
   institution: mockCourtOfAppeals,
@@ -65,7 +70,7 @@ export const mockPrisonUser = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -75,10 +80,10 @@ export const mockJudgeQuery = [
   },
 ]
 
-export const mockCourtOfAppealsQuery = [
+export const mockCourtOfAppealsJudgeQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -91,7 +96,7 @@ export const mockCourtOfAppealsQuery = [
 export const mockPrisonUserQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -104,11 +109,35 @@ export const mockPrisonUserQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
         currentUser: mockProsecutor,
+      },
+    },
+  },
+]
+
+export const mockTransitonCaseMutation = (caseId: string) => [
+  {
+    request: {
+      query: TransitionCaseDocument,
+      variables: {
+        input: {
+          id: caseId,
+          transition: CaseTransition.COMPLETE_APPEAL,
+        },
+      },
+    },
+    result: {
+      data: {
+        transitionCase: {
+          state: CaseState.ACCEPTED,
+          appealState: CaseAppealState.COMPLETED,
+          statementDeadline: '2021-09-09T12:00:00.000Z',
+          appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
+        },
       },
     },
   },
@@ -137,5 +166,32 @@ export const mockCase = (caseType: CaseType): Case => {
       },
     ],
     defendantWaivesRightToCounsel: false,
+  }
+}
+
+export const mockUser = (userRole: UserRole): User => {
+  return {
+    active: true,
+    created: '',
+    email: '',
+    id: '',
+    mobileNumber: '',
+    modified: '',
+    name: '',
+    nationalId: '',
+    title: '',
+    role: userRole,
+    institution: {
+      id: '',
+      created: '',
+      modified: '',
+      type:
+        // TODO: Add more institutions if we use more user roles
+        userRole === UserRole.PROSECUTOR
+          ? InstitutionType.PROSECUTORS_OFFICE
+          : InstitutionType.DISTRICT_COURT,
+      name: '',
+      active: true,
+    },
   }
 }

@@ -88,11 +88,11 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     }
 
     const [licenseInfo, propertyInfo] = data
-    this.logger.warn('No license info found for user', {
-      requestId,
-      category: LOG_CATEGORY,
-    })
     if (!licenseInfo) {
+      this.logger.warn('No license info found for user', {
+        requestId,
+        category: LOG_CATEGORY,
+      })
       return {
         ok: false,
         error: {

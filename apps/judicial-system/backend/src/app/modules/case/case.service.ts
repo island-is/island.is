@@ -38,6 +38,7 @@ import {
   EventType,
   isIndictmentCase,
   isRestrictionCase,
+  prosecutorCanSelectDefenderForInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -122,6 +123,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'crimeScenes'
     | 'indictmentIntroduction'
@@ -137,7 +139,11 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
   > {
   type?: CaseType
   state?: CaseState
@@ -145,7 +151,6 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   rulingSignatureDate?: Date | null
-  rulingModifiedHistory?: string
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
@@ -210,6 +215,7 @@ export const include: Includeable[] = [
         as: 'caseFiles',
         required: false,
         where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+        separate: true,
       },
     ],
   },
@@ -221,6 +227,7 @@ export const include: Includeable[] = [
     as: 'caseFiles',
     required: false,
     where: { state: { [Op.not]: CaseFileState.DELETED } },
+    separate: true,
   },
   {
     model: EventLog,
@@ -229,6 +236,7 @@ export const include: Includeable[] = [
     where: {
       eventType: { [Op.in]: eventTypes },
     },
+    separate: true,
   },
 ]
 
@@ -819,7 +827,10 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+      } else if (
+        theCase.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealState === CaseAppealState.RECEIVED
+      ) {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
@@ -1164,16 +1175,26 @@ export class CaseService {
   async extend(theCase: Case, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
+        const shouldCopyDefender =
+          isRestrictionCase(theCase.type) ||
+          prosecutorCanSelectDefenderForInvestigationCase(theCase.type)
+
         const caseId = await this.createCase(
           {
             origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            defenderName: shouldCopyDefender ? theCase.defenderName : undefined,
+            defenderNationalId: shouldCopyDefender
+              ? theCase.defenderNationalId
+              : undefined,
+            defenderEmail: shouldCopyDefender
+              ? theCase.defenderEmail
+              : undefined,
+            defenderPhoneNumber: shouldCopyDefender
+              ? theCase.defenderPhoneNumber
+              : undefined,
             leadInvestigator: theCase.leadInvestigator,
             courtId: theCase.courtId,
             translator: theCase.translator,

@@ -29,6 +29,10 @@ import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule
 import { EhicClientConfig } from '@island.is/clients/ehic-client-v1'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
+import { AlthingiOmbudsmanClientConfig } from '@island.is/clients/althingi-ombudsman'
+import { DirectorateOfImmigrationClientConfig } from '@island.is/clients/directorate-of-immigration'
+import { CarRecyclingClientConfig } from '@island.is/clients/car-recycling'
+import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 
 @Module({
   imports: [
@@ -61,6 +65,10 @@ import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
         EhicClientConfig,
         JudicialAdministrationClientConfig,
         AuthPublicApiClientConfig,
+        AlthingiOmbudsmanClientConfig,
+        DirectorateOfImmigrationClientConfig,
+        CarRecyclingClientConfig,
+        SignatureCollectionClientConfig,
       ],
     }),
   ],

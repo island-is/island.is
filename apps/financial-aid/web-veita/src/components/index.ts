@@ -3,6 +3,7 @@ export { default as ProfileUnit } from './ProfileUnit/ProfileUnit'
 export { default as AdminLayout } from './AdminLayout/AdminLayout'
 export { default as LogoMunicipality } from './LogoMunicipality/index'
 export { default as ApplicationsTable } from './ApplicationsTable/ApplicationsTable'
+export { default as ApplicationsFilterTable } from './ApplicationsTable/ApplicationsFilterTable'
 export { default as GeneratedProfile } from './Generator/GeneratedProfile'
 export { default as GenerateName } from './Generator/GenerateName'
 export { default as AdminProvider } from './AdminProvider/AdminProvider'
@@ -15,6 +16,8 @@ export { default as EmailFormatInputModal } from './ModalTypes/EmailFormatInputM
 export { default as AcceptModal } from './ModalTypes/AcceptModal'
 export { default as AidAmountModal } from './AidAmountModal/AidAmountModal'
 export { default as TableHeaders } from './TableHeaders/TableHeaders'
+export { default as SortableTableHeader } from './TableHeaders/SortableTableHeader'
+
 export {
   TableBody,
   TextTableItem,
@@ -51,4 +54,5 @@ export { default as PrintableFiles } from './PrintableFiles/PrintableFiles'
 export { default as MultiSelectionMunicipality } from './MultiSelection/MultiSelectionMunicipality'
 export { default as SelectedMunicipality } from './SelectedMunicipality/SelectedMunicipality'
 export { default as FilterPopover } from './FilterPopover/FilterPopover'
+export { default as FilterDates } from './FilterDates/FilterDates'
 export { default as MultiSelectionAdmin } from './MultiSelection/MultiSelectionAdmins'

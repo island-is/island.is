@@ -1,8 +1,9 @@
-import { downloadFile } from './downloadFile'
+import { downloadFile } from '@island.is/service-portal/core'
 import { CustomerRecordsDetails } from '../screens/FinanceTransactions/FinanceTransactionsData.types'
 import { hreyfingarHeaders } from './dataHeaders'
 const name = 'Hreyfingar'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getDataArray = (data: Array<any>) =>
   data.map((record: CustomerRecordsDetails) => [
     record.createDate,

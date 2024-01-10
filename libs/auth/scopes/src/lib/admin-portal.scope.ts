@@ -1,5 +1,6 @@
 export enum AdminPortalScope {
   airDiscountScheme = '@admin.island.is/ads',
+  explicitAirDiscountScheme = '@admin.island.is/ads:explicit',
   delegations = '@admin.island.is/delegations',
   regulationAdmin = '@admin.island.is/regulations',
   regulationAdminManage = '@admin.island.is/regulations:manage',
@@ -10,4 +11,6 @@ export enum AdminPortalScope {
   idsAdminSuperUser = '@admin.island.is/auth:admin',
   petitionsAdmin = '@admin.island.is/petitions',
   serviceDesk = '@admin.island.is/service-desk',
+  signatureCollectionProcess = '@admin.island.is/signature-collection:process',
+  signatureCollectionManage = '@admin.island.is/signature-collection:manage',
 }

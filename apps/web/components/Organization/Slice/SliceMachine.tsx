@@ -1,5 +1,5 @@
-import { Slice } from '@island.is/web/graphql/schema'
 import dynamic from 'next/dynamic'
+
 import {
   Box,
   GridColumn,
@@ -8,11 +8,13 @@ import {
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import {
-  RichText,
   EmailSignup,
+  RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
+import { Slice } from '@island.is/web/graphql/schema'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
+
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
 
 const DistrictsSlice = dynamic(() =>
@@ -63,6 +65,10 @@ const LatestNewsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
 )
 
+const LatestEventsSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestEventsSlice),
+)
+
 const OverviewLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
 )
@@ -75,8 +81,8 @@ const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
 
-const LifeEventPageListSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
+const AnchorPageListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.AnchorPageListSlice),
 )
 
 const PowerBiSlice = dynamic(() =>
@@ -139,12 +145,9 @@ const renderSlice = (
     case 'LatestNewsSlice':
       return <LatestNewsSlice slice={slice} slug={slug} {...params} />
     case 'LifeEventPageListSlice':
+    case 'AnchorPageListSlice':
       return (
-        <LifeEventPageListSlice
-          slice={slice}
-          namespace={namespace}
-          {...params}
-        />
+        <AnchorPageListSlice slice={slice} namespace={namespace} {...params} />
       )
     case 'EmailSignup':
       return <EmailSignup slice={slice} marginLeft={[0, 0, 0, 6]} />
@@ -156,6 +159,15 @@ const renderSlice = (
       return <PowerBiSlice slice={slice} />
     case 'SectionWithVideo':
       return <SectionWithVideo slice={slice} />
+    case 'LatestEventsSlice':
+      return (
+        <LatestEventsSlice
+          slice={slice}
+          slug={slug}
+          namespace={namespace}
+          {...params}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
@@ -168,14 +180,13 @@ export const SliceMachine = ({
   slug = '',
   marginBottom = 0,
   params,
-  paddingBottom = 6,
   wrapWithGridContainer = false,
 }: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
-      <GridRow marginBottom={marginBottom}>
+      <GridRow>
         <GridColumn
-          paddingBottom={paddingBottom}
+          paddingBottom={0}
           span={
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict

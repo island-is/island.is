@@ -5,7 +5,6 @@ import router from 'next/router'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
 import {
   core,
   icDemands,
@@ -15,10 +14,11 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -30,7 +30,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
-export const formatInstitutionName = (name: string | undefined) => {
+export const formatInstitutionName = (name?: string | null) => {
   if (!name) return ''
 
   if (name.startsWith('Lögreglustjórinn')) {
@@ -120,7 +120,7 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
 
     if (workingCase.defendants && workingCase.defendants.length > 0) {
-      const courtClaim = courtClaimPrefill[workingCase.type]
+      const courtClaim = workingCase.type && courtClaimPrefill[workingCase.type]
       const courtClaimText = courtClaim
         ? formatMessage(courtClaim.text, {
             ...(courtClaim.format?.accused && {

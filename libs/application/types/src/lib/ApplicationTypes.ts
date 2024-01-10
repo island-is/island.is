@@ -47,6 +47,15 @@ export enum ApplicationTypes {
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
+  OLD_AGE_PENSION = 'OldAgePension',
+  HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
+  CAR_RECYCLING = 'CarRecycling',
+  SIGNATURE_LIST_CREATION = 'SignatureListCreation',
+  SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
+  CITIZENSHIP = 'Citizenship',
+  ENERGY_FUNDS = 'EnergyFunds',
+  HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
+  TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
 }
 
 export const ApplicationConfigurations = {
@@ -241,5 +250,41 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
     slug: 'evropska-sjukratryggingakortid',
     translation: 'ehic.application',
+  },
+  [ApplicationTypes.OLD_AGE_PENSION]: {
+    slug: 'ellilifeyrir',
+    translation: ['oap.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
+    slug: 'heimilisuppbot',
+    translation: ['hs.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CAR_RECYCLING]: {
+    slug: 'skilavottord',
+    translation: 'rf.cr.application',
+  },
+  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+    slug: 'medmaelalisti',
+    translation: 'slc.application',
+  },
+  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+    slug: 'maela-med-lista',
+    translation: 'sls.application',
+  },
+  [ApplicationTypes.CITIZENSHIP]: {
+    slug: 'rikisborgararettur',
+    translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.ENERGY_FUNDS]: {
+    slug: 'rafbila-styrkur',
+    translation: 'ef.application',
+  },
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
+    slug: 'starfsleyfis-vottord',
+    translation: 'hlc.application',
+  },
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
+    slug: 'eigendaskipti-taekis',
+    translation: 'aosh.tmo.application',
   },
 }

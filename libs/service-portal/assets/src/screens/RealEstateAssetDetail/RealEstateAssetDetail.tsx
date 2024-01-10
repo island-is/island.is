@@ -1,4 +1,3 @@
-import React from 'react'
 import { useParams } from 'react-router-dom'
 import {
   unitsOfUseFragment,
@@ -11,7 +10,11 @@ import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import { NotFound, amountFormat, HMS_ID } from '@island.is/service-portal/core'
+import {
+  NotFound,
+  amountFormat,
+  HMS_SLUG,
+} from '@island.is/service-portal/core'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import { ownersArray } from '../../utils/createUnits'
@@ -257,7 +260,7 @@ export const AssetsDetail = () => {
             { text: formatMessage(messages.disclaimerA) },
             { text: formatMessage(messages.disclaimerB) },
           ]}
-          serviceProviderID={HMS_ID}
+          serviceProviderSlug={HMS_SLUG}
         />
       </Box>
     </>

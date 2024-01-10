@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
+import { getAssetDescriptionText } from '../../lib/utils'
 
 export const estateAssets = buildSection({
   id: 'estateProperties',
@@ -27,7 +28,7 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
@@ -52,7 +53,7 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'inventory',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'membersOfEstateTitle',
@@ -85,7 +86,7 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'vehiclesTitle',
@@ -94,22 +95,11 @@ export const estateAssets = buildSection({
               titleVariant: 'h3',
               marginBottom: 2,
             }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'estate.vehicles',
-                component: 'AssetsRepeater',
-              },
-              {
-                assetName: 'vehicles',
-                texts: {
-                  assetTitle: m.vehiclesTitle,
-                  assetNumber: m.vehicleNumberLabel,
-                  assetType: m.vehicleTypeLabel,
-                  addAsset: m.addVehicle,
-                },
-              },
-            ),
+            buildCustomField({
+              title: '',
+              id: 'estate.vehicles',
+              component: 'VehicleRepeater',
+            }),
           ],
         }),
       ],
@@ -121,7 +111,7 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'gunsTitle',
@@ -157,7 +147,7 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'estateBankInfo',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'estateBankInfoTitle',
@@ -175,18 +165,19 @@ export const estateAssets = buildSection({
               {
                 fields: [
                   {
-                    title: m.bankAccount.defaultMessage,
+                    title: m.bankAccount,
                     id: 'accountNumber',
-                    format: '#### - ## - ######',
                   },
                   {
-                    title: m.bankAccountBalance.defaultMessage,
+                    title: m.bankAccountBalance,
                     id: 'balance',
                     currency: true,
                   },
                 ],
-                repeaterButtonText: m.bankAccountRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.bankAccount.defaultMessage,
+                repeaterButtonText: m.bankAccountRepeaterButton,
+                repeaterHeaderText: m.bankAccount,
+                sumField: 'balance',
+                currency: true,
               },
             ),
           ],
@@ -196,11 +187,16 @@ export const estateAssets = buildSection({
     buildSubSection({
       id: 'claims',
       title: m.claimsTitle,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       children: [
         buildMultiField({
           id: 'claims',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'claimsTitle',
@@ -218,17 +214,22 @@ export const estateAssets = buildSection({
               {
                 fields: [
                   {
-                    title: m.claimsPublisher.defaultMessage,
+                    title: m.claimsPublisher,
                     id: 'publisher',
                   },
                   {
-                    title: m.claimsAmount.defaultMessage,
+                    title: m.claimsAmount,
                     id: 'value',
                     currency: true,
                   },
+                  {
+                    title: m.nationalId,
+                    id: 'nationalId',
+                    format: '######-####',
+                  },
                 ],
-                repeaterButtonText: m.claimsRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.claimsTitle.defaultMessage,
+                repeaterButtonText: m.claimsRepeaterButton,
+                repeaterHeaderText: m.claimsTitle,
               },
             ),
           ],
@@ -238,11 +239,16 @@ export const estateAssets = buildSection({
     buildSubSection({
       id: 'stocks',
       title: m.stocksTitle,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       children: [
         buildMultiField({
           id: 'stocks',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'stocksTitle',
@@ -260,33 +266,33 @@ export const estateAssets = buildSection({
               {
                 fields: [
                   {
-                    title: m.stocksOrganization.defaultMessage,
+                    title: m.stocksOrganization,
                     id: 'organization',
                   },
                   {
-                    title: m.stocksNationalId.defaultMessage,
+                    title: m.stocksNationalId,
                     id: 'nationalId',
                     format: '######-####',
                   },
                   {
-                    title: m.stocksFaceValue.defaultMessage,
+                    title: m.stocksFaceValue,
                     id: 'faceValue',
-                    type: 'number',
                   },
                   {
-                    title: m.stocksRateOfChange.defaultMessage,
+                    title: m.stocksRateOfChange,
                     id: 'rateOfExchange',
                     type: 'number',
                   },
                   {
-                    title: m.stocksValue.defaultMessage,
+                    title: m.stocksValue,
                     id: 'value',
                     backgroundColor: 'white',
+                    currency: true,
                     readOnly: true,
                   },
                 ],
-                repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.stocksTitle.defaultMessage,
+                repeaterButtonText: m.stocksRepeaterButton,
+                repeaterHeaderText: m.stocksTitle,
               },
             ),
           ],
@@ -300,7 +306,7 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'moneyAndDeposit',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'moneyAndDepositTitle',
@@ -333,7 +339,7 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'otherAssets',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'otherAssetsTitle',

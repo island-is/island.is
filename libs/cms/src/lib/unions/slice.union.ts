@@ -33,6 +33,7 @@ import {
   IStepper,
   IGraphCard,
   ILifeEventPageListSlice,
+  IAnchorPageList,
   ISidebarCard,
   IPowerBiSlice,
   ITableSlice,
@@ -41,6 +42,10 @@ import {
   ISliceDropdown,
   ISectionWithVideo,
   IEmbed,
+  ILatestEventsSlice,
+  IChart,
+  IChartComponent,
+  IChartNumberBox,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -99,9 +104,9 @@ import { Form, mapForm } from '../models/form.model'
 import { mapStepper, Stepper } from '../models/stepper.model'
 import { GraphCard, mapGraphCard } from '../models/graphCard.model'
 import {
-  LifeEventPageListSlice,
-  mapLifeEventPageListSlice,
-} from '../models/lifeEventPageListSlice.model'
+  AnchorPageListSlice,
+  mapAnchorPageListSlice,
+} from '../models/anchorPageListSlice.model'
 import { mapSidebarCard, SidebarCard } from '../models/sidebarCard.model'
 import { PowerBiSlice, mapPowerBiSlice } from '../models/powerBiSlice.model'
 import { mapTableSlice, TableSlice } from '../models/tableSlice.model'
@@ -116,6 +121,20 @@ import {
   mapSectionWithVideo,
 } from '../models/sectionWithVideo.model'
 import { Embed, mapEmbed } from '../models/embed.model'
+import {
+  LatestEventsSlice,
+  mapLatestEventsSlice,
+} from '../models/latestEventsSlice.model'
+import { Chart, mapChart } from '../models/chart.model'
+import {
+  ChartComponent,
+  mapChartComponent,
+} from '../models/chartComponent.model'
+import {
+  ChartNumberBox,
+  mapChartNumberBox,
+} from '../models/chartNumberBox.model'
+import { LifeEventPageListSlice } from '../models/lifeEventPageList.model'
 
 type SliceTypes =
   | ITimeline
@@ -149,6 +168,7 @@ type SliceTypes =
   | IStepper
   | IGraphCard
   | ILifeEventPageListSlice
+  | IAnchorPageList
   | ISidebarCard
   | IPowerBiSlice
   | ITableSlice
@@ -156,6 +176,10 @@ type SliceTypes =
   | IFeaturedSupportQnAs
   | ISliceDropdown
   | IEmbed
+  | ILatestEventsSlice
+  | IChart
+  | IChartComponent
+  | IChartNumberBox
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -194,6 +218,7 @@ export const SliceUnion = createUnionType({
     Stepper,
     GraphCard,
     LifeEventPageListSlice,
+    AnchorPageListSlice,
     SidebarCard,
     PowerBiSlice,
     TableSlice,
@@ -201,6 +226,10 @@ export const SliceUnion = createUnionType({
     FeaturedSupportQNAs,
     SliceDropdown,
     Embed,
+    LatestEventsSlice,
+    Chart,
+    ChartComponent,
+    ChartNumberBox,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -269,7 +298,9 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
     case 'graphCard':
       return mapGraphCard(slice as IGraphCard)
     case 'lifeEventPageListSlice':
-      return mapLifeEventPageListSlice(slice as ILifeEventPageListSlice)
+      return mapAnchorPageListSlice(slice as ILifeEventPageListSlice)
+    case 'anchorPageList':
+      return mapAnchorPageListSlice(slice as IAnchorPageList)
     case 'sidebarCard':
       return mapSidebarCard(slice as ISidebarCard)
     case 'powerBiSlice':
@@ -284,6 +315,14 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapSliceDropdown(slice as ISliceDropdown)
     case 'embed':
       return mapEmbed(slice as IEmbed)
+    case 'latestEventsSlice':
+      return mapLatestEventsSlice(slice as ILatestEventsSlice)
+    case 'chart':
+      return mapChart(slice as IChart)
+    case 'chartComponent':
+      return mapChartComponent(slice as IChartComponent)
+    case 'chartNumberBox':
+      return mapChartNumberBox(slice as IChartNumberBox)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

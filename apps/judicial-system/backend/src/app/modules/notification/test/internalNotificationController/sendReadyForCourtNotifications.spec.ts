@@ -259,7 +259,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
             address: mockNotificationConfig.email.replyToEmail,
           },
           to: [{ name: 'Saul Goodman', address: 'saul@dummy.is' }],
-          subject: `Gögn í máli ${courtCaseNumber}`,
+          subject: `Krafa í máli ${courtCaseNumber}`,
           html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           attachments: undefined,
         }),

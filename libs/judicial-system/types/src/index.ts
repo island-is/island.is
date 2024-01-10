@@ -39,19 +39,17 @@ export type {
 export {
   UserRole,
   prosecutionRoles,
-  isProsecutionRole,
   isProsecutionUser,
-  courtRoles,
-  isCourtRole,
-  extendedCourtRoles,
-  isExtendedCourtRole,
+  districtCourtRoles,
   isDistrictCourtUser,
-  appealsCourtRoles,
-  isAppealsCourtUser,
+  courtOfAppealsRoles,
+  isCourtOfAppealsUser,
   prisonSystemRoles,
   isPrisonSystemUser,
   defenceRoles,
   isDefenceUser,
+  isAdminUser,
+  isCoreUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
@@ -76,13 +74,14 @@ export {
   isInvestigationCase,
   isAcceptingCaseDecision,
   completedCaseStates,
+  isCompletedCase,
   hasCaseBeenAppealed,
   CaseAppealState,
-  getAppealInfo,
   getStatementDeadline,
   getAppealedDate,
-  defenderAccessCaseFileCategoriesForIndictmentCases as defenderCaseFileCategoriesForIndictmentCases,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases as defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  prosecutorCanSelectDefenderForInvestigationCase,
 } from './lib/case'
 export type {
   Case,

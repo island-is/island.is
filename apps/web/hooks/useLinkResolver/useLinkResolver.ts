@@ -35,6 +35,10 @@ export const routesTemplate = {
     is: '/s/[organization]/frett',
     en: '/en/o/[organization]/news',
   },
+  organizationeventoverview: {
+    is: '/s/[organization]/vidburdir',
+    en: '/en/o/[organization]/events',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
@@ -59,6 +63,10 @@ export const routesTemplate = {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
   },
+  articlegroup: {
+    is: '/flokkur/[slug]#[subgroupSlug]',
+    en: '/en/category/[slug]#[subgroupSlug]',
+  },
   news: {
     is: '/frett/[slug]',
     en: '/en/news/[slug]',
@@ -74,6 +82,10 @@ export const routesTemplate = {
   manualchangelog: {
     is: '/handbaekur/[slug]/breytingasaga',
     en: '/en/manuals/[slug]/changelog',
+  },
+  manualchapteritem: {
+    is: '/handbaekur/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
+    en: '/en/manuals/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
   },
   manualchapter: {
     is: '/handbaekur/[slug]/[chapterSlug]',
@@ -127,6 +139,10 @@ export const routesTemplate = {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
   },
+  organizationevent: {
+    is: '/s/[organization]/vidburdir/[slug]',
+    en: '/en/o/[organization]/events/[slug]',
+  },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
     en: '/en/o/[slug]/[subSlug]',
@@ -171,7 +187,6 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
@@ -227,6 +242,22 @@ export const routesTemplate = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
+  },
+  universitysearchdetails: {
+    is: '/haskolanam-temp/[id]',
+    en: '/en/university-studies/[id]',
+  },
+  universitysearchcomparison: {
+    is: '/haskolanam-temp/samanburdur',
+    en: '/en/university-studies/comparison',
+  },
+  universitysearch: {
+    is: '/haskolanam-temp/leit',
+    en: '/en/university-studies/search',
+  },
+  universitylandingpage: {
+    is: '/haskolanam-temp',
+    en: '/en/university-studies',
   },
   homepage: {
     is: '/',

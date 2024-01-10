@@ -1,44 +1,49 @@
-import { useMemo, useState, useEffect } from 'react'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { useEffect, useMemo, useState } from 'react'
+import { Locale } from 'locale'
+import { useRouter } from 'next/router'
+import slugify from '@sindresorhus/slugify'
+
+import { SliceType } from '@island.is/island-ui/contentful'
+import {
+  Box,
+  BreadCrumbItem,
+  Stack,
+  TableOfContents,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  Form,
+  HeadWithSocialSharing,
+  OneColumnTextSlice,
+  SliceMachine,
+  Stepper,
+  stepperUtils,
+  TabSectionSlice,
+  Webreader,
+} from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   OneColumnText,
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
+  Slice,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '../queries'
-import { Screen } from '../../types'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
-import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
-import {
-  SliceMachine,
-  HeadWithSocialSharing,
-  Stepper,
-  stepperUtils,
-  Form,
-  TabSectionSlice,
-  Webreader,
-  OneColumnTextSlice,
-} from '@island.is/web/components'
-import {
-  Box,
-  BreadCrumbItem,
-  TableOfContents,
-  Text,
-} from '@island.is/island-ui/core'
-import { SliceType } from '@island.is/island-ui/contentful'
-import { useRouter } from 'next/router'
-import slugify from '@sindresorhus/slugify'
-import { getThemeConfig } from './utils'
-import { ProjectWrapper } from './components/ProjectWrapper'
-import { Locale } from 'locale'
-import { ProjectFooter } from './components/ProjectFooter'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
+
+import { Screen } from '../../types'
+import { GET_NAMESPACE_QUERY } from '../queries'
+import { ProjectFooter } from './components/ProjectFooter'
+import { ProjectWrapper } from './components/ProjectWrapper'
 import { TOC } from './ProjectTableOfContents'
+import { getThemeConfig } from './utils'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -221,8 +226,8 @@ const ProjectPage: Screen<PageProps> = ({
             </Text>
           </Box>
         )}
-        {content && (
-          <Box className="rs_read">
+        {content?.length > 0 && (
+          <Box className="rs_read" paddingBottom={SLICE_SPACING}>
             {webRichText(content, {
               renderComponent: {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -251,68 +256,67 @@ const ProjectPage: Screen<PageProps> = ({
             />
           </Box>
         )}
-        {!renderSlicesAsTabs &&
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          (subpage ?? projectPage).slices.map((slice) =>
-            slice.__typename === 'OneColumnText' ? (
-              <Box marginTop={6} className="rs_read">
-                <SliceMachine
-                  key={slice.id}
-                  slice={slice}
-                  namespace={namespace}
-                  fullWidth={true}
-                  slug={projectPage?.slug}
-                />
-              </Box>
-            ) : (
-              <Box className="rs_read">
-                <SliceMachine
-                  key={slice.id}
-                  slice={slice}
-                  namespace={namespace}
-                  fullWidth={true}
-                  slug={projectPage?.slug}
-                />
-              </Box>
-            ),
-          )}
+        {!renderSlicesAsTabs && (
+          <Stack space={SLICE_SPACING}>
+            {(subpage ?? projectPage)?.slices.map((slice: Slice, index) => {
+              const sliceCount = (subpage ?? projectPage)?.slices?.length
+              return (
+                <Box className="rs_read">
+                  <SliceMachine
+                    key={slice.id}
+                    slice={slice}
+                    namespace={namespace}
+                    fullWidth={true}
+                    slug={projectPage?.slug}
+                    marginBottom={
+                      typeof sliceCount === 'number' && index === sliceCount - 1
+                        ? 8
+                        : 0
+                    }
+                  />
+                </Box>
+              )
+            })}
+          </Stack>
+        )}
       </ProjectWrapper>
 
-      {bottomSlices.map((slice, index) => {
-        if (
-          slice.__typename === 'OneColumnText' &&
-          index === bottomSlices.length - 1
-        ) {
+      <Stack space={SLICE_SPACING}>
+        {bottomSlices.map((slice, index) => {
+          if (
+            slice.__typename === 'OneColumnText' &&
+            index === bottomSlices.length - 1
+          ) {
+            return (
+              <Box paddingBottom={6}>
+                <OneColumnTextSlice slice={slice} />
+              </Box>
+            )
+          }
           return (
-            <Box paddingBottom={6} paddingTop={2}>
-              <OneColumnTextSlice slice={slice} />
-            </Box>
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={projectPage?.slug}
+              fullWidth={true}
+              params={{
+                linkType: 'projectnews',
+                overview: 'projectnewsoverview',
+                containerPaddingBottom: 0,
+                containerPaddingTop: 0,
+                contentPaddingTop: 0,
+                contentPaddingBottom: 0,
+              }}
+              wrapWithGridContainer={
+                slice.__typename === 'ConnectedComponent' ||
+                slice.__typename === 'TabSection' ||
+                slice.__typename === 'PowerBiSlice'
+              }
+            />
           )
-        }
-        return (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={projectPage?.slug}
-            fullWidth={true}
-            params={{
-              linkType: 'projectnews',
-              overview: 'projectnewsoverview',
-              containerPaddingBottom: 0,
-              containerPaddingTop: 0,
-              contentPaddingTop: 0,
-              contentPaddingBottom: 0,
-            }}
-            wrapWithGridContainer={
-              slice.__typename === 'ConnectedComponent' ||
-              slice.__typename === 'TabSection' ||
-              slice.__typename === 'PowerBiSlice'
-            }
-          />
-        )
-      })}
+        })}
+      </Stack>
       <ProjectFooter
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
@@ -390,7 +394,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
       )
   }
 
-  const projectNamespace = JSON.parse(getProjectPage.namespace?.fields ?? '{}')
+  const projectNamespace = JSON.parse(getProjectPage.namespace?.fields || '{}')
 
   return {
     projectPage: getProjectPage,

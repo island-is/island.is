@@ -108,6 +108,15 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true, defaultValue: null })
   nextInspectionDate?: Date
+
+  @Field(() => Date, { nullable: true })
+  nextAvailableMileageReadDate?: Date | null
+
+  @Field(() => Boolean, { nullable: true })
+  requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMileage?: boolean | null
 }
 
 @ObjectType()
@@ -132,28 +141,118 @@ export class VehiclesHistory {
 }
 
 @ObjectType()
+export class VehiclePaging {
+  @Field({ nullable: true })
+  pageNumber?: number
+
+  @Field({ nullable: true })
+  pageSize?: number
+
+  @Field({ nullable: true })
+  totalPages?: number
+
+  @Field({ nullable: true })
+  totalRecords?: number
+}
+
+@ObjectType()
 export class VehiclesList {
-  @Field({ nullable: true })
-  persidno?: string
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  address?: string
-
-  @Field({ nullable: true })
-  postStation?: string
-
-  @Field(() => [VehiclesVehicle], { nullable: true })
+  @Field(() => [VehiclesVehicle], {
+    nullable: true,
+    deprecationReason: 'Too slow. Use VehiclesListV2 when possible.',
+  })
   vehicleList?: VehiclesVehicle[]
 
   @Field({ nullable: true })
-  createdTimestamp?: string
+  paging?: VehiclePaging
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  postStation?: string
 
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string
 
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  persidno?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  name?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  address?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  createdTimestamp?: string
+}
+
+@ObjectType()
+export class VehicleListed {
   @Field({ nullable: true })
-  nextCursor?: string
+  permno?: string
+
+  @Field({ nullable: true })
+  regno?: string
+
+  @Field({ nullable: true })
+  persidno?: string
+
+  @Field({ nullable: true })
+  role?: string
+
+  @Field({ nullable: true })
+  make?: string
+
+  @Field({ nullable: true })
+  colorCode?: string
+
+  @Field({ nullable: true })
+  colorName?: string
+
+  @Field({ nullable: true })
+  modelYear?: string
+
+  @Field(() => Boolean, { nullable: true })
+  requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMilage?: boolean | null
+
+  @Field({ nullable: true })
+  regTypeCode?: string
+
+  @Field({ nullable: true })
+  regTypeName?: string
+
+  @Field({ nullable: true })
+  regTypeSubName?: string
+
+  @Field({ nullable: true })
+  nextMainInspection?: Date
+}
+
+@ObjectType()
+export class VehiclesListV2 {
+  @Field(() => [VehicleListed], { nullable: true })
+  vehicleList?: VehicleListed[]
+
+  @Field({ nullable: true })
+  paging?: VehiclePaging
+
+  @Field(() => String, { nullable: true })
+  downloadServiceURL?: string
 }

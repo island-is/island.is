@@ -118,6 +118,7 @@ export enum CaseTransition {
   APPEAL = 'APPEAL',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -176,6 +177,7 @@ export enum SessionArrangements {
 export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
+  NOT_SHARED = 'NOT_SHARED',
 }
 
 export interface Case {
@@ -283,8 +285,13 @@ export interface Case {
   appealReceivedByCourtDate?: string
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
+  appealRulingModifiedHistory?: string
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
+  appealValidToDate?: string
+  isAppealCustodyIsolation?: boolean
+  appealIsolationToDate?: string
+  requestAppealRulingNotToBePublished?: UserRole[]
 }
 
 export interface CaseListEntry
@@ -403,6 +410,12 @@ export interface UpdateCase
     | 'appealCaseNumber'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
+    | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
+    | 'requestAppealRulingNotToBePublished'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -415,7 +428,6 @@ export interface UpdateCase
   appealJudge1Id?: string
   appealJudge2Id?: string
   appealJudge3Id?: string
-  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TransitionCase {
@@ -468,10 +480,11 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
   CaseFileCategory.APPEAL_RULING,
 ]
 
-export const defenderAccessCaseFileCategoriesForIndictmentCases = [
+export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
   CaseFileCategory.COVER_LETTER,
@@ -481,22 +494,21 @@ export const defenderAccessCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.CASE_FILE,
 ]
 
-export function isIndictmentCase(type: string): boolean {
-  const caseType = type as CaseType
-  return indictmentCases.includes(caseType)
+export function isIndictmentCase(type?: string | null): boolean {
+  return Boolean(type) && indictmentCases.includes(type as CaseType)
 }
 
-export function isRestrictionCase(type: string): boolean {
-  const caseType = type as CaseType
-  return restrictionCases.includes(caseType)
+export function isRestrictionCase(type?: CaseType | null): boolean {
+  return Boolean(type && restrictionCases.includes(type))
 }
 
-export function isInvestigationCase(type: string): boolean {
-  const caseType = type as CaseType
-  return investigationCases.includes(caseType)
+export function isInvestigationCase(type?: CaseType | null): boolean {
+  return Boolean(type && investigationCases.includes(type))
 }
 
-export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
+export function isAcceptingCaseDecision(
+  decision?: CaseDecision | null,
+): boolean {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
 }
 
@@ -505,6 +517,10 @@ export const completedCaseStates = [
   CaseState.REJECTED,
   CaseState.DISMISSED,
 ]
+
+export function isCompletedCase(state?: CaseState | null): boolean {
+  return Boolean(state && completedCaseStates.includes(state))
+}
 
 export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
@@ -521,55 +537,7 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
   )
 }
 
-export function getAppealInfo(theCase: Case): Case {
-  const {
-    rulingDate,
-    appealState,
-    accusedAppealDecision,
-    prosecutorAppealDecision,
-    prosecutorPostponedAppealDate,
-    accusedPostponedAppealDate,
-    appealReceivedByCourtDate,
-  } = theCase
-
-  const appealInfo = {} as Case
-
-  if (!rulingDate) return appealInfo
-
-  appealInfo.canBeAppealed = Boolean(
-    !appealState &&
-      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
-  )
-
-  appealInfo.hasBeenAppealed = Boolean(appealState)
-
-  appealInfo.appealedByRole = prosecutorPostponedAppealDate
-    ? UserRole.PROSECUTOR
-    : accusedPostponedAppealDate
-    ? UserRole.DEFENDER
-    : undefined
-
-  appealInfo.appealedDate =
-    appealInfo.appealedByRole === UserRole.PROSECUTOR
-      ? prosecutorPostponedAppealDate ?? undefined
-      : accusedPostponedAppealDate ?? undefined
-
-  const theRulingDate = new Date(rulingDate)
-  appealInfo.appealDeadline = new Date(
-    theRulingDate.setDate(theRulingDate.getDate() + 3),
-  ).toISOString()
-
-  if (appealReceivedByCourtDate) {
-    appealInfo.statementDeadline = getStatementDeadline(
-      new Date(appealReceivedByCourtDate),
-    )
-  }
-
-  return appealInfo
-}
-
-export function getStatementDeadline(appealReceived: Date) {
+export function getStatementDeadline(appealReceived: Date): string {
   return new Date(
     new Date(appealReceived).setDate(appealReceived.getDate() + 1),
   ).toISOString()
@@ -580,4 +548,21 @@ export function getAppealedDate(
   accusedPostponedAppealDate?: string,
 ): string | undefined {
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
+}
+
+export function prosecutorCanSelectDefenderForInvestigationCase(
+  type?: CaseType | null,
+): boolean {
+  return Boolean(
+    type &&
+      [
+        CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+        CaseType.EXPULSION_FROM_HOME,
+        CaseType.PAROLE_REVOCATION,
+        CaseType.PSYCHIATRIC_EXAMINATION,
+        CaseType.RESTRAINING_ORDER,
+        CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+        CaseType.OTHER,
+      ].includes(type),
+  )
 }

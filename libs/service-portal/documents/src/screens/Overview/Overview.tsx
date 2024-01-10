@@ -18,7 +18,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import {
   GoBack,
-  ServicePortalPath,
   formatPlausiblePathToParams,
   m,
   useScrollTopOnUpdate,
@@ -52,6 +51,7 @@ import {
   useDocumentSendersQuery,
   useDocumentTypesQuery,
 } from './DocumentExtra.generated'
+import { DocumentsPaths } from '../../lib/paths'
 
 const pageSize = 10
 
@@ -274,9 +274,7 @@ export const ServicePortalDocuments = () => {
       }))
       if (!searchInteractionEventSent) {
         documentsSearchDocumentsInitialized(
-          formatPlausiblePathToParams(
-            ServicePortalPath.ElectronicDocumentsRoot,
-          ),
+          formatPlausiblePathToParams(DocumentsPaths.ElectronicDocumentsRoot),
         )
         setSearchInteractionEventSent(true)
       }
@@ -319,9 +317,14 @@ export const ServicePortalDocuments = () => {
                 marginX={1}
                 className={styles.bullet}
               ></Box>
-              <Button unfocusable size="small" variant="text" truncate as="h1">
+              <Text
+                as="h1"
+                variant="eyebrow"
+                color="blue400"
+                fontWeight="semiBold"
+              >
                 {formatMessage(m.documents)}
-              </Button>
+              </Text>
             </Box>
           </Box>
           <DocumentsFilter

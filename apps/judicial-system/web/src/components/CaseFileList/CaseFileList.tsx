@@ -2,36 +2,63 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import {
-  Box,
-  StatusColor,
-  Text,
-  UploadedFile,
-  UploadFile,
-} from '@island.is/island-ui/core'
-import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
+import { Box, IconMapIcon, StatusColor, Text } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
-import { FileNotFoundModal } from '@island.is/judicial-system-web/src/components'
-import type {
+import {
   CaseFile,
-  CaseFileStatus,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+  FileNotFoundModal,
+} from '@island.is/judicial-system-web/src/components'
+import type { CaseFileWithStatus } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   caseId: string
-  files: TCaseFile[]
+  files: CaseFileWithStatus[]
   hideIcons?: boolean
   canOpenFiles?: boolean
   handleRetryClick?: (id: string) => void
 }
 
-const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
-  if (status === 'broken') {
+const getBackgroundColor = (caseFile: CaseFileWithStatus): StatusColor => {
+  if (
+    caseFile.status === 'broken' ||
+    caseFile.status === 'done-broken' ||
+    !caseFile.id ||
+    !caseFile.key
+  ) {
     return { background: 'dark100', border: 'dark200' }
+  } else if (caseFile.status === 'error') {
+    return { background: 'red100', border: 'red200' }
+  } else {
+    return { background: 'blue100', border: 'blue300' }
   }
+}
 
-  return { background: 'blue100', border: 'blue300' }
+const getIcon = (
+  file: CaseFileWithStatus,
+  handleRetryClick?: (id: string) => void,
+): {
+  icon: IconMapIcon
+  color: Colors
+  onClick?: (fileId: string) => void
+} | null => {
+  switch (file.status) {
+    case 'error':
+      return {
+        icon: 'reload',
+        color: 'red100',
+        onClick: handleRetryClick ? () => handleRetryClick(file.id) : undefined,
+      }
+    case 'done':
+    case 'done-broken':
+      return {
+        icon: 'checkmark',
+        color: 'blue400',
+      }
+    default:
+      return null
+  }
 }
 
 const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
@@ -48,71 +75,56 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
   })
   const { formatMessage } = useIntl()
 
-  const xFiles = [...files] as CaseFile[]
-
-  if (xFiles.length <= 0) {
+  if (files.length === 0) {
     return <Text>{formatMessage(m.noFilesFound)}</Text>
   }
 
   return (
     <>
-      {xFiles.map((file, index) => (
-        <Box
-          marginBottom={
-            index === xFiles.length - 1 ||
-            file.status === 'case-not-found' ||
-            file.status === 'unsupported'
-              ? 0
-              : 3
-          }
-          key={`${file.id}-${index}`}
-        >
-          <UploadedFile
-            file={
-              {
-                ...file,
-                status:
-                  file.status === 'case-not-found' ||
-                  file.status === 'unsupported'
-                    ? 'error'
-                    : file.status === 'done-broken'
-                    ? 'done'
-                    : file.status,
-              } as TCaseFile
+      {files.map((file, index) => {
+        if (!file.name) return null
+        const iconProperties = getIcon(file, handleRetryClick)
+
+        return (
+          <Box
+            marginBottom={
+              index === files.length - 1 ||
+              file.status === 'case-not-found' ||
+              file.status === 'unsupported'
+                ? 0
+                : 3
             }
-            showFileSize={true}
-            defaultBackgroundColor={getBackgroundColor(file.status)}
-            doneIcon="checkmark"
-            hideIcons={
-              hideIcons ||
-              (file.status !== 'done' &&
-                file.status !== 'done-broken' &&
-                file.status !== 'error')
-            }
-            onOpenFile={
-              canOpenFiles && file.key
-                ? (file: UploadFile) => {
-                    if (file.id) {
-                      onOpen(file.id)
-                    }
-                  }
-                : undefined
-            }
-            onRemoveClick={() => (canOpenFiles ? onOpen(file.id) : null)}
-            onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
-          />
-          {file.status === 'unsupported' && (
-            <Text color="red600" variant="eyebrow" lineHeight="lg">
-              {formatMessage(m.fileUnsupportedInCourt)}
-            </Text>
-          )}
-          {file.status === 'case-not-found' && (
-            <Text color="red600" variant="eyebrow" lineHeight="lg">
-              {formatMessage(m.caseNotFoundInCourt)}
-            </Text>
-          )}
-        </Box>
-      ))}
+            key={file.id}
+          >
+            <CaseFile
+              name={file.name}
+              size={file.size}
+              color={getBackgroundColor(file)}
+              icon={
+                hideIcons === false && iconProperties !== null
+                  ? iconProperties
+                  : undefined
+              }
+              id={file.id}
+              onClick={
+                canOpenFiles && file.key && file.id
+                  ? () => onOpen(file.id)
+                  : undefined
+              }
+            />
+            {file.status === 'unsupported' && (
+              <Text color="red600" variant="eyebrow" lineHeight="lg">
+                {formatMessage(m.fileUnsupportedInCourt)}
+              </Text>
+            )}
+            {file.status === 'case-not-found' && (
+              <Text color="red600" variant="eyebrow" lineHeight="lg">
+                {formatMessage(m.caseNotFoundInCourt)}
+              </Text>
+            )}
+          </Box>
+        )
+      })}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

@@ -16,16 +16,37 @@ export class DiscountAdminService {
   async createExplicitDiscountCode(
     auth: User,
     input: CreateExplicitDiscountCodeInput,
-  ): Promise<Discount> {
+  ): Promise<Array<Discount>> {
     const discount = await this.adsAdminApiWithAuth(
       auth,
     ).privateDiscountAdminControllerCreateExplicitDiscountCode({ body: input })
-    return {
-      ...discount,
-      user: {
-        ...discount.user,
-        name: discount.user.firstName,
-      },
-    }
+    return discount.map((item) => {
+      return {
+        ...item,
+        user: {
+          ...item.user,
+          name: item.user.firstName,
+        },
+      }
+    })
+  }
+  async createSuperExplicitDiscountCode(
+    auth: User,
+    input: CreateExplicitDiscountCodeInput,
+  ): Promise<Array<Discount>> {
+    const discount = await this.adsAdminApiWithAuth(
+      auth,
+    ).privateDiscountAdminControllerCreateSuperExplicitDiscountCode({
+      body: input,
+    })
+    return discount.map((item) => {
+      return {
+        ...item,
+        user: {
+          ...item.user,
+          name: item.user.firstName,
+        },
+      }
+    })
   }
 }

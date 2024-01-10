@@ -197,6 +197,16 @@ export const Finance = new XroadConf({
       staging: 'IS-DEV/GOV/10021/FJS-Public/financeIsland',
       prod: 'IS/GOV/5402697509/FJS-Public/financeIsland',
     },
+    XROAD_FINANCES_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
+    },
+    XROAD_HMS_LOANS_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
+    },
   },
 })
 
@@ -389,6 +399,16 @@ export const Passports = new XroadConf({
   },
 })
 
+export const SignatureCollection = new XroadConf({
+  env: {
+    XROAD_SIGNATURE_COLLECTION_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1',
+    },
+  },
+})
+
 export const Labor = new XroadConf({
   env: {
     XROAD_VMST_API_PATH: {
@@ -413,6 +433,16 @@ export const PaymentSchedule = new XroadConf({
       dev: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
       staging: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1',
       prod: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1',
+    },
+  },
+})
+
+export const IntellectualProperties = new XroadConf({
+  env: {
+    XROAD_INTELLECTUAL_PROPERTIES_PATH: {
+      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
+      staging: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+      prod: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
     },
   },
 })
@@ -504,12 +534,33 @@ export const Vehicles = new XroadConf({
   },
 })
 
+export const VehiclesMileage = new XroadConf({
+  env: {
+    XROAD_VEHICLES_MILEAGE_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+      staging:
+        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+    },
+  },
+})
+
 export const ChargeFjsV2 = new XroadConf({
   env: {
     XROAD_CHARGE_FJS_V2_PATH: {
       dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
       staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
+    },
+  },
+})
+
+export const EnergyFunds = new XroadConf({
+  env: {
+    XROAD_ENERGY_FUNDS_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/ElectricCarSubSidyService_v1',
     },
   },
 })
@@ -620,6 +671,77 @@ export const ShipRegistry = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1',
+    },
+  },
+})
+
+export const DirectorateOfImmigration = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: {
+      dev: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
+      staging: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
+      prod: 'IS/GOV/6702696399/UTL-Protected/Utl-Umsokn-v1',
+    },
+  },
+})
+
+export const UniversityGatewayUniversityOfIceland = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayUniversityOfAkureyri = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: {
+      dev: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5206871229/UNAK-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayIcelandUniversityOfTheArts = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: {
+      dev: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/4210984099/LHI-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayAgriculturalUniversityOfIceland = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/4112043590/LBHI-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const UniversityGatewayHolarUniversity = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1',
+      prod: 'IS/EDU/5001694359/Holar-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const SocialInsuranceAdministration = new XroadConf({
+  env: {
+    XROAD_TR_PATH: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
+      staging:
+        'IS-TEST/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
+      prod: 'IS/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
     },
   },
 })

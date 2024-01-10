@@ -1,6 +1,5 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FC } from 'react'
 import {
   ExpandHeader,
   amountFormat,
@@ -9,6 +8,7 @@ import {
 import { messages } from '../../lib/messages'
 import ExpiringTable from '../../components/ExpiringTable/ExpiringTable'
 import { ExpiringExpandedTableRow } from '../../components/ExpiringTable/ExpiringExpandedTableRow'
+import { exportAidTable } from '../../utils/FileBreakdown'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -17,12 +17,7 @@ interface Props {
   linkText: string
 }
 
-const AidsTable: FC<React.PropsWithChildren<Props>> = ({
-  data,
-  footnote,
-  link,
-  linkText,
-}) => {
+const AidsTable = ({ data, footnote, link, linkText }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
@@ -69,6 +64,7 @@ const AidsTable: FC<React.PropsWithChildren<Props>> = ({
       footnote={footnote}
       link={link}
       linkText={linkText}
+      onExport={() => exportAidTable(data ?? [], 'xlsx')}
     >
       {data.map((rowItem, idx) => (
         <ExpiringExpandedTableRow

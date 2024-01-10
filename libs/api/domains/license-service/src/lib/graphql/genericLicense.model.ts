@@ -57,6 +57,9 @@ export class GenericUserLicenseMetaLinks {
   @Field(() => String, { nullable: true })
   value?: string
 
+  @Field(() => String, { nullable: true })
+  name?: string
+
   @Field(() => GenericUserLicenseMetaLinksType, { nullable: true })
   type?: GenericUserLicenseMetaLinksType
 }
@@ -68,6 +71,12 @@ export class GenericUserLicenseMetadata {
 
   @Field(() => String)
   licenseNumber?: string
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Unique license identifier',
+  })
+  licenseId?: string
 
   @Field(() => Boolean, { nullable: true })
   expired?: boolean | null
@@ -130,8 +139,27 @@ export class GenericLicenseFetch {
 }
 
 @ObjectType()
+export class UserLicensesResponse {
+  @Field({ description: 'National ID of licenses owner' })
+  nationalId!: string
+
+  @Field(() => [GenericUserLicense], {
+    description: 'All of the users licenses',
+  })
+  licenses!: Array<GenericUserLicense>
+
+  @Field(() => [GenericUserLicense], {
+    description: 'The users children licenses',
+  })
+  childrenLicenses?: Array<GenericUserLicense>
+}
+
+@ObjectType()
 export class GenericUserLicense {
-  @Field({ description: 'National ID of license owner' })
+  @Field({
+    description: 'National ID of license owner',
+    deprecationReason: 'Moved one level up',
+  })
   nationalId!: string
 
   @Field(() => GenericLicense, { description: 'License info' })

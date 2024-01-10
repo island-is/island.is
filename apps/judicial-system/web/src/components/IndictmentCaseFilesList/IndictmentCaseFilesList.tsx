@@ -4,10 +4,8 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
-  CaseFile,
-  CaseFileCategory,
-  completedCaseStates,
-  isExtendedCourtRole,
+  isCompletedCase,
+  isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
 import {
   FileNotFoundModal,
@@ -15,6 +13,10 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseFile,
+  CaseFileCategory,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -175,7 +177,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.caseFileTitle)}
           </Text>
-          {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
+          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
             <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
               <PdfButton
                 caseId={workingCase.id}
@@ -190,8 +192,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           ))}
         </Box>
 
-        {(user && isExtendedCourtRole(user.role)) ||
-        completedCaseStates.includes(workingCase.state) ? (
+        {isDistrictCourtUser(user) || isCompletedCase(workingCase.state) ? (
           <>
             {courtRecords && courtRecords.length > 0 && (
               <Box marginBottom={5}>

@@ -58,8 +58,8 @@ describe('Email confirmation', () => {
       server = request(app.getHttpServer())
     })
 
-    afterEach(() => {
-      app.cleanUp()
+    afterEach(async () => {
+      await app.cleanUp()
     })
 
     it('POST /v2/me/create-verification should return 200, email verification should be created and user profile email unchanged', async () => {

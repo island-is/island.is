@@ -28,7 +28,7 @@ const userSeeds = `[
     "title": "dómritari",
     "mobile_number": "1111111",
     "email": "dalli@dummy.dd",
-    "role": "REGISTRAR",
+    "role": "DISTRICT_COURT_REGISTRAR",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   },
   {
@@ -38,7 +38,7 @@ const userSeeds = `[
     "title": "dómari",
     "mobile_number": "2222222",
     "email": "dora@dummy.dd",
-    "role": "JUDGE",
+    "role": "DISTRICT_COURT_JUDGE",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   },
   {
@@ -48,7 +48,37 @@ const userSeeds = `[
     "title": "landsréttardómari",
     "mobile_number": "3333333",
     "email": "lalli@dummy.dd",
-    "role": "JUDGE",
+    "role": "COURT_OF_APPEALS_JUDGE",
+    "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
+  },
+  {
+    "id": "3bbf247c-c14f-40b5-8f4c-dd3236e7f667",
+    "national_id": "0000033339",
+    "name": "Lára Landsréttardómari",
+    "title": "landsréttardómari",
+    "mobile_number": "2333333",
+    "email": "lara@dummy.dd",
+    "role": "COURT_OF_APPEALS_JUDGE",
+    "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
+  },
+  {
+    "id": "2bbf247c-c14f-40b5-8f4c-dd3236e7f667",
+    "national_id": "0000000001",
+    "name": "Lilja Landsréttardómari",
+    "title": "landsréttardómari",
+    "mobile_number": "1333333",
+    "email": "lilja@dummy.dd",
+    "role": "COURT_OF_APPEALS_JUDGE",
+    "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
+  },
+  {
+    "id": "1bbf247c-c14f-40b5-8f4c-dd3236e7f667",
+    "national_id": "0033333339",
+    "name": "Dóri Dómritari",
+    "title": "landsréttardómari",
+    "mobile_number": "5333333",
+    "email": "dori@dummy.dd",
+    "role": "COURT_OF_APPEALS_ASSISTANT",
     "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
   },
   {
@@ -58,7 +88,7 @@ const userSeeds = `[
     "title": "aðstoðarmaður dómara",
     "mobile_number": "7777777",
     "email": "adalheidur@dummy.dd",
-    "role": "ASSISTANT",
+    "role": "DISTRICT_COURT_ASSISTANT",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   },
   {
@@ -80,6 +110,26 @@ const userSeeds = `[
     "email": "valgard@dummy.dd",
     "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b3ae-2a85-11ec-8d3d-0242ac130003"
+  },
+  {
+    "id": "b129c0f6-d8db-4ac1-a1de-f517657b6e83",
+    "national_id": "9999999999",
+    "name": "Test Sækjandi",
+    "title": "Test Saksóknari",
+    "mobile_number": "9999999",
+    "email": "testsaekjandi@dummy.dd",
+    "role": "PROSECUTOR",
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+  },
+  {
+    "id": "12301c51-2bb7-4014-9469-f7ac2cd9c794",
+    "national_id": "0000000000",
+    "name": "Test Dómari",
+    "title": "Test Dómari",
+    "mobile_number": "0000009",
+    "email": "testdomari@dummy.dd",
+    "role": "DISTRICT_COURT_JUDGE",
+    "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   }
 ]`
 

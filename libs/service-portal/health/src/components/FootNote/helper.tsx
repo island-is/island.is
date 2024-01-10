@@ -18,11 +18,10 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str: any) => (
+          link: (str: React.ReactNode) => (
             <LinkButton
-              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
-              text={str ?? ''}
+              text={String(str ?? '')}
             />
           ),
         }),
@@ -32,11 +31,10 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str: any) => (
+          link: (str: React.ReactNode) => (
             <LinkButton
-              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
-              text={str ?? ''}
+              text={String(str ?? '')}
             />
           ),
         }),
@@ -45,11 +43,10 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str: any) => (
+          link: (str: React.ReactNode) => (
             <LinkButton
-              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
-              text={str ?? ''}
+              text={String(str ?? '')}
             />
           ),
         }),
@@ -62,11 +59,10 @@ export const getFootNoteByType = (
     case OCCUPATIONAL_THERAPY:
       return {
         first: formatMessage(messages['occupationalDisclaimer'], {
-          link: (str: any) => (
+          link: (str: React.ReactNode) => (
             <LinkButton
-              skipIcon
               to={formatMessage(messages['occupationalDisclaimerLink'])}
-              text={str ?? ''}
+              text={String(str ?? '')}
             />
           ),
         }),
@@ -75,7 +71,9 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str: any) => <LinkButton to="" text={str ?? ''} />,
+          link: (str: React.ReactNode) => (
+            <LinkButton to="" text={String(str ?? '')} />
+          ),
         }),
       }
   }

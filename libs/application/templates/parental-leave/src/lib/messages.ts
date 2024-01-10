@@ -1074,8 +1074,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     title: {
       id: 'pl.application:applicant.title',
-      defaultMessage: 'Er þetta réttur sími og netfang?',
-      description: 'What is your email and phone number?',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email address and phone number',
     },
     description: {
       id: 'pl.application:applicant.description',
@@ -1101,6 +1101,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:applicant.nationalId',
       defaultMessage: 'Kennitala',
       description: 'National id',
+    },
+    languageTitle: {
+      id: 'pl.application:applicant.languageTitle',
+      defaultMessage:
+        'Vinasamlegast veldu tungumál fyrir samskipti við sjóðinn',
+      description:
+        'Please select language to use in communication with the parental leave fund',
+    },
+    icelandic: {
+      id: 'pl.application:applicant.icelandic',
+      defaultMessage: 'Íslenska',
+      description: 'icelandic',
+    },
+    english: {
+      id: 'pl.application:applicant.english',
+      defaultMessage: 'Enska',
+      description: 'english',
     },
   }),
 
@@ -1532,6 +1549,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: `Hvaðan ertu að þiggja bætur?`,
       description: 'Where are you receiving benefits from?',
     },
+    alertTitle: {
+      id: 'pl.application:employer.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
+    alertDescription: {
+      id: 'pl.application:employer.alert.description',
+      defaultMessage:
+        'Aðeins þeir sem eru ekki í ráðningu og eru ekki með neinn vinnuveitanda merkja við „Já“ hér að neðan.',
+      description:
+        'Only those who are not employed and do not have an employer tick "Yes" below.',
+    },
     addEmployer: {
       id: 'pl.application:employer.add',
       defaultMessage: 'Bæta við vinnuveitanda',
@@ -1576,6 +1605,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:selfEmployed.attachment.button',
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
+    },
+    uploadDescription: {
+      id: 'pl.application:fileUpload.upload.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description: 'Accepted documents with the following extensions: .pdf',
     },
     attachmentMaxSizeError: {
       id: 'pl.application:selfEmployed.attachment.maxSizeError',

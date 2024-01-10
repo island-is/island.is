@@ -1,14 +1,16 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
+import router from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseFileCategory,
-  completedCaseStates,
-  UserRole,
+  isCompletedCase,
+  isCourtOfAppealsUser,
+  isDefenceUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
   FileNotFoundModal,
@@ -16,7 +18,11 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealState,
+  CaseFileCategory,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AppealCaseFilesOverview.strings'
@@ -31,7 +37,7 @@ const AppealCaseFilesOverview: React.FC<
   })
 
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
+  const { user, limitedAccess } = useContext(UserContext)
 
   const fileDate = (category: CaseFileCategory) => {
     switch (category) {
@@ -72,12 +78,17 @@ const AppealCaseFilesOverview: React.FC<
           [
             CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
             CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-          ].includes(caseFile.category))),
+          ].includes(caseFile.category)) ||
+        [
+          CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        ].includes(caseFile.category)),
   )
 
   const appealRulingFiles = workingCase.caseFiles?.filter(
     (caseFile) =>
-      workingCase.appealState === CaseAppealState.COMPLETED &&
+      (workingCase.appealState === CaseAppealState.COMPLETED ||
+        isCourtOfAppealsUser(user)) &&
       caseFile.category &&
       [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
   )
@@ -87,12 +98,12 @@ const AppealCaseFilesOverview: React.FC<
       ? appealRulingFiles
       : appealCaseFiles?.concat(appealRulingFiles ?? [])
 
-  return completedCaseStates.includes(workingCase.state) &&
+  return isCompletedCase(workingCase.state) &&
     allFiles &&
     allFiles.length > 0 ? (
     <>
-      <Box marginBottom={5}>
-        <Text as="h3" variant="h3">
+      <Box marginBottom={2}>
+        <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(strings.title)}
         </Text>
         {allFiles.map((file) => (
@@ -108,10 +119,10 @@ const AppealCaseFilesOverview: React.FC<
               <Box display="flex" flexDirection="column">
                 <Text>
                   {`${formatDate(
-                    fileDate(file.category),
+                    fileDate(file.category) ?? file.created,
                     'dd.MM.y',
                   )} kl. ${formatDate(
-                    fileDate(file.category),
+                    fileDate(file.category) ?? file.created,
                     constants.TIME_FORMAT,
                   )}`}
                 </Text>
@@ -125,6 +136,24 @@ const AppealCaseFilesOverview: React.FC<
           </PdfButton>
         ))}
       </Box>
+      {(isProsecutionUser(user) || isDefenceUser(user)) &&
+        workingCase.appealState &&
+        workingCase.appealState !== CaseAppealState.COMPLETED && (
+          <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+            <Button
+              icon="add"
+              onClick={() => {
+                router.push(
+                  limitedAccess
+                    ? `${constants.DEFENDER_APPEAL_FILES_ROUTE}/${workingCase.id}`
+                    : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }}
+            >
+              {formatMessage(strings.addFiles)}
+            </Button>
+          </Box>
+        )}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
