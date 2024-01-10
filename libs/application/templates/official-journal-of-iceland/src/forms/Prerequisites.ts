@@ -31,7 +31,7 @@ export const Prerequsites: Form = buildForm({
           title: '',
           children: [
             buildCustomField({
-              id: Routes.PREREQUISITES,
+              id: 'prerequisites',
               title: '',
               component: 'Prerequisites',
             }),

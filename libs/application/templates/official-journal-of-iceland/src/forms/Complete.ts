@@ -63,7 +63,7 @@ export const Complete: Form = buildForm({
           title: '',
           children: [
             buildCustomField({
-              id: Routes.COMPLETE,
+              id: 'complete',
               title: '',
               component: 'Complete',
             }),

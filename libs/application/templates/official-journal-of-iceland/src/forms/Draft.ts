@@ -42,7 +42,7 @@ export const Draft: Form = buildForm({
       title: newCase.general.sectionTitle,
       children: [
         buildCustomField({
-          id: Routes.NEW_CASE,
+          id: 'case',
           title: '',
           component: 'NewCase',
         }),
@@ -52,11 +52,6 @@ export const Draft: Form = buildForm({
       id: Routes.ADDITIONS_AND_DOCUMENTS,
       title: additionsAndDocuments.general.sectionTitle,
       children: [
-        // buildCustomField({
-        //   id: Routes.ADDITIONS_AND_DOCUMENTS,
-        //   title: '',
-        //   component: 'AdditionsAndDocuments',
-        // }),
         buildMultiField({
           id: Routes.ADDITIONS_AND_DOCUMENTS,
           title: '',
@@ -99,7 +94,7 @@ export const Draft: Form = buildForm({
       title: preview.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'Preview',
+          id: 'preview',
           title: '',
           component: 'Preview',
         }),
@@ -109,11 +104,6 @@ export const Draft: Form = buildForm({
       id: Routes.ORIGINAL_DATA,
       title: originalData.general.sectionTitle,
       children: [
-        // buildCustomField({
-        //   id: 'originalData',
-        //   title: '',
-        //   component: 'OriginalData',
-        // }),
         buildMultiField({
           id: Routes.ORIGINAL_DATA,
           title: '',
@@ -141,53 +131,8 @@ export const Draft: Form = buildForm({
       id: Routes.PUBLISHING_PREFERENCES,
       title: publishingPreferences.general.sectionTitle,
       children: [
-        // buildMultiField({
-        //   id: 'PublishingPreferencesField',
-        //   title: '',
-        //   space: 2,
-        //   children: [
-        //     buildDescriptionField({
-        //       id: 'publishingPreferencesIntro',
-        //       title: publishingPreferences.general.formTitle,
-        //       description: publishingPreferences.general.formIntro,
-        //     }),
-        //     buildDateField({
-        //       id: InputFields.publishingPreferences.date,
-        //       description: publishingPreferences.dateChapter.title,
-        //       title: publishingPreferences.inputs.datepicker.label,
-        //       backgroundColor: 'blue',
-        //       width: 'half',
-        //     }),
-        //     buildCheckboxField({
-        //       id: InputFields.publishingPreferences.fastTrack,
-        //       title: '',
-        //       large: false,
-        //       backgroundColor: 'white',
-        //       // defaultValue: BooleanValue.NO,
-        //       options: [
-        //         {
-        //           value: AnswerOption.YES,
-        //           label: publishingPreferences.inputs.fastTrack.label,
-        //         },
-        //       ],
-        //     }),
-        //     buildCustomField({
-        //       id: 'communicationChannels',
-        //       title: '',
-        //       component: 'PublishingPreferences',
-        //     }),
-        //     buildTextField({
-        //       id: InputFields.publishingPreferences.message,
-        //       title: publishingPreferences.messagesChapter.title,
-        //       description: publishingPreferences.messagesChapter.intro,
-        //       variant: 'textarea',
-        //       rows: 4,
-        //       backgroundColor: 'white',
-        //     }),
-        //   ],
-        // }),
         buildCustomField({
-          id: 'communicationChannels',
+          id: 'publishingPreferences',
           title: '',
           component: 'PublishingPreferences',
         }),

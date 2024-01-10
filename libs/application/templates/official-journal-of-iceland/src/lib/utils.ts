@@ -2,6 +2,17 @@ import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { emailRegex } from './constants'
+import { ApplicationContext } from '@island.is/application/types'
+import { AnswerOption, InputFields } from './types'
+import { getValueViaPath } from '@island.is/application/core'
+
+export function hasApprovedExternalData(context: ApplicationContext): boolean {
+  const val = getValueViaPath(
+    context.application.answers,
+    InputFields.prerequisites.approveExternalData,
+  )
+  return val === AnswerOption.YES
+}
 
 const isWeekday = (date: Date) => {
   const day = date.getDay()

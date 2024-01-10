@@ -8,9 +8,15 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 export const dataSchema = z.object({
-  approveExternalData: z.string().refine((v) => v === AnswerOption.YES, {
-    params: error.dataGathering,
-  }),
+  approveExternalData: z.string().refine(
+    (v) => {
+      console.log(v)
+      return v === AnswerOption.YES
+    },
+    {
+      params: error.dataGathering,
+    },
+  ),
   case: z.object({
     department: z.string(),
     category: z.string(),

@@ -27,27 +27,6 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
 
   const { data: options } = application.externalData.options
 
-  // setBeforeSubmitCallback &&
-  //   setBeforeSubmitCallback(async () => {
-  //     await updateApplication({
-  //       variables: {
-  //         locale,
-  //         input: {
-  //           id: application.id,
-  //           answers: {
-  //             ...application.answers,
-  //             case: {
-  //               ...state,
-  //             },
-  //           },
-  //         },
-  //       },
-  //     }).catch(() => {
-  //       return [false, f(error.dataSubmissionErrorTitle)]
-  //     })
-  //     return [true, null]
-  //   })
-
   return (
     <>
       <FormWrap

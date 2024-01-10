@@ -1,10 +1,10 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Checkbox } from '@island.is/island-ui/core'
 
-import { CheckboxController } from '@island.is/shared/form-fields'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { useFormatMessage } from '../../hooks'
 import { prerequisites } from '../../lib/messages'
 import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
+import { Controller } from 'react-hook-form'
 
 export const Prerequisites = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
@@ -22,17 +22,26 @@ export const Prerequisites = ({ application }: OJOIFieldBaseProps) => {
           ),
         })}
       />
-      <CheckboxController
-        large
-        backgroundColor="blue"
-        id={InputFields.prerequisites.approveExternalData}
+      <Controller
         name={InputFields.prerequisites.approveExternalData}
-        options={[
-          {
-            value: AnswerOption.YES,
-            label: f(prerequisites.checkbox.label),
-          },
-        ]}
+        defaultValue={
+          application.answers.approveExternalData ?? AnswerOption.NO
+        }
+        render={({ field: { onChange, value } }) => {
+          return (
+            <Checkbox
+              backgroundColor="blue"
+              large
+              onChange={(e) => {
+                onChange(e.target.checked ? AnswerOption.YES : AnswerOption.NO)
+              }}
+              checked={value === AnswerOption.YES}
+              label={f(prerequisites.checkbox.label)}
+              name={InputFields.prerequisites.approveExternalData}
+              id={InputFields.prerequisites.approveExternalData}
+            />
+          )
+        }}
       />
     </Box>
   )
