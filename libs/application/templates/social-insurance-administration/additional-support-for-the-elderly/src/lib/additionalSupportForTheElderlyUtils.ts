@@ -1,8 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, YesOrNo } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  YesOrNo,
+} from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
-import { AttachmentLabel } from './constants'
+import { AttachmentLabel, AttachmentTypes } from './constants'
 import {
   FileType,
   Attachments,
@@ -14,10 +18,6 @@ import {
   BankAccountType,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-
-enum AttachmentTypes {
-  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
-}
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
@@ -209,4 +209,10 @@ export function getAvailableYears() {
       }
     },
   )
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
 }

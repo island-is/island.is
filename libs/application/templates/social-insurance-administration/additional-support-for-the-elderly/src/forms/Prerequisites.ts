@@ -21,7 +21,7 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
-import { getApplicationExternalData } from '../lib/additionalSupportForTheElderlyUtils'
+import { isEligible } from '../lib/additionalSupportForTheElderlyUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyPrerequisites',
@@ -88,9 +88,8 @@ export const PrerequisitesForm: Form = buildForm({
           title:
             additionalSupportForTheElderyFormMessage.pre.isNotEligibleLabel,
           condition: (_, externalData) => {
-            const { isEligible } = getApplicationExternalData(externalData)
             // Show if applicant is not eligible
-            return !isEligible
+            return !isEligible(externalData)
           },
           children: [
             buildDescriptionField({

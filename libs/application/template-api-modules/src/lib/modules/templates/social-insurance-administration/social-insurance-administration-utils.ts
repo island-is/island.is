@@ -187,7 +187,7 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     application.externalData,
   )
 
-  const additionalSupportForTheLederlyDTO: ApplicationDTO = {
+  const additionalSupportForTheElderlyDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
       email: email,
@@ -224,7 +224,7 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     comment: comment,
   }
 
-  return additionalSupportForTheLederlyDTO
+  return additionalSupportForTheElderlyDTO
 }
 
 export const getMonthNumber = (monthName: string): number => {

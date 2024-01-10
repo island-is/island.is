@@ -46,17 +46,9 @@ import {
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,
-  getApplicationExternalData,
+  isEligible,
 } from './additionalSupportForTheElderlyUtils'
 import { Features } from '@island.is/feature-flags'
-
-function isEligible(context: ApplicationContext) {
-  const { application } = context
-  const { externalData } = application
-  const { isEligible } = getApplicationExternalData(externalData)
-
-  return isEligible
-}
 
 const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -108,7 +100,8 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           SUBMIT: [
             {
               target: States.DRAFT,
-              cond: isEligible,
+              cond: (application) =>
+                isEligible(application?.application?.externalData),
             },
             {
               actions: 'setApproveExternalData',
@@ -507,7 +500,6 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
 
     return undefined
   },
-  //answerValidators,
 }
 
 export default AdditionalSupportForTheElderlyTemplate

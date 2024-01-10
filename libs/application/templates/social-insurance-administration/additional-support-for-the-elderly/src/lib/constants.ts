@@ -7,3 +7,7 @@ export const AttachmentLabel: {
   additionalDocuments:
     socialInsuranceAdministrationMessage.confirm.additionalDocumentsAttachment,
 }
+
+export enum AttachmentTypes {
+  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
+}
