@@ -19,7 +19,7 @@ const ViewList = () => {
         <Stack space={5}>
           <Box>
             <Text variant="h3">
-              {listInfo.owner.name + ' - ' + listInfo.area.name}
+              {listInfo.candidate.name + ' - ' + listInfo.area.name}
             </Text>
           </Box>
           <Box display={['block', 'flex']} justifyContent="spaceBetween">
