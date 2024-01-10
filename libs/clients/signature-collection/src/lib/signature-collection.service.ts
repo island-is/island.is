@@ -384,7 +384,7 @@ export class SignatureCollectionClientService {
     const { dagsetningLokar } = list
     return {
       success: dagsetningLokar
-        ? new Date(newEndDate) === new Date(dagsetningLokar)
+        ? newEndDate.getTime() === dagsetningLokar.getTime()
         : false,
     }
   }
