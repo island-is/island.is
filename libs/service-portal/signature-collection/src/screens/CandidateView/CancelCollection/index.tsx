@@ -46,6 +46,7 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
         isVisible={modalIsOpen}
         toggleClose={false}
         initialVisibility={false}
+        onCloseModal={() => setModalIsOpen(false)}
         disclosure={
           <Button
             variant="ghost"

@@ -107,6 +107,7 @@ const SigneeView = () => {
                 isVisible={modalIsOpen}
                 toggleClose={false}
                 initialVisibility={false}
+                onCloseModal={() => setModalIsOpen(false)}
               >
                 <Text variant="h2" marginTop={[5, 0]}>
                   {formatMessage(m.unSignModalMessage)}
