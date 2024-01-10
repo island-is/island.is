@@ -29,10 +29,7 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
-import {
-  getApplicationAnswers,
-  isEligible,
-} from './pensionSupplementUtils'
+import { getApplicationAnswers, isEligible } from './pensionSupplementUtils'
 import {
   BankAccountType,
   Events,
