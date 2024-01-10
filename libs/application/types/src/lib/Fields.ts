@@ -299,8 +299,8 @@ export interface KeyValueField extends BaseField {
   component: FieldComponents.KEY_VALUE
   display?: 'block' | 'flex'
   divider?: boolean
-  paddingX?: ResponsiveProp<Space>
-  paddingY?: ResponsiveProp<Space>
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
