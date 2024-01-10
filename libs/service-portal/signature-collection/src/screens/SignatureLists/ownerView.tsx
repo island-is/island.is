@@ -62,7 +62,7 @@ const OwnerView = () => {
                 return (
                   <ActionCard
                     backgroundColor="white"
-                    heading={list.owner.name + ' - ' + list.area.name}
+                    heading={list.candidate.name + ' - ' + list.area.name}
                     eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
                     text={formatMessage(m.collectionTitle)}
                     cta={{
