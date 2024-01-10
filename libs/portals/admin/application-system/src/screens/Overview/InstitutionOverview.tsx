@@ -91,13 +91,6 @@ const InstitutionOverview = () => {
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
 
-  // Get organizations of all applications currently fetched
-  const typeIds = applicationAdminList?.map((x) => x.typeId) as string[]
-  const availableOrganizations = organizations?.filter((x) => {
-    const allApplications = institutionApplications[x.slug]
-    return allApplications?.some((x) => typeIds?.includes(x))
-  })
-
   const handleSearchChange = (nationalId: string) => {
     if (nationalId.length === 11 || nationalId.length === 0) {
       setFilters((prev) => ({
