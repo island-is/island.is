@@ -1,5 +1,11 @@
-import { Employer, RatioType } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
-import { getMonthNumber, getEmployers } from './social-insurance-administration-utils'
+import {
+  Employer,
+  RatioType,
+} from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import {
+  getMonthNumber,
+  getEmployers,
+} from './social-insurance-administration-utils'
 
 describe('Old age pesion utils', () => {
   it('should return 3 for March', () => {
@@ -9,7 +15,7 @@ describe('Old age pesion utils', () => {
 
 describe('getEmployers', () => {
   it('should return ratio and ratioMonthly as numbers, only phoneNumber if there is any and only the months that where put in in ratioMontly', () => {
-    const employersAnswers:Employer[]  = [
+    const employersAnswers: Employer[] = [
       {
         email: 'vinnuveitandi@mail.is',
         rawIndex: 0,
@@ -21,14 +27,14 @@ describe('getEmployers', () => {
       {
         email: 'vinna@mail.is',
         rawIndex: 0,
-        ratioType:  RatioType.YEARLY,
+        ratioType: RatioType.YEARLY,
         phoneNumber: '7777777',
         ratioYearly: '10',
         ratioMonthly: {},
       },
       {
         email: 'fajefja@bs.is',
-        ratioType:  RatioType.MONTHLY,
+        ratioType: RatioType.MONTHLY,
         phoneNumber: '8888888',
         ratioYearly: '',
         ratioMonthly: {
