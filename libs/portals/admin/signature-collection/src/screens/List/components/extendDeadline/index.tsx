@@ -34,9 +34,10 @@ const ActionExtendDeadline = ({
           },
         },
       })
-
-      if (res.data) {
+      if (res.data?.signatureCollectionExtendDeadline.success) {
         toast.success(formatMessage(m.updateListEndTimeSuccess))
+      } else {
+        toast.error(formatMessage(m.updateListEndTimeError))
       }
     } catch (e) {
       toast.error(e.message)
