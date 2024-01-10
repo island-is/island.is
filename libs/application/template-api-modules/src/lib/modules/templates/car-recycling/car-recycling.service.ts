@@ -140,6 +140,9 @@ export class CarRecyclingService extends BaseTemplateApiService {
         }
       })
 
+      // Wait for cancel to finish before continuing
+      await Promise.all(canceledResponses)
+
       // Recycle
       const vehiclesResponses = selectedVehicles.map(async (vehicle) => {
         if (!isError) {
@@ -173,7 +176,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
       })
 
       // Wait for all promises to resolve or reject
-      await Promise.all(vehiclesResponses.concat(canceledResponses))
+      await Promise.all(vehiclesResponses)
 
       if (isError) {
         return Promise.reject(

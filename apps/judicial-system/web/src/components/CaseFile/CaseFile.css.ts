@@ -2,26 +2,23 @@ import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const CaseFileContainer = style({
+export const caseFileWrapper = style({
   display: 'flex',
-  justifyContent: 'space-between',
-  maxWidth: '100%',
-})
-
-export const CaseFileNameContainer = style({
-  display: 'flex',
-  flex: '1',
   alignItems: 'center',
-  marginRight: theme.spacing[1],
-  maxWidth: '68%',
+  justifyContent: 'space-between',
+  padding: `${theme.spacing[1]}px ${theme.spacing[2]}px`,
+  borderRadius: theme.border.radius.large,
+  cursor: 'pointer',
+
+  ':hover': {
+    textDecoration: 'underline',
+  },
 })
 
-export const CaseFileName = style({
-  marginRight: theme.spacing[1],
-  maxWidth: '80%',
-})
+export const brokenFile = style({
+  cursor: 'not-allowed',
 
-export const CaseFileCreatedContainer = style({
-  marginRight: theme.spacing[2],
-  whiteSpace: 'nowrap',
+  ':hover': {
+    textDecoration: 'none',
+  },
 })

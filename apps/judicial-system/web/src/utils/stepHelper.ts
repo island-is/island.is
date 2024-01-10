@@ -56,8 +56,11 @@ export const getRestrictionTagVariant = (
   }
 }
 
-export const kb = (bytes?: number) => {
-  return bytes ? Math.ceil(bytes / 1024) : ''
+export const fileSize = (bytes?: number) => {
+  if (!bytes) return ''
+
+  const kb = Math.ceil(bytes / 1024)
+  return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
 }
 
 export const getAppealEndDate = (rulingDate: string) => {
