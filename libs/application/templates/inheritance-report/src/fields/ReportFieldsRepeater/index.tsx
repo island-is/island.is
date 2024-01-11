@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react'
+import { FC, useState, useEffect, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import {
   InputController,
@@ -10,7 +10,6 @@ import {
   GridColumn,
   GridRow,
   Button,
-  Text,
   Input,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
@@ -60,15 +59,12 @@ export const ReportFieldsRepeater: FC<
     name: id,
   })
 
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
   const taxFreeLimit = Number(
     formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
   )
-  const answersValues = getValueViaPath(answers, id) as
-    | Array<object>
-    | undefined
-
+  
   /* ------ Stocks ------ */
   const [rateOfExchange, setRateOfExchange] = useState(0)
   const [faceValue, setFaceValue] = useState(0)
@@ -82,20 +78,24 @@ export const ReportFieldsRepeater: FC<
   const [inheritanceTax, setInheritanceTax] = useState(0)
 
   /* ------ Total ------ */
-  const answersValuesTotal = answersValues?.reduce(
-    (a: number, o: any) => a + Number(o[props.sumField]),
-    0,
-  )
+  const [total, setTotal] = useState(0)
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+    if (!values) {
+      return
+    }
 
-  const [valueArray, setValueArray] = useState<Array<number>>(
-    answersValues?.length
-      ? answersValues.map((v: any) => Number(v[props.sumField]))
-      : [],
-  )
+    const total = values.reduce(
+      (acc: number, current: any) =>
+        Number(acc) + Number(current[props.sumField]),
+      0,
+    )
+    setTotal(total)
+  }, [getValues, id, props.sumField])
 
-  const [total, setTotal] = useState(
-    answersValues?.length ? answersValuesTotal : 0,
-  )
+  useEffect(() => {
+    calculateTotal()
+  }, [calculateTotal])
 
   const relations =
     (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
@@ -125,22 +125,13 @@ export const ReportFieldsRepeater: FC<
     append(repeaterFields)
   }
 
-  /* ------ Set total value ------ */
-  useEffect(() => {
-    const addTotal = id.replace('data', 'total')
-    setValue(addTotal, total)
-  }, [id, total, setValue])
-
   /* ------ Set stocks value and total ------ */
   useEffect(() => {
     if (rateOfExchange > 0 && faceValue > 0) {
       setValue(`${index}.value`, String(faceValue * rateOfExchange))
 
       const i = index.match(/\d+/)
-      calculateTotal(
-        currencyStringToNumber(String(Number(rateOfExchange * faceValue))),
-        Number((i as any)[0]),
-      )
+      calculateTotal()
     }
   }, [faceValue, index, rateOfExchange, setValue])
 
@@ -197,22 +188,6 @@ export const ReportFieldsRepeater: FC<
     }
   }, [props, fields, append])
 
-  const calculateTotal = (input: any, index: number) => {
-    const arr = valueArray
-    if (input === '') {
-      arr.splice(index, 1)
-    } else if (arr[index]) {
-      arr.splice(index, 1, input)
-      setValueArray(arr)
-    } else {
-      arr.push(input)
-      setValueArray(arr)
-    }
-    setTotal(
-      valueArray.reduce((sum: number, value: number) => (sum = sum + value), 0),
-    )
-  }
-
   const getDefaults = (fieldId: string) => {
     return fieldId === 'taxFreeInheritance'
       ? taxFreeInheritance
@@ -239,14 +214,8 @@ export const ReportFieldsRepeater: FC<
                   circle
                   icon="remove"
                   onClick={() => {
-                    valueArray.splice(index, 1)
-                    setTotal(
-                      valueArray.reduce(
-                        (a: number, v: number) => (a = a + v),
-                        0,
-                      ),
-                    )
                     remove(index)
+                    calculateTotal()
                   }}
                 />
               </Box>
@@ -310,7 +279,7 @@ export const ReportFieldsRepeater: FC<
 
                           // total
                           if (props.sumField === field.id) {
-                            calculateTotal(currencyStringToNumber(value), index)
+                            calculateTotal()
                           }
 
                           setIndex(fieldIndex)
