@@ -1,15 +1,13 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
 import { test } from '../utils/judicialSystemTest'
-import {
-  randomPoliceCaseNumber,
-  randomCourtCaseNumber,
-  randomAppealCaseNumber,
-  createFakePdf,
-} from '../utils/helpers'
+import { randomPoliceCaseNumber, randomCourtCaseNumber } from '../utils/helpers'
 
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
+import { receiveAppealTest } from './shared/receive-appeal'
+import { appealCaseTest } from './shared/appeal-case'
+import { coaJudgeCompletesCaseTest } from './shared/coa-complates-case'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -188,134 +186,16 @@ test.describe.serial('Custody tests', () => {
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {
-    const page = prosecutorPage
-    await page.goto(`krafa/yfirlit/${caseId}`)
-
-    await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
-    await page.getByRole('button', { name: 'Senda inn kæru' }).click()
-
-    // Send appeal
-    await expect(page).toHaveURL(`/kaera/${caseId}`)
-    const appealFileChooserPromise = page.waitForEvent('filechooser')
-    await page
-      .locator('section')
-      .filter({
-        hasText:
-          'Kæra *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með endingu: .pdf',
-      })
-      .locator('button')
-      .first()
-      .click()
-
-    const appealFileChooser = await appealFileChooserPromise
-    await page.waitForTimeout(1000)
-
-    await appealFileChooser.setFiles(await createFakePdf('TestKaera.pdf'))
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
-    ])
-
-    await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalSecondaryButton').click()
-
-    // Overview
-    await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
-    await page.getByRole('button', { name: 'Senda greinargerð' }).click()
-
-    // Send statement
-    await expect(page).toHaveURL(`/greinargerd/${caseId}`)
-    const statementFileChooserPromise = page.waitForEvent('filechooser')
-    await page
-      .locator('section')
-      .filter({
-        hasText:
-          'Greinargerð *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með ending',
-      })
-      .locator('button')
-      .click()
-    const statementFileChooser = await statementFileChooserPromise
-    await page.waitForTimeout(1000)
-    await statementFileChooser.setFiles(
-      await createFakePdf('TestGreinargerd.pdf'),
-    )
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
-    ])
-    await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalSecondaryButton').click()
+    await appealCaseTest(prosecutorPage, caseId)
   })
 
   test('judge should receive appealed case', async ({ judgePage }) => {
-    const page = judgePage
-
-    await page.goto(`krafa/yfirlit/${caseId}`)
-    await page
-      .getByRole('button', {
-        name: 'Senda tilkynningu um kæru til Landsréttar',
-      })
-      .click()
-    await page.getByTestId('modalPrimaryButton').click()
+    await receiveAppealTest(judgePage, caseId)
   })
 
   test('coa judge should submit decision in appeal case', async ({
     coaPage,
   }) => {
-    const page = coaPage
-    await page.goto(`/landsrettur/yfirlit/${caseId}`)
-
-    // Overview
-    await expect(page).toHaveURL(`/landsrettur/yfirlit/${caseId}`)
-    await page.getByTestId('continueButton').click()
-
-    // Appeal case reception
-    await expect(page).toHaveURL(`/landsrettur/kaera/${caseId}`)
-    await page.getByText('Mál nr. *').fill(randomAppealCaseNumber())
-
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-      page.getByText('Mál nr. *').press('Tab'),
-    ])
-    await page
-      .getByTestId('select-assistant')
-      .getByTestId('icon-chevronDown')
-      .click({ delay: 50 })
-    await page.locator('#react-select-assistant-option-0').click()
-    await page.getByTestId('icon-chevronDown').nth(2).click()
-    await page.locator('#react-select-judge-option-0').click()
-    await page.getByTestId('icon-chevronDown').nth(3).click()
-    await page.locator('#react-select-judge-option-0').click()
-    await page.getByTestId('icon-chevronDown').nth(4).click()
-    await page.locator('#react-select-judge-option-0').click()
-    await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalPrimaryButton').click()
-
-    // Ruling
-    await expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`)
-    await Promise.all([
-      page.locator('label').filter({ hasText: 'Staðfesting' }).click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-    ])
-    await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').click()
-    await page
-      .getByPlaceholder('Hver eru úrskurðarorð Landsréttar?')
-      .fill('Test úrskurðarorð Landsréttar')
-    await page
-      .getByPlaceholder('Hver eru úrskurðarorð Landsréttar?')
-      .press('Tab')
-
-    const rulingFileChooserPromise = page.waitForEvent('filechooser')
-    await page.getByText('Velja gögn til að hlaða upp').click()
-    const rulingFileChooser = await rulingFileChooserPromise
-    await page.waitForTimeout(1000)
-    await rulingFileChooser.setFiles(await createFakePdf('TestNidurstada.pdf'))
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
-    ])
-    await page.getByTestId('continueButton').click()
-    await expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`)
-    await page.getByTestId('continueButton').click()
+    await coaJudgeCompletesCaseTest(coaPage, caseId)
   })
 })
