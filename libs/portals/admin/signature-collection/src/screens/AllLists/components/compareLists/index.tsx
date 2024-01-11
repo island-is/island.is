@@ -85,12 +85,14 @@ const CompareLists = () => {
       <Box
         background="purple100"
         borderRadius="large"
-        display="flex"
+        display={['block', 'flex', 'flex']}
         justifyContent="spaceBetween"
         alignItems="center"
         padding={3}
       >
-        <Text>{formatMessage(m.compareListsDescription)}</Text>
+        <Text marginBottom={[2, 0, 0]}>
+          {formatMessage(m.compareListsDescription)}
+        </Text>
         <Button
           icon="documents"
           iconType="outline"
