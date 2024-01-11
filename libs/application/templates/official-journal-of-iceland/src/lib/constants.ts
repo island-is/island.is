@@ -17,3 +17,7 @@ export enum Routes {
   SUMMARY = 'summary',
   COMPLETE = '/complete',
 }
+
+export const REGLUGERDIR_ID = '2'
+export const GJALDSKRA_ID = '0'
+export const SKIPULAGSSKRA_ID = '3'

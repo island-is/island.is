@@ -20,7 +20,7 @@ export const dataSchema = z.object({
   case: z.object({
     department: z.string(),
     category: z.string(),
-    // subCategory: z.string().optional(),
+    subCategory: z.string(),
     title: z.string(),
     template: z.string().optional(),
     documentContents: z.string(),

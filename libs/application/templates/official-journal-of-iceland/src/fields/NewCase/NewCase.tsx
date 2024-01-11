@@ -10,14 +10,24 @@ import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { newCase } from '../../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../../lib/types'
+import {
+  GJALDSKRA_ID,
+  REGLUGERDIR_ID,
+  SKIPULAGSSKRA_ID,
+} from '../../lib/constants'
+import { useFormContext } from 'react-hook-form'
+
 export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
   const { f } = useFormatMessage(application)
   const [modalToggle, setModalToggle] = useState(false)
 
+  const { setValue } = useFormContext()
+
   const [state, setState] = useState({
     department: answers?.case?.department ?? '',
     category: answers?.case?.category ?? '',
+    subCategory: answers?.case?.subCategory ?? '',
     title: answers?.case?.title ?? '',
     template: answers?.case?.template ?? '',
     documentContents: answers?.case?.documentContents ?? '',
@@ -58,7 +68,12 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
               placeholder={f(newCase.inputs.department.placeholder)}
               defaultValue={state.department}
               options={options.departments}
-              onSelect={(opt) => setState({ ...state, department: opt.value })}
+              onSelect={(opt) =>
+                setState({
+                  ...state,
+                  department: opt.value,
+                })
+              }
               size="sm"
               error={
                 errors && getErrorViaPath(errors, InputFields.case.department)
@@ -69,24 +84,61 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
             <SelectController
               id={InputFields.case.category}
               name={InputFields.case.category}
-              label={f(newCase.inputs.publishingType.label)}
-              placeholder={f(newCase.inputs.publishingType.placeholder)}
+              label={f(newCase.inputs.category.label)}
+              placeholder={f(newCase.inputs.category.placeholder)}
               defaultValue={state.department}
               backgroundColor="blue"
               options={options.categories}
-              onSelect={(opt) => setState({ ...state, category: opt.value })}
+              onSelect={(opt) => {
+                const adverb =
+                  opt.value === GJALDSKRA_ID || opt.value === SKIPULAGSSKRA_ID
+                    ? 'fyrir'
+                    : 'um'
+                const title = `${opt.label.toUpperCase()} ${adverb}`
+                if (state.title === '') {
+                  setValue(InputFields.case.title, title, {
+                    shouldValidate: true,
+                  })
+                }
+                setState({
+                  ...state,
+                  category: opt.value,
+                  title: state.title ? state.title : title,
+                })
+              }}
               size="sm"
               error={
                 errors && getErrorViaPath(errors, InputFields.case.category)
               }
             />
           </Box>
+          {state.category === REGLUGERDIR_ID && options.subCategories.length && (
+            <Box width="half">
+              <SelectController
+                id={InputFields.case.subCategory}
+                name={InputFields.case.subCategory}
+                label={f(newCase.inputs.subCategory.label)}
+                placeholder={f(newCase.inputs.subCategory.placeholder)}
+                defaultValue={state.subCategory}
+                backgroundColor="blue"
+                options={options.subCategories}
+                onSelect={(opt) =>
+                  setState({ ...state, subCategory: opt.value })
+                }
+                size="sm"
+                error={
+                  errors &&
+                  getErrorViaPath(errors, InputFields.case.subCategory)
+                }
+              />
+            </Box>
+          )}
           <Box width="full">
             <InputController
               id={InputFields.case.title}
               name={InputFields.case.title}
-              label={f(newCase.inputs.nameOfCase.label)}
-              placeholder={f(newCase.inputs.nameOfCase.placeholder)}
+              label={f(newCase.inputs.title.label)}
+              placeholder={f(newCase.inputs.title.placeholder)}
               defaultValue={state.title}
               backgroundColor="blue"
               textarea

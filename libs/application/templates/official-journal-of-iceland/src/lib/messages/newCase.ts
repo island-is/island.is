@@ -55,7 +55,7 @@ export const newCase = {
     copyOldCase: defineMessages({
       label: {
         id: 'ojoi.application:newCase.buttons.copyOldCase.label',
-        defaultMessage: 'Afrita eldri mál',
+        defaultMessage: 'Afrita eldra mál',
         description: 'Label for the copy old case button',
       },
     }),
@@ -80,26 +80,38 @@ export const newCase = {
         description: 'Placeholder for the department input',
       },
     }),
-    publishingType: defineMessages({
+    category: defineMessages({
       label: {
-        id: 'ojoi.application:newCase.inputs.publishingTypeInput.label',
+        id: 'ojoi.application:newCase.inputs.category.label',
         defaultMessage: 'Tegund birtingar',
         description: 'Label for the publishing type input',
       },
       placeholder: {
-        id: 'ojoi.application:newCase.inputs.publishingTypeInput.placeholder',
+        id: 'ojoi.application:newCase.inputs.category.placeholder',
         defaultMessage: 'Veldu tegund birtingar',
         description: 'Placeholder for the publishing type input',
       },
     }),
-    nameOfCase: defineMessages({
+    subCategory: defineMessages({
       label: {
-        id: 'ojoi.application:newCase.inputs.nameOfCaseInput.label',
-        defaultMessage: 'Heiti auglýsingar',
-        description: 'Label for the name of case input',
+        id: 'ojoi.application:newCase.inputs.subCategory.label',
+        defaultMessage: 'Undirtegund',
+        description: 'Label for the sub category input',
       },
       placeholder: {
-        id: 'ojoi.application:newCase.inputs.nameOfCaseInput.placeholder',
+        id: 'ojoi.application:newCase.inputs.subCategory.placeholder',
+        defaultMessage: 'Veldu undirtegund',
+        description: 'Placeholder for the sub category input',
+      },
+    }),
+    title: defineMessages({
+      label: {
+        id: 'ojoi.application:newCase.inputs.title.label',
+        defaultMessage: 'Heiti auglýsingar',
+        description: 'Label for the title of case input',
+      },
+      placeholder: {
+        id: 'ojoi.application:newCase.inputs.title.placeholder',
         defaultMessage: 'Heiti auglýsingar',
         description: 'Placeholder for the name of case input',
       },
