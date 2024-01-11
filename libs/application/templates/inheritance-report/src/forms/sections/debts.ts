@@ -158,7 +158,9 @@ export const debts = buildSection({
                         `${m.nationalId.defaultMessage}: ${formatNationalId(
                           debt.nationalId ?? '',
                         )}`,
-                        `${m.debtsLoanIdentity.defaultMessage}: ${debt.loanIdentity ?? ''}`,
+                        `${m.debtsLoanIdentity.defaultMessage}: ${
+                          debt.loanIdentity ?? ''
+                        }`,
                         `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                           debt.balance ?? '0',
                         )}`,

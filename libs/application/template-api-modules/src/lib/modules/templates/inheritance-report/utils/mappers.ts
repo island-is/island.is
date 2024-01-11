@@ -150,6 +150,7 @@ export const expandAnswers = (
       businessDebts: {
         data: (answers.business.businessDebts?.data ?? []).map((debt) => {
           return {
+            loanIdentity: debt.loanIdentity ?? '',
             businessDebt: debt.businessDebt ?? '',
             debtValue: debt.debtValue ?? 0,
             nationalId: debt.nationalId ?? '',
@@ -166,6 +167,7 @@ export const expandAnswers = (
         data: (answers.debts.domesticAndForeignDebts?.data ?? []).map(
           (debt) => {
             return {
+              loanIdentity: debt.loanIdentity ?? '',
               balance: debt.balance ?? 0,
               creditorName: debt.creditorName ?? '',
               nationalId: debt.nationalId ?? '',

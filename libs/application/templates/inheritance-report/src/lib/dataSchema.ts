@@ -140,7 +140,7 @@ export const inheritanceReportSchema = z.object({
             creditorName: z.string(),
             nationalId: z.string(),
             loanIdentity: z.string(),
-            balance: z.string()
+            balance: z.string(),
           })
           .refine(
             ({ nationalId }) => {
@@ -165,7 +165,9 @@ export const inheritanceReportSchema = z.object({
           )
           .refine(
             ({ creditorName, nationalId, balance, loanIdentity }) => {
-              return nationalId !== '' || creditorName !== '' || loanIdentity !== ''
+              return nationalId !== '' ||
+                creditorName !== '' ||
+                loanIdentity !== ''
                 ? isValidString(balance)
                 : true
             },
@@ -225,7 +227,7 @@ export const inheritanceReportSchema = z.object({
             businessDebt: z.string(),
             loanIdentity: z.string(),
             nationalId: z.string(),
-            debtValue: z.string()
+            debtValue: z.string(),
           })
           .refine(
             ({ nationalId }) => {
@@ -240,7 +242,9 @@ export const inheritanceReportSchema = z.object({
           )
           .refine(
             ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
-              return nationalId !== '' || businessDebt !== '' || debtValue !== ''
+              return nationalId !== '' ||
+                businessDebt !== '' ||
+                debtValue !== ''
                 ? isValidString(loanIdentity)
                 : true
             },
@@ -250,7 +254,9 @@ export const inheritanceReportSchema = z.object({
           )
           .refine(
             ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
-              return nationalId !== '' || businessDebt !== '' || loanIdentity !== ''
+              return nationalId !== '' ||
+                businessDebt !== '' ||
+                loanIdentity !== ''
                 ? isValidString(debtValue)
                 : true
             },
@@ -260,7 +266,9 @@ export const inheritanceReportSchema = z.object({
           )
           .refine(
             ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
-              return nationalId !== '' || debtValue !== '' || loanIdentity !== ''
+              return nationalId !== '' ||
+                debtValue !== '' ||
+                loanIdentity !== ''
                 ? isValidString(businessDebt)
                 : true
             },
