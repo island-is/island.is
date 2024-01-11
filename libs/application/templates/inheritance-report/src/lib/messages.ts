@@ -56,6 +56,22 @@ export const m = defineMessages({
     description:
       'User not eligible for estate or no estates found bound to their national id',
   },
+  applicationInfoSectionTitle: {
+    id: 'es.application:applicationInfoSectionTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Titill fyrir hliðastiku',
+  },
+  applicationInfoTitle: {
+    id: 'es.application:applicationInfoTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Upplýsinga skjár titill',
+  },
+  applicationInfoText: {
+    id: 'es.application:applicationInfoTexts#markdown',
+    defaultMessage: 'Upplýsinga Texti',
+    description: 'Texti fyrir upplýsinga skjá',
+  },
+
   deceasedInfoProviderTitle: {
     id: 'ir.application:deceasedInfoProviderTitle',
     defaultMessage: 'Upplýsingar um hinn látna',

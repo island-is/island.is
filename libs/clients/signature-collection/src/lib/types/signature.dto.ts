@@ -8,7 +8,7 @@ export interface Signature {
   id: string
   listId: string
   signee: Signee
-  signatureType: string
+  isDigital: boolean
   created: Date
 }
 
@@ -21,7 +21,7 @@ export const mapSignature = (signature: MedmaeliBaseDTO): Signature => {
       name: signature.nafn ?? '',
       address: signature.heimilisfang ?? '',
     },
-    signatureType: signature.medmaeliTegund?.toString() ?? '',
+    isDigital: signature.medmaeliTegundNr === 1,
     created: signature.dagsetning ?? new Date(),
   }
 }
