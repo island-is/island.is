@@ -42,11 +42,14 @@ export const PaymentChargeOverviewFormField: FC<
     0,
   )
 
+  console.log('field', field)
+
   return (
     <Box>
       <Box>
         <Text variant="h5">
-          {formatText(field.forPaymentLabel, application, formatMessage)}
+          {formatMessage(field.forPaymentLabel)}
+          {/* {formatText(field.forPaymentLabel, application, formatMessage)} */}
         </Text>
         {selectedChargeWithInfoList.map((charge) => (
           <Box
