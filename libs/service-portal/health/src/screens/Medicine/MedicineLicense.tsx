@@ -64,7 +64,7 @@ export const MedicineLicense = () => {
                       variant:
                         certificate.processed === false
                           ? 'darkerBlue'
-                          : certificate?.valid
+                          : certificate.valid
                           ? 'blue'
                           : 'red',
                     }}

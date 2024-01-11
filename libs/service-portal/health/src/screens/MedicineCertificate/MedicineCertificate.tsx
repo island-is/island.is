@@ -122,10 +122,10 @@ export const MedicineCertificate = () => {
                           : 'closeCircle'
                       }
                       color={
-                        certificate.valid
-                          ? 'mint600'
-                          : certificate.processed === false
+                        certificate.processed === false
                           ? 'blue600'
+                          : certificate.valid
+                          ? 'mint600'
                           : 'red600'
                       }
                       type="filled"
