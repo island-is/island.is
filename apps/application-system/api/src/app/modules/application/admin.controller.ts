@@ -141,7 +141,7 @@ export class AdminController {
         from: {
           type: 'string',
           required: false,
-          description: 'Only return results cerated after specified date',
+          description: 'Only return results created after specified date',
         },
         to: {
           type: 'string',
