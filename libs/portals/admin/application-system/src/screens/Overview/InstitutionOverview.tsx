@@ -20,6 +20,7 @@ import { Organization } from '@island.is/shared/types'
 import { institutionMapper } from '@island.is/application/types'
 import { AdminApplication } from '../../types/adminApplication'
 import { useUserInfo } from '@island.is/auth/react'
+import endOfDay from 'date-fns/endOfDay'
 
 const defaultFilters: ApplicationFilters = {
   nationalId: '',
@@ -112,6 +113,10 @@ const InstitutionOverview = () => {
 
   const handleDateChange = (period: ApplicationFilters['period']) => {
     const update = { ...filters.period, ...period }
+    if (update.to) {
+      update.to = endOfDay(update.to)
+    }
+
     setFilters((prev) => ({
       ...prev,
       period: update,

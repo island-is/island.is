@@ -9,8 +9,6 @@ import {
   ApplicationLifecycle,
 } from '@island.is/application/types'
 import { Application, ApplicationPaginatedResponse } from './application.model'
-import endOfDay from 'date-fns/endOfDay'
-import startOfDay from 'date-fns/startOfDay'
 import { getTypeIdsForInstitution } from '@island.is/application/utils'
 
 const applicationIsNotSetToBePruned = () => ({
@@ -125,8 +123,8 @@ export class ApplicationService {
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
     const typeIds = getTypeIdsForInstitution(nationalId)
-    const toDate = to ? endOfDay(new Date(to)) : undefined
-    const fromDate = from ? startOfDay(new Date(from)) : undefined
+    const toDate = to ? new Date(to) : undefined
+    const fromDate = from ? new Date(from) : undefined
 
     // No applications for this institution ID
     if (typeIds.length < 1) {
