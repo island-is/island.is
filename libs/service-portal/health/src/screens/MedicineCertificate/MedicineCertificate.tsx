@@ -102,23 +102,23 @@ export const MedicineCertificate = () => {
                   >
                     <Text>
                       {formatMessage(
-                        certificate.valid
+                        certificate.processed === false
+                          ? messages.medicineIsProcessedCertificate
+                          : certificate.valid
                           ? messages.medicineIsValidCertificate
                           : certificate.rejected
                           ? messages.medicineIsRejectedCertificate
                           : certificate.expired
                           ? messages.medicineIsExpiredCertificate
-                          : certificate.processed === false
-                          ? messages.medicineIsProcessedCertificate
                           : messages.medicineIsNotValidCertificate,
                       )}
                     </Text>
                     <Icon
                       icon={
-                        certificate.valid
-                          ? 'checkmarkCircle'
-                          : certificate.processed === false
+                        certificate.processed === false
                           ? 'informationCircle'
+                          : certificate.valid
+                          ? 'checkmarkCircle'
                           : 'closeCircle'
                       }
                       color={
