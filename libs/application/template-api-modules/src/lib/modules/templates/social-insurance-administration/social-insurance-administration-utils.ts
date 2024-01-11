@@ -24,6 +24,10 @@ import {
   getApplicationAnswers as getHSApplicationAnswers,
   getApplicationExternalData as getHSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import {
+  getApplicationAnswers as getASFTEApplicationAnswers,
+  getApplicationExternalData as getASFTEApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -170,6 +174,88 @@ export const transformApplicationToHouseholdSupplementDTO = (
   return householdSupplementDTO
 }
 
+export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
+  application: Application,
+  uploads: Attachment[],
+): ApplicationDTO => {
+  const {
+    selectedYear,
+    selectedMonth,
+    applicantPhonenumber,
+    bank,
+    bankAccountType,
+    comment,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+    paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
+  } = getASFTEApplicationAnswers(application.answers)
+  const { bankInfo, email } = getASFTEApplicationExternalData(
+    application.externalData,
+  )
+
+  const additionalSupportForTheElderlyDTO: ApplicationDTO = {
+    applicationId: application.id,
+    applicantInfo: {
+      email: email,
+      phonenumber: applicantPhonenumber,
+    },
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      ...((bankAccountType === undefined ||
+        bankAccountType === BankAccountType.ICELANDIC) && {
+        domesticBankInfo: {
+          bank: formatBank(bank),
+        },
+      }),
+      ...(bankAccountType === BankAccountType.FOREIGN && {
+        foreignBankInfo: {
+          iban: iban.replace(/[\s]+/g, ''),
+          swift: swift.replace(/[\s]+/g, ''),
+          foreignBankName: bankName,
+          foreignBankAddress: bankAddress,
+          foreignCurrency: currency,
+        },
+      }),
+    }),
+    taxInfo: {
+      personalAllowance: YES === personalAllowance,
+      personalAllowanceUsage:
+        YES === personalAllowance ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
+    period: {
+      year: +selectedYear,
+      month: getMonthNumber(selectedMonth),
+    },
+    uploads,
+    comment: comment,
+  }
+
+  return additionalSupportForTheElderlyDTO
+}
+
+export const getMonthNumber = (monthName: string): number => {
+  // Parse the month name and get the month number (0-based)
+  const monthNumber = parse(monthName, 'MMMM', new Date())
+  return monthNumber.getMonth() + 1
+}
+
+export const getApplicationType = (application: Application): string => {
+  const { applicationType } = getOAPApplicationAnswers(application.answers)
+
+  if (applicationType === ApplicationType.HALF_OLD_AGE_PENSION) {
+    return ApplicationType.HALF_OLD_AGE_PENSION
+  }
+
+  // Sailors pension and Old age pension is the same application type
+  return ApplicationType.OLD_AGE_PENSION
+}
+
 export const getEmployers = (employers: Employer[]): EmployersInfo[] => {
   const employersInfo: EmployersInfo[] = []
 
@@ -229,21 +315,4 @@ export const getEmployers = (employers: Employer[]): EmployersInfo[] => {
   }
 
   return employersInfo
-}
-
-export const getMonthNumber = (monthName: string): number => {
-  // Parse the month name and get the month number (0-based)
-  const monthNumber = parse(monthName, 'MMMM', new Date())
-  return monthNumber.getMonth() + 1
-}
-
-export const getApplicationType = (application: Application): string => {
-  const { applicationType } = getOAPApplicationAnswers(application.answers)
-
-  if (applicationType === ApplicationType.HALF_OLD_AGE_PENSION) {
-    return ApplicationType.HALF_OLD_AGE_PENSION
-  }
-
-  // Sailors pension and Old age pension is the same application type
-  return ApplicationType.OLD_AGE_PENSION
 }

@@ -39,32 +39,32 @@ export class InternalCourseService {
 
   async updateCourses(): Promise<void> {
     Promise.allSettled([
-      await this.doUpdateCoursesForUniversity(
+      this.doUpdateCoursesForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         (externalId: string) =>
           this.reykjavikUniversityClient.getCourses(externalId),
       ),
-      await this.doUpdateCoursesForUniversity(
+      this.doUpdateCoursesForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         (externalId: string) =>
           this.universityOfIcelandClient.getCourses(externalId),
       ),
-      await this.doUpdateCoursesForUniversity(
+      this.doUpdateCoursesForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_AKUREYRI,
         (externalId: string) =>
           this.universityOfAkureyriClient.getCourses(externalId),
       ),
-      await this.doUpdateCoursesForUniversity(
+      this.doUpdateCoursesForUniversity(
         UniversityNationalIds.ICELAND_UNIVERSITY_OF_THE_ARTS,
         (externalId: string) =>
           this.icelandUniversityOfTheArtsClient.getCourses(externalId),
       ),
-      await this.doUpdateCoursesForUniversity(
+      this.doUpdateCoursesForUniversity(
         UniversityNationalIds.AGRICULTURAL_UNIVERSITY_OF_ICELAND,
         (externalId: string) =>
           this.agriculturalUniversityOfIcelandClient.getCourses(externalId),
       ),
-      await this.doUpdateCoursesForUniversity(
+      this.doUpdateCoursesForUniversity(
         UniversityNationalIds.HOLAR_UNIVERSITY,
         (externalId: string) =>
           this.holarUniversityClient.getCourses(externalId),

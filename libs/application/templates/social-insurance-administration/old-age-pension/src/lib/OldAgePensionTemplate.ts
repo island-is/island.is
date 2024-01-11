@@ -26,7 +26,7 @@ import {
 } from '@island.is/application/core'
 
 import { dataSchema } from './dataSchema'
-import { oldAgePensionFormMessage, statesMessages } from './messages'
+import { statesMessages } from './messages'
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
