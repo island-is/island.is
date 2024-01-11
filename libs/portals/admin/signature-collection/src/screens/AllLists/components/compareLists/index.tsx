@@ -58,7 +58,7 @@ const CompareLists = () => {
 
       if (res.data) {
         if (res.data.signatureCollectionUnsignAdmin.success) {
-          toast.success(formatMessage(m.unsignFromList))
+          toast.success(formatMessage(m.unsignFromListSuccess))
           setUploadResults(
             uploadResults?.filter((result: SignatureCollectionSignature) => {
               return result.id !== signatureId
