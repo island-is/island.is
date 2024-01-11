@@ -6,7 +6,7 @@ import {
   ScopesGuard,
   Scopes,
   CurrentUser,
-  User,
+  type User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { SocialInsuranceService } from './socialInsurance.service'
