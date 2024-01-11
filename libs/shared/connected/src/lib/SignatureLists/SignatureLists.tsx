@@ -57,7 +57,7 @@ export const SignatureLists: FC<
                       size: 'small',
                       onClick: () =>
                         window.open(
-                          `${window.location.origin}/umsoknir/maela-med-lista`,
+                          `${window.location.origin}/umsoknir/maela-med-frambodi`,
                           '_blank',
                         ),
                     }}

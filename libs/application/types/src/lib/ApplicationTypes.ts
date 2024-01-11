@@ -269,7 +269,7 @@ export const ApplicationConfigurations = {
     translation: 'slc.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
-    slug: 'maela-med-lista',
+    slug: 'maela-med-frambodi',
     translation: 'sls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
