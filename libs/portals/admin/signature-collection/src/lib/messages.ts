@@ -166,6 +166,12 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  listReviewedModalDescription: {
+    id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
+    defaultMessage:
+      'Þegar búið er að fara yfir meðmælalistann skal ýta á hnappinn.',
+    description: '',
+  },
 
   // Upload
   uploadFile: {
