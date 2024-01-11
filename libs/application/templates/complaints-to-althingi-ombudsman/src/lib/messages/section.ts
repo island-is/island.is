@@ -31,9 +31,14 @@ export const section = defineMessages({
     defaultMessage: 'Lagt fyrir dómstóla',
     description: 'Definition of judged section title',
   },
+  previousComplaint: {
+    id: `ctao.application:section.previousComplaint`,
+    defaultMessage: 'Áður kvartað',
+    description: 'Definition of attechments section title',
+  },
   attachments: {
     id: `ctao.application:section.attachments`,
-    defaultMessage: 'Viðhengi',
+    defaultMessage: 'Fylgiskjöl',
     description: 'Definition of attechments section title',
   },
   complaint: {
