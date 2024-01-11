@@ -24,7 +24,6 @@ import {
   ApplicationListAdminResponseDto,
 } from './dto/applicationAdmin.response.dto'
 import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
-import { ApplicationAdminPaginatedSerializer } from './tools/applicationAdminPaginated.serializer'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -99,7 +98,7 @@ export class AdminController {
   @Scopes(AdminPortalScope.applicationSystem)
   @BypassDelegation()
   @Get('admin/institution/:nationalId/applications/:page/:count')
-  @UseInterceptors(ApplicationAdminPaginatedSerializer)
+  @UseInterceptors(ApplicationAdminSerializer)
   @Audit<ApplicationAdminPaginatedResponse>({
     resources: (apps) => apps.rows.map((app) => app.id),
   })
