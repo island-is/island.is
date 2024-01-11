@@ -16,6 +16,7 @@ import { format as formatNationalId } from 'kennitala'
 import { SignatureCollectionSignature } from '@island.is/api/schema'
 import { createFileList, getFileData } from '../../../../lib/utils'
 import { Skeleton } from './skeleton'
+import { useUnsignAdminMutation } from './removeSignatureFromList.generated'
 
 const CompareLists = () => {
   const { formatMessage } = useLocale()
@@ -23,6 +24,7 @@ const CompareLists = () => {
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
   const [uploadResults, setUploadResults] = useState<Array<any>>()
   const [compareMutation, { loading }] = useBulkCompareMutation()
+  const [unSignMutation] = useUnsignAdminMutation()
 
   const compareLists = async (nationalIds: Array<string>) => {
     try {
@@ -37,6 +39,29 @@ const CompareLists = () => {
       if (res.data) {
         setUploadResults(
           res.data?.signatureCollectionBulkCompareSignaturesAllLists,
+        )
+      }
+    } catch (e) {
+      toast.error(e.message)
+    }
+  }
+
+  const unSignFromList = async (signatureId: string) => {
+    try {
+      const res = await unSignMutation({
+        variables: {
+          input: {
+            id: signatureId,
+          },
+        },
+      })
+
+      if (res.data && res.data.signatureCollectionUnsignAdmin.success) {
+        toast.success(formatMessage(m.unsignFromListSuccess))
+        setUploadResults(
+          uploadResults?.filter((result: SignatureCollectionSignature) => {
+            return result.id !== signatureId
+          }),
         )
       }
     } catch (e) {
@@ -139,8 +164,13 @@ const CompareLists = () => {
                               </T.Data>
                               <T.Data>{'todo: nafn á lista'}</T.Data>
                               <T.Data style={{ minWidth: '160px' }}>
-                                <Button variant="utility">
-                                  {formatMessage(m.deleteFromList)}
+                                <Button
+                                  variant="utility"
+                                  onClick={() => {
+                                    unSignFromList(result.id)
+                                  }}
+                                >
+                                  {formatMessage(m.unsignFromList)}
                                 </Button>
                               </T.Data>
                             </T.Row>
