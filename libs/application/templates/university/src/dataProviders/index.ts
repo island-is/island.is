@@ -10,6 +10,12 @@ export const NationalRegistryIndividualApi = defineTemplateApi({
 
 export const UniversityApi = defineTemplateApi({
   action: 'getUniversities',
-  externalDataId: 'universitites',
+  externalDataId: 'universities',
+  namespace: 'University',
+})
+
+export const ProgramApi = defineTemplateApi({
+  action: 'getPrograms',
+  externalDataId: 'programs',
   namespace: 'University',
 })

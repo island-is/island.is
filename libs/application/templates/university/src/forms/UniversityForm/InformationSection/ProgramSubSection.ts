@@ -3,12 +3,14 @@ import {
   buildSubSection,
   buildDescriptionField,
   buildSelectField,
-  buildCheckboxField,
   buildRadioField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
-import { Application } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
+import { UniversityExternalData } from '../../../types'
+import { ProgramBase } from '@island.is/clients/university-gateway-api'
 
 export const ProgramSubSection = buildSubSection({
   id: Routes.PROGRAMINFORMATION,
@@ -17,13 +19,8 @@ export const ProgramSubSection = buildSubSection({
     buildMultiField({
       id: Routes.PROGRAMINFORMATION,
       title: information.labels.programSelection.title,
+      description: information.labels.programSelection.subTitle,
       children: [
-        buildDescriptionField({
-          id: `${Routes.PROGRAMINFORMATION}.title`,
-          title: information.labels.programSelection.title,
-          description: information.labels.programSelection.subTitle,
-          titleVariant: 'h2',
-        }),
         buildDescriptionField({
           id: `${Routes.PROGRAMINFORMATION}.selectTitle`,
           title: information.labels.programSelection.selectProgramTitle,
@@ -31,45 +28,46 @@ export const ProgramSubSection = buildSubSection({
         }),
         buildSelectField({
           id: `${Routes.PROGRAMINFORMATION}.university`,
-          title: information.labels.programSelection.selectProgramLabel,
+          title: information.labels.programSelection.selectUniversityLabel,
           placeholder:
             information.labels.programSelection.selectUniversityPlaceholder,
           options: (application: Application) => {
-            const universities = ['Prufa'] // TODO application.externalData.universities
-            return universities.map((university) => {
-              return {
-                label: university,
-                value: university,
-              }
+            console.log('application', application)
+            const universities = application.externalData.universities
+              .data as Array<UniversityExternalData>
+
+            return universities.map((uni) => {
+              return { label: uni.contentfulKey, value: uni.id }
             })
           },
         }),
+        // TODO can we make this dynamic, so options change when answer to previous question changes
         buildSelectField({
           id: `${Routes.PROGRAMINFORMATION}.program`,
           title: information.labels.programSelection.selectProgramLabel,
           placeholder:
             information.labels.programSelection.selectProgramPlaceholder,
-          options: (application: Application) => {
-            const programs = ['prugfaa '] // TODO application.externalData.programs
-            return programs.map((program) => {
-              return {
-                label: program,
-                value: program,
-              }
-            })
+          condition: (formValue: FormValue, externalData) => {
+            const universityAnswer = getValueViaPath(
+              formValue,
+              `${Routes.PROGRAMINFORMATION}.university`,
+            )
+            return !!universityAnswer
           },
-        }),
-        buildSelectField({
-          id: `${Routes.PROGRAMINFORMATION}.major`,
-          title: information.labels.programSelection.selectMajorLabel,
-          placeholder:
-            information.labels.programSelection.selectMajorPlaceholder,
           options: (application: Application) => {
-            const majors = ['major1 '] // TODO application.externalData.majors
-            return majors.map((major) => {
+            const universityAnswer = getValueViaPath(
+              application.answers,
+              `${Routes.PROGRAMINFORMATION}.university`,
+            )
+            const programs = application.externalData.programs
+              .data as Array<ProgramBase>
+            const filteredByAnswer = programs.filter(
+              (program) => program.universityId === universityAnswer,
+            )
+            return filteredByAnswer.map((program) => {
               return {
-                label: major,
-                value: major,
+                label: program.nameIs,
+                value: program.id,
               }
             })
           },
@@ -79,37 +77,68 @@ export const ProgramSubSection = buildSubSection({
           space: 'gutter',
           title:
             information.labels.programSelection.checkboxModeOfDeliveryLabel,
-          options: [
-            // TODO right options
-            {
-              label: 'Staðnám',
-              value: 'OnSite',
-            },
-            {
-              label: 'Fjarnám með staðarlotun',
-              value: 'Online',
-            },
-          ],
-        }),
-        buildSelectField({
-          id: `${Routes.PROGRAMINFORMATION}.examLocation`,
-          title: information.labels.programSelection.selectExamLocationLabel,
-          placeholder:
-            information.labels.programSelection.selectExamLocationPlaceholder,
-          condition: (application) => {
-            // TODO check if answer to modeOfDelivery was online, then show
-            return true
+          condition: (formValue: FormValue, externalData) => {
+            const programAnswer = getValueViaPath(
+              formValue,
+              `${Routes.PROGRAMINFORMATION}.program`,
+            )
+
+            const programs = externalData.programs.data as Array<ProgramBase>
+
+            const filteredByAnswer = programs.filter(
+              (program) => program.id === programAnswer,
+            )[0]
+
+            return !!programAnswer && filteredByAnswer.modeOfDelivery.length > 0
           },
+          // TODO can we make this dynamic, so options change when answer to previous question changes
+          // TODO translate options
           options: (application: Application) => {
-            const locations = ['location1 '] // TODO application.externalData.locations
-            return locations.map((location) => {
+            const programAnswer = getValueViaPath(
+              application.answers,
+              `${Routes.PROGRAMINFORMATION}.program`,
+            )
+            const programs = application.externalData.programs
+              .data as Array<ProgramBase>
+
+            const filteredByAnswer = programs.filter(
+              (program) => program.id === programAnswer,
+            )[0]
+
+            return filteredByAnswer.modeOfDelivery.map((deliveryMethod) => {
               return {
-                label: location,
-                value: location,
+                label: deliveryMethod.modeOfDelivery,
+                value: deliveryMethod.modeOfDelivery,
               }
             })
           },
         }),
+        // TODO set correct locations when they are available in API
+        // buildSelectField({
+        //   id: `${Routes.PROGRAMINFORMATION}.examLocation`,
+        //   title: information.labels.programSelection.selectExamLocationLabel,
+        //   placeholder:
+        //     information.labels.programSelection.selectExamLocationPlaceholder,
+        //   condition: (formValue: FormValue, externalData) => {
+        //     const modeOfDeliveryAnswer = getValueViaPath(
+        //       formValue,
+        //       `${Routes.PROGRAMINFORMATION}.modeOfDelivery`,
+        //     )
+        //     return (
+        //       modeOfDeliveryAnswer === 'ONLINE' ||
+        //       modeOfDeliveryAnswer === 'ONLINE_WITH_SESSION'
+        //     )
+        //   },
+        //   options: (application: Application) => {
+        //     const locations = ['location1 '] // TODO application.externalData.locations
+        //     return locations.map((location) => {
+        //       return {
+        //         label: location,
+        //         value: location,
+        //       }
+        //     })
+        //   },
+        // }),
       ],
     }),
   ],

@@ -25,6 +25,7 @@ import {
   UserProfileApi,
   NationalRegistryIndividualApi,
   UniversityApi,
+  ProgramApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes } from '../utils'
@@ -81,6 +82,7 @@ const template: ApplicationTemplate<
                 NationalRegistryIndividualApi,
                 UserProfileApi,
                 UniversityApi,
+                ProgramApi,
               ],
             },
           ],

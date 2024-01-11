@@ -10,8 +10,8 @@ export const InformationSection = buildSection({
   title: information.general.sectionTitle,
   children: [
     ProgramSubSection,
-    ExtraDataProviderSubSection,
-    ExtraPermissionSubSection,
+    // ExtraDataProviderSubSection,
+    // ExtraPermissionSubSection,
     UserInformationSubSection,
   ],
 })

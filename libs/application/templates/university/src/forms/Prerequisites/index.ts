@@ -14,6 +14,7 @@ import {
 } from '../../lib/messages'
 import {
   NationalRegistryIndividualApi,
+  ProgramApi,
   UniversityApi,
   UserProfileApi,
 } from '../../dataProviders'
@@ -63,7 +64,10 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               provider: UniversityApi,
               title: '',
-              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: ProgramApi,
+              title: '',
             }),
           ],
         }),

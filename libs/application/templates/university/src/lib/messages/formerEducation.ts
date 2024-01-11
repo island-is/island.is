@@ -12,7 +12,7 @@ export const formerEducation = {
     educationOptions: defineMessages({
       pageTitle: {
         id: 'uni.application:formerEducation.educationOptions.pageTitle',
-        defaultMessage: 'Námsferill',
+        defaultMessage: 'Námsferilsupplýsingar',
         description: 'Former education page title',
       },
       pageDescription: {
@@ -39,7 +39,8 @@ export const formerEducation = {
       },
       diplomaNotFinishedDescription: {
         id: 'uni.application:formerEducation.educationOptions.diplomaNotFinishedDescription',
-        defaultMessage: 'Lorem ipsum',
+        defaultMessage:
+          'Um leið og gögn um stúdentspróf liggur fyrir mun háskólinn sækja þau rafrænt.',
         description: 'Diploma not finished checkbox description',
       },
       exemptionLabel: {
@@ -59,7 +60,7 @@ export const formerEducation = {
         description: 'Third level checkbox label',
       },
       thirdLevelDescription: {
-        id: 'uni.application:formerEducation.educationOptions.thirdLevelDescription',
+        id: 'uni.application:formerEducation.educationOptions.thirdLevelDescription#markdown',
         defaultMessage: 'Sjá upplýsingar hér',
         description: 'Third level checkbox description',
       },

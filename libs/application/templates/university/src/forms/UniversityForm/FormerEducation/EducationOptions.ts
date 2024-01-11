@@ -7,11 +7,13 @@ import { Routes } from '../../../lib/constants'
 
 export const EducationOptionsSubSection = buildSubSection({
   id: Routes.EDUCATIONOPTIONS,
-  title: formerEducation.general.sectionTitle,
+  title: formerEducation.labels.educationOptions.pageTitle,
   children: [
     buildCheckboxField({
       id: `${Routes.EDUCATIONOPTIONS}`,
-      title: 'TODO',
+      title: formerEducation.labels.educationOptions.pageTitle,
+      description: formerEducation.labels.educationOptions.pageDescription,
+      backgroundColor: 'white',
       options: [
         {
           label: formerEducation.labels.educationOptions.diplomaFinishedLabel,

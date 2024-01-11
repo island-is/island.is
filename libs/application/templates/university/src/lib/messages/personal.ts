@@ -55,6 +55,12 @@ export const personal = {
         defaultMessage: 'Símanúmer',
         description: 'User information phone number label',
       },
+      alertMessage: {
+        id: 'uni.application:personal.labels.userInformation.alertMessage#markdown',
+        defaultMessage:
+          'Ef netfang og símanúmer er ekki rétt hér að neðan þá verður að breyta þeim upplýsingum á mínum síðum. Þú þarft svo að koma aftur í þennan glugga og uppfæra upplýsingar hér neðst á síðunni.',
+        description: 'User information alert message',
+      },
     }),
   },
 }

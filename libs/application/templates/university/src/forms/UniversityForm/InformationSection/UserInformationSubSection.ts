@@ -4,6 +4,7 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { personal } from '../../../lib/messages'
 import { Application, UserProfile } from '@island.is/api/schema'
@@ -87,6 +88,12 @@ export const UserInformationSubSection = buildSubSection({
 
             return `${individual?.address?.postalCode} ${individual?.address?.city}`
           },
+        }),
+        buildAlertMessageField({
+          id: 'userInformation.alert',
+          title: '',
+          alertType: 'info',
+          message: personal.labels.userInformation.alertMessage,
         }),
         buildTextField({
           id: 'userInformation.email',
