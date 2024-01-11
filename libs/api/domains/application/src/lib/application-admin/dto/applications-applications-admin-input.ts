@@ -1,4 +1,3 @@
-import {} from '@island.is/clients/smartsolutions'
 import { Field, InputType, OmitType, PartialType } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 
