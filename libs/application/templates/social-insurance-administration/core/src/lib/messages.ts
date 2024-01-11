@@ -72,8 +72,7 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     socialInsuranceAdministrationPrivacyTitle: {
       id: 'sia.application:prerequisites.socialInsuranceAdministration.privacy.title',
-      defaultMessage:
-        'Gagnaöflun og meðferð persónuupplýsinga',
+      defaultMessage: 'Gagnaöflun og meðferð persónuupplýsinga',
       description: 'english translation',
     },
     socialInsuranceAdministrationPrivacyDescription: {
