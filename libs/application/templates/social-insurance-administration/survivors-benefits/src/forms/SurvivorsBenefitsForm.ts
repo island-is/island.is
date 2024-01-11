@@ -412,8 +412,64 @@ export const SurvivorsBenefitsForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'expectingChildSection',
+          title: survivorsBenefitsFormMessage.info.expectingChildTitle,
+          condition: (_, externalData) => {
+            const { hasSpouse } = getApplicationExternalData(externalData)
+            console.log('hasSpouse: ', hasSpouse)
+            // if applicant does not have a spouse, then show question
+            if (hasSpouse) return false
+            return true
+          },
+          children: [
+            buildMultiField({
+              id: 'expectingChild',
+              title: survivorsBenefitsFormMessage.info.expectingChildTitle,
+              children: [
+                buildRadioField({
+                  id: 'expectingChild.question',
+                  title: '',
+                  options: getYesNoOptions(),
+                  width: 'half',
+                }),
+              ],
+            }),
+          ],
+        }),
       ],
     }),
+    // buildSection({
+    //   id: 'expectingChildSection',
+    //   title: 'Áttu von á barni?', //oldAgePensionFormMessage.pre.questionTitle,
+    //   children: [
+    //     buildSubSection({
+    //       condition: (_, externalData) => {
+    //         const { hasSpouse } = getApplicationExternalData(externalData)
+    //         console.log('hasSpouse: ', hasSpouse)
+    //         // if applicant does not have a spouse, then show question
+    //         if (!hasSpouse) return true
+    //         return false
+    //       },
+    //       id: 'expectingChild',
+    //       title: 'Áttu von á barni?',
+    //       children: [
+    //         buildMultiField({
+    //           id: 'expectingChild',
+    //           title: 'Áttu von á barni?',
+    //           children: [
+    //             buildRadioField({
+    //               id: 'expectingChild.question',
+    //               title: '',
+    //               options: getYesNoOptions(),
+    //               width: 'half',
+    //             }),
+    //           ],
+    //         }),
+    //       ],
+    //     }),
+    //   ],
+    // }),
     buildSection({
       id: 'additionalInfo',
       title: socialInsuranceAdministrationMessage.additionalInfo.section,

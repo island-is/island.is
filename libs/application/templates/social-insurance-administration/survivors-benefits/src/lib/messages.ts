@@ -64,6 +64,12 @@ export const survivorsBenefitsFormMessage: MessageDir = {
         'Samkvæmt uppflettingu í Þjóðskrá ert þú með eftirfarandi barn/börn skráð á lögheimili hjá þér.',
       description: 'english translation',
     },
+    expectingChildTitle: {
+      id: 'sb.application:expectingChild.title',
+      defaultMessage:
+        'Áttu von á barni',
+      description: 'Are you expecting a child?',
+    },
   }),
 
   payment: defineMessages({

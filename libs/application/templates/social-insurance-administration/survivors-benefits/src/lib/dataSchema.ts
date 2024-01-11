@@ -138,7 +138,10 @@ export const dataSchema = z.object({
     ({ spouseAllowance, spouseAllowanceUsage }) =>
       spouseAllowance === YES ? !!spouseAllowanceUsage : true,
     { path: ['spouseAllowanceUsage'] },
-  )
+  ),
+  expectingChild: z.object({
+    question: z.enum([YES, NO]),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
