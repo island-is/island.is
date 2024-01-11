@@ -352,7 +352,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     return attachments
   }
-    
+
   private async getASFTEAttachments(
     application: Application,
   ): Promise<Attachment[]> {
@@ -374,7 +374,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     return attachments
   }
-    
 
   async getPdf(key: string) {
     const file = await this.s3
@@ -436,7 +435,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         application.typeId.toLowerCase(),
       )
     }
-    
+
     if (
       application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
     ) {
