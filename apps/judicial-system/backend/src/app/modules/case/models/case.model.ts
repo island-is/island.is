@@ -30,6 +30,7 @@ import {
   CourtDocument,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -1168,4 +1169,16 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   appealIsolationToDate?: Date
+
+  /**********
+   * Indicates whether someone requested that the appeals court's ruling should not
+   * be published immediately.
+   **********/
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(UserRole),
+  })
+  @ApiPropertyOptional({ enum: UserRole, isArray: true })
+  requestAppealRulingNotToBePublished?: UserRole[]
 }

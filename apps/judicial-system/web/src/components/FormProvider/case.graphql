@@ -232,6 +232,7 @@ query Case($input: CaseQueryInput!) {
     appealValidToDate
     isAppealCustodyIsolation
     appealIsolationToDate
+    requestAppealRulingNotToBePublished
     eventLogs {
       id
       created

@@ -17,10 +17,7 @@ export class VehicleOwnerAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateOwnerInput,
   ): Promise<boolean> {
-    logger.info(`Creating Vehicle Owner`, {
-      name: input.name,
-      user,
-    })
+    logger.info(`Creating Vehicle Owner`)
 
     const vm = new VehicleOwnerModel()
     vm.nationalId = user.nationalId
