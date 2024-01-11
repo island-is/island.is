@@ -333,35 +333,23 @@ export const overviewAssets = [
     marginBottom: 'gutter',
     space: 'gutter',
   }),
-  buildCustomField(
-    {
-      title: '',
-      id: 'estateAssetsCards',
-      component: 'Cards',
-      doesNotRequireAnswer: true,
-    },
-    {
-      cards: ({ answers }: Application) => {
-        const otherAssets = (answers.assets as unknown as EstateAssets)
-          .otherAssets.data
-        return (
-          otherAssets.map((asset: otherassetsData) => ({
-            title: asset.otherAssets,
-            description: [
-              `${m.otherAssetsValue.defaultMessage}: ${formatCurrency(
-                asset.otherAssetsValue ?? '',
-              )}`,
-            ],
-          })) ?? []
-        )
-      },
-    },
-  ),
+  buildDescriptionField({
+    id: 'moneyInfo',
+    title: m.otherAssetsDescription,
+    description: (application: Application) =>
+      getValueViaPath<string>(application.answers, 'assets.otherAssets.info'),
+    titleVariant: 'h4',
+    space: 'gutter',
+    marginBottom: 'gutter',
+    condition: (answers) =>
+      getValueViaPath<string>(answers, 'assets.otherAssets.info') !== '',
+  }),
+
   buildKeyValueField({
     label: m.otherAssetsTotal,
     display: 'flex',
     value: ({ answers }) => {
-      const total = getValueViaPath(answers, 'assets.otherAssets.total')
+      const total = getValueViaPath(answers, 'assets.otherAssets.value')
       return formatCurrency(String(total))
     },
   }),
