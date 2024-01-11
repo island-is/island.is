@@ -10,8 +10,9 @@ import {
   institutionMapper,
 } from '@island.is/application/types'
 import { Application, ApplicationPaginatedResponse } from './application.model'
-import { invertBy } from 'lodash'
-import { endOfDay, startOfDay } from 'date-fns'
+import invertBy from 'lodash/invertBy'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
