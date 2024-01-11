@@ -18,10 +18,6 @@ export const CountriesOfResidenceSubSection = buildSubSection({
         buildCustomField({
           id: 'countriesOfResidence',
           title: '',
-          condition: (answer: Answer, externalData) => {
-            console.log('externalDAta', externalData)
-            return true
-          },
           component: 'ResidenceCountries',
         }),
       ],

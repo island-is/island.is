@@ -52,8 +52,6 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
   const dateFromField = `${fieldIndex}.dateFrom`
   const dateRangeField = `${fieldIndex}.dateRange`
 
-  console.log('application', application)
-
   const countryOptions = (
     getValueViaPath(
       application.externalData,
