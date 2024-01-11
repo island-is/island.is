@@ -21,11 +21,12 @@ import {
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { ApplicationType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getYesNOOptions,
 } from '../lib/oldAgePensionUtils'
+import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   NationalRegistryResidenceHistoryApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
@@ -35,7 +36,7 @@ import {
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'OldAgePensionPrerequisites',
-  title: oldAgePensionFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: false,
@@ -85,23 +86,33 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'externalData',
-          title: oldAgePensionFormMessage.pre.externalDataSubSection,
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
           children: [
             buildExternalDataProvider({
               id: 'approveExternalData',
-              title: oldAgePensionFormMessage.pre.externalDataSubSection,
-              subTitle: oldAgePensionFormMessage.pre.externalDataDescription,
-              checkboxLabel: oldAgePensionFormMessage.pre.checkboxProvider,
+              title:
+                socialInsuranceAdministrationMessage.pre.externalDataSection,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .externalDataDescription,
+              checkboxLabel:
+                socialInsuranceAdministrationMessage.pre.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
                   provider: NationalRegistryUserApi,
-                  title: oldAgePensionFormMessage.pre.skraInformationTitle,
+                  title:
+                    socialInsuranceAdministrationMessage.pre
+                      .skraInformationTitle,
                   subTitle:
                     oldAgePensionFormMessage.pre.skraInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryResidenceHistoryApi,
-                  title: '',
+                  title:
+                    socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+                  subTitle:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationInformationDescription,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistrySpouseApi,
@@ -113,12 +124,17 @@ export const PrerequisitesForm: Form = buildForm({
                     oldAgePensionFormMessage.pre
                       .socialInsuranceAdministrationInformationTitle,
                   subTitle:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationDescription,
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationDataDescription,
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
-                  title: '',
+                  title:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationPrivacyTitle,
+                  subTitle:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationPrivacyDescription,
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationCurrenciesApi,
@@ -146,12 +162,12 @@ export const PrerequisitesForm: Form = buildForm({
                 buildRadioField({
                   id: 'questions.pensionFund',
                   title: '',
-                  options: getYesNOOptions(),
+                  options: getYesNoOptions(),
                   width: 'half',
                 }),
                 buildAlertMessageField({
                   id: 'question.pensionFundAlert',
-                  title: oldAgePensionFormMessage.shared.alertTitle,
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.pre.pensionFundAlertDescription,
                   doesNotRequireAnswer: true,
@@ -170,7 +186,8 @@ export const PrerequisitesForm: Form = buildForm({
                   actions: [
                     {
                       event: DefaultEvents.SUBMIT,
-                      name: oldAgePensionFormMessage.pre.startApplication,
+                      name: socialInsuranceAdministrationMessage.pre
+                        .startApplication,
                       type: 'primary',
                       condition: (answers) => {
                         const { pensionFundQuestion } =
@@ -212,32 +229,32 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'applicant',
-      title: oldAgePensionFormMessage.applicant.applicantSection,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [],
     }),
     buildSection({
       id: 'periodSection',
-      title: oldAgePensionFormMessage.period.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.title,
       children: [],
     }),
     buildSection({
       id: 'fileUpload',
-      title: oldAgePensionFormMessage.fileUpload.title,
+      title: socialInsuranceAdministrationMessage.fileUpload.title,
       children: [],
     }),
     buildSection({
       id: 'additionalInformation',
-      title: oldAgePensionFormMessage.comment.additionalInfoTitle,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [],
     }),
     buildSection({
       id: 'confirm',
-      title: oldAgePensionFormMessage.review.overviewTitle,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [],
     }),
     buildSection({
       id: 'conclusion',
-      title: oldAgePensionFormMessage.review.confirmSectionTitle,
+      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
       children: [],
     }),
   ],

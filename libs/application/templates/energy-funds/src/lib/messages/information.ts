@@ -91,7 +91,7 @@ export const information = {
         description: 'Vehicle title',
       },
       description: {
-        id: 'ef.application:information.labels.vehicle.title',
+        id: 'ef.application:information.labels.vehicle.description',
         defaultMessage:
           'Athugaðu að ekki er veittur styrkur fyrir kaup á bifreiðum sem kosta meira en 10.000.000,-',
         description: 'Vehicle description',
@@ -149,6 +149,11 @@ export const information = {
         defaultMessage: 'Ökutækið hefur nú þegar fengið styrk',
         description: 'Checkbox not checkable tag label',
       },
+      carNotEligable: {
+        id: 'ef.application:information.labels.pickVehicle.carNotEligable',
+        defaultMessage: 'Ökutækið hefur ekki rétt á styrk',
+        description: 'car is not eligable for this grant',
+      },
       checkboxCheckableTag: {
         id: 'ef.application:information.labels.pickVehicle.checkboxCheckableTag',
         defaultMessage: 'Styrkur {amount}',
@@ -156,7 +161,7 @@ export const information = {
       },
       registrationDate: {
         id: 'ef.application:information.labels.pickVehicle.registrationDate',
-        defaultMessage: 'Fyrsti skráningardagur',
+        defaultMessage: 'Nýskráningardagur',
         description: 'Vehicle registrationDate label',
       },
     }),

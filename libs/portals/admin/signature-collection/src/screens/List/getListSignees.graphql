@@ -5,12 +5,10 @@ query Signatures($input: SignatureCollectionIdInput!) {
     signee {
       name
       nationalId
-      areaId
       address
     }
-    signatureType
+    isDigital
     active
     created
-    modified
   }
 }

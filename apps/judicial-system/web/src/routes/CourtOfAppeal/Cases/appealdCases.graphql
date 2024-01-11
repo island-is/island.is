@@ -1,0 +1,34 @@
+query AppealedCases($input: CaseListQueryInput) {
+  cases(input: $input) {
+    id
+    created
+    type
+    decision
+    state
+    courtCaseNumber
+    accusedAppealDecision
+    prosecutorAppealDecision
+    accusedPostponedAppealDate
+    prosecutorPostponedAppealDate
+    courtEndTime
+    validToDate
+    policeCaseNumbers
+    parentCaseId
+    appealCaseNumber
+    appealState
+    appealRulingDecision
+    defendants {
+      id
+      created
+      modified
+      caseId
+      nationalId
+      name
+      noNationalId
+      defendantWaivesRightToCounsel
+    }
+    appealedDate
+    initialRulingDate
+    rulingDate
+  }
+}

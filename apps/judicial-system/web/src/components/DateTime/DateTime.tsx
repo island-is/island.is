@@ -18,7 +18,7 @@ interface Props {
   timeLabel?: string
   minDate?: Date
   maxDate?: Date
-  selectedDate?: Date | string
+  selectedDate?: Date | string | null
   disabled?: boolean
   required?: boolean
   blueBox?: boolean
@@ -57,7 +57,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
           .padStart(2, '0')}`
       : ''
 
-  const date = (d: Date | string | undefined) => {
+  const date = (d: Date | string | undefined | null) => {
     return d ? new Date(d) : undefined
   }
 

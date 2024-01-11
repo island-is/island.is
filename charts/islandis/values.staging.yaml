@@ -359,6 +359,7 @@ api:
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
     XROAD_SHIP_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
+    XROAD_SIGNATURE_COLLECTION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
@@ -509,6 +510,7 @@ api:
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
@@ -604,6 +606,7 @@ application-system-api:
     XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1'
+    XROAD_SIGNATURE_COLLECTION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
@@ -620,6 +623,7 @@ application-system-api:
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '7005942039'
+    XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   files:
     - 'islyklar.p12'
   grantNamespaces:
@@ -1847,6 +1851,7 @@ service-portal-api:
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.staging01.devland.is/minarsidur'
+    USER_PROFILE_WORKER_PAGE_SIZE: '3000'
   files:
     - 'islyklar.p12'
   grantNamespaces:

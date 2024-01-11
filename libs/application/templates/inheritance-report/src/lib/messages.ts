@@ -56,6 +56,22 @@ export const m = defineMessages({
     description:
       'User not eligible for estate or no estates found bound to their national id',
   },
+  applicationInfoSectionTitle: {
+    id: 'es.application:applicationInfoSectionTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Titill fyrir hliðastiku',
+  },
+  applicationInfoTitle: {
+    id: 'es.application:applicationInfoTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Upplýsinga skjár titill',
+  },
+  applicationInfoText: {
+    id: 'es.application:applicationInfoTexts#markdown',
+    defaultMessage: 'Upplýsinga Texti',
+    description: 'Texti fyrir upplýsinga skjá',
+  },
+
   deceasedInfoProviderTitle: {
     id: 'ir.application:deceasedInfoProviderTitle',
     defaultMessage: 'Upplýsingar um hinn látna',
@@ -523,7 +539,7 @@ export const m = defineMessages({
   },
   moneyText: {
     id: 'ir.application:moneyText',
-    defaultMessage: 'Upplýsingar um peninga',
+    defaultMessage: 'peningar og bankahólf',
     description: '',
   },
   moneyPlaceholder: {
@@ -594,6 +610,11 @@ export const m = defineMessages({
     id: 'ir.application:overviewDescription',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  notFilledOut: {
+    id: 'ir.application:notFilledOut',
+    defaultMessage: 'Ekki fyllt út',
     description: '',
   },
   assetOverview: {

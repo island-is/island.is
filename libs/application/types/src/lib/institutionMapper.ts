@@ -78,7 +78,11 @@ export const institutionMapper = {
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.CITIZENSHIP]: InstitutionTypes.UTLENDINGASTOFNUN,
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]:
+    InstitutionTypes.TRYGGINGASTOFNUN,
   [ApplicationTypes.ENERGY_FUNDS]: InstitutionTypes.ORKUSTOFNUN,
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]:
     InstitutionTypes.EMBAETTI_LANDLAEKNIS,
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]:
+    InstitutionTypes.VINNUEFTIRLITID,
 }

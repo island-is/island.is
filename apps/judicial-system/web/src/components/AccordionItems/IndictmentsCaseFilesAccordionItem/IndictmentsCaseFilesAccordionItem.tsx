@@ -26,7 +26,6 @@ import {
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseFile as TCaseFile,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -34,6 +33,7 @@ import {
   FileNotFoundModal,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFile as TCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useFileList,
@@ -65,14 +65,14 @@ interface CaseFileProps {
 
 export interface ReorderableItem {
   id: string
-  displayText: string
+  displayText?: string | null
   isDivider: boolean
   isHeading: boolean
-  created?: string
-  chapter?: number
-  orderWithinChapter?: number
-  userGeneratedFilename?: string
-  displayDate?: string
+  created?: string | null
+  chapter?: number | null
+  orderWithinChapter?: number | null
+  userGeneratedFilename?: string | null
+  displayDate?: string | null
   canOpen?: boolean
 }
 
@@ -154,7 +154,9 @@ export const sortedFilesInChapter = (
     .sort((a, b) => {
       if (
         a.orderWithinChapter === undefined ||
-        b.orderWithinChapter === undefined
+        a.orderWithinChapter === null ||
+        b.orderWithinChapter === undefined ||
+        b.orderWithinChapter === null
       ) {
         return 0
       }
@@ -163,7 +165,7 @@ export const sortedFilesInChapter = (
     })
 }
 
-const renderChapter = (chapter: number, name: string) => (
+const renderChapter = (chapter: number, name?: string | null) => (
   <Box className={styles.chapterContainer} data-testid="chapter">
     <Box marginRight={3}>
       <Text variant="h4">{`${chapter + 1}.`}</Text>
@@ -180,9 +182,9 @@ const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [editedFilename, setEditedFilename] = useState<string | undefined>(
-    caseFile.userGeneratedFilename,
-  )
+  const [editedFilename, setEditedFilename] = useState<
+    string | undefined | null
+  >(caseFile.userGeneratedFilename)
   const [ref, { width }] = useMeasure<HTMLDivElement>()
 
   const [editedDisplayDate, setEditedDisplayDate] = useState<
@@ -214,21 +216,26 @@ const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
       style={{
         y,
         boxShadow,
-        // Prevents text selection when dragging
-        userSelect: isDragging ? 'none' : 'auto',
       }}
       className={styles.reorderItem}
       dragListener={false}
       dragControls={controls}
+      onPointerDown={(evt) => {
+        controls.start(evt)
+        // Prevents text selection when dragging
+        evt.preventDefault()
+      }}
     >
-      {caseFile.isHeading && caseFile.chapter !== undefined ? (
+      {caseFile.isHeading &&
+      caseFile.chapter !== undefined &&
+      caseFile.chapter !== null ? (
         renderChapter(caseFile.chapter, caseFile.displayText)
       ) : caseFile.isDivider ? (
         <Box marginBottom={2}>
           <Box marginBottom={1}>
-            <Text variant="h4">{caseFile.displayText.split('|')[0]}</Text>
+            <Text variant="h4">{caseFile.displayText?.split('|')[0]}</Text>
           </Box>
-          <Text>{caseFile.displayText.split('|')[1]}</Text>
+          <Text>{caseFile.displayText?.split('|')[1]}</Text>
         </Box>
       ) : (
         <div
@@ -270,7 +277,7 @@ const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
                           name="fileName"
                           size="xs"
                           placeholder={formatMessage(m.simpleInputPlaceholder)}
-                          defaultValue={displayName}
+                          defaultValue={displayName ?? undefined}
                           onChange={(evt) =>
                             setEditedFilename(evt.target.value)
                           }

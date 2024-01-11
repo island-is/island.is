@@ -26,7 +26,6 @@ type RepeaterProps = {
     props: {
       fields: Array<object>
       repeaterButtonText: string
-      repeaterHeaderText: string
       sumField: string
       fromExternalData?: string
     }
@@ -66,7 +65,9 @@ export const ReportFieldsRepeater: FC<
   const taxFreeLimit = Number(
     formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
   )
-  const answersValues = getValueViaPath(answers, id) as Array<object>
+  const answersValues = getValueViaPath(answers, id) as
+    | Array<object>
+    | undefined
 
   /* ------ Stocks ------ */
   const [rateOfExchange, setRateOfExchange] = useState(0)
@@ -231,9 +232,6 @@ export const ReportFieldsRepeater: FC<
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
-              <Text variant="h4" marginBottom={2}>
-                {props.repeaterHeaderText}
-              </Text>
               <Box position="absolute" className={styles.removeFieldButton}>
                 <Button
                   variant="ghost"

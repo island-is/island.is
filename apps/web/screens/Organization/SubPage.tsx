@@ -25,6 +25,7 @@ import {
   SliceMachine,
   Webreader,
 } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   Query,
@@ -68,7 +69,7 @@ const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
           id: slice.id,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
-          text: slice['title'] ?? slice['leftTitle'] ?? '',
+          text: slice.json?.title ?? slice.title ?? slice.leftTitle ?? '',
         }))
         .filter((item) => !!item.text),
     [slices],
@@ -274,21 +275,23 @@ const SubPage: Screen<SubPageProps> = ({
           </GridRow>
         </Box>
       </GridContainer>
-      {renderSlices(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.slices,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceCustomRenderer,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceExtraText,
-        namespace,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationPage.slug,
-      )}
+      <Stack space={SLICE_SPACING}>
+        {renderSlices(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.slices,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceCustomRenderer,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceExtraText,
+          namespace,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationPage.slug,
+        )}
+      </Stack>
     </OrganizationWrapper>
   )
 }

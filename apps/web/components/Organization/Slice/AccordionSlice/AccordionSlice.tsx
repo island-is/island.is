@@ -1,37 +1,24 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Accordion,
   AccordionCard,
   AccordionItem,
   ActionCard,
   Box,
-  BoxProps,
   CategoryCard,
   Text,
 } from '@island.is/island-ui/core'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+import { BorderAbove } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
   Html,
 } from '@island.is/web/graphql/schema'
-import { SliceType } from '@island.is/island-ui/contentful'
+import { extractHeadingLevels } from '@island.is/web/utils/navigation'
 import { webRichText } from '@island.is/web/utils/richText'
-
-const headingLevels = ['h2', 'h3', 'h4', 'h5'] as const
-type HeadingType = typeof headingLevels[number]
-
-export const extractHeadingLevels = (slice: AccordionSliceSchema) => {
-  let titleHeading: HeadingType = 'h2'
-  let childHeading: HeadingType = 'h3'
-
-  if (headingLevels.includes(slice.titleHeadingLevel as HeadingType)) {
-    titleHeading = slice.titleHeadingLevel as HeadingType
-    childHeading = `h${Number(titleHeading[1]) + 1}` as HeadingType
-  }
-
-  return { titleHeading, childHeading }
-}
 
 interface SliceProps {
   slice: AccordionSliceSchema
@@ -43,23 +30,12 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   const router = useRouter()
   const labelId = 'sliceTitle-' + slice.id
 
-  const borderProps: BoxProps = slice.hasBorderAbove
-    ? {
-        borderTopWidth: 'standard',
-        borderColor: 'standard',
-        paddingTop: [4, 4, 6],
-        paddingBottom: [4, 4, 6],
-      }
-    : {
-        paddingTop: 2,
-        paddingBottom: 2,
-      }
-
   const { titleHeading, childHeading } = extractHeadingLevels(slice)
 
   return (
     <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
-      <Box {...borderProps}>
+      {slice.hasBorderAbove && <BorderAbove />}
+      <Box>
         {slice.showTitle && (
           <Text variant="h2" as={titleHeading} marginBottom={2} id={labelId}>
             {slice.title}

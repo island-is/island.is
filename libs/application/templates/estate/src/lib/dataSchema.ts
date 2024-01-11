@@ -108,14 +108,6 @@ export const estateSchema = z.object({
           .optional(),
       })
       .refine(
-        ({ nationalId, advocate }) => {
-          return kennitala.info(nationalId as string).age < 18 ? advocate : true
-        },
-        {
-          path: ['nationalId'],
-        },
-      )
-      .refine(
         ({ foreignCitizenship, nationalId }) => {
           return !foreignCitizenship?.length
             ? nationalId && kennitala.isValid(nationalId)
@@ -145,7 +137,7 @@ export const estateSchema = z.object({
         },
       )
 
-      /* phone and email validation for advocates */
+      /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
           return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
@@ -452,16 +444,16 @@ export const estateSchema = z.object({
   // is: Umboðsmaður
   representative: z
     .object({
-      name: z.string().or(z.undefined()),
-      nationalId: z.string().or(z.undefined()),
-      phone: z.string(),
-      email: z.string(),
+      name: z.string().optional(),
+      nationalId: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return name !== '' || nationalId !== '' || phone !== ''
-          ? isValidEmail(email)
+        return !!name || !!nationalId || !!phone
+          ? email && isValidEmail(email)
           : true
       },
       {
@@ -470,8 +462,8 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return name !== '' || nationalId !== '' || email !== ''
-          ? isValidPhoneNumber(phone)
+        return !!name || !!nationalId || !!email
+          ? phone && isValidPhoneNumber(phone)
           : true
       },
       {
@@ -480,7 +472,7 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return name !== '' || phone !== '' || email !== ''
+        return !!name || !!phone || !!email
           ? nationalId &&
               kennitala.isPerson(nationalId) &&
               kennitala.info(nationalId).age >= 18
@@ -492,9 +484,7 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return phone !== '' || email !== '' || nationalId !== ''
-          ? isValidString(name)
-          : true
+        return !!phone || !!email || !!nationalId ? isValidString(name) : true
       },
       {
         path: ['name'],

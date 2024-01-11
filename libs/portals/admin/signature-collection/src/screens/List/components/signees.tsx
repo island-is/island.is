@@ -19,34 +19,36 @@ import { pageSize } from '../../../lib/utils'
 
 const Signees = () => {
   const { formatMessage } = useLocale()
+
   const { allSignees } = useLoaderData() as { allSignees: Signature[] }
   const [signees, setSignees] = useState(allSignees)
+
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
 
   useEffect(() => {
-    if (searchTerm.length > 0) {
-      let filteredSignees = []
+    setSignees(allSignees)
+  }, [allSignees])
 
-      filteredSignees = signees.filter((s) => {
-        return (
-          s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          s.signee.nationalId.includes(searchTerm)
-        )
-      })
+  useEffect(() => {
+    let filteredSignees: Signature[] = allSignees
 
-      setPage(1)
-      setSignees(filteredSignees)
-    } else {
-      setSignees(allSignees)
-    }
+    filteredSignees = filteredSignees.filter((s) => {
+      return (
+        s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        formatNationalId(s.signee.nationalId).includes(searchTerm)
+      )
+    })
+
+    setPage(1)
+    setSignees(filteredSignees)
   }, [searchTerm])
 
   return (
     <Box marginTop={7}>
       <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
 
-      <GridRow marginTop={3}>
+      <GridRow marginTop={3} marginBottom={5}>
         <GridColumn span={['12/12', '12/12', '7/12']}>
           <FilterInput
             name="searchSignee"
@@ -95,8 +97,7 @@ const Signees = () => {
               {signees
                 .slice(pageSize * (page - 1), pageSize * page)
                 .map((s) => {
-                  const boxColor =
-                    s.signatureType === 'Paper' ? 'purple100' : 'white'
+                  const boxColor = s.isDigital ? 'white' : 'purple100'
 
                   return (
                     <T.Row key={s.id}>
@@ -122,10 +123,10 @@ const Signees = () => {
                         box={{ background: boxColor }}
                         text={{ variant: 'medium' }}
                       >
-                        {formatMessage(m.tempMessage)}
+                        {s.signee.address}
                       </T.Data>
                       <T.Data box={{ background: boxColor }}>
-                        {s.signatureType === 'Paper' && (
+                        {!s.isDigital && (
                           <Icon
                             icon="document"
                             type="outline"

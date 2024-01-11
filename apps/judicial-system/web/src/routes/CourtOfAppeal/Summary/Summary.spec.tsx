@@ -4,9 +4,9 @@ import { MockedProvider } from '@apollo/client/testing'
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { CaseState } from '@island.is/judicial-system/types'
 import {
   CaseOrigin,
+  CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockTransitonCaseMutation } from '@island.is/judicial-system-web/src/utils/mocks'

@@ -32,12 +32,11 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
-import { STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
+import { SLICE_SPACING, STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
 import {
   Image,
   Organization,
   OrganizationPage,
-  OrganizationTheme,
 } from '@island.is/web/graphql/schema'
 import {
   useLinkResolver,
@@ -346,7 +345,8 @@ export const OrganizationExternalLinks: React.FC<
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
               organizationPage.slug === 'sjukratryggingar' ||
-              organizationPage.slug === 'icelandic-health-insurance'
+              organizationPage.slug === 'icelandic-health-insurance' ||
+              organizationPage.slug === 'iceland-health'
 
             let variant = undefined
             if (
@@ -420,6 +420,7 @@ export const OrganizationFooter: React.FC<
       break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
+    case 'iceland-health':
       OrganizationFooterComponent = (
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
@@ -775,6 +776,8 @@ export const OrganizationWrapper: React.FC<
 
   const SidebarContainer = stickySidebar ? Sticky : Box
 
+  const sidebarCards = organizationPage.sidebarCards ?? []
+
   return (
     <>
       <HeadWithSocialSharing
@@ -789,7 +792,7 @@ export const OrganizationWrapper: React.FC<
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
-          paddingBottom={[4, 4, 4]}
+          paddingBottom={[4, 4, 9]}
           isSticky={false}
           fullWidthContent={fullWidthContent}
           sidebarContent={
@@ -953,7 +956,7 @@ export const OrganizationWrapper: React.FC<
                   <Box
                     className="rs_read"
                     paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}
-                    paddingBottom={6}
+                    paddingBottom={SLICE_SPACING}
                   >
                     <Text variant="default">{pageDescription}</Text>
                   </Box>
@@ -967,6 +970,32 @@ export const OrganizationWrapper: React.FC<
           <Box className="rs_read" paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}
           </Box>
+
+          {isMobile && sidebarCards.length > 0 && (
+            <Box marginY={4}>
+              <Stack space={3}>
+                {sidebarCards.map((card) => {
+                  if (card.__typename === 'SidebarCard') {
+                    return (
+                      <ProfileCard
+                        key={card.id}
+                        title={card.title}
+                        description={card.contentString}
+                        link={card.link ?? undefined}
+                        size="small"
+                      />
+                    )
+                  }
+
+                  if (card.__typename === 'ConnectedComponent') {
+                    return renderConnectedComponent(card)
+                  }
+
+                  return null
+                })}
+              </Stack>
+            </Box>
+          )}
         </SidebarLayout>
       )}
 

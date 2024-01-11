@@ -28,8 +28,15 @@ const devConfig = {
     defaultNamespace: '@island.is/user-profile',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer:
+      process.env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
     audience: '@island.is',
+  },
+  worker: {
+    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
+      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
+      : 3000,
   },
 }
 
@@ -66,6 +73,11 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
+  },
+  worker: {
+    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
+      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
+      : 3000,
   },
 }
 

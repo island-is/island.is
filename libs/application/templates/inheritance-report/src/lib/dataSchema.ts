@@ -54,14 +54,8 @@ export const inheritanceReportSchema = z.object({
       .optional(),
     inventory: z
       .object({
-        data: z
-          .object({
-            inventory: z.string(),
-            inventoryValue: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
+        info: z.string().optional(),
+        value: z.string().optional(),
       })
       .optional(),
     bankAccounts: z
@@ -116,25 +110,14 @@ export const inheritanceReportSchema = z.object({
       .optional(),
     money: z
       .object({
-        data: z
-          .object({
-            moneyValue: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
+        info: z.string().optional(),
+        value: z.string().optional(),
       })
       .optional(),
     otherAssets: z
       .object({
-        data: z
-          .object({
-            otherAssets: z.string(),
-            otherAssetsValue: z.string().refine((v) => v),
-          })
-          .array()
-          .optional(),
-        total: z.number().optional(),
+        info: z.string().optional(),
+        value: z.string().optional(),
       })
       .optional(),
     assetsTotal: z.number().optional(),
