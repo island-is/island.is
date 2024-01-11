@@ -37,9 +37,8 @@ export class SocialInsuranceAdministrationClientService {
     user: User,
     year?: number,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
-    const inputYear = year ?? new Date().getFullYear()
     return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
-      year: inputYear.toString(),
+      year: year ? year.toString() : undefined,
     })
   }
 

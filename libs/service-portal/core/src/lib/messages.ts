@@ -49,6 +49,10 @@ export const m = defineMessages({
     id: 'service.portal:year',
     defaultMessage: 'Ár',
   },
+  theYear: {
+    id: 'service.portal:the-year',
+    defaultMessage: 'Árið',
+  },
   yearAndSeason: {
     id: 'service.portal:year-and-season',
     defaultMessage: 'Ár og tímabil',
@@ -1266,5 +1270,65 @@ export const m = defineMessages({
   paymentPlan: {
     id: 'service-portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
+  },
+  january: {
+    id: 'service.portal:january',
+    defaultMessage: 'Janúar',
+    description: 'January',
+  },
+  february: {
+    id: 'service.portal:february',
+    defaultMessage: 'Febrúar',
+    description: 'February',
+  },
+  march: {
+    id: 'service.portal:march',
+    defaultMessage: 'Mars',
+    description: 'March',
+  },
+  april: {
+    id: 'service.portal:april',
+    defaultMessage: 'Apríl',
+    description: 'April',
+  },
+  may: {
+    id: 'service.portal:may',
+    defaultMessage: 'Maí',
+    description: 'May',
+  },
+  june: {
+    id: 'service.portal:june',
+    defaultMessage: 'Júní',
+    description: 'June',
+  },
+  july: {
+    id: 'service.portal:july',
+    defaultMessage: 'Júlí',
+    description: 'July',
+  },
+  august: {
+    id: 'service.portal:august',
+    defaultMessage: 'Ágúst',
+    description: 'August',
+  },
+  september: {
+    id: 'service.portal:september',
+    defaultMessage: 'September',
+    description: 'September',
+  },
+  october: {
+    id: 'service.portal:october',
+    defaultMessage: 'Október',
+    description: 'October',
+  },
+  november: {
+    id: 'service.portal:november',
+    defaultMessage: 'Nóvember',
+    description: 'November',
+  },
+  december: {
+    id: 'service.portal:december',
+    defaultMessage: 'Desember',
+    description: 'December',
   },
 })
