@@ -262,7 +262,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Other,
+          DocumentTypeEnum.OTHER,
           additionalAttachments,
         )),
       )
