@@ -434,39 +434,19 @@ export const assets = buildSection({
               description: m.otherAssetsDescription,
               titleVariant: 'h3',
             }),
-            buildDescriptionField({
-              id: 'assets.otherAssets.total',
-              title: '',
+            buildTextField({
+              id: 'assets.otherAssets.info',
+              title: m.otherAssetsText,
+              placeholder: m.otherAssetsPlaceholder,
+              variant: 'textarea',
+              rows: 7,
             }),
-
-            buildCustomField(
-              {
-                title: '',
-                id: 'assets.otherAssets.data',
-                component: 'ReportFieldsRepeater',
-                doesNotRequireAnswer: true,
-              },
-              {
-                fields: [
-                  {
-                    title: m.otherAssetsText.defaultMessage,
-                    id: 'otherAssets',
-                    placeholder: m.otherAssetsPlaceholder.defaultMessage,
-                    variant: 'textarea',
-                    rows: 7,
-                    width: 'full',
-                  },
-                  {
-                    title: m.otherAssetsValue.defaultMessage,
-                    id: 'otherAssetsValue',
-                    required: true,
-                    currency: true,
-                  },
-                ],
-                repeaterButtonText: m.addAsset.defaultMessage,
-                sumField: 'otherAssetsValue',
-              },
-            ),
+            buildTextField({
+              id: 'assets.otherAssets.value',
+              title: m.otherAssetsValue,
+              width: 'half',
+              variant: 'currency',
+            }),
           ],
         }),
       ],
