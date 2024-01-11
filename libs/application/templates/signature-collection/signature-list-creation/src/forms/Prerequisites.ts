@@ -82,8 +82,8 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CurrentCollectionApi,
-              title: m.canCreateProviderTitle,
-              subTitle: m.canCreateProviderSubtitle,
+              title: '',
+              subTitle: '',
             }),
           ],
         }),
