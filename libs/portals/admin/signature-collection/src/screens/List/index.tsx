@@ -42,7 +42,7 @@ export const List = () => {
             <>
               <IntroHeader
                 title={list.title}
-                intro={formatMessage(m.signatureListsIntro)}
+                intro={formatMessage(m.singleListIntro)}
                 img={header}
                 imgPosition="right"
                 imgHiddenBelow="sm"

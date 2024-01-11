@@ -9,13 +9,13 @@ export const m = defineMessages({
   },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection:signatureLists',
-    defaultMessage: 'Yfirlit meðmælalista',
+    defaultMessage: 'Yfirlit meðmælasafnanna',
     description: '',
   },
   signatureListsIntro: {
     id: 'admin-portal.signature-collection:signatureListsIntro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur.',
+      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið.',
     description: '',
   },
   searchInAllListsPlaceholder: {
@@ -83,6 +83,11 @@ export const m = defineMessages({
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
     defaultMessage: 'Meðmælalisti',
+    description: '',
+  },
+  singleListIntro: {
+    id: 'admin-portal.signature-collection:singleListIntro',
+    defaultMessage: 'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
     description: '',
   },
   noSignees: {
@@ -169,7 +174,7 @@ export const m = defineMessages({
   },
   uploadFileDescription: {
     id: 'admin-portal.signature-collection:uploadFileDescription#markdown',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    defaultMessage: 'Hlaðið upp skjali með meðmælum viðkomandi frambjóðanda í þessum landsfjórðungi. ',
     description: '',
   },
   uploadHeader: {
@@ -184,7 +189,7 @@ export const m = defineMessages({
   },
   downloadTemplate: {
     id: 'admin-portal.signature-collection:downloadTemplate',
-    defaultMessage: 'Sækja template',
+    defaultMessage: 'Sækja sniðmat',
     description: '',
   },
   uploadButton: {
@@ -222,13 +227,19 @@ export const m = defineMessages({
   // Compare lists
   compareLists: {
     id: 'admin-portal.signature-collection:compareLists',
-    defaultMessage: 'Bera saman lista',
+    defaultMessage: 'Bera saman',
     description: '',
   },
   compareListsDescription: {
-    id: 'admin-portal.signature-collection:compareListsDescription#markdown',
+    id: 'admin-portal.signature-collection:compareListsDescription',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur.',
+      'Fulltrúar í yfirkjörstjórnum og frambjóðendur geta ekki mælt með framboði',
+    description: '',
+  },
+  compareListsModalDescription: {
+    id: 'admin-portal.signature-collection:compareListsModalDescription#markdown',
+    defaultMessage:
+      'Hlaðið upp skjali með nöfnum og kennitölum fulltrúa yfirkjörstjórna og frambjóðendum til að kanna hvort þau hafi skrifað undir meðmælalista.',
     description: '',
   },
   compareListsResultsHeader: {
