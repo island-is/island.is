@@ -57,11 +57,15 @@ export const MedicineLicense = () => {
                           ? messages.medicineIsRejectedCertificate
                           : certificate.expired
                           ? messages.medicineIsExpiredCertificate
-                          : certificate.processed && !certificate.approved
+                          : certificate.processed === false
                           ? messages.medicineIsProcessedCertificate
                           : messages.medicineIsNotValidCertificate,
                       ),
-                      variant: certificate?.valid ? 'blue' : 'red',
+                      variant: certificate?.valid
+                        ? 'blue'
+                        : certificate.processed === false
+                        ? 'darkerBlue'
+                        : 'red',
                     }}
                     text={certificate.atcName ?? undefined}
                     cta={{
