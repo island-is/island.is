@@ -53,7 +53,9 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
   }
 
   doMapping(entries: ISupportQna[]) {
-    logger.info('Mapping SupportQNAs', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping SupportQNAs', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

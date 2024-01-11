@@ -10,16 +10,20 @@ import {
   getApplicationExternalData as getOAPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath } from '@island.is/application/core'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
   shouldNotUpdateBankAccount,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
   getApplicationExternalData as getHSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import {
+  getApplicationAnswers as getASFTEApplicationAnswers,
+  getApplicationExternalData as getASFTEApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -156,6 +160,71 @@ export const transformApplicationToHouseholdSupplementDTO = (
   }
 
   return householdSupplementDTO
+}
+
+export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
+  application: Application,
+  uploads: Attachment[],
+): ApplicationDTO => {
+  const {
+    selectedYear,
+    selectedMonth,
+    applicantPhonenumber,
+    bank,
+    bankAccountType,
+    comment,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+    paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
+  } = getASFTEApplicationAnswers(application.answers)
+  const { bankInfo, email } = getASFTEApplicationExternalData(
+    application.externalData,
+  )
+
+  const additionalSupportForTheElderlyDTO: ApplicationDTO = {
+    applicationId: application.id,
+    applicantInfo: {
+      email: email,
+      phonenumber: applicantPhonenumber,
+    },
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      ...((bankAccountType === undefined ||
+        bankAccountType === BankAccountType.ICELANDIC) && {
+        domesticBankInfo: {
+          bank: formatBank(bank),
+        },
+      }),
+      ...(bankAccountType === BankAccountType.FOREIGN && {
+        foreignBankInfo: {
+          iban: iban.replace(/[\s]+/g, ''),
+          swift: swift.replace(/[\s]+/g, ''),
+          foreignBankName: bankName,
+          foreignBankAddress: bankAddress,
+          foreignCurrency: currency,
+        },
+      }),
+    }),
+    taxInfo: {
+      personalAllowance: YES === personalAllowance,
+      personalAllowanceUsage:
+        YES === personalAllowance ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
+    period: {
+      year: +selectedYear,
+      month: getMonthNumber(selectedMonth),
+    },
+    uploads,
+    comment: comment,
+  }
+
+  return additionalSupportForTheElderlyDTO
 }
 
 export const getMonthNumber = (monthName: string): number => {

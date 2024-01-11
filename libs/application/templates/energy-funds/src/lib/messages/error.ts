@@ -32,4 +32,9 @@ export const error = defineMessages({
     defaultMessage: 'Villa kom upp við að skila inn umsókn',
     description: 'Failed to submit application',
   },
+  priceError: {
+    id: 'ef.application:error.priceError',
+    defaultMessage: 'Upphæð ekki gild',
+    description: 'Price not valid',
+  },
 })

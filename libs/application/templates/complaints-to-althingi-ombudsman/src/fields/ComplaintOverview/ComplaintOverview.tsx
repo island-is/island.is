@@ -57,7 +57,7 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
       </ReviewGroup>
       <ReviewGroup
         isEditable={isEditable}
-        editAction={() => changeScreens('information.aboutTheComplainer')}
+        editAction={() => changeScreens('applicant')}
       >
         <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
@@ -95,9 +95,16 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
         isEditable={isEditable}
         onEdit={changeScreens}
       />
+      <ComplaintInformation
+        name={answers.complaintDescription.complaineeName}
+        type={answers.complainee.type}
+        description={answers.complaintDescription.complaintDescription}
+        isEditable={isEditable}
+        onEdit={changeScreens}
+      />
       <ReviewGroup
         isEditable={isEditable}
-        editAction={() => changeScreens('complainee')}
+        editAction={() => changeScreens('section.complaintInformation')}
       >
         <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '9/12', '5/12']}>
@@ -120,13 +127,6 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
           )}
         </GridRow>
       </ReviewGroup>
-      <ComplaintInformation
-        name={answers.complaintDescription.complaineeName}
-        type={answers.complainee.type}
-        description={answers.complaintDescription.complaintDescription}
-        isEditable={isEditable}
-        onEdit={changeScreens}
-      />
       <ReviewGroup
         isEditable={isEditable}
         editAction={() => changeScreens('preexistingComplaint.multifield')}

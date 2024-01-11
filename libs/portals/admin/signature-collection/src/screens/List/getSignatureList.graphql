@@ -10,7 +10,8 @@ query listbyid($input: SignatureCollectionIdInput!) {
     }
     endTime
     startTime
-    owner {
+    candidate {
+      id
       nationalId
       name
       phone
@@ -19,12 +20,11 @@ query listbyid($input: SignatureCollectionIdInput!) {
     collectors {
       nationalId
       name
-      phone
-      email
     }
     active
     collectionId
-    link
+    slug
     numberOfSignatures
+    maxReached
   }
 }
