@@ -3,6 +3,7 @@ query getPaymentPlan($input: SocialInsurancePaymentPlanInput!) {
     nextPayment
     previousPayment
     paymentGroups {
+      __typename
       type
       totalYearCumulativeAmount
       payments {

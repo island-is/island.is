@@ -1,13 +1,24 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useGetPaymentPlanQuery } from './PaymentPlan.generated'
+import { useGetPaymentPlanLazyQuery } from './PaymentPlan.generated'
+import {
+  ExpandHeader,
+  ExpandRow,
+  amountFormat,
+  generateYears,
+} from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   Box,
-  DatePicker,
   Inline,
   Text,
   Button,
   Table,
+  Select,
+  Stack,
+  Divider,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import {
   IntroHeader,
@@ -15,12 +26,30 @@ import {
   m as coreMessages,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
+import { useEffect, useMemo, useState } from 'react'
+import addYears from 'date-fns/addYears'
+import { MONTHS } from '../../lib/constants'
+import { PaymentGroupTableRow } from '../../lib/components/PaymentGroupTableRow'
 
 const PaymentPlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useGetPaymentPlanQuery()
+  const [getPaymentPlanQuery, { data, loading, error }] =
+    useGetPaymentPlanLazyQuery()
+
+  const yearOptions = useMemo(() => {
+    const years = generateYears(addYears(new Date(), -120), new Date(), 'desc')
+    return years.map((y) => ({ value: y, label: y.toString() }))
+  }, [])
+
+  const [selectedYear, setSelectedYear] = useState(yearOptions[0])
+
+  useEffect(() => {
+    getPaymentPlanQuery({
+      variables: { input: { year: selectedYear.value } },
+    })
+  }, [selectedYear, getPaymentPlanQuery])
 
   if (error) {
     return <Problem type="internal_service_error" error={error} />
@@ -34,41 +63,134 @@ const PaymentPlan = () => {
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip="Eitthvað tooltip"
       />
-      <UserInfoLine
-        label={formatMessage(m.nextPayment)}
-        content={
-          data?.socialInsurancePaymentPlan?.nextPayment?.toString() ?? ''
-        }
-        loading={loading}
-      />
-      <UserInfoLine
-        label={formatMessage(m.previousMonthsPayment)}
-        content={
-          data?.socialInsurancePaymentPlan?.previousPayment?.toString() ?? ''
-        }
-        loading={loading}
-      />
-      <Text variant="h5">{formatMessage(coreMessages.period)}</Text>
-      <Inline space={1}>
-        <DatePicker
-          backgroundColor="blue"
-          label={formatMessage(coreMessages.year)}
-          placeholderText={undefined}
-        />
-        <Button icon="print" onClick={() => console.log('clicked print')}>
-          {formatMessage(coreMessages.print)}
-        </Button>
-        <Button icon="download" onClick={() => console.log('clicked download')}>
-          {formatMessage(coreMessages.getDocument)}
-        </Button>
-      </Inline>
+      <Box marginBottom={[2, 2, 6]}>
+        <Stack space={1}>
+          <UserInfoLine
+            label={formatMessage(m.nextPayment)}
+            content={
+              data?.socialInsurancePaymentPlan?.nextPayment
+                ? amountFormat(data.socialInsurancePaymentPlan.nextPayment)
+                : ''
+            }
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(m.previousMonthsPayment)}
+            content={
+              data?.socialInsurancePaymentPlan?.previousPayment
+                ? amountFormat(data.socialInsurancePaymentPlan.previousPayment)
+                : ''
+            }
+            loading={loading}
+          />
+          <Divider />
+        </Stack>
+      </Box>
+      <Text marginBottom={2} variant="h5">
+        {formatMessage(coreMessages.period)}
+      </Text>
+      <Box marginBottom={3}>
+        <GridContainer>
+          <GridRow alignItems="flexEnd">
+            <GridColumn span={'3/8'}>
+              <Select
+                backgroundColor="blue"
+                size="xs"
+                options={yearOptions}
+                label={formatMessage(coreMessages.year)}
+                onChange={(ev) => {
+                  if (ev?.value) {
+                    setSelectedYear(ev)
+                  }
+                }}
+                value={selectedYear}
+              />
+            </GridColumn>
+            <GridColumn>
+              <Button
+                size="small"
+                variant="utility"
+                icon="print"
+                onClick={() => console.log('clicked print')}
+              >
+                {formatMessage(coreMessages.print)}
+              </Button>
+            </GridColumn>
+            <GridColumn>
+              <Button
+                size="small"
+                variant="utility"
+                icon="download"
+                iconType="outline"
+                onClick={() => console.log('clicked download')}
+              >
+                {formatMessage(coreMessages.getDocument)}
+              </Button>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
       <Table.Table>
-        <Table.Head>
-          <Table.HeadData>{formatMessage(m.paymentTypes)}</Table.HeadData>
-          <Table.HeadData>
-            {formatMessage(m.yearCumulativeTotal)}
-          </Table.HeadData>
-        </Table.Head>
+        <ExpandHeader
+          data={[
+            { value: '' },
+            { value: formatMessage(m.paymentTypes) },
+            { value: formatMessage(m.yearCumulativeTotal) },
+          ]}
+        />
+        <Table.Body>
+          {data?.socialInsurancePaymentPlan?.paymentGroups
+            .filter((pg) => pg.type !== 'Frádráttur')
+            .map((pg) => (
+              <PaymentGroupTableRow data={pg} formatMessage={formatMessage} />
+            ))}
+          <Table.Row>
+            <Table.Data align="left">
+              <Text fontWeight="semiBold">
+                {formatMessage(m.paymentsTotal)}
+              </Text>
+            </Table.Data>
+            <Table.Data align="right">
+              <Text fontWeight="semiBold">
+                {amountFormat(
+                  data?.socialInsurancePaymentPlan?.paymentGroups
+                    .filter((pg) => pg.type !== 'Frádráttur')
+                    .reduce(
+                      (total, current) =>
+                        (total += current.totalYearCumulativeAmount),
+                      0,
+                    ) ?? 0,
+                )}
+              </Text>
+            </Table.Data>
+          </Table.Row>
+          {data?.socialInsurancePaymentPlan?.paymentGroups
+            .filter((pg) => pg.type === 'Frádráttur')
+            .map((pg) => (
+              <PaymentGroupTableRow data={pg} formatMessage={formatMessage} />
+            ))}
+          <Table.Row>
+            <Table.Data align="left">
+              <Text fontWeight="semiBold">
+                {formatMessage(m.paymentsReceived)}
+              </Text>
+            </Table.Data>
+            <Table.Data align="right">
+              <Text fontWeight="semiBold">
+                {amountFormat(
+                  data?.socialInsurancePaymentPlan?.paymentGroups
+                    .filter((pg) => pg.type === 'Frádráttur')
+                    .reduce(
+                      (total, current) =>
+                        (total += current.totalYearCumulativeAmount),
+                      0,
+                    ) ?? 0,
+                )}
+              </Text>
+            </Table.Data>
+          </Table.Row>
+        </Table.Body>
       </Table.Table>
     </Box>
   )
