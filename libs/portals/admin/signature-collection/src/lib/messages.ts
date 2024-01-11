@@ -87,7 +87,8 @@ export const m = defineMessages({
   },
   singleListIntro: {
     id: 'admin-portal.signature-collection:singleListIntro',
-    defaultMessage: 'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
+    defaultMessage:
+      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
     description: '',
   },
   noSignees: {
@@ -174,7 +175,8 @@ export const m = defineMessages({
   },
   uploadFileDescription: {
     id: 'admin-portal.signature-collection:uploadFileDescription#markdown',
-    defaultMessage: 'Hlaðið upp skjali með meðmælum viðkomandi frambjóðanda í þessum landsfjórðungi. ',
+    defaultMessage:
+      'Hlaðið upp skjali með meðmælum viðkomandi frambjóðanda í þessum landsfjórðungi. ',
     description: '',
   },
   uploadHeader: {
