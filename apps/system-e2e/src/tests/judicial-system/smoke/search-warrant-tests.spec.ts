@@ -1,13 +1,15 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
 import subDays from 'date-fns/subDays'
-import { test } from '../utils/judicialSystemTest'
-import { randomCourtCaseNumber, randomPoliceCaseNumber } from '../utils/helpers'
+
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
-import { appealCaseTest } from './shared/appeal-case'
-import { receiveAppealTest } from './shared/receive-appeal'
-import { coaJudgeCompletesCaseTest } from './shared/coa-complates-case'
+
+import { test } from '../utils/judicialSystemTest'
+import { randomCourtCaseNumber, randomPoliceCaseNumber } from '../utils/helpers'
+import { appealCaseTest } from './shared-steps/send-appeal'
+import { receiveAppealTest } from './shared-steps/receive-appeal'
+import { coaJudgeCompletesCaseTest } from './shared-steps/complete-appeal'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
