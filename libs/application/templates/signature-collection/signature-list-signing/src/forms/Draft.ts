@@ -1,10 +1,9 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
-  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
@@ -13,7 +12,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
-import { Application } from '@island.is/api/schema'
+import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import { List } from '../lib/constants'
 
@@ -40,38 +39,45 @@ export const Draft: Form = buildForm({
 
       children: [
         buildSubSection({
-          id: 'listInfo',
-          title: m.listName,
+          id: 'selectCandidate',
+          title: m.selectCandidate,
           condition: (_, externalData) => {
             const lists = getValueViaPath(
               externalData,
               'getList.data',
               [],
-            ) as List[]
+            ) as SignatureCollectionList[]
             return lists.length > 1
           },
           children: [
-            buildSelectField({
-              id: 'listId',
-              title: m.listName,
-              defaultValue: ({ externalData }: Application) => {
-                const lists = getValueViaPath(
-                  externalData,
-                  'getList.data',
-                  [],
-                ) as List[]
-                return lists[0].id
-              },
-              options: ({
-                externalData: {
-                  getList: { data },
-                },
-              }) => {
-                return (data as List[]).map((list) => ({
-                  value: list.id,
-                  label: list.title,
-                }))
-              },
+            buildMultiField({
+              id: 'selectCandidate',
+              title: m.selectCandidate,
+              description: m.selectCandidateDescription,
+              children: [
+                buildRadioField({
+                  id: 'candidate.name',
+                  title: '',
+                  defaultValue: ({ externalData }: Application) => {
+                    const lists = getValueViaPath(
+                      externalData,
+                      'getList.data',
+                      [],
+                    ) as SignatureCollectionList[]
+                    return lists[0].id
+                  },
+                  options: ({
+                    externalData: {
+                      getList: { data },
+                    },
+                  }) => {
+                    return (data as SignatureCollectionList[]).map((list) => ({
+                      value: list.title,
+                      label: list.title,
+                    }))
+                  },
+                }),
+              ],
             }),
           ],
         }),
@@ -82,8 +88,34 @@ export const Draft: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'signeeInfoHeader',
+              title: m.candidateInformationHeader,
+              titleVariant: 'h3',
+            }),
+            buildTextField({
+              id: 'candidate.name',
+              title: m.name,
+              width: 'full',
+              readOnly: true,
+              defaultValue: ({ externalData }: Application) => {
+                const list = getValueViaPath(
+                  externalData,
+                  'getList.data',
+                  [],
+                ) as SignatureCollectionList[]
+
+                return list[0].candidate?.name ?? ''
+              },
+            }),
+            buildDescriptionField({
+              id: 'spaceDivider',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDescriptionField({
+              id: 'signeeInfoHeader',
               title: m.signeeInformationHeader,
               titleVariant: 'h3',
+              space: 'containerGutter',
             }),
             buildTextField({
               id: 'signee.name',
