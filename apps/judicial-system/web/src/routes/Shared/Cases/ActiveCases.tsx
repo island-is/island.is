@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useLocalStorage } from 'react-use'
 import cn from 'classnames'
 import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
@@ -72,13 +73,15 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { width } = useViewport()
+  const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(
+    'sortConfig',
+    {
+      column: 'courtDate',
+      direction: 'descending',
+    },
+  )
   const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
     useCaseList()
-
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'createdAt',
-    direction: 'descending',
-  })
 
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
@@ -170,7 +173,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('defendant')}
               sortAsc={getClassNamesFor('defendant') === 'ascending'}
               sortDes={getClassNamesFor('defendant') === 'descending'}
-              isActive={sortConfig.column === 'defendant'}
+              isActive={sortConfig?.column === 'defendant'}
               dataTestid="accusedNameSortButton"
             />
           </th>
@@ -185,7 +188,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('createdAt')}
               sortAsc={getClassNamesFor('createdAt') === 'ascending'}
               sortDes={getClassNamesFor('createdAt') === 'descending'}
-              isActive={sortConfig.column === 'createdAt'}
+              isActive={sortConfig?.column === 'createdAt'}
               dataTestid="createdAtSortButton"
             />
           </th>
@@ -204,7 +207,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('courtDate')}
               sortAsc={getClassNamesFor('courtDate') === 'ascending'}
               sortDes={getClassNamesFor('courtDate') === 'descending'}
-              isActive={sortConfig.column === 'courtDate'}
+              isActive={sortConfig?.column === 'courtDate'}
             />
           </th>
           <th></th>
