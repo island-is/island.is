@@ -109,7 +109,7 @@ test.describe.serial('Search warrant tests', () => {
       await page
         .getByText('Veldu dómara/aðstoðarmann *Veldu héraðsdómara')
         .click()
-      await page.locator('#react-select-judge-option-1').click()
+      await page.getByTestId('select-judge').getByText('Test Dómari').click()
       await page.getByTestId('continueButton').click()
       await expect(page).toHaveURL(`domur/rannsoknarheimild/yfirlit/${caseId}`)
       await page.getByTestId('continueButton').click()
