@@ -135,11 +135,6 @@ export const m = defineMessages({
     defaultMessage: 'Heimilisfang',
     description: '',
   },
-  tempMessage: {
-    id: 'admin-portal.signature-collection:tempMessage',
-    defaultMessage: 'Lorem ipsum',
-    description: '',
-  },
   updateListEndTime: {
     id: 'admin-portal.signature-collection:updateListEndTime',
     defaultMessage: 'Framlengja lokadag',
