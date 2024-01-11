@@ -51,19 +51,17 @@ const Lists = () => {
     filteredList = filteredList.filter((list) => {
       return (
         // Filter by area
-        ((filters.area.length === 0 || filters.area.includes(list.area.name)) &&
-          // Filter by candidate
-          (filters.candidate.length === 0 ||
-            filters.candidate.includes(list.candidate.name)) &&
-          // Filter by input
-          (filters.input.length === 0 ||
-            list.candidate.name
-              .toLowerCase()
-              .includes(filters.input.toLowerCase()) ||
-            list.area.name
-              .toLowerCase()
-              .includes(filters.input.toLowerCase()))) ||
-        formatNationalId(list.candidate.nationalId).includes(filters.input)
+        (filters.area.length === 0 || filters.area.includes(list.area.name)) &&
+        // Filter by candidate
+        (filters.candidate.length === 0 ||
+          filters.candidate.includes(list.candidate.name)) &&
+        // Filter by input
+        (filters.input.length === 0 ||
+          list.candidate.name
+            .toLowerCase()
+            .includes(filters.input.toLowerCase()) ||
+          list.area.name.toLowerCase().includes(filters.input.toLowerCase()) ||
+          formatNationalId(list.candidate.nationalId).includes(filters.input))
       )
     })
 
