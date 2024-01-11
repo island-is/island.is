@@ -12,6 +12,6 @@ export function mapArea(area: SvaediDTO): Area {
     name: area?.nafn?.toString() ?? '',
     min: area?.fjoldi ?? 0,
     // TODO: update when max is available
-    max: area?.fjoldi ?? 0,
+    max: area?.fjoldiMax ?? 0,
   }
 }
