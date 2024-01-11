@@ -104,6 +104,10 @@ export const business = buildSection({
                     format: '######-####',
                   },
                   {
+                    title: m.debtsLoanIdentity.defaultMessage,
+                    id: 'loanIdentity',
+                  },
+                  {
                     title: m.debtsBalance.defaultMessage,
                     id: 'debtValue',
                     required: true,
