@@ -165,7 +165,6 @@ export const inheritanceReportSchema = z.object({
           )
           .refine(
             ({ creditorName, nationalId, balance, loanIdentity }) => {
-              console.log({ creditorName, nationalId, balance, loanIdentity })
               return nationalId !== '' || creditorName !== '' || loanIdentity !== ''
                 ? isValidString(balance)
                 : true
