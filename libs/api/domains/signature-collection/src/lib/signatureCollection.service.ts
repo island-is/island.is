@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
-import { SignatureCollection } from './models/collection.model'
+import { SignatureCollection, SignatureCollectionInfo } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import {
@@ -23,12 +23,16 @@ export class SignatureCollectionService {
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
 
-  async isOwner(nationalId: string): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.isOwner(nationalId)
+  async isOwner(signee: SignatureCollectionSignee): Promise<SignatureCollectionSuccess> {
+    return {success: signee.isOwner}
   }
 
-  async current(): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.getCurrentCollection()
+  async currentCollectionInfo(): Promise<SignatureCollectionInfo> {
+    return await this.signatureCollectionClientService.currentCollectionInfo()
+  }
+
+  async current(collectionId: number): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.getCurrentCollection(collectionId)
   }
 
   async allLists(): Promise<SignatureCollectionList[]> {
@@ -123,7 +127,6 @@ export class SignatureCollectionService {
   async delegateList(
     input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
-    console.log('delegateList ', input)
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ success: true })
@@ -134,7 +137,6 @@ export class SignatureCollectionService {
   async undelegateList(
     input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
-    console.log('undelegateList ', input)
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ success: true })

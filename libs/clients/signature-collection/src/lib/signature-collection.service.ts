@@ -56,11 +56,15 @@ export class SignatureCollectionClientService {
     return current
   }
 
-  async getCurrentCollection(): Promise<Collection> {
-    const { id } = await this.currentCollectionInfo()
+  async getCurrentCollection(collectionId?: number): Promise<Collection> {
+    if (!collectionId) {
+      const { id } = await this.currentCollectionInfo()
+
+      collectionId = id
+    }
 
     const currentCollection = await this.collectionsApi.medmaelasofnunIDGet({
-      iD: id,
+      iD: collectionId,
     })
     return mapCollection(currentCollection)
   }
@@ -235,14 +239,6 @@ export class SignatureCollectionClientService {
     return { success: true }
   }
 
-  async getUser(nationalId: string): Promise<EinstaklingurKosningInfoDTO> {
-    const { id } = await this.currentCollectionInfo()
-    return await this.collectionsApi.medmaelasofnunIDEinsInfoKennitalaGet({
-      kennitala: nationalId,
-      iD: id,
-    })
-  }
-
   async getSignedList(nationalId: string): Promise<List | null> {
     const { signature } = await this.getSignee(nationalId)
     if (!signature) {
@@ -375,10 +371,9 @@ export class SignatureCollectionClientService {
 
   //   TODO: DelegateList
 
-async delegateList(listId: string, nationalId: string): Promise<Success> {
-  
-  return {success: true}
-}
+  async delegateList(listId: string, nationalId: string): Promise<Success> {
+    return { success: true }
+  }
   //   TODO: UndelegateList
 
   async extendDeadline(listId: string, newEndDate: Date): Promise<List> {

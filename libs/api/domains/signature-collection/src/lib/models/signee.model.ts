@@ -28,4 +28,7 @@ export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
 
   @Field(() => [SignatureCollectionList], { nullable: true })
   ownedLists?: SignatureCollectionList[]
+
+  @Field()
+  isOwner!: boolean  
 }

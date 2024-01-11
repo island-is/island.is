@@ -8,7 +8,10 @@ import {
   BypassAuth,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { SignatureCollection } from './models/collection.model'
+import {
+  SignatureCollection,
+  SignatureCollectionInfo,
+} from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionSignature } from './models/signature.model'
@@ -24,8 +27,14 @@ import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInpu
 import { Audit } from '@island.is/nest/audit'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
+import { RolesGuard } from './guards/roles.guard'
+import { RolesRules } from './decorators/roles-rules.decorator'
+import { UserRole } from './utils/role.types'
+import { CollectionGuard } from './guards/collection.guard'
+import { CurrentCollection } from './decorators/current-collection.decorator'
+import { CurrentSignee } from './decorators/signee.decorator'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, CollectionGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
 export class SignatureCollectionResolver {
@@ -34,33 +43,41 @@ export class SignatureCollectionResolver {
   @Query(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionIsOwner(
-    @CurrentUser() user: User,
+    @CurrentSignee() signee: SignatureCollectionSignee,
   ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.isOwner(user.nationalId)
+    return this.signatureCollectionService.isOwner(signee)
   }
 
+  @BypassAuth()
   @Query(() => SignatureCollection)
-  @Audit()
-  async signatureCollectionCurrent(): Promise<SignatureCollection> {
-    return this.signatureCollectionService.current()
+  async signatureCollectionCurrent(
+    @CurrentCollection() collection: SignatureCollectionInfo,
+  ): Promise<SignatureCollection> {
+    return this.signatureCollectionService.current(collection.id)
   }
 
   @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionAllLists(): Promise<SignatureCollectionList[]> {
+    // TODO: Admin endpoint
     return this.signatureCollectionService.allLists()
   }
+
   @BypassAuth()
   @Query(() => [SignatureCollectionList])
   async signatureCollectionAllOpenLists(): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allOpenLists()
   }
 
+  @UseGuards(RolesGuard)
+  @RolesRules(UserRole.CANDIDATE_OWNER)
   @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionListsForUser(
     @CurrentUser() user: User,
+    @CurrentCollection() collection: SignatureCollectionInfo,
   ): Promise<SignatureCollectionList[]> {
+    // TODO: map params here to send in
     return this.signatureCollectionService.listsForUser(user.nationalId)
   }
 
@@ -69,6 +86,7 @@ export class SignatureCollectionResolver {
   async signatureCollectionListsByArea(
     @Args('input') input: SignatureCollectionAreaInput,
   ): Promise<SignatureCollectionList[]> {
+    // TODO: check if used
     return this.signatureCollectionService.listsByArea(input.areaId)
   }
 
@@ -77,6 +95,7 @@ export class SignatureCollectionResolver {
   async signatureCollectionList(
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionList> {
+    // TODO: Access guard state and role
     return this.signatureCollectionService.list(input.id)
   }
 
@@ -85,6 +104,7 @@ export class SignatureCollectionResolver {
   async signatureCollectionSignedList(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionList | null> {
+    // TODO: Use signature from decorator
     return this.signatureCollectionService.signedList(user.nationalId)
   }
 
@@ -93,6 +113,8 @@ export class SignatureCollectionResolver {
   async signatureCollectionSignatures(
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSignature[]> {
+    // TODO: Collection id
+    // TODO: Access guard state and role
     return this.signatureCollectionService.signatures(input.id)
   }
 
@@ -101,6 +123,7 @@ export class SignatureCollectionResolver {
   async signatureCollectionSignee(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSignee> {
+    // TODO: Use singee from decoreator
     return this.signatureCollectionService.signee(user.nationalId)
   }
 
@@ -110,6 +133,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListInput,
   ): Promise<SignatureCollectionSlug> {
+    // TODO: Admins will only use as mutation, users will use client directly
     return this.signatureCollectionService.create(user, input)
   }
 
@@ -119,6 +143,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSignature> {
+    // TODO: is this used?
     return this.signatureCollectionService.sign(input.id, user.nationalId)
   }
 
@@ -128,6 +153,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSuccess> {
+    // TODO: role and state NO DELEGATION HERE
     return this.signatureCollectionService.unsign(input.id, user.nationalId)
   }
 
@@ -137,6 +163,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSuccess> {
+    // TODO: role and state
     return this.signatureCollectionService.unsignAdmin(input.id)
   }
 
@@ -146,6 +173,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionSuccess> {
+    // TODO: role and state owner not delegated while open
     return this.signatureCollectionService.cancel(user.nationalId, input)
   }
 
@@ -155,6 +183,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
+    // TODO: Will this happen here or in interceptor...
     return this.signatureCollectionService.delegateList(input)
   }
 
@@ -164,6 +193,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
+    // TODO: check if used
     return this.signatureCollectionService.undelegateList(input)
   }
 
@@ -172,6 +202,7 @@ export class SignatureCollectionResolver {
   async signatureCollectionExtendDeadline(
     @Args('input') input: SignatureCollectionExtendDeadlineInput,
   ): Promise<SignatureCollectionList> {
+    // TODO: state and role
     return this.signatureCollectionService.extendDeadline(input)
   }
 
@@ -181,6 +212,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListBulkUploadInput,
   ): Promise<SignatureCollectionBulk> {
+    // TODO: state and role
     return this.signatureCollectionService.bulkUploadSignatures(input)
   }
 
@@ -190,6 +222,7 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionNationalIdsInput,
   ): Promise<SignatureCollectionSignature[]> {
+    // TODO: state and role
     return this.signatureCollectionService.bulkCompareSignaturesAllLists(input)
   }
 
@@ -198,6 +231,7 @@ export class SignatureCollectionResolver {
   async signatureCollectionCompareList(
     @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSignature[]> {
+    // TODO: state and role
     return this.signatureCollectionService.compareLists(input)
   }
 }
