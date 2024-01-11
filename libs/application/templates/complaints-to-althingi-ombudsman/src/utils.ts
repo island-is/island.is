@@ -1,4 +1,4 @@
-import { Answer, NO, YES } from '@island.is/application/types'
+import { Answer, NO, YES, YesOrNo } from '@island.is/application/types'
 import { shared } from './lib/messages'
 import {
   ComplainedForTypes,
@@ -11,6 +11,13 @@ export const isGovernmentComplainee = (answers: Answer) => {
   return (
     (answers as { complainee: { type: ComplaineeTypes } }).complainee?.type ===
     ComplaineeTypes.GOVERNMENT
+  )
+}
+
+export const isPreviousOmbudsmanComplaint = (answers: Answer) => {
+  return (
+    (answers as { previousOmbudsmanComplaint: { Answer: YesOrNo } })
+      .previousOmbudsmanComplaint?.Answer === YES
   )
 }
 

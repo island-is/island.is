@@ -60,6 +60,16 @@ export const complaintOverview = {
       defaultMessage: 'Umboð frá kvörtunaraðila',
       description: 'Label for power of attorney',
     },
+    previousOmbudsmanComplaint: {
+      id: 'ctao.application:overview.label.previousOmbudsmanComplaint',
+      defaultMessage: 'Leitað áður til umboðsmanns?',
+      description: 'Label for previous Ombudsman complaint',
+    },
+    previousOmbudsmanComplaintDescription: {
+      id: 'ctao.application:overview.label.previousOmbudsmanComplaintDescription',
+      defaultMessage: 'Lýsing',
+      description: 'Label for previous Ombudsman complaint description',
+    },
     attachments: {
       id: 'ctao.application:overview.label.attachments',
       defaultMessage: 'Rökstuðningur kvörtunar og önnur fylgiskjöl',

@@ -96,13 +96,8 @@ export const expandAnswers = (
         value: answers.assets.money?.value ?? '',
       },
       otherAssets: {
-        data: (answers.assets.otherAssets?.data ?? []).map((asset) => {
-          return {
-            otherAssets: asset.otherAssets ?? '',
-            otherAssetsValue: asset.otherAssetsValue ?? '',
-          }
-        }),
-        total: answers.assets.otherAssets?.total ?? 0,
+        info: answers.assets.otherAssets?.info ?? '',
+        value: answers.assets.otherAssets?.value ?? '',
       },
       realEstate: {
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
