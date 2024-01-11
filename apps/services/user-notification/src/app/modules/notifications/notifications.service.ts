@@ -287,7 +287,7 @@ export class NotificationsService {
     }
   }
 
-  @Cron('5 * * * * *')
+  @Cron('0 * * * *')// run once every hour
   async handleCron() {
     const rowCountBeforeCleanup = await this.notificationModel.count()
     const sixMonthsAgo = new Date(
