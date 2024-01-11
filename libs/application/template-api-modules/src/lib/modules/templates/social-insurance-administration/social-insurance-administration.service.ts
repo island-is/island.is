@@ -21,6 +21,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -32,6 +33,7 @@ import {
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
+  transformApplicationToAdditionalSupportForTheElderlyDTO,
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
@@ -86,6 +88,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
       additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (
+      application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
+    ) {
+      additionalAttachmentsRequired = getASFTEApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
@@ -343,6 +352,29 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     return attachments
   }
+    
+  private async getASFTEAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const { additionalAttachments } = getASFTEApplicationAnswers(
+      application.answers,
+    )
+
+    const attachments: Attachment[] = []
+
+    if (additionalAttachments && additionalAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.Other,
+          additionalAttachments,
+        )),
+      )
+    }
+
+    return attachments
+  }
+    
 
   async getPdf(key: string) {
     const file = await this.s3
@@ -403,7 +435,23 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         pensionSupplemenhtDTO,
         application.typeId.toLowerCase(),
       )
+    }
+    
+    if (
+      application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
+    ) {
+      const attachments = await this.getASFTEAttachments(application)
+      const additionalSupportForTheElderlyDTO =
+        transformApplicationToAdditionalSupportForTheElderlyDTO(
+          application,
+          attachments,
+        )
 
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        additionalSupportForTheElderlyDTO,
+        application.typeId.toLowerCase(),
+      )
       return response
     }
   }
