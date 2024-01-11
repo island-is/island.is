@@ -8,7 +8,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.age.title',
+      id: 'slc.application:error.age.summary',
       defaultMessage: '35 ára aldursmark er ekki náð',
       description: '',
     },
@@ -20,7 +20,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.citizenship.title',
+      id: 'slc.application:error.citizenship.summary',
       defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
       description: '',
     },
@@ -32,7 +32,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.residency.title',
+      id: 'slc.application:error.residency.summary',
       defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
       description: '',
     },
@@ -44,19 +44,19 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.active.title',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      id: 'slc.application:error.active.summary',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   owner: defineMessages({
     title: {
       id: 'slc.application:error.owner.title',
-      defaultMessage: 'Þú átt núþegar lista í öllum söfnunarsvæðum',
+      defaultMessage: 'Þú átt nú þegar lista í öllum söfnunarsvæðum',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.owner.title',
+      id: 'slc.application:error.owner.summary',
       defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
       description: '',
     },
@@ -68,8 +68,8 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.deniedByService.title',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      id: 'slc.application:error.deniedByService.summary',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
