@@ -277,6 +277,8 @@ export const estateAssets = buildSection({
                   {
                     title: m.stocksFaceValue,
                     id: 'faceValue',
+                    type: 'number',
+                    currency: true,
                   },
                   {
                     title: m.stocksRateOfChange,
