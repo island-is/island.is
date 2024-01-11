@@ -265,7 +265,7 @@ export const ApplicationConfigurations = {
     translation: 'rf.cr.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
-    slug: 'medmaelalisti',
+    slug: 'medmaelasofnun',
     translation: 'slc.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
