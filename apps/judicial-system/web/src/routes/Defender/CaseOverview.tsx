@@ -259,7 +259,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               RequestSharedWithDefender.COURT_DATE ||
             isCompletedCase(workingCase.state)) && (
             <Box marginBottom={10}>
-              <Text as="h3" variant="h3" marginBottom={3}>
+              <Text as="h3" variant="h3" marginBottom={1}>
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
@@ -269,7 +269,6 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title={formatMessage(core.pdfButtonRequest)}
                   pdfType={'request'}
                 />
-
                 {isCompletedCase(workingCase.state) && (
                   <>
                     <PdfButton
