@@ -57,17 +57,17 @@ export const m = defineMessages({
       'User not eligible for estate or no estates found bound to their national id',
   },
   applicationInfoSectionTitle: {
-    id: 'es.application:applicationInfoSectionTitle',
+    id: 'ir.application:applicationInfoSectionTitle',
     defaultMessage: 'Upplýsingar',
-    description: 'Titill fyrir hliðastiku',
+    description: 'Titill fyrir hliðarstiku',
   },
   applicationInfoTitle: {
-    id: 'es.application:applicationInfoTitle',
+    id: 'ir.application:applicationInfoTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Upplýsinga skjár titill',
   },
   applicationInfoText: {
-    id: 'es.application:applicationInfoTexts#markdown',
+    id: 'ir.application:applicationInfoTexts#markdown',
     defaultMessage: 'Upplýsinga Texti',
     description: 'Texti fyrir upplýsinga skjá',
   },
@@ -148,6 +148,11 @@ export const m = defineMessages({
     id: 'ir.application:nationalId',
     defaultMessage: 'Kennitala',
     description: '',
+  },
+  errorNationalIdIncorrect: {
+    id: 'ir.application:error.nationalIdIncorrect',
+    defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
+    description: 'National id is invalid',
   },
   address: {
     id: 'ir.application:address',
@@ -714,6 +719,11 @@ export const m = defineMessages({
   debtsCreditorName: {
     id: 'ir.application:debtsCreditorName',
     defaultMessage: 'Nafn kröfuhafa',
+    description: '',
+  },
+  debtsLoanIdentity: {
+    id: 'ir.application:debtsLoanIdentity',
+    defaultMessage: 'Auðkenni / Lánsnúmer',
     description: '',
   },
   creditorsNationalId: {

@@ -60,6 +60,10 @@ export const debts = buildSection({
                     format: '######-####',
                   },
                   {
+                    title: m.debtsLoanIdentity.defaultMessage,
+                    id: 'loanIdentity',
+                  },
+                  {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
                     required: true,
@@ -154,6 +158,7 @@ export const debts = buildSection({
                         `${m.nationalId.defaultMessage}: ${formatNationalId(
                           debt.nationalId ?? '',
                         )}`,
+                        `${m.debtsLoanIdentity.defaultMessage}: ${debt.loanIdentity ?? ''}`,
                         `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                           debt.balance ?? '0',
                         )}`,

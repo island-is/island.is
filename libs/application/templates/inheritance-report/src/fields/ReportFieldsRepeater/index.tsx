@@ -17,7 +17,7 @@ import { Answers } from '../../types'
 import * as styles from '../styles.css'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
+import { currencyStringToNumber } from '../../lib/utils/helpers'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
