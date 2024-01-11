@@ -5,7 +5,7 @@ import {
   randomPoliceCaseNumber,
   randomCourtCaseNumber,
   randomAppealCaseNumber,
-  createPdf,
+  createFakePdf,
 } from '../utils/helpers'
 
 import { urls } from '../../../support/urls'
@@ -204,20 +204,18 @@ test.describe.serial('Custody tests', () => {
           'Kæra *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með endingu: .pdf',
       })
       .locator('button')
+      .first()
       .click()
-    const appealPdfBuffer = await createPdf('Kæra sækjanda')
+
     const appealFileChooser = await appealFileChooserPromise
+    await page.waitForTimeout(1000)
 
-    await appealFileChooser.setFiles({
-      name: 'TestKaera.pdf',
-      mimeType: 'application/pdf',
-      buffer: appealPdfBuffer,
-    })
-
+    await appealFileChooser.setFiles(await createFakePdf('TestKaera.pdf'))
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
       verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
     ])
+
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalSecondaryButton').click()
 
@@ -236,16 +234,11 @@ test.describe.serial('Custody tests', () => {
       })
       .locator('button')
       .click()
-
-    const statementPdfBuffer = await createPdf('Greinargerð sækjanda')
     const statementFileChooser = await statementFileChooserPromise
-
-    await statementFileChooser.setFiles({
-      name: 'TestGreinargerd.pdf',
-      mimeType: 'application/pdf',
-      buffer: statementPdfBuffer,
-    })
-
+    await page.waitForTimeout(1000)
+    await statementFileChooser.setFiles(
+      await createFakePdf('TestGreinargerd.pdf'),
+    )
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
       verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
@@ -314,21 +307,13 @@ test.describe.serial('Custody tests', () => {
 
     const rulingFileChooserPromise = page.waitForEvent('filechooser')
     await page.getByText('Velja gögn til að hlaða upp').click()
-
-    const rulingPdfBuffer = await createPdf('Niðurstaða Landsréttar')
     const rulingFileChooser = await rulingFileChooserPromise
-
-    await rulingFileChooser.setFiles({
-      name: 'TestNidurstada.pdf',
-      mimeType: 'application/pdf',
-      buffer: rulingPdfBuffer,
-    })
-
+    await page.waitForTimeout(1000)
+    await rulingFileChooser.setFiles(await createFakePdf('TestNidurstada.pdf'))
     await Promise.all([
       verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
       verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
     ])
-
     await page.getByTestId('continueButton').click()
     await expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`)
     await page.getByTestId('continueButton').click()
