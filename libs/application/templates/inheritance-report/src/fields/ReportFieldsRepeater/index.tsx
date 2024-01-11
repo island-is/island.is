@@ -65,7 +65,9 @@ export const ReportFieldsRepeater: FC<
   const taxFreeLimit = Number(
     formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
   )
-  const answersValues = getValueViaPath(answers, id) as Array<object>
+  const answersValues = getValueViaPath(answers, id) as
+    | Array<object>
+    | undefined
 
   /* ------ Stocks ------ */
   const [rateOfExchange, setRateOfExchange] = useState(0)
