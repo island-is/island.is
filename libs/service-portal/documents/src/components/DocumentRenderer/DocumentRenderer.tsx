@@ -1,6 +1,6 @@
 import { DocumentDetails } from '@island.is/api/schema'
 import { HtmlDocument } from './HTMLDocument'
-import { PdfDocument } from './PdfDocument'
+import { PdfDocWithModal, PdfDocument } from './PdfDocument'
 import { UrlDocument } from './UrlDocment'
 import NoPDF from '../NoPDF/NoPDF'
 import { messages } from '../../utils/messages'
@@ -38,7 +38,7 @@ export const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   }
 
   if (type === 'pdf') {
-    return <PdfDocument document={document} />
+    return <PdfDocWithModal document={document} />
   }
 
   if (type === 'url') {

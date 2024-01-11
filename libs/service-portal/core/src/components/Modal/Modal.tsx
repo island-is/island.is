@@ -37,20 +37,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
       isVisible={isVisible}
     >
       {({ closeModal }: { closeModal: () => void }) => (
-        <Box background="white" paddingY={[3, 6, 12]} paddingX={[3, 6, 12, 15]}>
-          <Box className={styles.closeButton}>
-            <Button
-              circle
-              colorScheme="negative"
-              icon="close"
-              onClick={() => {
-                closeModal()
-              }}
-              size="large"
-            />
-          </Box>
-          {children}
-        </Box>
+        <Box background="white">{children}</Box>
       )}
     </ModalBase>
   )

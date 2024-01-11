@@ -1,60 +1,95 @@
+import { useRef, useState, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
-import * as styles from './DocumentRenderer.css'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { Modal, m } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
-import { useState } from 'react'
 import { ActiveDocumentType } from '../../lib/types'
 import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
 import { Problem } from '@island.is/react-spa/shared'
+import * as styles from './DocumentRenderer.css'
 
 type PdfDocumentProps = {
   document: ActiveDocumentType
+  expandCallback?: (value: boolean) => void
+  initScale?: number
 }
 
-export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
-  const [scalePDF, setScalePDF] = useState(1.0)
+export const PdfDocument: React.FC<PdfDocumentProps> = ({
+  document,
+  expandCallback,
+  initScale = 1.0,
+}) => {
+  const [scalePDF, setScalePDF] = useState(initScale)
   const userInfo = useUserInfo()
+  const ref = useRef<HTMLDivElement>(null)
   const { formatMessage } = useLocale()
+  const showExpand = !!expandCallback
+
+  useEffect(() => {
+    if (scalePDF > 1) {
+      ref.current?.scrollBy(35, 0)
+    }
+
+    // Size of PDF Canvas
+  }, [ref.current?.querySelectorAll('canvas')?.[0]?.width])
+
   return (
     <>
       <Box
         className={styles.pdfControls}
+        justifyContent={showExpand ? 'spaceBetween' : 'center'}
         display="flex"
         flexDirection="row"
         paddingBottom={2}
       >
-        <Button
-          circle
-          icon="remove"
-          variant="ghost"
-          size="small"
-          onClick={() => setScalePDF(scalePDF - 0.1)}
-          disabled={0.6 > scalePDF}
-        />
-        <Box
-          paddingX={1}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Text variant="small">{(scalePDF * 100).toFixed(0) + '%'}</Text>
+        {showExpand && <Box className={styles.space} />}
+        <Box display="flex" flexDirection="row">
+          <Button
+            circle
+            icon="remove"
+            variant="ghost"
+            size="small"
+            onClick={() => setScalePDF(scalePDF - 0.1)}
+            disabled={0.6 > scalePDF}
+          />
+          <Box
+            paddingX={1}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text variant="small">
+              {((scalePDF / initScale) * 100).toFixed(0) + '%'}
+            </Text>
+          </Box>
+          <Button
+            circle
+            icon="add"
+            variant="ghost"
+            size="small"
+            onClick={() => {
+              setScalePDF(scalePDF + 0.1)
+            }}
+            disabled={scalePDF > 3.5}
+          />
         </Box>
-        <Button
-          circle
-          icon="add"
-          variant="ghost"
-          size="small"
-          onClick={() => setScalePDF(scalePDF + 0.1)}
-          disabled={scalePDF > 3.5}
-        />
+        {showExpand ? (
+          <Button
+            circle
+            icon="expand"
+            variant="ghost"
+            size="small"
+            onClick={() => expandCallback(true)}
+          />
+        ) : null}
       </Box>
       <Box
         className={styles.pdfPage}
         height="full"
-        overflow="auto"
+        overflow="auto" //
         boxShadow="subtle"
+        ref={ref}
       >
         <PdfViewer
           file={`data:application/pdf;base64,${document.document.content}`}
@@ -86,6 +121,25 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
           }
         />
       </Box>
+    </>
+  )
+}
+
+export const PdfDocWithModal = (
+  props: PdfDocumentProps & { modalCallback?: () => void },
+) => {
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+  return (
+    <>
+      <PdfDocument expandCallback={(v) => setModalIsOpen(v)} {...props} />
+      <Modal
+        onCloseModal={() => setModalIsOpen(false)}
+        isVisible={modalIsOpen}
+        initialVisibility={false}
+        id="moal"
+      >
+        <PdfDocument initScale={1.3} {...props} />
+      </Modal>
     </>
   )
 }
