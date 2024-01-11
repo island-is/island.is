@@ -865,9 +865,6 @@
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
-      "@island.is/service-portal/social-insurance-maintenance": [
-        "libs/service-portal/social-insurance-maintenance/src/index.ts"
-      ],
       "@island.is/service-portal/air-discount": [
         "libs/service-portal/air-discount/src/index.ts"
       ],
@@ -960,6 +957,9 @@
       ],
       "@island.is/service-portal/signature-collection": [
         "libs/service-portal/signature-collection/src/index.ts"
+      ],
+      "@island.is/service-portal/social-insurance-maintenance": [
+        "libs/service-portal/social-insurance-maintenance/src/index.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
