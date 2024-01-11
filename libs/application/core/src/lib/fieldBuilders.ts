@@ -129,6 +129,7 @@ export function buildDescriptionField(
     titleTooltip,
     space,
     marginBottom,
+    marginTop,
   } = data
   return {
     ...extractCommonFields(data),
@@ -140,6 +141,7 @@ export function buildDescriptionField(
     titleTooltip,
     space,
     marginBottom,
+    marginTop,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,
   }

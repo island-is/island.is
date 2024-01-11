@@ -7,6 +7,11 @@ export const application = {
       defaultMessage: 'Umsókn um heimastuðning',
       description: 'Home support application',
     },
+    submit: {
+      id: 'hst.application:general.submit',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application button text',
+    },
   }),
   applicant: defineMessages({
     infoSectionTitle: {
@@ -23,6 +28,117 @@ export const application = {
       id: 'hst.applicant.legalDomicilePersons:section.subtitle',
       defaultMessage: 'Einstaklingar skráðir á lögheimili',
       description: 'Legal domicile persons section subtitle',
+    },
+  }),
+  contacts: defineMessages({
+    sectionTitle: {
+      id: 'hst.contacts:section.title',
+      defaultMessage: 'Tengiliðir',
+      description: 'Contacts section title',
+    },
+  }),
+  doctor: defineMessages({
+    sectionTitle: {
+      id: 'hst.doctor:section.title',
+      defaultMessage: 'Heimilislæknir',
+      description: 'Doctor section title',
+    },
+    receivesServiceTitle: {
+      id: 'hst.doctor:service.title',
+      defaultMessage: 'Færðu þjónustu nú þegar?',
+      description: 'Receives service title',
+    },
+    doesReceiveServiceText: {
+      id: 'hst.doctor:receives.service.yes',
+      defaultMessage: 'Já, ég fæ ákveðna þjónustu hjá mínu sveitarfélagi',
+      description: 'Does receive service text',
+    },
+    doesNotReceiveServiceText: {
+      id: 'hst.doctor:receives.service.no',
+      defaultMessage: 'Nei ég fæ ekki neina þjónustu',
+      description: 'Does not receive service text',
+    },
+  }),
+  reason: defineMessages({
+    sectionTitle: {
+      id: 'hst.reason:section.title',
+      defaultMessage: 'Ástæða umsóknar',
+      description: 'Reason section title',
+    },
+    sectionSubtitle: {
+      id: 'hst.reason:section.subtitle',
+      defaultMessage: 'Hvers vegna sækir þú um heimastuðning?',
+      description: 'Reason section subtitle',
+    },
+    inputLabel: {
+      id: 'hst.reason:input.label',
+      defaultMessage: 'Athugasemd',
+      description: 'Reason input label',
+    },
+    inputPlaceholder: {
+      id: 'hst.reason:input.placeholder',
+      defaultMessage: 'Skrifaðu hér ástæðu umsóknar',
+      description: 'Reason input placeholder',
+    },
+  }),
+  exemption: defineMessages({
+    sectionTitle: {
+      id: 'hst.exemption:section.title',
+      defaultMessage: 'Undanþága',
+      description: 'Exemption section title',
+    },
+    checkboxText: {
+      id: 'hst.exemption:checkbox.text',
+      defaultMessage: 'Ég vil sækja um undanþágu',
+      description: 'Exemption checkbox text',
+    },
+  }),
+  overview: defineMessages({
+    sectionTitle: {
+      id: 'hst.overview:section.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview section title',
+    },
+    sectionDescription: {
+      id: 'hst.overview:section.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Overview section description',
+    },
+    applicantTitle: {
+      id: 'hst.overview:applicant.title',
+      defaultMessage: 'Persónu upplýsingar',
+      description: 'Overview applicant title',
+    },
+    receivesDoctorServiceTitle: {
+      id: 'hst.overview:receivesDoctorService.title',
+      defaultMessage: 'Færðu þjónustu frá þínu sveitarfélagi nú þegar?',
+      description: 'Overview receives doctor service title',
+    },
+    exemptionTitle: {
+      id: 'hst.overview:exemption.title',
+      defaultMessage:
+        'Er sótt um undanþágu á greiðslum fyrir þjónustu í formi þrifa?',
+      description: 'Overview exemption title',
+    },
+  }),
+  conclusion: defineMessages({
+    alertTitle: {
+      id: 'hst.conclusion:alert.title',
+      defaultMessage:
+        'Umsókn þín fyrir heimaþjónustu er móttekin og fer í vinnslu sem fyrst',
+      description: 'Conclusion alert title',
+    },
+    expendableHeader: {
+      id: 'hst.conclusion:expendable.header',
+      defaultMessage: 'Hér eru næstu skref',
+      description: 'Conclusion expendable header',
+    },
+    expendableContent: {
+      id: 'hst.conclusion:expendable.content#markdown',
+      defaultMessage: `* Staðfesting á móttöku umsóknar mun berast frá sveitarfélaginu þínu.\n\n* Starfsmaður sveitarfélagsins mun vera í sambandi við þig varðandi mat og útfærslu á þjónustu.
+      `,
+      description: 'Conclusion expendable content',
     },
   }),
 }
