@@ -111,7 +111,7 @@ test.describe.serial('Search warrant tests', () => {
         .click()
       await page.getByTestId('select-judge').getByText('Test Dómari').click()
       await page.getByTestId('continueButton').click()
-      await expect(page).toHaveURL(`domur/rannsoknarheimild/yfirlit/${caseId}`)
+      await expect(page).toHaveURL(`/domur/rannsoknarheimild/yfirlit/${caseId}`)
       await page.getByTestId('continueButton').click()
       await page.getByText('Fulltrúar málsaðila boðaðir').click()
       await page.getByTestId('continueButton').click()
