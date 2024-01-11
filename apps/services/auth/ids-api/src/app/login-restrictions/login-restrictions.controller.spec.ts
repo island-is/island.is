@@ -54,7 +54,7 @@ describe('LoginRestrictionsController', () => {
       await app.cleanUp()
     })
 
-    describe('GET /login-restrictions', () => {
+    describe('GET /login-restrictions/.phone-number', () => {
       const path = '/v1/login-restrictions/.phone-number'
 
       it('should return 200 and empty object if user has no restrictions', async () => {
@@ -68,7 +68,7 @@ describe('LoginRestrictionsController', () => {
         expect(response.body).toEqual({})
       })
 
-      it('should return 200 and array of restrictions if user has restrictions', async () => {
+      it('should return 200 and a restriction object if user has a restriction by phone number', async () => {
         // Arrange
         const loginRestriction = await loginRestrictionModel.create({
           nationalId: '1234567890',
@@ -90,29 +90,9 @@ describe('LoginRestrictionsController', () => {
         })
       })
 
-      it('should return 400 Bad Request for empty phone number', async () => {
-        // Arrange
-        await loginRestrictionModel.create({
-          nationalId: '1234567890',
-          phoneNumber: userPhoneNumber.replace('-', ''),
-          until: startOfDay(addDays(new Date(), 8)),
-        })
-
-        // Act
-        const response = await server.get(path).set('X-Param-Phone-Number', '')
-
-        // Assert
-        expect(response.status).toBe(400)
-        expect(response.body).toEqual({
-          status: 400,
-          type: 'https://httpstatuses.org/400',
-          title: 'Bad Request',
-          detail: 'Phone number must be provided and valid Icelandic',
-        })
-      })
-
       it.each`
         phoneNumber
+        ${''}
         ${'1234567'}
         ${'12345678901234567890'}
         ${'123abcd'}
@@ -131,6 +111,78 @@ describe('LoginRestrictionsController', () => {
           const response = await server
             .get(path)
             .set('X-Param-Phone-Number', phoneNumber)
+
+          // Assert
+          expect(response.status).toBe(400)
+          expect(response.body).toEqual({
+            status: 400,
+            type: 'https://httpstatuses.org/400',
+            title: 'Bad Request',
+            detail: 'Phone number must be provided and valid Icelandic',
+          })
+        },
+      )
+    })
+
+    describe('GET /login-restrictions', () => {
+      const path = '/v1/login-restrictions'
+
+      it('should return 200 and empty array if user has no restrictions', async () => {
+        // Act
+        const response = await server
+          .get(path)
+          .set('X-Query-Phone-Number', userPhoneNumber)
+
+        // Assert
+        expect(response.status).toBe(200)
+        expect(response.body).toEqual([])
+      })
+
+      it('should return 200 and array of restrictions if user has restrictions', async () => {
+        // Arrange
+        const loginRestriction = await loginRestrictionModel.create({
+          nationalId: '1234567890',
+          phoneNumber: userPhoneNumber.replace('-', ''),
+          until: startOfDay(addDays(new Date(), 8)),
+        })
+
+        // Act
+        const response = await server
+          .get(path)
+          .set('X-Query-Phone-Number', userPhoneNumber)
+
+        // Assert
+        expect(response.status).toBe(200)
+        expect(response.body).toEqual([
+          {
+            nationalId: loginRestriction.nationalId,
+            phoneNumber: loginRestriction.phoneNumber,
+            until: loginRestriction.until.toISOString(),
+          },
+        ])
+      })
+
+      it.each`
+        phoneNumber
+        ${''}
+        ${'1234567'}
+        ${'12345678901234567890'}
+        ${'123abcd'}
+        ${'+4543218765'}
+      `(
+        'should return 400 Bad Request for invalid phone number $phoneNumber',
+        async (phoneNumber) => {
+          // Arrange
+          await loginRestrictionModel.create({
+            nationalId: '1234567890',
+            phoneNumber: userPhoneNumber.replace('-', ''),
+            until: startOfDay(addDays(new Date(), 8)),
+          })
+
+          // Act
+          const response = await server
+            .get(path)
+            .set('X-Query-Phone-Number', phoneNumber)
 
           // Assert
           expect(response.status).toBe(400)

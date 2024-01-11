@@ -76,13 +76,6 @@ export const firstCourtDocument = style({
   },
 })
 
-export const removeButton = style({
-  background: theme.color.blue200,
-  padding: theme.spacing[1],
-  borderRadius: '8px',
-  width: '34px',
-})
-
 globalStyle('.court-documents-select__option--is-selected', {
   color: theme.color.dark400,
   background: theme.color.blue100,

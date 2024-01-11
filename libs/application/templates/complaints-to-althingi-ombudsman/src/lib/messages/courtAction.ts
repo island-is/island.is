@@ -14,7 +14,7 @@ export const courtAction = defineMessages({
   alertText: {
     id: 'ctao.application:courtAction.alertText',
     defaultMessage: `Starfssvið umboðsmanns Alþingis tekur hvorki til starfa dómstóla né ákvarðana 
-		sem lög gera ráð fyrir að menn leiti leiðréttingar með málskoti til dómstóla.
+		sem lög gera ráð fyrir að menn leiti leiðréttingar á með málskoti til dómstóla.
 		Ef málið hefur verið lagt fyrir dómstóla er líklegt að umboðsmaður geti ekki tekið það til skoðunar.`,
     description: 'Description of the court action alert',
   },

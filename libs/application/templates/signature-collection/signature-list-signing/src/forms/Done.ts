@@ -6,8 +6,9 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { SignatureCollectionCandidate } from '@island.is/api/schema'
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -38,12 +39,24 @@ export const Done: Form = buildForm({
         buildMultiField({
           id: 'doneScreen',
           title: m.listSigned,
-          description: m.listSignedDescription,
+          description: (application: Application) => ({
+            ...m.listSignedDescription,
+            values: {
+              name: (
+                application.answers.candidate as SignatureCollectionCandidate
+              )?.name,
+            },
+          }),
           children: [
             buildCustomField({
               id: 'listSigned',
               title: '',
               component: 'ListSigned',
+            }),
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              space: 'containerGutter',
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
@@ -53,12 +66,12 @@ export const Done: Form = buildForm({
               message: m.linkFieldMessage,
             }),
             buildDescriptionField({
-              id: 'space',
+              id: 'space1',
               title: '',
               space: 'containerGutter',
             }),
             buildDescriptionField({
-              id: 'space1',
+              id: 'space2',
               title: '',
               space: 'containerGutter',
             }),

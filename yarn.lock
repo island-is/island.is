@@ -21699,7 +21699,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bindings@npm:^1.3.0, bindings@npm:^1.5.0":
+"bindings@npm:^1.5.0":
   version: 1.5.0
   resolution: "bindings@npm:1.5.0"
   dependencies:
@@ -31588,15 +31588,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-shots@npm:9.0.0":
-  version: 9.0.0
-  resolution: "hot-shots@npm:9.0.0"
+"hot-shots@npm:10.0.0":
+  version: 10.0.0
+  resolution: "hot-shots@npm:10.0.0"
   dependencies:
-    unix-dgram: 2.0.x
+    unix-dgram: 2.x
   dependenciesMeta:
     unix-dgram:
       optional: true
-  checksum: bafc26a2a89154d6f0777d89f506f7aa03a0cb14f0bb6e9bc147bbca5ca549085b634db69bc7f754607360bd58e520b94fa398621cef30aaf8081bb2f08ea48b
+  checksum: b37f611190e897bbd2d8d07542cd24c98f2dcca01813f25cd8ba36155c0fa26db5216e01058a2b47142c2be8e45e6d80965358d69a7f0d85a6878ca27951813e
   languageName: node
   linkType: hard
 
@@ -33945,7 +33945,7 @@ __metadata:
     graphql-type-json: 0.3.2
     handlebars: 4.7.7
     history: ^5.3.0
-    hot-shots: 9.0.0
+    hot-shots: 10.0.0
     http-cache-semantics: 4.1.1
     http-proxy-middleware: 2.0.6
     hypher: 0.2.5
@@ -39901,7 +39901,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.12.1, nan@npm:^2.13.2, nan@npm:^2.14.1, nan@npm:^2.15.0":
+"nan@npm:^2.12.1, nan@npm:^2.14.1, nan@npm:^2.15.0":
   version: 2.15.0
   resolution: "nan@npm:2.15.0"
   dependencies:
@@ -39910,7 +39910,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.17.0":
+"nan@npm:^2.16.0, nan@npm:^2.17.0":
   version: 2.18.0
   resolution: "nan@npm:2.18.0"
   dependencies:
@@ -50413,9 +50413,9 @@ __metadata:
   linkType: hard
 
 "tinymce@npm:^5.10.2, tinymce@npm:^5.5.1":
-  version: 5.10.2
-  resolution: "tinymce@npm:5.10.2"
-  checksum: 6f80abd64f51f558a6135e48fb5061a5fed2badfc742c1560dfc1b56be2f9a30cfe48e48f8aaa14537dc9526ee70ece5408272245109114cdf894e07492497ff
+  version: 5.10.9
+  resolution: "tinymce@npm:5.10.9"
+  checksum: 9927f3132820c183ca1a3ed19b4e650b16276385b4c253e51cf2a399a5981522d4197901b7abd8a7bf7000d783880eda9727b5eee9381b5c4c42c48c48a1d6f5
   languageName: node
   linkType: hard
 
@@ -51885,14 +51885,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unix-dgram@npm:2.0.x":
-  version: 2.0.4
-  resolution: "unix-dgram@npm:2.0.4"
+"unix-dgram@npm:2.x":
+  version: 2.0.6
+  resolution: "unix-dgram@npm:2.0.6"
   dependencies:
-    bindings: ^1.3.0
-    nan: ^2.13.2
+    bindings: ^1.5.0
+    nan: ^2.16.0
     node-gyp: latest
-  checksum: 2ff0d015687ebb3a04c25b372269a206bd627d50f62f0bdf945f7c1fb36cfca9a67b24b4b540f57f3cee1ed6243c34fdfd5eaa155121b22ae2d9e622b9bd442d
+  checksum: 0ab238726fd69e0a0174664225117b4575b40bd5df546c50a01de2fadf9da602c385ec8ff2f159607a127a6e7bf67628931903d43d286db27460b5abbe8cf8ac
   languageName: node
   linkType: hard
 

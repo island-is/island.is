@@ -23,7 +23,9 @@ export class ManualSyncService implements CmsSyncProvider<IManual> {
   }
 
   doMapping(entries: IManual[]) {
-    logger.info('Mapping manuals', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping manuals', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {

@@ -55,6 +55,7 @@ export const VehicleSelectField: FC<
     setValue('selectVehicle.grantAmount', '')
     setValue('selectVehicle.newRegistrationDate', '')
     setValue('selectVehicle.type', '')
+    setValue('selectVehicle.grantItemCode', '')
   }
 
   const onChange = (option: Option) => {
@@ -95,6 +96,10 @@ export const VehicleSelectField: FC<
                 : '',
             )
             setValue('selectVehicle.type', chosenVehicle.make)
+            setValue(
+              'selectVehicle.grantItemCode',
+              response.energyFundVehicleGrant.vehicleGrantItemCode,
+            )
           } else {
             resetValues()
           }

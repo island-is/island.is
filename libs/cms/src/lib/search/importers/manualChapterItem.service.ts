@@ -51,9 +51,11 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
       }
     }
 
-    logger.info('Mapping manuals chapter items', {
-      count: chapterItems.length,
-    })
+    if (chapterItems.length > 0) {
+      logger.info('Mapping manuals chapter items', {
+        count: chapterItems.length,
+      })
+    }
 
     return chapterItems
       .map<MappedData | boolean>(({ item, manual, chapter }) => {

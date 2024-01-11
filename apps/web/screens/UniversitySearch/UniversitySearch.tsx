@@ -857,7 +857,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           >
                             <ListViewCard
                               key={index}
-                              iconText="Háskólinn í Reykjavík"
+                              iconText={
+                                universities.filter(
+                                  (x) => x.id === dataItem.universityId,
+                                )[0].contentfulTitle || ''
+                              }
                               heading={
                                 locale === 'en'
                                   ? dataItem.nameEn

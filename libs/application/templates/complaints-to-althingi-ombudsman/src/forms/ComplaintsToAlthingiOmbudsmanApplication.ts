@@ -43,6 +43,7 @@ import {
   preexistingComplaint,
   confirmation,
   complaintOverview,
+  previousOmbudsmanComplaint,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -54,6 +55,7 @@ import {
   getComplaintType,
   isDecisionDateOlderThanYear,
   isGovernmentComplainee,
+  isPreviousOmbudsmanComplaint,
 } from '../utils'
 import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 
@@ -305,11 +307,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             buildMultiField({
               id: 'complaintDescription',
               title: complaintDescription.general.pageTitle,
-              description: (application: Application) =>
-                getComplaintType(application.answers) ===
-                OmbudsmanComplaintTypeEnum.DECISION
-                  ? complaintDescription.general.decisionInfo
-                  : '',
+              description: complaintDescription.general.decisionInfo,
               children: [
                 buildTextField({
                   id: 'complaintDescription.complaineeName',
@@ -337,15 +335,16 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 }),
                 buildDateField({
                   id: 'complaintDescription.decisionDate',
-                  title: complaintDescription.labels.decisionDateTitle,
+                  title: (application: Application) =>
+                    getComplaintType(application.answers) ===
+                    OmbudsmanComplaintTypeEnum.DECISION
+                      ? complaintDescription.labels.decisionDateTitle
+                      : complaintDescription.labels.proceedingsDateTitle,
                   placeholder:
                     complaintDescription.labels.decisionDatePlaceholder,
                   backgroundColor: 'blue',
                   width: 'half',
                   maxDate: new Date(),
-                  condition: (answers: FormValue) =>
-                    getComplaintType(answers) ===
-                    OmbudsmanComplaintTypeEnum.DECISION,
                 }),
                 buildAlertMessageField({
                   id: 'complaintDescriptionAlert',
@@ -426,6 +425,37 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               doesNotRequireAnswer: true,
               condition: (answers: FormValue) =>
                 answers.courtActionAnswer === YES,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'previousOmbudsmanComplaint',
+      title: section.previousComplaint,
+      children: [
+        buildMultiField({
+          id: 'previousOmbudsmanComplaint.question',
+          title: previousOmbudsmanComplaint.general.title,
+          children: [
+            buildRadioField({
+              id: 'previousOmbudsmanComplaint.Answer',
+              title: '',
+              width: 'half',
+              options: [
+                { value: YES, label: shared.general.yes },
+                { value: NO, label: shared.general.no },
+              ],
+            }),
+            buildTextField({
+              id: 'previousOmbudsmanComplaint.moreInfo',
+              title: previousOmbudsmanComplaint.general.label,
+              rows: 6,
+              placeholder: '',
+              backgroundColor: 'blue',
+              variant: 'textarea',
+              required: true,
+              condition: (answers) => isPreviousOmbudsmanComplaint(answers),
             }),
           ],
         }),

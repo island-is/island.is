@@ -53,6 +53,7 @@ export enum ApplicationTypes {
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
+  ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
@@ -253,11 +254,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
-    translation: 'oap.application',
+    translation: ['oap.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
-    translation: 'hs.application',
+    translation: ['hs.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.CAR_RECYCLING]: {
     slug: 'skilavottord',
@@ -274,6 +275,14 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
+    slug: 'felagslegur-vidbotarstudningur',
+    translation: [
+      'asfte.application',
+      'sia.application',
+      'uiForms.application',
+    ],
   },
   [ApplicationTypes.ENERGY_FUNDS]: {
     slug: 'rafbila-styrkur',
