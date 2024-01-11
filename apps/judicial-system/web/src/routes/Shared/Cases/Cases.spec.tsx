@@ -455,11 +455,11 @@ describe('Cases', () => {
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
-      expect(tableRows[4]).toHaveTextContent('D. M. Kil')
-      expect(tableRows[3]).toHaveTextContent('Erlingur L Kristinsson')
+      expect(tableRows[0]).toHaveTextContent('D. M. Kil')
+      expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
       expect(tableRows[2]).toHaveTextContent('Jon Harring')
-      expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
-      expect(tableRows[0]).toHaveTextContent('Moe')
+      expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
+      expect(tableRows[4]).toHaveTextContent('Moe')
     })
 
     test('should order the table data by created in ascending order when the user clicks the created table header', async () => {
@@ -488,7 +488,7 @@ describe('Cases', () => {
       expect(tableRows[4]).toHaveTextContent('Moe')
     })
 
-    test('should order the table data by created in descending order when the user clicks the created table header twice', async () => {
+    test('should order the table data by created in acending order when the user clicks the created table header twice', async () => {
       const user = userEvent.setup()
       render(
         <MockedProvider
@@ -507,11 +507,11 @@ describe('Cases', () => {
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
-      expect(tableRows[4]).toHaveTextContent('Erlingur L Kristinsson')
-      expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
+      expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
+      expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
       expect(tableRows[2]).toHaveTextContent('Jon Harring')
-      expect(tableRows[1]).toHaveTextContent('D. M. Kil')
-      expect(tableRows[0]).toHaveTextContent('Moe')
+      expect(tableRows[3]).toHaveTextContent('D. M. Kil')
+      expect(tableRows[4]).toHaveTextContent('Moe')
     })
   })
 
