@@ -25,7 +25,6 @@ import {
 } from '@island.is/application/core'
 import { HouseholdSupplementHousing } from './constants'
 import { dataSchema } from './dataSchema'
-import { answerValidators } from './answerValidators'
 import { householdSupplementFormMessage, statesMessages } from './messages'
 import {
   socialInsuranceAdministrationMessage,
@@ -45,18 +44,7 @@ import {
   Actions,
   BankAccountType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import {
-  getApplicationAnswers,
-  getApplicationExternalData,
-} from './householdSupplementUtils'
-
-function isEligible(context: ApplicationContext) {
-  const { application } = context
-  const { externalData } = application
-  const { isEligible } = getApplicationExternalData(externalData)
-
-  return isEligible
-}
+import { getApplicationAnswers, isEligible } from './householdSupplementUtils'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -109,7 +97,8 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           SUBMIT: [
             {
               target: States.DRAFT,
-              cond: isEligible,
+              cond: (application) =>
+                isEligible(application?.application?.externalData),
             },
             {
               actions: 'setApproveExternalData',
@@ -367,13 +356,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
-      setApproveExternalData: assign((context) => {
-        const { application } = context
-        const { answers } = application
-
-        set(answers, 'approveExternalData', true)
-        return context
-      }),
       /**
        * Copy the current answers to temp. If the user cancels the edits,
        * we will restore the answers to their original state from temp.
@@ -496,7 +478,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
     }
     return undefined
   },
-  answerValidators,
 }
 
 export default HouseholdSupplementTemplate

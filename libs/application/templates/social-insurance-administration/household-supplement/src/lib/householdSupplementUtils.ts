@@ -4,7 +4,12 @@ import {
   AttachmentLabel,
   AttachmentTypes,
 } from './constants'
-import { Application, YesOrNo, YES } from '@island.is/application/types'
+import {
+  Application,
+  YesOrNo,
+  YES,
+  ExternalData,
+} from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
@@ -273,4 +278,10 @@ export function getAvailableMonths(selectedYear: string) {
   }
 
   return months
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
 }
