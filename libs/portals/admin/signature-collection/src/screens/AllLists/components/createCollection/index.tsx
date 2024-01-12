@@ -3,15 +3,15 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
-import { useIdentityLookupLazyQuery } from './identityLookup.generated'
 import { InputController } from '@island.is/shared/form-fields'
 import { Control, useForm } from 'react-hook-form'
+import { useSigneeLookupLazyQuery } from './singeeLookup.generated'
 
 const CompareLists = () => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const { control } = useForm()
-  const [identityLookup, { loading }] = useIdentityLookupLazyQuery()
+  const [signeeLookup, { loading }] = useSigneeLookupLazyQuery()
 
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
@@ -19,15 +19,18 @@ const CompareLists = () => {
 
   useEffect(() => {
     if (nationalIdInput.length === 10) {
-      identityLookup({
+      signeeLookup({
         variables: {
           input: {
-            nationalId: nationalIdInput,
+            id: nationalIdInput,
           },
         },
       }).then((res) => {
-        if (res.data?.identity?.name) {
-          setName(res.data.identity.name)
+        if (res.data?.signatureCollectionSigneeLookup?.name) {
+          setName(res.data.signatureCollectionSigneeLookup.name)
+          // TODO: use can create and can createInfo
+          console.log(res.data.signatureCollectionSigneeLookup.canCreate)
+          console.log(res.data.signatureCollectionSigneeLookup.canCreateInfo)
         } else {
           setName('')
           setNationalIdNotFound(true)

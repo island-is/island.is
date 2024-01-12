@@ -1,6 +1,0 @@
-query IdentityLookup($input: IdentityInput!) {
-  identity(input: $input) {
-    name
-    nationalId
-  }
-}
