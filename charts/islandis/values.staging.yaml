@@ -763,6 +763,7 @@ application-system-api-worker:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
+    CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
@@ -778,7 +779,6 @@ application-system-api-worker:
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
-    XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:'
