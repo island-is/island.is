@@ -53,6 +53,16 @@ export const m = defineMessages({
     defaultMessage: 'Hreinsa allar síur',
     description: '',
   },
+  createCollection: {
+    id: 'admin-portal.signature-collection:createCollection',
+    defaultMessage: 'Stofna söfnun',
+    description: '',
+  },
+  createCollectionModalDescription: {
+    id: 'admin-portal.signature-collection:createCollectionModalDescription',
+    defaultMessage: 'Sláðu inn kennitölu frambjóðanda',
+    description: '',
+  },
   listEndTime: {
     id: 'admin-portal.signature-collection:listEndTime',
     defaultMessage: 'Lokadagur',
