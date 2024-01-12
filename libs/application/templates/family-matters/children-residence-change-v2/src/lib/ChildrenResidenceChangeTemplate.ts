@@ -29,6 +29,7 @@ import {
   pruneAfterDays,
   coreHistoryMessages,
   coreMessages,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { Features } from '@island.is/feature-flags'
@@ -65,12 +66,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           status: 'draft',
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // If application stays in this state for 24 hours it will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           actionCard: {
             historyLogs: {
               logMessage: coreHistoryMessages.applicationStarted,
