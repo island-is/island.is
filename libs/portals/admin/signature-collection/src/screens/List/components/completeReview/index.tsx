@@ -32,7 +32,7 @@ const ActionReviewComplete = () => {
         closeButtonLabel={''}
       >
         <Box marginTop={5}>
-          <Text>Lorem ipsum</Text>
+          <Text>{formatMessage(m.listReviewedModalDescription)}</Text>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
