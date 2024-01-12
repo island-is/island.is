@@ -50,7 +50,11 @@ describe('InfoCard', () => {
     )
 
     // Act and Assert
-    expect(await screen.findByText('Joe, s. 555-5555')).toBeTruthy()
+    expect(
+      await screen.findByText(
+        (_, element) => element?.textContent === 'Joe, s. 555-5555',
+      ),
+    ).toBeTruthy()
   })
 
   test('should display the assigned defender name, email and phonenumber if that info is provided', async () => {
@@ -74,7 +78,12 @@ describe('InfoCard', () => {
     )
 
     // Act and Assert
-    expect(await screen.findByText('Joe, joe@joe.is, s. 455-5544')).toBeTruthy()
+    expect(
+      await screen.findByText(
+        (_, element) => element?.textContent === 'Joe, joe@joe.is, s. 455-5544',
+        {},
+      ),
+    ).toBeTruthy()
   })
 
   test('should display multiple defenders', async () => {
@@ -103,9 +112,16 @@ describe('InfoCard', () => {
     )
 
     // Act and Assert
-    expect(await screen.findByText('Joe, joe@joe.is, s. 455-5544')).toBeTruthy()
     expect(
-      await screen.findByText('Melissa, mel@issa.is, s. 411-1114'),
+      await screen.findByText(
+        (_, element) => element?.textContent === 'Joe, joe@joe.is, s. 455-5544',
+      ),
+    ).toBeTruthy()
+    expect(
+      await screen.findByText(
+        (_, element) =>
+          element?.textContent === 'Melissa, mel@issa.is, s. 411-1114',
+      ),
     ).toBeTruthy()
   })
 
