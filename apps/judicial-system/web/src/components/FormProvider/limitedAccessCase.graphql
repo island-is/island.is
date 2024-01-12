@@ -54,6 +54,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
       title
+      email
       institution {
         id
         name
