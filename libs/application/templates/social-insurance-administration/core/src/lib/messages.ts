@@ -352,6 +352,13 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Fylgiskjöl viðbótargögn',
       description: 'Additional attachments',
     },
+    additionalFileDescription: {
+      id: 'sia.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar ef þú telur þörf á.',
+      description:
+        'Below you can submit additional data to the Social Insurance Administration, if need be.',
+    },
     additionalDocumentsEditSubmit: {
       id: 'sia.application:fileUpload.additionalDocumentsEditSubmit',
       defaultMessage: 'Senda inn',
