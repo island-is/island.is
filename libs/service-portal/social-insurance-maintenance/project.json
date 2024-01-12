@@ -15,13 +15,13 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/libs/service-portal/social-insurance-maintenance"
-      ],
       "options": {
-        "jestConfig": "libs/service-portal/social-insurance-maintenance/jest.config.ts",
+        "jestConfig": "libs/service-portal/social-insurance-maintenance/jest.config.js",
         "passWithNoTests": true
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/service-portal/social-insurance-maintenance"
+      ]
     },
     "extract-strings": {
       "executor": "nx:run-commands",
