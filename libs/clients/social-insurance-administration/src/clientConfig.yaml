@@ -432,8 +432,5 @@ components:
           type: number
         detail:
           type: string
-        testBuildError:
-          type: string
-
 security:
   - bearerAuth: []

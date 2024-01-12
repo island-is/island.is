@@ -29,7 +29,8 @@
         "command": "yarn openapi-generator -o libs/clients/social-insurance-administration/gen/fetch -i libs/clients/social-insurance-administration/src/clientConfig.yaml"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
-    }
+    },
+    "touching": {}
   },
   "tags": ["lib:client", "scope:client"]
 }
