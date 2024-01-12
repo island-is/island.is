@@ -13,11 +13,13 @@ import {
   buildCheckboxField,
   buildDividerField,
   coreMessages,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   Form,
   FormModes,
   NationalRegistryIndividual,
+  CurrentHealthCenter,
 } from '@island.is/application/types'
 
 import {
@@ -43,16 +45,41 @@ export const HomeSupportForm: Form = buildForm({
       id: 'legalDomicilePersonsSection',
       title: m.application.applicant.legalDomicilePersonsSectionTitle,
       children: [
-        buildActionCardListField({
-          id: 'cohabitants',
-          doesNotRequireAnswer: true,
+        buildMultiField({
+          id: 'legalDomicilePersonsSection',
           title: m.application.applicant.legalDomicilePersonsSectionSubtitle,
-          items: (application) => {
-            const cohabitants = application.externalData
-              .nationalRegistryCohabitants.data as NationalRegistryIndividual[]
-
-            return cohabitants.map((x) => mapIndividualToActionCard(x))
-          },
+          children: [
+            buildActionCardListField({
+              id: 'cohabitants',
+              doesNotRequireAnswer: true,
+              title: '',
+              condition: (_, externalData) => {
+                const cohabitants = externalData.nationalRegistryCohabitants
+                  .data as NationalRegistryIndividual[]
+                return cohabitants.length > 0
+              },
+              items: (application) => {
+                const cohabitants = application.externalData
+                  .nationalRegistryCohabitants
+                  .data as NationalRegistryIndividual[]
+                console.log('extd', application.externalData)
+                return cohabitants.map((x) => mapIndividualToActionCard(x))
+              },
+            }),
+            buildAlertMessageField({
+              id: 'noCohabitants',
+              title: 'Þú átt enga vini',
+              message:
+                'Engir einstaklingar fundust skráðir á þínu heimilisfangi',
+              alertType: 'info',
+              condition: (_, externalData) => {
+                const cohabitants = externalData.nationalRegistryCohabitants
+                  .data as NationalRegistryIndividual[]
+                console.log('extd', externalData)
+                return cohabitants.length === 0
+              },
+            }),
+          ],
         }),
       ],
     }),
@@ -76,8 +103,26 @@ export const HomeSupportForm: Form = buildForm({
           title: m.application.doctor.sectionTitle,
           children: [
             buildKeyValueField({
-              label: 'Mockmundur Testson', // TODO: Get this information from api
-              value: 'Teststofnun Mocklands (TSM)',
+              label: ({ externalData }) =>
+                (externalData.currentHealthcenter?.data as CurrentHealthCenter)
+                  ?.doctor,
+              value: ({ externalData }) =>
+                (externalData.currentHealthcenter?.data as CurrentHealthCenter)
+                  ?.healthCenter,
+              condition: (_, externalData) => {
+                return !!(
+                  externalData.currentHealthcenter?.data as CurrentHealthCenter
+                )?.doctor
+              },
+            }),
+            buildKeyValueField({
+              label: '',
+              value: 'Þú ert ekki með neinn heimilislækni kallinn minnn',
+              condition: (_, externalData) => {
+                return !(
+                  externalData.currentHealthcenter?.data as CurrentHealthCenter
+                )?.doctor
+              },
             }),
             buildDescriptionField({
               id: 'doctorServiceDescription',

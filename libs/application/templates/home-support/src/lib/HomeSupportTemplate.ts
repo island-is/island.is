@@ -15,6 +15,7 @@ import {
   HealthInsuranceApi,
   NationalRegistryUserApi,
   UserProfileApi,
+  HealthCenterApi,
 } from '../dataProviders'
 import { application } from './messages'
 import { HomeSupportSchema } from './dataSchema'
@@ -83,6 +84,7 @@ const HomeSupportTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistryCohabitantsApi,
                 HealthInsuranceApi,
+                HealthCenterApi,
               ],
             },
           ],

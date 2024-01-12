@@ -13,13 +13,14 @@ import {
   NationalRegistryUserApi,
   NationalRegistryCohabitantsApi,
   UserProfileApi,
+  HealthCenterApi,
 } from '../dataProviders'
 import { prerequisites, application } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'HomeSupportPrerequisites',
   title: application.general.name,
-  mode: FormModes.NOT_STARTED,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
@@ -80,7 +81,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: prerequisites.dataProviders.internalRevenueDescription,
             }),
             buildDataProviderItem({
-              provider: HealthInsuranceApi,
+              provider: HealthCenterApi,
               title: prerequisites.dataProviders.healthInsuranceTitle,
               subTitle: prerequisites.dataProviders.healthInsuranceDescription,
             }),
