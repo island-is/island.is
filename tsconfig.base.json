@@ -716,6 +716,9 @@
       "@island.is/clients/work-machines": [
         "libs/clients/work-machines/src/index.ts"
       ],
+      "@island.is/clients/workpoint/arborg": [
+        "libs/clients/workpoint/arborg/src/index.ts"
+      ],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
       "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],

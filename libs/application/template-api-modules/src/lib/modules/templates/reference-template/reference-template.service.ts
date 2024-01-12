@@ -10,37 +10,52 @@ import {
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { ApplicationApi } from '@island.is/clients/workpoint/arborg'
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
 export class ReferenceTemplateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly applicationApi: ApplicationApi,
   ) {
     super(ApplicationTypes.EXAMPLE)
   }
 
   async getReferenceData({ application }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
-
+    const arborg = await this.applicationApi.applicationGet()
     const name = getValueViaPath(
       application.externalData,
       'nationalRegistry.data.name',
     ) as string
+
+    const arg = await this.applicationApi.applicationPost({
+      applicationSystemInput: {
+        notandagogn: [
+          {
+            gildi: { stuff: 'sdfs' },
+          },
+        ],
+      },
+    })
 
     return {
       referenceData: {
         name,
         some: 'data',
         numbers: 123,
+        arborg,
       },
     }
   }
 
   async getAnotherReferenceData({ application }: TemplateApiModuleActionProps) {
+    const result = await this.applicationApi.applicationGet()
     return {
       anotherData: {
         stuff: 'someDataString',
+        result,
       },
     }
   }
