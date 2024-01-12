@@ -16,21 +16,8 @@ export const GetSignatureLists = gql`
       }
       endTime
       startTime
-      owner {
-        nationalId
-        name
-        phone
-        email
-      }
-      collectors {
-        nationalId
-        name
-        phone
-        email
-      }
       active
       collectionId
-      link
     }
   }
 `
