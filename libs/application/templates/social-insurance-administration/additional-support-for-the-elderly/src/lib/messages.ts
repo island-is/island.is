@@ -58,7 +58,7 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     additionalFileDescription: {
       id: 'asfte.application:fileUpload.additionalFile.description',
       defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis dvalarleyfi frá útlendingastofnun (skila þarf inn báðum hliðum dvalarleyfis). Athugaðu að skjalið þarf að vera á .pdf formi.',
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis dvalarleyfi frá útlendingastofnun (skila þarf inn báðum hliðum dvalarleyfis).',
       description: 'english description',
     },
   }),
