@@ -1,72 +1,44 @@
-import {
-  Box,
-  InputFileUpload,
-  Text,
-  Button,
-  Table as T,
-  UploadFile,
-  toast,
-  Input,
-  Stack,
-} from '@island.is/island-ui/core'
+import { Box, Text, Button, Stack, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
-import { format as formatNationalId } from 'kennitala'
-import { SignatureCollectionSignature } from '@island.is/api/schema'
-import { createFileList, getFileData } from '../../../../lib/utils'
+import { useIdentityLookupLazyQuery } from './identityLookup.generated'
+import { InputController } from '@island.is/shared/form-fields'
+import { Control, useForm } from 'react-hook-form'
 
 const CompareLists = () => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const [fileList, setFileList] = useState<Array<UploadFile>>([])
-  const [uploadResults, setUploadResults] = useState<Array<any>>()
-  /*const [compareMutation, { loading }] = useBulkCompareMutation()
-  const [unSignMutation] = useUnsignAdminMutation()
+  const { control } = useForm()
+  const [identityLookup, { loading }] = useIdentityLookupLazyQuery()
 
-  const compareLists = async (nationalIds: Array<string>) => {
-    try {
-      const res = await compareMutation({
+  const [nationalIdInput, setNationalIdInput] = useState('')
+  const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
+  const [name, setName] = useState('')
+
+  useEffect(() => {
+    if (nationalIdInput.length === 10) {
+      identityLookup({
         variables: {
           input: {
-            nationalIds: nationalIds,
+            nationalId: nationalIdInput,
           },
         },
+      }).then((res) => {
+        if (res.data?.identity?.name) {
+          setName(res.data.identity.name)
+        } else {
+          setName('')
+          setNationalIdNotFound(true)
+        }
       })
-
-      if (res.data) {
-        setUploadResults(
-          res.data?.signatureCollectionBulkCompareSignaturesAllLists,
-        )
-      }
-    } catch (e) {
-      toast.error(e.message)
+    } else {
+      setName('')
+      setNationalIdInput('')
+      setNationalIdNotFound(false)
     }
-  }
-
-  const unSignFromList = async (signatureId: string) => {
-    try {
-      const res = await unSignMutation({
-        variables: {
-          input: {
-            id: signatureId,
-          },
-        },
-      })
-
-      if (res.data && res.data.signatureCollectionUnsignAdmin.success) {
-        toast.success(formatMessage(m.unsignFromListSuccess))
-        setUploadResults(
-          uploadResults?.filter((result: SignatureCollectionSignature) => {
-            return result.id !== signatureId
-          }),
-        )
-      }
-    } catch (e) {
-      toast.error(e.message)
-    }
-  }*/
+  }, [nationalIdInput])
 
   return (
     <Box>
@@ -90,8 +62,9 @@ const CompareLists = () => {
         isVisible={modalIsOpen}
         title={formatMessage(m.createCollection)}
         onClose={() => {
-          setFileList([])
           setModalIsOpen(false)
+          setNationalIdInput('')
+          setName('')
         }}
         hideOnClickOutside={false}
         closeButtonLabel={''}
@@ -101,8 +74,29 @@ const CompareLists = () => {
           {formatMessage(m.createCollectionModalDescription)}
         </Text>
         <Stack space={3}>
-          <Input name="candidateNationalId" label="Kennitala frambjóðanda" />
-          <Input name="candidateName" label="Nafn frambjóðanda" readOnly />
+          <InputController
+            control={control as unknown as Control}
+            type="tel"
+            id="candidateNationalId"
+            label={formatMessage(m.candidateNationalId)}
+            format="######-####"
+            defaultValue={nationalIdInput}
+            onChange={(v) =>
+              setNationalIdInput(v.target.value.replace(/\W/g, ''))
+            }
+            loading={loading}
+            error={
+              nationalIdNotFound
+                ? formatMessage(m.candidateNationalIdNotFound)
+                : undefined
+            }
+          />
+          <Input
+            name="candidateName"
+            label={formatMessage(m.candidateName)}
+            readOnly
+            value={name}
+          />
         </Stack>
         <Box display="flex" justifyContent="center" marginY={5}>
           <Button onClick={() => setModalIsOpen(false)}>

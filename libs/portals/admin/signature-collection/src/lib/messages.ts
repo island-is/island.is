@@ -63,6 +63,21 @@ export const m = defineMessages({
     defaultMessage: 'Sláðu inn kennitölu frambjóðanda',
     description: '',
   },
+  candidateNationalId: {
+    id: 'admin-portal.signature-collection:candidateNationalId',
+    defaultMessage: 'Kennitala frambjóðanda',
+    description: '',
+  },
+  candidateNationalIdNotFound: {
+    id: 'admin-portal.signature-collection:candidateNationalIdNotFound',
+    defaultMessage: 'Kennitala finnst ekki',
+    description: '',
+  },
+  candidateName: {
+    id: 'admin-portal.signature-collection:candidateName',
+    defaultMessage: 'Nafn frambjóðanda',
+    description: '',
+  },
   listEndTime: {
     id: 'admin-portal.signature-collection:listEndTime',
     defaultMessage: 'Lokadagur',
