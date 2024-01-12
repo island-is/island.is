@@ -14,22 +14,17 @@ import { getSelectedChildrenFromExternalData } from '@island.is/application/temp
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
-import {
-  application,
-  stateDescriptions,
-  stateLabels,
-  history,
-} from './messages'
+import { application, stateDescriptions, history } from './messages'
 import {
   ChildrenCustodyInformationApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
 import {
-  pruneAfterDays,
   coreHistoryMessages,
   coreMessages,
   EphemeralStateLifeCycle,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { Features } from '@island.is/feature-flags'
@@ -120,7 +115,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ParentA,
@@ -197,7 +192,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                     content: history.actions.waitingForCounterpartyDescription,
                   },
           },
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.sendNotificationToCounterParty,
           }),
@@ -259,7 +254,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
           },
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.rejectedByCounterParty,
           }),
@@ -293,7 +288,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             action: TemplateApiActions.submitApplication,
             shouldPersistToExternalData: true,
           }),
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             historyLogs: [
               {
@@ -362,7 +357,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.rejected,
           },
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.rejectedByOrganization,
           }),
@@ -394,7 +389,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.approved,
           },
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.approvedByOrganization,
           }),
