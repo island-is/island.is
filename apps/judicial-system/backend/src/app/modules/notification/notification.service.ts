@@ -1556,7 +1556,6 @@ export class NotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
-
     const html = this.formatMessage(
       notifications.caseAppealedToCourtOfAppeals.body,
       {
@@ -1564,6 +1563,12 @@ export class NotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
         linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
+      },
+    )
+    const smsText = this.formatMessage(
+      notifications.caseAppealedToCourtOfAppeals.text,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
@@ -1598,6 +1603,7 @@ export class NotificationService {
           theCase.prosecutor?.email,
         ),
       )
+      promises.push(this.sendSms(smsText, theCase.prosecutor?.mobileNumber))
     }
 
     if (user.role === UserRole.PROSECUTOR && theCase.defenderEmail) {
@@ -1626,13 +1632,6 @@ export class NotificationService {
         ),
       )
     }
-
-    const smsText = this.formatMessage(
-      notifications.caseAppealedToCourtOfAppeals.text,
-      {
-        courtCaseNumber: theCase.courtCaseNumber,
-      },
-    )
 
     promises.push(
       this.sendSms(
@@ -1671,6 +1670,14 @@ export class NotificationService {
         statementDeadline: formatDate(statementDeadline, 'PPPp'),
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
+      },
+    )
+
+    const smsText = this.formatMessage(
+      notifications.caseAppealReceivedByCourt.text,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        statementDeadline: formatDate(statementDeadline, 'PPPp'),
       },
     )
 
@@ -1730,6 +1737,8 @@ export class NotificationService {
         ),
       )
     }
+
+    promises.push(this.sendSms(smsText, theCase.prosecutor?.mobileNumber))
 
     const recipients = await Promise.all(promises)
 

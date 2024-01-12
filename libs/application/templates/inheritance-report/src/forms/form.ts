@@ -30,8 +30,8 @@ export const form: Form = buildForm({
     applicationInfo,
     applicant,
     assets,
-    debts,
     funeralCost,
+    debts,
     business,
     heirs,
     buildSection({
