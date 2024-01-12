@@ -22,7 +22,6 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
-import { answerValidators } from './answerValidators'
 import { pensionSupplementFormMessage, statesMessages } from './messages'
 import {
   SocialInsuranceAdministrationApplicantApi,
@@ -341,13 +340,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
-      setApproveExternalData: assign((context) => {
-        const { application } = context
-        const { answers } = application
-
-        set(answers, 'approveExternalData', true)
-        return context
-      }),
       /**
        * Copy the current answers to temp. If the user cancels the edits,
        * we will restore the answers to their original state from temp.
@@ -452,7 +444,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
     }
     return undefined
   },
-  answerValidators,
 }
 
 export default PensionSupplementTemplate

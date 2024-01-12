@@ -128,6 +128,44 @@ export const dataSchema = z.object({
       },
       { params: coreSIAErrorMessages.period, path: ['month'] },
     ),
+  fileUpload: z.object({
+    assistedCareAtHome: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: coreSIAErrorMessages.requireAttachment,
+      }),
+    purchaseOfHearingAids: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: coreSIAErrorMessages.requireAttachment,
+      }),
+    assistedLiving: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: coreSIAErrorMessages.requireAttachment,
+      }),
+    halfwayHouse: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: coreSIAErrorMessages.requireAttachment,
+      }),
+    houseRentAgreement: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: coreSIAErrorMessages.requireAttachment,
+      }),
+    houseRentAllowance: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: coreSIAErrorMessages.requireAttachment,
+      }),
+  }),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)

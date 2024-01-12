@@ -337,8 +337,10 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     attachmentDescription: {
       id: 'sia.application:fileUpload.attachment.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'The following document types are accepted: .pdf',
+      defaultMessage:
+        'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+      description:
+        'The following document types are accepted: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
     },
     attachmentMaxSizeError: {
       id: 'sia.application:fileUpload.attachment.maxSizeError',
