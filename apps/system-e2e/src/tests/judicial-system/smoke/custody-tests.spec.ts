@@ -1,11 +1,9 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
-
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
 import { randomPoliceCaseNumber, randomCourtCaseNumber } from '../utils/helpers'
-
 import { receiveAppealTest } from './shared-steps/receive-appeal'
 import { appealCaseTest } from './shared-steps/send-appeal'
 import { coaJudgeCompletesCaseTest } from './shared-steps/complete-appeal'

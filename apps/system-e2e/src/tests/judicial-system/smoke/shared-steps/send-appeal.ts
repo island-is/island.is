@@ -1,5 +1,4 @@
 import { Page, expect } from '@playwright/test'
-
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 import { createFakePdf } from '../../utils/helpers'
 

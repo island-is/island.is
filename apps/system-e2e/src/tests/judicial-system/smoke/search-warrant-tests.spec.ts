@@ -1,10 +1,8 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
 import subDays from 'date-fns/subDays'
-
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
-
 import { test } from '../utils/judicialSystemTest'
 import { randomCourtCaseNumber, randomPoliceCaseNumber } from '../utils/helpers'
 import { appealCaseTest } from './shared-steps/send-appeal'

@@ -1,5 +1,4 @@
 import { Page, expect } from '@playwright/test'
-
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 import { createFakePdf, randomAppealCaseNumber } from '../../utils/helpers'
 
@@ -20,7 +19,6 @@ export async function coaJudgeCompletesCaseTest(page: Page, caseId: string) {
     page.getByText('Mál nr. *').press('Tab'),
   ])
   await page.getByTestId('select-assistant').click()
-
   await Promise.all([
     page.locator('#react-select-assistant-option-0').click(),
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
