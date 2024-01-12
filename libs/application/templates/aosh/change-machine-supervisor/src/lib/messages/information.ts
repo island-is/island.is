@@ -199,7 +199,7 @@ export const information = {
         description: 'Operator add label',
       },
       identicalError: {
-        id: 'ta.cms.application:information.labels.supervisor.identicalError',
+        id: 'aosh.cms.application:information.labels.supervisor.identicalError',
         defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
         description: 'operator identical error',
       },

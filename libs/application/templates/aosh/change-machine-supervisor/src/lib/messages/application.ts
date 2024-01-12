@@ -41,7 +41,7 @@ export const application = defineMessages({
     description: 'History log approved by reviewer',
   },
   actionCardPrerequisites: {
-    id: 'hlc.application:actionCardPrerequisites',
+    id: 'aosh.cms.application:actionCardPrerequisites',
     defaultMessage: 'Gagnaöflun',
     description:
       'Description of application state/status when the application is in prerequisites',

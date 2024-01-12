@@ -1,13 +1,5 @@
-import { ZodError, ZodIssue, z } from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
-
-function createZodIssue(path: string[], message: string): ZodIssue {
-  return {
-    path,
-    message,
-    code: 'custom',
-  }
-}
 
 export const MachineAnswersSchema = z.object({
   machine: z.object({
@@ -42,33 +34,30 @@ export const MachineAnswersSchema = z.object({
       phone: z.string().optional(),
       isOwner: z.array(z.string()),
     })
-    .refine((data) => {
-      const { isOwner, ...rest } = data
-
-      if (isOwner[0] !== 'ownerIsSupervisor') {
-        if (rest.nationalId === '')
-          throw new ZodError([
-            createZodIssue(['nationalId'], 'Kennitala þarf að vera fyllt út'),
-          ])
-        if (rest.name === '')
-          throw new ZodError([
-            createZodIssue(['name'], 'Nafn þarf að vera fyllt út'),
-          ])
-        if (rest.email === '')
-          throw new ZodError([
-            createZodIssue(['email'], 'Netfang þarf að vera fyllt út'),
-          ])
-        if (rest?.phone === '' || rest.phone?.length !== 11)
-          throw new ZodError([
-            createZodIssue(
-              ['phone'],
-              `Símanúmer þarf að vera fyllt út ${rest?.phone}`,
-            ),
-          ])
-      }
-
-      return true
-    }),
+    .refine(
+      ({ nationalId, isOwner }) => {
+        return isOwner[0] === 'ownerIsSupervisor' || nationalId !== ''
+      },
+      { path: ['nationalId'] },
+    )
+    .refine(
+      ({ name, isOwner }) => {
+        return isOwner[0] === 'ownerIsSupervisor' || name !== ''
+      },
+      { path: ['name'] },
+    )
+    .refine(
+      ({ email, isOwner }) => {
+        return isOwner[0] === 'ownerIsSupervisor' || email !== ''
+      },
+      { path: ['email'] },
+    )
+    .refine(
+      ({ phone, isOwner }) => {
+        return isOwner[0] === 'ownerIsSupervisor' || phone !== ''
+      },
+      { path: ['phone'] },
+    ),
   approveExternalData: z.boolean(),
   location: z
     .object({

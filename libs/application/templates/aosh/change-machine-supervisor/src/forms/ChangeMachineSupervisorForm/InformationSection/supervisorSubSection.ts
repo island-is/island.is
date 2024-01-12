@@ -18,7 +18,7 @@ export const supervisorSubSection = buildSubSection({
   title: supervisor.general.title,
   children: [
     buildMultiField({
-      id: 'supervisorMultiField',
+      id: 'supervisor',
       title: supervisor.general.newSupervisorTitle,
       description: supervisor.general.description,
       children: [
