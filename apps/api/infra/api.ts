@@ -147,7 +147,7 @@ export const serviceSetup = (services: {
       XROAD_PROPERTIES_TIMEOUT: '35000',
       SYSLUMENN_TIMEOUT: '40000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
-      XROAD_FINANCES_TIMEOUT: '20000',
+      XROAD_FINANCES_TIMEOUT: '60000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       AUTH_DELEGATION_API_URL: {
         dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',

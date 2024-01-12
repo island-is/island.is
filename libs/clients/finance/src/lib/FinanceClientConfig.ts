@@ -20,6 +20,6 @@ export const FinanceClientConfig = defineConfig({
       // TODO: Remove when fjs has migrated to the scope above.
       'api_resource.scope',
     ],
-    fetchTimeout: env.optionalJSON('XROAD_FINANCES_TIMEOUT') ?? 20000,
+    fetchTimeout: env.optionalJSON('XROAD_FINANCES_TIMEOUT') ?? 60000,
   }),
 })
