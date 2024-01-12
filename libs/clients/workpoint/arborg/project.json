@@ -1,0 +1,41 @@
+{
+  "name": "clients-workpoint-arborg",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/workpoint/arborg/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/workpoint/arborg/**/*.ts"]
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' {projectRoot}/src/clientConfig.json) > {projectRoot}/src/clientConfig.json",
+          "prettier --write {projectRoot}/src/clientConfig.json",
+          "yarn openapi-generator -o {projectRoot}/gen/fetch -i {projectRoot}/src/clientConfig.json"
+        ]
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/workpoint/arborg/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}
