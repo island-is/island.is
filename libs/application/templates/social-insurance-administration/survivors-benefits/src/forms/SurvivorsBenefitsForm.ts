@@ -437,39 +437,28 @@ export const SurvivorsBenefitsForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          condition: (answers) => {
+            const { isExpectingChild } = getApplicationAnswers(answers)
+            console.log('isExpectingChild: ', isExpectingChild)
+            return isExpectingChild === YES
+          },
+          id: 'expectingChild.fileUpload.section',
+          title: survivorsBenefitsFormMessage.info.expectingChildFileUpload,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.expectingChild',
+              title: survivorsBenefitsFormMessage.info.expectingChildFileUpload,
+              description:
+                survivorsBenefitsFormMessage.info.expectingChildFileUploadDescription,
+              introduction:
+                survivorsBenefitsFormMessage.info.expectingChildFileUploadDescription,
+              ...fileUploadSharedProps,
+            }),
+          ],
+        }),
       ],
     }),
-    // buildSection({
-    //   id: 'expectingChildSection',
-    //   title: 'Áttu von á barni?', //oldAgePensionFormMessage.pre.questionTitle,
-    //   children: [
-    //     buildSubSection({
-    //       condition: (_, externalData) => {
-    //         const { hasSpouse } = getApplicationExternalData(externalData)
-    //         console.log('hasSpouse: ', hasSpouse)
-    //         // if applicant does not have a spouse, then show question
-    //         if (!hasSpouse) return true
-    //         return false
-    //       },
-    //       id: 'expectingChild',
-    //       title: 'Áttu von á barni?',
-    //       children: [
-    //         buildMultiField({
-    //           id: 'expectingChild',
-    //           title: 'Áttu von á barni?',
-    //           children: [
-    //             buildRadioField({
-    //               id: 'expectingChild.question',
-    //               title: '',
-    //               options: getYesNoOptions(),
-    //               width: 'half',
-    //             }),
-    //           ],
-    //         }),
-    //       ],
-    //     }),
-    //   ],
-    // }),
     buildSection({
       id: 'additionalInfo',
       title: socialInsuranceAdministrationMessage.additionalInfo.section,
@@ -485,10 +474,10 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-                survivorsBenefitsFormMessage.fileUpload
+              socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileDescription,
               introduction:
-                survivorsBenefitsFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileDescription,
               ...fileUploadSharedProps,
             }),

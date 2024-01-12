@@ -1,9 +1,13 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { BankAccountType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { NO, YES } from '@island.is/application/types'
-import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { 
+  formatBankInfo, 
+  validIBAN, 
+  validSWIFT 
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -25,14 +29,14 @@ export const dataSchema = z.object({
   applicantInfo: z.object({
     email: z.string().email(),
     phonenumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
-      params: errorMessages.phoneNumber,
+      params: coreSIAErrorMessages.phoneNumber,
     }),
   }),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)
       .refine((a) => a.length !== 0, {
-        params: errorMessages.requireAttachment,
+        params: coreSIAErrorMessages.requireAttachment,
       }),
   }),
   paymentInfo: z
@@ -66,7 +70,7 @@ export const dataSchema = z.object({
       }
       return true
     },
-    { params: errorMessages.bank, path: ['bank'] },
+    { params: coreSIAErrorMessages.bank, path: ['bank'] },
   )
   .refine(
     ({ iban, bankAccountType }) => {
@@ -76,7 +80,7 @@ export const dataSchema = z.object({
       }
       return true
     },
-    { params: errorMessages.iban, path: ['iban'] },
+    { params: coreSIAErrorMessages.iban, path: ['iban'] },
   )
   .refine(
     ({ swift, bankAccountType }) => {
@@ -86,7 +90,7 @@ export const dataSchema = z.object({
       }
       return true
     },
-    { params: errorMessages.swift, path: ['swift'] },
+    { params: coreSIAErrorMessages.swift, path: ['swift'] },
   )
   .refine(
     ({ bankName, bankAccountType }) =>
@@ -113,7 +117,7 @@ export const dataSchema = z.object({
         : true,
     {
       path: ['personalAllowanceUsage'],
-      params: errorMessages.personalAllowance,
+      params: coreSIAErrorMessages.personalAllowance,
     },
   )
   .refine(
@@ -131,7 +135,7 @@ export const dataSchema = z.object({
         : true,
     {
       path: ['spouseAllowanceUsage'],
-      params: errorMessages.personalAllowance,
+      params: coreSIAErrorMessages.personalAllowance,
     },
   )
   .refine(
@@ -142,6 +146,14 @@ export const dataSchema = z.object({
   expectingChild: z.object({
     question: z.enum([YES, NO]),
   }),
+  fileUpload: z.object({
+    expectingChild: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: coreSIAErrorMessages.requireAttachment,
+      }),
+  }),     
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

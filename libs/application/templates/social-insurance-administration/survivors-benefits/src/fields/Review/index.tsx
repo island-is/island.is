@@ -12,7 +12,7 @@ import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { PaymentInformation } from './review-groups/PaymentInformation'
 import { Children } from './review-groups/Children'
-import { getApplicationAnswers } from '../../lib/survivorsBenefitsUtils'
+import { ExpectingChild } from './review-groups/ExpectingChild'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
 
@@ -160,6 +160,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <PaymentInformation {...childProps} />
       <Children {...childProps} />
+      <ExpectingChild {...childProps} />
       <Comment {...childProps} />
       <Attachments {...childProps} />
     </>

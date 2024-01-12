@@ -90,6 +90,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'tempAnswers',
   ) as Application['answers']
 
+  const isExpectingChild = getValueViaPath(
+    answers,
+    'expectingChild.question',
+  ) as YesOrNo
+
   return {
     applicantPhonenumber,
     comment,
@@ -109,6 +114,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     taxLevel,
     additionalAttachmentsRequired,
     tempAnswers,
+    isExpectingChild,
   }
 }
 

@@ -70,6 +70,18 @@ export const survivorsBenefitsFormMessage: MessageDir = {
         'Áttu von á barni',
       description: 'Are you expecting a child?',
     },
+    expectingChildFileUpload: {
+      id: 'sb.application:expectingChild.fileUpload',
+      defaultMessage:
+        'Fylgiskjöl vegna væntanlegs barns',
+      description: 'File upload for expected child',
+    },
+    expectingChildFileUploadDescription: {
+      id: 'sb.application:expectingChild.fileUpload.description',
+      defaultMessage:
+        'Hér þarft þú að skila inn staðfestingu á því að þú eigir von á barni.',
+      description: 'Below you must submit confirmation that you are expecting a child.',
+    },
   }),
 
   payment: defineMessages({
@@ -87,16 +99,6 @@ export const survivorsBenefitsFormMessage: MessageDir = {
       id: 'sb.application:payment.spouse.allowance.percentage',
       defaultMessage: 'Skráðu tölu á bilinu 1-100',
       description: 'Enter a number between 1 and 100',
-    },
-  }),
-
-  fileUpload: defineMessages({
-    additionalFileDescription: {
-      id: 'sb.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
     },
   }),
 
