@@ -54,7 +54,7 @@ export const workerSetup =
           staging: 'https://identity-server.staging01.devland.is',
           prod: 'https://innskra.island.is',
         },
-        XROAD_CHARGE_FJS_V2_PATH: {
+        CHARGE_FJS_V2_PATH: {
           dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
           staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
           prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
@@ -265,7 +265,6 @@ export const serviceSetup = (services: {
       SocialInsuranceAdministration,
       OccupationalLicenses,
       SignatureCollection,
-      WorkMachines,
       WorkMachines,
     )
     .secrets({
