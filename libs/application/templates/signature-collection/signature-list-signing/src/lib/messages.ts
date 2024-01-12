@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationName: {
     id: 'sls.application:applicationName',
-    defaultMessage: 'Mæla með lista',
+    defaultMessage: 'Mæla með framboði',
     description: '',
   },
   institution: {
@@ -88,6 +88,11 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: '',
   },
+  candidateInformationHeader: {
+    id: 'sls.application:candidateInformationHeader',
+    defaultMessage: 'Frambjóðandi',
+    description: '',
+  },
   signeeInformationHeader: {
     id: 'sls.application:signeeInformationHeader',
     defaultMessage: 'Meðmælandi',
@@ -95,11 +100,21 @@ export const m = defineMessages({
   },
   listName: {
     id: 'sls.application:listName',
-    defaultMessage: 'TBD: Nafn frambjóðanda',
+    defaultMessage: 'Mæla með frambjóðanda',
+    description: '',
+  },
+  selectCandidate: {
+    id: 'sls.application:selectCandidate',
+    defaultMessage: 'Veldu frambjóðanda',
+    description: '',
+  },
+  selectCandidateDescription: {
+    id: 'sls.application:selectCandidateDescription',
+    defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með',
     description: '',
   },
   listDateTil: {
-    id: 'slc.application:listDateTil',
+    id: 'sls.application:listDateTil',
     defaultMessage: 'Lokadagur',
     description: '',
   },
@@ -131,20 +146,20 @@ export const m = defineMessages({
   },
   signList: {
     id: 'sls.application:signList',
-    defaultMessage: 'Mæla með lista',
+    defaultMessage: 'Mæla með framboði',
     description: '',
   },
 
   /* List Signed */
   listSigned: {
     id: 'sls.application:listSigned',
-    defaultMessage: 'Þú hefur mælt með lista',
+    defaultMessage: 'Þú hefur mælt með framboði',
     description: '',
   },
   listSignedDescription: {
-    id: 'sls.application:listSignedDescription',
+    id: 'sls.application:listSignedDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
+      'Þú hefur mælt með **{name}**. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
     description: '',
   },
   linkFieldButtonTitle: {

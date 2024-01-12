@@ -135,11 +135,6 @@ export const m = defineMessages({
     defaultMessage: 'Heimilisfang',
     description: '',
   },
-  tempMessage: {
-    id: 'admin-portal.signature-collection:tempMessage',
-    defaultMessage: 'Lorem ipsum',
-    description: '',
-  },
   updateListEndTime: {
     id: 'admin-portal.signature-collection:updateListEndTime',
     defaultMessage: 'Framlengja lokadag',
@@ -148,6 +143,11 @@ export const m = defineMessages({
   updateListEndTimeSuccess: {
     id: 'admin-portal.signature-collection:updateListEndTimeSuccess',
     defaultMessage: 'Tókst að framlengja lokadag',
+    description: '',
+  },
+  updateListEndTimeError: {
+    id: 'admin-portal.signature-collection:updateListEndTimeError',
+    defaultMessage: 'Ekki tókst að framlengja lokadag',
     description: '',
   },
   confirmListReviewed: {
@@ -243,9 +243,14 @@ export const m = defineMessages({
       'Enginn fannst í yfirkjörstjórn eða landskjörstjórn sem er skráður á lista.',
     description: '',
   },
-  deleteFromList: {
-    id: 'admin-portal.signature-collection:deleteFromList',
+  unsignFromList: {
+    id: 'admin-portal.signature-collection:unsignFromList',
     defaultMessage: 'Taka af lista',
+    description: '',
+  },
+  unsignFromListSuccess: {
+    id: 'admin-portal.signature-collection:unsignFromListSuccess',
+    defaultMessage: 'Tókst að taka aðila af lista',
     description: '',
   },
 })

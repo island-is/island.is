@@ -5,8 +5,8 @@ import { SignatureCollectionPaths } from './lib/paths'
 import { Features } from '@island.is/feature-flags'
 import { ApiScope } from '@island.is/auth/scopes'
 
-const SignatureLists = lazy(() => import('./screens/SignatureLists'))
-const ViewList = lazy(() => import('./screens/ViewList'))
+const SignatureLists = lazy(() => import('./screens'))
+const ViewList = lazy(() => import('./screens/CandidateView/ViewList'))
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollectionLists,

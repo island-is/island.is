@@ -14,7 +14,7 @@ export const m = defineMessages({
   },
   createListButton: {
     id: 'sp.signatureCollection:createListButton',
-    defaultMessage: 'Stofna meðmælalista',
+    defaultMessage: 'Stofna',
     description: '',
   },
   myListsHeader: {
@@ -27,6 +27,11 @@ export const m = defineMessages({
     defaultMessage: 'Forsetakosningar 2024',
     description: '',
   },
+  endTime: {
+    id: 'sp.signatureCollection:endTime',
+    defaultMessage: 'Lokadagur:',
+    description: '',
+  },
   viewList: {
     id: 'sp.signatureCollection:viewList',
     defaultMessage: 'Skoða nánar',
@@ -36,12 +41,12 @@ export const m = defineMessages({
   /* Signee View */
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
-    defaultMessage: 'Hér eru þeir frambjóðendur sem þú hefur mælt með',
+    defaultMessage: 'Frambjóðandi sem þú hefur mælt með',
     description: '',
   },
   mySigneeListsByAreaHeader: {
     id: 'sp.signatureCollection:mySigneeListsByAreaHeader',
-    defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með',
+    defaultMessage: 'Frambjóðandur á þínu svæði sem hægt er að mæla með',
     description: '',
   },
   signList: {
@@ -94,6 +99,11 @@ export const m = defineMessages({
   cancelCollectionModalToastError: {
     id: 'sp.signatureCollection:modalToastError',
     defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
+    description: '',
+  },
+  cancelCollectionModalToastSuccess: {
+    id: 'sp.signatureCollection:cancelCollectionModalToastSuccess',
+    defaultMessage: 'Tókst að hætta við söfnun meðmæla',
     description: '',
   },
 
@@ -204,11 +214,6 @@ export const m = defineMessages({
   nationalIdsError: {
     id: 'sp.signatureCollection:nationalIdsError',
     defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
-    description: '',
-  },
-  tempMessage: {
-    id: 'sp.signatureCollection:tempMessage',
-    defaultMessage: 'Tempus facilisis',
     description: '',
   },
 })

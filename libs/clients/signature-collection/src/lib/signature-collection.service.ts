@@ -158,7 +158,7 @@ export class SignatureCollectionClientService {
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: area.id,
-          listiNafn: `${owner.name} ${area.name}`,
+          listiNafn: `${owner.name} - ${area.name}`,
         })),
       },
     })
@@ -376,12 +376,17 @@ export class SignatureCollectionClientService {
   }
   //   TODO: UndelegateList
 
-  async extendDeadline(listId: string, newEndDate: Date): Promise<List> {
+  async extendDeadline(listId: string, newEndDate: Date): Promise<Success> {
     const list = await this.listsApi.medmaelalistarIDExtendTimePatch({
       iD: parseInt(listId),
       newEndDate: newEndDate,
     })
-    return mapList(list)
+    const { dagsetningLokar } = list
+    return {
+      success: dagsetningLokar
+        ? newEndDate.getTime() === dagsetningLokar.getTime()
+        : false,
+    }
   }
 
   async bulkUploadSignatures({

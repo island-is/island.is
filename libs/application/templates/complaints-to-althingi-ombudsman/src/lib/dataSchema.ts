@@ -55,6 +55,23 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   }),
   courtActionAnswer: z.enum([YES, NO]),
   preexistingComplaint: z.enum([YES, NO]),
+  previousOmbudsmanComplaint: z
+    .object({
+      Answer: z.enum([YES, NO]),
+      moreInfo: z.string(),
+    })
+    .refine(
+      (val) => {
+        if (val.Answer && val.Answer === NO) {
+          return true
+        }
+        return val?.moreInfo ? val.moreInfo.length > 0 : false
+      },
+      {
+        params: error.required,
+        path: ['moreInfo'],
+      },
+    ),
   attachments: z.object({ documents: z.array(FileSchema).optional() }),
 })
 

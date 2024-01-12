@@ -147,7 +147,7 @@ export class SignatureCollectionService {
   async extendDeadline({
     id,
     newEndDate,
-  }: SignatureCollectionExtendDeadlineInput): Promise<SignatureCollectionList> {
+  }: SignatureCollectionExtendDeadlineInput): Promise<SignatureCollectionSuccess> {
     return await this.signatureCollectionClientService.extendDeadline(
       id,
       newEndDate,
