@@ -33,6 +33,7 @@ import { AlthingiOmbudsmanClientConfig } from '@island.is/clients/althingi-ombud
 import { DirectorateOfImmigrationClientConfig } from '@island.is/clients/directorate-of-immigration'
 import { CarRecyclingClientConfig } from '@island.is/clients/car-recycling'
 import { ArborgWorkpoinClientConfig } from '@island.is/clients/workpoint/arborg'
+import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 
 @Module({
   imports: [
@@ -69,6 +70,8 @@ import { ArborgWorkpoinClientConfig } from '@island.is/clients/workpoint/arborg'
         DirectorateOfImmigrationClientConfig,
         CarRecyclingClientConfig,
         ArborgWorkpoinClientConfig,
+        SignatureCollectionClientConfig,
+
       ],
     }),
   ],

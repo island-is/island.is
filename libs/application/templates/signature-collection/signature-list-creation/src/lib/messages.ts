@@ -70,6 +70,16 @@ export const m = defineMessages({
     defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
+  canCreateProviderTitle: {
+    id: 'slc.application:canCreateProviderTitle',
+    defaultMessage: 'Kjörskrá',
+    description: '',
+  },
+  canCreateProviderSubtitle: {
+    id: 'slc.application:canCreateProviderSubtitle',
+    defaultMessage: 'Skilyrði fyrir að stofna meðmælalista',
+    description: '',
+  },
 
   /* Upplýsingar um meðmælalista */
   listInformationSection: {
@@ -197,7 +207,7 @@ export const m = defineMessages({
   },
   shareListLink: {
     id: 'slc.application:shareListLink',
-    defaultMessage: 'https://island.is/umsoknir/maela-med-lista',
+    defaultMessage: 'https://island.is/umsoknir/maela-med-frambodi',
     description: '',
   },
   copyLink: {

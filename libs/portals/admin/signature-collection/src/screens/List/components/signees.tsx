@@ -19,10 +19,16 @@ import { pageSize } from '../../../lib/utils'
 
 const Signees = () => {
   const { formatMessage } = useLocale()
+
   const { allSignees } = useLoaderData() as { allSignees: Signature[] }
   const [signees, setSignees] = useState(allSignees)
+
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    setSignees(allSignees)
+  }, [allSignees])
 
   useEffect(() => {
     let filteredSignees: Signature[] = allSignees
@@ -91,8 +97,7 @@ const Signees = () => {
               {signees
                 .slice(pageSize * (page - 1), pageSize * page)
                 .map((s) => {
-                  const boxColor =
-                    s.signatureType === 'Paper' ? 'purple100' : 'white'
+                  const boxColor = s.isDigital ? 'white' : 'purple100'
 
                   return (
                     <T.Row key={s.id}>
@@ -118,10 +123,10 @@ const Signees = () => {
                         box={{ background: boxColor }}
                         text={{ variant: 'medium' }}
                       >
-                        {formatMessage(m.tempMessage)}
+                        {s.signee.address}
                       </T.Data>
                       <T.Data box={{ background: boxColor }}>
-                        {s.signatureType === 'Paper' && (
+                        {!s.isDigital && (
                           <Icon
                             icon="document"
                             type="outline"

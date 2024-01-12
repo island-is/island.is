@@ -53,9 +53,11 @@ export enum ApplicationTypes {
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
+  ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  HOME_SUPPORT = 'HomeSupport',
 }
 
 export const ApplicationConfigurations = {
@@ -264,16 +266,24 @@ export const ApplicationConfigurations = {
     translation: 'rf.cr.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
-    slug: 'medmaelalisti',
+    slug: 'medmaelasofnun',
     translation: 'slc.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
-    slug: 'maela-med-lista',
+    slug: 'maela-med-frambodi',
     translation: 'sls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
+    slug: 'felagslegur-vidbotarstudningur',
+    translation: [
+      'asfte.application',
+      'sia.application',
+      'uiForms.application',
+    ],
   },
   [ApplicationTypes.ENERGY_FUNDS]: {
     slug: 'rafbila-styrkur',
@@ -286,5 +296,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'eigendaskipti-taekis',
     translation: 'aosh.tmo.application',
+  },
+  [ApplicationTypes.HOME_SUPPORT]: {
+    slug: 'heimastudningur',
+    translation: 'hst.application',
   },
 }

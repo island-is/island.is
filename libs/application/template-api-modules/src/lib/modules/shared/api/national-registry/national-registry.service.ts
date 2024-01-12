@@ -48,7 +48,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     // Case when parent can apply for custody child without fulfilling some requirements
     if (params?.allowPassOnChild) {
       const children = await this.nationalRegistryApi.getCustodyChildren(auth)
-      this.validateChildren(params, children)
+      await this.validateChildren(params, children)
     }
 
     // Validate individual
@@ -497,5 +497,30 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
 
     return cohabitants
+  }
+
+  async getCohabitantsDetailed(
+    props: TemplateApiModuleActionProps,
+  ): Promise<(NationalRegistryIndividual | null)[]> {
+    const cohabitants = await this.getCohabitants(props)
+
+    if (!cohabitants) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryCohabitantsMissing,
+          summary: coreErrorMessages.nationalRegistryCohabitantsMissing,
+        },
+        404,
+      )
+    }
+
+    const cohabitantsDetails = await Promise.all(
+      cohabitants.map(async (cohabitant) => {
+        const individual = await this.getIndividual(cohabitant)
+        return individual
+      }),
+    )
+
+    return cohabitantsDetails
   }
 }

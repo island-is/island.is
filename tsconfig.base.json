@@ -370,6 +370,9 @@
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/home-support": [
+        "libs/application/templates/home-support/src/index.ts"
+      ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
       ],
@@ -432,6 +435,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration-core/*": [
         "libs/application/templates/social-insurance-administration/core/src/*"
+      ],
+      "@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly": [
+        "libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
