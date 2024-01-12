@@ -1,9 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { CaseCategoryType } from './CaseCategory'
-import { CaseDepartmentType } from './CaseDepartment.model'
-import { CaseSignatureType } from './CaseSignatureType'
-import { CaseSubCategoryType } from './CaseSubCategory'
-import { CaseTemplateType } from './CaseTemplate.model'
+import { CaseCategoryType } from './caseCategory.type'
+import { CaseDepartmentType } from './caseDepartment.type'
+import { CaseSignatureType } from './caseSignature.type'
+import { CaseSubCategoryType } from './caseSubCategory.type'
+import { CaseTemplateType } from './caseTemplate.type'
 
 @ObjectType('MinistryOfJusticeCase')
 export class Case {

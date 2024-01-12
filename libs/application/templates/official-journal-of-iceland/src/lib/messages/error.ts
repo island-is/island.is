@@ -41,4 +41,9 @@ export const error = defineMessages({
     defaultMessage: 'Athugaðu hvort símanúmer sé rétt slegið inn',
     description: 'Error message when phone is invalid or not present',
   },
+  datePicker: {
+    id: 'ojoi.application:error.datePicker',
+    defaultMessage: 'Vinsamlegast veldu dagsetningu',
+    description: 'Error message when date is invalid or not present',
+  },
 })

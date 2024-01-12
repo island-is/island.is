@@ -8,21 +8,15 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 export const dataSchema = z.object({
-  approveExternalData: z.string().refine(
-    (v) => {
-      console.log(v)
-      return v === AnswerOption.YES
-    },
-    {
-      params: error.dataGathering,
-    },
-  ),
+  approveExternalData: z.string().refine((v) => v === AnswerOption.YES, {
+    params: error.dataGathering,
+  }),
   case: z.object({
     department: z.string(),
     category: z.string(),
-    subCategory: z.string(),
+    subCategory: z.string().optional(),
     title: z.string(),
-    template: z.string().optional(),
+    template: z.string(),
     documentContents: z.string(),
     signatureType: z.string(),
     signatureContents: z.string(),
@@ -36,7 +30,9 @@ export const dataSchema = z.object({
     fileNames: z.enum(['additions', 'documents']),
   }),
   publishingPreferences: z.object({
-    date: z.string(),
+    date: z.string().refine((v) => v && v.length > 0, {
+      params: error.datePicker,
+    }),
     fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]).refine((v) => v),
     communicationChannels: z.array(
       z.object({

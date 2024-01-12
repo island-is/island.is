@@ -81,5 +81,6 @@ export type OJOIFieldBaseProps = Override<
   FieldBaseProps,
   {
     application: OJOIApplication
+    errors: ErrorSchema
   }
 >

@@ -1,11 +1,8 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { Case } from './Case.model'
+import { ObjectType } from '@nestjs/graphql'
+import { Case } from './case.model'
+import { PaginatedResponse } from '@island.is/nest/pagination'
 
-@ObjectType('MinistryOfJusticeSearchCaseTemplateResponse')
-export class SearchCaseTemplateResponse {
-  @Field(() => [Case])
-  items!: Case[]
-
-  @Field(() => Int)
-  count!: number
-}
+@ObjectType('MinistryOfJusticePaginatedSearchCaseTemplateResponse')
+export class PaginatedSearchCaseTemplateResponse extends PaginatedResponse(
+  Case,
+) {}

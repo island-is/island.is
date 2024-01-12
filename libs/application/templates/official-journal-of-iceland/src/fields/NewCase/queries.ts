@@ -3,7 +3,7 @@ import { gql } from '@apollo/client'
 export const SEARCH_CASE_TEMPLATES = gql`
   query SearchCaseTemplate($input: MinistryOfJusticeSearchCaseTemplateInput!) {
     ministryOfJusticeSearchCaseTemplates(input: $input) {
-      items {
+      data {
         applicationId
         department
         category
@@ -18,7 +18,13 @@ export const SEARCH_CASE_TEMPLATES = gql`
         preferedPublicationDate
         fastTrack
       }
-      count
+      totalCount
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
     }
   }
 `

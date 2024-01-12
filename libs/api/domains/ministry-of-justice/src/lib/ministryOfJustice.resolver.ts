@@ -1,19 +1,14 @@
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  CurrentUser,
-  IdsAuthGuard,
-  IdsUserGuard,
-  Scopes,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { MinistryOfJusticeService } from './ministryOfJustice.service'
-import { SearchCaseTemplateInput } from './models/SearchCaseTemplate.input'
-import { SearchCaseTemplateResponse } from './models/SearchCaseTemplate.response'
+import { SearchCaseTemplateInput } from './models/searchCaseTemplate.input'
+import { PaginatedSearchCaseTemplateResponse } from './models/searchCaseTemplate.response'
 
-@UseGuards(IdsUserGuard, IdsAuthGuard)
+@UseGuards(IdsUserGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
 export class MinistryOfJusticeResolver {
@@ -21,14 +16,14 @@ export class MinistryOfJusticeResolver {
     private readonly ministryOfJusticeService: MinistryOfJusticeService,
   ) {}
 
-  @Query(() => SearchCaseTemplateResponse, {
+  @Query(() => PaginatedSearchCaseTemplateResponse, {
     name: 'ministryOfJusticeSearchCaseTemplates',
   })
   @Audit()
-  async searchCaseTemplates(
+  searchCaseTemplates(
     @CurrentUser() user: User,
     @Args('input') input: SearchCaseTemplateInput,
   ) {
-    return await this.ministryOfJusticeService.searchCaseTemplates(user, input)
+    return this.ministryOfJusticeService.searchCaseTemplates(user, input)
   }
 }

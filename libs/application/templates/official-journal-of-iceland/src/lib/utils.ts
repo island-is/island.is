@@ -56,3 +56,17 @@ export const isValidEmail = (email: string) => {
 export const isValidPhone = (phone: string) => {
   return parsePhoneNumberFromString(phone, 'IS')?.isValid() ?? false
 }
+
+export const mapDepartmentToId = (department: string) => {
+  const s = department.toLowerCase()
+  switch (s) {
+    case 'a-deild':
+      return '0'
+    case 'b-deild':
+      return '1'
+    case 'c-deild':
+      return '2'
+    default:
+      return ''
+  }
+}

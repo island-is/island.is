@@ -14,12 +14,18 @@ import {
 import addYears from 'date-fns/addYears'
 import { Controller } from 'react-hook-form'
 import { CommunicationChannels } from '../../components/CommunicationChannels/CommunicationChannels'
+import { getErrorViaPath } from '@island.is/application/core'
 
-export const PublishingPreferences = ({ application }: OJOIFieldBaseProps) => {
+export const PublishingPreferences = ({
+  application,
+  errors,
+}: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
   const today = new Date()
   const maxEndDate = addYears(today, 5)
+
+  console.log(errors)
 
   return (
     <>
@@ -37,6 +43,10 @@ export const PublishingPreferences = ({ application }: OJOIFieldBaseProps) => {
           minDate={today}
           maxDate={maxEndDate}
           excludeDates={getWeekendDates(today, maxEndDate)}
+          error={
+            errors &&
+            getErrorViaPath(errors, InputFields.publishingPreferences.date)
+          }
         />
         <Controller
           name={InputFields.publishingPreferences.fastTrack}

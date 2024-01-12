@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/client'
 import {
   MinistryOfJusticeCase,
-  MinistryOfJusticeSearchCaseTemplateResponse,
+  MinistryOfJusticePaginatedSearchCaseTemplateResponse,
 } from '@island.is/api/schema'
 import {
   Box,
@@ -14,77 +14,90 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
-import { SEARCH_CASE_TEMPLATES } from '../../graphql/queries'
+import { SEARCH_CASE_TEMPLATES } from './queries'
 import { general, newCase } from '../../lib/messages'
 import * as styles from './NewCase.css'
 
 type Props = {
   visible?: boolean
-  selectedTemplateId?: MinistryOfJusticeCase['applicationId']
-  onVisibilityChange?: (visibility: boolean) => void
-  onSelectChange: (id: MinistryOfJusticeCase['applicationId']) => void
   onClose?: () => void
-  onSave: (template: MinistryOfJusticeCase) => void
+  onSave: (template: any) => void
 }
 
-type TemplateRepsonse = {
-  ministryOfJusticeSearchCaseTemplates: MinistryOfJusticeSearchCaseTemplateResponse
+type SearchResponse = {
+  ministryOfJusticeSearchCaseTemplates: MinistryOfJusticePaginatedSearchCaseTemplateResponse
 }
 
-export const TemplateModal = ({
-  visible = false,
-  selectedTemplateId,
-  onVisibilityChange,
-  onSelectChange,
-  onClose,
-  onSave,
-}: Props) => {
+export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
   const { formatMessage: f } = useLocale()
-  const [templates, setTemplates] = useState([])
+  const [selectedTemplateId, setSelectedTemplateId] = useState('')
+  const [templates, setTemplates] = useState([
+    {
+      department: '0',
+      category: '2',
+      subCategory: '0',
+      title:
+        'REGLUGERÐ um breytingu á reglugerð um skipulagsmál í Reykjavíkurborg',
+      template: '',
+      documentContents:
+        '<div><h1>REGLUGERÐ</h1><p>Lorem ipsum dolor sit amet</p></div>',
+      signatureType: '0',
+      signatureContents: 'Jón Bjarni',
+    },
+    {
+      department: '2',
+      category: '1',
+      subCategory: '',
+      title:
+        'AUGLÝSING um breytingu á reglugerð um skipulagsmál í Reykjavíkurborg',
+      template: '',
+      documentContents:
+        '<div><h1>AUGLÝSING</h1><p>Lorem ipsum dolor sit amet</p></div>',
+      signatureType: '0',
+      signatureContents: 'Jón Bjarni Ólafsson',
+    },
+  ])
   const [filter, setFilter] = useState('')
   const [lazyFilter, setLazyFilter] = useState('')
   const [loading, setLoading] = useState(false)
-  const [lazySearchQuery] = useLazyQuery<TemplateRepsonse>(
-    SEARCH_CASE_TEMPLATES,
-  )
+  const [lazySearchQuery] = useLazyQuery<SearchResponse>(SEARCH_CASE_TEMPLATES)
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true)
-      return lazySearchQuery({
-        variables: {
-          input: {
-            q: lazyFilter,
-          },
-        },
-        fetchPolicy: 'no-cache',
-        onCompleted(data) {
-          setLoading(false)
-          setTemplates(data.ministryOfJusticeSearchCaseTemplates.items)
-        },
-        onError(error) {
-          console.log(error)
-          setLoading(false)
-        },
-      })
-    }
-    load()
-  }, [lazySearchQuery, lazyFilter])
+  // useEffect(() => {
+  //   const load = async () => {
+  //     setLoading(true)
+  //     return lazySearchQuery({
+  //       variables: {
+  //         input: {
+  //           q: lazyFilter,
+  //         },
+  //       },
+  //       fetchPolicy: 'no-cache',
+  //       onCompleted(data) {
+  //         setLoading(false)
+  //         setTemplates(data.ministryOfJusticeSearchCaseTemplates.data)
+  //       },
+  //       onError(error) {
+  //         console.log(error)
+  //         setLoading(false)
+  //       },
+  //     })
+  //   }
+  //   load()
+  // }, [lazySearchQuery, lazyFilter])
 
-  useDebounce(
-    () => {
-      setLazyFilter(filter)
-    },
-    250,
-    [filter],
-  )
+  // useDebounce(
+  //   () => {
+  //     setLazyFilter(filter)
+  //   },
+  //   250,
+  //   [filter],
+  // )
 
   return (
     <ModalBase
       baseId="template-modal"
       isVisible={visible}
       className={styles.modalBase}
-      onVisibilityChange={onVisibilityChange}
     >
       <Box className={styles.modalContent}>
         <Box className={styles.modalContentInner}>
@@ -112,10 +125,10 @@ export const TemplateModal = ({
               >
                 <RadioButton
                   label={template.title}
-                  checked={template.applicationId === selectedTemplateId}
+                  checked={template.title === selectedTemplateId}
                   name={`option-${i}`}
                   value={i}
-                  onChange={() => onSelectChange(template.applicationId)}
+                  onChange={() => setSelectedTemplateId(template.title)}
                 />
               </Box>
             ))}
@@ -133,7 +146,7 @@ export const TemplateModal = ({
               loading={loading}
               onClick={() => {
                 const template = templates.find(
-                  (t) => t.applicationId === selectedTemplateId,
+                  (t) => t.title === selectedTemplateId,
                 )
                 if (template) {
                   onSave(template)

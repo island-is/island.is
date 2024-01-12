@@ -16,6 +16,8 @@ import {
   SKIPULAGSSKRA_ID,
 } from '../../lib/constants'
 import { useFormContext } from 'react-hook-form'
+import { TemplateModal } from './TemplateModal'
+import { MinistryOfJusticeCase } from '@island.is/api/schema'
 
 export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
@@ -34,6 +36,45 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
     signatureType: answers?.case?.signatureType ?? '',
     signatureContents: answers?.case?.signatureContents ?? '',
   })
+
+  const onSave = (template: typeof state) => {
+    const newState: typeof state = {
+      category: template.category ?? '',
+      department: template.department ?? '',
+      documentContents: template.documentContents ?? '',
+      signatureContents: template.signatureContents ?? '',
+      signatureType: template.signatureType ?? '',
+      subCategory: template.subCategory ?? '',
+      template: template.template ?? '',
+      title: template.title ?? '',
+    }
+
+    setValue(InputFields.case.category, newState.category, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.case.department, newState.department, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.case.documentContents, newState.documentContents, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.case.signatureContents, newState.signatureContents, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.case.signatureType, newState.signatureType, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.case.subCategory, newState.subCategory, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.case.template, newState.template, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.case.title, newState.title, { shouldValidate: true })
+
+    setState(newState)
+    setModalToggle(false)
+  }
 
   const { data: options } = application.externalData.options
 
@@ -242,17 +283,11 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
           </Box>
         </FormGroup>
       </FormWrap>
-      {/* <TemplateModal
+      <TemplateModal
         visible={modalToggle}
-        onVisibilityChange={(visible) => setModalToggle(visible)}
         onClose={() => setModalToggle(false)}
-        selectedTemplateId={selectedTemplateId}
-        onSelectChange={(id) => setSelectedTemplateId(id)}
-        onSave={(template) => {
-          setState({ ...state, ...template })
-          setModalToggle(false)
-        }}
-      /> */}
+        onSave={onSave}
+      />
     </>
   )
 }

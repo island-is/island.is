@@ -5,9 +5,19 @@ import { useFormatMessage } from '../../hooks'
 import { prerequisites } from '../../lib/messages'
 import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
 import { Controller } from 'react-hook-form'
+import { useEffect, useState } from 'react'
 
-export const Prerequisites = ({ application }: OJOIFieldBaseProps) => {
+export const Prerequisites = ({
+  application,
+  setSubmitButtonDisabled,
+}: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
+
+  const [isApproved, setIsApproved] = useState(false)
+
+  useEffect(() => {
+    setSubmitButtonDisabled && setSubmitButtonDisabled(!isApproved)
+  }, [isApproved])
 
   return (
     <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
@@ -30,15 +40,16 @@ export const Prerequisites = ({ application }: OJOIFieldBaseProps) => {
         render={({ field: { onChange, value } }) => {
           return (
             <Checkbox
-              backgroundColor="blue"
-              large
+              id={InputFields.prerequisites.approveExternalData}
+              name={InputFields.prerequisites.approveExternalData}
+              label={f(prerequisites.checkbox.label)}
+              checked={value === AnswerOption.YES}
               onChange={(e) => {
                 onChange(e.target.checked ? AnswerOption.YES : AnswerOption.NO)
+                setIsApproved(e.target.checked)
               }}
-              checked={value === AnswerOption.YES}
-              label={f(prerequisites.checkbox.label)}
-              name={InputFields.prerequisites.approveExternalData}
-              id={InputFields.prerequisites.approveExternalData}
+              backgroundColor="blue"
+              large
             />
           )
         }}
