@@ -2,9 +2,19 @@ import { Injectable } from '@nestjs/common'
 
 import { ElasticService } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
-import { CmsSyncService } from '@island.is/cms'
+import {
+  CmsSyncService,
+  Manual,
+  ManualChapterItem,
+  News,
+  OrganizationPage,
+  OrganizationSubpage,
+  ProjectPage,
+  SubArticle,
+} from '@island.is/cms'
 import {
   ContentSearchImporter,
+  MappedData,
   SyncOptions,
   SyncResponse,
 } from '@island.is/content-search-indexer/types'
@@ -14,6 +24,8 @@ import {
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
 import { Entry } from 'contentful'
+import { writeFileSync } from 'fs'
+import { inspect } from 'util'
 
 type SyncStatus = {
   running?: boolean
@@ -42,6 +54,161 @@ export class IndexingService {
 
   async ping() {
     return this.elasticService.ping()
+  }
+
+  async invalidateCache(b: MappedData[], locale: ElasticsearchIndexLocale) {
+    let baseUrl = 'https://island.is'
+
+    switch (environment.runtimeEnvironment) {
+      case 'prod':
+        baseUrl = 'https://island.is'
+        break
+      case 'staging':
+        baseUrl = 'https://beta.staging01.devland.is'
+        break
+      case 'dev':
+        baseUrl = 'https://beta.dev01.devland.is'
+        break
+      case 'local':
+        baseUrl = 'http://localhost:4200'
+        break
+      default:
+        return
+    }
+
+    const bypassSecret = environment.bypassCacheSecret
+
+    const paths: Record<
+      string,
+      Record<typeof locale, (document: unknown) => string[]>
+    > = {
+      webArticle: {
+        is: (article: { slug: string }) => [`${baseUrl}/${article.slug}`],
+        en: (article: { slug: string }) => [`${baseUrl}/en/${article.slug}`],
+      },
+      webSubArticle: {
+        is: (subArticle: SubArticle) => [`${baseUrl}/${subArticle.slug}`],
+        en: (subArticle: SubArticle) => [`${baseUrl}/en/${subArticle.slug}`],
+      },
+      webProjectPage: {
+        is: (projectPage: ProjectPage) => [`${baseUrl}/v/${projectPage.slug}`],
+        en: (projectPage: ProjectPage) => [
+          `${baseUrl}/en/p/${projectPage.slug}`,
+        ],
+      },
+      webOrganizationPage: {
+        is: (organizationPage: OrganizationPage) => [
+          `${baseUrl}/s/${organizationPage.slug}`,
+        ],
+        en: (organizationPage: OrganizationPage) => [
+          `${baseUrl}/en/o/${organizationPage.slug}`,
+        ],
+      },
+      webOrganizationSubpage: {
+        is: (subpage: OrganizationSubpage) => [
+          `${baseUrl}/s/${subpage.organizationPage.slug}/${subpage.slug}`,
+        ],
+        en: (subpage: OrganizationSubpage) => [
+          `${baseUrl}/en/o/${subpage.organizationPage.slug}/${subpage.slug}`,
+        ],
+      },
+      webNews: {
+        is: (newsItem: News) => {
+          const urls = [`${baseUrl}/frett/${newsItem.slug}`]
+          if (newsItem.organization?.slug) {
+            urls.push(
+              `${baseUrl}/s/${newsItem.organization.slug}/${newsItem.slug}`,
+            )
+          }
+          return urls
+        },
+        en: (newsItem: News) => {
+          const urls = [`${baseUrl}/en/news/${newsItem.slug}`]
+          if (newsItem.organization?.slug) {
+            urls.push(
+              `${baseUrl}/en/o/news/${newsItem.organization.slug}/${newsItem.slug}`,
+            )
+          }
+          return urls
+        },
+      },
+      webManual: {
+        is: (manual: Manual) => [`${baseUrl}/handbaekur/${manual.slug}`],
+        en: (manual: Manual) => [`${baseUrl}/en/manuals/${manual.slug}`],
+      },
+      webManualChapterItem: {
+        is: (chapterItem: ManualChapterItem) => [
+          `${baseUrl}/handbaekur/${chapterItem.manual.slug}/${chapterItem.manualChapter.slug}`,
+        ],
+        en: (chapterItem: ManualChapterItem) => [
+          `${baseUrl}/en/manuals/${chapterItem.manual.slug}/${chapterItem.manualChapter.slug}`,
+        ],
+      },
+    }
+
+    const promises: Promise<unknown>[] = []
+    let successfulCacheInvalidationCount = 0
+    let failedCacheInvalidationCount = 0
+
+    for (const item of b) {
+      if (item.type in paths) {
+        const urls = paths[item.type][locale](JSON.parse(item.response))
+        for (const url of urls) {
+          logger.info(`Invalidating: ${url}?bypass-cache=${bypassSecret}`)
+          promises.push(fetch(`${url}?bypass-cache=${bypassSecret}`))
+        }
+      }
+
+      if (promises.length > 10) {
+        const responses = await Promise.allSettled(promises)
+        const successCount = responses.filter(
+          (response) => response.status === 'fulfilled',
+        ).length
+        successfulCacheInvalidationCount += successCount
+        failedCacheInvalidationCount += responses.length - successCount
+        promises.length = 0
+
+        responses.forEach(async (r) => {
+          if (r.status === 'fulfilled') {
+            const v = await (r.value as { text: () => Promise<string> })?.text()
+            writeFileSync(
+              item._id + '.js',
+              inspect(v.slice(v.indexOf('prufugrein')), true, 999999),
+            )
+          }
+        })
+      }
+    }
+    let i = 0
+    if (promises.length > 0) {
+      const responses = await Promise.allSettled(promises)
+      const successCount = responses.filter(
+        (response) => response.status === 'fulfilled',
+      ).length
+      successfulCacheInvalidationCount += successCount
+      failedCacheInvalidationCount += responses.length - successCount
+      promises.length = 0
+      responses.forEach(async (r) => {
+        if (r.status === 'fulfilled') {
+          const v = await (r.value as { text: () => Promise<string> })?.text()
+          writeFileSync(
+            String(i++) + '--' + '.js',
+            inspect(v.slice(v.indexOf('prufugrein')), true, 999999),
+          )
+        }
+      })
+    }
+
+    if (successfulCacheInvalidationCount > 0) {
+      logger.info(
+        `Invalidated cache for ${successfulCacheInvalidationCount} pages`,
+      )
+    }
+    if (failedCacheInvalidationCount > 0) {
+      logger.warn(
+        `Could not invalidate cache for ${failedCacheInvalidationCount} pages`,
+      )
+    }
   }
 
   async doSync(options: SyncOptions) {
@@ -80,6 +247,14 @@ export class IndexingService {
           ...elasticData
         } = importerResponse
         await this.elasticService.bulk(elasticIndex, elasticData)
+
+        // Wait for some time to make sure data will be returned
+        await new Promise((r) => setTimeout(r, 2000))
+
+        // Only invalidate cached pages if we are performing an incremental update
+        if (syncType === 'fromLast') {
+          await this.invalidateCache(elasticData.add, options.locale)
+        }
 
         nextPageToken = importerResponseNextPageToken
         postSyncOptions = importerResponsePostSyncOptions

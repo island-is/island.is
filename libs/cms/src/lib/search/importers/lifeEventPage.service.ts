@@ -13,8 +13,6 @@ export class LifeEventPageSyncService
   implements CmsSyncProvider<ILifeEventPage>
 {
   processSyncData(entries: processSyncDataInput<ILifeEventPage>) {
-    logger.info('Processing sync data for life event pages')
-
     // only process life event pages that we consider not to be empty and dont have circular structures
     return entries.filter(
       (entry: Entry<any>): entry is ILifeEventPage =>
