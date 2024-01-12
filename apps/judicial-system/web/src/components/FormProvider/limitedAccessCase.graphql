@@ -76,11 +76,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
       title
+      email
     }
     judge {
       id
       name
       title
+      email
     }
     courtRecordSignatory {
       id
