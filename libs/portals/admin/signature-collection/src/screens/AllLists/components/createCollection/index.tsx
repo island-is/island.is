@@ -58,7 +58,7 @@ const CompareLists = () => {
         </Button>
       </Box>
       <Modal
-        id="compareLists"
+        id="createCollection"
         isVisible={modalIsOpen}
         title={formatMessage(m.createCollection)}
         onClose={() => {
