@@ -28,6 +28,7 @@ import {
 import {
   pruneAfterDays,
   coreHistoryMessages,
+  coreMessages,
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { Features } from '@island.is/feature-flags'
@@ -58,8 +59,57 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   dataSchema,
   featureFlag: Features.childrenResidenceChangeV2,
   stateMachineConfig: {
-    initial: ApplicationStates.DRAFT,
+    initial: ApplicationStates.PREREQUISITES,
     states: {
+      [ApplicationStates.PREREQUISITES]: {
+        meta: {
+          name: applicationName,
+          status: 'draft',
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            // If application stays in this state for 24 hours it will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          actionCard: {
+            historyLogs: {
+              logMessage: coreHistoryMessages.applicationStarted,
+              onEvent: DefaultEvents.SUBMIT,
+            },
+          },
+          roles: [
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/PrerequisitesForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: coreMessages.externalDataAgreement,
+                  type: 'primary',
+                },
+              ],
+              delete: true,
+              write: 'all',
+              api: [
+                ChildrenCustodyInformationApi.configure({
+                  params: {
+                    validateHasChildren: true,
+                    validateHasJointCustody: true,
+                  },
+                }),
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: ApplicationStates.DRAFT },
+        },
+      },
       [ApplicationStates.DRAFT]: {
         meta: {
           status: 'draft',
@@ -74,7 +124,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(30),
           roles: [
             {
               id: Roles.ParentA,
@@ -111,16 +161,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   UserProfileApi.externalDataId,
                 ],
               },
-              api: [
-                ChildrenCustodyInformationApi.configure({
-                  params: {
-                    validateHasChildren: true,
-                    validateHasJointCustody: true,
-                  },
-                }),
-                NationalRegistryUserApi,
-                UserProfileApi,
-              ],
             },
           ],
         },
@@ -161,7 +201,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                     content: history.actions.waitingForCounterpartyDescription,
                   },
           },
-          lifecycle: pruneAfterDays(28),
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.sendNotificationToCounterParty,
           }),
@@ -223,7 +263,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.rejectedByCounterParty,
           }),
@@ -257,7 +297,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             action: TemplateApiActions.submitApplication,
             shouldPersistToExternalData: true,
           }),
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(30),
           actionCard: {
             historyLogs: [
               {
@@ -326,7 +366,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.rejected,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.rejectedByOrganization,
           }),
@@ -358,7 +398,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.approved,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.approvedByOrganization,
           }),
