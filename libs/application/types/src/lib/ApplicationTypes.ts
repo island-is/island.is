@@ -97,11 +97,11 @@ export const ApplicationConfigurations = {
     translation: 'hi.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns',
+    slug: 'breytt-logheimili-barns-old',
     translation: 'crc.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
-    slug: 'breytt-logheimili-barns-v2',
+    slug: 'breytt-logheimili-barns',
     translation: 'crc.application',
   },
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {
@@ -265,11 +265,11 @@ export const ApplicationConfigurations = {
     translation: 'rf.cr.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
-    slug: 'medmaelalisti',
+    slug: 'medmaelasofnun',
     translation: 'slc.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
-    slug: 'maela-med-lista',
+    slug: 'maela-med-frambodi',
     translation: 'sls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
