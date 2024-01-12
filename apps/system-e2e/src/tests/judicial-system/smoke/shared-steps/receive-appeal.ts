@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 
-export async function receiveAppealTest(page: Page, caseId: string) {
+export async function judgeReceivesAppealTest(page: Page, caseId: string) {
   await page.goto(`krafa/yfirlit/${caseId}`)
   await page
     .getByRole('button', {

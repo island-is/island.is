@@ -2,7 +2,7 @@ import { Page, expect } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 import { createFakePdf } from '../../utils/helpers'
 
-export async function appealCaseTest(page: Page, caseId: string) {
+export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
   await page.goto(`krafa/yfirlit/${caseId}`)
 
   await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)

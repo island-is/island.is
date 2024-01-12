@@ -2,7 +2,10 @@ import { Page, expect } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 import { createFakePdf, randomAppealCaseNumber } from '../../utils/helpers'
 
-export async function coaJudgeCompletesCaseTest(page: Page, caseId: string) {
+export async function coaJudgesCompleteAppealCaseTest(
+  page: Page,
+  caseId: string,
+) {
   await page.goto(`/landsrettur/yfirlit/${caseId}`)
 
   // Overview

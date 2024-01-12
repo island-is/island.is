@@ -4,9 +4,9 @@ import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
 import { randomPoliceCaseNumber, randomCourtCaseNumber } from '../utils/helpers'
-import { receiveAppealTest } from './shared-steps/receive-appeal'
-import { appealCaseTest } from './shared-steps/send-appeal'
-import { coaJudgeCompletesCaseTest } from './shared-steps/complete-appeal'
+import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
+import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
+import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -185,16 +185,16 @@ test.describe.serial('Custody tests', () => {
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {
-    await appealCaseTest(prosecutorPage, caseId)
+    await prosecutorAppealsCaseTest(prosecutorPage, caseId)
   })
 
   test('judge should receive appealed case', async ({ judgePage }) => {
-    await receiveAppealTest(judgePage, caseId)
+    await judgeReceivesAppealTest(judgePage, caseId)
   })
 
   test('coa judge should submit decision in appeal case', async ({
     coaPage,
   }) => {
-    await coaJudgeCompletesCaseTest(coaPage, caseId)
+    await coaJudgesCompleteAppealCaseTest(coaPage, caseId)
   })
 })

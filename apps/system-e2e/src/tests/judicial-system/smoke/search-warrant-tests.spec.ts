@@ -5,9 +5,9 @@ import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
 import { randomCourtCaseNumber, randomPoliceCaseNumber } from '../utils/helpers'
-import { appealCaseTest } from './shared-steps/send-appeal'
-import { receiveAppealTest } from './shared-steps/receive-appeal'
-import { coaJudgeCompletesCaseTest } from './shared-steps/complete-appeal'
+import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
+import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
+import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -146,16 +146,16 @@ test.describe.serial('Search warrant tests', () => {
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {
-    await appealCaseTest(prosecutorPage, caseId)
+    await prosecutorAppealsCaseTest(prosecutorPage, caseId)
   })
 
   test('judge should receive appealed case', async ({ judgePage }) => {
-    await receiveAppealTest(judgePage, caseId)
+    await judgeReceivesAppealTest(judgePage, caseId)
   })
 
   test('coa judge should submit decision in search warrant appeal case', async ({
     coaPage,
   }) => {
-    await coaJudgeCompletesCaseTest(coaPage, caseId)
+    await coaJudgesCompleteAppealCaseTest(coaPage, caseId)
   })
 })
