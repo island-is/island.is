@@ -139,7 +139,7 @@ export const TextFieldsRepeater: FC<
     <Box>
       {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
-
+        console.log(id)
         return (
           <Box
             position="relative"

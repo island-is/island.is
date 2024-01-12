@@ -42,10 +42,13 @@ function setIfValueIsNotNan(
   setValue(fieldId, value)
 }
 
+const valueKeys = ['rateOfExchange', 'faceValue']
+
 export const ReportFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
   const { answers, externalData } = application
+
   const { id, props } = field
   const splitId = id.split('.')
 
@@ -59,7 +62,7 @@ export const ReportFieldsRepeater: FC<
     name: id,
   })
 
-  const { setValue, getValues } = useFormContext()
+  const { setValue, getValues, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
   const taxFreeLimit = Number(
     formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
@@ -125,12 +128,42 @@ export const ReportFieldsRepeater: FC<
     append(repeaterFields)
   }
 
+  const updateValue = (fieldIndex: string) => {
+    const stockValues: { faceValue?: string; rateOfExchange?: string } =
+      getValues(fieldIndex)
+
+    const faceValue = stockValues?.faceValue
+    const rateOfExchange = stockValues?.rateOfExchange
+
+    const a = faceValue?.replace(/[^\d.]/g, '') || '0'
+    const b = rateOfExchange?.replace(/[^\d.]/g, '') || '0'
+
+    const aVal = parseFloat(a)
+    const bVal = parseFloat(b)
+
+    if (!aVal || !bVal) {
+      setValue(`${fieldIndex}.value`, '')
+      calculateTotal()
+      return
+    }
+
+    const total = aVal * bVal
+    const totalString = total.toFixed(0)
+
+    setValue(`${fieldIndex}.value`, totalString)
+
+    if (total > 0) {
+      clearErrors(`${fieldIndex}.value`)
+    }
+
+    calculateTotal()
+  }
+
   /* ------ Set stocks value and total ------ */
   useEffect(() => {
     if (rateOfExchange > 0 && faceValue > 0) {
       setValue(`${index}.value`, String(faceValue * rateOfExchange))
 
-      const i = index.match(/\d+/)
       calculateTotal()
     }
   }, [faceValue, index, rateOfExchange, setValue])
@@ -204,6 +237,7 @@ export const ReportFieldsRepeater: FC<
     <Box>
       {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
+        console.log(id)
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
@@ -269,13 +303,17 @@ export const ReportFieldsRepeater: FC<
                           if (field.id === 'heirsPercentage') {
                             setPercentage(Number(value) / 100)
                           }
+                          
+                          if (valueKeys.includes(field.id)) {
+                            updateValue(fieldIndex)
+                          }
 
                           // stocks
-                          if (field.id === 'rateOfExchange') {
-                            setRateOfExchange(Number(value))
-                          } else if (field.id === 'faceValue') {
-                            setFaceValue(Number(value))
-                          }
+                          // if (field.id === 'rateOfExchange') {
+                          //   setRateOfExchange(Number(value))
+                          // } else if (field.id === 'faceValue') {
+                          //   setFaceValue(Number(value))
+                          // }
 
                           // total
                           if (props.sumField === field.id) {
@@ -321,8 +359,8 @@ export const ReportFieldsRepeater: FC<
                     ? formatMessage(m.totalPercentage)
                     : formatMessage(m.total)
                 }
-                backgroundColor={'white'}
-                readOnly={true}
+                backgroundColor='white'
+                readOnly
                 hasError={
                   (props.sumField === 'heirsPercentage' &&
                     error &&
