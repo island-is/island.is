@@ -12,29 +12,27 @@ export class CollectionGuard implements CanActivate {
     private reflector: Reflector,
   ) {}
 
-  getRole(user: User, isOwner?: boolean): UserRole[] {
-    const roles: UserRole[] = []
-
+  getRole(user: User, isOwner?: boolean): UserRole {
     // If user then check scopes
     if (user.scope.includes(AdminPortalScope.signatureCollectionManage)) {
-      roles.push(UserRole.ADMIN_MANAGER)
+      return UserRole.ADMIN_MANAGER
     }
     if (user.scope.includes(AdminPortalScope.signatureCollectionProcess)) {
-      roles.push(UserRole.ADMIN_PROCESSOR)
+      return UserRole.ADMIN_PROCESSOR
     }
     if (user.scope.includes(ApiScope.signatureCollection)) {
       if (isOwner) {
         if (user.actor) {
-          roles.push(UserRole.CANDIDATE_COLLECTOR)
+          return UserRole.CANDIDATE_COLLECTOR
         } else {
-          roles.push(UserRole.CANDIDATE_OWNER)
+          return UserRole.CANDIDATE_OWNER
         }
       } else {
-        roles.push(UserRole.USER)
+        return UserRole.USER
       }
     }
 
-    return roles
+    return UserRole.UNAUTHENTICATED
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -47,24 +45,25 @@ export class CollectionGuard implements CanActivate {
     const collection =
       await this.signatureCollectionService.currentCollectionInfo()
     if (!user) {
+      console.log('should not be here}')
       request.body = {
         ...request.body,
         collection,
         role: UserRole.UNAUTHENTICATED,
       }
     } else {
-        console.log(user)
-      if (
-        !user.scope.includes(ApiScope.signatureCollection)
-      ) {
-        const roles = this.getRole(user)
-        request.body = { ...request.body, collection, roles }
+      if (!user.scope.includes(ApiScope.signatureCollection)) {
+        console.log('ghere}')
+        const role = this.getRole(user)
+        request.body = { ...request.body, collection, role }
       } else {
         const signee = await this.signatureCollectionService.signee(
           user.nationalId,
         )
-        const roles = this.getRole(user, signee?.isOwner)
-        request.body = { ...request.body, collection, roles }
+        console.log('hhhhaaaa')
+        console.log(signee)
+        const role = this.getRole(user, signee?.isOwner)
+        request.body = { ...request.body, collection, role, signee }
       }
     }
 

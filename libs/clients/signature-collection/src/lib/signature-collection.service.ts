@@ -69,7 +69,12 @@ export class SignatureCollectionClientService {
     return mapCollection(currentCollection)
   }
 
-  async getListsParams({ areaId, nationalId, candidateId }: GetListInput) {
+  async getListsParams({
+    areaId,
+    nationalId,
+    candidateId,
+    collectionId,
+  }: GetListInput) {
     const { id } = await this.currentCollectionInfo()
     if (nationalId) {
       const { isOwner, area, candidate } = await this.getSignee(nationalId)

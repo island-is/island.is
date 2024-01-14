@@ -11,7 +11,7 @@ const ViewList = lazy(() => import('./screens/CandidateView/ViewList'))
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollectionLists,
   featureFlag: Features.servicePortalSignatureCollection,
-  routes: ({userInfo}) => {
+  routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
       {
         name: m.signatureCollectionLists,

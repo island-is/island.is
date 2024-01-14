@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
-import { SignatureCollection, SignatureCollectionInfo } from './models/collection.model'
+import {
+  SignatureCollection,
+  SignatureCollectionInfo,
+} from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import {
@@ -10,12 +13,16 @@ import {
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
-import { SignatureCollectionClientService } from '@island.is/clients/signature-collection'
+import {
+  GetListInput,
+  SignatureCollectionClientService,
+} from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
+import { UserRole } from './utils/role.types'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -23,8 +30,10 @@ export class SignatureCollectionService {
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
 
-  async isOwner(signee: SignatureCollectionSignee): Promise<SignatureCollectionSuccess> {
-    return {success: signee.isOwner}
+  async isOwner(
+    signee: SignatureCollectionSignee,
+  ): Promise<SignatureCollectionSuccess> {
+    return { success: signee.isOwner }
   }
 
   async currentCollectionInfo(): Promise<SignatureCollectionInfo> {
@@ -32,7 +41,9 @@ export class SignatureCollectionService {
   }
 
   async current(collectionId: number): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.getCurrentCollection(collectionId)
+    return await this.signatureCollectionClientService.getCurrentCollection(
+      collectionId,
+    )
   }
 
   async allLists(): Promise<SignatureCollectionList[]> {
@@ -43,12 +54,29 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.getLists({})
   }
 
-  async listsForUser(nationalId: string): Promise<SignatureCollectionList[]> {
-    return await this.signatureCollectionClientService.getLists({ nationalId })
-  }
+  async listsForUser(
+    nationalId: string,
+    collection: SignatureCollectionInfo,
+    role: UserRole,
+    signee: SignatureCollectionSignee,
+  ): Promise<SignatureCollectionList[]> {
+    // console.log('listsForUser', nationalId)
+    // let params:GetListInput = {collectionId: collection.id,   areaId: undefined,
+    //   nationalId,
+    //   candidateId: undefined}
+    // const {id} = collection
+    // switch (role) {
+    //   case UserRole.CANDIDATE_COLLECTOR:
 
-  async listsByArea(areaId: string): Promise<SignatureCollectionList[]> {
-    return await this.signatureCollectionClientService.getLists({ areaId })
+    //     params = { ...params, candidateId: signee.candidate?.id, areaId: collection.isPresidential ?  }
+    //   case UserRole.CANDIDATE_OWNER:
+    //     return await this.signatureCollectionClientService.getLists({})
+    //   case UserRole.USER:
+    //     return await this.signatureCollectionClientService.getLists({})
+    //   default:
+    //     return []
+    // }
+    return await this.signatureCollectionClientService.getLists({ nationalId })
   }
 
   async list(listId: string): Promise<SignatureCollectionList> {

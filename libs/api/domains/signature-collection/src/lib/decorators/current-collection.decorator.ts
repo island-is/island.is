@@ -1,7 +1,4 @@
-import {
-  createParamDecorator,
-  ExecutionContext,
-} from '@nestjs/common'
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
 import { getRequest } from '@island.is/auth-nest-tools'
 import { SignatureCollectionInfo } from '../models/collection.model'

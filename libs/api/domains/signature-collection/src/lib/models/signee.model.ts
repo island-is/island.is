@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { SignatureCollectionAreaBase } from './area.model'
 import { SignatureCollectionSignature } from './signature.model'
 import { SignatureCollectionList } from './signatureList.model'
+import { SignatureCollectionCandidate } from './candidate.model'
 
 @ObjectType()
 export class SignatureCollectionSigneeBase {
@@ -17,7 +18,7 @@ export class SignatureCollectionSigneeBase {
 
 @ObjectType()
 export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
-  @Field()
+  @Field({ nullable: true })
   canSign!: boolean
 
   @Field(() => SignatureCollectionAreaBase, { nullable: true })
@@ -29,6 +30,9 @@ export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
   @Field(() => [SignatureCollectionList], { nullable: true })
   ownedLists?: SignatureCollectionList[]
 
-  @Field()
-  isOwner!: boolean  
+  @Field({ nullable: true })
+  isOwner!: boolean
+
+  @Field({ nullable: true })
+  candidate?: SignatureCollectionCandidate
 }

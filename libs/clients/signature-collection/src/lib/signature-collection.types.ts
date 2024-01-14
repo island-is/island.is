@@ -1,10 +1,15 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
 import { List } from './types/list.dto'
 
+export enum ListState {
+  Open = 'open',
+  Closed = 'closed',
+}
 export interface GetListInput {
   areaId?: string
   nationalId?: string
   candidateId?: string
+  collectionId?: number
 }
 
 export interface OwnerInput {

@@ -69,7 +69,9 @@ export function mapCollection(
     endTime,
     isActive: startTime < new Date() && endTime > new Date(),
     isPresidential: collection.kosningTegund == 'Forsetakosning',
-    candidates: candidates ? candidates.map((candidate) =>mapCandidate(candidate)) : [],
+    candidates: candidates
+      ? candidates.map((candidate) => mapCandidate(candidate))
+      : [],
     areas: areas.map((area) => mapArea(area)),
   }
 }
