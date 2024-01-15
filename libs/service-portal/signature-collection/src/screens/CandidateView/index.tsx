@@ -8,10 +8,13 @@ import { useGetListsForUser } from '../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@island.is/auth/react'
 
 const OwnerView = () => {
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
+  const { userInfo: user } = useAuth()
+
   const { formatMessage } = useLocale()
   const { listsForUser, loadingUserLists } = useGetListsForUser()
   const collectionId = listsForUser[0]?.collectionId
@@ -77,7 +80,7 @@ const OwnerView = () => {
               })}
             </Stack>
           </Box>
-          {listsForUser.length > 0 && (
+          {listsForUser.length > 0 && !user?.profile.actor && (
             <CancelCollection collectionId={collectionId} />
           )}
         </Box>

@@ -10,6 +10,7 @@ export interface GetListInput {
   nationalId?: string
   candidateId?: string
   collectionId?: number
+  onlyActive?: boolean
 }
 
 export interface OwnerInput {

@@ -27,7 +27,7 @@ export class CollectionGuard implements CanActivate {
         } else {
           return UserRole.CANDIDATE_OWNER
         }
-      } else {
+      } else if (!user.actor) {
         return UserRole.USER
       }
     }
@@ -45,7 +45,6 @@ export class CollectionGuard implements CanActivate {
     const collection =
       await this.signatureCollectionService.currentCollectionInfo()
     if (!user) {
-      console.log('should not be here}')
       request.body = {
         ...request.body,
         collection,
@@ -53,15 +52,12 @@ export class CollectionGuard implements CanActivate {
       }
     } else {
       if (!user.scope.includes(ApiScope.signatureCollection)) {
-        console.log('ghere}')
         const role = this.getRole(user)
         request.body = { ...request.body, collection, role }
       } else {
         const signee = await this.signatureCollectionService.signee(
           user.nationalId,
         )
-        console.log('hhhhaaaa')
-        console.log(signee)
         const role = this.getRole(user, signee?.isOwner)
         request.body = { ...request.body, collection, role, signee }
       }

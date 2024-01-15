@@ -69,43 +69,20 @@ export class SignatureCollectionClientService {
     return mapCollection(currentCollection)
   }
 
-  async getListsParams({
-    areaId,
-    nationalId,
-    candidateId,
+  async getLists({
     collectionId,
-  }: GetListInput) {
-    const { id } = await this.currentCollectionInfo()
-    if (nationalId) {
-      const { isOwner, area, candidate } = await this.getSignee(nationalId)
-      if (isOwner && candidate) {
-        // TODO: check if actor and if type collection not presidentional send in area of actor
-        return areaId
-          ? {
-              sofnunID: id,
-              frambodID: parseInt(candidate.id),
-              svaediID: parseInt(areaId),
-            }
-          : { sofnunID: id, frambodID: parseInt(candidate.id) }
-      } else if (area) {
-        return {
-          sofnunID: id,
-          svaediID: parseInt(area?.id),
-          frambodID: candidateId ? parseInt(candidateId) : undefined,
-        }
-      }
-    }
-    return {
-      sofnunID: id,
+    areaId,
+    candidateId,
+    onlyActive,
+  }: GetListInput): Promise<List[]> {
+    const lists = await this.listsApi.medmaelalistarGet({
+      sofnunID: collectionId,
       svaediID: areaId ? parseInt(areaId) : undefined,
       frambodID: candidateId ? parseInt(candidateId) : undefined,
-    }
-  }
+    })
 
-  async getLists(input: GetListInput): Promise<List[]> {
-    const params = await this.getListsParams(input)
-    const lists = await this.listsApi.medmaelalistarGet(params)
-    return lists.map((list) => mapList(list))
+    const listsMapped = lists.map((list) => mapList(list))
+    return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
   }
 
   async getList(listId: string): Promise<List> {
@@ -376,8 +353,12 @@ export class SignatureCollectionClientService {
 
   //   TODO: DelegateList
 
-  async delegateList(listId: string, nationalId: string): Promise<Success> {
-    return { success: true }
+  async delegateList(listId: number, nationalId: string): Promise<List> {
+    const res = await this.listsApi.medmaelalistarIDAddUmbodPost({
+      iD: listId,
+      kennitala: nationalId,
+    })
+    return mapList(res)
   }
   //   TODO: UndelegateList
 

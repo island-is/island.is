@@ -77,7 +77,10 @@ export function mapList(list: MedmaelalistiDTO): List {
     title: list.listiNafn ?? '',
     startTime: list.medmaelasofnun?.sofnunStart ?? new Date(),
     endTime: list.medmaelasofnun?.sofnunEnd ?? new Date(),
-
+    collectors: list.umbodList?.map((collector) => ({
+      name: collector.nafn ?? '',
+      nationalId: collector.kennitala ?? '',
+    })),
     candidate: mapCandidate(candidate),
     // TODO: update active functionality
     slug: getSlug(candidate.id),
