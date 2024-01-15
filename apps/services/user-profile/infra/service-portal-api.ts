@@ -64,6 +64,8 @@ export const workerSetup = (): ServiceBuilder<typeof workerId> =>
     .env(envVariables)
     .secrets(secrets)
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
+    .command('node')
+    .args('main.js', '--job=worker')
     .resources({
       limits: { cpu: '800m', memory: '1024Mi' },
       requests: { cpu: '400m', memory: '512Mi' },
