@@ -68,18 +68,19 @@ export const HouseholdSupplementForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'info',
-          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
+              title:
+                socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
               description:
-                socialInsuranceAdministrationMessage.info.subSectionDescription,
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.name',
-                  title:
-                    socialInsuranceAdministrationMessage.info.applicantName,
+                  title: socialInsuranceAdministrationMessage.confirm.name,
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
@@ -511,7 +512,7 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [
         buildMultiField({
           id: 'periodField',

@@ -42,7 +42,9 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
                 key={x.countryId}
                 application={application}
                 id={`${field.id}[${index}].attachment`}
-                header={`Sakavottorð - ${
+                header={`${formatMessage(
+                  supportingDocuments.labels.otherDocuments.criminalRecord,
+                )} - ${
                   countryOptions.find((z) => z.id?.toString() === x.countryId)
                     ?.name
                 }`}
