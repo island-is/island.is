@@ -21,6 +21,7 @@ const useStringHelpers = () => {
         return formatMessage(strings.decisionAccept)
       case CaseAppealRulingDecision.REPEAL:
       case CaseAppealRulingDecision.CHANGED:
+      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
         return formatMessage(strings.decisionChange)
       case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
       case CaseAppealRulingDecision.DISMISSED_FROM_COURT:

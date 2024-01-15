@@ -1,6 +1,8 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from './constants'
+import { isValidString } from './utils/helpers'
+import { m } from './messages'
 
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -131,8 +133,52 @@ export const inheritanceReportSchema = z.object({
           .object({
             creditorName: z.string(),
             nationalId: z.string(),
-            balance: z.string().refine((v) => v),
+            loanIdentity: z.string(),
+            balance: z.string(),
           })
+          .refine(
+            ({ nationalId }) => {
+              return nationalId === ''
+                ? true
+                : nationalId && kennitala.isValid(nationalId)
+            },
+            {
+              params: m.errorNationalIdIncorrect,
+              path: ['nationalId'],
+            },
+          )
+          .refine(
+            ({ creditorName, nationalId, balance, loanIdentity }) => {
+              return nationalId !== '' || creditorName !== '' || balance !== ''
+                ? isValidString(loanIdentity)
+                : true
+            },
+            {
+              path: ['loanIdentity'],
+            },
+          )
+          .refine(
+            ({ creditorName, nationalId, balance, loanIdentity }) => {
+              return nationalId !== '' ||
+                creditorName !== '' ||
+                loanIdentity !== ''
+                ? isValidString(balance)
+                : true
+            },
+            {
+              path: ['balance'],
+            },
+          )
+          .refine(
+            ({ creditorName, nationalId, balance, loanIdentity }) => {
+              return nationalId !== '' || balance !== '' || loanIdentity !== ''
+                ? isValidString(creditorName)
+                : true
+            },
+            {
+              path: ['creditorName'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -173,9 +219,57 @@ export const inheritanceReportSchema = z.object({
         data: z
           .object({
             businessDebt: z.string(),
+            loanIdentity: z.string(),
             nationalId: z.string(),
-            debtValue: z.string().refine((v) => v),
+            debtValue: z.string(),
           })
+          .refine(
+            ({ nationalId }) => {
+              return nationalId === ''
+                ? true
+                : nationalId && kennitala.isValid(nationalId)
+            },
+            {
+              params: m.errorNationalIdIncorrect,
+              path: ['nationalId'],
+            },
+          )
+          .refine(
+            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
+              return nationalId !== '' ||
+                businessDebt !== '' ||
+                debtValue !== ''
+                ? isValidString(loanIdentity)
+                : true
+            },
+            {
+              path: ['loanIdentity'],
+            },
+          )
+          .refine(
+            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
+              return nationalId !== '' ||
+                businessDebt !== '' ||
+                loanIdentity !== ''
+                ? isValidString(debtValue)
+                : true
+            },
+            {
+              path: ['debtValue'],
+            },
+          )
+          .refine(
+            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
+              return nationalId !== '' ||
+                debtValue !== '' ||
+                loanIdentity !== ''
+                ? isValidString(businessDebt)
+                : true
+            },
+            {
+              path: ['businessDebt'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
