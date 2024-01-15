@@ -5,7 +5,6 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
-import { Answer } from '@island.is/application/types'
 
 export const CountriesOfResidenceSubSection = buildSubSection({
   id: Routes.COUNTRIESOFRESIDENCE,

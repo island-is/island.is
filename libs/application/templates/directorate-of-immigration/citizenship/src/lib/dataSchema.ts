@@ -109,22 +109,6 @@ export const RemoveableCountrySchema = z
       path: ['countryId'],
     },
   )
-  // .refine(
-  //   ({ wasRemoved, dateTo }) => {
-  //     return wasRemoved === 'true' || (dateTo && dateTo.length > 0)
-  //   },
-  //   {
-  //     path: ['dateTo'],
-  //   },
-  // )
-  // .refine(
-  //   ({ wasRemoved, dateFrom }) => {
-  //     return wasRemoved === 'true' || (dateFrom && dateFrom.length > 0)
-  //   },
-  //   {
-  //     path: ['dateFrom'],
-  //   },
-  // )
   .refine(
     ({ dateTo, dateFrom }) => {
       const to = dateTo ? new Date(dateTo).getTime() : null
