@@ -294,7 +294,6 @@ export const overviewAssets = [
     label: m.totalValue,
     display: 'flex',
     value: ({ answers }) => {
-      console.log(answers)
       const total = getValueViaPath(answers, 'assets.stocks.total')
       return formatCurrency(String(total))
     },
