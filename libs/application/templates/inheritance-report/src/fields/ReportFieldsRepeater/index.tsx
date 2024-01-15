@@ -16,7 +16,6 @@ import { Answers } from '../../types'
 import * as styles from '../styles.css'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
@@ -93,9 +92,12 @@ export const ReportFieldsRepeater: FC<
         Number(acc) + Number(current[props.sumField]),
       0,
     )
+    const addTotal = id.replace('data', 'total')
+    setValue(addTotal, total)
+
     setTotal(total)
   }, [getValues, id, props.sumField])
-
+  
   useEffect(() => {
     calculateTotal()
   }, [calculateTotal])
@@ -237,7 +239,6 @@ export const ReportFieldsRepeater: FC<
     <Box>
       {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
-        console.log(id)
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
@@ -308,14 +309,6 @@ export const ReportFieldsRepeater: FC<
                             updateValue(fieldIndex)
                           }
 
-                          // stocks
-                          // if (field.id === 'rateOfExchange') {
-                          //   setRateOfExchange(Number(value))
-                          // } else if (field.id === 'faceValue') {
-                          //   setFaceValue(Number(value))
-                          // }
-
-                          // total
                           if (props.sumField === field.id) {
                             calculateTotal()
                           }
