@@ -131,7 +131,7 @@ export const DefaultHeader: React.FC<
                 }}
                 className={styles.headerImage}
                 src={image}
-                alt="header backgroundimage"
+                alt=""
               />
             </Hidden>
           )}

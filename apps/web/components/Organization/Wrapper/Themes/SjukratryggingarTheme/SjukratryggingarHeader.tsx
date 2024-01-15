@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import {
   Box,
@@ -8,34 +8,20 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useI18n } from '@island.is/web/i18n'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
 import * as styles from './SjukratryggingarHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const SjukratryggingarHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, logoAltText }) => {
   const { linkResolver } = useLinkResolver()
-  const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
-    [organizationPage.organization?.namespace?.fields],
-  )
-  const n = useNamespace(namespace)
-
-  const { activeLocale } = useI18n()
-  const logoAltText = n(
-    'organizationLogoAltText',
-    activeLocale === 'is'
-      ? organizationPage.organization?.title + ' Forsíða'
-      : organizationPage.organization?.title + ' Frontpage',
-  )
 
   return (
     <div className={styles.headerBg}>

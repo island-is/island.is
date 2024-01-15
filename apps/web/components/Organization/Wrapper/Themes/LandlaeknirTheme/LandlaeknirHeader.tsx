@@ -6,7 +6,6 @@ import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { useI18n } from '@island.is/web/i18n'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 
@@ -44,10 +43,12 @@ const getDefaultStyle = (width: number) => {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const LandlaeknirHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
+  logoAltText,
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
@@ -58,14 +59,6 @@ const LandlaeknirHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   const { width } = useWindowSize()
 
   const screenWidth = getScreenWidthString(width)
-
-  const { activeLocale } = useI18n()
-  const logoAltText = n(
-    'organizationLogoAltText',
-    activeLocale === 'is'
-      ? organizationPage.organization?.title + ' Forsíða'
-      : organizationPage.organization?.title + ' Frontpage',
-  )
 
   return (
     <div

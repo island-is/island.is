@@ -4,7 +4,6 @@ import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { useI18n } from '@island.is/web/i18n'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 
@@ -22,9 +21,13 @@ const getDefaultStyle = () => {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
-const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
+const FjarsyslaRikisinsHeader = ({
+  organizationPage,
+  logoAltText,
+}: HeaderProps) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
@@ -34,14 +37,6 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
   const { width } = useWindowSize()
 
   const screenWidth = getScreenWidthString(width)
-
-  const { activeLocale } = useI18n()
-  const logoAltText = n(
-    'organizationLogoAltText',
-    activeLocale === 'is'
-      ? organizationPage.organization?.title + ' Forsíða'
-      : organizationPage.organization?.title + ' Frontpage',
-  )
 
   return (
     <div
