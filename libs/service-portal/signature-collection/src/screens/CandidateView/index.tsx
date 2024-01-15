@@ -32,7 +32,7 @@ const OwnerView = () => {
               iconType="outline"
               onClick={() =>
                 window.open(
-                  `${document.location.origin}/umsoknir/medmaelalisti/`,
+                  `${document.location.origin}/umsoknir/medmaelasofnun/`,
                 )
               }
               size="small"

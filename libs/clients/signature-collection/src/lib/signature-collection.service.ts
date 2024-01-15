@@ -348,7 +348,17 @@ export class SignatureCollectionClientService {
         iD: id,
         requestBody: nationalIds,
       })
-    return signaturesFound.map(mapSignature)
+    // Get listTitle for signatures
+    const allLists = await this.getLists({ collectionId: id })
+    const listNameIndexer: Record<string, string> = allLists.reduce(
+      (acc, list) => ({ ...acc, [list.id]: list.title }),
+      {},
+    )
+    const signaturesMapped = signaturesFound.map(mapSignature)
+    signaturesMapped.forEach((signature) => {
+      signature.listTitle = listNameIndexer[signature.listId]
+    })
+    return signaturesMapped
   }
 
   //   TODO: DelegateList

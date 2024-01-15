@@ -85,12 +85,14 @@ const CompareLists = () => {
       <Box
         background="purple100"
         borderRadius="large"
-        display="flex"
+        display={['block', 'flex', 'flex']}
         justifyContent="spaceBetween"
         alignItems="center"
         padding={3}
       >
-        <Text>{formatMessage(m.uploadFileDescription)}</Text>
+        <Text marginBottom={[2, 0, 0]}>
+          {formatMessage(m.compareListsDescription)}
+        </Text>
         <Button
           icon="documents"
           iconType="outline"
@@ -113,7 +115,7 @@ const CompareLists = () => {
         closeButtonLabel={''}
         label={''}
       >
-        <Text>{formatMessage(m.uploadFileDescription)}</Text>
+        <Text>{formatMessage(m.compareListsModalDescription)}</Text>
         <Box paddingTop={5} paddingBottom={5}>
           <InputFileUpload
             fileList={fileList}
@@ -162,7 +164,7 @@ const CompareLists = () => {
                               <T.Data style={{ minWidth: '250px' }}>
                                 {result.signee.name}
                               </T.Data>
-                              <T.Data>{'todo: nafn á lista'}</T.Data>
+                              <T.Data>{result.listTitle}</T.Data>
                               <T.Data style={{ minWidth: '160px' }}>
                                 <Button
                                   variant="utility"

@@ -21,6 +21,15 @@ export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
   @Field({ nullable: true })
   canSign!: boolean
 
+  @Field(() => [String], { nullable: true })
+  canSignInfo?: string[]
+
+  @Field()
+  canCreate!: boolean
+
+  @Field(() => [String], { nullable: true })
+  canCreateInfo?: string[]
+
   @Field(() => SignatureCollectionAreaBase, { nullable: true })
   area?: SignatureCollectionAreaBase
 
@@ -30,9 +39,9 @@ export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
   @Field(() => [SignatureCollectionList], { nullable: true })
   ownedLists?: SignatureCollectionList[]
 
-  @Field({ nullable: true })
-  isOwner!: boolean
-
-  @Field({ nullable: true })
+  @Field(() => SignatureCollectionCandidate, { nullable: true })
   candidate?: SignatureCollectionCandidate
+
+  @Field()
+  isOwner!: boolean
 }

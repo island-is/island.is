@@ -21,7 +21,7 @@ export interface List {
 }
 
 export function getSlug(id: number | string): string {
-  return `/umsoknir/maela-med-lista/?candidate=${id}`
+  return `/umsoknir/maela-med-frambodi/?candidate=${id}`
 }
 
 export function mapListBase(
