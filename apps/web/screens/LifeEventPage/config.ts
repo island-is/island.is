@@ -37,7 +37,7 @@ export const watsonConfig: Record<
       onLoad(instance) {
         setupOneScreenWatsonChatBot(
           instance,
-          'ad_eldast',
+          'adeldast',
           'b1a80e76-da12-4333-8872-936b08246eaa',
         )
       },
