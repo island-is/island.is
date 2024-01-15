@@ -337,8 +337,10 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     attachmentDescription: {
       id: 'sia.application:fileUpload.attachment.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'The following document types are accepted: .pdf',
+      defaultMessage:
+        'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+      description:
+        'The following document types are accepted: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
     },
     attachmentMaxSizeError: {
       id: 'sia.application:fileUpload.attachment.maxSizeError',
@@ -349,6 +351,13 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:fileUpload.additionalFile.title',
       defaultMessage: 'Fylgiskjöl viðbótargögn',
       description: 'Additional attachments',
+    },
+    additionalFileDescription: {
+      id: 'sia.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar ef þú telur þörf á.',
+      description:
+        'Below you can submit additional data to the Social Insurance Administration, if need be.',
     },
     additionalDocumentsEditSubmit: {
       id: 'sia.application:fileUpload.additionalDocumentsEditSubmit',

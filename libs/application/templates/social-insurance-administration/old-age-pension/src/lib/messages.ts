@@ -327,13 +327,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Here you can submit data confirming how many days you have been legally registered at sea. Examples of such data are; An overview of the seafarers status registration from the Transport Agency, sea voyage books published by the Icelandic Maritime Administration, tax returns or sailing certificates from the County Commissioner. Note that the document must be in .pdf format.',
     },
-    additionalFileDescription: {
-      id: 'oap.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
-    },
     selfEmployedTitle: {
       id: 'oap.application:fileUpload.selfEmployed.title',
       defaultMessage: 'Fylgiskjöl reiknað endurgjald',

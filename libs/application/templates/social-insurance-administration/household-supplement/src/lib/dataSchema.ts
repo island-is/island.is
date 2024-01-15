@@ -98,6 +98,20 @@ export const dataSchema = z.object({
         bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
       { path: ['currency'] },
     ),
+  fileUpload: z.object({
+    leaseAgreement: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requireAttachment,
+      }),
+    schoolConfirmation: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requireAttachment,
+      }),
+  }),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)

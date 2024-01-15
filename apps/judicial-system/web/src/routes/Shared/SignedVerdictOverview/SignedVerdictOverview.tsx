@@ -55,6 +55,7 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import {
   CaseAppealDecision,
   CaseAppealState,
@@ -536,11 +537,17 @@ export const SignedVerdictOverview: React.FC = () => {
                 },
                 {
                   title: formatMessage(core.prosecutorPerson),
-                  value: workingCase.prosecutor?.name,
+                  value: NameAndEmail(
+                    workingCase.prosecutor?.name,
+                    workingCase.prosecutor?.email,
+                  ),
                 },
                 {
                   title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
+                  value: NameAndEmail(
+                    workingCase.judge?.name,
+                    workingCase.judge?.email,
+                  ),
                 },
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
@@ -555,7 +562,10 @@ export const SignedVerdictOverview: React.FC = () => {
                   ? [
                       {
                         title: formatMessage(core.registrar),
-                        value: workingCase.registrar?.name,
+                        value: NameAndEmail(
+                          workingCase.registrar?.name,
+                          workingCase.registrar?.email,
+                        ),
                       },
                     ]
                   : []),
