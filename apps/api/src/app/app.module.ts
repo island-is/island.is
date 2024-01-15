@@ -344,7 +344,6 @@ const environment = getConfig
         NationalRegistryClientConfig,
         SyslumennClientConfig,
         ElectronicRegistrationsClientConfig,
-        FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
         SocialInsuranceAdministrationClientConfig,

@@ -28,7 +28,7 @@ const TextComponent = ({ children, ...props }: { children: ReactNode }) => {
   )
 }
 
-const LinkComponent = ({
+export const LinkComponent = ({
   children,
   href,
 }: {

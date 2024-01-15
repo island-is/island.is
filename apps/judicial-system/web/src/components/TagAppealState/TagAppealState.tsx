@@ -63,6 +63,7 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
           ruling === CaseAppealRulingDecision.ACCEPTING
             ? 'mint'
             : ruling === CaseAppealRulingDecision.CHANGED ||
+              ruling === CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
               ruling === CaseAppealRulingDecision.REPEAL
             ? 'rose'
             : 'blueberry',
