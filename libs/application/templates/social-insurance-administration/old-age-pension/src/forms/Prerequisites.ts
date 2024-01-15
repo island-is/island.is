@@ -123,7 +123,7 @@ export const PrerequisitesForm: Form = buildForm({
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationApplicantApi,
                   title:
-                    oldAgePensionFormMessage.pre
+                    socialInsuranceAdministrationMessage.pre
                       .socialInsuranceAdministrationInformationTitle,
                   subTitle:
                     socialInsuranceAdministrationMessage.pre
@@ -235,7 +235,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [],
     }),
     buildSection({

@@ -132,18 +132,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   applicant: defineMessages({
-    applicantInfoSubSectionTitle: {
-      id: 'oap.application:applicant.info.sub.section.title',
-      defaultMessage: 'Upplýsingar um þig',
-      description: 'Information about you',
-    },
-    applicantInfoSubSectionDescription: {
-      id: 'oap.application:applicant.info.sub.section.description#markdown',
-      defaultMessage:
-        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður TR. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
-      description:
-        'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
-    },
     applicantInfoName: {
       id: 'oap.application:applicant.info.name',
       defaultMessage: 'Fullt nafn',
@@ -334,7 +322,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Pension fund attachment',
     },
     pensionFileDescription: {
-      id: 'oap.application:fileUpload.pensionFile.description',
+      id: 'oap.application:fileUpload.pensionFile.description#markdown',
       defaultMessage:
         'Hér getur þú skilað staðfestingu greiðslna hjá lífeyrissjóði. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
