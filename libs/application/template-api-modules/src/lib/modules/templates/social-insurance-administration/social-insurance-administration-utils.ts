@@ -29,6 +29,11 @@ import {
   getApplicationExternalData as getASFTEApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 
+import {
+  getApplicationAnswers as getPSApplicationAnswers,
+  getApplicationExternalData as getPSApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/pension-supplement'
+
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
   uploads: Attachment[],
@@ -237,6 +242,60 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
   }
 
   return additionalSupportForTheElderlyDTO
+}
+
+export const transformApplicationToPensionSupplementDTO = (
+  application: Application,
+  uploads: Attachment[],
+): ApplicationDTO => {
+  const {
+    selectedYear,
+    selectedMonth,
+    applicantPhonenumber,
+    bank,
+    bankAccountType,
+    comment,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+
+    applicationReason,
+  } = getPSApplicationAnswers(application.answers)
+  const { email } = getPSApplicationExternalData(application.externalData)
+
+  const pensionSupplementDTO: ApplicationDTO = {
+    applicationId: application.id,
+    applicantInfo: {
+      email: email,
+      phonenumber: applicantPhonenumber,
+    },
+    ...((bankAccountType === undefined ||
+      bankAccountType === BankAccountType.ICELANDIC) && {
+      domesticBankInfo: {
+        bank: formatBank(bank),
+      },
+    }),
+    ...(bankAccountType === BankAccountType.FOREIGN && {
+      foreignBankInfo: {
+        iban: iban.replace(/[\s]+/g, ''),
+        swift: swift.replace(/[\s]+/g, ''),
+        foreignBankName: bankName,
+        foreignBankAddress: bankAddress,
+        foreignCurrency: currency,
+      },
+    }),
+    reasons: applicationReason,
+    period: {
+      year: +selectedYear,
+      month: getMonthNumber(selectedMonth),
+    },
+    uploads,
+    comment: comment,
+  }
+
+  return pensionSupplementDTO
 }
 
 export const getMonthNumber = (monthName: string): number => {

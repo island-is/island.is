@@ -193,6 +193,8 @@ components:
           $ref: '#/components/schemas/TaxInfo'
         applicantInfo:
           $ref: '#/components/schemas/ApplicantInfo'
+        reasons:
+          $ref: '#/components/schemas/Reasons'
         hasAbroadResidence:
           type: boolean
         hasOneTimePayment:
@@ -304,6 +306,12 @@ components:
             - selfEmployed
             - rentalAgreement
             - schoolConfirmation
+            - assistedCareAtHome
+            - purchaseOfHearingAids
+            - assistedLiving
+            - halfwayHouse
+            - houseRentAgreement
+            - houseRentAllowance
         file:
           type: string
     Response:
@@ -423,6 +431,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Attachment'
+    Reasons:
+      type: array
+      items:
+        type: string
     ErrorResult:
       type: object
       properties:
