@@ -24,7 +24,7 @@ describe('<CaseDates /> expired', () => {
 
     renderCaseDates(theCase)
     expect(
-      screen.getByText('Gæsla rann út 15. júní 2022 kl. 19:50'),
+      screen.getByText('Gæslu lauk út 15. júní 2022 kl. 19:50'),
     ).toBeInTheDocument()
   })
 
@@ -37,7 +37,7 @@ describe('<CaseDates /> expired', () => {
 
     renderCaseDates(theCase)
     expect(
-      screen.getByText('Vistun rann út 15. júní 2022 kl. 19:50'),
+      screen.getByText('Vistun lauk út 15. júní 2022 kl. 19:50'),
     ).toBeInTheDocument()
   })
 
@@ -50,7 +50,7 @@ describe('<CaseDates /> expired', () => {
 
     renderCaseDates(theCase)
     expect(
-      screen.getByText('Farbann rann út 15. júní 2022 kl. 19:50'),
+      screen.getByText('Farbann lauk út 15. júní 2022 kl. 19:50'),
     ).toBeInTheDocument()
   })
 })
