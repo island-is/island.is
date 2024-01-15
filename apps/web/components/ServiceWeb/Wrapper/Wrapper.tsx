@@ -1,19 +1,20 @@
-import { FC, useEffect, useState, createContext, useMemo } from 'react'
+import { createContext, FC, useEffect, useMemo, useState } from 'react'
+
 import { Box } from '@island.is/island-ui/core'
-import { Organization } from '@island.is/web/graphql/schema'
 import {
-  ServiceWebSearchSection,
-  ServiceWebHeader,
+  HeadWithSocialSharing,
   ServiceWebBackground,
   ServiceWebDynamicFooter,
-  HeadWithSocialSharing,
+  ServiceWebHeader,
+  ServiceWebSearchSection,
   WatsonChatPanel,
 } from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
+import { Organization, ServiceWebPage } from '@island.is/web/graphql/schema'
 import { usePlausiblePageview } from '@island.is/web/hooks'
-import { BackgroundVariations, Options, TextModes } from '../types'
-import config, { watsonConfig } from '../config'
+import { useI18n } from '@island.is/web/i18n'
 
+import config, { watsonConfig } from '../config'
+import { BackgroundVariations, Options, TextModes } from '../types'
 import * as styles from './Wrapper.css'
 
 const DEFAULT_INSTITUTION_SLUG = 'stafraent-island'
@@ -42,6 +43,7 @@ interface WrapperProps {
   pageDescription?: string
   indexableBySearchEngine?: boolean
   showLogoOnMobileDisplays?: boolean
+  pageData?: ServiceWebPage | null
 }
 
 export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
@@ -58,6 +60,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   pageDescription,
   indexableBySearchEngine = false,
   showLogoOnMobileDisplays,
+  pageData,
   children,
 }) => {
   const { activeLocale } = useI18n()
@@ -84,6 +87,13 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
     [],
   )
+
+  // Override the footer items in case the page has some
+  const footerItems =
+    typeof pageData?.footerItems?.length === 'number' &&
+    pageData.footerItems.length > 0
+      ? pageData?.footerItems ?? []
+      : organization?.footerItems ?? []
 
   return (
     <>
@@ -133,7 +143,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
         {children}
         <ServiceWebDynamicFooter
           institutionSlug={institutionSlug}
-          organization={organization}
+          organization={{ ...organization, footerItems }}
           namespace={namespace}
         />
       </ServiceWebContext.Provider>
