@@ -339,11 +339,12 @@ const Search: Screen<CategoryProps> = ({
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
   const getItemLink = (item: SearchEntryType) => {
-    if (
-      item.__typename === 'AnchorPage' &&
-      item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
-    ) {
-      return linkResolver('digitalicelandservicesdetailpage', [item.slug])
+    if (item.__typename === 'AnchorPage') {
+      if (item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE) {
+        return linkResolver('digitalicelandservicesdetailpage', [item.slug])
+      } else {
+        return linkResolver('lifeeventpage', [item.slug])
+      }
     }
 
     if (item.__typename === 'ManualChapterItem') {
