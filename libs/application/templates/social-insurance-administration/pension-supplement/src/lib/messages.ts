@@ -91,13 +91,6 @@ export const pensionSupplementFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    additionalFileDescription: {
-      id: 'ul.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangar upplýsingar. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
-    },
     assistedCareAtHomeTitle: {
       id: 'ul.application:fileUppload.assisted.care.at.home.title',
       defaultMessage: 'Fylgiskjöl umönnun í heimahúsi',
