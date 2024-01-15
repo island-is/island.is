@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -22,7 +21,6 @@ import {
   FormValue,
   NO,
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
   YES,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
