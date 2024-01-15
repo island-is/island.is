@@ -146,6 +146,24 @@ export async function generateComplaintPdf(application: Application) {
     PdfConstants.NORMAL_LINE_GAP,
   )
 
+  addSubheader('Leitað áður til Umboðsmanns Alþingis', doc)
+  addValue(
+    `${answers.previousOmbudsmanComplaint.Answer === YES ? 'Já' : 'Nei'}`,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.NORMAL_LINE_GAP,
+  )
+
+  if (answers.previousOmbudsmanComplaint.Answer === YES) {
+    addSubheader('Lýsing', doc)
+    addValue(
+      `${answers.previousOmbudsmanComplaint.moreInfo}`,
+      doc,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.NORMAL_LINE_GAP,
+    )
+  }
+
   addSubheader('Rökstuðningur kvörtunar og önnur fylgiskjöl', doc)
   if (
     answers.attachments?.documents &&

@@ -870,9 +870,11 @@ export const OldAgePensionForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileDescription,
               introduction:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileDescription,
               ...fileUploadSharedProps,
             }),
           ],
