@@ -31,6 +31,7 @@ export interface ApplicantInfo {
 export interface ApplicationDTO {
   period?: Period
   comment?: string
+  reasons?: Array<string>
   applicationId?: string
   domesticBankInfo?: DomesticBankInfo
   foreignBankInfo?: ForeignBankInfo
