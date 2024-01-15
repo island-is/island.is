@@ -24,6 +24,7 @@ export enum Features {
   carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
 

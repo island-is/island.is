@@ -470,10 +470,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-                householdSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileDescription,
               introduction:
-                householdSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileDescription,
               ...fileUploadSharedProps,
             }),
