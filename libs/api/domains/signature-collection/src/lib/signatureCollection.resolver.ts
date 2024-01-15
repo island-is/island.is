@@ -104,6 +104,14 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.signee(user.nationalId)
   }
 
+  @Query(() => SignatureCollectionSignee)
+  @Audit()
+  async signatureCollectionSigneeLookup(
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSignee> {
+    return this.signatureCollectionService.signee(input.id)
+  }
+
   @Mutation(() => SignatureCollectionSlug)
   @Audit()
   async signatureCollectionCreate(
