@@ -1,7 +1,5 @@
 import { Box, Table as T } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import cn from 'classnames'
-import * as styles from './ScrollableMiddleTable.css'
 import { useWindowSize } from 'react-use'
 
 export interface Columns {
@@ -60,8 +58,10 @@ export const ScrollableMiddleTable = ({
             >
               {header.first}
             </T.HeadData>
-            {header.scrollableMiddle.map((val) => (
-              <T.HeadData>{val}</T.HeadData>
+            {header.scrollableMiddle.map((val, index) => (
+              <T.HeadData key={`nested-table-header-col-${index}`}>
+                {val}
+              </T.HeadData>
             ))}
             <T.HeadData
               style={{
@@ -75,8 +75,8 @@ export const ScrollableMiddleTable = ({
           </T.Row>
         </T.Head>
         <T.Body>
-          {rows?.map((r) => (
-            <T.Row>
+          {rows?.map((r, rowIdx) => (
+            <T.Row key={`nested-table-row-${rowIdx}`}>
               <T.Data
                 style={{
                   position: 'sticky',
@@ -86,8 +86,10 @@ export const ScrollableMiddleTable = ({
               >
                 {r.first}
               </T.Data>
-              {r.scrollableMiddle.map((val) => (
-                <T.Data>{val}</T.Data>
+              {r.scrollableMiddle.map((val, idx) => (
+                <T.Data key={`nested-table-row-${rowIdx}-cell-${idx}`}>
+                  {val}
+                </T.Data>
               ))}
               <T.Data
                 style={{

@@ -140,8 +140,12 @@ const PaymentPlan = () => {
         <Table.Body>
           {data?.socialInsurancePaymentPlan?.paymentGroups
             .filter((pg) => pg.type !== 'Frádráttur')
-            .map((pg) => (
-              <PaymentGroupTableRow data={pg} formatMessage={formatMessage} />
+            .map((pg, idx) => (
+              <PaymentGroupTableRow
+                key={`payment-group-idx-${idx}`}
+                data={pg}
+                formatMessage={formatMessage}
+              />
             ))}
           <Table.Row>
             <Table.Data colSpan={2}>
@@ -165,8 +169,12 @@ const PaymentPlan = () => {
           </Table.Row>
           {data?.socialInsurancePaymentPlan?.paymentGroups
             .filter((pg) => pg.type === 'Frádráttur')
-            .map((pg) => (
-              <PaymentGroupTableRow data={pg} formatMessage={formatMessage} />
+            .map((pg, idx) => (
+              <PaymentGroupTableRow
+                key={`payment-group-idx-subtraction-${idx}`}
+                data={pg}
+                formatMessage={formatMessage}
+              />
             ))}
           <Table.Row>
             <Table.Data align="left" colSpan={2}>
