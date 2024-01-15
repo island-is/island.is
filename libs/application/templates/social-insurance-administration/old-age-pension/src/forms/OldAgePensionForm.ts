@@ -71,8 +71,7 @@ export const OldAgePensionForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'info',
-          title:
-            socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',

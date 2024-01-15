@@ -72,14 +72,15 @@ export const HouseholdSupplementForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
+              title:
+                socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
               description:
-              socialInsuranceAdministrationMessage.info.infoSubSectionDescription,
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.name',
-                  title:
-                    socialInsuranceAdministrationMessage.confirm.name,
+                  title: socialInsuranceAdministrationMessage.confirm.name,
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {

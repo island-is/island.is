@@ -70,16 +70,15 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationApplicantApi,
-              title:
-                socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
                 socialInsuranceAdministrationMessage.pre
-                .socialInsuranceAdministrationInformationDescription,
+                  .socialInsuranceAdministrationInformationDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
               title:
-                householdSupplementFormMessage.pre
+                socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationTitle,
               subTitle:
                 socialInsuranceAdministrationMessage.pre
@@ -88,11 +87,11 @@ export const PrerequisitesForm: Form = buildForm({
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
               title:
-               socialInsuranceAdministrationMessage.pre
-                .socialInsuranceAdministrationPrivacyTitle,
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyTitle,
               subTitle:
                 socialInsuranceAdministrationMessage.pre
-                .socialInsuranceAdministrationPrivacyDescription,
+                  .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
