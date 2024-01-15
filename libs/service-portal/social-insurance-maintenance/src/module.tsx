@@ -32,5 +32,11 @@ export const socialInsuranceMaintenanceModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <SocialInsuranceMaintenancePaymentPlan />,
     },
+    {
+      name: m.paymentsReasoning,
+      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentsReasoning,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <SocialInsuranceMaintenancePaymentPlan />,
+    },
   ],
 }

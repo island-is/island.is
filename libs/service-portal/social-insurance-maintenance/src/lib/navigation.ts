@@ -12,6 +12,18 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
     {
       name: m.paymentPlan,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentPlan,
+      children: [
+        {
+          name: m.paymentPlan,
+          path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentPlan,
+          navHide: true,
+        },
+        {
+          name: m.paymentsReasoning,
+          path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentsReasoning,
+          navHide: true,
+        },
+      ],
     },
   ],
 }

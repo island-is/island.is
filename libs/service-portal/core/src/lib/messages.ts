@@ -1271,6 +1271,10 @@ export const m = defineMessages({
     id: 'service-portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
   },
+  paymentsReasoning: {
+    id: 'service-portal:payments-reasoning',
+    defaultMessage: 'Forsenda greiðslna',
+  },
   january: {
     id: 'service.portal:january',
     defaultMessage: 'Janúar',

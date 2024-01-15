@@ -9,6 +9,10 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
   },
+  paymentsReasoning: {
+    id: 'sp.social-insurance-maintenance:payments-reasoning',
+    defaultMessage: 'Forsendur greiðslna',
+  },
   previousMonthsPayment: {
     id: 'sp.social-insurance-maintenance:previous-months-payment',
     defaultMessage: 'Greiðsla síðasta mánaðar',

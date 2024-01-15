@@ -18,15 +18,13 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import {
-  IntroHeader,
-  UserInfoLine,
-  m as coreMessages,
-} from '@island.is/service-portal/core'
+import { UserInfoLine, m as coreMessages } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { useEffect, useMemo, useState } from 'react'
 import addYears from 'date-fns/addYears'
 import { PaymentGroupTableRow } from '../../components'
+import { PaymentPlanWrapper } from './wrapper/wrapper/PaymentPlanWrapper'
+import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
 
 const PaymentPlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
@@ -53,38 +51,36 @@ const PaymentPlan = () => {
   }
 
   return (
-    <Box>
-      <IntroHeader
-        title={coreMessages.socialInsuranceMaintenance}
-        intro={coreMessages.socialInsuranceMaintenanceDescription}
-        serviceProviderSlug={'tryggingastofnun'}
-        serviceProviderTooltip="Eitthvað tooltip"
-      />
-      <Box marginBottom={[2, 2, 6]}>
-        <Stack space={1}>
-          <UserInfoLine
-            label={formatMessage(m.nextPayment)}
-            content={
-              data?.socialInsurancePaymentPlan?.nextPayment
-                ? amountFormat(data.socialInsurancePaymentPlan.nextPayment)
-                : ''
-            }
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={formatMessage(m.previousMonthsPayment)}
-            content={
-              data?.socialInsurancePaymentPlan?.previousPayment
-                ? amountFormat(data.socialInsurancePaymentPlan.previousPayment)
-                : ''
-            }
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-      </Box>
-      <Text marginBottom={2} variant="h5">
+    <PaymentPlanWrapper
+      pathname={
+        SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentPlan
+      }
+      loading={loading}
+      error={error}
+    >
+      <Stack space={1}>
+        <UserInfoLine
+          label={formatMessage(m.nextPayment)}
+          content={
+            data?.socialInsurancePaymentPlan?.nextPayment
+              ? amountFormat(data.socialInsurancePaymentPlan.nextPayment)
+              : ''
+          }
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={formatMessage(m.previousMonthsPayment)}
+          content={
+            data?.socialInsurancePaymentPlan?.previousPayment
+              ? amountFormat(data.socialInsurancePaymentPlan.previousPayment)
+              : ''
+          }
+          loading={loading}
+        />
+        <Divider />
+      </Stack>
+      <Text marginTop={[2, 2, 6]} marginBottom={2} variant="h5">
         {formatMessage(coreMessages.period)}
       </Text>
       <Box marginBottom={3}>
@@ -198,15 +194,7 @@ const PaymentPlan = () => {
           </Table.Row>
         </Table.Body>
       </Table.Table>
-      <Box>
-        <Text variant="small" marginTop={5} marginBottom={2}>
-          Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-          vulputate libero et velit interdum, ac aliquet odio mattis. Class
-          aptent taciti sociosqu ad litora torquent per conubia nostra, per
-          inceptos himenaeos.
-        </Text>
-      </Box>
-    </Box>
+    </PaymentPlanWrapper>
   )
 }
 
