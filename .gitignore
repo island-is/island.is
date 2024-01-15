@@ -32,6 +32,7 @@ TODO
 *.todo
 .env
 .env.*
+!.env.podman
 .envrc.*
 .nvmrc
 .node-version
