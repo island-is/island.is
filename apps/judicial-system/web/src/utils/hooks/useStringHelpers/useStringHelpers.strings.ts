@@ -21,4 +21,9 @@ export const useStringHelpersStrings = defineMessages({
     defaultMessage: 'Heimvísun',
     description: 'Staða eftir úrskurð á máli ef málið er heimvísun',
   },
+  decisionRepeal: {
+    id: 'judicial.system.core:use_string_helpers.tag_decision_repeal',
+    defaultMessage: 'Fellt úr gildi',
+    description: 'Staða eftir úrskurð á máli ef málið er fellt úr gildi',
+  },
 })
