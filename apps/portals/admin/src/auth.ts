@@ -32,6 +32,7 @@ if (userMocked) {
       AdminPortalScope.idsAdminSuperUser,
       AdminPortalScope.petitionsAdmin,
       AdminPortalScope.serviceDesk,
+      AdminPortalScope.explicitAirDiscountScheme,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'ap.',

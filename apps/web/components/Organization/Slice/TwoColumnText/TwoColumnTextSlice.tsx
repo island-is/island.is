@@ -1,8 +1,8 @@
 import React from 'react'
-import { TwoColumnText } from '@island.is/web/graphql/schema'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
-  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -12,9 +12,11 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import { SliceType } from '@island.is/island-ui/contentful'
-import { webRichText } from '@island.is/web/utils/richText'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { BorderAbove } from '@island.is/web/components'
+import { TwoColumnText } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+import { webRichText } from '@island.is/web/utils/richText'
 
 const columnSpan: SpanType = ['12/12', '12/12', '12/12', '6/12']
 
@@ -25,23 +27,22 @@ interface SliceProps {
 export const TwoColumnTextSlice: React.FC<
   React.PropsWithChildren<SliceProps>
 > = ({ slice }) => {
+  const { activeLocale } = useI18n()
   const labelId = 'sliceTitle-' + slice.id
-  const boxProps: BoxProps = slice.dividerOnTop
-    ? { borderTopWidth: 'standard', borderColor: 'standard', paddingTop: 4 }
-    : {}
   return (
     <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
       <GridContainer>
-        <Box {...boxProps}>
+        {slice.dividerOnTop && <BorderAbove />}
+        <Box>
           <GridRow>
-            <GridColumn span={columnSpan} paddingBottom={2} hiddenBelow="lg">
+            <GridColumn span={columnSpan} hiddenBelow="lg">
               {slice.leftTitle && (
                 <Text variant="h2" as="h2" id={labelId}>
                   <Hyphen>{slice.leftTitle}</Hyphen>
                 </Text>
               )}
             </GridColumn>
-            <GridColumn span={columnSpan} paddingBottom={2} hiddenBelow="lg">
+            <GridColumn span={columnSpan} hiddenBelow="lg">
               {slice.rightTitle && (
                 <Text variant="h2" as="h2">
                   <Hyphen>{slice.rightTitle}</Hyphen>
@@ -58,7 +59,11 @@ export const TwoColumnTextSlice: React.FC<
                   </Text>
                 </Hidden>
               )}
-              {webRichText(slice.leftContent as SliceType[])}
+              {webRichText(
+                slice.leftContent as SliceType[],
+                undefined,
+                activeLocale,
+              )}
               {slice.leftLink && slice.leftLink.url && (
                 <Link href={slice.leftLink.url}>
                   <Button
@@ -80,7 +85,11 @@ export const TwoColumnTextSlice: React.FC<
                   </Text>
                 </Hidden>
               )}
-              {webRichText(slice.rightContent as SliceType[])}
+              {webRichText(
+                slice.rightContent as SliceType[],
+                undefined,
+                activeLocale,
+              )}
               {slice.rightLink && slice.rightLink.url && (
                 <Link href={slice.rightLink.url}>
                   <Button

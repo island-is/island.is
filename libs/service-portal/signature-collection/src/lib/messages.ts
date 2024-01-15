@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   pageTitle: {
-    id: 'sp.signatureCollection.information:title',
+    id: 'sp.signatureCollection:title',
     defaultMessage: 'Meðmælalistar',
     description: '',
   },
@@ -14,7 +14,7 @@ export const m = defineMessages({
   },
   createListButton: {
     id: 'sp.signatureCollection:createListButton',
-    defaultMessage: 'Stofna meðmælalista',
+    defaultMessage: 'Stofna',
     description: '',
   },
   myListsHeader: {
@@ -27,6 +27,11 @@ export const m = defineMessages({
     defaultMessage: 'Forsetakosningar 2024',
     description: '',
   },
+  endTime: {
+    id: 'sp.signatureCollection:endTime',
+    defaultMessage: 'Lokadagur:',
+    description: '',
+  },
   viewList: {
     id: 'sp.signatureCollection:viewList',
     defaultMessage: 'Skoða nánar',
@@ -36,32 +41,42 @@ export const m = defineMessages({
   /* Signee View */
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
-    defaultMessage: 'Listar sem ég hef mælt með',
+    defaultMessage: 'Frambjóðandi sem þú hefur mælt með',
     description: '',
   },
   mySigneeListsByAreaHeader: {
     id: 'sp.signatureCollection:mySigneeListsByAreaHeader',
-    defaultMessage: 'Listar á mínu svæði sem hægt er að mæla með',
+    defaultMessage: 'Frambjóðandur á þínu svæði sem hægt er að mæla með',
     description: '',
   },
   signList: {
     id: 'sp.signatureCollection:signList',
-    defaultMessage: 'Mæla með lista',
+    defaultMessage: 'Mæla með frambjóðanda',
     description: '',
   },
   unSignList: {
     id: 'sp.signatureCollection:unSignList',
-    defaultMessage: 'Draga meðmæli mitt til baka',
+    defaultMessage: 'Draga meðmæli til baka',
     description: '',
   },
   unSignModalMessage: {
-    id: 'sp.signatureCollection:modalMessage',
-    defaultMessage: 'Þú ert að fara að draga meðmæli þitt til baka. Ertu viss?',
+    id: 'sp.signatureCollection:unSignModalMessage',
+    defaultMessage: 'Þú ert að fara að draga meðmælin þín til baka. Ertu viss?',
     description: '',
   },
   unSignModalConfirmButton: {
     id: 'sp.signatureCollection:unSignModalButton',
     defaultMessage: 'Já, draga meðmæli tilbaka',
+    description: '',
+  },
+  unSignSuccess: {
+    id: 'sp.signatureCollection:unSignSuccess',
+    defaultMessage: 'Tókst að draga meðmæli til baka',
+    description: '',
+  },
+  unSignError: {
+    id: 'sp.signatureCollection:unSignError',
+    defaultMessage: 'Tókst ekki að draga meðmæli til baka',
     description: '',
   },
 
@@ -72,13 +87,23 @@ export const m = defineMessages({
     description: '',
   },
   cancelCollectionModalMessage: {
-    id: 'sp.signatureCollection:modalMessage',
+    id: 'sp.signatureCollection:cancelCollectionModalMessage',
     defaultMessage: 'Þú ert að fara að hætta við söfnun meðmæla. Ertu viss?',
     description: '',
   },
   cancelCollectionModalConfirmButton: {
-    id: 'sp.signatureCollection:modelConfirmButton',
+    id: 'sp.signatureCollection:modalConfirmButton',
     defaultMessage: 'Já, hætta við söfnun meðmæla',
+    description: '',
+  },
+  cancelCollectionModalToastError: {
+    id: 'sp.signatureCollection:modalToastError',
+    defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
+    description: '',
+  },
+  cancelCollectionModalToastSuccess: {
+    id: 'sp.signatureCollection:cancelCollectionModalToastSuccess',
+    defaultMessage: 'Tókst að hætta við söfnun meðmæla',
     description: '',
   },
 
@@ -121,6 +146,11 @@ export const m = defineMessages({
   noSignees: {
     id: 'sp.signatureCollection:noSignees',
     defaultMessage: 'Engin meðmæli',
+    description: '',
+  },
+  noSigneesFoundBySearch: {
+    id: 'sp.signatureCollection:noSigneesFoundBySearch',
+    defaultMessage: 'Engin meðmæli fundust þegar leitað var að',
     description: '',
   },
   signeeDate: {
@@ -184,11 +214,6 @@ export const m = defineMessages({
   nationalIdsError: {
     id: 'sp.signatureCollection:nationalIdsError',
     defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
-    description: '',
-  },
-  tempMessage: {
-    id: 'sp.signatureCollection:tempMessage',
-    defaultMessage: 'Tempus facilisis',
     description: '',
   },
 })

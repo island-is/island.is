@@ -48,7 +48,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     // Case when parent can apply for custody child without fulfilling some requirements
     if (params?.allowPassOnChild) {
       const children = await this.nationalRegistryApi.getCustodyChildren(auth)
-      this.validateChildren(params, children)
+      await this.validateChildren(params, children)
     }
 
     // Validate individual
@@ -211,6 +211,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           code: cohabitionCodeValue?.code,
           description: cohabitionCodeValue?.description,
         },
+        birthDate: person.birthdate,
       }
     )
   }

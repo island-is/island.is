@@ -21,13 +21,12 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
@@ -50,7 +49,6 @@ const Ruling = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
 
@@ -139,16 +137,7 @@ const Ruling = () => {
               label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
-              <CaseFileList
-                caseId={workingCase.id}
-                files={caseFiles}
-                canOpenFiles={
-                  (workingCase.judge !== null &&
-                    workingCase.judge?.id === user?.id) ||
-                  (workingCase.registrar !== null &&
-                    workingCase.registrar?.id === user?.id)
-                }
-              />
+              <CaseFileList caseId={workingCase.id} files={caseFiles} />
             </AccordionItem>
           </Accordion>
         </Box>

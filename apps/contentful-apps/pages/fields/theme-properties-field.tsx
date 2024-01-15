@@ -25,6 +25,7 @@ interface ThemeProperties {
   imagePadding?: string
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
+  imageObjectPosition?: 'left' | 'center' | 'right'
   useGradientColor?: boolean
 }
 
@@ -183,7 +184,7 @@ const ThemePropertiesField = () => {
           <Radio
             name="imageObjectFitRadio"
             id="imageObjectFitContain"
-            value="Yes"
+            value="contain"
             isChecked={state.imageObjectFit === 'contain'}
             onChange={() => {
               updateState('imageObjectFit', 'contain')
@@ -194,13 +195,55 @@ const ThemePropertiesField = () => {
           <Radio
             name="imageObjectFitRadio"
             id="imageObjectFitCover"
-            value="No"
+            value="cover"
             isChecked={state.imageObjectFit === 'cover'}
             onChange={() => {
               updateState('imageObjectFit', 'cover')
             }}
           >
             cover
+          </Radio>
+        </Stack>
+      </Stack>
+
+      <Stack flexDirection="column" alignItems="flex-start" spacing="none">
+        <FormControl.Label>Image Object Position</FormControl.Label>
+        <Stack flexDirection="row">
+          <Radio
+            name="imageObjectPositionRadio"
+            id="imageObjectPositionLeft"
+            value="left"
+            isChecked={state.imageObjectPosition === 'left'}
+            onChange={() => {
+              updateState('imageObjectPosition', 'left')
+            }}
+          >
+            left
+          </Radio>
+          <Radio
+            name="imageObjectPositionRadio"
+            id="imageObjectPositionCenter"
+            value="center"
+            isChecked={
+              !state.imageObjectPosition ||
+              state.imageObjectPosition === 'center'
+            }
+            onChange={() => {
+              updateState('imageObjectPosition', 'center')
+            }}
+          >
+            center
+          </Radio>
+          <Radio
+            name="imageObjectFitRadio"
+            id="imageObjectFitRight"
+            value="right"
+            isChecked={state.imageObjectPosition === 'right'}
+            onChange={() => {
+              updateState('imageObjectPosition', 'right')
+            }}
+          >
+            right
           </Radio>
         </Stack>
       </Stack>

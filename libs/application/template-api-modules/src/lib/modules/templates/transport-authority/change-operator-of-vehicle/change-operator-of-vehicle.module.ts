@@ -16,6 +16,10 @@ import {
   VehicleOwnerChangeClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import {
+  VehicleCodetablesClientModule,
+  VehicleCodetablesClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-codetables'
+import {
   VehicleServiceFjsV1ClientModule,
   VehicleServiceFjsV1ClientConfig,
 } from '@island.is/clients/vehicle-service-fjs-v1'
@@ -33,6 +37,7 @@ export class ChangeOperatorOfVehicleModule {
         ChargeFjsV2ClientModule,
         VehicleOperatorsClientModule,
         VehicleOwnerChangeClientModule,
+        VehicleCodetablesClientModule,
         VehicleServiceFjsV1ClientModule,
         VehiclesClientModule,
         ConfigModule.forRoot({
@@ -41,6 +46,7 @@ export class ChangeOperatorOfVehicleModule {
             ChargeFjsV2ClientConfig,
             VehicleOperatorsClientConfig,
             VehicleOwnerChangeClientConfig,
+            VehicleCodetablesClientConfig,
             VehicleServiceFjsV1ClientConfig,
             VehiclesClientConfig,
           ],

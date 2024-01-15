@@ -12,16 +12,16 @@ import Select, {
 import { Box, IconDeprecated, Tag, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
+import { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CourtDocument,
   ReactSelectOption,
   TempCase as Case,
 } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useCase } from '../../utils/hooks'
-import Trash from '../Icons/Trash'
+import IconButton from '../IconButton/IconButton'
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import * as styles from './CourtDocuments.css'
 
@@ -292,12 +292,11 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
                     </Box>
                   </Box>
                 </div>
-                <button
+                <IconButton
                   onClick={() => handleRemoveDocument(index)}
-                  className={styles.removeButton}
-                >
-                  <Trash width={14} height={14} color={theme.color.blue400} />
-                </button>
+                  icon="trash"
+                  colorScheme="blue"
+                />
               </div>
             )
           })}

@@ -1,20 +1,22 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+
 import {
   Box,
-  Columns,
-  Column,
-  Icon,
   Checkbox,
+  Column,
+  Columns,
   Hidden,
+  Icon,
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
-import { msg } from '../../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Controller, useForm } from 'react-hook-form'
+
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
+import { msg } from '../../../../../../lib/messages'
 
 interface Props {
   refuseMail: boolean
@@ -29,32 +31,29 @@ interface Props {
 export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, getValues } = useForm<Props>()
-  const [inputPristine, setInputPristine] = useState<boolean>(false)
+  const { control, handleSubmit, getValues, setValue } = useForm<Props>({
+    defaultValues: {
+      refuseMail,
+    },
+  })
+  const [allowSubmit, setAllowSubmit] = useState(false)
   const [submitError, setSubmitError] = useState<string>()
 
   useEffect(() => {
-    checkSetPristineInput()
+    setValue('refuseMail', refuseMail)
   }, [refuseMail])
 
   const { updateOrCreateUserProfile, loading } = useUpdateOrCreateUserProfile()
 
-  const checkSetPristineInput = () => {
-    const localForm = getValues().refuseMail
-
-    if (localForm === refuseMail) {
-      setInputPristine(true)
-    } else {
-      setInputPristine(false)
-    }
-  }
-
   const submitFormData = async (data: { refuseMail: boolean }) => {
+    setSubmitError(undefined)
+
     try {
-      setSubmitError(undefined)
       await updateOrCreateUserProfile({
         canNudge: !data.refuseMail,
-      }).then(() => setInputPristine(true))
+      })
+
+      setAllowSubmit(false)
     } catch (err) {
       console.error(`updateOrCreateUserProfile error: ${err}`)
       setSubmitError(formatMessage(m.somethingWrong))
@@ -74,8 +73,10 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
                 <Checkbox
                   name="refuseMail"
                   onChange={(e) => {
-                    onChange(e.target.checked)
-                    checkSetPristineInput()
+                    const value = e.target.checked
+                    onChange(value)
+                    setValue('refuseMail', value)
+                    setAllowSubmit(!allowSubmit)
                   }}
                   label={formatMessage({
                     id: 'sp.settings:nudge-checkbox-label',
@@ -96,16 +97,16 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
             alignItems="center"
             justifyContent="flexStart"
           >
-            <Hidden below="sm">
-              <Box display="flex" alignItems="center" marginRight={1}>
-                {inputPristine && (
+            {!allowSubmit && (
+              <Hidden below="sm">
+                <Box display="flex" alignItems="center" marginRight={1}>
                   <Icon icon="checkmark" color="blue300" type="filled" />
-                )}
-              </Box>
-            </Hidden>
+                </Box>
+              </Hidden>
+            )}
             <Box display="flex" alignItems="flexStart" flexDirection="column">
               {!loading && (
-                <FormButton disabled={inputPristine} submit>
+                <FormButton disabled={!allowSubmit} submit>
                   {formatMessage(msg.saveSettings)}
                 </FormButton>
               )}

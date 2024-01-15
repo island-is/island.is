@@ -1,14 +1,17 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, TaxLevelOptions, Employment } from './constants'
-import { errorMessages, validatorErrorMessages } from './messages'
+import { ApplicationType, Employment } from './constants'
 import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { NO, YES } from '@island.is/application/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  BankAccountType,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -53,11 +56,19 @@ export const dataSchema = z.object({
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
   }),
+  fileUpload: z.object({
+    fishermen: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requireAttachment,
+      }),
+  }),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)
       .refine((a) => a.length !== 0, {
-        params: validatorErrorMessages.requireAttachment,
+        params: errorMessages.requireAttachment,
       }),
   }),
   employment: z
@@ -73,7 +84,7 @@ export const dataSchema = z.object({
           ? selfEmployedAttachment.length !== 0
           : true,
       {
-        params: validatorErrorMessages.requireAttachment,
+        params: errorMessages.requireAttachment,
         path: ['selfEmployedAttachment'],
       },
     ),
@@ -142,6 +153,24 @@ export const dataSchema = z.object({
       ({ currency, bankAccountType }) =>
         bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
       { path: ['currency'] },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES
+          ? !(
+              Number(personalAllowanceUsage) < 1 ||
+              Number(personalAllowanceUsage) > 100
+            )
+          : true,
+      {
+        path: ['personalAllowanceUsage'],
+        params: errorMessages.personalAllowance,
+      },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES ? !!personalAllowanceUsage : true,
+      { path: ['personalAllowanceUsage'] },
     ),
 })
 export type SchemaFormValues = z.infer<typeof dataSchema>

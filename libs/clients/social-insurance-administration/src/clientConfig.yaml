@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Social Insurance Administration API
-  version: 1.1.0
+  version: 1.2.0
   contact:
     name: Social Insurance Administration (Tryggingastofnun)
 servers:
@@ -14,7 +14,7 @@ paths:
     post:
       tags:
         - Send application
-      operationId: OldAgePension_SendApplication
+      operationId: SendApplication
       parameters:
         - name: applicationType
           in: path
@@ -24,11 +24,11 @@ paths:
             nullable: false
           x-position: 1
       requestBody:
-        x-name: oldAgePension
+        x-name: application
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OldAgePension'
+              $ref: '#/components/schemas/ApplicationDTO'
         required: true
       responses:
         '200':
@@ -177,7 +177,7 @@ components:
         applicationCreateDate:
           format: date-time
           type: string
-    OldAgePension:
+    ApplicationDTO:
       properties:
         period:
           $ref: '#/components/schemas/Period'
@@ -193,11 +193,17 @@ components:
           $ref: '#/components/schemas/TaxInfo'
         applicantInfo:
           $ref: '#/components/schemas/ApplicantInfo'
+        reasons:
+          $ref: '#/components/schemas/Reasons'
         hasAbroadResidence:
           type: boolean
         hasOneTimePayment:
           type: boolean
         isSailorPension:
+          type: boolean
+        isRental:
+          type: boolean
+        hasAStudyingAdolescenceResident:
           type: boolean
         uploads:
           $ref: '#/components/schemas/Uploads'
@@ -247,6 +253,14 @@ components:
             - retirement
             - sailor
             - selfEmployed
+            - rentalAgreement
+            - schoolConfirmation
+            - assistedCareAtHome
+            - purchaseOfHearingAids
+            - assistedLiving
+            - halfwayHouse
+            - houseRentAgreement
+            - houseRentAllowance
         file:
           type: string
     Response:
@@ -314,6 +328,8 @@ components:
       properties:
         isEligible:
           type: boolean
+        reason:
+          type: string
     DomesticBankInfo:
       type: object
       additionalProperties: false
@@ -364,6 +380,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Attachment'
+    Reasons:
+      type: array
+      items:
+        type: string
     ErrorResult:
       type: object
       properties:

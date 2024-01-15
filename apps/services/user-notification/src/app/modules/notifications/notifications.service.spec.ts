@@ -1,10 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { NotificationsService } from './notifications.service'
-import { LoggingModule } from '@island.is/logging'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LoggingModule, logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
+import { getModelToken } from '@nestjs/sequelize'
+import { Notification } from './notification.model'
+import { NotificationsScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+
+import {
+  ExtendedPaginationDto,
+  UpdateNotificationDto,
+  RenderedNotificationDto,
+  PaginatedNotificationDto,
+} from './dto/notification.dto'
+
+const user: User = {
+  nationalId: '1234567890',
+  scope: [NotificationsScope.read, NotificationsScope.write],
+  authorization: '',
+  client: '',
+}
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
@@ -15,6 +32,7 @@ const mockHnippTemplate: HnippTemplate = {
   category: 'Demo category',
   args: ['arg1', 'arg2'],
 }
+
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
 
 const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
@@ -37,6 +55,10 @@ describe('NotificationsService', () => {
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
+        },
+        {
+          provide: getModelToken(Notification),
+          useClass: jest.fn(() => ({})),
         },
       ],
     }).compile()
@@ -68,7 +90,7 @@ describe('NotificationsService', () => {
 
   it('should validate true argument count match', () => {
     const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto,
+      mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
     expect(mockCreateHnippNotificationDto.args.length).toBe(2)
@@ -82,7 +104,7 @@ describe('NotificationsService', () => {
       { key: 'arg3', value: 'extra' },
     ]
     const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto,
+      mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
     expect(mockCreateHnippNotificationDto.args.length).toBe(3)
@@ -91,7 +113,7 @@ describe('NotificationsService', () => {
   it('should validate false on argument count mismatch -', () => {
     mockCreateHnippNotificationDto.args = [{ key: 'arg2', value: 'world' }]
     const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto,
+      mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
     expect(mockCreateHnippNotificationDto.args.length).toBe(1)
@@ -101,7 +123,7 @@ describe('NotificationsService', () => {
   it('should validate false on argument count mismatch 0', () => {
     mockCreateHnippNotificationDto.args = []
     const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto,
+      mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
     expect(mockCreateHnippNotificationDto.args.length).toBe(0)
@@ -114,10 +136,58 @@ describe('NotificationsService', () => {
       { key: 'arg2', value: 'world' },
     ]
     const template = service.formatArguments(
-      mockCreateHnippNotificationDto,
+      mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
     expect(template.notificationBody).toEqual('Demo body hello')
     expect(template.clickAction).toEqual('Demo click action world')
+  })
+
+  it('should return the correct locale mapping', async () => {
+    expect(service.mapLocale('en')).toBe('en')
+    expect(service.mapLocale('is')).toBe('is-IS')
+    expect(service.mapLocale(null)).toBe('is-IS')
+    expect(service.mapLocale(undefined)).toBe('is-IS')
+  })
+
+  describe('findMany', () => {
+    it('should return a paginated list of notifications', async () => {
+      const query = new ExtendedPaginationDto()
+      const mockedResponse = new PaginatedNotificationDto()
+      jest
+        .spyOn(service, 'findMany')
+        .mockImplementation(async () => mockedResponse)
+
+      expect(await service.findMany(user, query)).toBe(mockedResponse)
+    })
+  })
+
+  describe('findOne', () => {
+    it('should return a specific notification', async () => {
+      const id = 123
+      const locale = 'en'
+      const mockedResponse = new RenderedNotificationDto()
+      jest
+        .spyOn(service, 'findOne')
+        .mockImplementation(async () => mockedResponse)
+
+      expect(await service.findOne(user, id, locale)).toBe(mockedResponse)
+    })
+  })
+
+  describe('update', () => {
+    it('should update a notification', async () => {
+      const id = 123
+      const updateNotificationDto = new UpdateNotificationDto()
+      const locale = 'en' // Mock locale
+      const mockedResponse = new RenderedNotificationDto()
+      jest
+        .spyOn(service, 'update')
+        .mockImplementation(async () => mockedResponse)
+
+      expect(
+        await service.update(user, id, updateNotificationDto, locale),
+      ).toBe(mockedResponse)
+    })
   })
 })

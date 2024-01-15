@@ -73,7 +73,17 @@ export const institutionMapper = {
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: InstitutionTypes.STAFRAENT_ISLAND,
   [ApplicationTypes.OLD_AGE_PENSION]: InstitutionTypes.TRYGGINGASTOFNUN,
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: InstitutionTypes.TRYGGINGASTOFNUN,
+  [ApplicationTypes.CAR_RECYCLING]: InstitutionTypes.URVINNSLUSJODUR,
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.CITIZENSHIP]: InstitutionTypes.UTLENDINGASTOFNUN,
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]:
+    InstitutionTypes.TRYGGINGASTOFNUN,
+  [ApplicationTypes.ENERGY_FUNDS]: InstitutionTypes.ORKUSTOFNUN,
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]:
+    InstitutionTypes.EMBAETTI_LANDLAEKNIS,
+  [ApplicationTypes.PENSION_SUPPLEMENT]: InstitutionTypes.TRYGGINGASTOFNUN,
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]:
+    InstitutionTypes.VINNUEFTIRLITID,
 }

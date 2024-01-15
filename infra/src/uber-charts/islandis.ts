@@ -63,10 +63,14 @@ import { ServiceBuilder } from '../dsl/dsl'
 
 const endorsement = endorsementServiceSetup({})
 
+const skilavottordWs = skilavottordWsSetup()
+const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
+
 const documentsService = serviceDocumentsSetup()
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
+  skilavottordWs,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
@@ -111,9 +115,6 @@ const consultationPortal = consultationPortalSetup({ api: api })
 const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
-
-const skilavottordWs = skilavottordWsSetup()
-const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
@@ -243,4 +244,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
+  universityGatewayWorker,
 ]

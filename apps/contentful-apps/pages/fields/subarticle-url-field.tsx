@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import { TextInput, Text, Spinner } from '@contentful/f36-components'
 import { EntryProps, SysLink } from 'contentful-management'
+import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { Spinner, Text, TextInput } from '@contentful/f36-components'
+import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
+
 import {
   CONTENTFUL_ENVIRONMENT,
   CONTENTFUL_SPACE,
@@ -103,11 +104,7 @@ const SubArticleUrlField = () => {
     () => {
       if (firstRender) {
         setFirstRender(false)
-
-        // No need to change the value if the value is already up to date
-        if (sdk.field.getValue() === `${prefix}/${value}`) {
-          return
-        }
+        return
       }
       if (value.trim().length === 0) {
         sdk.field.setValue('')

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import useIndictmentCounts from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import { useIndictmentCounts } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
