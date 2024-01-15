@@ -20,8 +20,9 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOAD } = AnswerValidationConstants
 
-  const { selectedMonth, selectedYear } =
-    getApplicationAnswers(application.answers)
+  const { selectedMonth, selectedYear } = getApplicationAnswers(
+    application.answers,
+  )
   const dateOfBirth = kennitala.info(application.applicant).birthday
 
   const dateOfBirth00 = new Date(
