@@ -364,13 +364,6 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
-      setApproveExternalData: assign((context) => {
-        const { application } = context
-        const { answers } = application
-
-        set(answers, 'approveExternalData', true)
-        return context
-      }),
       /**
        * Copy the current answers to temp. If the user cancels the edits,
        * we will restore the answers to their original state from temp.

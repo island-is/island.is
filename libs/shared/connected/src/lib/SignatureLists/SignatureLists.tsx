@@ -27,47 +27,44 @@ export const SignatureLists: FC<
   const t = useLocalization(slice.json)
 
   return (
-    <>
-      {!loading && lists?.length > 0 && (
-        <Box>
-          <Box marginBottom={3}>
-            <Text variant="h4">
-              {t('title', 'Frambjóðendur sem hægt er að mæla með')}
-            </Text>
-          </Box>
-          <Stack space={4}>
-            {lists?.length > 0 &&
-              lists.map((list: SignatureCollectionList) => {
-                return (
-                  <ActionCard
-                    eyebrow={
-                      t('openTil', 'Lokadagur:') +
-                      ' ' +
-                      formatDate(list.endTime)
-                    }
-                    key={list.title}
-                    backgroundColor="white"
-                    heading={list.title}
-                    text={t('collectionTitle', 'Forsetakosningar 2024')}
-                    cta={{
-                      label: t('sign', 'Mæla með framboði'),
-                      variant: 'text',
-                      icon: 'open',
-                      iconType: 'outline',
-                      size: 'small',
-                      onClick: () =>
-                        window.open(
-                          `${window.location.origin}/umsoknir/maela-med-lista`,
-                          '_blank',
-                        ),
-                    }}
-                  />
-                )
-              })}
-          </Stack>
+    !loading &&
+    lists?.length > 0 && (
+      <Box>
+        <Box marginBottom={3}>
+          <Text variant="h4">
+            {t('title', 'Frambjóðendur sem hægt er að mæla með')}
+          </Text>
         </Box>
-      )}
-    </>
+        <Stack space={4}>
+          {lists?.length > 0 &&
+            lists.map((list: SignatureCollectionList) => {
+              return (
+                <ActionCard
+                  eyebrow={
+                    t('openTil', 'Lokadagur:') + ' ' + formatDate(list.endTime)
+                  }
+                  key={list.title}
+                  backgroundColor="white"
+                  heading={list.title}
+                  text={t('collectionTitle', 'Forsetakosningar 2024')}
+                  cta={{
+                    label: t('sign', 'Mæla með framboði'),
+                    variant: 'text',
+                    icon: 'open',
+                    iconType: 'outline',
+                    size: 'small',
+                    onClick: () =>
+                      window.open(
+                        `${window.location.origin}/umsoknir/maela-med-lista`,
+                        '_blank',
+                      ),
+                  }}
+                />
+              )
+            })}
+        </Stack>
+      </Box>
+    )
   )
 }
 

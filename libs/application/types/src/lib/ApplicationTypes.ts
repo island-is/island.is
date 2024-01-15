@@ -56,6 +56,7 @@ export enum ApplicationTypes {
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
+  PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
 }
@@ -98,11 +99,11 @@ export const ApplicationConfigurations = {
     translation: 'hi.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns',
+    slug: 'breytt-logheimili-barns-old',
     translation: 'crc.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
-    slug: 'breytt-logheimili-barns-v2',
+    slug: 'breytt-logheimili-barns',
     translation: 'crc.application',
   },
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {
@@ -266,11 +267,11 @@ export const ApplicationConfigurations = {
     translation: 'rf.cr.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
-    slug: 'medmaelalisti',
+    slug: 'medmaelasofnun',
     translation: 'slc.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
-    slug: 'maela-med-lista',
+    slug: 'maela-med-frambodi',
     translation: 'sls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
@@ -292,6 +293,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
     slug: 'starfsleyfis-vottord',
     translation: 'hlc.application',
+  },
+  [ApplicationTypes.PENSION_SUPPLEMENT]: {
+    slug: 'uppbot-a-lifeyri',
+    translation: ['ul.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'eigendaskipti-taekis',
