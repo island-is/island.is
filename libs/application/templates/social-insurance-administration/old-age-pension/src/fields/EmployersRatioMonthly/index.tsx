@@ -83,7 +83,7 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
             <T.Data width="50%">{formatMessage(e.label)}</T.Data>
             <T.Data>
               <InputController
-                id={`${id}.${e.value}`}
+                id={`${id}.${e.value.toLowerCase()}`}
                 placeholder="0%"
                 label={formatMessage(oldAgePensionFormMessage.employer.ratio)}
                 maxLength={4}

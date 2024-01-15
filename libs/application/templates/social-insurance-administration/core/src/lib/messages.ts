@@ -64,6 +64,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
         'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun.',
       description: 'english translation',
     },
+    socialInsuranceAdministrationInformationTitle: {
+      id: 'sia.application:prerequisites.socialInsuranceAdministration.title',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Information regarding income and circumstances',
+    },
     socialInsuranceAdministrationDataDescription: {
       id: 'sia.application:prerequisites.socialInsuranceAdministration.data.description',
       defaultMessage:
@@ -79,6 +84,12 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:prerequisites.socialInsuranceAdministration.privacy.description#markdown',
       defaultMessage:
         'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna hér (https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
+      description: 'english translation',
+    },
+    socialInsuranceAdministrationPrivacyWithoutIncomeDescription: {
+      id: 'sia.application:prerequisites.socialInsuranceAdministration.privacy.without.income.description#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna hér (https://www.tr.is/tryggingastofnun/personuvernd).',
       description: 'english translation',
     },
     startApplication: {

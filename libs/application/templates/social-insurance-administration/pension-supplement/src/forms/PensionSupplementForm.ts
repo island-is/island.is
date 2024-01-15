@@ -532,10 +532,10 @@ export const PensionSupplementForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-                pensionSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileDescription,
               introduction:
-                pensionSupplementFormMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileDescription,
               ...fileUploadSharedProps,
             }),
