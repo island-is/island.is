@@ -92,7 +92,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   const footerItems =
     typeof pageData?.footerItems?.length === 'number' &&
     pageData.footerItems.length > 0
-      ? pageData?.footerItems ?? []
+      ? pageData.footerItems
       : organization?.footerItems ?? []
 
   return (
