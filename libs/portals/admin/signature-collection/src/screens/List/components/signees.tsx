@@ -97,7 +97,6 @@ const Signees = () => {
               {signees
                 .slice(pageSize * (page - 1), pageSize * page)
                 .map((s) => {
-                  console.log(s)
                   const boxColor = s.isDigital ? 'white' : 'purple100'
 
                   return (
