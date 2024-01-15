@@ -4,7 +4,7 @@ let env = process.env
 
 const isDevelopment = env.NODE_ENV === 'development'
 
-if (!env.NODE_ENV || env.NODE_ENV === 'development') {
+if (!env.NODE_ENV || isDevelopment) {
   env = {
     MAIN_QUEUE_NAME: 'notifications',
     DEAD_LETTER_QUEUE_NAME: 'notifications-failure',
