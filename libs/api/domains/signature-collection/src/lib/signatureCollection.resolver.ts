@@ -39,8 +39,8 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.isOwner(user.nationalId)
   }
 
+  @BypassAuth()
   @Query(() => SignatureCollection)
-  @Audit()
   async signatureCollectionCurrent(): Promise<SignatureCollection> {
     return this.signatureCollectionService.current()
   }
