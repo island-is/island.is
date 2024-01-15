@@ -97,6 +97,7 @@ const Signees = () => {
               {signees
                 .slice(pageSize * (page - 1), pageSize * page)
                 .map((s) => {
+                  console.log(s)
                   const boxColor = s.isDigital ? 'white' : 'purple100'
 
                   return (
@@ -127,11 +128,16 @@ const Signees = () => {
                       </T.Data>
                       <T.Data box={{ background: boxColor }}>
                         {!s.isDigital && (
-                          <Icon
-                            icon="document"
-                            type="outline"
-                            color="blue400"
-                          />
+                          <Box display="flex">
+                            <Text>{s.pageNumber}</Text>
+                            <Box marginLeft={1}>
+                              <Icon
+                                icon="document"
+                                type="outline"
+                                color="blue400"
+                              />
+                            </Box>
+                          </Box>
                         )}
                       </T.Data>
                     </T.Row>

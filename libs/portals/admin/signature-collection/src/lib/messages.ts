@@ -58,6 +58,16 @@ export const m = defineMessages({
     defaultMessage: 'Stofna söfnun',
     description: '',
   },
+  createCollectionSuccess: {
+    id: 'admin-portal.signature-collection:createCollectionSuccess',
+    defaultMessage: 'Tókst að stofna meðmælasöfnun',
+    description: '',
+  },
+  createCollectionError: {
+    id: 'admin-portal.signature-collection:createCollectionError',
+    defaultMessage: 'Tókst ekki að stofna meðmælasöfnun',
+    description: '',
+  },
   createCollectionModalDescription: {
     id: 'admin-portal.signature-collection:createCollectionModalDescription',
     defaultMessage: 'Sláðu inn kennitölu frambjóðanda',
@@ -295,6 +305,39 @@ export const m = defineMessages({
   unsignFromListSuccess: {
     id: 'admin-portal.signature-collection:unsignFromListSuccess',
     defaultMessage: 'Tókst að taka aðila af lista',
+    description: '',
+  },
+})
+
+export const createCollectionErrorMessages = defineMessages({
+  age: {
+    id: 'admin-portal.signature-collection:error.age',
+    defaultMessage: '35 ára aldursmark er ekki náð.',
+    description: '',
+  },
+  citizenship: {
+    id: 'admin-portal.signature-collection:error.citizenship',
+    defaultMessage: 'Eftirfarandi aðili er ekki með íslenkst ríkisfang.',
+    description: '',
+  },
+  residency: {
+    id: 'admin-portal.signature-collection:residency',
+    defaultMessage: 'Eftirfarandi aðili er ekki með búsetu á Íslandi.',
+    description: '',
+  },
+  active: {
+    id: 'admin-portal.signature-collection:error.active',
+    defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
+    description: '',
+  },
+  owner: {
+    id: 'admin-portal.signature-collection:error.owner',
+    defaultMessage: 'Eftirfarandi aðili er þegar eigandi meðmæsöfnunar.',
+    description: '',
+  },
+  deniedByService: {
+    id: 'admin-portal.signature-collection:error.deniedByService',
+    defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
     description: '',
   },
 })
