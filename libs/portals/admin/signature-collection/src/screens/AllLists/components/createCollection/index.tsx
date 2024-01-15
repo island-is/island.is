@@ -20,8 +20,9 @@ import { useCurrentCollectionQuery } from './getCurrentCollection.generated'
 
 const CompareLists = () => {
   const { formatMessage } = useLocale()
-  const [modalIsOpen, setModalIsOpen] = useState(false)
   const { control } = useForm()
+
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
   const [name, setName] = useState('')
@@ -30,7 +31,6 @@ const CompareLists = () => {
 
   const [candidateLookup] = useCandidateLookupLazyQuery()
   const { data: currentCollection } = useCurrentCollectionQuery()
-
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
@@ -49,10 +49,10 @@ const CompareLists = () => {
     try {
       const createCollectionRes = await createCollection()
       if (createCollectionRes.data?.signatureCollectionCreate.slug) {
-        toast.success('yes')
+        toast.success(formatMessage(m.createCollectionSuccess))
         setModalIsOpen(false)
       } else {
-        toast.error('no')
+        toast.error(formatMessage(m.createCollectionSuccess))
       }
     } catch (e) {
       toast.error(e.message)
