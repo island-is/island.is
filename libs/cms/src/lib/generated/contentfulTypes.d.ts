@@ -3461,6 +3461,9 @@ export interface IServiceWebPageFields {
 
   /** Slices */
   slices?: IFeaturedArticles[] | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
