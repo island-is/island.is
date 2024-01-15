@@ -52,4 +52,10 @@ export enum DocumentTypeEnum {
   SELF_EMPLOYED = 'selfEmployed',
   RENTAL_AGREEMENT = 'rentalAgreement',
   SCHOOL_CONFIRMATION = 'schoolConfirmation',
+  ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',
+  PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids',
+  ASSISTED_LIVING = 'assistedLiving',
+  HALFWAY_HOUSE = 'halfwayHouse',
+  HOUSE_RENT_AGREEMENT = 'houseRentAgreement',
+  HOUSE_RENT_ALLOWANCE = 'houseRentAllowance',
 }
