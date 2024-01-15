@@ -198,6 +198,14 @@ const PaymentPlan = () => {
           </Table.Row>
         </Table.Body>
       </Table.Table>
+      <Box>
+        <Text variant="small" marginTop={5} marginBottom={2}>
+          Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
+          vulputate libero et velit interdum, ac aliquet odio mattis. Class
+          aptent taciti sociosqu ad litora torquent per conubia nostra, per
+          inceptos himenaeos.
+        </Text>
+      </Box>
     </Box>
   )
 }
