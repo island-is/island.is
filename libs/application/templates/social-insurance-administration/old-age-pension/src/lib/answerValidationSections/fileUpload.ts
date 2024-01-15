@@ -10,7 +10,6 @@ import {
 } from '../oldAgePensionUtils'
 import {
   AnswerValidationConstants,
-  ApplicationType,
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
 } from '../constants'
@@ -21,7 +20,7 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOAD } = AnswerValidationConstants
 
-  const { selectedMonth, selectedYear, applicationType } =
+  const { selectedMonth, selectedYear } =
     getApplicationAnswers(application.answers)
   const dateOfBirth = kennitala.info(application.applicant).birthday
 
@@ -37,15 +36,6 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
 
   const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
 
-  if (obj.pension) {
-    if (isEmpty((obj as { pension: unknown[] }).pension)) {
-      return buildError(
-        errorMessages.requireAttachment,
-        `${FILEUPLOAD}.pension`,
-      )
-    }
-  }
-
   if (
     age >= earlyRetirementMinAge &&
     age <= earlyRetirementMaxAge &&
@@ -55,15 +45,6 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
       return buildError(
         errorMessages.requireAttachment,
         `${FILEUPLOAD}.earlyRetirement`,
-      )
-    }
-  }
-
-  if (applicationType === ApplicationType.SAILOR_PENSION && obj.fishermen) {
-    if (isEmpty((obj as { fishermen: unknown[] }).fishermen)) {
-      return buildError(
-        errorMessages.requireAttachment,
-        `${FILEUPLOAD}.fishermen`,
       )
     }
   }
