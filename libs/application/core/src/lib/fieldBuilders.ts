@@ -37,6 +37,7 @@ import {
   ImageField,
   NationalIdWithNameField,
   ActionCardListField,
+  TableRepeaterField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -657,5 +658,24 @@ export function buildActionCardListField(
     marginTop,
     marginBottom,
     space,
+  }
+}
+
+export function buildTableRepeaterField(
+  data: Omit<TableRepeaterField, 'type' | 'component' | 'children'>,
+): TableRepeaterField {
+  const { fields, table, addItemButtonText, saveItemButtonText, formTitle } =
+    data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.TABLE_REPEATER,
+    component: FieldComponents.TABLE_REPEATER,
+    fields,
+    table,
+    addItemButtonText,
+    saveItemButtonText,
+    formTitle,
   }
 }
