@@ -162,6 +162,7 @@ export enum CaseAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
   CHANGED = 'CHANGED',
+  CHANGED_SIGNIFICANTLY = 'CHANGED_SIGNIFICANTLY',
   DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
   DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
   REMAND = 'REMAND',
@@ -291,6 +292,7 @@ export interface Case {
   appealValidToDate?: string
   isAppealCustodyIsolation?: boolean
   appealIsolationToDate?: string
+  requestAppealRulingNotToBePublished?: UserRole[]
 }
 
 export interface CaseListEntry
@@ -414,6 +416,7 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
+    | 'requestAppealRulingNotToBePublished'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]

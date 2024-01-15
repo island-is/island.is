@@ -1,17 +1,19 @@
 import React from 'react'
+
+import { Image, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Button,
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   Stack,
   Text,
-  Link,
-  BoxProps,
 } from '@island.is/island-ui/core'
+import { BorderAbove } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import { OverviewLinks } from '@island.is/web/graphql/schema'
-import { Image, SliceType } from '@island.is/island-ui/contentful'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -24,16 +26,6 @@ export const OverviewLinksSlice: React.FC<
 > = ({ slice }) => {
   const { linkResolver } = useLinkResolver()
 
-  const boxProps: BoxProps = slice.hasBorderAbove
-    ? {
-        borderTopWidth: 'standard',
-        borderColor: 'standard',
-        paddingTop: 4,
-      }
-    : {
-        paddingTop: 2,
-      }
-
   return (
     <section
       key={slice.id}
@@ -41,8 +33,9 @@ export const OverviewLinksSlice: React.FC<
       aria-labelledby={'sliceTitle-' + slice.id}
     >
       <GridContainer>
-        <Box {...boxProps}>
-          <Stack space={6}>
+        {slice.hasBorderAbove && <BorderAbove />}
+        <Box>
+          <Stack space={SLICE_SPACING}>
             {slice.overviewLinks.map(
               (
                 {

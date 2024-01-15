@@ -130,8 +130,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                         setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
                         sideMenuOpen={sideMenuOpen}
                         rightPosition={
-                          window.outerWidth -
-                          (ref.current?.getBoundingClientRect().right ?? 0)
+                          ref.current?.getBoundingClientRect().right
                         }
                       />
 

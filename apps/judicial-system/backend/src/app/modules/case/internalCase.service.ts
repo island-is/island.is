@@ -198,7 +198,7 @@ export class InternalCaseService {
 
       return true
     } catch (error) {
-      this.logger.error(
+      this.logger.warn(
         `Failed to upload signed ruling pdf to court for case ${theCase.id}`,
         { error },
       )
@@ -233,7 +233,7 @@ export class InternalCaseService {
       return true
     } catch (error) {
       // Log and ignore this error. The court record can be uploaded manually.
-      this.logger.error(
+      this.logger.warn(
         `Failed to upload court record pdf to court for case ${theCase.id}`,
         { error },
       )
@@ -270,7 +270,7 @@ export class InternalCaseService {
       })
       .catch((error) => {
         // Tolerate failure, but log error
-        this.logger.error(
+        this.logger.warn(
           `Failed to upload request pdf to court for case ${theCase.id}`,
           { error },
         )
@@ -397,7 +397,7 @@ export class InternalCaseService {
       })
       .catch((error) => {
         // Tolerate failure, but log error
-        this.logger.error(
+        this.logger.warn(
           `Failed to upload case files record pdf to court for case ${theCase.id}`,
           { error },
         )

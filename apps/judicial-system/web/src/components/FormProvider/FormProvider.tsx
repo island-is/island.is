@@ -91,7 +91,6 @@ const FormProvider = ({ children }: Props) => {
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
-  const [path, setPath] = useState<string>()
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
@@ -100,7 +99,7 @@ const FormProvider = ({ children }: Props) => {
 
   // Used in exported indicators
   const replacingCase = router.query.id && router.query.id !== caseId
-  const replacingPath = router.pathname !== path
+  const replacingPath = router.pathname !== window.location.pathname
 
   useEffect(() => {
     if (!router.query.id) {
@@ -115,7 +114,6 @@ const FormProvider = ({ children }: Props) => {
     }
 
     setCaseId(router.query.id as string)
-    setPath(router.pathname)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
@@ -154,7 +152,7 @@ const FormProvider = ({ children }: Props) => {
   })
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && router.pathname !== '/') {
       window.location.assign(
         `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
       )
@@ -169,7 +167,15 @@ const FormProvider = ({ children }: Props) => {
         getCase({ variables: { input: { id } } })
       }
     }
-  }, [getCase, getLimitedAccessCase, id, isAuthenticated, limitedAccess, state])
+  }, [
+    getCase,
+    getLimitedAccessCase,
+    id,
+    isAuthenticated,
+    limitedAccess,
+    router.pathname,
+    state,
+  ])
 
   useEffect(() => {
     let timeout: undefined | NodeJS.Timeout

@@ -101,3 +101,17 @@ export enum TaxLevelOptions {
   FIRST_LEVEL = '1',
   SECOND_LEVEL = '3',
 }
+
+export const fileUploadSharedProps = {
+  maxSize: FILE_SIZE_LIMIT,
+  maxSizeErrorText:
+    socialInsuranceAdministrationMessage.fileUpload.attachmentMaxSizeError,
+  uploadAccept: '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png',
+  uploadHeader:
+    socialInsuranceAdministrationMessage.fileUpload.attachmentHeader,
+  uploadDescription:
+    socialInsuranceAdministrationMessage.fileUpload.attachmentDescription,
+  uploadButtonLabel:
+    socialInsuranceAdministrationMessage.fileUpload.attachmentButton,
+  uploadMultiple: true,
+}

@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import Trash from '../Icons/Trash'
+import IconButton from '../IconButton/IconButton'
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import * as styles from './CourtDocuments.css'
 
@@ -292,12 +292,11 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
                     </Box>
                   </Box>
                 </div>
-                <button
+                <IconButton
                   onClick={() => handleRemoveDocument(index)}
-                  className={styles.removeButton}
-                >
-                  <Trash width={14} height={14} color={theme.color.blue400} />
-                </button>
+                  icon="trash"
+                  colorScheme="blue"
+                />
               </div>
             )
           })}

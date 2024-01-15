@@ -1,56 +1,59 @@
-import { useRouter } from 'next/router'
+import { Locale } from 'locale'
+import groupBy from 'lodash/groupBy'
 import NextLink from 'next/link'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { useRouter } from 'next/router'
+
+import { SliceType } from '@island.is/island-ui/contentful'
+import {
+  AccordionCard,
+  Box,
+  Breadcrumbs,
+  Button,
+  ContentBlock,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Link,
+  LinkContext,
+  Stack,
+  Text,
+  TopicCard,
+} from '@island.is/island-ui/core'
+import { ServiceWebWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
   Organization,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
+  QueryGetServiceWebPageArgs,
   QueryGetSingleSupportQnaArgs,
   QueryGetSupportCategoryArgs,
   QueryGetSupportQnAsInCategoryArgs,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import {
-  GET_NAMESPACE_QUERY,
-  GET_SERVICE_WEB_ORGANIZATION,
-  GET_SINGLE_SUPPORT_QNA,
-  GET_SUPPORT_CATEGORY,
-  GET_SUPPORT_QNAS_IN_CATEGORY,
-} from '../../queries'
-import { Screen } from '../../../types'
-import {
-  Box,
-  Breadcrumbs,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Stack,
-  Text,
-  TopicCard,
-  ContentBlock,
-  AccordionCard,
-  Link,
-  LinkContext,
-  Button,
-} from '@island.is/island-ui/core'
-import { ServiceWebWrapper } from '@island.is/web/components'
-import {
   linkResolver,
   useLinkResolver,
   useNamespace,
 } from '@island.is/web/hooks'
-import { getSlugPart } from '../utils'
-
-import ContactBanner from '../ContactBanner/ContactBanner'
-import groupBy from 'lodash/groupBy'
-import { SliceType } from '@island.is/island-ui/contentful'
-import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Locale } from 'locale'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { webRichText } from '@island.is/web/utils/richText'
+
+import { Screen } from '../../../types'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
+  GET_SINGLE_SUPPORT_QNA,
+  GET_SUPPORT_CATEGORY,
+  GET_SUPPORT_QNAS_IN_CATEGORY,
+} from '../../queries'
+import ContactBanner from '../ContactBanner/ContactBanner'
+import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
+import { getSlugPart } from '../utils'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -65,6 +68,7 @@ interface SubPageProps {
   organizationNamespace: Record<string, string>
   singleSupportCategory: Query['getSupportCategory']
   locale: Locale
+  serviceWebPage?: Query['getServiceWebPage']
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -76,6 +80,7 @@ const SubPage: Screen<SubPageProps> = ({
   organizationNamespace,
   singleSupportCategory,
   locale,
+  serviceWebPage,
 }) => {
   const Router = useRouter()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -168,6 +173,7 @@ const SubPage: Screen<SubPageProps> = ({
         'serviceWebSearchPlaceholder',
         'Leitaðu á þjónustuvefnum',
       )}
+      pageData={serviceWebPage}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -429,6 +435,9 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
     supportQNAs,
     singleSupportQNA,
     singleSupportCategory,
+    {
+      data: { getServiceWebPage },
+    },
   ] = await Promise.all([
     !!organizationSlug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
@@ -482,6 +491,15 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
           input: { slug: categorySlug, lang: locale as ContentLanguage },
         },
       }),
+    apolloClient.query<Query, QueryGetServiceWebPageArgs>({
+      query: GET_SERVICE_WEB_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: organizationSlug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   const organizationNamespace = JSON.parse(
@@ -507,6 +525,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
     // @ts-ignore make web strict
     singleSupportCategory: singleSupportCategory?.data?.getSupportCategory,
     locale: locale as Locale,
+    serviceWebPage: getServiceWebPage,
   }
 }
 
