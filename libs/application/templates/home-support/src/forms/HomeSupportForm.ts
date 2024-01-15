@@ -14,6 +14,7 @@ import {
   buildDividerField,
   coreMessages,
   buildAlertMessageField,
+  buildTableRepeaterField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -30,6 +31,7 @@ import {
 import * as m from '../lib/messages'
 import { mapIndividualToActionCard } from '../utils'
 import { HomeSupport } from '../lib/dataSchema'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 export const HomeSupportForm: Form = buildForm({
   id: 'HomeSupportDraft',
@@ -62,7 +64,6 @@ export const HomeSupportForm: Form = buildForm({
                 const cohabitants = application.externalData
                   .nationalRegistryCohabitants
                   .data as NationalRegistryIndividual[]
-                console.log('extd', application.externalData)
                 return cohabitants.map((x) => mapIndividualToActionCard(x))
               },
             }),
@@ -87,10 +88,46 @@ export const HomeSupportForm: Form = buildForm({
       id: 'contactsSection',
       title: m.application.contacts.sectionTitle,
       children: [
-        buildDescriptionField({
+        buildTableRepeaterField({
           id: 'contacts',
-          title: 'TODO',
-          description: 'Here be dragons',
+          title: m.application.contacts.sectionTitle,
+          formTitle: m.application.contacts.formTitle,
+          addItemButtonText: m.application.contacts.addContactButton,
+          saveItemButtonText: m.application.contacts.saveContactButton,
+          fields: [
+            {
+              id: 'name',
+              label: applicantInformationMessages.labels.name,
+              component: 'input',
+              width: 'half',
+            },
+            {
+              id: 'email',
+              label: applicantInformationMessages.labels.email,
+              component: 'input',
+              type: 'email',
+              width: 'half',
+            },
+            {
+              id: 'phone',
+              label: applicantInformationMessages.labels.tel,
+              component: 'input',
+              type: 'tel',
+              format: '###-####',
+              width: 'half',
+            },
+            {
+              id: 'relation',
+              label: m.application.contacts.relation,
+              component: 'input',
+              width: 'half',
+            },
+          ],
+          table: {
+            format: {
+              phone: (value) => formatPhoneNumber(value),
+            },
+          },
         }),
       ],
     }),

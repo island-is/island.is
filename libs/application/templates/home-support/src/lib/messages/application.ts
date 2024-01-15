@@ -47,6 +47,26 @@ export const application = {
       defaultMessage: 'Tengiliðir',
       description: 'Contacts section title',
     },
+    addContactButton: {
+      id: 'hst.contacts:addContact.button',
+      defaultMessage: 'Bæta við tengilið',
+      description: 'Add contact button text',
+    },
+    saveContactButton: {
+      id: 'hst.contacts:saveContact.button',
+      defaultMessage: 'Vista tengilið',
+      description: 'Save contact button text',
+    },
+    formTitle: {
+      id: 'hst.contacts:form.title',
+      defaultMessage: 'Nýr tengiliður',
+      description: 'Contact form title',
+    },
+    relation: {
+      id: 'hst.contacts:relation',
+      defaultMessage: 'Tengsl',
+      description: 'Relation label',
+    },
   }),
   doctor: defineMessages({
     sectionTitle: {
