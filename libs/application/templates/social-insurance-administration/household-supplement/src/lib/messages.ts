@@ -96,13 +96,6 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    additionalFileDescription: {
-      id: 'hs.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangar upplýsingar. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
-    },
     leaseAgreementTitle: {
       id: 'hs.application:fileUppload.lease.agreement.title',
       defaultMessage: 'Fylgiskjöl leigusamningur',
@@ -115,17 +108,14 @@ export const householdSupplementFormMessage: MessageDir = {
     },
     leaseAgreement: {
       id: 'hs.application:fileUppload.lease.agreement',
-      defaultMessage:
-        'Hér þarft þú að skila undirritaðum leigusamningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you must upload the signed rental agreement. Note that the document must be in .pdf format.',
+      defaultMessage: 'Hér þarft þú að skila undirritaðum leigusamningi.',
+      description: 'Here you must upload the signed rental agreement.',
     },
     schoolConfirmation: {
       id: 'hs.application:fileUppload.school.confirmation',
-      defaultMessage:
-        'Hér þarft þú að skila vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      defaultMessage: 'Hér þarft þú að skila vottorði um skólavist ungmennis.',
       description:
-        "Here you must upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
+        "Here you must upload a certificate of a young person's school attendance.",
     },
   }),
 

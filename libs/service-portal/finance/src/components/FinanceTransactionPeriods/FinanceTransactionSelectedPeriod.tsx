@@ -13,10 +13,10 @@ import {
   formatDate,
   m,
   periodFormat,
+  NestedTable,
 } from '@island.is/service-portal/core'
 import { useGetChargeTypePeriodSubjectQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
-import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
 import { m as messages } from '../../lib/messages'
 import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
 
@@ -126,7 +126,7 @@ export default function FinanceTransactionSelectedPeriod({
                   { value: '', align: 'right' },
                 ]}
               >
-                <FinanceTransactionsDetail
+                <NestedTable
                   data={[
                     {
                       title: formatMessage(m.effectiveDate),

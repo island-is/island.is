@@ -27,7 +27,6 @@ import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { GetAnchorPageInput } from './dto/getAnchorPage.input'
 import { GetAnchorPagesInput } from './dto/getAnchorPages.input'
-import { GetAnchorPagesInCategoryInput } from './dto/getAnchorPagesInCategory.input'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
@@ -102,6 +101,10 @@ import { Manual } from './models/manual.model'
 import { GetSingleManualInput } from './dto/getSingleManual.input'
 import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
 import { EntryTitle } from './models/entryTitle.model'
+import { LifeEventPage } from './models/lifeEventPage.model'
+import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
+import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import { CategoryPage } from './models/categoryPage.model'
 import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
 
@@ -382,11 +385,27 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => [AnchorPage])
-  getAnchorPagesInCategory(
-    @Args('input') input: GetAnchorPagesInCategoryInput,
-  ): Promise<AnchorPage[]> {
-    return this.cmsContentfulService.getAnchorPagesInCategory(
+  @Query(() => LifeEventPage, { nullable: true })
+  getLifeEventPage(
+    @Args('input') input: GetLifeEventPageInput,
+  ): Promise<LifeEventPage | null> {
+    return this.cmsContentfulService.getLifeEventPage(input.slug, input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [LifeEventPage])
+  getLifeEvents(
+    @Args('input') input: GetLifeEventsInput,
+  ): Promise<LifeEventPage[]> {
+    return this.cmsContentfulService.getLifeEvents(input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [LifeEventPage])
+  getLifeEventsInCategory(
+    @Args('input') input: GetLifeEventsInCategoryInput,
+  ): Promise<LifeEventPage[]> {
+    return this.cmsContentfulService.getLifeEventsInCategory(
       input.lang,
       input.slug,
     )

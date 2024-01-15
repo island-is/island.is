@@ -16,6 +16,7 @@ import { format as formatNationalId } from 'kennitala'
 
 import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'
+import format from 'date-fns/format'
 
 export const Draft: Form = buildForm({
   id: 'SignatureListCreationDraft',
@@ -99,14 +100,24 @@ export const Draft: Form = buildForm({
               title: m.collectionDateFrom,
               width: 'half',
               readOnly: true,
-              defaultValue: '19.03.2024',
+              defaultValue: ({ externalData }: Application) => {
+                return format(
+                  new Date(externalData.currentCollection?.data.startTime),
+                  'dd.MM.yy',
+                )
+              },
             }),
             buildTextField({
               id: 'collection.dateTil',
               title: m.collectionDateTil,
               width: 'half',
               readOnly: true,
-              defaultValue: '19.05.2024',
+              defaultValue: ({ externalData }: Application) => {
+                return format(
+                  new Date(externalData.currentCollection?.data.endTime),
+                  'dd.MM.yy',
+                )
+              },
             }),
           ],
         }),
@@ -173,7 +184,7 @@ export const Draft: Form = buildForm({
               title: m.listOverviewHeader,
               titleVariant: 'h3',
               space: 'gutter',
-              marginBottom: 5,
+              marginBottom: 3,
             }),
             buildCustomField({
               id: 'createdLists',

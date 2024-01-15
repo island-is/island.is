@@ -68,5 +68,20 @@ export const login = {
           'Notaður sem texti í villuskilaboðum þegar reynt er að skrá sig inn án þess að hafar aðgang að kerfinu',
       },
     }),
+    deprecatedLogin: defineMessages({
+      title: {
+        id: 'judicial.system.core:login.error.deprecated_login.title',
+        defaultMessage: 'Innskráning tókst ekki',
+        description:
+          'Notaður sem titill í villuskilaboðum þegar reynt er að skrá sig inn með gömlu innskráningunni',
+      },
+      message: {
+        id: 'judicial.system.core:login.error.deprecated_login.message',
+        defaultMessage:
+          'Þú reyndir að skrá þig inn með eldri innskráningarþjónustu Ísland.is. Vinsamlegast reyndu aftur með því að smella á takkann hér fyrir neðan.',
+        description:
+          'Notaður sem texti í villuskilaboðum þegar reynt er að skrá sig inn með gömlu innskráningunni',
+      },
+    }),
   },
 }

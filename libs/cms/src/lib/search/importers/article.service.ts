@@ -146,7 +146,9 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
   }
 
   doMapping(entries: (IArticle & MetaData)[]) {
-    logger.info('Mapping articles', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping articles', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

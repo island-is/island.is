@@ -27,12 +27,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Upplýsingar um tekjur og aðstæður',
       description: 'Information about income and circumstances',
     },
-    socialInsuranceAdministrationInformationDescription: {
-      id: 'oap.application:prerequisites.socialInsuranceAdministration.description#markdown',
-      defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. Tryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
-      description: 'english translation',
-    },
     questionTitle: {
       id: 'oap.application:prerequisites.question.title',
       defaultMessage: 'Spurningar',
@@ -119,9 +113,9 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Information about you',
     },
     applicantInfoSubSectionDescription: {
-      id: 'oap.application:applicant.info.sub.section.description',
+      id: 'oap.application:applicant.info.sub.section.description#markdown',
       defaultMessage:
-        'Hérna eru upplýsingar um þig. Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá.',
+        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður TR. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
       description:
         'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
     },
@@ -165,13 +159,13 @@ export const oldAgePensionFormMessage: MessageDir = {
   onePaymentPerYear: defineMessages({
     onePaymentPerYearTitle: {
       id: 'oap.application:one.payment.per.year.title',
-      defaultMessage: 'Ein greiðsla á ári',
+      defaultMessage: 'Vilt þú fá greiddan lífeyri einu sinni á ári?',
       description: 'One payment per year',
     },
     onePaymentPerYearDescription: {
-      id: 'oap.application:one.payment.per.year.description',
+      id: 'oap.application:one.payment.per.year.description#markdown',
       defaultMessage:
-        'Vilt þú óska eftir að fá greiddan lífeyri einu sinni á ári? Þá eru réttindin reiknuð út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
+        'Ef svo er þá reiknum við réttindin út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
       description: 'description',
     },
     onePaymentPerYearAlertDescription: {
@@ -189,7 +183,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Residence history',
     },
     residenceHistoryDescription: {
-      id: 'oap.application:residence.history.description',
+      id: 'oap.application:residence.history.description#markdown',
       defaultMessage:
         'Hérna eru upplýsingar um búsetusögu þína eftir 1987. Full réttindi af ellilífeyri miðast við samtals 40 ára búsetu á Íslandi á tímabilinu 16-67 ára. Þegar búsetutími á Íslandi er styttri reiknast réttindin hlutfallslega miðað við búsetu. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá.',
       description:
@@ -347,13 +341,6 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Hér getur þú skilað gögnum sem staðfesta hversu marga daga þú hefur verið lögskráður á sjó. Dæmi um slík gögn eru; Yfirlit af stöðuskráningu sjómanns frá Samgöngustofu, sjóferðabækur sem gefnar voru út af Siglingastofnun Íslands, skattframtöl eða siglingavottorð frá Sýslumanni. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         'Here you can submit data confirming how many days you have been legally registered at sea. Examples of such data are; An overview of the seafarers status registration from the Transport Agency, sea voyage books published by the Icelandic Maritime Administration, tax returns or sailing certificates from the County Commissioner. Note that the document must be in .pdf format.',
-    },
-    additionalFileDescription: {
-      id: 'oap.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
     },
     selfEmployedTitle: {
       id: 'oap.application:fileUpload.selfEmployed.title',

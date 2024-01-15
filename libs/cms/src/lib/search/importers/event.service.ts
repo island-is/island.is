@@ -25,7 +25,9 @@ export class EventSyncService implements CmsSyncProvider<IEvent> {
   }
 
   doMapping(entries: IEvent[]) {
-    logger.info('Mapping Event', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping Event', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
