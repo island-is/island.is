@@ -16,8 +16,13 @@ export const BaseInformation = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { applicantPhonenumber } = getApplicationAnswers(application.answers)
-  const { applicantName, applicantNationalId, email } =
-    getApplicationExternalData(application.externalData)
+  const {
+    applicantName,
+    applicantNationalId,
+    email,
+    spouseName,
+    spouseNationalId,
+  } = getApplicationExternalData(application.externalData)
   const { formatMessage } = useLocale()
   return (
     <ReviewGroup
@@ -74,6 +79,27 @@ export const BaseInformation = ({
           />
         </GridColumn>
       </GridRow>
+      {spouseName && (
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={3}>
+            <DataValue
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.info.applicantSpouseName,
+              )}
+              value={spouseName}
+            />
+          </GridColumn>
+
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={3}>
+            <DataValue
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.confirm.nationalId,
+              )}
+              value={formatKennitala(spouseNationalId)}
+            />
+          </GridColumn>
+        </GridRow>
+      )}
     </ReviewGroup>
   )
 }

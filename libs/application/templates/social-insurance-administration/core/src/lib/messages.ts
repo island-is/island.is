@@ -127,6 +127,36 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
     },
+    applicantMaritalTitle: {
+      id: 'sia.application:info.applicant.martial.title',
+      defaultMessage: 'Hjúskaparstaða þín',
+      description: 'Your marital status',
+    },
+    applicantMaritalStatus: {
+      id: 'sia.application:info.applicant.marital.status',
+      defaultMessage: 'Hjúskaparstaða',
+      description: 'Marital status',
+    },
+    applicantSpouseName: {
+      id: 'sia.application:info.applicant.spouse.name',
+      defaultMessage: 'Nafn maka',
+      description: `Spouse's name`,
+    },
+    applicantAddress: {
+      id: 'sia.application:info.applicant.address',
+      defaultMessage: 'Póstfang',
+      description: 'Postal address',
+    },
+    applicantPostalcode: {
+      id: 'sia.application:info.applicant.postalcode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Postal code',
+    },
+    applicantMunicipality: {
+      id: 'sia.application:info.applicant.municipality',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Municipality',
+    },
   }),
 
   period: defineMessages({

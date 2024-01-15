@@ -16,6 +16,7 @@ import {
   InstitutionNationalIds,
   YES,
   defineTemplateApi,
+  NationalRegistrySpouseApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -85,6 +86,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 NationalRegistryCohabitantsApi,
+                NationalRegistrySpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
