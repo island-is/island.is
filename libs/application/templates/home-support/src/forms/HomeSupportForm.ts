@@ -68,9 +68,9 @@ export const HomeSupportForm: Form = buildForm({
             }),
             buildAlertMessageField({
               id: 'noCohabitants',
-              title: 'Þú átt enga vini',
+              title: m.application.applicant.legalDomicilePersonsNotFoundTitle,
               message:
-                'Engir einstaklingar fundust skráðir á þínu heimilisfangi',
+                m.application.applicant.legalDomicilePersonsNotFoundDescription,
               alertType: 'info',
               condition: (_, externalData) => {
                 const cohabitants = externalData.nationalRegistryCohabitants
@@ -117,7 +117,7 @@ export const HomeSupportForm: Form = buildForm({
             }),
             buildKeyValueField({
               label: '',
-              value: 'Þú ert ekki með neinn heimilislækni kallinn minnn',
+              value: m.application.doctor.notFoundText,
               condition: (_, externalData) => {
                 return !(
                   externalData.currentHealthcenter?.data as CurrentHealthCenter

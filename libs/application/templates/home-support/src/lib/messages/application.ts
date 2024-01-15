@@ -29,6 +29,17 @@ export const application = {
       defaultMessage: 'Einstaklingar skráðir á lögheimili',
       description: 'Legal domicile persons section subtitle',
     },
+    legalDomicilePersonsNotFoundTitle: {
+      id: 'hst.applicant.legalDomicilePersons:notFound.title',
+      defaultMessage: 'Ekkert sambúðarfólk',
+      description: 'Legal domicile persons not found title',
+    },
+    legalDomicilePersonsNotFoundDescription: {
+      id: 'hst.applicant.legalDomicilePersons:notFound.description',
+      defaultMessage:
+        'Engir aðrir einstaklingar eru skráðir á þínu heimilisfangi',
+      description: 'Legal domicile persons not found description',
+    },
   }),
   contacts: defineMessages({
     sectionTitle: {
@@ -57,6 +68,11 @@ export const application = {
       id: 'hst.doctor:receives.service.no',
       defaultMessage: 'Nei ég fæ ekki neina þjónustu',
       description: 'Does not receive service text',
+    },
+    notFoundText: {
+      id: 'hst.doctor:notFound.text',
+      defaultMessage: 'Enginn heimilislæknir skráður',
+      description: 'Not found text',
     },
   }),
   reason: defineMessages({
