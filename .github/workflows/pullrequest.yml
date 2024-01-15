@@ -68,7 +68,6 @@ jobs:
           HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
           echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-          cat  libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration/social-insurance-administration-utils.ts | grep "EmployersInfo"
 
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
