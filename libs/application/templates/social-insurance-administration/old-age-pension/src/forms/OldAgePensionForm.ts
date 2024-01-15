@@ -79,15 +79,15 @@ export const OldAgePensionForm: Form = buildForm({
         buildSubSection({
           id: 'info',
           title:
-            oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle,
+            socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
               title:
-                oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle,
+                socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
               description:
-                oldAgePensionFormMessage.applicant
-                  .applicantInfoSubSectionDescription,
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.name',
@@ -740,7 +740,7 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [
         // Period is from 65 year old birthday or last
         // 2 years if applicant is 67+ to 6 month ahead

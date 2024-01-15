@@ -234,7 +234,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [],
     }),
     buildSection({
