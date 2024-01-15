@@ -47,7 +47,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
   const { formatMessage, lang } = useLocale()
 
   const [showMoreQuestions, setShowMoreQuestions] = useState<boolean>(
-    repeaterField.hasFullCustody === 'no' ? true : false,
+    repeaterField.hasFullCustody === NO ? true : false,
   )
   const [nationalIdInput, setNationalIdInput] = useState(
     repeaterField.otherParentNationalId
@@ -140,7 +140,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
           setShowMoreQuestions(!showMoreQuestions)
         }}
         disabled={readOnlyFields}
-        defaultValue={repeaterField.hasFullCustody === 'yes' ? YES : ''}
+        defaultValue={repeaterField.hasFullCustody === NO ? NO : ''}
         options={[
           {
             value: YES,

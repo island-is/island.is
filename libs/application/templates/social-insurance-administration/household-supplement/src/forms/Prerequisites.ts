@@ -10,6 +10,7 @@ import {
 import {
   Form,
   FormModes,
+  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
@@ -92,6 +93,10 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle:
                 socialInsuranceAdministrationMessage.pre
                 .socialInsuranceAdministrationPrivacyDescription,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: '',
             }),
           ],
         }),
