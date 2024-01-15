@@ -14,6 +14,9 @@ import { SmsVerification } from '../user-profile/smsVerification.model'
 import { VerificationService } from '../user-profile/verification.service'
 import { IslykillService } from './islykill.service'
 import { UserProfileController } from './user-profile.controller'
+import { UserTokenController } from './userToken.controller'
+import { UserTokenService } from './userToken.service'
+import { UserDeviceTokens } from '../user-profile/userDeviceTokens.model'
 
 @Module({
   imports: [
@@ -21,6 +24,7 @@ import { UserProfileController } from './user-profile.controller'
       UserProfile,
       EmailVerification,
       SmsVerification,
+      UserDeviceTokens,
     ]),
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
@@ -30,7 +34,16 @@ import { UserProfileController } from './user-profile.controller'
       passphrase: environment.islykillConfig.passphrase,
     }),
   ],
-  controllers: [MeUserProfileController, UserProfileController],
-  providers: [UserProfileService, VerificationService, IslykillService],
+  controllers: [
+    MeUserProfileController,
+    UserProfileController,
+    UserTokenController,
+  ],
+  providers: [
+    UserProfileService,
+    VerificationService,
+    IslykillService,
+    UserTokenService,
+  ],
 })
 export class UserProfileModule {}
