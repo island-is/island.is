@@ -1,3 +1,4 @@
+import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
   Inject,
@@ -6,7 +7,6 @@ import {
   Param,
   Query,
   UseInterceptors,
-  BadRequestException,
   Version,
   VERSION_NEUTRAL,
   Controller,
@@ -23,7 +23,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateNotificationDto } from './dto/createNotification.dto'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
 
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
@@ -38,8 +37,8 @@ import { NotificationsService } from './notifications.service'
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @InjectQueue('notifications') private queue: QueueService,
     private readonly notificationsService: NotificationsService,
+    @InjectQueue('notifications') private queue: QueueService,
   ) {}
 
   // redirecting legacy endpoint to new one with fixed values
@@ -54,7 +53,7 @@ export class NotificationsController {
   @HttpCode(201)
   @Post()
   @Version(VERSION_NEUTRAL)
-  async createNotification(
+  async createDeprecatedNotification(
     @Body() body: CreateNotificationDto,
   ): Promise<CreateNotificationResponse> {
     return this.createHnippNotification({
@@ -136,38 +135,25 @@ export class NotificationsController {
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
-    const template = await this.notificationsService.getTemplate(
-      body.templateId,
-    )
-    // check counts
-    if (!this.notificationsService.validateArgCounts(body, template)) {
-      throw new BadRequestException(
-        `Number of arguments doesn't match - template requires ${template.args.length} arguments but ${body.args.length} were provided`,
-      )
-    }
+    await this.notificationsService.validate(body.templateId, body.args)
+
+    const id = await this.queue.add(body)
+
     const records: Record<string, string> = {}
+
     for (const arg of body.args) {
       records[arg.key] = arg.value
     }
 
-    // check keys/args/properties
-    for (const [key] of Object.entries(records)) {
-      if (!template.args.includes(key)) {
-        throw new BadRequestException(
-          `${key} is not a valid argument for template: ${template.templateId}`,
-        )
-      }
-    }
-
-    // add to queue
-    const id = await this.queue.add(body)
-    const { templateId, recipient } = body
     this.logger.info('Message queued', {
       messageId: id,
       ...records,
-      templateId,
-      recipient,
+      templateId: body.templateId,
+      recipient: body.recipient,
     })
-    return { id }
+
+    return {
+      id,
+    }
   }
 }
