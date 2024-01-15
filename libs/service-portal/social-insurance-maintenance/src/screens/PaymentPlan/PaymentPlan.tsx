@@ -8,7 +8,6 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import {
   Box,
-  Inline,
   Text,
   Button,
   Table,
@@ -22,13 +21,13 @@ import {
 import {
   IntroHeader,
   UserInfoLine,
-  ScrollableMiddleTable
   m as coreMessages,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { useEffect, useMemo, useState } from 'react'
 import addYears from 'date-fns/addYears'
-import { PaymentGroupTableRow } from '../../components/PaymentGroupTableRow'
+import { PaymentGroupTableRow } from '../../components'
+
 const PaymentPlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
@@ -129,12 +128,13 @@ const PaymentPlan = () => {
           </GridRow>
         </GridContainer>
       </Box>
+
       <Table.Table>
         <ExpandHeader
           data={[
             { value: '' },
             { value: formatMessage(m.paymentTypes) },
-            { value: formatMessage(m.yearCumulativeTotal) },
+            { value: formatMessage(m.yearCumulativeTotal), align: 'right' },
           ]}
         />
         <Table.Body>
@@ -144,12 +144,12 @@ const PaymentPlan = () => {
               <PaymentGroupTableRow data={pg} formatMessage={formatMessage} />
             ))}
           <Table.Row>
-            <Table.Data align="left">
+            <Table.Data colSpan={2}>
               <Text fontWeight="semiBold">
                 {formatMessage(m.paymentsTotal)}
               </Text>
             </Table.Data>
-            <Table.Data align="right">
+            <Table.Data align="right" colSpan={2}>
               <Text fontWeight="semiBold">
                 {amountFormat(
                   data?.socialInsurancePaymentPlan?.paymentGroups
@@ -169,7 +169,7 @@ const PaymentPlan = () => {
               <PaymentGroupTableRow data={pg} formatMessage={formatMessage} />
             ))}
           <Table.Row>
-            <Table.Data align="left">
+            <Table.Data align="left" colSpan={2}>
               <Text fontWeight="semiBold">
                 {formatMessage(m.paymentsReceived)}
               </Text>

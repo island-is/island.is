@@ -28,7 +28,7 @@ export const Table = ({
   box,
   ...props
 }: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => (
-  <div className={useBoxStyles({ component: 'div', overflow: 'auto', ...box })}>
+  <div className={useBoxStyles({ component: 'div', ...box })}>
     <table
       className={cn(
         useBoxStyles({

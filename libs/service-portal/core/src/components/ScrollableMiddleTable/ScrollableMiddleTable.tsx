@@ -1,24 +1,107 @@
 import { Box, Table as T } from '@island.is/island-ui/core'
-import { amountFormat } from '../../utils/amountFormat'
-
+import { theme } from '@island.is/island-ui/theme'
+import cn from 'classnames'
 import * as styles from './ScrollableMiddleTable.css'
+import { useWindowSize } from 'react-use'
+
+export interface Columns {
+  first: string
+  scrollableMiddle: Array<string>
+  last: string
+}
 
 export interface ScrollableMiddleTableProps {
-  firstColumnData: React.ReactNode
-  lastColumnData: React.ReactNode
-  children: React.ReactNode
+  header: Columns
+  rows?: Array<Columns>
+  footer?: Columns
+  nested?: boolean
+}
+
+const getBreakpointWidth = (width: number) => {
+  if (width < theme.breakpoints.sm) {
+    return '350%'
+  }
+  if (width < theme.breakpoints.lg) {
+    return '300%'
+  }
+
+  if (width < theme.breakpoints.xl) {
+    return '250%'
+  }
+  return '200%'
 }
 
 export const ScrollableMiddleTable = ({
-  firstColumnData,
-  lastColumnData,
-  children,
+  header,
+  rows,
+  nested = false,
 }: ScrollableMiddleTableProps) => {
+  const { width } = useWindowSize()
+
+  const breakpointWidth = getBreakpointWidth(width)
+
   return (
-    <T.Table>
-      <Box className={styles.fixedColumns}>{firstColumnData}</Box>
-      <T.Body>{children}</T.Body>
-      <Box className={styles.fixedColumns}>{lastColumnData}</Box>
-    </T.Table>
+    <Box overflow="auto" width="full">
+      <T.Table
+        style={{
+          tableLayout: nested ? 'fixed' : 'auto',
+          width: nested ? breakpointWidth : 'initial',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        <T.Head>
+          <T.Row>
+            <T.HeadData
+              style={{
+                position: 'sticky',
+                left: 0,
+                backgroundColor: theme.color.blue100,
+              }}
+            >
+              {header.first}
+            </T.HeadData>
+            {header.scrollableMiddle.map((val) => (
+              <T.HeadData>{val}</T.HeadData>
+            ))}
+            <T.HeadData
+              style={{
+                position: 'sticky',
+                right: 0,
+                backgroundColor: theme.color.blue100,
+              }}
+            >
+              {header.last}
+            </T.HeadData>
+          </T.Row>
+        </T.Head>
+        <T.Body>
+          {rows?.map((r) => (
+            <T.Row>
+              <T.Data
+                style={{
+                  position: 'sticky',
+                  left: 0,
+                  backgroundColor: theme.color.white,
+                }}
+              >
+                {r.first}
+              </T.Data>
+              {r.scrollableMiddle.map((val) => (
+                <T.Data>{val}</T.Data>
+              ))}
+              <T.Data
+                style={{
+                  position: 'sticky',
+                  right: 0,
+                  backgroundColor: theme.color.white,
+                }}
+              >
+                {r.last}
+              </T.Data>
+            </T.Row>
+          ))}
+        </T.Body>
+      </T.Table>
+    </Box>
   )
 }
