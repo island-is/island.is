@@ -29,33 +29,35 @@ export const SignatureLists: FC<
         </Box>
         <Stack space={4}>
           {collection?.candidates?.length > 0 &&
-            collection.candidates.map((candidate: SignatureCollectionCandidate) => {
-              return (
-                <ActionCard
-                  eyebrow={
-                    t('openTil', 'Lokadagur:') +
-                    ' ' +
-                    format(new Date(collection.endTime), 'dd.MM.yyyy')
-                  }
-                  key={candidate.id}
-                  backgroundColor="white"
-                  heading={candidate.name}
-                  text={collection.name}
-                  cta={{
-                    label: t('sign', 'Mæla með framboði'),
-                    variant: 'text',
-                    icon: 'open',
-                    iconType: 'outline',
-                    size: 'small',
-                    onClick: () =>
-                      window.open(
-                        `${window.location.origin}/umsoknir/maela-med-lista`,
-                        '_blank',
-                      ),
-                  }}
-                />
-              )
-            })}
+            collection.candidates.map(
+              (candidate: SignatureCollectionCandidate) => {
+                return (
+                  <ActionCard
+                    eyebrow={
+                      t('openTil', 'Lokadagur:') +
+                      ' ' +
+                      format(new Date(collection.endTime), 'dd.MM.yyyy')
+                    }
+                    key={candidate.id}
+                    backgroundColor="white"
+                    heading={candidate.name}
+                    text={collection.name}
+                    cta={{
+                      label: t('sign', 'Mæla með framboði'),
+                      variant: 'text',
+                      icon: 'open',
+                      iconType: 'outline',
+                      size: 'small',
+                      onClick: () =>
+                        window.open(
+                          `${window.location.origin}/umsoknir/maela-med-frambodi/?candidate=${candidate.id}`,
+                          '_blank',
+                        ),
+                    }}
+                  />
+                )
+              },
+            )}
         </Stack>
       </Box>
     )
