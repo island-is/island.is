@@ -39,7 +39,7 @@ export class LifeEventPageSyncService
             contentWordCount: content.split(/\s+/).length,
             type: 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
-            response: JSON.stringify({ ...mapped, typename: 'AnchorPage' }),
+            response: JSON.stringify({ ...mapped, typename: 'LifeEventPage' }),
             tags: [],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
