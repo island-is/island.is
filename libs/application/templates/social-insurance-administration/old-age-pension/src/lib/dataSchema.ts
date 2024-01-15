@@ -56,6 +56,14 @@ export const dataSchema = z.object({
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
   }),
+  fileUpload: z.object({
+    fishermen: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requireAttachment,
+      }),
+  }),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)
