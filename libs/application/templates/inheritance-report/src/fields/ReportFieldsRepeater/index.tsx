@@ -66,7 +66,7 @@ export const ReportFieldsRepeater: FC<
   const taxFreeLimit = Number(
     formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
   )
-  
+
   /* ------ Stocks ------ */
   const [rateOfExchange, setRateOfExchange] = useState(0)
   const [faceValue, setFaceValue] = useState(0)
@@ -97,7 +97,7 @@ export const ReportFieldsRepeater: FC<
 
     setTotal(total)
   }, [getValues, id, props.sumField])
-  
+
   useEffect(() => {
     calculateTotal()
   }, [calculateTotal])
@@ -304,7 +304,7 @@ export const ReportFieldsRepeater: FC<
                           if (field.id === 'heirsPercentage') {
                             setPercentage(Number(value) / 100)
                           }
-                          
+
                           if (valueKeys.includes(field.id)) {
                             updateValue(fieldIndex)
                           }
@@ -352,7 +352,7 @@ export const ReportFieldsRepeater: FC<
                     ? formatMessage(m.totalPercentage)
                     : formatMessage(m.total)
                 }
-                backgroundColor='white'
+                backgroundColor="white"
                 readOnly
                 hasError={
                   (props.sumField === 'heirsPercentage' &&
