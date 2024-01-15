@@ -46,7 +46,8 @@
     "buffer-equal-constant-time",
     "safer-buffer",
     "jwa",
-    "sequelize"
+    "sequelize",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }
