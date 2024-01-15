@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { string } from 'zod'
 
 @ObjectType()
 export class VehicleValidationErrorMessage {
@@ -10,12 +11,33 @@ export class VehicleValidationErrorMessage {
 }
 
 @ObjectType()
+export class BasicVehicleInformation {
+  @Field(() => String, { nullable: true })
+  permno?: string | null
+
+  @Field(() => String, { nullable: true })
+  make?: string | null
+
+  @Field(() => String, { nullable: true })
+  color?: string | null
+
+  @Field(() => String, { nullable: true })
+  role?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  requireMileage?: boolean | null
+}
+
+@ObjectType()
 export class VehicleOwnerchangeChecksByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
+
+  @Field(() => BasicVehicleInformation, { nullable: true })
+  basicVehicleInformation?: BasicVehicleInformation | null
 }
 
 @ObjectType()

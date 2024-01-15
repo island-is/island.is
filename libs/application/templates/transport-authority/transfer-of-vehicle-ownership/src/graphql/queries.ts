@@ -6,6 +6,13 @@ export const GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO = `
         errorNo
         defaultMessage
       }
+      basicVehicleInformation {
+        permno
+        make
+        color
+        role
+        requireMileage
+      }
     }
   } 
 `
@@ -23,6 +30,9 @@ export const GET_VEHICLE_INFORMATION = `
       }
     }
   }
+`
+
+export const GET_BASIC_VEHICLE_INFORMATION = `
 `
 
 export const IDENTITY_QUERY = `

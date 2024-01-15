@@ -4,10 +4,11 @@ import { FC, useCallback, useEffect } from 'react'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useFormContext } from 'react-hook-form'
-import { VehiclesCurrentVehicle } from '../../shared'
+import { CurrentVehiclesAndRecords, VehiclesCurrentVehicle } from '../../shared'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
+import { VehicleFindField } from './VehicleFindField'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -17,8 +18,8 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { application } = props
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const currentVehicleList = application.externalData.currentVehicleList
-    .data as VehiclesCurrentVehicle[]
-
+    .data as CurrentVehiclesAndRecords
+  console.log('currentVehicleList', currentVehicleList)
   const updateData = useCallback(async () => {
     await updateApplication({
       variables: {
@@ -38,13 +39,22 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   }, [setValue])
   return (
     <Box paddingTop={2}>
-      {currentVehicleList.length > 5 ? (
-        <VehicleSelectField
-          currentVehicleList={currentVehicleList}
+      {currentVehicleList.totalRecords > 5 ? (
+        <VehicleFindField
+          currentVehicleList={currentVehicleList.vehicles}
           {...props}
         />
       ) : (
-        <VehicleRadioField currentVehicleList={currentVehicleList} {...props} />
+        // currentVehicleList.totalRecords > 5 ? (
+        //   <VehicleSelectField
+        //     currentVehicleList={currentVehicleList.vehicles}
+        //     {...props}
+        //   />
+        // ) :
+        <VehicleRadioField
+          currentVehicleList={currentVehicleList?.vehicles}
+          {...props}
+        />
       )}
     </Box>
   )
