@@ -1,23 +1,28 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
   buildSection,
+  buildSelectField,
+  buildSubSection,
   buildSubmitField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
+import { List } from '../lib/constants'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
   title: m.applicationName,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'screen1',
@@ -32,7 +37,44 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'signeeInfo',
       title: m.information,
+
       children: [
+        buildSubSection({
+          id: 'listInfo',
+          title: m.listName,
+          condition: (_, externalData) => {
+            const lists = getValueViaPath(
+              externalData,
+              'getList.data',
+              [],
+            ) as List[]
+            return lists.length > 1
+          },
+          children: [
+            buildSelectField({
+              id: 'listId',
+              title: m.listName,
+              defaultValue: ({ externalData }: Application) => {
+                const lists = getValueViaPath(
+                  externalData,
+                  'getList.data',
+                  [],
+                ) as List[]
+                return lists[0].id
+              },
+              options: ({
+                externalData: {
+                  getList: { data },
+                },
+              }) => {
+                return (data as List[]).map((list) => ({
+                  value: list.id,
+                  label: list.title,
+                }))
+              },
+            }),
+          ],
+        }),
         buildMultiField({
           id: 'signeeInfo',
           title: m.listName,
@@ -68,7 +110,7 @@ export const Draft: Form = buildForm({
             }),
             buildTextField({
               id: 'signee.address',
-              title: m.countryArea,
+              title: m.address,
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) =>

@@ -7,7 +7,7 @@ import { useIsOwner } from '../hooks'
 const SignatureLists = () => {
   useNamespaces('sp.signatureCollection')
 
-  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner()
+  const { isOwner, loadingIsOwner } = useIsOwner()
 
   return (
     <div>

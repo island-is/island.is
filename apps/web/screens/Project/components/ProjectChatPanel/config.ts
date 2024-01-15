@@ -31,17 +31,6 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'ukrainian-citizens',
     },
-
-    // Fyrir Grindavík
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3wvjVmglZEaKaM5lSzouCB
-    '3wvjVmglZEaKaM5lSzouCB': {
-      integrationID: 'fd247025-59fc-4ccd-83eb-7ae960019e37',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
   },
   en: {
     // Test page for Watson chat bot
@@ -64,17 +53,6 @@ export const watsonConfig: Record<
       showLauncher: true,
       carbonTheme: 'g10',
       namespaceKey: 'ukrainian-citizens',
-    },
-
-    // For Grindavík
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3wvjVmglZEaKaM5lSzouCB
-    '3wvjVmglZEaKaM5lSzouCB': {
-      integrationID: 'e72d26ef-92eb-4e66-bdae-1f13a72a887a',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
     },
   },
 }
