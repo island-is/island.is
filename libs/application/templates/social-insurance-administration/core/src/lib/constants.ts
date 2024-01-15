@@ -106,7 +106,7 @@ export const fileUploadSharedProps = {
   maxSize: FILE_SIZE_LIMIT,
   maxSizeErrorText:
     socialInsuranceAdministrationMessage.fileUpload.attachmentMaxSizeError,
-  uploadAccept: '.pdf',
+  uploadAccept: '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
   uploadHeader:
     socialInsuranceAdministrationMessage.fileUpload.attachmentHeader,
   uploadDescription:
