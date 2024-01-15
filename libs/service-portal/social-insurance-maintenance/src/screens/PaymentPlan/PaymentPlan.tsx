@@ -2,7 +2,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useGetPaymentPlanLazyQuery } from './PaymentPlan.generated'
 import {
   ExpandHeader,
-  ExpandRow,
   amountFormat,
   generateYears,
 } from '@island.is/service-portal/core'
@@ -23,14 +22,13 @@ import {
 import {
   IntroHeader,
   UserInfoLine,
+  ScrollableMiddleTable
   m as coreMessages,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { useEffect, useMemo, useState } from 'react'
 import addYears from 'date-fns/addYears'
-import { MONTHS } from '../../lib/constants'
-import { PaymentGroupTableRow } from '../../lib/components/PaymentGroupTableRow'
-
+import { PaymentGroupTableRow } from '../../components/PaymentGroupTableRow'
 const PaymentPlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()

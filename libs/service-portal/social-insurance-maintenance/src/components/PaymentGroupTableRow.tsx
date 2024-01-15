@@ -1,6 +1,6 @@
 import { Table } from '@island.is/island-ui/core'
 import { ExpandRow, amountFormat } from '@island.is/service-portal/core'
-import { MONTHS } from '../constants'
+import { MONTHS } from '../lib/constants'
 import { SocialInsurancePaymentGroup } from '@island.is/api/schema'
 import { FormatMessage } from '@island.is/localization'
 import { m as coreMessages } from '@island.is/service-portal/core'
