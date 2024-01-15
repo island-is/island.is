@@ -130,6 +130,8 @@ export class DirectorateOfImmigrationClient {
           addressCity: application.address,
           countryOfResidence: application.countriesOfResidence.map((x) => ({
             countryId: parseInt(x.countryId),
+            dateFrom: x.dateFrom,
+            dateTo: x.dateTo,
           })),
         },
         residenceAbroads: application.staysAbroad.map((x) => ({

@@ -18,7 +18,6 @@ import { information } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { CountryOfResidenceViewModel } from '@island.is/clients/directorate-of-immigration'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 interface ExtendedCountryProps extends CountryOfResidence {
   readOnly?: boolean
@@ -71,6 +70,8 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
         .map((i) => {
           return {
             countryId: i.countryId?.toString(),
+            dateTo: i.dateTo ?? '',
+            dateFrom: i.dateFrom ?? '',
             wasRemoved: 'false',
             readOnly: true,
           } as ExtendedCountryProps
@@ -91,6 +92,8 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
       ...selectedCountries,
       {
         countryId: '',
+        dateTo: '',
+        dateFrom: '',
         wasRemoved: 'false',
       },
     ])
@@ -116,14 +119,11 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
     }
   }
 
-  const addCountryToList = (newCountry: string, newIndex: number) => {
+  const addCountryToList = (field: string, value: string, newIndex: number) => {
     setSelectedCountries(
       selectedCountries.map((country, index) => {
         if (newIndex === index) {
-          return {
-            ...country,
-            countryId: newCountry,
-          }
+          return { ...country, [field]: value }
         }
         return country
       }),

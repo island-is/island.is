@@ -156,6 +156,26 @@ export function getApplicationExternalData(
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
 
+  const spouseName = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.name',
+  ) as string
+
+  const spouseNationalId = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.nationalId',
+  ) as string
+
+  const maritalStatus = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.maritalStatus',
+  ) as string
+
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
+
   return {
     cohabitants,
     applicantName,
@@ -164,6 +184,10 @@ export function getApplicationExternalData(
     email,
     currencies,
     isEligible,
+    spouseName,
+    spouseNationalId,
+    maritalStatus,
+    hasSpouse,
   }
 }
 

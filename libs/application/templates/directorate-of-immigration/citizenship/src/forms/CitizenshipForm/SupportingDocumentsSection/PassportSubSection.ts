@@ -133,7 +133,17 @@ export const PassportSubSection = buildSubSection({
               [],
             ) as OptionSetItem[]
 
-            return countryOptions.map(({ id, name }) => ({
+            const countryStr = JSON.stringify(countryOptions)
+            const countryParsed = JSON.parse(countryStr) as OptionSetItem[]
+
+            const sortedCountryOptions = countryParsed.sort((x, y) => {
+              const splitX = x.name?.split(/-(.*)/s)[1].replace(' ', '')
+              const splitY = y.name?.split(/-(.*)/s)[1].replace(' ', '')
+              if (splitX && splitY && splitX > splitY) return 1
+              else return -1
+            })
+
+            return sortedCountryOptions.map(({ id, name }) => ({
               value: id?.toString() || '',
               label: name || '',
             }))

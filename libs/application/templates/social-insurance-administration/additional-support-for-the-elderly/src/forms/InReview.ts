@@ -5,11 +5,11 @@ import {
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { inReviewFormMessages } from '../lib/messages'
+import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyInReview',
-  title: inReviewFormMessages.formTitle,
+  title: additionalSupportForTheElderyFormMessage.shared.applicationTitle,
   logo: Logo,
   children: [
     buildSection({

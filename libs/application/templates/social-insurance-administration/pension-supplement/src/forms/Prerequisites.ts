@@ -65,12 +65,19 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationApplicantApi,
-              title:
-                pensionSupplementFormMessage.pre
-                  .socialInsuranceAdministrationInformationTitle,
+              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
-                pensionSupplementFormMessage.pre
+                socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationDescription,
+            }),
+            buildDataProviderItem({
+              id: 'sia.privacy',
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyWithoutIncomeDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
