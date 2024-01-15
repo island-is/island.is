@@ -42,7 +42,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
 
     let onlyElectricVehiclesWithGrant = onlyElectricVehicles
 
-    if (onlyElectricVehicles.length < 6) {
+    if (onlyElectricVehicles.length < 10) {
       onlyElectricVehicles = await Promise.all(
         onlyElectricVehicles.map(async (vehicle: VehicleMiniDto) => {
           const vehicleGrant =
@@ -173,8 +173,10 @@ export class EnergyFundsService extends BaseTemplateApiService {
       subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
-    await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
-      subsidyInput: answers,
-    })
+    console.log('answers', answers)
+
+    // await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
+    //   subsidyInput: answers,
+    // })
   }
 }

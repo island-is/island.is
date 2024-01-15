@@ -43,6 +43,7 @@ export const VehicleCheckboxField: FC<
 
   useEffect(() => {
     if (currentVehicle) {
+      console.log('currentVehicle', currentVehicle)
       setValue('selectVehicle.plate', currentVehicle.permno || '')
       setValue('selectVehicle.grantAmount', currentVehicle.vehicleGrant)
       setValue(
