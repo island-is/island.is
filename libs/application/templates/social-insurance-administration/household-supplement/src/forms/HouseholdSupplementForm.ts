@@ -79,7 +79,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.name',
                   title:
-                    socialInsuranceAdministrationMessage.info.applicantName,
+                    socialInsuranceAdministrationMessage.confirm.name,
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
