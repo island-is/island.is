@@ -11,16 +11,9 @@ import { m as coreMessages } from '@island.is/service-portal/core'
 type Props = {
   data: SocialInsurancePaymentGroup
   formatMessage: FormatMessage
-  onScroll?: (scrollPos: number) => void
-  scrollPos?: number
 }
 
-export const PaymentGroupTableRow = ({
-  data,
-  formatMessage,
-  onScroll,
-  scrollPos,
-}: Props) => (
+export const PaymentGroupTableRow = ({ data, formatMessage }: Props) => (
   <ExpandRow
     data={[
       { value: formatMessage(data.type) },
@@ -54,8 +47,6 @@ export const PaymentGroupTableRow = ({
         }),
         last: amountFormat(p.totalYearCumulativeAmount),
       }))}
-      onScroll={onScroll}
-      scrollPos={scrollPos}
     />
   </ExpandRow>
 )

@@ -1,6 +1,5 @@
 import { Box, Table as T } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { useCallback, useEffect, useRef } from 'react'
 import { useWindowSize } from 'react-use'
 
 export interface Columns {
@@ -14,8 +13,6 @@ export interface ScrollableMiddleTableProps {
   rows?: Array<Columns>
   footer?: Columns
   nested?: boolean
-  scrollPos?: number
-  onScroll?: (scrollPosition: number) => void
 }
 
 const getBreakpointWidth = (width: number) => {
@@ -36,34 +33,13 @@ export const ScrollableMiddleTable = ({
   header,
   rows,
   nested = false,
-  onScroll,
-  scrollPos,
 }: ScrollableMiddleTableProps) => {
   const { width } = useWindowSize()
 
   const breakpointWidth = getBreakpointWidth(width)
-  const ref = useRef<HTMLElement>(null)
-
-  const handleScroll = useCallback(() => {
-    if (ref?.current && onScroll) {
-      const scrollLeft = ref?.current.scrollLeft
-      onScroll(scrollLeft)
-    }
-  }, [onScroll])
-
-  useEffect(
-    () => ref.current?.addEventListener('scroll', handleScroll),
-    [handleScroll, onScroll, ref],
-  )
-
-  useEffect(() => {
-    if (ref.current && scrollPos) {
-      ref.current.scrollLeft = scrollPos
-    }
-  }, [scrollPos])
 
   return (
-    <Box overflow="auto" width="full" ref={ref}>
+    <Box overflow="auto" width="full">
       <T.Table
         style={{
           tableLayout: nested ? 'fixed' : 'auto',
