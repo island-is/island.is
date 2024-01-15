@@ -57,11 +57,7 @@ export const DefaultHeader: React.FC<
                   borderRadius="circle"
                   background="white"
                 >
-                  <img
-                    className={styles.logo}
-                    src={logo}
-                    alt={logoAltText}
-                  />
+                  <img className={styles.logo} src={logo} alt={logoAltText} />
                 </Box>
               </LinkWrapper>
             </div>

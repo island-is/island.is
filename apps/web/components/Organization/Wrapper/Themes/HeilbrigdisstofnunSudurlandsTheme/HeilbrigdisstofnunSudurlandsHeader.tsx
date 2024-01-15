@@ -59,7 +59,7 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<
       ? organizationPage.organization?.title + ' Forsíða'
       : organizationPage.organization?.title + ' Frontpage',
   )
-  
+
   return (
     <div
       style={n(`hsuHeader-${screenWidth}`, getDefaultStyle(width))}

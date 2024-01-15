@@ -13,7 +13,7 @@ export const Main: React.FC<React.PropsWithChildren<unknown>> = ({
         component: 'main',
         tabIndex: -1,
         outline: 'none',
-        id: 'main-content'
+        id: 'main-content',
       }
     : {}
   return (

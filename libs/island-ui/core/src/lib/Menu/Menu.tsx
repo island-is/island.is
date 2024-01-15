@@ -124,7 +124,7 @@ const AsideTopLinkWithSub = ({
   sub,
   id,
   expandButtonLabel = 'Expand',
-  collapseButtonLabel = 'Collapse'
+  collapseButtonLabel = 'Collapse',
 }: {
   link: ReactNode
   sub: ReactNode[]
@@ -151,7 +151,9 @@ const AsideTopLinkWithSub = ({
           aria-controls={`AsideTopLink-${id}`}
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          <VisuallyHidden>{isCollapsed ? expandButtonLabel : collapseButtonLabel}</VisuallyHidden>
+          <VisuallyHidden>
+            {isCollapsed ? expandButtonLabel : collapseButtonLabel}
+          </VisuallyHidden>
         </Button>
       </Box>
       <AnimateHeight
