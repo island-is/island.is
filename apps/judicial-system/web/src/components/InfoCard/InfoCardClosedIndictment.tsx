@@ -11,7 +11,7 @@ import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import InfoCard from './InfoCard'
+import InfoCard, { NameAndEmail } from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
 
 const InfoCardClosedIndictment: React.FC<
@@ -52,11 +52,17 @@ const InfoCardClosedIndictment: React.FC<
         },
         {
           title: formatMessage(m.prosecutor),
-          value: workingCase.prosecutor?.name,
+          value: NameAndEmail(
+            workingCase.prosecutor?.name,
+            workingCase.prosecutor?.email,
+          ),
         },
         {
           title: formatMessage(core.judge),
-          value: workingCase.judge?.name,
+          value: NameAndEmail(
+            workingCase.judge?.name,
+            workingCase.judge?.email,
+          ),
         },
         {
           title: formatMessage(m.offence),

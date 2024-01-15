@@ -83,6 +83,7 @@ export const institutionMapper = {
   [ApplicationTypes.ENERGY_FUNDS]: InstitutionTypes.ORKUSTOFNUN,
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]:
     InstitutionTypes.EMBAETTI_LANDLAEKNIS,
+  [ApplicationTypes.PENSION_SUPPLEMENT]: InstitutionTypes.TRYGGINGASTOFNUN,
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]:
     InstitutionTypes.VINNUEFTIRLITID,
 }
