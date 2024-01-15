@@ -11,6 +11,7 @@ import {
   buildFileUploadField,
   buildAlertMessageField,
   buildSelectField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -18,11 +19,13 @@ import {
   Form,
   FormModes,
   FormValue,
+  NationalRegistryIndividual,
+  NationalRegistrySpouse,
   YES,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { HouseholdSupplementHousing } from '../lib/constants'
+import { HouseholdSupplementHousing, maritalStatuses } from '../lib/constants'
 import {
   isExistsCohabitantOlderThan25,
   getApplicationAnswers,
@@ -46,6 +49,7 @@ import {
   getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import * as kennitala from 'kennitala'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
@@ -73,11 +77,76 @@ export const HouseholdSupplementForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.info.subSectionDescription,
               children: [
                 buildTextField({
+                  id: 'applicantInfo.name',
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantName,
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const nationalRegistry = application.externalData
+                      .nationalRegistry.data as NationalRegistryIndividual
+                    return nationalRegistry.fullName
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.ID',
+                  title:
+                    socialInsuranceAdministrationMessage.confirm.nationalId,
+                  format: '######-####',
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) =>
+                    kennitala.format(application.applicant),
+                }),
+                buildTextField({
+                  id: 'applicantInfo.address',
+                  title:
+                    socialInsuranceAdministrationMessage.info.applicantAddress,
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const nationalRegistry = application.externalData
+                      .nationalRegistry.data as NationalRegistryIndividual
+                    return nationalRegistry?.address?.streetAddress
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.postcode',
+                  title:
+                    socialInsuranceAdministrationMessage.info
+                      .applicantPostalcode,
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const nationalRegistry = application.externalData
+                      .nationalRegistry.data as NationalRegistryIndividual
+                    return nationalRegistry?.address?.postalCode
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.municipality',
+                  title:
+                    socialInsuranceAdministrationMessage.info
+                      .applicantMunicipality,
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const nationalRegistry = application.externalData
+                      .nationalRegistry.data as NationalRegistryIndividual
+                    return nationalRegistry?.address?.locality
+                  },
+                }),
+                buildTextField({
                   id: 'applicantInfo.email',
                   title:
                     socialInsuranceAdministrationMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
+                  backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData
@@ -97,6 +166,80 @@ export const HouseholdSupplementForm: Form = buildForm({
                       .socialInsuranceAdministrationApplicant
                       .data as ApplicantInfo
                     return data.phoneNumber
+                  },
+                }),
+                buildDescriptionField({
+                  id: 'applicantInfo.descriptionField',
+                  space: 'containerGutter',
+                  titleVariant: 'h5',
+                  title:
+                    socialInsuranceAdministrationMessage.info
+                      .applicantMaritalTitle,
+                  condition: (_, externalData) => {
+                    const { hasSpouse } =
+                      getApplicationExternalData(externalData)
+
+                    if (hasSpouse) return true
+                    return false
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.maritalStatus',
+                  title:
+                    socialInsuranceAdministrationMessage.info
+                      .applicantMaritalStatus,
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const data = application.externalData.nationalRegistrySpouse
+                      .data as NationalRegistrySpouse
+                    return maritalStatuses[data.maritalStatus]
+                  },
+                  condition: (_, externalData) => {
+                    const { maritalStatus } =
+                      getApplicationExternalData(externalData)
+                    if (maritalStatus) return true
+                    return false
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.spouseName',
+                  title:
+                    socialInsuranceAdministrationMessage.info
+                      .applicantSpouseName,
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const data = application.externalData.nationalRegistrySpouse
+                      .data as NationalRegistrySpouse
+                    return data.name
+                  },
+                  condition: (_, externalData) => {
+                    const { spouseName } =
+                      getApplicationExternalData(externalData)
+                    if (spouseName) return true
+                    return false
+                  },
+                }),
+                buildTextField({
+                  id: 'applicantInfo.spouseID',
+                  title:
+                    socialInsuranceAdministrationMessage.confirm.nationalId,
+                  format: '######-####',
+                  width: 'half',
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const data = application.externalData.nationalRegistrySpouse
+                      .data as NationalRegistrySpouse
+                    return kennitala.format(data.nationalId)
+                  },
+                  condition: (_, externalData) => {
+                    const { spouseNationalId } =
+                      getApplicationExternalData(externalData)
+                    if (spouseNationalId) return true
+                    return false
                   },
                 }),
               ],

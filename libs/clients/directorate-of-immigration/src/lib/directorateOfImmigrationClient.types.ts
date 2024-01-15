@@ -34,6 +34,8 @@ export interface CitizenshipApplication {
   }[]
   countriesOfResidence: {
     countryId: string
+    dateFrom?: Date
+    dateTo?: Date
   }[]
   staysAbroad: {
     countryId: string
