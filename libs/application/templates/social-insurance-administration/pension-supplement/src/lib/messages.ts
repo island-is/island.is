@@ -16,23 +16,6 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Upplýsingar um þig.',
       description: 'Information about you.',
     },
-    socialInsuranceAdministrationInformationTitle: {
-      id: 'ul.application:prerequisites.socialInsuranceAdministration.title',
-      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
-      description: 'Information regarding income and circumstances',
-    },
-    socialInsuranceAdministrationInformationDescription: {
-      id: 'ul.application:prerequisites.socialInsuranceAdministration.description#markdown',
-      defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun. \n\nTryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðslu mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. \n\nFrekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar [hér](https://www.tr.is/tryggingastofnun/personuvernd). \n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
-      description:
-        'Information about email address, phone number and bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. That information can relate to both your income and other circumstances. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd). \n\nIf your income or other circumstances change, you must notify the Social Insurance Administration as this may affect your payments.',
-    },
-    startApplication: {
-      id: 'ul.application:start.application',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Start application',
-    },
     isNotEligibleLabel: {
       id: 'ul.application:is.not.eligible.label',
       defaultMessage: 'Því miður hefur þú ekki rétt á uppbót á lífeyri',
@@ -108,13 +91,6 @@ export const pensionSupplementFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    additionalFileDescription: {
-      id: 'ul.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangar upplýsingar. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
-    },
     assistedCareAtHomeTitle: {
       id: 'ul.application:fileUppload.assisted.care.at.home.title',
       defaultMessage: 'Fylgiskjöl umönnun í heimahúsi',
@@ -223,18 +199,10 @@ export const errorMessages = defineMessages({
   },
 })
 
-export const inReviewFormMessages = defineMessages({
-  formTitle: {
-    id: 'ul.application:inReview.form.title',
-    defaultMessage: 'Umsókn um uppbót á lífeyri',
-    description: 'Pension supplement',
-  },
-})
-
 export const statesMessages = defineMessages({
   applicationApprovedDescription: {
     id: 'ul.application:applicationApprovedDescription',
-    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið samþykkt',
-    description: 'The application for old-age pension has been approved',
+    defaultMessage: 'Umsókn vegna uppbóta á lífeyri hefur verið samþykkt',
+    description: 'The application for pension supplement has been approved',
   },
 })
