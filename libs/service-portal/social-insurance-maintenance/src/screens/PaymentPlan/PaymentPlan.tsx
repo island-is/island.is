@@ -24,7 +24,7 @@ import {
   m as coreMessages,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import addYears from 'date-fns/addYears'
 import { PaymentGroupTableRow } from '../../components'
 
@@ -41,6 +41,13 @@ const PaymentPlan = () => {
   }, [])
 
   const [selectedYear, setSelectedYear] = useState(yearOptions[0])
+
+  const [scrollPos, setScrollPos] = useState<number>()
+
+  const onScroll = (scrollPos: number) => {
+    console.log(scrollPos)
+    setScrollPos(scrollPos)
+  }
 
   useEffect(() => {
     getPaymentPlanQuery({
@@ -145,6 +152,8 @@ const PaymentPlan = () => {
                 key={`payment-group-idx-${idx}`}
                 data={pg}
                 formatMessage={formatMessage}
+                onScroll={onScroll}
+                scrollPos={scrollPos}
               />
             ))}
           <Table.Row>
@@ -174,6 +183,8 @@ const PaymentPlan = () => {
                 key={`payment-group-idx-subtraction-${idx}`}
                 data={pg}
                 formatMessage={formatMessage}
+                onScroll={onScroll}
+                scrollPos={scrollPos}
               />
             ))}
           <Table.Row>
