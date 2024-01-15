@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -22,19 +21,13 @@ import {
   FormValue,
   NO,
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
   YES,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import {
-  ApplicationType,
-  Employment,
-  RatioType,
-  maritalStatuses,
-} from '../lib/constants'
+import { ApplicationType, Employment, RatioType } from '../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -177,78 +170,6 @@ export const OldAgePensionForm: Form = buildForm({
                       .socialInsuranceAdministrationApplicant
                       .data as ApplicantInfo
                     return data.phoneNumber
-                  },
-                }),
-                buildDescriptionField({
-                  id: 'applicantInfo.descriptionField',
-                  space: 'containerGutter',
-                  titleVariant: 'h5',
-                  title:
-                    oldAgePensionFormMessage.applicant
-                      .applicantInfoMaritalTitle,
-                  condition: (_, externalData) => {
-                    const { hasSpouse } =
-                      getApplicationExternalData(externalData)
-                    if (hasSpouse) return true
-                    return false
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.maritalStatus',
-                  title:
-                    oldAgePensionFormMessage.applicant
-                      .applicantInfoMaritalStatus,
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
-                    return maritalStatuses[data.maritalStatus]
-                  },
-                  condition: (_, externalData) => {
-                    const { maritalStatus } =
-                      getApplicationExternalData(externalData)
-                    if (maritalStatus) return true
-                    return false
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.spouseName',
-                  title:
-                    oldAgePensionFormMessage.applicant.applicantInfoSpouseName,
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
-                    return data.name
-                  },
-                  condition: (_, externalData) => {
-                    const { spouseName } =
-                      getApplicationExternalData(externalData)
-                    if (spouseName) return true
-                    return false
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.spouseID',
-                  title:
-                    socialInsuranceAdministrationMessage.confirm.nationalId,
-                  format: '######-####',
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
-                    return kennitala.format(data.nationalId)
-                  },
-                  condition: (_, externalData) => {
-                    const { spouseNationalId } =
-                      getApplicationExternalData(externalData)
-                    if (spouseNationalId) return true
-                    return false
                   },
                 }),
               ],
@@ -870,9 +791,11 @@ export const OldAgePensionForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileDescription,
               introduction:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileDescription,
               ...fileUploadSharedProps,
             }),
           ],
