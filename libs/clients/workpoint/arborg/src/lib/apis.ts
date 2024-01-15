@@ -1,7 +1,7 @@
 import { ApiConfiguration } from './apiConfiguration'
-import { Configuration, DefaultApi } from '../../gen/fetch'
+import { Configuration, ApplicationApi } from '../../gen/fetch'
 
-export const exportedApis = [DefaultApi].map((Api) => ({
+export const exportedApis = [ApplicationApi].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {
     return new Api(configuration)
