@@ -1,4 +1,5 @@
 import React, { ReactNode, useRef } from 'react'
+
 import { Box, BoxProps } from '@island.is/island-ui/core'
 
 export const Main: React.FC<React.PropsWithChildren<unknown>> = ({
@@ -12,6 +13,7 @@ export const Main: React.FC<React.PropsWithChildren<unknown>> = ({
         component: 'main',
         tabIndex: -1,
         outline: 'none',
+        id: 'main-content'
       }
     : {}
   return (

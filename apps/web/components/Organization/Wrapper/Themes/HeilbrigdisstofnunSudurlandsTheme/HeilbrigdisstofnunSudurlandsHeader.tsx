@@ -1,12 +1,15 @@
-import { OrganizationPage } from '@island.is/web/graphql/schema'
 import React, { useMemo } from 'react'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useNamespace } from '@island.is/web/hooks'
-import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useI18n } from '@island.is/web/i18n'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+
 import * as styles from './HeilbrigdisstofnunSudurlandsHeader.css'
 
 const backgroundUrl =
@@ -49,6 +52,14 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<
 
   const screenWidth = getScreenWidthString(width)
 
+  const { activeLocale } = useI18n()
+  const logoAltText = n(
+    'organizationLogoAltText',
+    activeLocale === 'is'
+      ? organizationPage.organization?.title + ' Forsíða'
+      : organizationPage.organization?.title + ' Frontpage',
+  )
+  
   return (
     <div
       style={n(`hsuHeader-${screenWidth}`, getDefaultStyle(width))}
@@ -67,7 +78,7 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -84,7 +95,7 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             </Hidden>

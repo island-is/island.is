@@ -1,9 +1,13 @@
+import { useMemo } from 'react'
 import Link from 'next/link'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useI18n } from '@island.is/web/i18n'
+
 import * as styles from './RettindagaeslaFatladsFolksHeader.css'
 
 interface Props {
@@ -12,8 +16,22 @@ interface Props {
 
 const RettindagaeslaFatladsFolksHeader = ({ organizationPage }: Props) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+
   const { width } = useWindowSize()
   const isMobileScreenWidth = width < theme.breakpoints.lg
+
+  const { activeLocale } = useI18n()
+  const logoAltText = n(
+    'organizationLogoAltText',
+    activeLocale === 'is'
+      ? organizationPage.organization?.title + ' Forsíða'
+      : organizationPage.organization?.title + ' Frontpage',
+  )
 
   return (
     <div className={styles.headerBg}>
@@ -48,7 +66,7 @@ const RettindagaeslaFatladsFolksHeader = ({ organizationPage }: Props) => {
                   <img
                     className={styles.logo}
                     src={organizationPage.organization?.logo?.url}
-                    alt=""
+                    alt={logoAltText}
                   />
                 </Box>
               </Link>
@@ -81,7 +99,7 @@ const RettindagaeslaFatladsFolksHeader = ({ organizationPage }: Props) => {
                   <img
                     className={styles.logo}
                     src={organizationPage.organization?.logo?.url}
-                    alt=""
+                    alt={logoAltText}
                   />
                 </Box>
               </Link>

@@ -1,13 +1,16 @@
-import cn from 'classnames'
 import React, { useMemo } from 'react'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+import cn from 'classnames'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { useNamespace } from '@island.is/web/hooks'
 import { theme } from '@island.is/island-ui/theme'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useI18n } from '@island.is/web/i18n'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+
 import * as styles from './SyslumennHeader.css'
 
 const getDefaultStyle = (width: number) => {
@@ -44,6 +47,14 @@ const SyslumennHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
 
+  const { activeLocale } = useI18n()
+  const logoAltText = n(
+    'organizationLogoAltText',
+    activeLocale === 'is'
+      ? organizationPage.organization?.title + ' Forsíða'
+      : organizationPage.organization?.title + ' Frontpage',
+  )
+
   const screenWidth = getScreenWidthString(width)
 
   return (
@@ -64,7 +75,7 @@ const SyslumennHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -81,7 +92,7 @@ const SyslumennHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             </Hidden>

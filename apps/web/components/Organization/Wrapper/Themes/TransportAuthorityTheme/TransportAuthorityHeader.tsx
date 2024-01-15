@@ -1,13 +1,16 @@
 import React, { useMemo } from 'react'
 import type { CSSProperties } from '@vanilla-extract/css'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useNamespace } from '@island.is/web/hooks'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import { theme } from '@island.is/island-ui/theme'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useI18n } from '@island.is/web/i18n'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+
 import * as styles from './TransportAuthorityHeader.css'
 
 const getDefaultStyle = (width: number): CSSProperties => {
@@ -45,6 +48,14 @@ const TransportAuthorityHeader: React.FC<HeaderProps> = ({
 
   const screenWidth = getScreenWidthString(width)
 
+  const { activeLocale } = useI18n()
+  const logoAltText = n(
+    'organizationLogoAltText',
+    activeLocale === 'is'
+      ? organizationPage.organization?.title + ' Forsíða'
+      : organizationPage.organization?.title + ' Frontpage',
+  )
+
   return (
     <div
       style={n(
@@ -66,7 +77,7 @@ const TransportAuthorityHeader: React.FC<HeaderProps> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -83,7 +94,7 @@ const TransportAuthorityHeader: React.FC<HeaderProps> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             </Hidden>

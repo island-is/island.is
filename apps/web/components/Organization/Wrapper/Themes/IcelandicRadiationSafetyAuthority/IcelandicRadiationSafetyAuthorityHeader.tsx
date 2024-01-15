@@ -1,13 +1,16 @@
-import type { CSSProperties } from '@vanilla-extract/css'
 import React, { useMemo } from 'react'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+import type { CSSProperties } from '@vanilla-extract/css'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useNamespace } from '@island.is/web/hooks'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import { theme } from '@island.is/island-ui/theme'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useI18n } from '@island.is/web/i18n'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+
 import * as styles from './IcelandicRadiationSafetyAuthorityHeader.css'
 
 const headerLogoUrl =
@@ -34,17 +37,21 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
-    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
-    [organizationPage.organization.namespace?.fields],
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
 
   const screenWidth = getScreenWidthString(width)
+
+  const { activeLocale } = useI18n()
+  const logoAltText = n(
+    'organizationLogoAltText',
+    activeLocale === 'is'
+      ? organizationPage.organization?.title + ' Forsíða'
+      : organizationPage.organization?.title + ' Frontpage',
+  )
 
   return (
     <div
@@ -57,9 +64,7 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -67,39 +72,30 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
                 className={styles.iconCircle}
               >
                 <img
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="nti-logo"
+                  alt={logoAltText}
                 />
               </Link>
             )
           }
         >
-          {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            !!organizationPage.organization.logo && (
-              <Hidden above="sm">
-                <Link
-                  href={
-                    linkResolver('organizationpage', [organizationPage.slug])
-                      .href
-                  }
-                  className={styles.iconCircle}
-                >
-                  <img
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
-                    src={organizationPage.organization.logo.url}
-                    className={styles.headerLogo}
-                    alt=""
-                  />
-                </Link>
-              </Hidden>
-            )
-          }
+          {!!organizationPage.organization?.logo && (
+            <Hidden above="sm">
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+                className={styles.iconCircle}
+              >
+                <img
+                  src={organizationPage.organization.logo.url}
+                  className={styles.headerLogo}
+                  alt={logoAltText}
+                />
+              </Link>
+            </Hidden>
+          )}
           <Box
             marginTop={[2, 2, 6]}
             textAlign={['center', 'center', 'left']}

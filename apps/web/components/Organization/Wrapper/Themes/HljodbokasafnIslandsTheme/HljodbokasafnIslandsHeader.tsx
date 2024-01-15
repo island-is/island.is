@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import { DefaultHeader, DefaultHeaderProps } from '@island.is/web/components'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './HljodbokasafnIslandsHeader.css'
 
@@ -19,6 +20,13 @@ const HljodbokasafnIslandsHeader: React.FC<
     [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
+  const logoAltText = n(
+    'organizationLogoAltText',
+    activeLocale === 'is'
+      ? organizationPage.organization?.title + ' Forsíða'
+      : organizationPage.organization?.title + ' Frontpage',
+  )
 
   const themeProp = organizationPage.themeProperties
 
@@ -52,6 +60,7 @@ const HljodbokasafnIslandsHeader: React.FC<
       logo={organizationPage.organization?.logo?.url}
       logoHref={linkResolver('organizationpage', [organizationPage.slug]).href}
       className={styles.gridContainer}
+      logoAltText={logoAltText}
     />
   )
 }

@@ -1,5 +1,5 @@
-import { OrganizationPage } from '@island.is/web/graphql/schema'
-import React from 'react'
+import React, { useMemo } from 'react'
+
 import {
   Box,
   GridContainer,
@@ -7,8 +7,12 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
 import * as styles from './SjukratryggingarHeader.css'
 
 interface HeaderProps {
@@ -19,6 +23,19 @@ const SjukratryggingarHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
 > = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+
+  const { activeLocale } = useI18n()
+  const logoAltText = n(
+    'organizationLogoAltText',
+    activeLocale === 'is'
+      ? organizationPage.organization?.title + ' Forsíða'
+      : organizationPage.organization?.title + ' Frontpage',
+  )
 
   return (
     <div className={styles.headerBg}>
@@ -39,7 +56,7 @@ const SjukratryggingarHeader: React.FC<
                   <img
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
-                    alt=""
+                    alt={logoAltText}
                   />
                 </Link>
               )
@@ -57,7 +74,7 @@ const SjukratryggingarHeader: React.FC<
                   <img
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
-                    alt=""
+                    alt={logoAltText}
                   />
                 </Link>
               </Hidden>

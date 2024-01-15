@@ -200,6 +200,12 @@ export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
 > = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage?.organization?.namespace?.fields ?? '{}'),
+    [organizationPage?.organization?.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
 
   switch (organizationPage.theme) {
     case 'syslumenn':
@@ -310,6 +316,12 @@ export const OrganizationHeader: React.FC<
               ? 'right'
               : 'center'
           }
+          logoAltText={n(
+            'organizationLogoAltText',
+            activeLocale === 'is'
+              ? organizationPage.organization?.title + ' Forsíða'
+              : organizationPage.organization?.title + ' Frontpage',
+          )}
         />
       )
   }
