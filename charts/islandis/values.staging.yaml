@@ -1946,6 +1946,11 @@ service-portal-api:
     create: true
     name: 'service-portal-api'
 service-portal-api-worker:
+  args:
+    - 'main.js'
+    - '--job=worker'
+  command:
+    - 'node'
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
