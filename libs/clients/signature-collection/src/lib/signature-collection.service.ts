@@ -93,8 +93,8 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async getLists(input: GetListInput): Promise<List[]> {
-    const params = await this.getListsParams(input)
+  async getLists(input?: GetListInput): Promise<List[]> {
+    const params = await this.getListsParams({ ...input })
     const lists = await this.listsApi.medmaelalistarGet(params)
     return lists.map((list) => mapList(list))
   }
@@ -370,7 +370,17 @@ export class SignatureCollectionClientService {
         iD: id,
         requestBody: nationalIds,
       })
-    return signaturesFound.map(mapSignature)
+    // Get listTitle for signatures
+    const allLists = await this.getLists()
+    const listNameIndexer: Record<string, string> = allLists.reduce(
+      (acc, list) => ({ ...acc, [list.id]: list.title }),
+      {},
+    )
+    const signaturesMapped = signaturesFound.map(mapSignature)
+    signaturesMapped.forEach((signature) => {
+      signature.listTitle = listNameIndexer[signature.listId]
+    })
+    return signaturesMapped
   }
 
   //   TODO: DelegateList

@@ -139,21 +139,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Sveitarfélag',
       description: 'Municipality',
     },
-    applicantInfoMaritalTitle: {
-      id: 'oap.application:applicant.info.martial.title',
-      defaultMessage: 'Hjúskaparstaða þín',
-      description: 'Your marital status',
-    },
-    applicantInfoMaritalStatus: {
-      id: 'oap.application:applicant.info.marital.status',
-      defaultMessage: 'Hjúskaparstaða',
-      description: 'Marital status',
-    },
-    applicantInfoSpouseName: {
-      id: 'oap.application:applicant.info.spouse.name',
-      defaultMessage: 'Nafn maka',
-      description: `Spouse's name`,
-    },
   }),
 
   onePaymentPerYear: defineMessages({

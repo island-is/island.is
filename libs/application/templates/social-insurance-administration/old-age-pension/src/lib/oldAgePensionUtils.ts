@@ -225,21 +225,6 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data',
   ) as object
 
-  const spouseName = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.name',
-  ) as string
-
-  const spouseNationalId = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.nationalId',
-  ) as string
-
-  const maritalStatus = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.maritalStatus',
-  ) as string
-
   const email = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.emailAddress',
@@ -267,9 +252,6 @@ export function getApplicationExternalData(
     applicantAddress,
     applicantMunicipality,
     hasSpouse,
-    spouseName,
-    spouseNationalId,
-    maritalStatus,
     isEligible,
     email,
     bankInfo,

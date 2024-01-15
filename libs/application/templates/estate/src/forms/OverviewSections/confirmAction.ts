@@ -3,7 +3,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { EstateTypes, NO, YES } from '../../lib/constants'
+import { EstateTypes, YES } from '../../lib/constants'
 
 export const overviewConfirmAction = [
   buildCheckboxField({
