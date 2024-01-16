@@ -300,6 +300,7 @@ export class ContentfulService {
       nextSyncToken: newNextSyncToken,
       nextPageToken,
       deletedEntries,
+      assets,
     } = await this.getSyncData(typeOfSync)
 
     // In case someone in the CMS triggers a sync by setting the translation of an entry to an inactive state we'd like to remove that entry
@@ -324,16 +325,17 @@ export class ContentfulService {
       }
     }
 
-    const nestedEntryIds = entries
+    const nestedItems = entries
       .filter((entry) =>
         environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
       )
-      .map((entry) => entry.sys.id)
+      .map((entry) => ({ id: entry.sys.id, isEntry: true }))
+      .concat(assets.map((asset) => ({ id: asset.sys.id, isEntry: false })))
 
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
-      nestedEntries: nestedEntryIds.length,
+      nestedItems: nestedItems.length,
     })
 
     // Get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
@@ -357,7 +359,7 @@ export class ContentfulService {
 
     return {
       indexableEntries,
-      nestedEntryIds,
+      nestedItems,
       deletedEntryIds,
       newNextSyncToken,
       nextPageToken,
@@ -395,7 +397,7 @@ export class ContentfulService {
       deletedEntryIds,
       nextPageToken,
     } = populatedSyncEntriesResult
-    let { nestedEntryIds } = populatedSyncEntriesResult
+    let { nestedItems } = populatedSyncEntriesResult
 
     const isDeltaUpdate = syncType !== 'full'
 
@@ -411,7 +413,7 @@ export class ContentfulService {
       const visitedEntryIds = new Set<string>()
 
       for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
-        if (nestedEntryIds.length <= 0) break
+        if (nestedItems.length <= 0) break
 
         const nextLevelOfNestedEntryIds = new Set<string>()
 
@@ -447,16 +449,16 @@ export class ContentfulService {
           }
         }
 
-        for (const entryId of nestedEntryIds) {
-          if (visitedEntryIds.has(entryId)) {
+        for (const item of nestedItems) {
+          if (visitedEntryIds.has(item.id)) {
             continue
           }
-          visitedEntryIds.add(entryId)
+          visitedEntryIds.add(item.id)
 
           promises.push(
             this.getContentfulData(chunkSize, {
               include: this.defaultIncludeDepth,
-              links_to_entry: entryId,
+              [item.isEntry ? 'links_to_entry' : 'links_to_asset']: item.id,
               locale: this.contentfulLocaleMap[locale],
             }),
           )
@@ -471,7 +473,10 @@ export class ContentfulService {
         }
 
         // Next round of the loop will only find linked entries to nested entries
-        nestedEntryIds = Array.from(nextLevelOfNestedEntryIds)
+        nestedItems = Array.from(nextLevelOfNestedEntryIds).map((id) => ({
+          id,
+          isEntry: true,
+        }))
         logger.info(`Found ${counter} nested entries at depth ${i + 1}`)
       }
     }
