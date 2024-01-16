@@ -98,6 +98,8 @@ export const RemoveableCountrySchema = z
   .object({
     countryId: z.string(),
     wasRemoved: z.string().min(1),
+    dateTo: z.string().optional(),
+    dateFrom: z.string().optional(),
   })
   .refine(
     ({ wasRemoved, countryId }) => {
@@ -105,6 +107,21 @@ export const RemoveableCountrySchema = z
     },
     {
       path: ['countryId'],
+    },
+  )
+  .refine(
+    ({ dateTo, dateFrom }) => {
+      const to = dateTo ? new Date(dateTo).getTime() : null
+      const from = dateFrom ? new Date(dateFrom).getTime() : null
+
+      if (from && to) {
+        return to > from
+      }
+
+      return true
+    },
+    {
+      path: ['dateRange'],
     },
   )
 
@@ -218,9 +235,10 @@ export const SelectedChildSchema = z
     },
   )
   .refine(
-    ({ wasRemoved, otherParentBirtDate }) => {
+    ({ wasRemoved, otherParentBirtDate, otherParentNationalId }) => {
       return (
         wasRemoved === 'true' ||
+        otherParentNationalId ||
         (otherParentBirtDate && otherParentBirtDate.length > 0)
       )
     },

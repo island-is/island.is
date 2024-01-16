@@ -1,0 +1,8 @@
+query CandidateLookup($input: SignatureCollectionIdInput!) {
+  signatureCollectionSigneeLookup(input: $input) {
+    nationalId
+    name
+    canCreate
+    canCreateInfo
+  }
+}

@@ -6,14 +6,14 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import { inReviewFormMessages } from '../lib/messages'
+import { pensionSupplementFormMessage } from '../lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'PensionSupplementInReviewUpload',
-  title: inReviewFormMessages.formTitle,
+  title: pensionSupplementFormMessage.shared.applicationTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenBackButton: true,

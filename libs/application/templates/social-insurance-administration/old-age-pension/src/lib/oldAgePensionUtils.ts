@@ -14,7 +14,7 @@ import {
   NationalRegistryResidenceHistory,
   YesOrNo,
 } from '@island.is/application/types'
-
+import { oldAgePensionFormMessage } from './messages'
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
@@ -225,21 +225,6 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data',
   ) as object
 
-  const spouseName = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.name',
-  ) as string
-
-  const spouseNationalId = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.nationalId',
-  ) as string
-
-  const maritalStatus = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.maritalStatus',
-  ) as string
-
   const email = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.emailAddress',
@@ -267,9 +252,6 @@ export function getApplicationExternalData(
     applicantAddress,
     applicantMunicipality,
     hasSpouse,
-    spouseName,
-    spouseNationalId,
-    maritalStatus,
     isEligible,
     email,
     bankInfo,
@@ -563,4 +545,36 @@ export const filterValidEmployers = (
     })
 
   return filtered as Employer[]
+}
+
+export const getEligibleDesc = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleDescription
+    : applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleHalfDescription
+    : oldAgePensionFormMessage.pre.isNotEligibleSailorDescription
+}
+
+export const getEligibleLabel = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleLabel
+    : applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleHalfLabel
+    : oldAgePensionFormMessage.pre.isNotEligibleSailorLabel
+}
+
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.halfRetirementPensionApplicationTitle
+    : applicationType === ApplicationType.SAILOR_PENSION
+    ? oldAgePensionFormMessage.pre.fishermenApplicationTitle
+    : oldAgePensionFormMessage.shared.applicationTitle
 }
