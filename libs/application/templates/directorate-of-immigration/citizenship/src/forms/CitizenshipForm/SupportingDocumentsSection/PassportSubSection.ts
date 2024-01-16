@@ -18,6 +18,7 @@ import {
   TravelDocumentViewModel,
 } from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
+import { FILE_TYPES_ALLOWED } from '../../../shared'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -162,6 +163,7 @@ export const PassportSubSection = buildSubSection({
           id: `${Routes.PASSPORT}.attachment`,
           title: supportingDocuments.labels.passport.fileUpload,
           introduction: '',
+          uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
           uploadHeader:
             supportingDocuments.labels.passport.uploadTitlePlaceholder,
