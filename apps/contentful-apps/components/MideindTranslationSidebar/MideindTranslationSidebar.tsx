@@ -34,6 +34,7 @@ const isPublished = (sys: SysVersion): boolean => {
 const handleClick = async (sdk: SidebarExtensionSDK) => {
   const apiKey = sdk.parameters.instance['MIDEIND_TRANSLATION_API_KEY']
   const baseUrl = sdk.parameters.instance['MIDEIND_TRANSLATION_API_BASE_URL']
+  const model = sdk.parameters.instance['MIDEIND_TRANSLATION_API_MODEL_NAME']
 
   if (!apiKey || !baseUrl) {
     sdk.notifier.error(
@@ -59,7 +60,7 @@ const handleClick = async (sdk: SidebarExtensionSDK) => {
   }
 
   // 2 - Translate
-  const translatedTexts = await translateTexts(texts, apiKey, baseUrl)
+  const translatedTexts = await translateTexts(texts, apiKey, baseUrl, model)
 
   // 3 - Reverse populate the fields
   translatedTexts.reverse()
@@ -124,13 +125,18 @@ export const MideindTranslationSidebar = () => {
         enTexts = [...enTexts, ...enExtractedTexts]
       }
 
-      sendTexts(
-        iceTexts,
-        enTexts,
-        translationReference,
-        sdk.parameters.instance['MIDEIND_TRANSLATION_API_KEY'],
-        sdk.parameters.instance['MIDEIND_TRANSLATION_API_BASE_URL'],
-      )
+      if (sdk.parameters.instance['MIDEIND_TRANSLATION_API_SEND_FEEDBACK']) {
+        sendTexts(
+          iceTexts,
+          enTexts,
+          translationReference,
+          sdk.parameters.instance['MIDEIND_TRANSLATION_API_KEY'],
+          sdk.parameters.instance['MIDEIND_TRANSLATION_API_BASE_URL'],
+          sdk.parameters.instance['MIDEIND_TRANSLATION_API_MODEL_NAME'],
+          sdk.parameters.instance['MIDEIND_TRANSLATION_API_USER_REFERENCE'] ??
+            'island.is-contentful',
+        )
+      }
     }
   }
 

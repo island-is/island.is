@@ -7,10 +7,12 @@ async function translateTexts(
   texts: string[],
   apiKey: string,
   baseUrl: string,
+  model?: string,
 ) {
   const translations = []
   const body = {
     contents: texts,
+    model,
     ...defaultParams,
   }
 
@@ -36,6 +38,8 @@ async function sendTexts(
   reference: string,
   apiKey: string,
   baseUrl: string,
+  model?: string,
+  userReference?: string,
 ) {
   const body = {
     machineTranslatedText: '', // Required even if empty
@@ -43,7 +47,8 @@ async function sendTexts(
     originalText: iceTexts.join(' '), // String expected, not array
     correctedText: enTexts.join(' '), // String expected, not array
     languagePair: 'is-en',
-    model: 'transformer-base',
+    model,
+    userReference: userReference,
   }
 
   await fetch(`${baseUrl}/corrected`, {
