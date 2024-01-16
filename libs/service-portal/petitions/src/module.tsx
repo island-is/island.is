@@ -4,6 +4,7 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { PetitionPaths } from './lib/paths'
+import { Navigate } from 'react-router-dom'
 
 const Petitions = lazy(() => import('./screens/Petitions'))
 const ViewSignedPetition = lazy(() => import('./screens/ViewSignedList'))
@@ -15,6 +16,11 @@ export const petitionsModule: PortalModule = {
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
+      {
+        name: m.generalPetitions,
+        path: PetitionPaths.RootPath,
+        element: <Navigate to={PetitionPaths.Petitions} replace />,
+      },
       {
         name: m.generalPetitions,
         path: PetitionPaths.Petitions,
