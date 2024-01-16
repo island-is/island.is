@@ -33,7 +33,7 @@ export class HealthController {
 
     const healthCheck = await this.health.check(healthChecks)
 
-    if (!healthCheck.status) {
+    if (healthCheck.status !== 'ok') {
       res.status(503).send(healthCheck)
     }
 
