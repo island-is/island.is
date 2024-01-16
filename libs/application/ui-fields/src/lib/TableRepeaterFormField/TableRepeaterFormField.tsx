@@ -53,11 +53,11 @@ export const TableRepeaterFormField: FC<Props> = ({
     control: methods.control,
     name: data.id,
   })
+
   const values = useWatch({ name: data.id, control: methods.control })
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
   const savedFields = fields.filter((_, index) => index !== activeIndex)
   const tableItems = items.filter((x) => x.displayInTable !== false)
-
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
 
@@ -89,8 +89,8 @@ export const TableRepeaterFormField: FC<Props> = ({
           <T.Head>
             <T.Row>
               <T.HeadData></T.HeadData>
-              {tableHeader.map((item) => (
-                <T.HeadData>
+              {tableHeader.map((item, index) => (
+                <T.HeadData key={index}>
                   {formatText(item ?? '', application, formatMessage)}
                 </T.HeadData>
               ))}
@@ -118,10 +118,10 @@ export const TableRepeaterFormField: FC<Props> = ({
                       </Tooltip>
                     </Box>
                   </T.Data>
-                  {tableRows.map((item) => {
+                  {tableRows.map((item, idx) => {
                     const formatFn = table?.format?.[item]
                     return (
-                      <T.Data>
+                      <T.Data key={`${item}-${idx}`}>
                         {formatFn
                           ? formatFn(values[index][item])
                           : values[index][item]}
@@ -144,7 +144,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                 component,
                 id: itemId,
                 backgroundColor = 'blue',
-                label,
+                label = '',
                 placeholder = '',
                 options,
                 ...props
@@ -159,9 +159,10 @@ export const TableRepeaterFormField: FC<Props> = ({
 
               return (
                 <Component
+                  key={id}
                   id={id}
                   name={id}
-                  label={formatText(label ?? '', application, formatMessage)}
+                  label={formatText(label, application, formatMessage)}
                   options={translatedOptions}
                   placeholder={formatText(
                     placeholder,
