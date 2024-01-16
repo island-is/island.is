@@ -26,6 +26,8 @@ type SyncCollection = ContentfulSyncCollection & {
   nextPageToken?: string
 }
 
+const MAX_REQUEST_COUNT = 10
+
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const defaultContentfulClientLogging = (level: ClientLogLevel, data: any) => {
@@ -414,6 +416,37 @@ export class ContentfulService {
         const nextLevelOfNestedEntryIds = new Set<string>()
 
         const promises: Promise<Entry<unknown>[]>[] = []
+        let counter = 0
+
+        const handleRequests = async () => {
+          const responses = await Promise.all(promises)
+
+          for (const linkedEntries of responses) {
+            for (const linkedEntry of linkedEntries) {
+              counter += 1
+              if (
+                environment.indexableTypes.includes(
+                  linkedEntry.sys.contentType.sys.id,
+                )
+              ) {
+                const entryAlreadyListed =
+                  indexableEntries.findIndex(
+                    (entry) => entry.sys.id === linkedEntry.sys.id,
+                  ) >= 0
+                if (!entryAlreadyListed) {
+                  indexableEntries.push(linkedEntry)
+                }
+              } else if (
+                environment.nestedContentTypes.includes(
+                  linkedEntry.sys.contentType.sys.id,
+                )
+              ) {
+                nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
+              }
+            }
+          }
+        }
+
         for (const entryId of nestedEntryIds) {
           if (visitedEntryIds.has(entryId)) {
             continue
@@ -427,33 +460,14 @@ export class ContentfulService {
               locale: this.contentfulLocaleMap[locale],
             }),
           )
+
+          if (promises.length > MAX_REQUEST_COUNT) {
+            await handleRequests()
+          }
         }
 
-        const responses = await Promise.all(promises)
-
-        let counter = 0
-        for (const linkedEntries of responses) {
-          for (const linkedEntry of linkedEntries) {
-            counter += 1
-            if (
-              environment.indexableTypes.includes(
-                linkedEntry.sys.contentType.sys.id,
-              )
-            ) {
-              const entryAlreadyListed =
-                indexableEntries.findIndex(
-                  (entry) => entry.sys.id === linkedEntry.sys.id,
-                ) >= 0
-              if (!entryAlreadyListed) indexableEntries.push(linkedEntry)
-            }
-            if (
-              environment.nestedContentTypes.includes(
-                linkedEntry.sys.contentType.sys.id,
-              )
-            ) {
-              nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
-            }
-          }
+        if (promises.length > 0) {
+          await handleRequests()
         }
 
         // Next round of the loop will only find linked entries to nested entries

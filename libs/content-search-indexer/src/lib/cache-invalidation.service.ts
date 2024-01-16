@@ -122,7 +122,7 @@ export class CacheInvalidationService {
         baseUrl = 'http://localhost:4200'
         break
       default:
-        return
+        return ''
     }
 
     return baseUrl
@@ -130,19 +130,27 @@ export class CacheInvalidationService {
 
   async invalidateCache(items: MappedData[], locale: ElasticsearchIndexLocale) {
     const baseUrl = this.getBaseUrl()
+
+    if (!baseUrl) {
+      logger.warn('Could not get cache invalidation base url')
+      return
+    }
+
     const bypassSecret = environment.bypassCacheSecret
 
     const promises: Promise<unknown>[] = []
     let successfulCacheInvalidationCount = 0
-    let failedCacheInvalidationCount = 0
+    const failedCacheInvalidationReasons = []
 
     const handleRequests = async () => {
       const responses = await Promise.allSettled(promises)
-      const successCount = responses.filter(
-        (response) => response.status === 'fulfilled',
-      ).length
-      successfulCacheInvalidationCount += successCount
-      failedCacheInvalidationCount += responses.length - successCount
+      for (const response of responses) {
+        if (response.status === 'fulfilled') {
+          successfulCacheInvalidationCount += 1
+        } else {
+          failedCacheInvalidationReasons.push(response.reason)
+        }
+      }
       promises.length = 0
     }
 
@@ -152,7 +160,9 @@ export class CacheInvalidationService {
 
     if (itemsThatCanBeCacheInvalidated.length > 0) {
       logger.info(
-        `Invalidating cache for ${itemsThatCanBeCacheInvalidated.length} pages...`,
+        `Invalidating cache for ${itemsThatCanBeCacheInvalidated.length} ${
+          itemsThatCanBeCacheInvalidated.length === 1 ? 'page' : 'pages'
+        }...`,
       )
     }
 
@@ -161,11 +171,17 @@ export class CacheInvalidationService {
         locale
       ] as GenerateInvalidationUrlsFunctionType
 
-      const urls = generateInvalidationUrls(baseUrl, JSON.parse(item.response))
+      let urls: string[] = []
+
+      try {
+        urls = generateInvalidationUrls(baseUrl, JSON.parse(item.response))
+      } catch {
+        logger.warn(`Generating invalidation url failed for: ${item._id}`)
+        continue
+      }
 
       for (const url of urls) {
         promises.push(fetch(`${url}?bypass-cache=${bypassSecret}`))
-
         if (promises.length > MAX_REQUEST_COUNT) {
           await handleRequests()
         }
@@ -181,9 +197,10 @@ export class CacheInvalidationService {
         `Successfully invalidated cache for ${successfulCacheInvalidationCount} pages`,
       )
     }
-    if (failedCacheInvalidationCount > 0) {
+    if (failedCacheInvalidationReasons.length > 0) {
       logger.warn(
-        `Could not invalidate cache for ${failedCacheInvalidationCount} pages`,
+        `Could not invalidate cache for ${failedCacheInvalidationReasons.length} pages`,
+        failedCacheInvalidationReasons,
       )
     }
   }
