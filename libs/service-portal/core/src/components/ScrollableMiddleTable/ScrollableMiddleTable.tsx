@@ -9,11 +9,21 @@ export interface Columns {
   last: string
 }
 
+export interface ColumnOptions {
+  sticky?: boolean
+  width?: number
+  shadow?: boolean
+}
+
 export interface ScrollableMiddleTableProps {
   header: Columns
   rows?: Array<Columns>
   footer?: Columns
   nested?: boolean
+  options?: {
+    firstColumn: ColumnOptions
+    lastColumn: ColumnOptions
+  }
 }
 
 const getBreakpointWidth = (width: number) => {
@@ -38,6 +48,7 @@ export const ScrollableMiddleTable = ({
   rows,
   footer,
   nested = false,
+  options,
 }: ScrollableMiddleTableProps) => {
   const { width } = useWindowSize()
 
@@ -108,12 +119,14 @@ export const ScrollableMiddleTable = ({
           <T.Row>
             <T.HeadData
               style={{
-                position: 'sticky',
-                left: 0,
+                position: options?.firstColumn.sticky ? 'sticky' : 'initial',
+                left: options?.firstColumn.sticky ? 0 : 'auto',
                 backgroundColor: theme.color.blue100,
-                width: `${FIRST_COLUMN_WIDTH}px`,
+                width: options?.firstColumn.width ?? `${FIRST_COLUMN_WIDTH}px`,
                 borderRight: `1px solid ${theme.border.color.blue200}`,
-                boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
+                boxShadow: options?.firstColumn.shadow
+                  ? `4px 0px 8px -2px ${theme.border.color.blue200}`
+                  : 'initial',
               }}
             >
               <Text variant="small" fontWeight="medium">
@@ -129,12 +142,14 @@ export const ScrollableMiddleTable = ({
             ))}
             <T.HeadData
               style={{
-                position: 'sticky',
-                right: 0,
+                position: options?.lastColumn.sticky ? 'sticky' : 'initial',
+                right: options?.lastColumn.sticky ? 0 : 'auto',
                 backgroundColor: theme.color.blue100,
-                width: `${LAST_COLUMN_WIDTH}px`,
+                width: options?.lastColumn.width ?? `${LAST_COLUMN_WIDTH}px`,
                 borderLeft: `1px solid ${theme.border.color.blue200}`,
-                boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
+                boxShadow: options?.lastColumn.shadow
+                  ? `-4px 0px 8px -2px ${theme.border.color.blue200}`
+                  : 'initial',
               }}
             >
               <Text textAlign="right" variant="small" fontWeight="medium">
@@ -148,12 +163,14 @@ export const ScrollableMiddleTable = ({
             <T.Row key={`nested-table-row-${rowIdx}`}>
               <T.Data
                 style={{
-                  position: 'sticky',
-                  left: 0,
+                  position: options?.firstColumn.sticky ? 'sticky' : 'initial',
+                  left: options?.firstColumn.sticky ? 0 : 'auto',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   borderRight: `1px solid ${theme.border.color.blue200} `,
-                  boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
+                  boxShadow: options?.firstColumn.shadow
+                    ? `4px 0px 8px -2px ${theme.border.color.blue200}`
+                    : 'initial',
                   backgroundColor:
                     rowIdx % 2 === 0 ? theme.color.white : theme.color.blue100,
                 }}
@@ -175,10 +192,12 @@ export const ScrollableMiddleTable = ({
               ))}
               <T.Data
                 style={{
-                  position: 'sticky',
-                  right: 0,
+                  position: options?.lastColumn.sticky ? 'sticky' : 'initial',
+                  right: options?.lastColumn.sticky ? 0 : 'auto',
                   borderLeft: `1px solid ${theme.border.color.blue200}`,
-                  boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
+                  boxShadow: options?.lastColumn.shadow
+                    ? `-4px 0px 8px -2px ${theme.border.color.blue200}`
+                    : 'initial',
                   backgroundColor:
                     rowIdx % 2 === 0 ? theme.color.white : theme.color.blue100,
                 }}
@@ -191,11 +210,13 @@ export const ScrollableMiddleTable = ({
             <T.Row>
               <T.Data
                 style={{
-                  position: 'sticky',
-                  left: 0,
+                  position: options?.firstColumn.sticky ? 'sticky' : 'initial',
+                  left: options?.firstColumn.sticky ? 0 : 'auto',
                   backgroundColor: theme.color.white,
                   borderRight: `1px solid ${theme.border.color.blue200}`,
-                  boxShadow: `4px 0px 6px -2px ${theme.border.color.blue200}`,
+                  boxShadow: options?.firstColumn.shadow
+                    ? `4px 0px 8px -2px ${theme.border.color.blue200}`
+                    : 'initial',
                 }}
               >
                 <Text variant="small" fontWeight="medium">
@@ -211,11 +232,13 @@ export const ScrollableMiddleTable = ({
               ))}
               <T.Data
                 style={{
-                  position: 'sticky',
-                  right: 0,
+                  position: options?.lastColumn.sticky ? 'sticky' : 'initial',
+                  right: options?.lastColumn.sticky ? 0 : 'auto',
                   backgroundColor: theme.color.white,
                   borderLeft: `1px solid ${theme.border.color.blue200}`,
-                  boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
+                  boxShadow: options?.lastColumn.shadow
+                    ? `-4px 0px 8px -2px ${theme.border.color.blue200}`
+                    : 'initial',
                 }}
               >
                 <Text variant="small" fontWeight="medium">

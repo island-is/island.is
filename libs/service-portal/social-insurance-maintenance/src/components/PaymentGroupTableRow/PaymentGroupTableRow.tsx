@@ -22,6 +22,16 @@ export const PaymentGroupTableRow = ({ data, formatMessage }: Props) => (
   >
     <ScrollableMiddleTable
       nested
+      options={{
+        firstColumn: {
+          shadow: true,
+          sticky: true,
+        },
+        lastColumn: {
+          shadow: true,
+          sticky: true,
+        },
+      }}
       header={{
         first: formatMessage(coreMessages.transactionType),
         scrollableMiddle: MONTHS.map((month) =>
