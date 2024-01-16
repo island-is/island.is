@@ -63,11 +63,11 @@ const PaymentPlan = () => {
       paymentGroups: [
         {
           __typename: 'SocialInsurancePaymentGroup',
-          type: 'Bing bong',
+          type: 'Greiðslugreiði',
           totalYearCumulativeAmount: 126890409,
           payments: [
             {
-              type: 'slung',
+              type: 'Vasapeningar',
               monthlyPaymentHistory: [
                 {
                   monthIndex: 3,
@@ -77,7 +77,7 @@ const PaymentPlan = () => {
               totalYearCumulativeAmount: 40000,
             },
             {
-              type: 'kloing',
+              type: 'Desemberruppbót á heimilisuppbót',
               monthlyPaymentHistory: [
                 {
                   monthIndex: 5,
@@ -100,11 +100,11 @@ const PaymentPlan = () => {
         },
         {
           __typename: 'SocialInsurancePaymentGroup',
-          type: 'Donko bonk',
+          type: 'viðskiptavild',
           totalYearCumulativeAmount: 78489,
           payments: [
             {
-              type: 'xyz',
+              type: 'Greiðar',
               monthlyPaymentHistory: [
                 {
                   monthIndex: 1,
@@ -114,7 +114,7 @@ const PaymentPlan = () => {
               totalYearCumulativeAmount: 2,
             },
             {
-              type: 'klaxinbor',
+              type: 'Innheimtur',
               monthlyPaymentHistory: [
                 {
                   monthIndex: 8,

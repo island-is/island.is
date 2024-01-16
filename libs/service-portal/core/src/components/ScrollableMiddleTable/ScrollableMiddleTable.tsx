@@ -1,5 +1,6 @@
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { Box, Button, Table as T, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useRef } from 'react'
 import { useWindowSize } from 'react-use'
 
 export interface Columns {
@@ -28,6 +29,9 @@ const getBreakpointWidth = (width: number) => {
   }
   return '200%'
 }
+const FIRST_COLUMN_WIDTH = theme.spacing[23]
+const LAST_COLUMN_WIDTH = theme.spacing[20]
+const ICON_WIDTH = theme.spacing[6]
 
 export const ScrollableMiddleTable = ({
   header,
@@ -39,8 +43,60 @@ export const ScrollableMiddleTable = ({
 
   const breakpointWidth = getBreakpointWidth(width)
 
+  const tableRef = useRef<HTMLDivElement>(null)
+
+  const handleScroll = (type: 'backward' | 'forward') => {
+    if (tableRef?.current) {
+      if (type === 'backward') {
+        tableRef.current.scrollLeft -= LAST_COLUMN_WIDTH / 2
+      } else {
+        tableRef.current.scrollLeft += LAST_COLUMN_WIDTH / 2
+      }
+    }
+  }
+
   return (
-    <Box overflow="auto" width="full">
+    <Box overflow="auto" width="full" ref={tableRef}>
+      <Box
+        position="absolute"
+        style={{
+          left: `${FIRST_COLUMN_WIDTH - ICON_WIDTH / 2}px`,
+          top: '45%',
+          zIndex: '20',
+          opacity: 0.8,
+        }}
+      >
+        <Button
+          circle
+          colorScheme="light"
+          icon={'arrowBack'}
+          iconType="filled"
+          onClick={() => handleScroll('backward')}
+          size="medium"
+          type="button"
+          variant="primary"
+        />
+      </Box>
+      <Box
+        position="absolute"
+        style={{
+          right: `${LAST_COLUMN_WIDTH - ICON_WIDTH / 2}px`,
+          top: '45%',
+          zIndex: '20',
+          opacity: 0.8,
+        }}
+      >
+        <Button
+          circle
+          colorScheme="light"
+          icon={'arrowForward'}
+          iconType="filled"
+          onClick={() => handleScroll('forward')}
+          size="medium"
+          type="button"
+          variant="primary"
+        />
+      </Box>
       <T.Table
         style={{
           tableLayout: nested ? 'fixed' : 'auto',
@@ -55,6 +111,9 @@ export const ScrollableMiddleTable = ({
                 position: 'sticky',
                 left: 0,
                 backgroundColor: theme.color.blue100,
+                width: `${FIRST_COLUMN_WIDTH}px`,
+                borderRight: `1px solid ${theme.border.color.blue200}`,
+                boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
               }}
             >
               <Text variant="small" fontWeight="medium">
@@ -73,9 +132,12 @@ export const ScrollableMiddleTable = ({
                 position: 'sticky',
                 right: 0,
                 backgroundColor: theme.color.blue100,
+                width: `${LAST_COLUMN_WIDTH}px`,
+                borderLeft: `1px solid ${theme.border.color.blue200}`,
+                boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
               }}
             >
-              <Text variant="small" fontWeight="medium">
+              <Text textAlign="right" variant="small" fontWeight="medium">
                 {header.last}
               </Text>
             </T.HeadData>
@@ -88,11 +150,15 @@ export const ScrollableMiddleTable = ({
                 style={{
                   position: 'sticky',
                   left: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  borderRight: `1px solid ${theme.border.color.blue200} `,
+                  boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
                   backgroundColor:
                     rowIdx % 2 === 0 ? theme.color.white : theme.color.blue100,
                 }}
               >
-                {r.first}
+                <Text variant="small">{r.first}</Text>
               </T.Data>
               {r.scrollableMiddle.map((val, idx) => (
                 <T.Data
@@ -111,6 +177,8 @@ export const ScrollableMiddleTable = ({
                 style={{
                   position: 'sticky',
                   right: 0,
+                  borderLeft: `1px solid ${theme.border.color.blue200}`,
+                  boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
                   backgroundColor:
                     rowIdx % 2 === 0 ? theme.color.white : theme.color.blue100,
                 }}
@@ -126,6 +194,8 @@ export const ScrollableMiddleTable = ({
                   position: 'sticky',
                   left: 0,
                   backgroundColor: theme.color.white,
+                  borderRight: `1px solid ${theme.border.color.blue200}`,
+                  boxShadow: `4px 0px 6px -2px ${theme.border.color.blue200}`,
                 }}
               >
                 <Text variant="small" fontWeight="medium">
@@ -144,6 +214,8 @@ export const ScrollableMiddleTable = ({
                   position: 'sticky',
                   right: 0,
                   backgroundColor: theme.color.white,
+                  borderLeft: `1px solid ${theme.border.color.blue200}`,
+                  boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
                 }}
               >
                 <Text variant="small" fontWeight="medium">
