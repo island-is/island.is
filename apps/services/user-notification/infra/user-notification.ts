@@ -1,4 +1,9 @@
-import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistry,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
@@ -37,7 +42,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
     })
-    .xroad(Base, Client, NationalRegistry)
+    .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/readiness')
     .ingress({
@@ -120,5 +125,6 @@ export const userNotificationWorkerSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
     })
+    .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/readiness')
