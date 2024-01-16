@@ -264,7 +264,16 @@ export const ReportFieldsRepeater: FC<
                   <Fragment key={field.id}>
                     {field?.sectionTitle ? (
                       <GridColumn span="1/1">
-                        <Text variant={field.sectionTitleVariant ? field.sectionTitleVariant : 'h5'} marginBottom={2}>{field.sectionTitle}</Text>
+                        <Text
+                          variant={
+                            field.sectionTitleVariant
+                              ? field.sectionTitleVariant
+                              : 'h5'
+                          }
+                          marginBottom={2}
+                        >
+                          {field.sectionTitle}
+                        </Text>
                       </GridColumn>
                     ) : null}
                     <GridColumn

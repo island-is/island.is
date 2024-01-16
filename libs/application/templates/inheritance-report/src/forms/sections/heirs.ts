@@ -131,7 +131,7 @@ export const heirs = buildSection({
                   {
                     title: m.heirsRelation.defaultMessage,
                     id: 'relation',
-                    width: 'full'
+                    width: 'full',
                   },
                   {
                     sectionTitle: m.heirContactInfo.defaultMessage,
