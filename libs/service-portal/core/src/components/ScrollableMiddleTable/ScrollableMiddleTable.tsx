@@ -1,4 +1,4 @@
-import { Box, Table as T } from '@island.is/island-ui/core'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 
@@ -32,6 +32,7 @@ const getBreakpointWidth = (width: number) => {
 export const ScrollableMiddleTable = ({
   header,
   rows,
+  footer,
   nested = false,
 }: ScrollableMiddleTableProps) => {
   const { width } = useWindowSize()
@@ -56,11 +57,15 @@ export const ScrollableMiddleTable = ({
                 backgroundColor: theme.color.blue100,
               }}
             >
-              {header.first}
+              <Text variant="small" fontWeight="medium">
+                {header.first}
+              </Text>
             </T.HeadData>
             {header.scrollableMiddle.map((val, index) => (
               <T.HeadData key={`nested-table-header-col-${index}`}>
-                {val}
+                <Text variant="small" fontWeight="medium">
+                  {val}
+                </Text>
               </T.HeadData>
             ))}
             <T.HeadData
@@ -70,7 +75,9 @@ export const ScrollableMiddleTable = ({
                 backgroundColor: theme.color.blue100,
               }}
             >
-              {header.last}
+              <Text variant="small" fontWeight="medium">
+                {header.last}
+              </Text>
             </T.HeadData>
           </T.Row>
         </T.Head>
@@ -81,13 +88,22 @@ export const ScrollableMiddleTable = ({
                 style={{
                   position: 'sticky',
                   left: 0,
-                  backgroundColor: theme.color.white,
+                  backgroundColor:
+                    rowIdx % 2 === 0 ? theme.color.white : theme.color.blue100,
                 }}
               >
                 {r.first}
               </T.Data>
               {r.scrollableMiddle.map((val, idx) => (
-                <T.Data key={`nested-table-row-${rowIdx}-cell-${idx}`}>
+                <T.Data
+                  style={{
+                    backgroundColor:
+                      rowIdx % 2 === 0
+                        ? theme.color.white
+                        : theme.color.blue100,
+                  }}
+                  key={`nested-table-row-${rowIdx}-cell-${idx}`}
+                >
                   {val}
                 </T.Data>
               ))}
@@ -95,13 +111,48 @@ export const ScrollableMiddleTable = ({
                 style={{
                   position: 'sticky',
                   right: 0,
-                  backgroundColor: theme.color.white,
+                  backgroundColor:
+                    rowIdx % 2 === 0 ? theme.color.white : theme.color.blue100,
                 }}
               >
                 {r.last}
               </T.Data>
             </T.Row>
           ))}
+          {footer && (
+            <T.Row>
+              <T.Data
+                style={{
+                  position: 'sticky',
+                  left: 0,
+                  backgroundColor: theme.color.white,
+                }}
+              >
+                <Text variant="small" fontWeight="medium">
+                  {footer.first}
+                </Text>
+              </T.Data>
+              {footer.scrollableMiddle.map((val, index) => (
+                <T.Data key={`nested-table-footer-col-${index}`}>
+                  <Text variant="small" fontWeight="medium">
+                    {val}
+                  </Text>
+                </T.Data>
+              ))}
+              <T.Data
+                style={{
+                  position: 'sticky',
+                  right: 0,
+                  backgroundColor: theme.color.white,
+                  fontWeight: 'bolder',
+                }}
+              >
+                <Text variant="small" fontWeight="medium">
+                  {footer.last}
+                </Text>
+              </T.Data>
+            </T.Row>
+          )}
         </T.Body>
       </T.Table>
     </Box>

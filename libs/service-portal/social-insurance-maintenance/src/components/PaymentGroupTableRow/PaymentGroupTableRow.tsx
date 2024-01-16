@@ -30,11 +30,17 @@ export const PaymentGroupTableRow = ({ data, formatMessage }: Props) => (
         last: formatMessage(coreMessages.theYear),
       }}
       footer={{
-        first: formatMessage(coreMessages.transactionType),
-        scrollableMiddle: MONTHS.map((month) =>
-          formatMessage(coreMessages[month as keyof typeof coreMessages]),
-        ),
-        last: formatMessage(coreMessages.theYear),
+        first: formatMessage(coreMessages.total),
+        scrollableMiddle: MONTHS.map((month) => {
+          const monthlyAmount = data.monthlyPaymentHistory.find(
+            (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
+          )?.amount
+
+          return monthlyAmount ? amountFormat(monthlyAmount) : '-'
+        }),
+        last: data.totalYearCumulativeAmount
+          ? amountFormat(data.totalYearCumulativeAmount)
+          : '-',
       }}
       rows={data.payments.map((p) => ({
         first: p.type,

@@ -1,5 +1,8 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useGetPaymentPlanLazyQuery } from './PaymentPlan.generated'
+import {
+  GetPaymentPlanQuery,
+  useGetPaymentPlanLazyQuery,
+} from './PaymentPlan.generated'
 import {
   ExpandHeader,
   amountFormat,
@@ -30,8 +33,8 @@ const PaymentPlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const [getPaymentPlanQuery, { data, loading, error }] =
-    useGetPaymentPlanLazyQuery()
+  /*const [getPaymentPlanQuery, { data, loading, error }] =
+    useGetPaymentPlanLazyQuery()*/
 
   const yearOptions = useMemo(() => {
     const years = generateYears(addYears(new Date(), -120), new Date(), 'desc')
@@ -39,15 +42,101 @@ const PaymentPlan = () => {
   }, [])
 
   const [selectedYear, setSelectedYear] = useState(yearOptions[0])
-
+  /*
   useEffect(() => {
     getPaymentPlanQuery({
       variables: { input: { year: selectedYear.value } },
     })
-  }, [selectedYear, getPaymentPlanQuery])
+  }, [selectedYear, getPaymentPlanQuery])*/
+
+  const error = undefined
+  const loading = false
 
   if (error) {
     return <Problem type="internal_service_error" error={error} />
+  }
+
+  const data: GetPaymentPlanQuery = {
+    socialInsurancePaymentPlan: {
+      nextPayment: 9000000,
+      previousPayment: 6486834,
+      paymentGroups: [
+        {
+          __typename: 'SocialInsurancePaymentGroup',
+          type: 'Bing bong',
+          totalYearCumulativeAmount: 126890409,
+          payments: [
+            {
+              type: 'slung',
+              monthlyPaymentHistory: [
+                {
+                  monthIndex: 3,
+                  amount: 900000,
+                },
+              ],
+              totalYearCumulativeAmount: 40000,
+            },
+            {
+              type: 'kloing',
+              monthlyPaymentHistory: [
+                {
+                  monthIndex: 5,
+                  amount: 1,
+                },
+              ],
+              totalYearCumulativeAmount: 90930000,
+            },
+          ],
+          monthlyPaymentHistory: [
+            {
+              monthIndex: 1,
+              amount: 80,
+            },
+            {
+              monthIndex: 8,
+              amount: 4578,
+            },
+          ],
+        },
+        {
+          __typename: 'SocialInsurancePaymentGroup',
+          type: 'Donko bonk',
+          totalYearCumulativeAmount: 78489,
+          payments: [
+            {
+              type: 'xyz',
+              monthlyPaymentHistory: [
+                {
+                  monthIndex: 1,
+                  amount: 450000,
+                },
+              ],
+              totalYearCumulativeAmount: 2,
+            },
+            {
+              type: 'klaxinbor',
+              monthlyPaymentHistory: [
+                {
+                  monthIndex: 8,
+                  amount: -784593,
+                },
+              ],
+              totalYearCumulativeAmount: 909462430000,
+            },
+          ],
+          monthlyPaymentHistory: [
+            {
+              monthIndex: 1,
+              amount: 80,
+            },
+            {
+              monthIndex: 8,
+              amount: 4578,
+            },
+          ],
+        },
+      ],
+    },
   }
 
   return (
