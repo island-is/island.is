@@ -20,7 +20,7 @@ const Signees = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const listId = pathname.replace('/min-gogn/medmaelalistar/', '')
+  const listId = pathname.replace('/min-gogn/listar/medmaelalistar/', '')
 
   const [searchTerm, setSearchTerm] = useState('')
   const { listSignees, loadingSignees } = useGetListSignees(listId)

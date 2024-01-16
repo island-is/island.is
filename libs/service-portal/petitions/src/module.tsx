@@ -16,19 +16,19 @@ export const petitionsModule: PortalModule = {
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
       {
-        name: m.petitions,
+        name: m.generalPetitions,
         path: PetitionPaths.Petitions,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
         element: <Petitions />,
       },
       {
-        name: m.petitions,
+        name: m.generalPetitions,
         path: PetitionPaths.PetitionList,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
         element: <ViewSignedPetition />,
       },
       {
-        name: m.petitions,
+        name: m.generalPetitions,
         path: PetitionPaths.PetitionListOwned,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
         element: <ViewOwnedPetition />,
