@@ -57,6 +57,11 @@ export const information = {
         defaultMessage: 'Leita',
         description: 'Pick vehicle find button',
       },
+      notFoundTitle: {
+        id: 'ta.tvo.application:information.labels.pickVehicle.notFoundTitle',
+        defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
+        description: 'vehicle not found',
+      },
       hasErrorTitle: {
         id: 'ta.tvo.application:information.labels.pickVehicle.hasErrorTitle',
         defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',

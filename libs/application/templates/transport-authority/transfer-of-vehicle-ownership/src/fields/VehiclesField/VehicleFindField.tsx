@@ -38,6 +38,7 @@ export const VehicleFindField: FC<
     '',
   ) as string
   const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+  const [vehicleNotFound, setVehicleNotFound] = useState<boolean>()
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true)
   const updateInputState = (value: string) => {
     setButtonDisabled(value.length !== 5)
@@ -112,10 +113,14 @@ export const VehicleFindField: FC<
               response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
                 ?.make,
             )
-
+          setVehicleNotFound(false)
           setIsLoading(false)
         })
-        .catch((error) => console.error(error))
+        .catch((error) => {
+          console.error(error)
+          setVehicleNotFound(true)
+          setIsLoading(false)
+        })
     }
   }
 
@@ -173,7 +178,17 @@ export const VehicleFindField: FC<
           <SkeletonLoader />
         ) : (
           <Box>
-            {selectedVehicle && (
+            {vehicleNotFound && (
+              <AlertMessage
+                type="error"
+                title={'Errorinn'}
+                message={formatMessage(
+                  information.labels.pickVehicle.notFoundTitle,
+                  { plate },
+                )}
+              />
+            )}
+            {selectedVehicle && !vehicleNotFound && (
               <ActionCard
                 backgroundColor={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
