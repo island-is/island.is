@@ -2,14 +2,19 @@ name: 'Unit Test'
 description: 'Run unit tests'
 inputs:
   dd-api-key:
+    description: 'Datadog API key'
     required: true
   aws-access-key-id:
+    description: 'AWS access key ID'
     required: true
   aws-secret-access-key:
+    description: 'AWS secret access key'
     required: true
   docker-registry:
+    description: 'Docker registry'
     required: true
   codecov-token:
+    description: 'Codecov token'
     required: true
 runs:
   using: 'composite'
