@@ -1,13 +1,13 @@
-import { MIDEIND_TRANSLATION_API_BASE_URL } from '../../../constants'
-
 const defaultParams = {
   sourceLanguageCode: 'is',
   targetLanguageCode: 'en',
 }
 
-async function translateTexts(texts: string[], apiKey: string) {
-  const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
-
+async function translateTexts(
+  texts: string[],
+  apiKey: string,
+  baseUrl: string,
+) {
   const translations = []
   const body = {
     contents: texts,
@@ -35,9 +35,8 @@ async function sendTexts(
   enTexts: string[],
   reference: string,
   apiKey: string,
+  baseUrl: string,
 ) {
-  const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
-
   const body = {
     machineTranslatedText: '', // Required even if empty
     translationReference: 1 || reference, // Reference to be accepted later by Miðeind
@@ -47,7 +46,7 @@ async function sendTexts(
     model: 'transformer-base',
   }
 
-  const response = await fetch(`${baseUrl}/corrected`, {
+  await fetch(`${baseUrl}/corrected`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

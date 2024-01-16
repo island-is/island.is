@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+import { SidebarExtensionSDK } from '@contentful/app-sdk'
 import { Button, Spinner } from '@contentful/f36-components'
 import { TextIcon } from '@contentful/f36-icons'
-import { SidebarExtensionSDK } from '@contentful/app-sdk'
 import { useSDK } from '@contentful/react-apps-toolkit'
+
 import { extractField, populateField } from './fieldUtils/index'
-import { translateTexts, sendTexts } from './api'
+import { sendTexts, translateTexts } from './api'
 
 interface SysVersion {
   id: string
@@ -30,13 +31,23 @@ const isPublished = (sys: SysVersion): boolean => {
   return !!sys.publishedVersion && sys.version === sys.publishedVersion + 1
 }
 
-const handleClick = async (sdk: any) => {
+const handleClick = async (sdk: SidebarExtensionSDK) => {
+  const apiKey = sdk.parameters.instance['MIDEIND_TRANSLATION_API_KEY']
+  const baseUrl = sdk.parameters.instance['MIDEIND_TRANSLATION_API_BASE_URL']
+
+  if (!apiKey || !baseUrl) {
+    sdk.notifier.error(
+      "Can't translate due to missing configuration variables!",
+    )
+    return
+  }
+
   const fields = sdk.entry.fields
   const keys = Object.keys(fields)
 
   // 1 - Gather
   let texts: string[] = [] // Untranslated text collection
-  const lines: any[] = [] // Keeps track of the lines of texts per field
+  const lines: number[] = [] // Keeps track of the lines of texts per field
 
   for (const key of keys) {
     const field = fields[key]
@@ -48,10 +59,7 @@ const handleClick = async (sdk: any) => {
   }
 
   // 2 - Translate
-  const translatedTexts = await translateTexts(
-    texts,
-    sdk.parameters.instance['MIDEIND_TRANSLATION_API_KEY'],
-  )
+  const translatedTexts = await translateTexts(texts, apiKey, baseUrl)
 
   // 3 - Reverse populate the fields
   translatedTexts.reverse()
@@ -121,6 +129,7 @@ export const MideindTranslationSidebar = () => {
         enTexts,
         translationReference,
         sdk.parameters.instance['MIDEIND_TRANSLATION_API_KEY'],
+        sdk.parameters.instance['MIDEIND_TRANSLATION_API_BASE_URL'],
       )
     }
   }
