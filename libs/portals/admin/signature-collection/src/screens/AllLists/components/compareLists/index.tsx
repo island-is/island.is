@@ -164,7 +164,7 @@ const CompareLists = () => {
                               <T.Data style={{ minWidth: '250px' }}>
                                 {result.signee.name}
                               </T.Data>
-                              <T.Data>{'todo: nafn á lista'}</T.Data>
+                              <T.Data>{result.listTitle}</T.Data>
                               <T.Data style={{ minWidth: '160px' }}>
                                 <Button
                                   variant="utility"

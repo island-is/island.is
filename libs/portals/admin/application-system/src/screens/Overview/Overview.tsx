@@ -40,7 +40,9 @@ const defaultMultiChoiceFilters: Record<
 const pageSize = 12
 
 const Overview = () => {
-  const institutionApplications = invertBy(institutionMapper)
+  const institutionApplications = invertBy(institutionMapper, (application) => {
+    return application.slug
+  })
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState(defaultFilters)
