@@ -200,7 +200,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+                  "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
                 }
               }
             }
@@ -384,7 +384,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -678,7 +678,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
+                  }
                 }
               }
             }
@@ -778,9 +780,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
                 }
               }
             }
@@ -915,7 +915,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -1297,8 +1297,12 @@
       }
     },
     "securitySchemes": {
-      "Bearer": { "type": "http", "scheme": "Bearer", "bearerFormat": "Bearer" }
+      "IslandIs": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Bearer"
+      }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [{ "IslandIs": [] }]
 }

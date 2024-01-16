@@ -12,8 +12,6 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
     options: { email },
   } = props
 
-  // Temp until LKS has email ready
-  const adminEmail = 'postur@landskjorstjorn.is'
   const answers = application.answers as CreateListSchema
 
   const owner: OwnerInput = answers.applicant
@@ -36,8 +34,12 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
     },
     to: [
       {
-        name: '',
-        address: adminEmail as string,
+        name: 'Landskjörstjórn',
+        address: 'postur@landskjorstjorn.is',
+      },
+      {
+        name: 'Þjóðskrá',
+        address: 'kosningar@skra.is',
       },
     ],
     subject,
