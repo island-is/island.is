@@ -44,16 +44,10 @@ export const VehicleCheckboxField: FC<
   useEffect(() => {
     if (currentVehicle) {
       setValue('selectVehicle.plate', currentVehicle.permno || '')
-      setValue('selectVehicle.grantAmount', currentVehicle.vehicleGrant)
+      setValue('selectVehicle.grantAmount', currentVehicle.vehicleGrant || 0)
       setValue(
         'selectVehicle.grantItemCode',
-        currentVehicle.vehicleGrantItemCode,
-      )
-      setValue(
-        'selectVehicle.newRegistrationDate',
-        currentVehicle.newRegistrationDate
-          ? format(new Date(currentVehicle.newRegistrationDate), 'dd.MM.yyyy')
-          : '',
+        currentVehicle.vehicleGrantItemCode || 'fannst ekki',
       )
       setValue('selectVehicle.type', currentVehicle.make)
     }
