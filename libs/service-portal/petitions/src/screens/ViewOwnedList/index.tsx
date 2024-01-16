@@ -33,7 +33,7 @@ const ViewOwnedList = () => {
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
   const listId = pathname.replace(
-    '/min-gogn/listar/undirskriftalisti/minn-listi/',
+    '/min-gogn/listar/undirskriftalistar/minn-listi/',
     '',
   )
 
