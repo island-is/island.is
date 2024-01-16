@@ -7,7 +7,7 @@ import {
   FormValue,
   ApplicationStatus,
 } from '@island.is/application/types'
-import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import AdditionalSupportForTheElderlyTemplate from './AdditionalSupportForTheElderlyTemplate'
 
 function buildApplication(data: {

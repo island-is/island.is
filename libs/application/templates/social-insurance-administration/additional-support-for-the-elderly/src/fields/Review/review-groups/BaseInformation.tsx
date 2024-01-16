@@ -6,7 +6,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../lib/additionalSupportForTheElderlyUtils'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import { formatNumber } from 'libphonenumber-js'
 

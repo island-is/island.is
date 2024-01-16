@@ -1,15 +1,21 @@
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ConfigType } from '@island.is/nest/config'
-import { UserProfileApi, Configuration } from '../../gen/fetch'
+import {
+  createEnhancedFetch,
+  defaultCacheKeyWithHeader,
+} from '@island.is/clients/middlewares'
+import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
+import { Configuration } from '../../gen/fetch'
 
 import { UserProfileClientConfig } from './userProfileClient.config'
 import { createRedisCacheManager } from '@island.is/cache'
 
-export const UserProfileApiProvider = {
-  provide: UserProfileApi,
+export const ApiConfiguration = {
+  provide: 'UserProfileClientApiConfiguration',
   // Necessary because of cache-manager.
   // eslint-disable-next-line local-rules/no-async-module-init
-  useFactory: async (config: ConfigType<typeof UserProfileClientConfig>) => {
+  useFactory: async (
+    config: ConfigType<typeof UserProfileClientConfig>,
+    idsConfig: ConfigType<typeof IdsClientConfig>,
+  ) => {
     const cache =
       config.redis.nodes.length === 0
         ? undefined
@@ -21,20 +27,28 @@ export const UserProfileApiProvider = {
               noPrefix: true,
               ttl: 0,
             }),
+            cacheKey: defaultCacheKeyWithHeader('X-Param-National-Id'),
             shared: false,
             overrideCacheControl: config.cacheControl,
           }
 
-    return new UserProfileApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-user-profile',
-          organizationSlug: 'stafraent-island',
-          cache,
-        }),
-        basePath: config.basePath,
+    return new Configuration({
+      basePath: config.basePath,
+      fetchApi: createEnhancedFetch({
+        name: 'clients-user-profile',
+        organizationSlug: 'stafraent-island',
+        cache,
+        autoAuth: idsConfig.isConfigured
+          ? {
+              issuer: idsConfig.issuer,
+              clientId: idsConfig.clientId,
+              clientSecret: idsConfig.clientSecret,
+              scope: config.scope,
+              mode: 'auto',
+            }
+          : undefined,
       }),
-    )
+    })
   },
-  inject: [UserProfileClientConfig.KEY],
+  inject: [UserProfileClientConfig.KEY, IdsClientConfig.KEY],
 }

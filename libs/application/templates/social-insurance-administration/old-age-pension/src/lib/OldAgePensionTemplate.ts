@@ -26,11 +26,11 @@ import {
 } from '@island.is/application/core'
 
 import { dataSchema } from './dataSchema'
-import { oldAgePensionFormMessage, statesMessages } from './messages'
+import { statesMessages } from './messages'
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
-} from '@island.is/application/templates/social-insurance-administration-core/messages'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
@@ -39,14 +39,17 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
-import { getApplicationAnswers } from './oldAgePensionUtils'
+import {
+  determineNameFromApplicationAnswers,
+  getApplicationAnswers,
+} from './oldAgePensionUtils'
 import {
   Actions,
   BankAccountType,
   Events,
   Roles,
   States,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -54,13 +57,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.OLD_AGE_PENSION,
-  name: oldAgePensionFormMessage.shared.applicationTitle,
+  name: determineNameFromApplicationAnswers,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.oldAgePensionApplication,
-  translationNamespaces: [
-    ApplicationConfigurations.OldAgePension.translation,
-    'sia.application',
-  ],
+  translationNamespaces: ApplicationConfigurations.OldAgePension.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
@@ -429,15 +429,15 @@ const OldAgePensionTemplate: ApplicationTemplate<
         const { bankAccountType } = getApplicationAnswers(application.answers)
 
         if (bankAccountType === BankAccountType.ICELANDIC) {
-          unset(application.answers, 'paymentInfo.bankAccountInfo.iban')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.swift')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.bankName')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.bankAddress')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
+          unset(application.answers, 'paymentInfo.iban')
+          unset(application.answers, 'paymentInfo.swift')
+          unset(application.answers, 'paymentInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.currency')
         }
 
         if (bankAccountType === BankAccountType.FOREIGN) {
-          unset(application.answers, 'paymentInfo.bankAccountInfo.bank')
+          unset(application.answers, 'paymentInfo.bank')
         }
 
         return context

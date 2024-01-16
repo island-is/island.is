@@ -6,6 +6,7 @@ import {
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
+import format from 'date-fns/format'
 
 const importCodeList = {
   NEWCAR: ['2', '4'],
@@ -20,9 +21,20 @@ export class EnergyFundsClientService {
     return this.defaultApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getCatalogItems(auth: User): Promise<Array<CatalogItem>> {
+  async getCatalogItems(
+    auth: User,
+    vehicle: VehicleMiniDto,
+  ): Promise<Array<CatalogItem>> {
     const response = await this.defaultApiWithAuth(auth).catalogGET1({
-      registrationDate: new Date().toISOString(),
+      registrationDate: format(
+        new Date(vehicle.newRegistrationDate || ''),
+        'yyyy-MM-dd',
+      ),
+      vehicleGroup: vehicle.vehicleRegistrationCode || '',
+      firstRegDate: format(
+        new Date(vehicle.firstRegistrationDate || ''),
+        'yyyy-MM-dd',
+      ),
     })
 
     return response.item || []
@@ -42,55 +54,8 @@ export class EnergyFundsClientService {
   }
 
   async getCatalogValueForVehicle(auth: User, vehicle: VehicleMiniDto) {
-    const catalogCodes = await this.getCatalogItems(auth)
-
-    //TODO CHANGE YEAR
-    const cutOffDate = new Date(2022, 0, 1)
-
-    const importCode = vehicle.importCode || ''
-    const vehicleRegistrationCode = vehicle.vehicleRegistrationCode
-    const newRegistrationDate =
-      vehicle.newRegistrationDate && new Date(vehicle.newRegistrationDate)
-    const firstRegistrationDate =
-      vehicle.firstRegistrationDate && new Date(vehicle.firstRegistrationDate)
-
-    const oneYearAgo = new Date(
-      new Date().setFullYear(new Date().getFullYear() - 1),
-    )
-
-    if (vehicleRegistrationCode === 'M1') {
-      if (
-        importCodeList.NEWCAR.indexOf(importCode) !== -1 &&
-        newRegistrationDate &&
-        newRegistrationDate >= cutOffDate
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'M1NEW')
-      } else if (
-        importCodeList.USEDCAR.indexOf(importCode) !== -1 &&
-        firstRegistrationDate &&
-        firstRegistrationDate >= oneYearAgo &&
-        newRegistrationDate &&
-        newRegistrationDate >= cutOffDate
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'M1USE')
-      }
-    } else if (vehicleRegistrationCode === 'N1') {
-      if (
-        importCodeList.NEWCAR.indexOf(importCode) !== -1 &&
-        newRegistrationDate &&
-        newRegistrationDate >= cutOffDate
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'N1NEW')
-      } else if (
-        importCodeList.USEDCAR.indexOf(importCode) !== -1 &&
-        firstRegistrationDate &&
-        firstRegistrationDate >= oneYearAgo &&
-        newRegistrationDate &&
-        newRegistrationDate >= cutOffDate
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'N1USE')
-      }
-    }
+    const catalogCodes = await this.getCatalogItems(auth, vehicle)
+    return catalogCodes
   }
 
   async submitEnergyFundsApplication(

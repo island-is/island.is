@@ -7,7 +7,7 @@ import { RepeaterProps, FieldBaseProps } from '@island.is/application/types'
 
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
-import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
 
@@ -83,7 +83,7 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
             <T.Data width="50%">{formatMessage(e.label)}</T.Data>
             <T.Data>
               <InputController
-                id={`${id}.${e.value}`}
+                id={`${id}.${e.value.toLowerCase()}`}
                 placeholder="0%"
                 label={formatMessage(oldAgePensionFormMessage.employer.ratio)}
                 maxLength={4}

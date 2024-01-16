@@ -1,8 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  YesOrNo,
+} from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
-import { AttachmentLabel } from './constants'
+import { AttachmentLabel, AttachmentTypes } from './constants'
 import {
   FileType,
   Attachments,
@@ -10,11 +14,10 @@ import {
   BankInfo,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
-
-enum AttachmentTypes {
-  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
-}
+import {
+  BankAccountType,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
@@ -64,6 +67,21 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
+  const personalAllowance = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowance',
+  ) as YesOrNo
+
+  const personalAllowanceUsage = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowanceUsage',
+  ) as string
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
+
   return {
     applicantPhonenumber,
     selectedYear,
@@ -80,6 +98,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankAddress,
     currency,
     paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
   }
 }
 
@@ -95,6 +116,11 @@ export function getApplicationExternalData(
     externalData,
     'nationalRegistry.data.nationalId',
   ) as string
+
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
 
   const email = getValueViaPath(
     externalData,
@@ -119,6 +145,7 @@ export function getApplicationExternalData(
   return {
     applicantName,
     applicantNationalId,
+    hasSpouse,
     email,
     bankInfo,
     currencies,
@@ -169,13 +196,7 @@ export function getAttachments(application: Application) {
 
 // returns available years. Available period is
 // 3 months back in time and 6 months in the future.
-export function getAvailableYears(application: Application) {
-  const { applicantNationalId } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  if (!applicantNationalId) return []
-
+export function getAvailableYears() {
   const threeMonthsBackInTime = subMonths(new Date(), 3).getFullYear()
   const sixMonthsInTheFuture = addMonths(new Date(), 6).getFullYear()
 
@@ -188,4 +209,10 @@ export function getAvailableYears(application: Application) {
       }
     },
   )
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
 }

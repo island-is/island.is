@@ -10,10 +10,11 @@ import {
 import {
   Form,
   FormModes,
+  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
@@ -21,7 +22,7 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { getApplicationExternalData } from '../lib/householdSupplementUtils'
+import { isEligible } from '../lib/householdSupplementUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
@@ -69,19 +70,31 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationApplicantApi,
-              title:
-                householdSupplementFormMessage.pre
-                  .socialInsuranceAdministrationInformationTitle,
+              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
-                householdSupplementFormMessage.pre
+                socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
-              title: '',
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationInformationTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDataDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyDescription,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
               title: '',
             }),
           ],
@@ -89,10 +102,9 @@ export const PrerequisitesForm: Form = buildForm({
         buildMultiField({
           id: 'isNotEligible',
           title: householdSupplementFormMessage.pre.isNotEligibleLabel,
-          condition: (FormValue, externalData) => {
-            const { isEligible } = getApplicationExternalData(externalData)
+          condition: (_, externalData) => {
             // Show if applicant is not eligible
-            return !isEligible
+            return !isEligible(externalData)
           },
           children: [
             buildDescriptionField({
@@ -123,7 +135,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [],
     }),
     buildSection({

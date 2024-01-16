@@ -8,8 +8,8 @@ import {
   CaseAppealState,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useStringHelpers } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import useStringHelpers from '../../utils/hooks/useStringHelpers/useStringHelpers'
 import { UserContext } from '../UserProvider/UserProvider'
 
 interface Props {
@@ -63,6 +63,7 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
           ruling === CaseAppealRulingDecision.ACCEPTING
             ? 'mint'
             : ruling === CaseAppealRulingDecision.CHANGED ||
+              ruling === CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
               ruling === CaseAppealRulingDecision.REPEAL
             ? 'rose'
             : 'blueberry',

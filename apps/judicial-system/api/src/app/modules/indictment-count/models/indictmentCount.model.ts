@@ -12,14 +12,14 @@ export class IndictmentCount {
   @Field(() => ID)
   readonly id!: string
 
-  @Field()
-  readonly created!: string
+  @Field({ nullable: true })
+  readonly created?: string
 
-  @Field()
-  readonly modified!: string
+  @Field({ nullable: true })
+  readonly modified?: string
 
-  @Field()
-  readonly caseId!: string
+  @Field({ nullable: true })
+  readonly caseId?: string
 
   @Field({ nullable: true })
   readonly policeCaseNumber?: string

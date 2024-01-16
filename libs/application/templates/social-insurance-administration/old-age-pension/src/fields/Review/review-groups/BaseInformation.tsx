@@ -9,7 +9,7 @@ import {
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { formatNumber } from 'libphonenumber-js'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const BaseInformation = ({
   application,
@@ -22,8 +22,6 @@ export const BaseInformation = ({
     applicantNationalId,
     applicantAddress,
     applicantMunicipality,
-    spouseName,
-    spouseNationalId,
   } = getApplicationExternalData(application.externalData)
   const { applicantPhonenumber } = getApplicationAnswers(application.answers)
   const { formatMessage } = useLocale()
@@ -107,28 +105,6 @@ export const BaseInformation = ({
           />
         </GridColumn>
       </GridRow>
-
-      {spouseName && (
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={3}>
-            <DataValue
-              label={formatMessage(
-                oldAgePensionFormMessage.applicant.applicantInfoSpouseName,
-              )}
-              value={spouseName}
-            />
-          </GridColumn>
-
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={3}>
-            <DataValue
-              label={formatMessage(
-                socialInsuranceAdministrationMessage.confirm.nationalId,
-              )}
-              value={formatKennitala(spouseNationalId)}
-            />
-          </GridColumn>
-        </GridRow>
-      )}
     </ReviewGroup>
   )
 }

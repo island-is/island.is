@@ -9,13 +9,13 @@ export const m = defineMessages({
   },
   signatureListsTitle: {
     id: 'admin-portal.signature-collection:signatureLists',
-    defaultMessage: 'Yfirlit meðmælalista',
+    defaultMessage: 'Yfirlit meðmælasafnanna',
     description: '',
   },
   signatureListsIntro: {
     id: 'admin-portal.signature-collection:signatureListsIntro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur.',
+      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið.',
     description: '',
   },
   searchInAllListsPlaceholder: {
@@ -38,9 +38,54 @@ export const m = defineMessages({
     defaultMessage: 'Landsfjórðungur',
     description: '',
   },
-  clearFilters: {
-    id: 'admin-portal.signature-collection:clearFilters',
+  candidate: {
+    id: 'admin-portal.signature-collection:candidate',
+    defaultMessage: 'Frambjóðandi',
+    description: '',
+  },
+  clearFilter: {
+    id: 'admin-portal.signature-collection:clearFilter',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
+  clearAllFilters: {
+    id: 'admin-portal.signature-collection:clearAllFilters',
     defaultMessage: 'Hreinsa allar síur',
+    description: '',
+  },
+  createCollection: {
+    id: 'admin-portal.signature-collection:createCollection',
+    defaultMessage: 'Stofna söfnun',
+    description: '',
+  },
+  createCollectionSuccess: {
+    id: 'admin-portal.signature-collection:createCollectionSuccess',
+    defaultMessage: 'Tókst að stofna meðmælasöfnun',
+    description: '',
+  },
+  createCollectionError: {
+    id: 'admin-portal.signature-collection:createCollectionError',
+    defaultMessage: 'Tókst ekki að stofna meðmælasöfnun',
+    description: '',
+  },
+  createCollectionModalDescription: {
+    id: 'admin-portal.signature-collection:createCollectionModalDescription',
+    defaultMessage: 'Sláðu inn kennitölu frambjóðanda',
+    description: '',
+  },
+  candidateNationalId: {
+    id: 'admin-portal.signature-collection:candidateNationalId',
+    defaultMessage: 'Kennitala frambjóðanda',
+    description: '',
+  },
+  candidateNationalIdNotFound: {
+    id: 'admin-portal.signature-collection:candidateNationalIdNotFound',
+    defaultMessage: 'Kennitala finnst ekki',
+    description: '',
+  },
+  candidateName: {
+    id: 'admin-portal.signature-collection:candidateName',
+    defaultMessage: 'Nafn frambjóðanda',
     description: '',
   },
   listEndTime: {
@@ -75,8 +120,14 @@ export const m = defineMessages({
     defaultMessage: 'Meðmælalisti',
     description: '',
   },
+  singleListIntro: {
+    id: 'admin-portal.signature-collection:singleListIntro',
+    defaultMessage:
+      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
+    description: '',
+  },
   noSignees: {
-    id: 'admin-portal.signature-collection:noLists',
+    id: 'admin-portal.signature-collection:noSignees',
     defaultMessage: 'Engin meðmæli',
     description: '',
   },
@@ -125,19 +176,30 @@ export const m = defineMessages({
     defaultMessage: 'Heimilisfang',
     description: '',
   },
-  tempMessage: {
-    id: 'admin-portal.signature-collection:tempMessage',
-    defaultMessage: 'Lorem ipsum',
-    description: '',
-  },
   updateListEndTime: {
     id: 'admin-portal.signature-collection:updateListEndTime',
     defaultMessage: 'Framlengja lokadag',
     description: '',
   },
+  updateListEndTimeSuccess: {
+    id: 'admin-portal.signature-collection:updateListEndTimeSuccess',
+    defaultMessage: 'Tókst að framlengja lokadag',
+    description: '',
+  },
+  updateListEndTimeError: {
+    id: 'admin-portal.signature-collection:updateListEndTimeError',
+    defaultMessage: 'Ekki tókst að framlengja lokadag',
+    description: '',
+  },
   confirmListReviewed: {
     id: 'admin-portal.signature-collection:confirmListReviewed',
     defaultMessage: 'Úrvinnslu lokið',
+    description: '',
+  },
+  listReviewedModalDescription: {
+    id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
+    defaultMessage:
+      'Þegar búið er að fara yfir meðmælalistann skal ýta á hnappinn.',
     description: '',
   },
 
@@ -149,7 +211,8 @@ export const m = defineMessages({
   },
   uploadFileDescription: {
     id: 'admin-portal.signature-collection:uploadFileDescription#markdown',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    defaultMessage:
+      'Hlaðið upp skjali með meðmælum viðkomandi frambjóðanda í þessum landsfjórðungi. ',
     description: '',
   },
   uploadHeader: {
@@ -162,6 +225,11 @@ export const m = defineMessages({
     defaultMessage: 'Tekið er við skjölum með endingu: .xlsx, .xls',
     description: '',
   },
+  downloadTemplate: {
+    id: 'admin-portal.signature-collection:downloadTemplate',
+    defaultMessage: 'Sækja sniðmat',
+    description: '',
+  },
   uploadButton: {
     id: 'admin-portal.signature-collection:uploadButton',
     defaultMessage: 'Velja skjöl',
@@ -170,6 +238,12 @@ export const m = defineMessages({
   uploadResultsHeader: {
     id: 'admin-portal.signature-collection:uploadResultsHeader',
     defaultMessage: 'Niðurstöður',
+    description: '',
+  },
+  noUploadResults: {
+    id: 'admin-portal.signature-collection:noUploadResults',
+    defaultMessage:
+      'Engar niðurstöður komu upp úr skjalinu sem hlaðið var upp.',
     description: '',
   },
   totalListResults: {
@@ -195,9 +269,15 @@ export const m = defineMessages({
     description: '',
   },
   compareListsDescription: {
-    id: 'admin-portal.signature-collection:compareListsDescription#markdown',
+    id: 'admin-portal.signature-collection:compareListsDescription',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur.',
+      'Fulltrúar í yfirkjörstjórnum og frambjóðendur geta ekki mælt með framboði',
+    description: '',
+  },
+  compareListsModalDescription: {
+    id: 'admin-portal.signature-collection:compareListsModalDescription#markdown',
+    defaultMessage:
+      'Hlaðið upp skjali með nöfnum og kennitölum fulltrúa yfirkjörstjórna og frambjóðendum til að kanna hvort þau hafi skrifað undir meðmælalista.',
     description: '',
   },
   compareListsResultsHeader: {
@@ -211,9 +291,53 @@ export const m = defineMessages({
       'Eftirfarandi aðilar eru í yfirkjörstjórn eða landskjörstjórn og ættu ekki að vera skráðir á lista.',
     description: '',
   },
-  deleteFromList: {
-    id: 'admin-portal.signature-collection:deleteFromList',
+  compareListsNoResultsDescription: {
+    id: 'admin-portal.signature-collection:compareListsNoResultsDescription',
+    defaultMessage:
+      'Enginn fannst í yfirkjörstjórn eða landskjörstjórn sem er skráður á lista.',
+    description: '',
+  },
+  unsignFromList: {
+    id: 'admin-portal.signature-collection:unsignFromList',
     defaultMessage: 'Taka af lista',
+    description: '',
+  },
+  unsignFromListSuccess: {
+    id: 'admin-portal.signature-collection:unsignFromListSuccess',
+    defaultMessage: 'Tókst að taka aðila af lista',
+    description: '',
+  },
+})
+
+export const createCollectionErrorMessages = defineMessages({
+  age: {
+    id: 'admin-portal.signature-collection:error.age',
+    defaultMessage: '35 ára aldursmark er ekki náð.',
+    description: '',
+  },
+  citizenship: {
+    id: 'admin-portal.signature-collection:error.citizenship',
+    defaultMessage: 'Eftirfarandi aðili er ekki með íslenkst ríkisfang.',
+    description: '',
+  },
+  residency: {
+    id: 'admin-portal.signature-collection:residency',
+    defaultMessage: 'Eftirfarandi aðili er ekki með búsetu á Íslandi.',
+    description: '',
+  },
+  active: {
+    id: 'admin-portal.signature-collection:error.active',
+    defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
+    description: '',
+  },
+  owner: {
+    id: 'admin-portal.signature-collection:error.owner',
+    defaultMessage: 'Eftirfarandi aðili er þegar eigandi meðmæsöfnunar.',
+    description: '',
+  },
+  deniedByService: {
+    id: 'admin-portal.signature-collection:error.deniedByService',
+    defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
     description: '',
   },
 })

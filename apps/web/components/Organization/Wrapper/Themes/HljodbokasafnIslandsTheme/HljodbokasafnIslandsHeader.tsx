@@ -8,11 +8,12 @@ import * as styles from './HljodbokasafnIslandsHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const HljodbokasafnIslandsHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, logoAltText }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization?.namespace?.fields || '{}'),
@@ -25,6 +26,10 @@ const HljodbokasafnIslandsHeader: React.FC<
   return (
     <DefaultHeader
       title={organizationPage.title}
+      underTitle={n(
+        'hljodbokasafnIslandsHeaderUnderTitle',
+        'Fyrir blinda, sjónskerta og fólk með lestrarhömlun',
+      )}
       image={n(
         'hljodbokasafnIslandsHeaderImage',
         'https://images.ctfassets.net/8k0h54kbe6bj/3tzrR4b3oS4x84sAfGfOlk/7a69079d123471048e6ef9130d962313/mynd_HBS_1.png',
@@ -48,6 +53,7 @@ const HljodbokasafnIslandsHeader: React.FC<
       logo={organizationPage.organization?.logo?.url}
       logoHref={linkResolver('organizationpage', [organizationPage.slug]).href}
       className={styles.gridContainer}
+      logoAltText={logoAltText}
     />
   )
 }

@@ -209,6 +209,15 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'parentCase',
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+        separate: true,
+      },
+    ],
   },
   { model: Case, as: 'childCase' },
   { model: Defendant, as: 'defendants' },
@@ -218,6 +227,7 @@ export const include: Includeable[] = [
     as: 'caseFiles',
     required: false,
     where: { state: { [Op.not]: CaseFileState.DELETED } },
+    separate: true,
   },
   {
     model: EventLog,
@@ -226,6 +236,7 @@ export const include: Includeable[] = [
     where: {
       eventType: { [Op.in]: eventTypes },
     },
+    separate: true,
   },
 ]
 

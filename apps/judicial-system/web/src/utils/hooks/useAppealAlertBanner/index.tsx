@@ -48,7 +48,7 @@ const renderLinkButton = (text: string, href: string) => {
 
 export const getAppealDecision = (
   formatMessage: IntlShape['formatMessage'],
-  appealRulingDecision?: CaseAppealRulingDecision,
+  appealRulingDecision?: CaseAppealRulingDecision | null,
 ) => {
   switch (appealRulingDecision) {
     case CaseAppealRulingDecision.ACCEPTING:
@@ -56,6 +56,7 @@ export const getAppealDecision = (
     case CaseAppealRulingDecision.REPEAL:
       return formatMessage(appealRuling.decisionRepeal)
     case CaseAppealRulingDecision.CHANGED:
+    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
       return formatMessage(appealRuling.decisionChanged)
     case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
       return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)

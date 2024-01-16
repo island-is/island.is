@@ -1,14 +1,18 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { NO, YES } from '@island.is/application/types'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -45,6 +49,13 @@ export const dataSchema = z.object({
       currency: z.string(),
       iban: z.string(),
       swift: z.string(),
+      personalAllowance: z.enum([YES, NO]),
+      personalAllowanceUsage: z.string().optional(),
+      taxLevel: z.enum([
+        TaxLevelOptions.INCOME,
+        TaxLevelOptions.FIRST_LEVEL,
+        TaxLevelOptions.SECOND_LEVEL,
+      ]),
     })
     .partial()
     .refine(
@@ -91,6 +102,24 @@ export const dataSchema = z.object({
       ({ currency, bankAccountType }) =>
         bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
       { path: ['currency'] },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES
+          ? !(
+              Number(personalAllowanceUsage) < 1 ||
+              Number(personalAllowanceUsage) > 100
+            )
+          : true,
+      {
+        path: ['personalAllowanceUsage'],
+        params: errorMessages.personalAllowance,
+      },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES ? !!personalAllowanceUsage : true,
+      { path: ['personalAllowanceUsage'] },
     ),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z

@@ -43,12 +43,12 @@ export const externalData = {
   userProfile: defineMessages({
     title: {
       id: 'ef.application:externalData.userProfile.title',
-      defaultMessage: 'Upplýsingar um bankareikning úr þínum stillingum',
+      defaultMessage: 'Upplýsingar frá mínum sínum Ísland.is',
       description: 'User profile title',
     },
     subTitle: {
       id: 'ef.application:externalData.userProfile.subTitle',
-      defaultMessage: '',
+      defaultMessage: 'Upplýsingar um bankareikning úr þínum stillingum',
       description: 'User profile sub title',
     },
   }),

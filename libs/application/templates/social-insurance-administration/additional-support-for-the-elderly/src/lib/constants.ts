@@ -1,4 +1,4 @@
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
 export const AttachmentLabel: {
@@ -6,4 +6,8 @@ export const AttachmentLabel: {
 } = {
   additionalDocuments:
     socialInsuranceAdministrationMessage.confirm.additionalDocumentsAttachment,
+}
+
+export enum AttachmentTypes {
+  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
 }

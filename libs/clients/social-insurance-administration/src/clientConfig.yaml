@@ -193,6 +193,8 @@ components:
           $ref: '#/components/schemas/TaxInfo'
         applicantInfo:
           $ref: '#/components/schemas/ApplicantInfo'
+        reasons:
+          $ref: '#/components/schemas/Reasons'
         hasAbroadResidence:
           type: boolean
         hasOneTimePayment:
@@ -203,6 +205,10 @@ components:
           type: boolean
         hasAStudyingAdolescenceResident:
           type: boolean
+        employement:
+          type: string
+        employers:
+          $ref: '#/components/schemas/Employers'
         uploads:
           $ref: '#/components/schemas/Uploads'
     Period:
@@ -229,6 +235,53 @@ components:
           type: string
         phonenumber:
           type: string
+    Employers:
+      type: array
+      items:
+        $ref: '#/components/schemas/EmployersInfo'
+    EmployersInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - ratio
+      properties:
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        ratio:
+          type: number
+        ratioMonthly:
+          $ref: '#/components/schemas/Months'
+    Months:
+      type: object
+      additionalProperties: false
+      properties:
+        january:
+          type: number
+        february:
+          type: number
+        march:
+          type: number
+        april:
+          type: number
+        may:
+          type: number
+        june:
+          type: number
+        july:
+          type: number
+        august:
+          type: number
+        september:
+          type: number
+        october:
+          type: number
+        november:
+          type: number
+        december:
+          type: number
     Uploads:
       type: array
       items:
@@ -253,6 +306,12 @@ components:
             - selfEmployed
             - rentalAgreement
             - schoolConfirmation
+            - assistedCareAtHome
+            - purchaseOfHearingAids
+            - assistedLiving
+            - halfwayHouse
+            - houseRentAgreement
+            - houseRentAllowance
         file:
           type: string
     Response:
@@ -320,6 +379,8 @@ components:
       properties:
         isEligible:
           type: boolean
+        reason:
+          type: string
     DomesticBankInfo:
       type: object
       additionalProperties: false
@@ -370,6 +431,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Attachment'
+    Reasons:
+      type: array
+      items:
+        type: string
     ErrorResult:
       type: object
       properties:
@@ -379,6 +444,5 @@ components:
           type: number
         detail:
           type: string
-
 security:
   - bearerAuth: []

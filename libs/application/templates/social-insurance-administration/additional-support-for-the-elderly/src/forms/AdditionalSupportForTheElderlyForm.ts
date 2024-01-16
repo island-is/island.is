@@ -18,6 +18,7 @@ import {
   Form,
   FormModes,
   FormValue,
+  YES,
 } from '@island.is/application/types'
 import {
   friendlyFormatIBAN,
@@ -25,15 +26,18 @@ import {
   getBankIsk,
   typeOfBankInfo,
   getCurrencies,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+  getYesNoOptions,
+  getTaxOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   BankAccountType,
-  FILE_SIZE_LIMIT,
+  fileUploadSharedProps,
   MONTHS,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   getApplicationExternalData,
   getAvailableYears,
@@ -298,6 +302,57 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
+                buildRadioField({
+                  id: 'paymentInfo.personalAllowance',
+                  title:
+                    socialInsuranceAdministrationMessage.payment
+                      .personalAllowance,
+                  options: getYesNoOptions(),
+                  width: 'half',
+                  largeButtons: true,
+                  required: true,
+                  space: 'containerGutter',
+                }),
+                buildTextField({
+                  id: 'paymentInfo.personalAllowanceUsage',
+                  title:
+                    socialInsuranceAdministrationMessage.payment
+                      .personalAllowancePercentage,
+                  suffix: '%',
+                  condition: (answers) => {
+                    const { personalAllowance } = getApplicationAnswers(answers)
+                    return personalAllowance === YES
+                  },
+                  placeholder: '1%',
+                  defaultValue: '100',
+                  variant: 'number',
+                  width: 'half',
+                  maxLength: 4,
+                }),
+                buildAlertMessageField({
+                  id: 'payment.spouseAllowance.alert',
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
+                  message:
+                    socialInsuranceAdministrationMessage.payment
+                      .alertSpouseAllowance,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  condition: (_, externalData) => {
+                    const { hasSpouse } =
+                      getApplicationExternalData(externalData)
+                    if (hasSpouse) return true
+                    return false
+                  },
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.taxLevel',
+                  title: socialInsuranceAdministrationMessage.payment.taxLevel,
+                  options: getTaxOptions(),
+                  width: 'full',
+                  largeButtons: true,
+                  space: 'containerGutter',
+                  defaultValue: TaxLevelOptions.INCOME,
+                }),
               ],
             }),
           ],
@@ -306,7 +361,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [
         buildMultiField({
           id: 'periodField',
@@ -320,9 +375,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.yearDefaultText,
-              options: (application: Application) => {
-                return getAvailableYears(application)
-              },
+              options: getAvailableYears(),
             }),
             buildSelectField({
               id: 'period.month',
@@ -356,21 +409,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               introduction:
                 additionalSupportForTheElderyFormMessage.fileUpload
                   .additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),

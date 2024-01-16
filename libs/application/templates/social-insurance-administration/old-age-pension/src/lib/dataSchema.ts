@@ -1,15 +1,17 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, TaxLevelOptions, Employment } from './constants'
+import { ApplicationType, Employment } from './constants'
 import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { NO, YES } from '@island.is/application/types'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { validatorErrorMessages } from './messages'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  BankAccountType,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -53,6 +55,14 @@ export const dataSchema = z.object({
   }),
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
+  }),
+  fileUpload: z.object({
+    fishermen: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requireAttachment,
+      }),
   }),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
@@ -154,7 +164,7 @@ export const dataSchema = z.object({
           : true,
       {
         path: ['personalAllowanceUsage'],
-        params: validatorErrorMessages.personalAllowance,
+        params: errorMessages.personalAllowance,
       },
     )
     .refine(

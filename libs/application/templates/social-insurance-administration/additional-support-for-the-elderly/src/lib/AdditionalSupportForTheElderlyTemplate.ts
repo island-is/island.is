@@ -26,13 +26,15 @@ import {
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import {
   Actions,
   Events,
   Roles,
   States,
-} from '@island.is/application/templates/social-insurance-administration-core/constants'
+  BankAccountType,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   additionalSupportForTheElderyFormMessage,
   statesMessages,
@@ -40,9 +42,13 @@ import {
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
-} from '@island.is/application/templates/social-insurance-administration-core/messages'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { dataSchema } from './dataSchema'
-import { getApplicationAnswers } from './additionalSupportForTheElderlyUtils'
+import {
+  getApplicationAnswers,
+  isEligible,
+} from './additionalSupportForTheElderlyUtils'
+import { Features } from '@island.is/feature-flags'
 
 const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -52,11 +58,10 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   type: ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY,
   name: additionalSupportForTheElderyFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,
-    'sia.application',
-  ],
   dataSchema,
+  featureFlag: Features.additionalSupportForTheElderlyApplication,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -85,17 +90,27 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
             },
           ],
         },
         on: {
-          SUBMIT: States.DRAFT,
+          SUBMIT: [
+            {
+              target: States.DRAFT,
+              cond: (application) =>
+                isEligible(application?.application?.externalData),
+            },
+            {
+              actions: 'setApproveExternalData',
+            },
+          ],
         },
       },
       [States.DRAFT]: {
-        exit: ['clearTemp', 'restoreAnswersFromTemp'],
+        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -443,6 +458,24 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
 
         return context
       }),
+      clearBankAccountInfo: assign((context) => {
+        const { application } = context
+        const { bankAccountType } = getApplicationAnswers(application.answers)
+
+        if (bankAccountType === BankAccountType.ICELANDIC) {
+          unset(application.answers, 'paymentInfo.iban')
+          unset(application.answers, 'paymentInfo.swift')
+          unset(application.answers, 'paymentInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.currency')
+        }
+
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          unset(application.answers, 'paymentInfo.bank')
+        }
+
+        return context
+      }),
     },
   },
   mapUserToRole(
@@ -460,7 +493,6 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
 
     return undefined
   },
-  //answerValidators,
 }
 
 export default AdditionalSupportForTheElderlyTemplate

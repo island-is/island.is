@@ -99,10 +99,18 @@ import { EnergyFundsService } from './energy-funds/energy-funds.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
+import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
+import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
+import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
+import { ChangeMachineSupervisorTemplateService } from './aosh/change-machine-supervisor/change-machine-supervisor.service'
+import { SignatureListCreationModule } from './signature-collection/signature-list-creation/signature-list-creation.module'
+import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
+import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
+import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -158,6 +166,10 @@ export const modules = [
   CitizenshipModule,
   EnergyFundsModule,
   HealthcareLicenseCertificateModule,
+  SignatureListCreationModule,
+  SignatureListSigningModule,
+  TransferOfMachineOwnershipTemplateModule,
+  ChangeMachineSupervisorTemplateModule,
 ]
 
 export const services = [
@@ -214,4 +226,8 @@ export const services = [
   CitizenshipService,
   EnergyFundsService,
   HealthcareLicenseCertificateService,
+  SignatureListCreationService,
+  SignatureListSigningService,
+  TransferOfMachineOwnershipTemplateService,
+  ChangeMachineSupervisorTemplateService,
 ]

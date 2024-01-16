@@ -1,6 +1,5 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
-import { useLoaderData, useRevalidator } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
@@ -8,18 +7,13 @@ import { m } from '../../lib/messages'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import header from '../../../assets/headerImage.svg'
 import Signees from './components/signees'
-import ActionExtendDeadline from './components/actionExtendDeadline'
-import ActionReviewComplete from './components/actionReviewComplete'
+import ActionExtendDeadline from './components/extendDeadline'
+import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
 
 export const List = () => {
   const { list } = useLoaderData() as { list: SignatureCollectionList }
-  const { revalidate } = useRevalidator()
   const { formatMessage } = useLocale()
-
-  useEffect(() => {
-    revalidate()
-  }, [])
 
   return (
     <GridContainer>
@@ -41,15 +35,15 @@ export const List = () => {
           {!!list && (
             <>
               <IntroHeader
-                title={list.owner.name + ' - ' + list.area.name}
-                intro={formatMessage(m.signatureListsIntro)}
+                title={list.title}
+                intro={formatMessage(m.singleListIntro)}
                 img={header}
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              <ActionExtendDeadline endTime={list.endTime} />
+              <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
               <Signees />
-              <PaperUpload />
+              <PaperUpload listId={list.id} />
               <ActionReviewComplete />
             </>
           )}

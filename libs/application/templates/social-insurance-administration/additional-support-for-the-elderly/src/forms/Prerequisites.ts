@@ -14,13 +14,14 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
-import { getApplicationExternalData } from '../lib/additionalSupportForTheElderlyUtils'
+import { isEligible } from '../lib/additionalSupportForTheElderlyUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyPrerequisites',
@@ -65,15 +66,35 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationApplicantApi,
-              title:
-                additionalSupportForTheElderyFormMessage.pre
-                  .socialInsuranceAdministrationInformationTitle,
+              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
-                additionalSupportForTheElderyFormMessage.pre
+                socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationDescription,
             }),
             buildDataProviderItem({
+              id: 'sia.data',
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationInformationTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDataDescription,
+            }),
+            buildDataProviderItem({
+              id: 'sia.privacy',
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyDescription,
+            }),
+            buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
               title: '',
             }),
           ],
@@ -82,10 +103,9 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'isNotEligible',
           title:
             additionalSupportForTheElderyFormMessage.pre.isNotEligibleLabel,
-          condition: (FormValue, externalData) => {
-            const { isEligible } = getApplicationExternalData(externalData)
+          condition: (_, externalData) => {
             // Show if applicant is not eligible
-            return !isEligible
+            return !isEligible(externalData)
           },
           children: [
             buildDescriptionField({
@@ -112,7 +132,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [],
     }),
     buildSection({

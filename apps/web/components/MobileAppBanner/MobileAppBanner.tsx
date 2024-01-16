@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 
-import { Box, Text, Button, Logo, Icon, Link } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Link,
+  Logo,
+  Text,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 
 import * as style from './MobileAppBanner.css'
 
@@ -21,6 +30,7 @@ export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
   const COOKIE_NAME = 'island-mobile-app-banner'
 
   const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
 
   const appleLink = n('mobileAppLinkApple')
   const androidLink = n('mobileAppLinkAndroid')
@@ -62,6 +72,9 @@ export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
           setHidden(true)
         }}
       >
+        <VisuallyHidden>
+          {activeLocale === 'is' ? 'Loka' : 'Close'}
+        </VisuallyHidden>
         <Icon icon="close" color="white" type="outline" />
       </button>
       <Box
