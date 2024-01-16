@@ -28,6 +28,28 @@ export interface ApplicantInfo {
   phonenumber: string
 }
 
+export interface Employer {
+  email: string
+  phoneNumber?: string
+  ratio: number
+  ratioMonthly?: Months
+}
+
+export interface Months {
+  january?: number
+  february?: number
+  march?: number
+  april?: number
+  may?: number
+  june?: number
+  july?: number
+  august?: number
+  septembe?: number
+  october?: number
+  november?: number
+  december?: number
+}
+
 export interface ApplicationDTO {
   period?: Period
   comment?: string
@@ -43,6 +65,8 @@ export interface ApplicationDTO {
   isRental?: boolean
   hasAStudyingAdolescenceResident?: boolean
   uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
+  employment?: string
+  employers?: Array<Employer>
 }
 
 export enum DocumentTypeEnum {

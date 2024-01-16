@@ -3,6 +3,7 @@ import parse from 'date-fns/parse'
 import {
   ApplicationDTO,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
+  Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import {
   ApplicationType,
@@ -314,8 +315,8 @@ export const getApplicationType = (application: Application): string => {
   return ApplicationType.OLD_AGE_PENSION
 }
 
-export const getEmployers = (employers: Employer[]): EmployersInfo[] => {
-  const employersInfo: EmployersInfo[] = []
+export const getEmployers = (employers: Employer[]): Array<TrWebEmployer> => {
+  const employersInfo: TrWebEmployer[] = []
 
   for (const employer of employers) {
     const employerInfo = {
