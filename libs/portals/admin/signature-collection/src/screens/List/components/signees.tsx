@@ -17,7 +17,7 @@ import { m } from '../../../lib/messages'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 import { pageSize } from '../../../lib/utils'
 
-const Signees = () => {
+const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const { formatMessage } = useLocale()
 
   const { allSignees } = useLoaderData() as { allSignees: Signature[] }
@@ -74,7 +74,8 @@ const Signees = () => {
                 )
               : signees.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">
-                    {formatMessage(m.totalListResults)}: {signees.length}
+                    {/* using numberOfSignatures coming from list info for true total number of signees */}
+                    {formatMessage(m.totalListResults)}: {numberOfSignatures}
                   </Text>
                 )}
           </Box>
