@@ -10,7 +10,7 @@ import CaseDates, { Props } from './CaseDates'
 const renderCaseDates = (theCase: Case, button?: Props['button']) =>
   render(
     <IntlProvider locale="is" onError={jest.fn}>
-      <CaseDates workingCase={theCase} button={button} />{' '}
+      <CaseDates workingCase={theCase} button={button} />
     </IntlProvider>,
   )
 
@@ -24,7 +24,7 @@ describe('<CaseDates /> expired', () => {
 
     renderCaseDates(theCase)
     expect(
-      screen.getByText('Gæslu lauk út 15. júní 2022 kl. 19:50'),
+      screen.getByText('Gæslu lauk 15. júní 2022 kl. 19:50'),
     ).toBeInTheDocument()
   })
 
@@ -37,7 +37,7 @@ describe('<CaseDates /> expired', () => {
 
     renderCaseDates(theCase)
     expect(
-      screen.getByText('Vistun lauk út 15. júní 2022 kl. 19:50'),
+      screen.getByText('Vistun lauk 15. júní 2022 kl. 19:50'),
     ).toBeInTheDocument()
   })
 
@@ -50,7 +50,7 @@ describe('<CaseDates /> expired', () => {
 
     renderCaseDates(theCase)
     expect(
-      screen.getByText('Farbann lauk út 15. júní 2022 kl. 19:50'),
+      screen.getByText('Farbann lauk 15. júní 2022 kl. 19:50'),
     ).toBeInTheDocument()
   })
 })
