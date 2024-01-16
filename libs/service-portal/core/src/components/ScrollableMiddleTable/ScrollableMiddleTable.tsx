@@ -43,7 +43,7 @@ export const ScrollableMiddleTable = ({
 
   const breakpointWidth = getBreakpointWidth(width)
 
-  const tableRef = useRef<HTMLDivElement>(null)
+  const tableRef = useRef<HTMLElement>(null)
 
   const handleScroll = (type: 'backward' | 'forward') => {
     if (tableRef?.current) {
