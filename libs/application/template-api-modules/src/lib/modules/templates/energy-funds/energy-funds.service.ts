@@ -40,7 +40,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.fuelCode && parseInt(x.fuelCode) === 3,
     )
 
-    let onlyElectricVehiclesWithGrant
+    let onlyElectricVehiclesWithGrant = onlyElectricVehicles
 
     if (onlyElectricVehicles.length < 6) {
       const withGrant = await Promise.all(
@@ -60,8 +60,6 @@ export class EnergyFundsService extends BaseTemplateApiService {
       onlyElectricVehiclesWithGrant = withGrant.filter(
         (x) => x.vehicleGrant !== undefined,
       )
-    } else {
-      onlyElectricVehiclesWithGrant = onlyElectricVehicles
     }
 
     // Validate that user has at least 1 vehicle that fulfills requirements
@@ -175,9 +173,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
       subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
-    console.log('answers', answers)
-    // await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
-    //   subsidyInput: answers,
-    // })
+    await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
+      subsidyInput: answers,
+    })
   }
 }
