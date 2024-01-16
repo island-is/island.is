@@ -51,7 +51,7 @@ jobs:
       - name: Install codeowners-validator
         if: env.CHECK == 'true' || steps.cache-validator.outputs.cache-hit != 'true'
         run: |
-          curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b /opt/ v0.7.4
+          curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b "$HOME" v0.7.4
           echo "CODEOWNERS_VALIDATOR=$HOME/codeowners-validator" >> $GITHUB_ENV
       - name: Validate CODEOWNERS
         if: env.CHECK == 'true'
@@ -62,4 +62,4 @@ jobs:
           CHECKS: 'files,owners,duppatterns'
           OWNER_CHECKER_REPOSITORY: 'island-is/island.is'
         run: |
-          /opt/codeowners-validator
+          ~/codeowners-validator
