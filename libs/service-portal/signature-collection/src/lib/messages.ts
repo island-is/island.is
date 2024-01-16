@@ -7,13 +7,13 @@ export const m = defineMessages({
     description: '',
   },
   pageDescription: {
-    id: 'sp.signatureCollection:description#markdown',
+    id: 'sp.signatureCollection:description',
     defaultMessage:
       'Upplýsingar um það hvernig umboð er veitt - hvernig aðgangsstýringarnar virka. Linkur á aðgangsstýringu.',
     description: '',
   },
   pageDescriptionSignee: {
-    id: 'sp.signatureCollection:pageDescriptionSignee#markdown',
+    id: 'sp.signatureCollection:pageDescriptionSignee',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
     description: '',
@@ -182,49 +182,6 @@ export const m = defineMessages({
   signeeAddress: {
     id: 'sp.signatureCollection:signeeAddress',
     defaultMessage: 'Heimilisfang',
-    description: '',
-  },
-
-  /* File Upload */
-  uploadFile: {
-    id: 'sp.signatureCollection:uploadFile',
-    defaultMessage: 'Skila einning meðmælum á blaði',
-    description: '',
-  },
-  uploadFileDescription: {
-    id: 'sp.signatureCollection:uploadFileDescription#markdown',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non felis augue. Integer erat sapien, auctor ac porttitor ut, lacinia quis erat. Vivamus quis sollicitudin turpis. Aliquam erat volutpat. Donec ut ante malesuada, varius erat ut, scelerisque sapien. Sed in eros at purus sollicitudin feugiat non non arcu. Nullam at sapien eu nisi tempor pulvinar ut sed nibh. Sed ex libero, vestibulum vitae eros sit amet, sagittis cursus lacus.',
-    description: '',
-  },
-  uploadHeader: {
-    id: 'sp.signatureCollection:uploadHeader',
-    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
-    description: '',
-  },
-  uploadText: {
-    id: 'sp.signatureCollection:uploadText',
-    defaultMessage: 'Tekið er við skjölum með endingu: .xlsx, .xls',
-    description: '',
-  },
-  uploadButton: {
-    id: 'sp.signatureCollection:uploadButton',
-    defaultMessage: 'Velja skjöl',
-    description: '',
-  },
-  uploadResultsHeader: {
-    id: 'sp.signatureCollection:uploadResultsHeader',
-    defaultMessage: 'Niðurstöður',
-    description: '',
-  },
-  nationalIdsSuccess: {
-    id: 'sp.signatureCollection:nationalIdsSuccess',
-    defaultMessage: 'Kennitölur sem tókst að hlaða upp',
-    description: '',
-  },
-  nationalIdsError: {
-    id: 'sp.signatureCollection:nationalIdsError',
-    defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
     description: '',
   },
 })
