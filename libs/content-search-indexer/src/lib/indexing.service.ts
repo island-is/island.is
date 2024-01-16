@@ -88,7 +88,7 @@ export class IndexingService {
           // Wait for some time to make sure data is properly indexed
           setTimeout(() => {
             this.cacheInvalidationService.invalidateCache(
-              elasticData.add, // TODO: perhaps also invalidate pages that got deleted
+              elasticData.add,
               options.locale,
             )
           }, 2000)
