@@ -16,7 +16,6 @@ import {
 import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { YES } from '@island.is/application/types'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/messages'
 
 export const PaymentInformation = ({
   application,
