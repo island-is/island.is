@@ -40,10 +40,10 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.fuelCode && parseInt(x.fuelCode) === 3,
     )
 
-    let onlyElectricVehiclesWithGrant = onlyElectricVehicles
+    let onlyElectricVehiclesWithGrant
 
     if (onlyElectricVehicles.length < 6) {
-      onlyElectricVehicles = await Promise.all(
+      const withGrant = await Promise.all(
         onlyElectricVehicles.map(async (vehicle: VehicleMiniDto) => {
           const vehicleGrant =
             await this.energyFundsClientService.getCatalogValueForVehicle(
@@ -57,9 +57,11 @@ export class EnergyFundsService extends BaseTemplateApiService {
           }
         }),
       )
-      onlyElectricVehiclesWithGrant = onlyElectricVehicles.filter(
+      onlyElectricVehiclesWithGrant = withGrant.filter(
         (x) => x.vehicleGrant !== undefined,
       )
+    } else {
+      onlyElectricVehiclesWithGrant = onlyElectricVehicles
     }
 
     // Validate that user has at least 1 vehicle that fulfills requirements
@@ -173,8 +175,9 @@ export class EnergyFundsService extends BaseTemplateApiService {
       subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
-    await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
-      subsidyInput: answers,
-    })
+    console.log('answers', answers)
+    // await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
+    //   subsidyInput: answers,
+    // })
   }
 }
