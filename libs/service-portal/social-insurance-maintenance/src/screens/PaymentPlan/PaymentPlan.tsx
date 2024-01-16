@@ -23,7 +23,7 @@ import {
 } from '@island.is/island-ui/core'
 import { UserInfoLine, m as coreMessages } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import addYears from 'date-fns/addYears'
 import { PaymentGroupTableRow } from '../../components'
 import { PaymentPlanWrapper } from './wrapper/wrapper/PaymentPlanWrapper'
@@ -172,7 +172,7 @@ const PaymentPlan = () => {
       <Text marginTop={[2, 2, 6]} marginBottom={2} variant="h5">
         {formatMessage(coreMessages.period)}
       </Text>
-      <Box marginBottom={3}>
+      <Box printHidden marginBottom={3}>
         <GridContainer>
           <GridRow alignItems="flexEnd">
             <GridColumn span={'3/8'}>
@@ -194,7 +194,10 @@ const PaymentPlan = () => {
                 size="small"
                 variant="utility"
                 icon="print"
-                onClick={() => console.log('clicked print')}
+                onClick={(e) => {
+                  e.preventDefault()
+                  window.print()
+                }}
               >
                 {formatMessage(coreMessages.print)}
               </Button>
@@ -217,7 +220,7 @@ const PaymentPlan = () => {
       <Table.Table>
         <ExpandHeader
           data={[
-            { value: '' },
+            { value: '', printHidden: true },
             { value: formatMessage(m.paymentTypes) },
             { value: formatMessage(m.yearCumulativeTotal), align: 'right' },
           ]}
