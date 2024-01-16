@@ -43,7 +43,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
     let onlyElectricVehiclesWithGrant = onlyElectricVehicles
 
     if (onlyElectricVehicles.length < 6) {
-      const withGrant = await Promise.all(
+      onlyElectricVehicles = await Promise.all(
         onlyElectricVehicles.map(async (vehicle: VehicleMiniDto) => {
           const vehicleGrant =
             await this.energyFundsClientService.getCatalogValueForVehicle(
@@ -57,7 +57,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
           }
         }),
       )
-      onlyElectricVehiclesWithGrant = withGrant.filter(
+      onlyElectricVehiclesWithGrant = onlyElectricVehicles.filter(
         (x) => x.vehicleGrant !== undefined,
       )
     }
