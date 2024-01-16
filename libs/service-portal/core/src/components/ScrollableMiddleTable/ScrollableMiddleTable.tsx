@@ -144,7 +144,6 @@ export const ScrollableMiddleTable = ({
                   position: 'sticky',
                   right: 0,
                   backgroundColor: theme.color.white,
-                  fontWeight: 'bolder',
                 }}
               >
                 <Text variant="small" fontWeight="medium">
