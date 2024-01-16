@@ -2,7 +2,8 @@ import { Box, Button, Table as T, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useRef } from 'react'
 import { useWindowSize } from 'react-use'
-
+import cn from 'classnames'
+import * as styles from './ScrollableMiddleTable.css'
 export interface Columns {
   first: string
   scrollableMiddle: Array<string>
@@ -57,6 +58,9 @@ export const ScrollableMiddleTable = ({
   const tableRef = useRef<HTMLElement>(null)
 
   const handleScroll = (type: 'backward' | 'forward') => {
+    console.log(tableRef.current)
+    console.log(tableRef.current?.scrollWidth)
+    console.log(tableRef.current?.scrollLeft)
     if (tableRef?.current) {
       if (type === 'backward') {
         tableRef.current.scrollLeft -= LAST_COLUMN_WIDTH / 2
@@ -109,24 +113,21 @@ export const ScrollableMiddleTable = ({
         />
       </Box>
       <T.Table
+        box={{
+          className: styles.table,
+        }}
         style={{
           tableLayout: nested ? 'fixed' : 'auto',
           width: nested ? breakpointWidth : 'initial',
-          textOverflow: 'ellipsis',
         }}
       >
         <T.Head>
           <T.Row>
             <T.HeadData
-              style={{
-                position: options?.firstColumn.sticky ? 'sticky' : 'initial',
-                left: options?.firstColumn.sticky ? 0 : 'auto',
-                backgroundColor: theme.color.blue100,
-                width: options?.firstColumn.width ?? `${FIRST_COLUMN_WIDTH}px`,
-                borderRight: `1px solid ${theme.border.color.blue200}`,
-                boxShadow: options?.firstColumn.shadow
-                  ? `4px 0px 8px -2px ${theme.border.color.blue200}`
-                  : 'initial',
+              box={{
+                className: cn(styles.firstColumn, styles.row, {
+                  [styles.sticky]: options?.firstColumn.sticky,
+                }),
               }}
             >
               <Text variant="small" fontWeight="medium">
@@ -141,15 +142,10 @@ export const ScrollableMiddleTable = ({
               </T.HeadData>
             ))}
             <T.HeadData
-              style={{
-                position: options?.lastColumn.sticky ? 'sticky' : 'initial',
-                right: options?.lastColumn.sticky ? 0 : 'auto',
-                backgroundColor: theme.color.blue100,
-                width: options?.lastColumn.width ?? `${LAST_COLUMN_WIDTH}px`,
-                borderLeft: `1px solid ${theme.border.color.blue200}`,
-                boxShadow: options?.lastColumn.shadow
-                  ? `-4px 0px 8px -2px ${theme.border.color.blue200}`
-                  : 'initial',
+              box={{
+                className: cn(styles.lastColumn, styles.row, {
+                  [styles.sticky]: options?.firstColumn.sticky,
+                }),
               }}
             >
               <Text textAlign="right" variant="small" fontWeight="medium">
@@ -162,44 +158,27 @@ export const ScrollableMiddleTable = ({
           {rows?.map((r, rowIdx) => (
             <T.Row key={`nested-table-row-${rowIdx}`}>
               <T.Data
-                style={{
-                  position: options?.firstColumn.sticky ? 'sticky' : 'initial',
-                  left: options?.firstColumn.sticky ? 0 : 'auto',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  borderRight: `1px solid ${theme.border.color.blue200} `,
-                  boxShadow: options?.firstColumn.shadow
-                    ? `4px 0px 8px -2px ${theme.border.color.blue200}`
-                    : 'initial',
-                  backgroundColor:
-                    rowIdx % 2 === 0 ? theme.color.white : theme.color.blue100,
+                box={{
+                  className: cn(styles.firstColumn, styles.row, {
+                    [styles.sticky]: options?.firstColumn.sticky,
+                  }),
                 }}
               >
                 <Text variant="small">{r.first}</Text>
               </T.Data>
               {r.scrollableMiddle.map((val, idx) => (
                 <T.Data
-                  style={{
-                    backgroundColor:
-                      rowIdx % 2 === 0
-                        ? theme.color.white
-                        : theme.color.blue100,
-                  }}
+                  box={{ className: styles.row }}
                   key={`nested-table-row-${rowIdx}-cell-${idx}`}
                 >
                   {val}
                 </T.Data>
               ))}
               <T.Data
-                style={{
-                  position: options?.lastColumn.sticky ? 'sticky' : 'initial',
-                  right: options?.lastColumn.sticky ? 0 : 'auto',
-                  borderLeft: `1px solid ${theme.border.color.blue200}`,
-                  boxShadow: options?.lastColumn.shadow
-                    ? `-4px 0px 8px -2px ${theme.border.color.blue200}`
-                    : 'initial',
-                  backgroundColor:
-                    rowIdx % 2 === 0 ? theme.color.white : theme.color.blue100,
+                box={{
+                  className: cn(styles.lastColumn, styles.row, {
+                    [styles.sticky]: options?.lastColumn.sticky,
+                  }),
                 }}
               >
                 {r.last}
@@ -209,14 +188,10 @@ export const ScrollableMiddleTable = ({
           {footer && (
             <T.Row>
               <T.Data
-                style={{
-                  position: options?.firstColumn.sticky ? 'sticky' : 'initial',
-                  left: options?.firstColumn.sticky ? 0 : 'auto',
-                  backgroundColor: theme.color.white,
-                  borderRight: `1px solid ${theme.border.color.blue200}`,
-                  boxShadow: options?.firstColumn.shadow
-                    ? `4px 0px 8px -2px ${theme.border.color.blue200}`
-                    : 'initial',
+                box={{
+                  className: cn(styles.firstColumn, styles.row, {
+                    [styles.sticky]: options?.firstColumn.sticky,
+                  }),
                 }}
               >
                 <Text variant="small" fontWeight="medium">
@@ -231,14 +206,10 @@ export const ScrollableMiddleTable = ({
                 </T.Data>
               ))}
               <T.Data
-                style={{
-                  position: options?.lastColumn.sticky ? 'sticky' : 'initial',
-                  right: options?.lastColumn.sticky ? 0 : 'auto',
-                  backgroundColor: theme.color.white,
-                  borderLeft: `1px solid ${theme.border.color.blue200}`,
-                  boxShadow: options?.lastColumn.shadow
-                    ? `-4px 0px 8px -2px ${theme.border.color.blue200}`
-                    : 'initial',
+                box={{
+                  className: cn(styles.lastColumn, styles.row, {
+                    [styles.sticky]: options?.lastColumn.sticky,
+                  }),
                 }}
               >
                 <Text variant="small" fontWeight="medium">
