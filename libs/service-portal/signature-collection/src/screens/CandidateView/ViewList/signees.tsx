@@ -36,7 +36,8 @@ const Signees = () => {
     filteredSignees = filteredSignees.filter((s) => {
       return (
         s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        formatNationalId(s.signee.nationalId).includes(searchTerm)
+        formatNationalId(s.signee.nationalId).includes(searchTerm) ||
+        s.signee.nationalId.includes(searchTerm)
       )
     })
 

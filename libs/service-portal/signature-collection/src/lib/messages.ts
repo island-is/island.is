@@ -12,6 +12,12 @@ export const m = defineMessages({
       'Upplýsingar um það hvernig umboð er veitt - hvernig aðgangsstýringarnar virka. Linkur á aðgangsstýringu.',
     description: '',
   },
+  pageDescriptionSignee: {
+    id: 'sp.signatureCollection:pageDescriptionSignee#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+    description: '',
+  },
   createListButton: {
     id: 'sp.signatureCollection:createListButton',
     defaultMessage: 'Stofna',
@@ -35,6 +41,11 @@ export const m = defineMessages({
   viewList: {
     id: 'sp.signatureCollection:viewList',
     defaultMessage: 'Skoða nánar',
+    description: '',
+  },
+  collectionClosed: {
+    id: 'sp.signatureCollection:collectionClosed',
+    defaultMessage: 'Söfnuninni lokið',
     description: '',
   },
 
