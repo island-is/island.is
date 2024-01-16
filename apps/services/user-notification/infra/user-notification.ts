@@ -19,9 +19,9 @@ const postgresInfo = {
   passwordSecret: `/k8s/${serviceName}/DB_PASSWORD`,
 }
 
-export const userNotificationServiceSetup = (): ServiceBuilder<
-  typeof serviceName
-> =>
+export const userNotificationServiceSetup = (services: {
+  userProfileApi: ServiceBuilder<typeof serviceWorkerName>
+}): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(imageName)
     .namespace(serviceName)
@@ -37,6 +37,9 @@ export const userNotificationServiceSetup = (): ServiceBuilder<
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      USER_PROFILE_CLIENT_URL: ref(
+        (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
+      ),
     })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
@@ -107,7 +110,7 @@ export const userNotificationWorkerSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      SERVICE_USER_PROFILE_BASEPATH: ref(
+      USER_PROFILE_CLIENT_URL: ref(
         (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
       ),
       USER_NOTIFICATION_APP_PROTOCOL: {
