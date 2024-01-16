@@ -39,8 +39,8 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.isOwner(user.nationalId)
   }
 
+  @BypassAuth()
   @Query(() => SignatureCollection)
-  @Audit()
   async signatureCollectionCurrent(): Promise<SignatureCollection> {
     return this.signatureCollectionService.current()
   }
@@ -102,6 +102,14 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSignee> {
     return this.signatureCollectionService.signee(user.nationalId)
+  }
+
+  @Query(() => SignatureCollectionSignee)
+  @Audit()
+  async signatureCollectionSigneeLookup(
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSignee> {
+    return this.signatureCollectionService.signee(input.id)
   }
 
   @Mutation(() => SignatureCollectionSlug)

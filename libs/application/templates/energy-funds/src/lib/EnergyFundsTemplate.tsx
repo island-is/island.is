@@ -24,7 +24,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 
 import {
   UserProfileApi,
-  NationalRegistryUserApi,
+  IdentityApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -85,11 +85,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                NationalRegistryUserApi,
-                UserProfileApi,
-                CurrentVehiclesApi,
-              ],
+              api: [IdentityApi, UserProfileApi, CurrentVehiclesApi],
             },
           ],
         },
