@@ -103,6 +103,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                   <T.Data>
                     <Box display="flex" alignItems="center">
                       <Tooltip
+                        placement="left"
                         text={formatText(
                           coreMessages.deleteFieldText,
                           application,
