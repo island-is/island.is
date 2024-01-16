@@ -8,7 +8,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.age.summary',
+      id: 'slc.application:error.age.summary#markdown',
       defaultMessage: '35 ára aldursmark er ekki náð',
       description: '',
     },
@@ -20,7 +20,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.citizenship.summary',
+      id: 'slc.application:error.citizenship.summary#markdown',
       defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
       description: '',
     },
@@ -32,7 +32,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'slc.application:error.residency.summary',
+      id: 'slc.application:error.residency.summary#markdown',
       defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
       description: '',
     },
