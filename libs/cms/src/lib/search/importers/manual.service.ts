@@ -16,8 +16,6 @@ export const isManual = (entry: Entry<IManualFields>): entry is IManual =>
 @Injectable()
 export class ManualSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
-    logger.info('Processing sync data for manuals')
-
     // only process manuals that we consider not to be empty
     return entries.filter(isManual)
   }
