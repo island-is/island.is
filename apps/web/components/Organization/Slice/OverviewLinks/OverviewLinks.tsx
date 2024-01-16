@@ -3,6 +3,7 @@ import React from 'react'
 import { Image, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
+  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -79,7 +80,12 @@ export const OverviewLinksSlice: React.FC<
                         height="full"
                       >
                         <Box>
-                          <Text as="h2" variant="h2" marginBottom={2}>
+                          <Text
+                            as="h2"
+                            variant="h2"
+                            marginBottom={2}
+                            id={'sliceTitle-' + slice.id}
+                          >
                             {title}
                           </Text>
                           {Boolean(intro) && (
