@@ -3017,6 +3017,8 @@ user-notification:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
     DB_PASS: '/k8s/user-notification/DB_PASSWORD'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
