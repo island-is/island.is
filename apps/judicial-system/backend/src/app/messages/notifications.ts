@@ -647,6 +647,13 @@ export const notifications = {
         'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description: 'Texti í pósti til Landsréttar þegar að kæra er móttekin',
     },
+    text: {
+      id: 'judicial.system.backend:notifications.case_appeal_received_by_court.text',
+      defaultMessage:
+        'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. Sjá nánar á rettarvorslugatt.island.is',
+      description:
+        'Texti í SMS-i á vaktsíma dómara eða dómritara þegar að kærumál er móttekið af dómara',
+    },
   }),
   caseAppealStatement: defineMessages({
     subject: {

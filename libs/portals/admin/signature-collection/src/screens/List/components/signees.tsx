@@ -127,11 +127,16 @@ const Signees = () => {
                       </T.Data>
                       <T.Data box={{ background: boxColor }}>
                         {!s.isDigital && (
-                          <Icon
-                            icon="document"
-                            type="outline"
-                            color="blue400"
-                          />
+                          <Box display="flex">
+                            <Text>{s.pageNumber}</Text>
+                            <Box marginLeft={1}>
+                              <Icon
+                                icon="document"
+                                type="outline"
+                                color="blue400"
+                              />
+                            </Box>
+                          </Box>
                         )}
                       </T.Data>
                     </T.Row>

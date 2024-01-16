@@ -1,25 +1,26 @@
 import React, { useMemo, useRef } from 'react'
-import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
-import slugify from '@sindresorhus/slugify'
+import { Locale } from 'locale'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+import { parseAsBoolean } from 'next-usequerystate'
+import slugify from '@sindresorhus/slugify'
+
 import {
   SectionWithImage,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import {
-  GridRow,
-  GridColumn,
-  Breadcrumbs,
-  Text,
   Box,
-  GridContainer,
   BreadCrumbItem,
+  Breadcrumbs,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Inline,
-  Tag,
   Link,
+  Tag,
+  Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   AnchorNavigation,
   BackgroundImage,
@@ -28,10 +29,7 @@ import {
   Sticky,
   WatsonChatPanel,
 } from '@island.is/web/components'
-import {
-  GET_LIFE_EVENT_QUERY,
-  GET_NAMESPACE_QUERY,
-} from '@island.is/web/screens/queries'
+import { Webreader } from '@island.is/web/components'
 import {
   GetLifeEventQuery,
   GetNamespaceQuery,
@@ -40,15 +38,19 @@ import {
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useRouter } from 'next/router'
-import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { webRichText } from '@island.is/web/utils/richText'
 import { useI18n } from '@island.is/web/i18n'
-import { Webreader } from '@island.is/web/components'
-import { watsonConfig } from '../AnchorPage/config'
-import { parseAsBoolean } from 'next-usequerystate'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import {
+  GET_LIFE_EVENT_QUERY,
+  GET_NAMESPACE_QUERY,
+} from '@island.is/web/screens/queries'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { createNavigation } from '@island.is/web/utils/navigation'
+import { webRichText } from '@island.is/web/utils/richText'
+
+import { defaultWatsonConfig, watsonConfig } from './config'
 
 interface LifeEventPageProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -102,6 +104,10 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
   }, [n, overviewUrl])
 
   const socialImage = lifeEvent?.featuredImage ?? lifeEvent?.image
+
+  const chatConfig =
+    watsonConfig[locale]?.[lifeEvent?.id as string] ||
+    defaultWatsonConfig[locale]
 
   return (
     <Box paddingBottom={[2, 2, 10]}>
@@ -291,10 +297,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
           )}
         </GridRow>
       </GridContainer>
-      {watsonConfig[locale] && ( // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        <WatsonChatPanel {...watsonConfig[locale]} />
-      )}
+      {chatConfig && <WatsonChatPanel {...chatConfig} />}
     </Box>
   )
 }

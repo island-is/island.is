@@ -7,12 +7,15 @@ export interface Signee extends UserBase {
 export interface Signature {
   id: string
   listId: string
+  listTitle?: string
   signee: Signee
   isDigital: boolean
   created: Date
+  pageNumber?: number
 }
 
 export const mapSignature = (signature: MedmaeliBaseDTO): Signature => {
+  const isDigital = signature.medmaeliTegundNr === 1
   return {
     id: signature.id?.toString() ?? '',
     listId: signature.medmaelalistiID?.toString() ?? '',
@@ -21,7 +24,9 @@ export const mapSignature = (signature: MedmaeliBaseDTO): Signature => {
       name: signature.nafn ?? '',
       address: signature.heimilisfang ?? '',
     },
-    isDigital: signature.medmaeliTegundNr === 1,
+    isDigital,
     created: signature.dagsetning ?? new Date(),
+    pageNumber:
+      !isDigital && signature.bladsidaNr ? signature.bladsidaNr : undefined,
   }
 }

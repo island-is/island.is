@@ -35,3 +35,15 @@ export type MachineDto = {
   supervisorName?: string
   status?: string
 }
+
+export type SupervisorChange = {
+  machineId?: string
+  delegateNationalId?: string | null
+  ownerNationalId?: string | null
+  supervisorNationalId?: string | null
+  email?: string | null
+  phoneNumber?: string | null
+  address?: string | null
+  postalCode?: number | null
+  moreInfo?: string | null
+}
