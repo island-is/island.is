@@ -16,6 +16,7 @@ inputs:
   codecov-token:
     description: 'Codecov token'
     required: true
+
 runs:
   using: 'composite'
   steps:
@@ -52,7 +53,7 @@ runs:
 
     - name: Cached codecov uploader
       id: codecov-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: codecov
         key: ${{ runner.os }}-codeconv-${{ env.CODECOV_REV }}
