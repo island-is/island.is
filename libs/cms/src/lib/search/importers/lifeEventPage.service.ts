@@ -13,8 +13,6 @@ export class LifeEventPageSyncService
   implements CmsSyncProvider<ILifeEventPage>
 {
   processSyncData(entries: processSyncDataInput<ILifeEventPage>) {
-    logger.info('Processing sync data for life event pages')
-
     // only process life event pages that we consider not to be empty and dont have circular structures
     return entries.filter(
       (entry: Entry<any>): entry is ILifeEventPage =>
@@ -25,7 +23,9 @@ export class LifeEventPageSyncService
   }
 
   doMapping(entries: ILifeEventPage[]) {
-    logger.info('Mapping life event pages', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping life event pages', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {

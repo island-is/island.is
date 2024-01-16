@@ -1653,6 +1653,7 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+    ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -1734,6 +1735,7 @@ search-indexer-service:
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+      ENVIRONMENT: 'staging'
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'staging-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
@@ -1759,6 +1761,7 @@ search-indexer-service:
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
+    APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   securityContext:
