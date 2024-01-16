@@ -10,11 +10,12 @@ import * as styles from './TryggingastofnunHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const TryggingastofnunHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, logoAltText }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
@@ -49,7 +50,7 @@ const TryggingastofnunHeader: React.FC<
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="tryggingastofnun-logo"
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -66,7 +67,7 @@ const TryggingastofnunHeader: React.FC<
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             </Hidden>

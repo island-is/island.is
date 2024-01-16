@@ -25,6 +25,7 @@ import {
   Stack,
   Tag,
   Text,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { BorderAbove } from '@island.is/web/components'
 import {
@@ -310,7 +311,11 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
               >
                 {slice.hasBorderAbove && <BorderAbove />}
                 <Box>
-                  <Text variant="h2" paddingBottom={3}>
+                  <Text
+                    variant="h2"
+                    paddingBottom={3}
+                    id={'sliceTitle-' + slice.id}
+                  >
                     {slice.title}
                   </Text>
                   <Text>{slice.intro}</Text>
@@ -431,7 +436,9 @@ const ArrowButton = ({
         icon="arrowBack"
         disabled={disabled}
         onClick={onClick}
-      />
+      >
+        <VisuallyHidden>{type}</VisuallyHidden>
+      </Button>
     </Box>
   )
 }
