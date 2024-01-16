@@ -25,7 +25,7 @@ type ActionCardProps = {
   secondaryText?: string
   eyebrow?: string
   loading?: boolean
-  backgroundColor?: 'white' | 'blue' | 'red'
+  backgroundColor?: 'white' | 'blue' | 'red' | 'blueberry'
   tag?: {
     label: string
     variant?: TagVariant
@@ -96,6 +96,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       ? 'white'
       : backgroundColor === 'red'
       ? 'red100'
+      : backgroundColor === 'blueberry'
+      ? 'blueberry100'
       : 'blue100'
 
   const renderImage = () => {

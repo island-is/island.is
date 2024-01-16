@@ -23,15 +23,15 @@ import { PortalPageLoader } from '@island.is/portals/core'
 import { useAuth } from '@island.is/auth/react'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
+import NotificationButton from '../Notifications/NotificationButton'
+export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
   position: number
-  sideMenuOpen: boolean
-  setSideMenuOpen: (set: boolean) => void
 }
-export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
+export const Header = ({ position }: Props) => {
   const { formatMessage } = useLocale()
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const { unreadCounter } = useListDocuments()
   const { width } = useWindowSize()
   const ref = useRef<HTMLButtonElement>(null)
@@ -39,11 +39,6 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const { userInfo: user } = useAuth()
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
-
-  const closeUserMenu = (state: boolean) => {
-    setSideMenuOpen(false)
-    setUserMenuOpen(state)
-  }
 
   return (
     <div className={styles.placeholder}>
@@ -109,16 +104,22 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                       {user && <UserLanguageSwitcher user={user} />}
                       {/* Display X icon instead of dots if open in mobile*/}
 
+                      <NotificationButton
+                        setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                        showMenu={menuOpen === 'notifications'}
+                      />
+
                       <Box marginRight={[1, 1, 2]}>
                         <Button
                           variant="utility"
                           colorScheme="white"
-                          icon={sideMenuOpen && isMobile ? 'close' : 'dots'}
+                          icon={
+                            menuOpen === 'side' && isMobile ? 'close' : 'dots'
+                          }
                           onClick={() => {
-                            sideMenuOpen && isMobile
-                              ? setSideMenuOpen(false)
-                              : setSideMenuOpen(true)
-                            setUserMenuOpen(false)
+                            menuOpen === 'side' && isMobile
+                              ? setMenuOpen(undefined)
+                              : setMenuOpen('side')
                           }}
                           ref={ref}
                         >
@@ -127,18 +128,27 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                       </Box>
 
                       <Sidemenu
-                        setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
-                        sideMenuOpen={sideMenuOpen}
+                        setSideMenuOpen={(set: boolean) =>
+                          setMenuOpen(set ? 'side' : undefined)
+                        }
+                        sideMenuOpen={menuOpen === 'side'}
                         rightPosition={
                           ref.current?.getBoundingClientRect().right
                         }
                       />
 
-                      {/* Display X button instead if open in mobile*/}
                       <UserMenu
-                        setUserMenuOpen={closeUserMenu}
+                        setUserMenuOpen={(set: boolean) =>
+                          setMenuOpen(
+                            set
+                              ? 'user'
+                              : menuOpen === 'user'
+                              ? undefined
+                              : menuOpen,
+                          )
+                        }
                         showLanguageSwitcher={false}
-                        userMenuOpen={userMenuOpen}
+                        userMenuOpen={menuOpen === 'user'}
                       />
                     </Box>
                   </Hidden>

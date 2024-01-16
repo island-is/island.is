@@ -14,7 +14,7 @@ interface Props {
   large?: boolean
 }
 
-const AvatarImage: FC<Props> = ({
+export const AvatarImage: FC<Props> = ({
   img,
   background,
   avatar,

@@ -13,6 +13,12 @@ const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
 const FamilyMemberChild = lazy(() => import('./screens/Child/Child'))
 const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
+const Notifications = lazy(() =>
+  import('./screens/Notifications/Notifications'),
+)
+const NotificationDetail = lazy(() =>
+  import('./screens/Notifications/NotificationDetail'),
+)
 const UserProfileSettings = lazy(() =>
   import('./screens/UserProfile/UserProfile'),
 )
@@ -64,6 +70,18 @@ export const informationModule: PortalModule = {
       path: InformationPaths.Spouse,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <Spouse />,
+    },
+    {
+      name: 'Notifications',
+      path: InformationPaths.Notifications,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      element: <Notifications />,
+    },
+    {
+      name: 'Tilkynning',
+      path: InformationPaths.NotificationDetail,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      element: <NotificationDetail />,
     },
     ...sharedRoutes(userInfo),
   ],
