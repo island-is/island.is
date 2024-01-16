@@ -56,12 +56,12 @@ const SigneeView = () => {
 
   return (
     <Box>
+      <IntroHeader
+        title={formatMessage(m.pageTitle)}
+        intro={formatMessage(m.pageDescription)}
+      />
       {!loadingSignedList && !loadingUserLists ? (
         <Box>
-          <IntroHeader
-            title={formatMessage(m.pageTitle)}
-            intro={formatMessage(m.pageDescription)}
-          />
           {listsForUser.length === 0 && (
             <Button
               icon="open"
@@ -125,9 +125,11 @@ const SigneeView = () => {
           )}
           {/* Other available lists */}
           <Box marginTop={[5, 10]}>
-            <Text variant="h4" marginBottom={3}>
-              {formatMessage(m.mySigneeListsByAreaHeader)}
-            </Text>
+            {listsForUser.length > 0 && (
+              <Text variant="h4" marginBottom={3}>
+                {formatMessage(m.mySigneeListsByAreaHeader)}
+              </Text>
+            )}
 
             <Stack space={5}>
               {listsForUser?.map((list) => {
