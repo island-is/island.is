@@ -161,7 +161,7 @@ export class CacheInvalidationService {
     if (itemsThatCanBeCacheInvalidated.length > 0) {
       logger.info(
         `Invalidating cache for ${itemsThatCanBeCacheInvalidated.length} ${
-          itemsThatCanBeCacheInvalidated.length === 1 ? 'page' : 'pages'
+          itemsThatCanBeCacheInvalidated.length === 1 ? 'document' : 'documents'
         }...`,
       )
     }
@@ -194,12 +194,12 @@ export class CacheInvalidationService {
 
     if (successfulCacheInvalidationCount > 0) {
       logger.info(
-        `Successfully invalidated cache for ${successfulCacheInvalidationCount} pages`,
+        `Successfully invalidated cache for ${successfulCacheInvalidationCount} urls`,
       )
     }
     if (failedCacheInvalidationReasons.length > 0) {
       logger.warn(
-        `Could not invalidate cache for ${failedCacheInvalidationReasons.length} pages`,
+        `Could not invalidate cache for ${failedCacheInvalidationReasons.length} urls`,
         failedCacheInvalidationReasons,
       )
     }

@@ -23,7 +23,9 @@ export class LifeEventPageSyncService
   }
 
   doMapping(entries: ILifeEventPage[]) {
-    logger.info('Mapping life event pages', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping life event pages', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
