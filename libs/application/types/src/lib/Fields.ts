@@ -74,7 +74,6 @@ export type TableRepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full'
   required?: boolean
-  error?: string
 } & (
   | {
       component: 'input'

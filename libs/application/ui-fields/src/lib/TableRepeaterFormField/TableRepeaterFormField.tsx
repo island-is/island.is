@@ -11,6 +11,8 @@ import {
   Text,
   Icon,
   Tooltip,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -38,6 +40,7 @@ const componentMapper = {
 export const TableRepeaterFormField: FC<Props> = ({
   application,
   field: data,
+  error,
 }) => {
   const {
     fields: items,
@@ -80,6 +83,16 @@ export const TableRepeaterFormField: FC<Props> = ({
     if (activeIndex === index) setActiveIndex(-1)
     if (activeIndex > index) setActiveIndex(activeIndex - 1)
     remove(index)
+  }
+
+  const getFieldError = (id: string) => {
+    /**
+     * Errors that occur in a field-array have incorrect typing for some reason
+     * This hack is needed to get the correct type
+     */
+    const errorList = error as unknown as Record<string, string>[] | undefined
+    const errors = errorList?.[activeIndex]
+    return errors?.[id]
   }
 
   return (
@@ -140,42 +153,54 @@ export const TableRepeaterFormField: FC<Props> = ({
                 {formatText(formTitle, application, formatMessage)}
               </Text>
             )}
-            {items.map((item) => {
-              const {
-                component,
-                id: itemId,
-                backgroundColor = 'blue',
-                label = '',
-                placeholder = '',
-                options,
-                ...props
-              } = item
+            <GridRow rowGap={[2, 2, 2, 3]}>
+              {items.map((item) => {
+                const {
+                  component,
+                  id: itemId,
+                  backgroundColor = 'blue',
+                  label = '',
+                  placeholder = '',
+                  options,
+                  width = 'full',
+                  ...props
+                } = item
+                const isHalfColumn = component !== 'radio' && width === 'half'
+                const span = isHalfColumn ? '1/2' : '1/1'
+                const Component = componentMapper[component]
+                const id = `${data.id}[${activeIndex}].${itemId}`
 
-              const Component = componentMapper[component]
-              const id = `${data.id}[${activeIndex}].${itemId}`
-              const translatedOptions = options?.map((option) => ({
-                ...option,
-                label: formatText(option.label, application, formatMessage),
-              }))
+                const translatedOptions = options?.map((option) => ({
+                  ...option,
+                  label: formatText(option.label, application, formatMessage),
+                }))
 
-              return (
-                <Component
-                  key={id}
-                  id={id}
-                  name={id}
-                  label={formatText(label, application, formatMessage)}
-                  options={translatedOptions}
-                  placeholder={formatText(
-                    placeholder,
-                    application,
-                    formatMessage,
-                  )}
-                  control={methods.control}
-                  backgroundColor={backgroundColor}
-                  {...props}
-                />
-              )
-            })}
+                return (
+                  <GridColumn key={id} span={['1/1', '1/1', '1/1', span]}>
+                    <Component
+                      id={id}
+                      name={id}
+                      label={formatText(label, application, formatMessage)}
+                      options={translatedOptions}
+                      placeholder={formatText(
+                        placeholder,
+                        application,
+                        formatMessage,
+                      )}
+                      error={getFieldError(itemId)}
+                      control={methods.control}
+                      backgroundColor={backgroundColor}
+                      onChange={() => {
+                        if (error) {
+                          methods.clearErrors(id)
+                        }
+                      }}
+                      {...props}
+                    />
+                  </GridColumn>
+                )
+              })}
+            </GridRow>
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 variant="ghost"
