@@ -57,14 +57,14 @@ export const errorMessages = {
     },
     summary: {
       id: 'slc.application:error.owner.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   deniedByService: defineMessages({
     title: {
       id: 'slc.application:error.deniedByService.title',
-      defaultMessage: 'Etthvað fór úrskeiðis',
+      defaultMessage: 'Eitthvað fór úrskeiðis',
       description: '',
     },
     summary: {
