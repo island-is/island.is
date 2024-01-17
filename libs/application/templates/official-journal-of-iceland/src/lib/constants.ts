@@ -18,6 +18,23 @@ export enum Routes {
   COMPLETE = '/complete',
 }
 
+// this will be replaced with correct values once the api is ready
 export const REGLUGERDIR_ID = '2'
 export const GJALDSKRA_ID = '0'
 export const SKIPULAGSSKRA_ID = '3'
+export const UNDIRSKRIFT_RADHERRA_ID = '2'
+
+export const Ministries = [
+  'forsætisráðuneytið',
+  'dómsmálaráðuneytið',
+  'félags- og vinnumarksráðuneytið',
+  'fjármála- og efnahagsráðuneytið',
+  'háskóla-, iðnaðar- og nýsköpunarráðuneytið',
+  'heilbrigðisráðuneytið',
+  'innviðaráðuneytið',
+  'matvælaráðuneytið',
+  'menningar- og viðskiptaráðuneytið',
+  'mennta- og barnamálaráðuneytið',
+  'umhverfis-, orku- og loftslagsráðuneytið',
+  'utanríkisráðuneytið',
+]

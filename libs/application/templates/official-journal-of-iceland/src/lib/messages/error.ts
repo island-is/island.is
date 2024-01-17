@@ -16,6 +16,11 @@ export const error = defineMessages({
     defaultMessage: '{x} er þegar til',
     description: 'Error message when x already exists',
   },
+  emptyFieldError: {
+    id: 'ojoi.application:error.emptyFieldError',
+    defaultMessage: 'Þessi reitur má ekki vera tómur',
+    description: 'Error message when field is empty',
+  },
   dataGathering: {
     id: 'ojoi.application:error.dataGathering',
     defaultMessage: 'Samþykkja þarf gagnaöflun til að halda áfram',
@@ -45,5 +50,15 @@ export const error = defineMessages({
     id: 'ojoi.application:error.datePicker',
     defaultMessage: 'Vinsamlegast veldu dagsetningu',
     description: 'Error message when date is invalid or not present',
+  },
+  invalidDate: {
+    id: 'ojoi.application:error.invalidDate',
+    defaultMessage: 'Athugaðu hvort dagsetning sé rétt slegin inn',
+    description: 'Error message when date is invalid',
+  },
+  invalidMinsitry: {
+    id: 'ojoi.application:error.invalidMinsitry',
+    defaultMessage: 'Ráðuneyti er óþekkt',
+    description: 'Error message when ministry is invalid',
   },
 })

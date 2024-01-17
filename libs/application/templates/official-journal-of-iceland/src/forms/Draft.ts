@@ -74,6 +74,7 @@ export const Draft: Form = buildForm({
               id: InputFields.additionsAndDocuments.fileNames,
               title: additionsAndDocuments.nameOfDocumentsChapter.title,
               largeButtons: false,
+              defaultValue: 'documents',
               options: [
                 {
                   value: 'documents',
@@ -115,7 +116,7 @@ export const Draft: Form = buildForm({
               description: originalData.general.formIntro,
             }),
             buildFileUploadField({
-              id: InputFields.originalData.files,
+              id: 'InputFields.originalData.files', // TODO: fix this
               title: '',
               uploadAccept: UPLOAD_ACCEPT,
               uploadMultiple: false,

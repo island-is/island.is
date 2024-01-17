@@ -6,18 +6,12 @@ import { prerequisites } from '../../lib/messages'
 import { AnswerOption, InputFields, OJOIFieldBaseProps } from '../../lib/types'
 import { Controller } from 'react-hook-form'
 import { useEffect, useState } from 'react'
+import { getErrorViaPath } from '@island.is/application/core'
 
-export const Prerequisites = ({
-  application,
-  setSubmitButtonDisabled,
-}: OJOIFieldBaseProps) => {
+export const Prerequisites = ({ application, errors }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
-  const [isApproved, setIsApproved] = useState(false)
-
-  useEffect(() => {
-    setSubmitButtonDisabled && setSubmitButtonDisabled(!isApproved)
-  }, [isApproved])
+  console.log(errors)
 
   return (
     <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
@@ -35,7 +29,8 @@ export const Prerequisites = ({
       <Controller
         name={InputFields.prerequisites.approveExternalData}
         defaultValue={
-          application.answers.approveExternalData ?? AnswerOption.NO
+          application.answers.prerequisites?.approveExternalData ??
+          AnswerOption.NO
         }
         render={({ field: { onChange, value } }) => {
           return (
@@ -46,9 +41,20 @@ export const Prerequisites = ({
               checked={value === AnswerOption.YES}
               onChange={(e) => {
                 onChange(e.target.checked ? AnswerOption.YES : AnswerOption.NO)
-                setIsApproved(e.target.checked)
               }}
               backgroundColor="blue"
+              hasError={
+                getErrorViaPath(
+                  errors,
+                  InputFields.prerequisites.approveExternalData,
+                )
+                  ? true
+                  : false
+              }
+              errorMessage={getErrorViaPath(
+                errors,
+                InputFields.prerequisites.approveExternalData,
+              )}
               large
             />
           )

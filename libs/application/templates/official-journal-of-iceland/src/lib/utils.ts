@@ -1,18 +1,9 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { emailRegex } from './constants'
-import { ApplicationContext } from '@island.is/application/types'
-import { AnswerOption, InputFields } from './types'
-import { getValueViaPath } from '@island.is/application/core'
-
-export function hasApprovedExternalData(context: ApplicationContext): boolean {
-  const val = getValueViaPath(
-    context.application.answers,
-    InputFields.prerequisites.approveExternalData,
-  )
-  return val === AnswerOption.YES
-}
+import { Ministries, emailRegex } from './constants'
+import isValid from 'date-fns/isValid'
+import parse from 'date-fns/parse'
 
 const isWeekday = (date: Date) => {
   const day = date.getDay()
@@ -49,6 +40,13 @@ export const getWeekdayDates = (
   return weekends
 }
 
+export const getNextAvailableDate = (date: Date): Date => {
+  if (isWeekday(date)) {
+    return date
+  }
+  return getNextAvailableDate(addDays(date, 1))
+}
+
 export const isValidEmail = (email: string) => {
   return emailRegex.test(email)
 }
@@ -68,5 +66,18 @@ export const mapDepartmentToId = (department: string) => {
       return '2'
     default:
       return ''
+  }
+}
+
+// Move this logic to the API when possible?
+export const isValidMinsitry = (ministry?: string) =>
+  ministry && Ministries.includes(ministry.toLocaleLowerCase())
+
+export const isValidDate = (date?: string) => {
+  if (!date) return false
+  try {
+    return isValid(parse(date, 'yyyy-dd-MM', new Date()))
+  } catch (e) {
+    return false
   }
 }

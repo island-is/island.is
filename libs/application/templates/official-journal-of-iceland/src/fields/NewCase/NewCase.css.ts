@@ -35,3 +35,15 @@ export const modalButtons = style({
 export const formGroup = style({
   marginBottom: theme.spacing[6],
 })
+
+export const inputWrap = style({
+  display: 'flex',
+  flexFlow: 'row wrap',
+  width: '100%',
+  gap: theme.spacing[3],
+})
+
+export const inputWrapItem = style({
+  flex: 1,
+  minWidth: 225,
+})

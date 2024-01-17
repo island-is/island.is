@@ -1,6 +1,7 @@
 import { getErrorViaPath } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
+  DatePickerController,
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
@@ -14,10 +15,15 @@ import {
   GJALDSKRA_ID,
   REGLUGERDIR_ID,
   SKIPULAGSSKRA_ID,
+  UNDIRSKRIFT_RADHERRA_ID,
 } from '../../lib/constants'
 import { useFormContext } from 'react-hook-form'
 import { TemplateModal } from './TemplateModal'
-import { MinistryOfJusticeCase } from '@island.is/api/schema'
+import { HTMLEditor } from '../../components/HTMLEditor/HTMLEditor'
+import { HTMLText } from '@island.is/regulations-tools/types'
+import { signatureConfig } from '../../components/HTMLEditor/signatureConfig'
+import * as styles from './NewCase.css'
+import { baseConfig } from '../../components/HTMLEditor/baseConfig'
 
 export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
@@ -35,6 +41,8 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
     documentContents: answers?.case?.documentContents ?? '',
     signatureType: answers?.case?.signatureType ?? '',
     signatureContents: answers?.case?.signatureContents ?? '',
+    signatureMinistry: answers?.case?.signatureMinistry ?? '',
+    signatureDate: answers?.case?.signatureDate ?? '',
   })
 
   const onSave = (template: typeof state) => {
@@ -42,11 +50,13 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
       category: template.category ?? '',
       department: template.department ?? '',
       documentContents: template.documentContents ?? '',
-      signatureContents: template.signatureContents ?? '',
-      signatureType: template.signatureType ?? '',
       subCategory: template.subCategory ?? '',
       template: template.template ?? '',
       title: template.title ?? '',
+      signatureContents: template.signatureContents ?? '',
+      signatureType: template.signatureType ?? '',
+      signatureMinistry: template.signatureMinistry ?? '',
+      signatureDate: template.signatureDate ?? '',
     }
 
     setValue(InputFields.case.category, newState.category, {
@@ -71,6 +81,12 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
       shouldValidate: true,
     })
     setValue(InputFields.case.title, newState.title, { shouldValidate: true })
+    setValue(InputFields.case.signatureMinistry, newState.signatureMinistry, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.case.signatureDate, newState.signatureDate, {
+      shouldValidate: true,
+    })
 
     setState(newState)
     setModalToggle(false)
@@ -207,16 +223,10 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
             />
           </Box>
           <Box width="full">
-            <InputController
-              id={InputFields.case.documentContents}
+            <HTMLEditor
+              config={baseConfig}
+              defaultValue={state.documentContents as HTMLText}
               name={InputFields.case.documentContents}
-              defaultValue={state.documentContents}
-              backgroundColor="blue"
-              textarea
-              rows={4}
-              onChange={(e) =>
-                setState({ ...state, documentContents: e.target.value })
-              }
               error={
                 errors &&
                 getErrorViaPath(errors, InputFields.case.documentContents)
@@ -265,22 +275,47 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
             </Box>
           </Box>
           <Box width="full">
-            <InputController
-              id={InputFields.case.signatureContents}
+            <HTMLEditor
+              config={signatureConfig}
+              defaultValue={state.signatureContents as HTMLText}
               name={InputFields.case.signatureContents}
-              defaultValue={state.signatureContents}
-              backgroundColor="blue"
-              textarea
-              rows={4}
-              onChange={(e) =>
-                setState({ ...state, signatureContents: e.target.value })
-              }
               error={
                 errors &&
                 getErrorViaPath(errors, InputFields.case.signatureContents)
               }
             />
           </Box>
+          {state.signatureType === UNDIRSKRIFT_RADHERRA_ID && (
+            <Box className={styles.inputWrap}>
+              <Box className={styles.inputWrapItem}>
+                <DatePickerController
+                  id={InputFields.case.signatureDate}
+                  name={InputFields.case.signatureDate}
+                  label={f(newCase.inputs.signatureDate.label)}
+                  defaultValue={answers?.case?.signatureDate ?? ''}
+                  size="sm"
+                  error={
+                    errors &&
+                    getErrorViaPath(errors, InputFields.case.signatureDate)
+                  }
+                />
+              </Box>
+              <Box className={styles.inputWrapItem}>
+                <InputController
+                  id={InputFields.case.signatureMinistry}
+                  name={InputFields.case.signatureMinistry}
+                  placeholder={f(newCase.inputs.signatureMinistry.placeholder)}
+                  label={f(newCase.inputs.signatureMinistry.label)}
+                  error={
+                    errors &&
+                    getErrorViaPath(errors, InputFields.case.signatureMinistry)
+                  }
+                  backgroundColor="blue"
+                  size="sm"
+                />
+              </Box>
+            </Box>
+          )}
         </FormGroup>
       </FormWrap>
       <TemplateModal

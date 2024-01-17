@@ -47,14 +47,14 @@ export const additionsAndDocuments = {
     additions: defineMessages({
       label: {
         id: 'ojoi.application:additionsAndDocuments.radio.additions.label',
-        defaultMessage: 'Viðaukar',
+        defaultMessage: 'Viðaukar (1, 2, 3..)',
         description: 'Label of the additions radio button',
       },
     }),
     documents: defineMessages({
       label: {
         id: 'ojoi.application:additionsAndDocuments.radio.documents.label',
-        defaultMessage: 'Fylgirit',
+        defaultMessage: 'Fylgirit (I, II, III..)',
         description: 'Label of the documents radio button',
       },
     }),

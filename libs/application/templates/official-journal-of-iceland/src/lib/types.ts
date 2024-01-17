@@ -16,13 +16,11 @@ export const InputFields = {
     signatureType: 'case.signatureType',
     signatureContents: 'case.signatureContents',
     signatureDate: 'case.signatureDate',
+    signatureMinistry: 'case.ministry',
   },
   additionsAndDocuments: {
     files: 'additionsAndDocuments.files',
     fileNames: 'additionsAndDocuments.fileNames',
-  },
-  originalData: {
-    files: 'originalData.files',
   },
   publishingPreferences: {
     date: 'publishingPreferences.date',

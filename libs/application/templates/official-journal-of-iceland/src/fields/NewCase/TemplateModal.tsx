@@ -42,7 +42,7 @@ export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
       documentContents:
         '<div><h1>REGLUGERÐ</h1><p>Lorem ipsum dolor sit amet</p></div>',
       signatureType: '0',
-      signatureContents: 'Jón Bjarni',
+      signatureContents: '<p>Jón Bjarni</p>',
     },
     {
       department: '2',
@@ -54,7 +54,7 @@ export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
       documentContents:
         '<div><h1>AUGLÝSING</h1><p>Lorem ipsum dolor sit amet</p></div>',
       signatureType: '0',
-      signatureContents: 'Jón Bjarni Ólafsson',
+      signatureContents: '<p>Jón Bjarni Ólafsson</p>',
     },
   ])
   const [filter, setFilter] = useState('')

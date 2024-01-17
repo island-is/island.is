@@ -140,5 +140,24 @@ export const newCase = {
         description: 'Placeholder for the signature type input',
       },
     }),
+    signatureDate: defineMessages({
+      label: {
+        id: 'ojoi.application:newCase.inputs.signatureDateInput.label',
+        defaultMessage: 'Undirritunardagur',
+        description: 'Label for the signature date input',
+      },
+    }),
+    signatureMinistry: defineMessages({
+      label: {
+        id: 'ojoi.application:newCase.inputs.signatureMinistryInput.label',
+        defaultMessage: 'Ráðuneyti',
+        description: 'Label for the signature ministry input',
+      },
+      placeholder: {
+        id: 'ojoi.application:newCase.inputs.signatureMinistryInput.placeholder',
+        defaultMessage: 'Sláðu inn undirritunarstofnun',
+        description: 'Placeholder for the signature ministry input',
+      },
+    }),
   },
 }

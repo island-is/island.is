@@ -18,7 +18,6 @@ import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { general } from './messages'
 import { AnswerOption, OJOIApplication, TemplateApiActions } from './types'
-import { hasApprovedExternalData } from './utils'
 
 export enum ApplicationStates {
   PREREQUISITS = 'prerequisites',
@@ -77,10 +76,6 @@ const OJOITemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               target: ApplicationStates.DRAFT,
-              cond: hasApprovedExternalData,
-            },
-            {
-              target: ApplicationStates.PREREQUISITS,
             },
           ],
         },
