@@ -16,6 +16,7 @@ import { format as formatNationalId } from 'kennitala'
 import { m } from '../../../lib/messages'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 import { pageSize } from '../../../lib/utils'
+import SortSignees from './sortSignees'
 
 const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const { formatMessage } = useLocale()
@@ -50,7 +51,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
       <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
 
       <GridRow marginTop={3} marginBottom={5}>
-        <GridColumn span={['12/12', '12/12', '7/12']}>
+        <GridColumn span={['12/12', '12/12', '6/12']}>
           <FilterInput
             name="searchSignee"
             value={searchTerm}
@@ -59,14 +60,19 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
             backgroundColor="white"
           />
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '5/12']}>
+        <GridColumn span={['12/12', '12/12', '6/12']}>
           <Box
             display="flex"
-            justifyContent="flexEnd"
+            justifyContent="spaceBetween"
             alignItems="flexEnd"
             height="full"
             marginTop={[1, 1, 0]}
           >
+            <SortSignees
+              signees={signees}
+              setSignees={setSignees}
+              setPage={setPage}
+            />
             {searchTerm.length > 0 && signees.length > 0
               ? signees.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">
@@ -99,35 +105,21 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
               {signees
                 .slice(pageSize * (page - 1), pageSize * page)
                 .map((s) => {
-                  const boxColor = s.isDigital ? 'white' : 'purple100'
-
                   return (
                     <T.Row key={s.id}>
-                      <T.Data
-                        box={{ background: boxColor }}
-                        text={{ variant: 'medium' }}
-                      >
-                        {format(new Date(), 'dd.MM.yyyy')}
+                      <T.Data text={{ variant: 'medium' }}>
+                        {format(new Date(s.created), 'dd.MM.yyyy HH:mm')}
                       </T.Data>
-                      <T.Data
-                        box={{ background: boxColor }}
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {s.signee.name}
                       </T.Data>
-                      <T.Data
-                        box={{ background: boxColor }}
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {formatNationalId(s.signee.nationalId)}
                       </T.Data>
-                      <T.Data
-                        box={{ background: boxColor }}
-                        text={{ variant: 'medium' }}
-                      >
+                      <T.Data text={{ variant: 'medium' }}>
                         {s.signee.address}
                       </T.Data>
-                      <T.Data box={{ background: boxColor }}>
+                      <T.Data>
                         {!s.isDigital && (
                           <Box display="flex">
                             <Text>{s.pageNumber}</Text>
