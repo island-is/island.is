@@ -44,7 +44,7 @@ export const TwoColumnTextSlice: React.FC<
             </GridColumn>
             <GridColumn span={columnSpan} hiddenBelow="lg">
               {slice.rightTitle && (
-                <Text variant="h2" as="h2">
+                <Text variant="h2" as="h2" id={labelId}>
                   <Hyphen>{slice.rightTitle}</Hyphen>
                 </Text>
               )}
