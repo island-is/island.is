@@ -429,11 +429,11 @@ api:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '600m'
       memory: '2048Mi'
     requests:
-      cpu: '150m'
-      memory: '512Mi'
+      cpu: '250m'
+      memory: '896Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
