@@ -3,14 +3,13 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   SJUKRATRYGGINGAR_SLUG,
-  m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
-import AidsTable from './AidsTable'
-import NutritionTable from './NutritionTable'
 import { RightsPortalAidOrNutritionType } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
+import Aids from './Aids'
+import Nutrition from './Nutrition'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -32,26 +31,12 @@ const AidsAndNutrition = () => {
     aids &&
       aids.length > 0 && {
         label: formatMessage(messages.aids),
-        content: (
-          <AidsTable
-            data={aids}
-            footnote={formatMessage(messages['aidsDisclaimer'])}
-            link={formatMessage(messages['aidsDescriptionLink'])}
-            linkText={formatMessage(messages.aidsDescriptionInfo)}
-          />
-        ),
+        content: <Aids data={aids} />,
       },
     nutrition &&
       nutrition.length > 0 && {
         label: formatMessage(messages.nutrition),
-        content: (
-          <NutritionTable
-            data={nutrition}
-            footnote={formatMessage(messages['nutritionDisclaimer'])}
-            link={formatMessage(messages['nutritionDescriptionLink'])}
-            linkText={formatMessage(messages.nutritionDescriptionInfo)}
-          />
-        ),
+        content: <Nutrition data={nutrition} />,
       },
   ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 

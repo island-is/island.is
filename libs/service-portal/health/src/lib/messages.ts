@@ -521,6 +521,10 @@ export const messages = defineMessages({
     id: 'sp.health:next-available-unit-refund',
     defaultMessage: 'Næst heimild til úttektar',
   },
+  timeRemainingOfRefund: {
+    id: 'sp.health:time-remaining-of-refund',
+    defaultMessage: 'Innan við 60 dagar eftir af heimild',
+  },
   location: {
     id: 'sp.health:location',
     defaultMessage: 'Afgr. staður',
