@@ -281,7 +281,9 @@ const ProjectPage: Screen<PageProps> = ({
         )}
       </ProjectWrapper>
 
-      <Stack space={bottomSlices && bottomSlices.length > 0 ? SLICE_SPACING : 0}>
+      <Stack
+        space={bottomSlices && bottomSlices.length > 0 ? SLICE_SPACING : 0}
+      >
         {bottomSlices.map((slice, index) => {
           if (
             slice.__typename === 'OneColumnText' &&
