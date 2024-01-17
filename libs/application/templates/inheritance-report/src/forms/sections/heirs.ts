@@ -5,7 +5,6 @@ import {
   buildKeyValueField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   buildSubSection,
   buildTextField,
   getValueViaPath,
@@ -119,6 +118,8 @@ export const heirs = buildSection({
               {
                 fields: [
                   {
+                    sectionTitle: m.heirs.defaultMessage,
+                    sectionTitleVariant: 'h3',
                     title: m.heirsNationalId.defaultMessage,
                     id: 'nationalId',
                     format: '######-####',
@@ -128,6 +129,12 @@ export const heirs = buildSection({
                     id: 'heirsName',
                   },
                   {
+                    title: m.heirsRelation.defaultMessage,
+                    id: 'relation',
+                    width: 'full',
+                  },
+                  {
+                    sectionTitle: m.heirContactInfo.defaultMessage,
                     title: m.heirsEmail.defaultMessage,
                     id: 'email',
                   },
@@ -137,10 +144,7 @@ export const heirs = buildSection({
                     format: '###-####',
                   },
                   {
-                    title: m.heirsRelation.defaultMessage,
-                    id: 'relation',
-                  },
-                  {
+                    sectionTitle: m.heirShare.defaultMessage,
                     title: m.heirsInheritanceRate.defaultMessage,
                     id: 'heirsPercentage',
                   },

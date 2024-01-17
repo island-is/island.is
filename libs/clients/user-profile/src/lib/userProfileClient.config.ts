@@ -27,7 +27,7 @@ export const UserProfileClientConfig = defineConfig({
         nodes: env.optionalJSON('USER_PROFILE_CLIENT_REDIS_NODES') ?? [],
         ssl: env.optionalJSON('USER_PROFILE_CLIENT_REDIS_SSL', false) ?? true,
       },
-      scope: env.requiredJSON('USER_PROFILE_SCOPE', []),
+      scope: env.optionalJSON<string[]>('USER_PROFILE_CLIENT_SCOPE') ?? [],
     }
   },
 })

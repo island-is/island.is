@@ -9,10 +9,12 @@ import * as styles from './VinnueftirlitidHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const VinnueftilitidHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
+  logoAltText,
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
@@ -51,6 +53,7 @@ const VinnueftilitidHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
           linkResolver('organizationpage', [organizationPage.slug]).href
         }
         className={styles.gridContainer}
+        logoAltText={logoAltText}
       />
     </div>
   )
