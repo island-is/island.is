@@ -89,6 +89,10 @@ import {
   SjukratryggingarHeader,
 } from './Themes/SjukratryggingarTheme'
 import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
+import {
+  ThjodskjalasafnHeader,
+  ThjodskjalasafnFooter,
+} from './Themes/ThjodskjalasafnTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import {
   TryggingastofnunFooter,
@@ -403,6 +407,13 @@ export const OrganizationHeader: React.FC<
     case 'hljodbokasafn-islands':
       return (
         <HljodbokasafnIslandsHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
+    case 'thjodskjalasafn':
+      return (
+        <ThjodskjalasafnHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
@@ -733,6 +744,17 @@ export const OrganizationFooter: React.FC<
             }
           />
           <Divider />
+        </>
+      )
+      break
+    case 'thjodskjalasafn':
+    case 'national-archives':
+      OrganizationFooterComponent = (
+        <>
+          <ThjodskjalasafnFooter
+            heading={organization.title}
+            columns={organization.footerItems}
+          />
         </>
       )
       break
