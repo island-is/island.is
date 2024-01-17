@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useDebounce } from 'react-use'
+import isEqual from 'lodash/isEqual'
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -20,6 +22,7 @@ import {
   Hidden,
   Hyphen,
   Inline,
+  LoadingDots,
   Pagination,
   Stack,
   Tag,
@@ -45,6 +48,7 @@ import {
   GetExternalVacancyLocationsQueryVariables,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
+  VacancyListItem,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -62,15 +66,16 @@ import {
   GET_EXTERNAL_VACANCY_INSTITUTIONS,
   GET_EXTERNAL_VACANCY_LOCATIONS,
 } from '../queries/Vacancies'
-import { VACANCY_INTRO_MAX_LENGTH } from './utils'
+import { sortVacancyList, VACANCY_INTRO_MAX_LENGTH } from './utils'
 import * as styles from './VacanciesList.css'
 
 const ITEMS_PER_PAGE = 8
+const DEBOUNCE_TIME = 300
 
 interface VacanciesListProps {
   cmsVacancies: GetCmsVacanciesQuery['cmsVacancies']['vacancies']
-  externalVacancies: GetExternalVacanciesQuery['externalVacancies']['vacancies']
-  totalVacancies: number
+  initialExternalVacancies: GetExternalVacanciesQuery['externalVacancies']['vacancies']
+  totalInitialExternalVacancyCount: number
   namespace: Record<string, string>
   institutionOptions: FilterOptionListResponse['options']
   locationOptions: FilterOptionListResponse['options']
@@ -79,8 +84,8 @@ interface VacanciesListProps {
 
 const VacanciesList: Screen<VacanciesListProps> = ({
   cmsVacancies,
-  externalVacancies,
-  totalVacancies,
+  initialExternalVacancies,
+  totalInitialExternalVacancyCount,
   namespace,
   institutionOptions,
   locationOptions,
@@ -108,6 +113,12 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     'location',
     parseAsArrayOf(parseAsString),
   )
+  const [externalVacancies, setExternalVacancies] = useState<VacancyListItem[]>(
+    initialExternalVacancies,
+  )
+  const [totalExternalVacancyCount, setTotalExternalVacancyCount] = useState(
+    totalInitialExternalVacancyCount,
+  )
 
   const parameters = {
     fieldOfWork: {
@@ -124,24 +135,24 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     },
   }
 
-  const [queryVariables, setQueryVariables] =
-    useState<GetExternalVacanciesQueryVariables>({
-      input: {
-        page,
-        query,
-        fieldOfWork: parameters.fieldOfWork.state,
-        institution: parameters.institution.state,
-        location: parameters.location.state,
-      },
-    })
-
-  const [fetchMore] = useLazyQuery<
+  const [fetchMore, { loading }] = useLazyQuery<
     GetExternalVacanciesQuery,
     GetExternalVacanciesQueryVariables
   >(GET_EXTERNAL_VACANCIES, {
-    variables: queryVariables,
     onCompleted(data) {
-      console.log(data)
+      if (
+        isEqual(data.externalVacancies.input.page, page) &&
+        isEqual(data.externalVacancies.input.query, query) &&
+        isEqual(data.externalVacancies.input.fieldOfWork, fieldOfWork) &&
+        isEqual(data.externalVacancies.input.institution, institution) &&
+        isEqual(data.externalVacancies.input.location, location)
+      ) {
+        setExternalVacancies(data.externalVacancies.vacancies)
+        setTotalExternalVacancyCount(
+          data.externalVacancies.total ??
+            data.externalVacancies.vacancies.length,
+        )
+      }
     },
   })
 
@@ -179,7 +190,91 @@ const VacanciesList: Screen<VacanciesListProps> = ({
   const mainTitle = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
   const ogTitle = n('ogTitle', 'Starfatorg - laus störf hjá ríkinu | Ísland.is')
 
-  const vacancies = cmsVacancies.concat(externalVacancies)
+  useDebounce(
+    () => {
+      fetchMore({
+        variables: {
+          input: {
+            page,
+            query,
+            fieldOfWork: parameters.fieldOfWork.state,
+            institution: parameters.institution.state,
+            location: parameters.location.state,
+          },
+        },
+      })
+    },
+    DEBOUNCE_TIME,
+    [page, query, fieldOfWork, institution, location],
+  )
+
+  const { vacancies, totalVacancies } = useMemo(() => {
+    const filteredCmsVacancies = cmsVacancies.filter((vacancy) => {
+      const searchKeywords = query
+        .replace('´', '')
+        .trim()
+        .toLowerCase()
+        .split(' ')
+
+      const searchTermMatches = searchKeywords.every(
+        (keyword) =>
+          vacancy.title?.toLowerCase()?.includes(keyword) ||
+          vacancy.institutionName?.toLowerCase()?.includes(keyword) ||
+          vacancy.intro?.toLowerCase()?.includes(keyword),
+      )
+
+      let shouldBeShown = searchTermMatches
+
+      if (fieldOfWork && fieldOfWork.length > 0) {
+        shouldBeShown = Boolean(
+          shouldBeShown &&
+            vacancy.fieldOfWork &&
+            fieldOfWork.includes(vacancy.fieldOfWork),
+        )
+      }
+
+      if (location && location.length > 0) {
+        shouldBeShown =
+          shouldBeShown &&
+          Boolean(
+            vacancy.locations?.some(
+              (vacancyLocation) =>
+                vacancyLocation?.title &&
+                location.includes(vacancyLocation.title),
+            ),
+          )
+      }
+
+      if (institution && institution.length > 0) {
+        shouldBeShown = Boolean(
+          shouldBeShown &&
+            vacancy.institutionName &&
+            institution.includes(vacancy.institutionName),
+        )
+      }
+
+      return shouldBeShown
+    })
+
+    const list = filteredCmsVacancies.concat(externalVacancies)
+    sortVacancyList(list)
+
+    const offset = (page - 1) * ITEMS_PER_PAGE
+
+    return {
+      vacancies: list.slice(offset, offset + ITEMS_PER_PAGE),
+      totalVacancies: filteredCmsVacancies.length + totalExternalVacancyCount,
+    }
+  }, [
+    cmsVacancies,
+    externalVacancies,
+    fieldOfWork,
+    institution,
+    location,
+    page,
+    query,
+    totalExternalVacancyCount,
+  ])
 
   return (
     <Box paddingTop={[0, 0, 8]}>
@@ -317,16 +412,29 @@ const VacanciesList: Screen<VacanciesListProps> = ({
 
       <Box paddingTop={3} paddingBottom={6} background="blue100">
         <GridContainer>
-          {typeof totalVacancies === 'number' && (
-            <Box className="rs_read" marginBottom={6}>
-              <Text>
-                {totalVacancies}{' '}
-                {totalVacancies % 10 === 1 && totalVacancies % 100 !== 11
-                  ? n('singleJobFound', 'starf fannst')
-                  : n('jobsFound', 'störf fundust')}
-              </Text>
-            </Box>
-          )}
+          <GridRow>
+            <GridColumn span="1/3">
+              {typeof totalVacancies === 'number' && (
+                <Box className="rs_read" marginBottom={6}>
+                  <Text>
+                    {totalVacancies}{' '}
+                    {totalVacancies % 10 === 1 && totalVacancies % 100 !== 11
+                      ? n('singleJobFound', 'starf fannst')
+                      : n('jobsFound', 'störf fundust')}
+                  </Text>
+                </Box>
+              )}
+            </GridColumn>
+
+            <GridColumn span="1/3">
+              <Box display="flex" justifyContent="center">
+                {loading && <LoadingDots />}
+              </Box>
+            </GridColumn>
+
+            <GridColumn span="1/3" />
+          </GridRow>
+
           <GridRow rowGap={[3, 3, 6]}>
             {vacancies.map((vacancy) => {
               let logoUrl =
@@ -454,7 +562,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
             })}
           </GridRow>
           {/* TODO: perhaps just have a button to go to previous page or next page, þá þarf kannsi samt að hafa núllstilla síu möguleika */}
-          {vacancies.length > 0 && typeof totalVacancies === 'number' && (
+          {typeof totalVacancies === 'number' && (
             <Box paddingTop={8}>
               <Pagination
                 variant="blue"
@@ -563,12 +671,11 @@ VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
 
   return {
     cmsVacancies: cmsVacanciesResponse.data.cmsVacancies.vacancies,
-    externalVacancies:
+    initialExternalVacancies:
       externalVacanciesResponse.data.externalVacancies.vacancies,
-    totalVacancies:
-      cmsVacanciesResponse.data.cmsVacancies.vacancies.length +
-      (externalVacanciesResponse.data.externalVacancies.total ??
-        externalVacanciesResponse.data.externalVacancies.vacancies.length),
+    totalInitialExternalVacancyCount:
+      externalVacanciesResponse.data.externalVacancies.total ??
+      externalVacanciesResponse.data.externalVacancies.vacancies.length,
     institutionOptions:
       institutionsResponse.data.externalVacancyInstitutions.options,
     locationOptions: locationsResponse.data.externalVacancyLocations.options,

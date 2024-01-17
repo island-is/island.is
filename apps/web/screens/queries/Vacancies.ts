@@ -21,10 +21,16 @@ export const GET_CMS_VACANCIES = gql`
   }
 `
 
-// TODO: perhaps use the input that's returned
 export const GET_EXTERNAL_VACANCIES = gql`
   query GetExternalVacancies($input: ExternalVacanciesInput!) {
     externalVacancies(input: $input) {
+      input {
+        page
+        query
+        fieldOfWork
+        institution
+        location
+      }
       total
       vacancies {
         id

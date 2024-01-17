@@ -9,7 +9,15 @@ export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
 export const sortVacancyList = (vacancyList: VacancyListItem[]) => {
   vacancyList.sort((a, b) => {
-    if (!a?.applicationDeadlineFrom || !b?.applicationDeadlineFrom) return 0
+    if (!a?.applicationDeadlineFrom && b?.applicationDeadlineFrom) {
+      return 1
+    }
+    if (a?.applicationDeadlineFrom && !b?.applicationDeadlineFrom) {
+      return -1
+    }
+    if (!a?.applicationDeadlineFrom || !b?.applicationDeadlineFrom) {
+      return 0
+    }
 
     const [dayA, monthA, yearA] = a.applicationDeadlineFrom.split('.')
     if (!dayA || !monthA || !yearA) return 0
