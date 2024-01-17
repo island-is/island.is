@@ -46,12 +46,11 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     })
 
     try {
-    // Use the shared service to send an email using a custom email generator
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationSubmittedEmail,
-      application,
-    )
-
+      // Use the shared service to send an email using a custom email generator
+      await this.sharedTemplateAPIService.sendEmail(
+        generateApplicationSubmittedEmail,
+        application,
+      )
     } catch (e) {
       this.logger.warn(
         'Could not send submit email to admins for application: ',
