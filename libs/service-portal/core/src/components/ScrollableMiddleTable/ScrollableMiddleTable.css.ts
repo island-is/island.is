@@ -33,6 +33,7 @@ export const firstColumn = style({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   width: '140px',
+
   ...themeUtils.responsiveStyle({
     md: {
       width: theme.spacing[23],

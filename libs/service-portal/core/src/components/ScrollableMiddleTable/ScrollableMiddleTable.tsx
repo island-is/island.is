@@ -41,7 +41,7 @@ const getBreakpointWidth = (width: number) => {
   return '200%'
 }
 const FIRST_COLUMN_WIDTH = theme.spacing[23]
-const LAST_COLUMN_WIDTH = theme.spacing[20]
+const LAST_COLUMN_WIDTH = theme.spacing[15]
 const ICON_WIDTH = theme.spacing[6]
 
 export const ScrollableMiddleTable = ({
@@ -55,12 +55,11 @@ export const ScrollableMiddleTable = ({
 
   const breakpointWidth = getBreakpointWidth(width)
 
-  const tableRef = useRef<HTMLElement>(null)
+  const tableRef = useRef<HTMLDivElement>(null)
+
+  const isMobile = width < theme.breakpoints.md
 
   const handleScroll = (type: 'backward' | 'forward') => {
-    console.log(tableRef.current)
-    console.log(tableRef.current?.scrollWidth)
-    console.log(tableRef.current?.scrollLeft)
     if (tableRef?.current) {
       if (type === 'backward') {
         tableRef.current.scrollLeft -= LAST_COLUMN_WIDTH / 2
@@ -72,49 +71,54 @@ export const ScrollableMiddleTable = ({
 
   return (
     <Box overflow="auto" width="full" ref={tableRef}>
-      <Box
-        position="absolute"
-        style={{
-          left: `${FIRST_COLUMN_WIDTH - ICON_WIDTH / 2}px`,
-          top: '45%',
-          zIndex: '20',
-          opacity: 0.8,
-        }}
-      >
-        <Button
-          circle
-          colorScheme="light"
-          icon={'arrowBack'}
-          iconType="filled"
-          onClick={() => handleScroll('backward')}
-          size="medium"
-          type="button"
-          variant="primary"
-        />
-      </Box>
-      <Box
-        position="absolute"
-        style={{
-          right: `${LAST_COLUMN_WIDTH - ICON_WIDTH / 2}px`,
-          top: '45%',
-          zIndex: '20',
-          opacity: 0.8,
-        }}
-      >
-        <Button
-          circle
-          colorScheme="light"
-          icon={'arrowForward'}
-          iconType="filled"
-          onClick={() => handleScroll('forward')}
-          size="medium"
-          type="button"
-          variant="primary"
-        />
-      </Box>
+      {!isMobile && (
+        <>
+          <Box
+            position="absolute"
+            style={{
+              left: `${FIRST_COLUMN_WIDTH - ICON_WIDTH / 2}px`,
+              top: '45%',
+              zIndex: '20',
+              opacity: 0.8,
+            }}
+          >
+            <Button
+              circle
+              colorScheme="light"
+              icon={'arrowBack'}
+              iconType="filled"
+              onClick={() => handleScroll('backward')}
+              size="medium"
+              type="button"
+              variant="primary"
+            />
+          </Box>
+          <Box
+            position="absolute"
+            style={{
+              right: `${LAST_COLUMN_WIDTH - ICON_WIDTH / 2}px`,
+              top: '45%',
+              zIndex: '20',
+              opacity: 0.8,
+            }}
+          >
+            <Button
+              circle
+              colorScheme="light"
+              icon={'arrowForward'}
+              iconType="filled"
+              onClick={() => handleScroll('forward')}
+              size="medium"
+              type="button"
+              variant="primary"
+            />
+          </Box>
+        </>
+      )}
       <T.Table
         box={{
           className: styles.table,
+          overflow: 'initial',
         }}
         style={{
           tableLayout: nested ? 'fixed' : 'auto',
@@ -142,9 +146,12 @@ export const ScrollableMiddleTable = ({
               </T.HeadData>
             ))}
             <T.HeadData
+              style={{
+                width: isMobile ? 'initial' : LAST_COLUMN_WIDTH,
+              }}
               box={{
                 className: cn(styles.lastColumn, styles.row, {
-                  [styles.sticky]: options?.firstColumn.sticky,
+                  [styles.lastColumnSticky]: options?.firstColumn.sticky,
                 }),
               }}
             >
@@ -177,7 +184,7 @@ export const ScrollableMiddleTable = ({
               <T.Data
                 box={{
                   className: cn(styles.lastColumn, styles.row, {
-                    [styles.sticky]: options?.lastColumn.sticky,
+                    [styles.lastColumnSticky]: options?.lastColumn.sticky,
                   }),
                 }}
               >
@@ -208,7 +215,7 @@ export const ScrollableMiddleTable = ({
               <T.Data
                 box={{
                   className: cn(styles.lastColumn, styles.row, {
-                    [styles.sticky]: options?.lastColumn.sticky,
+                    [styles.lastColumnSticky]: options?.lastColumn.sticky,
                   }),
                 }}
               >
