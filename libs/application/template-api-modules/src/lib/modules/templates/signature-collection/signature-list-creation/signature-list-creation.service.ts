@@ -8,7 +8,7 @@ import {
   ReasonKey,
   OwnerInput,
 } from '@island.is/clients/signature-collection'
-import { generateApplicationSubmittedEmail } from './emailGenerators '
+import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import {
   CreateListSchema,

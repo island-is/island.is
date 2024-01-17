@@ -27,6 +27,7 @@ export enum Features {
   pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
+  ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
