@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { SignatureCollectionSignature } from './signature.model'
 
 @ObjectType()
-export class SignatureCollectionFailedNationalIds {
+export class SignatureCollectionNationalIds {
   @Field()
   nationalId!: string
 
@@ -12,9 +11,9 @@ export class SignatureCollectionFailedNationalIds {
 
 @ObjectType()
 export class SignatureCollectionBulk {
-  @Field(() => [SignatureCollectionSignature])
-  success!: SignatureCollectionSignature[]
+  @Field(() => [SignatureCollectionNationalIds])
+  success!: SignatureCollectionNationalIds[]
 
-  @Field(() => [SignatureCollectionFailedNationalIds])
-  failed!: SignatureCollectionFailedNationalIds[]
+  @Field(() => [SignatureCollectionNationalIds])
+  failed!: SignatureCollectionNationalIds[]
 }
