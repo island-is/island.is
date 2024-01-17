@@ -44,9 +44,12 @@ export class SignatureCollectionClientService {
     const res = await this.collectionsApi.medmaelasofnunGet({
       includeInactive: true,
     })
-    const current = (res.map(mapCollectionInfo).filter(
-        (collection) => collection?.isSignatureCollection,
-      ) as CollectionInfo[]
+    const current = (
+      res
+        .map(mapCollectionInfo)
+        .filter(
+          (collection) => collection?.isSignatureCollection,
+        ) as CollectionInfo[]
     ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
 
     if (!current) {
