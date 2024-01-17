@@ -334,6 +334,39 @@
         }
       }
     },
+    "/Medmaelalistar/AddListarAdmin": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedmaelalistiRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Medmaelalistar/{ID}": {
       "get": {
         "tags": ["Medmaelalistar"],
@@ -1260,6 +1293,11 @@
             "type": "array",
             "items": { "type": "string" }
           },
+          "medMedmaeliAnnarListi": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "medmaeliKenn": { "type": "array", "items": { "type": "string" } },
           "medmaeli": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }

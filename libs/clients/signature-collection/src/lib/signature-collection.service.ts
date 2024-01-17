@@ -417,10 +417,14 @@ export class SignatureCollectionClientService {
     })
     return {
       success:
-        signatures?.medmaeli
-          ?.map((signature) => mapSignature(signature))
-          .filter((s) => s.active) ?? [],
+        signatures.medmaeliKenn?.map((nationalId) => ({
+          nationalId,
+        })) ?? [],
       failed: [
+        ...(signatures.medMedmaeliAnnarListi?.map((nationalId) => ({
+          nationalId,
+          reason: 'Þegar meðmæli á öðrum lista',
+        })) ?? []),
         ...(signatures.medMedmaeliALista?.map((nationalId) => ({
           nationalId,
           reason: 'Þegar meðmæli á lista',
