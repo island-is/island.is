@@ -2,15 +2,21 @@ name: 'Unit Test'
 description: 'Run unit tests'
 inputs:
   dd-api-key:
+    description: 'Datadog API key'
     required: true
   aws-access-key-id:
+    description: 'AWS access key ID'
     required: true
   aws-secret-access-key:
+    description: 'AWS secret access key'
     required: true
   docker-registry:
+    description: 'Docker registry'
     required: true
   codecov-token:
+    description: 'Codecov token'
     required: true
+
 runs:
   using: 'composite'
   steps:
@@ -47,7 +53,7 @@ runs:
 
     - name: Cached codecov uploader
       id: codecov-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: codecov
         key: ${{ runner.os }}-codeconv-${{ env.CODECOV_REV }}
