@@ -15,7 +15,6 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
   const answers = application.answers as CreateListSchema
 
   const owner: OwnerInput = answers.applicant
-
   const currentCollection: SignatureCollection = application.externalData
     .currentCollection?.data as SignatureCollection
 
