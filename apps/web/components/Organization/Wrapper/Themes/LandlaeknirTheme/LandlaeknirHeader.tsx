@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { theme } from '@island.is/island-ui/theme'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+
 import * as styles from './LandlaeknirHeader.css'
 
 const backgroundUrl =
@@ -41,10 +43,12 @@ const getDefaultStyle = (width: number) => {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const LandlaeknirHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
+  logoAltText,
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
@@ -74,7 +78,7 @@ const LandlaeknirHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="landlaeknir-logo"
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -91,7 +95,7 @@ const LandlaeknirHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="landlaeknir-logo"
+                  alt={logoAltText}
                 />
               </Link>
             </Hidden>
