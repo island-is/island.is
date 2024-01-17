@@ -72,12 +72,3 @@ export const mapDepartmentToId = (department: string) => {
 // Move this logic to the API when possible?
 export const isValidMinsitry = (ministry?: string) =>
   ministry && Ministries.includes(ministry.toLocaleLowerCase())
-
-export const isValidDate = (date?: string) => {
-  if (!date) return false
-  try {
-    return isValid(parse(date, 'yyyy-dd-MM', new Date()))
-  } catch (e) {
-    return false
-  }
-}

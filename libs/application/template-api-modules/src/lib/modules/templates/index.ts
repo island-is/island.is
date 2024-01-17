@@ -107,6 +107,8 @@ import { OfficialJournalOfIcelandModule } from './official-journal-of-iceland/of
 import { OfficialJournalOfIcelandService } from './official-journal-of-iceland/official-journal-of-iceland.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
+import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
+import { ChangeMachineSupervisorTemplateService } from './aosh/change-machine-supervisor/change-machine-supervisor.service'
 import { SignatureListCreationModule } from './signature-collection/signature-list-creation/signature-list-creation.module'
 import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
 import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
@@ -169,6 +171,7 @@ export const modules = [
   SignatureListCreationModule,
   SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
+  ChangeMachineSupervisorTemplateModule,
   OfficialJournalOfIcelandModule,
 ]
 
@@ -229,5 +232,6 @@ export const services = [
   SignatureListCreationService,
   SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
+  ChangeMachineSupervisorTemplateService,
   OfficialJournalOfIcelandService,
 ]

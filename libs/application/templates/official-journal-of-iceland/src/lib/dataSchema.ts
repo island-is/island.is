@@ -6,7 +6,6 @@ import {
   REGLUGERDIR_ID,
   UNDIRSKRIFT_RADHERRA_ID,
 } from './constants'
-import { isValidDate } from './utils'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -69,14 +68,6 @@ export const dataSchema = z.object({
           })
         }
 
-        if (!isValidDate(caseSchema.signatureDate)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: error.invalidDate,
-            path: [InputFields.case.signatureDate.split('.')[1]],
-          })
-        }
-
         if (!caseSchema.signatureMinistry) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -101,19 +92,27 @@ export const dataSchema = z.object({
     files: z.array(FileSchema),
     fileNames: z.enum(['additions', 'documents']),
   }),
-  publishingPreferences: z.object({
-    date: z.string().refine((v) => v && v.length > 0, {
-      params: error.datePicker,
+  publishingPreferences: z
+    .object({
+      date: z.string(),
+      fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]),
+      communicationChannels: z.array(
+        z.object({
+          email: z.string(),
+          phone: z.string(),
+        }),
+      ),
+      message: z.string().optional(),
+    })
+    .superRefine((schema, ctx) => {
+      if (!schema.date) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.emptyFieldError,
+          path: [InputFields.publishingPreferences.date.split('.')[1]],
+        })
+      }
     }),
-    fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]).refine((v) => v),
-    communicationChannels: z.array(
-      z.object({
-        email: z.string(),
-        phone: z.string(),
-      }),
-    ),
-    message: z.string(),
-  }),
 })
 
 export type answerSchemas = z.infer<typeof dataSchema>

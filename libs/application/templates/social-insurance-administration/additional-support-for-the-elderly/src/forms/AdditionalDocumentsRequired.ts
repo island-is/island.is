@@ -7,13 +7,13 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { inReviewFormMessages } from '../lib/messages'
+import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'AdditionalSupportForTheElderyInReviewUpload',
-  title: inReviewFormMessages.formTitle,
+  title: additionalSupportForTheElderyFormMessage.shared.applicationTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenBackButton: true,

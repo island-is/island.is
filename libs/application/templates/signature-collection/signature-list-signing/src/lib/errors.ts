@@ -45,7 +45,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.active.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
@@ -81,19 +81,19 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.deniedByService.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   submitFailure: defineMessages({
     title: {
       id: 'sls.application:error.submitFailure.title',
-      defaultMessage: 'Ekitthvað fór úrskeiðis',
+      defaultMessage: 'Eitthvað fór úrskeiðis',
       description: '',
     },
     summary: {
       id: 'sls.application:error.submitFailure.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),

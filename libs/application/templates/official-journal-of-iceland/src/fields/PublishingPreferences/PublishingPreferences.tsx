@@ -22,6 +22,8 @@ export const PublishingPreferences = ({
 }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
 
+  const { answers } = application
+
   const today = new Date()
   const maxEndDate = addYears(today, 5)
 
@@ -42,11 +44,12 @@ export const PublishingPreferences = ({
           label={f(publishingPreferences.inputs.datepicker.label)}
           minDate={today}
           maxDate={maxEndDate}
+          defaultValue={answers.publishingPreferences?.date ?? ''}
           excludeDates={getWeekendDates(today, maxEndDate)}
-          error={
-            errors &&
-            getErrorViaPath(errors, InputFields.publishingPreferences.date)
-          }
+          error={getErrorViaPath(
+            errors,
+            InputFields.publishingPreferences.date,
+          )}
         />
         <Controller
           name={InputFields.publishingPreferences.fastTrack}
