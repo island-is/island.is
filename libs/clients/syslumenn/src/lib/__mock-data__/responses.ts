@@ -10,6 +10,7 @@ import {
   Afengisleyfi,
   Taekifaerisleyfi,
   Verdbrefamidlari,
+  ThjodskraSvarSkeyti,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -234,6 +235,18 @@ export const MORTGAGE_CERTIFICATE_CONTENT_OK = 'c29tZWNvbnRlbnQ='
 export const MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING = 'Precondition Required'
 export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING =
   'Ekki hægt að afgreiða vedbokarvottord'
+
+export const DEPARTED_REGISTRY_PERSON_RESPONSE: ThjodskraSvarSkeyti = {
+  nafn: 'Gervimaður Færeyjar',
+  kennitala: '0101302399',
+  heimili: 'Gervigata 1',
+  postaritun: '101-Reykjavik',
+  kynkodi: 1,
+  loghHusk: '000019700130',
+  stada: 'L',
+  sveitarfelag: 'Reykjavík',
+  svfNr: '0000',
+}
 
 export const REAL_ESTATE_ADDRESS_NAME = 'Hvergiland'
 

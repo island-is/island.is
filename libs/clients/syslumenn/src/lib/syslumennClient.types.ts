@@ -162,6 +162,14 @@ export interface Person {
   type: number
 }
 
+export interface RegistryPerson {
+  name: string
+  nationalId: string
+  address: string
+  postalCode: string
+  city: string
+}
+
 export interface Attachment {
   name: string
   content: string

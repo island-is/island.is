@@ -17,6 +17,7 @@ import {
   ESTATE_REGISTRANT_RESPONSE,
   OPERATING_LICENSES_CSV,
   TEMPORARY_EVENT_LICENCES,
+  DEPARTED_REGISTRY_PERSON_RESPONSE,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
@@ -30,6 +31,7 @@ import {
   mapBroker,
   mapAlcoholLicence,
   mapTemporaryEventLicence,
+  mapDepartedToRegistryPerson,
 } from './syslumennClient.utils'
 import {
   SYSLUMENN_AUCTION,
@@ -65,6 +67,7 @@ const ATTACHMENTS = [
 ]
 
 const VALID_ESTATE_APPLICANT = '0101302399'
+const VALID_DEPARTED_PERSON = '0101302399'
 const INVALID_ESTATE_APPLICANT = '0101303019'
 
 const config = defineConfig({
@@ -204,6 +207,15 @@ describe('SyslumennService', () => {
       const response = await service.getEstateRegistrant(VALID_ESTATE_APPLICANT)
       expect(response).toStrictEqual(
         ESTATE_REGISTRANT_RESPONSE.map(mapEstateRegistrant),
+      )
+    })
+  })
+
+  describe('getDeparted', () => {
+    it('should return personal information from registry for a valid nationalId', async () => {
+      const response = await service.getDeparted(VALID_DEPARTED_PERSON)
+      expect(response).toStrictEqual(
+        mapDepartedToRegistryPerson(DEPARTED_REGISTRY_PERSON_RESPONSE),
       )
     })
   })
