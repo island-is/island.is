@@ -564,7 +564,7 @@ describe('UserProfileWorker', () => {
     })
   })
 
-  it.only('should lower case emails coming from advania', async () => {
+  it('should lower case emails coming from advania', async () => {
     // Arrange
     const advaniaProfiles = new Array(10).fill(null).map((_, index) => ({
       ssn: `${index}`,
