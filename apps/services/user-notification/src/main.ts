@@ -8,3 +8,17 @@ bootstrap({
   openApi,
   enableVersioning: true,
 })
+
+const job = processJob()
+
+if (job === 'worker') {
+  import('./worker').then((app) => app.worker())
+} else {
+  bootstrap({
+    appModule: AppModule,
+    name: 'services-user-profile',
+    openApi,
+    port: environment.port,
+    enableVersioning: true,
+  })
+}

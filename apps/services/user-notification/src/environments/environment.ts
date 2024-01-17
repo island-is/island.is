@@ -28,7 +28,7 @@ export const environment = {
 
   appProtocol: required('USER_NOTIFICATION_APP_PROTOCOL'),
 
-  isWorker: job === 'worker',
+  isWorker: job === 'worker', // refactor this 
 
   firebaseCredentials: required('FIREBASE_CREDENTIALS'),
 

@@ -33,6 +33,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
   }
 
+ 
+
   async run() {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {

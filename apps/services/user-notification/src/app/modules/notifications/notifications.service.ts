@@ -287,29 +287,5 @@ export class NotificationsService {
     }
   }
 
-  @Cron('0 * * * *')// run once every hour
-  async handleCron() {
-    const rowCountBeforeCleanup = await this.notificationModel.count()
-    const sixMonthsAgo = new Date(
-      new Date().getTime() - 1000 * 60 * 60 * 24 * 180,
-    ) // 180 days
-    await this.notificationModel.destroy({
-      where: {
-        created: {
-          $lt: sixMonthsAgo,
-        },
-      },
-    })
-    const rowCountAfterCleanup = await this.notificationModel.count()
-    this.logger.info(
-      'Notification cleanup job row count before: ' + rowCountBeforeCleanup,
-    )
-    this.logger.info(
-      'Notification cleanup job completed. Rows deleted: ' +
-        (rowCountBeforeCleanup - rowCountAfterCleanup),
-    )
-    this.logger.info(
-      'Notification cleanup job row count after: ' + rowCountAfterCleanup,
-    )
-  }
+ 
 }
