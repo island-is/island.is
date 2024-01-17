@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react'
+import { FC, useState, useEffect, useCallback, Fragment } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import {
   InputController,
@@ -11,6 +11,7 @@ import {
   GridRow,
   Button,
   Input,
+  Text,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
@@ -22,6 +23,8 @@ import { m } from '../../lib/messages'
 type RepeaterProps = {
   field: {
     props: {
+      sectionTitle?: string
+      sectionTitleVariant?: string
       fields: Array<object>
       repeaterButtonText: string
       sumField: string
@@ -258,66 +261,82 @@ export const ReportFieldsRepeater: FC<
             <GridRow>
               {props.fields.map((field: any) => {
                 return (
-                  <GridColumn
-                    span={
-                      field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']
-                    }
-                    paddingBottom={2}
-                    key={field.id}
-                  >
-                    {field.id === 'relation' ? (
-                      <SelectController
-                        id={`${fieldIndex}.${field.id}`}
-                        name={`${fieldIndex}.${field.id}`}
-                        label={field.title}
-                        placeholder={field.placeholder}
-                        options={relations}
-                      />
-                    ) : (
-                      <InputController
-                        id={`${fieldIndex}.${field.id}`}
-                        name={`${fieldIndex}.${field.id}`}
-                        defaultValue={
-                          repeaterField[field.id]
-                            ? repeaterField[field.id]
-                            : getDefaults(field.id)
-                        }
-                        format={field.format}
-                        label={field.title}
-                        placeholder={field.placeholder}
-                        backgroundColor={field.color ? field.color : 'blue'}
-                        currency={field.currency}
-                        readOnly={field.readOnly}
-                        type={field.type}
-                        textarea={field.variant}
-                        rows={field.rows}
-                        required={field.required}
-                        error={
-                          error && error[index]
-                            ? error[index][field.id]
-                            : undefined
-                        }
-                        onChange={(elem) => {
-                          const value = elem.target.value.replace(/\D/g, '')
-
-                          // heirs
-                          if (field.id === 'heirsPercentage') {
-                            setPercentage(Number(value) / 100)
+                  <Fragment key={field.id}>
+                    {field?.sectionTitle ? (
+                      <GridColumn span="1/1">
+                        <Text
+                          variant={
+                            field.sectionTitleVariant
+                              ? field.sectionTitleVariant
+                              : 'h5'
                           }
-
-                          if (valueKeys.includes(field.id)) {
-                            updateValue(fieldIndex)
+                          marginBottom={2}
+                        >
+                          {field.sectionTitle}
+                        </Text>
+                      </GridColumn>
+                    ) : null}
+                    <GridColumn
+                      span={
+                        field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']
+                      }
+                      paddingBottom={2}
+                      key={field.id}
+                    >
+                      {field.id === 'relation' ? (
+                        <SelectController
+                          id={`${fieldIndex}.${field.id}`}
+                          name={`${fieldIndex}.${field.id}`}
+                          label={field.title}
+                          placeholder={field.placeholder}
+                          options={relations}
+                        />
+                      ) : (
+                        <InputController
+                          id={`${fieldIndex}.${field.id}`}
+                          name={`${fieldIndex}.${field.id}`}
+                          defaultValue={
+                            repeaterField[field.id]
+                              ? repeaterField[field.id]
+                              : getDefaults(field.id)
                           }
-
-                          if (props.sumField === field.id) {
-                            calculateTotal()
+                          format={field.format}
+                          label={field.title}
+                          placeholder={field.placeholder}
+                          backgroundColor={field.color ? field.color : 'blue'}
+                          currency={field.currency}
+                          readOnly={field.readOnly}
+                          type={field.type}
+                          textarea={field.variant}
+                          rows={field.rows}
+                          required={field.required}
+                          error={
+                            error && error[index]
+                              ? error[index][field.id]
+                              : undefined
                           }
+                          onChange={(elem) => {
+                            const value = elem.target.value.replace(/\D/g, '')
 
-                          setIndex(fieldIndex)
-                        }}
-                      />
-                    )}
-                  </GridColumn>
+                            // heirs
+                            if (field.id === 'heirsPercentage') {
+                              setPercentage(Number(value) / 100)
+                            }
+
+                            if (valueKeys.includes(field.id)) {
+                              updateValue(fieldIndex)
+                            }
+
+                            if (props.sumField === field.id) {
+                              calculateTotal()
+                            }
+
+                            setIndex(fieldIndex)
+                          }}
+                        />
+                      )}
+                    </GridColumn>
+                  </Fragment>
                 )
               })}
             </GridRow>

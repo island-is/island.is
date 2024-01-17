@@ -58,7 +58,7 @@ const SigneeView = () => {
     <Box>
       <IntroHeader
         title={formatMessage(m.pageTitle)}
-        intro={formatMessage(m.pageDescription)}
+        intro={formatMessage(m.pageDescriptionSignee)}
       />
       {!loadingSignedList && !loadingUserLists ? (
         <Box>
@@ -90,15 +90,28 @@ const SigneeView = () => {
                   format(new Date(signedList.endTime), 'dd.MM.yyyy')
                 }
                 text={formatMessage(m.collectionTitle)}
-                cta={{
-                  label: formatMessage(m.unSignList),
-                  buttonType: {
-                    variant: 'text',
-                    colorScheme: 'destructive',
-                  },
-                  onClick: () => setModalIsOpen(true),
-                  icon: undefined,
-                }}
+                cta={
+                  new Date(signedList.endTime) > new Date()
+                    ? {
+                        label: formatMessage(m.unSignList),
+                        buttonType: {
+                          variant: 'text',
+                          colorScheme: 'destructive',
+                        },
+                        onClick: () => setModalIsOpen(true),
+                        icon: undefined,
+                      }
+                    : undefined
+                }
+                tag={
+                  new Date(signedList.endTime) < new Date()
+                    ? {
+                        label: formatMessage(m.collectionClosed),
+                        variant: 'purple',
+                        outlined: true,
+                      }
+                    : undefined
+                }
               />
               <Modal
                 id="unSignList"
@@ -144,15 +157,30 @@ const SigneeView = () => {
                       format(new Date(list.endTime), 'dd.MM.yyyy')
                     }
                     text={formatMessage(m.collectionTitle)}
-                    cta={{
-                      label: formatMessage(m.signList),
-                      variant: 'text',
-                      icon: 'arrowForward',
-                      disabled: signedList !== null,
-                      onClick: () => {
-                        window.open(`${document.location.origin}${list.slug}`)
-                      },
-                    }}
+                    cta={
+                      new Date(list.endTime) > new Date()
+                        ? {
+                            label: formatMessage(m.signList),
+                            variant: 'text',
+                            icon: 'arrowForward',
+                            disabled: signedList !== null,
+                            onClick: () => {
+                              window.open(
+                                `${document.location.origin}${list.slug}`,
+                              )
+                            },
+                          }
+                        : undefined
+                    }
+                    tag={
+                      new Date(list.endTime) < new Date()
+                        ? {
+                            label: formatMessage(m.collectionClosed),
+                            variant: 'purple',
+                            outlined: true,
+                          }
+                        : undefined
+                    }
                   />
                 )
               })}
