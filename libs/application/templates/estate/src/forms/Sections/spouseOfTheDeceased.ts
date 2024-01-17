@@ -46,16 +46,21 @@ export const spouseOfTheDeceased = buildSection({
               'deceasedWithUndividedEstate.selection',
             ) === YES,
         }),
-        buildCustomField({
-          id: 'deceasedWithUndividedEstate.spouse',
-          title: '',
-          component: 'LookupPerson',
-          condition: (answers) =>
-            getValueViaPath(
-              answers,
-              'deceasedWithUndividedEstate.selection',
-            ) === YES,
-        }),
+        buildCustomField(
+          {
+            id: 'deceasedWithUndividedEstate.spouse',
+            title: '',
+            component: 'LookupPerson',
+            condition: (answers) =>
+              getValueViaPath(
+                answers,
+                'deceasedWithUndividedEstate.selection',
+              ) === YES,
+          },
+          {
+            fallbackToDeceasedRegistry: true,
+          },
+        ),
       ],
     }),
   ],

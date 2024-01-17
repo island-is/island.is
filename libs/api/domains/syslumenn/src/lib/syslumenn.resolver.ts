@@ -30,6 +30,8 @@ import { AlcoholLicence } from './models/alcoholLicence'
 import { TemporaryEventLicence } from './models/temporaryEventLicence'
 import { MasterLicencesResponse } from './models/masterLicence'
 import { GetVehicleInput } from './dto/getVehicle.input'
+import { RegistryPerson } from './models/registryPerson'
+import { GetRegistryPersonInput } from './dto/getRegistryPerson.input'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -144,6 +146,15 @@ export class SyslumennResolver {
     @Args('input') input: GetVehicleInput,
   ): Promise<VehicleRegistration> {
     return this.syslumennService.getVehicle(input.vehicleId)
+  }
+
+  @Query(() => RegistryPerson)
+  syslumennGetRegistryPerson(
+    @Args('input') input: GetRegistryPersonInput,
+  ): Promise<RegistryPerson> {
+    const person = this.syslumennService.getRegistryPerson(input.nationalId)
+    console.log('GOT PERSON', person)
+    return person
   }
 
   @Query(() => PropertyDetail, { nullable: true })

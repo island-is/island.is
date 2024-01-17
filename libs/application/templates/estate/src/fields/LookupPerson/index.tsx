@@ -11,8 +11,12 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
-import { IdentityInput, Query } from '@island.is/api/schema'
-import { IDENTITY_QUERY } from '../../graphql'
+import {
+  IdentityInput,
+  GetRegistryPersonInput,
+  Query,
+} from '@island.is/api/schema'
+import { DECEASED_IDENITY_QUERY, IDENTITY_QUERY } from '../../graphql'
 
 type LookupProps = {
   field: {
@@ -20,6 +24,7 @@ type LookupProps = {
     props?: {
       requiredNationalId?: boolean
       alertWhenUnder18?: boolean
+      fallbackToDeceasedRegistry?: boolean
     }
   }
   nested?: boolean
@@ -40,13 +45,34 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   const personNationalId: string = watch(`${id}.nationalId`)
   const personName: string = watch(`${id}.name`)
 
+  const [getDeceased, { loading: deceasedLoading }] = useLazyQuery<
+    Query,
+    { input: GetRegistryPersonInput }
+  >(DECEASED_IDENITY_QUERY, {
+    onCompleted: (data) => {
+      setValue(`${id}.name`, data.syslumennGetRegistryPerson?.name ?? '')
+      clearErrors(`${id}.name`)
+    },
+    fetchPolicy: 'network-only',
+  })
+
   const [getIdentity, { loading: queryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
   >(IDENTITY_QUERY, {
     onCompleted: (data) => {
-      setValue(`${id}.name`, data.identity?.name ?? '')
-      clearErrors(`${id}.name`)
+      if (!data.identity?.name) {
+        getDeceased({
+          variables: {
+            input: {
+              nationalId: personNationalId,
+            },
+          },
+        })
+      } else {
+        setValue(`${id}.name`, data.identity?.name)
+        clearErrors(`${id}.name`)
+      }
     },
     fetchPolicy: 'network-only',
   })

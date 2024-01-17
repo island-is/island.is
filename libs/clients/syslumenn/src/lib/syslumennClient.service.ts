@@ -461,7 +461,7 @@ export class SyslumennService {
     }
   }
 
-  async getDeparted(nationalId: string): Promise<RegistryPerson> {
+  async getRegistryPerson(nationalId: string): Promise<RegistryPerson> {
     const { id, api } = await this.createApi()
     const res = await api.leitaAdKennitoluIThjodskraPost({
       skeyti: {
@@ -469,6 +469,8 @@ export class SyslumennService {
         kennitala: nationalId,
       },
     })
+
+    console.log('GOT RESPONSE', JSON.stringify(res, null, 2))
 
     return mapDepartedToRegistryPerson(res)
   }
