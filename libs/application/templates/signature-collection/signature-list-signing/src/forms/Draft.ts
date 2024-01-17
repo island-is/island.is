@@ -58,6 +58,7 @@ export const Draft: Form = buildForm({
                 buildRadioField({
                   id: 'candidate.name',
                   title: '',
+                  backgroundColor: 'white',
                   defaultValue: ({ externalData }: Application) => {
                     const lists = getValueViaPath(
                       externalData,
@@ -74,6 +75,13 @@ export const Draft: Form = buildForm({
                     return (data as SignatureCollectionList[]).map((list) => ({
                       value: list.title,
                       label: list.title,
+                      disabled: list.maxReached,
+                      tag: list.maxReached
+                        ? {
+                            label: m.selectCandidateMaxReached.defaultMessage,
+                            variant: 'red',
+                          }
+                        : undefined,
                     }))
                   },
                 }),
