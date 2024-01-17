@@ -168,8 +168,12 @@ const VacanciesList: Screen<VacanciesListProps> = ({
 
   const selectedFilters = extractFilterTags(filterCategories)
 
-  const clearSearch = () => {
+  const clearFilters = () => {
     setPage(null)
+    setQuery(null)
+    setFieldOfWork(null)
+    setInstitution(null)
+    setLocation(null)
   }
 
   const mainTitle = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
@@ -247,7 +251,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
             labelClose={n('closeFilter', 'Loka síu')}
             labelResult={n('viewResults', 'Skoða niðurstöður')}
             labelTitle={n('filterMenuTitle', 'Sía niðurstöður')}
-            onFilterClear={clearSearch}
+            onFilterClear={clearFilters}
             filterInput={
               <Box className={styles.filterInput}>
                 <FilterInput

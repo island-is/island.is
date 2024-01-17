@@ -143,10 +143,12 @@ const VacancyDetails: Screen<VacancyDetailsProps> = ({
     <Box>
       <HeadWithSocialSharing
         title={`${vacancy?.title ?? ''}${vacancy?.title ? ogTitlePostfix : ''}`}
-        description={shortenText(
-          vacancy?.plainTextIntro ?? '',
-          VACANCY_INTRO_MAX_LENGTH,
-        )}
+        description={
+          shortenText(
+            vacancy?.plainTextIntro ?? '',
+            VACANCY_INTRO_MAX_LENGTH,
+          ) ?? ''
+        }
         imageUrl={getSocialImageUrl(vacancy?.logoUrl) ?? ''}
       >
         <meta name="robots" content="noindex, nofollow" />
