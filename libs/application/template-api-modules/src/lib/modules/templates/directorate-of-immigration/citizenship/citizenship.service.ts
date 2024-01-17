@@ -171,6 +171,8 @@ export class CitizenshipService extends BaseTemplateApiService {
         ?.filter((c) => c.wasRemoved !== 'true')
         ?.map((c) => ({
           countryId: c.countryId,
+          dateFrom: c.dateFrom ? new Date(c.dateFrom) : undefined,
+          dateTo: c.dateTo ? new Date(c.dateTo) : undefined,
         }))
     const filteredStaysAbroad =
       answers.staysAbroad?.hasStayedAbroad == YES &&

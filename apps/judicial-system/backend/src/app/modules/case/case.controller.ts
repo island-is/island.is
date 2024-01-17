@@ -346,7 +346,9 @@ export class CaseController {
           theCase.state === CaseState.ACCEPTED &&
           (theCase.decision === CaseDecision.ACCEPTING ||
             theCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-          theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED
+          (theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
+            theCase.appealRulingDecision ===
+              CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY)
         ) {
           // The court of appeals has modified the ruling of a restriction case
           update.validToDate = theCase.appealValidToDate

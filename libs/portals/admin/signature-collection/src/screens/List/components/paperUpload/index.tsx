@@ -19,13 +19,15 @@ import {
   getFileData,
 } from '../../../../lib/utils'
 import { useBulkUploadMutation } from './paperUpload.generated'
+import { useRevalidator } from 'react-router-dom'
 
 const PaperUpload = ({ listId }: { listId: string }) => {
   const { formatMessage } = useLocale()
   const [withPaperUpload, setWithPaperUpload] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
   const [uploadResults, setUploadResults] = useState<any>()
-  const [uploadMutation, { loading }] = useBulkUploadMutation()
+  const [uploadMutation] = useBulkUploadMutation()
+  const { revalidate } = useRevalidator()
 
   const paperUpload = async (
     data: Array<{ nationalId: string; pageNumber: number }>,
@@ -42,6 +44,7 @@ const PaperUpload = ({ listId }: { listId: string }) => {
 
       if (res.data) {
         setUploadResults(res.data?.signatureCollectionBulkUploadSignatures)
+        revalidate()
       }
     } catch (e) {
       toast.error(e.message)
@@ -63,7 +66,7 @@ const PaperUpload = ({ listId }: { listId: string }) => {
   }
 
   return (
-    <Box marginTop={7}>
+    <Box marginTop={10}>
       <Box
         background={withPaperUpload ? 'purple100' : 'white'}
         padding={withPaperUpload ? 5 : 0}
@@ -130,7 +133,7 @@ const PaperUpload = ({ listId }: { listId: string }) => {
                       {uploadResults.success.map((res: any, index: number) => {
                         return (
                           <Text key={index} marginBottom={1}>
-                            {formatNationalId(res.signee.nationalId)}
+                            {formatNationalId(res.nationalId)}
                           </Text>
                         )
                       })}

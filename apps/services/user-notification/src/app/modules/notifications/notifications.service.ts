@@ -1,5 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { InjectModel } from '@nestjs/sequelize'
 import {
   BadRequestException,
   Inject,
@@ -8,26 +9,42 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
-import axios from 'axios'
-import { Notification } from './notification.model'
-import { InjectModel } from '@nestjs/sequelize'
+
 import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
+import { NoContentException } from '@island.is/nest/problem'
+
+import { Notification } from './notification.model'
+import axios from 'axios'
+import { ArgumentDto } from './dto/createHnippNotification.dto'
+import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
   PaginatedNotificationDto,
   UpdateNotificationDto,
   RenderedNotificationDto,
   ExtendedPaginationDto,
 } from './dto/notification.dto'
-import { NoContentException } from '@island.is/nest/problem'
-import { Cron } from '@nestjs/schedule'
 
-const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
-const contentfulGqlUrl =
+const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
+const CONTENTFUL_GQL_ENDPOINT =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
+
+/**
+ * These are the properties that can be replaced in the template
+ */
+const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
+  'notificationTitle',
+  'notificationBody',
+  'notificationDataCopy',
+  'clickAction',
+  'clickActionWeb',
+]
+
+/**
+ * Finds {{key}} in string
+ */
+const ARG_REPLACE_REGEX = new RegExp(/{{[^{}]*}}/)
 
 @Injectable()
 export class NotificationsService {
@@ -52,7 +69,10 @@ export class NotificationsService {
       }
 
       // Format the template with arguments from the notification
-      const formattedTemplate = this.formatArguments(notification, template)
+      const formattedTemplate = this.formatArguments(
+        notification.args,
+        template,
+      )
 
       // Map to RenderedNotificationDto
       return {
@@ -80,30 +100,29 @@ export class NotificationsService {
     return await this.cacheManager.get(key)
   }
 
-  mapLocale(locale: string | null | undefined): string {
-    if (locale === 'en') {
-      return 'en'
-    }
-    return 'is-IS'
+  mapLocale(locale?: string | null | undefined): string {
+    return locale === 'en' ? locale : 'is-IS'
   }
+
   async getTemplates(
     locale?: string | null | undefined,
   ): Promise<HnippTemplate[]> {
-    locale = this.mapLocale(locale)
+    const mappedLocale = this.mapLocale(locale)
 
     this.logger.info(
-      'Fetching templates from Contentful GQL for locale: ' + locale,
+      'Fetching templates from Contentful GQL for locale: ' + mappedLocale,
     )
 
     const contentfulHnippTemplatesQuery = {
       query: ` {
-      hnippTemplateCollection(locale: "${locale}") {
+      hnippTemplateCollection(locale: "${mappedLocale}") {
         items {
           templateId
           notificationTitle
           notificationBody
           notificationDataCopy
           clickAction
+          clickActionWeb
           category
           args
         }
@@ -113,10 +132,10 @@ export class NotificationsService {
     }
 
     const res = await axios
-      .post(contentfulGqlUrl, contentfulHnippTemplatesQuery, {
+      .post(CONTENTFUL_GQL_ENDPOINT, contentfulHnippTemplatesQuery, {
         headers: {
           'content-type': 'application/json',
-          authorization: 'Bearer ' + accessToken,
+          authorization: `Bearer ${ACCESS_TOKEN}`,
         },
       })
       .then((response) => {
@@ -142,10 +161,12 @@ export class NotificationsService {
   ): Promise<HnippTemplate> {
     locale = this.mapLocale(locale)
     //check cache
-    const cacheKey = templateId + '-' + locale
+    const cacheKey = `${templateId}-${locale}`
     const cachedTemplate = await this.getFromCache(cacheKey)
+
     if (cachedTemplate) {
-      this.logger.info('cache hit for: ' + cacheKey)
+      this.logger.info(`cache hit for: ${cacheKey}`)
+
       return cachedTemplate as HnippTemplate
     }
 
@@ -156,47 +177,81 @@ export class NotificationsService {
           return template
         }
       }
+
       throw new NotFoundException(`Template: ${templateId} not found`)
     } catch {
       throw new NotFoundException(`Template: ${templateId} not found`)
     }
   }
 
-  validateArgCounts(
-    body: CreateHnippNotificationDto,
-    template: HnippTemplate,
-  ): boolean {
-    return body.args.length == template.args.length
+  /**
+   * Checks if the arguments provided in the request body are valid for the template and checks if the number of arguments match
+   */
+  async validate(templateId: string, args: ArgumentDto[]) {
+    const template = await this.getTemplate(templateId)
+
+    if (!this.validateArgCounts(args, template)) {
+      throw new BadRequestException(
+        `Number of arguments doesn't match, template requires ${template.args.length} arguments but ${args.length} were provided`,
+      )
+    }
+
+    const validArgs = this.validateArgs(args, template)
+
+    if (!validArgs.isValid && validArgs.message) {
+      throw new BadRequestException(validArgs.message)
+    }
   }
 
-  formatArguments(
-    body: CreateHnippNotificationDto,
-    template: HnippTemplate,
-  ): HnippTemplate {
-    if (template.args.length > 0) {
-      const allowedReplaceProperties = [
-        'notificationTitle',
-        'notificationBody',
-        'notificationDataCopy',
-        'clickAction',
-      ]
-      // find {{arg.key}} in string and replace with arg.value
-      const regex = new RegExp(/{{[^{}]*}}/)
+  validateArgCounts(args: ArgumentDto[], template: HnippTemplate): boolean {
+    return args.length == template.args.length
+  }
+
+  /**
+   * Checks if the arguments provided in the request body are valid for the template
+   */
+  validateArgs(args: ArgumentDto[], template: HnippTemplate) {
+    for (const arg of args) {
+      if (!template.args.includes(arg.key)) {
+        return {
+          isValid: false,
+          message: `${arg.key} is not a valid argument for template: ${template.templateId}`,
+        }
+      }
+    }
+
+    return {
+      isValid: true,
+    }
+  }
+
+  formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
+    if (args.length > 0) {
       Object.keys(template).forEach((key) => {
-        if (allowedReplaceProperties.includes(key)) {
-          let value = template[key as keyof HnippTemplate] as string
-          if (value) {
-            if (regex.test(value)) {
-              for (const arg of body.args) {
-                const regexTarget = new RegExp('{{' + arg.key + '}}', 'g')
-                value = value.replace(regexTarget, arg.value)
-                template[key as keyof Omit<HnippTemplate, 'args'>] = value
+        const templateKey = key as keyof HnippTemplate
+
+        if (
+          ALLOWED_REPLACE_PROPS.includes(templateKey) &&
+          templateKey !== 'args'
+        ) {
+          const value = template[templateKey] as string
+
+          if (value && ARG_REPLACE_REGEX.test(value)) {
+            for (const arg of args) {
+              const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
+              const newValue = value.replace(regexTarget, arg.value)
+
+              if (newValue !== value) {
+                // finds {{key}} in string and replace with value
+                template[templateKey] = value.replace(regexTarget, arg.value)
+                break
               }
             }
           }
         }
       })
     }
+
     return template
   }
 

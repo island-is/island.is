@@ -5,7 +5,14 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { environment } from '../environments/environment'
-import { ScheduleModule } from '@nestjs/schedule'
+import {
+  ConfigModule,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 
 @Module({
   imports: [
@@ -16,9 +23,18 @@ import { ScheduleModule } from '@nestjs/schedule'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        XRoadConfig,
+        NationalRegistryV3ClientConfig,
+        FeatureFlagConfig,
+        UserProfileClientConfig,
+        IdsClientConfig,
+      ],
+    }),
 
-    NotificationsModule,
-    ScheduleModule.forRoot(),
+    NotificationsModule
   ],
 })
 export class AppModule {}

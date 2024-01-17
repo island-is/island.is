@@ -56,19 +56,19 @@ const SigneeView = () => {
 
   return (
     <Box>
+      <IntroHeader
+        title={formatMessage(m.pageTitle)}
+        intro={formatMessage(m.pageDescriptionSignee)}
+      />
       {!loadingSignedList && !loadingUserLists ? (
         <Box>
-          <IntroHeader
-            title={formatMessage(m.pageTitle)}
-            intro={formatMessage(m.pageDescription)}
-          />
           {listsForUser.length === 0 && (
             <Button
               icon="open"
               iconType="outline"
               onClick={() =>
                 window.open(
-                  `${document.location.origin}/umsoknir/medmaelalisti/`,
+                  `${document.location.origin}/umsoknir/medmaelasofnun/`,
                 )
               }
               size="small"
@@ -90,15 +90,28 @@ const SigneeView = () => {
                   format(new Date(signedList.endTime), 'dd.MM.yyyy')
                 }
                 text={formatMessage(m.collectionTitle)}
-                cta={{
-                  label: formatMessage(m.unSignList),
-                  buttonType: {
-                    variant: 'text',
-                    colorScheme: 'destructive',
-                  },
-                  onClick: () => setModalIsOpen(true),
-                  icon: undefined,
-                }}
+                cta={
+                  new Date(signedList.endTime) > new Date()
+                    ? {
+                        label: formatMessage(m.unSignList),
+                        buttonType: {
+                          variant: 'text',
+                          colorScheme: 'destructive',
+                        },
+                        onClick: () => setModalIsOpen(true),
+                        icon: undefined,
+                      }
+                    : undefined
+                }
+                tag={
+                  new Date(signedList.endTime) < new Date()
+                    ? {
+                        label: formatMessage(m.collectionClosed),
+                        variant: 'purple',
+                        outlined: true,
+                      }
+                    : undefined
+                }
               />
               <Modal
                 id="unSignList"
@@ -125,9 +138,11 @@ const SigneeView = () => {
           )}
           {/* Other available lists */}
           <Box marginTop={[5, 10]}>
-            <Text variant="h4" marginBottom={3}>
-              {formatMessage(m.mySigneeListsByAreaHeader)}
-            </Text>
+            {listsForUser.length > 0 && (
+              <Text variant="h4" marginBottom={3}>
+                {formatMessage(m.mySigneeListsByAreaHeader)}
+              </Text>
+            )}
 
             <Stack space={5}>
               {listsForUser?.map((list) => {
@@ -142,15 +157,30 @@ const SigneeView = () => {
                       format(new Date(list.endTime), 'dd.MM.yyyy')
                     }
                     text={formatMessage(m.collectionTitle)}
-                    cta={{
-                      label: formatMessage(m.signList),
-                      variant: 'text',
-                      icon: 'arrowForward',
-                      disabled: signedList !== null,
-                      onClick: () => {
-                        window.open(`${document.location.origin}${list.slug}`)
-                      },
-                    }}
+                    cta={
+                      new Date(list.endTime) > new Date()
+                        ? {
+                            label: formatMessage(m.signList),
+                            variant: 'text',
+                            icon: 'arrowForward',
+                            disabled: signedList !== null,
+                            onClick: () => {
+                              window.open(
+                                `${document.location.origin}${list.slug}`,
+                              )
+                            },
+                          }
+                        : undefined
+                    }
+                    tag={
+                      new Date(list.endTime) < new Date()
+                        ? {
+                            label: formatMessage(m.collectionClosed),
+                            variant: 'purple',
+                            outlined: true,
+                          }
+                        : undefined
+                    }
                   />
                 )
               })}
