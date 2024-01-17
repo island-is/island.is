@@ -12,6 +12,7 @@ export interface CollectionInfo {
   endTime: Date
   isActive: boolean
   isPresidential: boolean
+  isSignatureCollection: boolean
 }
 export interface Collection extends Omit<CollectionInfo, 'id'> {
   id: string
@@ -21,10 +22,16 @@ export interface Collection extends Omit<CollectionInfo, 'id'> {
   areas: Area[]
   candidates: Candidate[]
 }
+
 export function mapCollectionInfo(
   collection: MedmaelasofnunDTO,
 ): CollectionInfo | null {
-  const { id: id, sofnunStart: startTime, sofnunEnd: endTime } = collection
+  const {
+    id: id,
+    sofnunStart: startTime,
+    sofnunEnd: endTime,
+    kosning,
+  } = collection
 
   if (id == null || startTime == null || endTime == null) {
     logger.warn(
@@ -35,10 +42,11 @@ export function mapCollectionInfo(
   }
   return {
     id,
-    startTime: startTime,
-    endTime: endTime,
+    startTime,
+    endTime,
     isActive: startTime < new Date() && endTime > new Date(),
     isPresidential: collection.kosningTegund == 'Forsetakosning',
+    isSignatureCollection: kosning?.erMedmaelakosning ?? false,
   }
 }
 
@@ -51,6 +59,7 @@ export function mapCollection(
     sofnunEnd: endTime,
     svaedi: areas,
     frambodList: candidates,
+    kosning,
   } = collection
   if (id == null || startTime == null || endTime == null || areas == null) {
     logger.warn(
@@ -69,6 +78,7 @@ export function mapCollection(
     endTime,
     isActive: startTime < new Date() && endTime > new Date(),
     isPresidential: collection.kosningTegund == 'Forsetakosning',
+    isSignatureCollection: kosning?.erMedmaelakosning ?? false,
     candidates: candidates
       ? candidates.map((candidate) => mapCandidate(candidate))
       : [],
