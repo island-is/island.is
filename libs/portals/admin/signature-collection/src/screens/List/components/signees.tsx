@@ -17,12 +17,18 @@ import { m } from '../../../lib/messages'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 import { pageSize } from '../../../lib/utils'
 
-const Signees = () => {
+const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const { formatMessage } = useLocale()
+
   const { allSignees } = useLoaderData() as { allSignees: Signature[] }
   const [signees, setSignees] = useState(allSignees)
+
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    setSignees(allSignees)
+  }, [allSignees])
 
   useEffect(() => {
     let filteredSignees: Signature[] = allSignees
@@ -30,7 +36,8 @@ const Signees = () => {
     filteredSignees = filteredSignees.filter((s) => {
       return (
         s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        formatNationalId(s.signee.nationalId).includes(searchTerm)
+        formatNationalId(s.signee.nationalId).includes(searchTerm) ||
+        s.signee.nationalId.includes(searchTerm)
       )
     })
 
@@ -68,7 +75,8 @@ const Signees = () => {
                 )
               : signees.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">
-                    {formatMessage(m.totalListResults)}: {signees.length}
+                    {/* using numberOfSignatures coming from list info for true total number of signees */}
+                    {formatMessage(m.totalListResults)}: {numberOfSignatures}
                   </Text>
                 )}
           </Box>
@@ -91,7 +99,7 @@ const Signees = () => {
               {signees
                 .slice(pageSize * (page - 1), pageSize * page)
                 .map((s) => {
-                  const boxColor = s.isDigital ? 'purple100' : 'white'
+                  const boxColor = s.isDigital ? 'white' : 'purple100'
 
                   return (
                     <T.Row key={s.id}>
@@ -117,15 +125,20 @@ const Signees = () => {
                         box={{ background: boxColor }}
                         text={{ variant: 'medium' }}
                       >
-                        {formatMessage(m.tempMessage)}
+                        {s.signee.address}
                       </T.Data>
                       <T.Data box={{ background: boxColor }}>
-                        {s.isDigital && (
-                          <Icon
-                            icon="document"
-                            type="outline"
-                            color="blue400"
-                          />
+                        {!s.isDigital && (
+                          <Box display="flex">
+                            <Text>{s.pageNumber}</Text>
+                            <Box marginLeft={1}>
+                              <Icon
+                                icon="document"
+                                type="outline"
+                                color="blue400"
+                              />
+                            </Box>
+                          </Box>
                         )}
                       </T.Data>
                     </T.Row>

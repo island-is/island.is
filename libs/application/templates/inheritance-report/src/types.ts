@@ -208,6 +208,7 @@ export interface AllDebts {
   balance: string
   nationalId: string
   creditorName: string
+  loanIdentity: string
   taxFreeInheritance: number
 }
 
@@ -224,6 +225,7 @@ export interface PublicChargesData {
 interface DomesticAndForeignDebtsData {
   balance: string
   nationalId: string
+  loanIdentity: string
   creditorName: string
   taxFreeInheritance: number
 }

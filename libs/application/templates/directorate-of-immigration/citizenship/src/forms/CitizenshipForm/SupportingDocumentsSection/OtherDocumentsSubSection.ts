@@ -15,7 +15,7 @@ import {
 } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import { Routes } from '../../../lib/constants'
-import { FILE_SIZE_LIMIT } from '../../../shared'
+import { FILE_SIZE_LIMIT, FILE_TYPES_ALLOWED } from '../../../shared'
 
 export const OtherDocumentsSubSection = buildSubSection({
   id: Routes.SUPPORTINGDOCUMENTS,
@@ -51,6 +51,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           title: supportingDocuments.labels.otherDocuments.birthCertificate,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
+          uploadAccept: FILE_TYPES_ALLOWED,
           condition: (answer: Answer) => {
             const answers = answer as Citizenship
             if (answers?.parentInformation?.hasValidParents === YES) {
@@ -69,6 +70,7 @@ export const OtherDocumentsSubSection = buildSubSection({
         buildFileUploadField({
           id: `${Routes.SUPPORTINGDOCUMENTS}.subsistenceCertificate`,
           title: supportingDocuments.labels.otherDocuments.incomeConfirmation,
+          uploadAccept: FILE_TYPES_ALLOWED,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
           uploadHeader:
@@ -84,6 +86,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           title:
             supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
           introduction: '',
+          uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
           uploadHeader:
             supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
@@ -97,6 +100,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           id: `${Routes.SUPPORTINGDOCUMENTS}.certificateOfLegalResidenceHistory`,
           title: supportingDocuments.labels.otherDocuments.legalHome,
           introduction: '',
+          uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
           uploadHeader: supportingDocuments.labels.otherDocuments.legalHome,
           uploadDescription:
@@ -109,6 +113,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           id: `${Routes.SUPPORTINGDOCUMENTS}.icelandicTestCertificate`,
           title: supportingDocuments.labels.otherDocuments.icelandicTest,
           introduction: '',
+          uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
           uploadHeader: supportingDocuments.labels.otherDocuments.icelandicTest,
           uploadDescription:

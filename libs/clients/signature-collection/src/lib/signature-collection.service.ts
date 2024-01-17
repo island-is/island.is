@@ -93,8 +93,8 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async getLists(input: GetListInput): Promise<List[]> {
-    const params = await this.getListsParams(input)
+  async getLists(input?: GetListInput): Promise<List[]> {
+    const params = await this.getListsParams({ ...input })
     const lists = await this.listsApi.medmaelalistarGet(params)
     return lists.map((list) => mapList(list))
   }
@@ -154,7 +154,7 @@ export class SignatureCollectionClientService {
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: area.id,
-          listiNafn: `${owner.name} ${area.name}`,
+          listiNafn: `${owner.name} - ${area.name}`,
         })),
       },
     })
@@ -370,18 +370,33 @@ export class SignatureCollectionClientService {
         iD: id,
         requestBody: nationalIds,
       })
-    return signaturesFound.map(mapSignature)
+    // Get listTitle for signatures
+    const allLists = await this.getLists()
+    const listNameIndexer: Record<string, string> = allLists.reduce(
+      (acc, list) => ({ ...acc, [list.id]: list.title }),
+      {},
+    )
+    const signaturesMapped = signaturesFound.map(mapSignature)
+    signaturesMapped.forEach((signature) => {
+      signature.listTitle = listNameIndexer[signature.listId]
+    })
+    return signaturesMapped
   }
 
   //   TODO: DelegateList
   //   TODO: UndelegateList
 
-  async extendDeadline(listId: string, newEndDate: Date): Promise<List> {
+  async extendDeadline(listId: string, newEndDate: Date): Promise<Success> {
     const list = await this.listsApi.medmaelalistarIDExtendTimePatch({
       iD: parseInt(listId),
       newEndDate: newEndDate,
     })
-    return mapList(list)
+    const { dagsetningLokar } = list
+    return {
+      success: dagsetningLokar
+        ? newEndDate.getTime() === dagsetningLokar.getTime()
+        : false,
+    }
   }
 
   async bulkUploadSignatures({

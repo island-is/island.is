@@ -1,15 +1,12 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
-import { test } from '../utils/judicialSystemTest'
-import {
-  randomPoliceCaseNumber,
-  randomCourtCaseNumber,
-  randomAppealCaseNumber,
-  createPdf,
-} from '../utils/helpers'
-
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
+import { test } from '../utils/judicialSystemTest'
+import { randomPoliceCaseNumber, randomCourtCaseNumber } from '../utils/helpers'
+import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
+import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
+import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -188,149 +185,16 @@ test.describe.serial('Custody tests', () => {
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {
-    const page = prosecutorPage
-    await page.goto(`krafa/yfirlit/${caseId}`)
-
-    await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
-    await page.getByRole('button', { name: 'Senda inn kæru' }).click()
-
-    // Send appeal
-    await expect(page).toHaveURL(`/kaera/${caseId}`)
-    const appealFileChooserPromise = page.waitForEvent('filechooser')
-    await page
-      .locator('section')
-      .filter({
-        hasText:
-          'Kæra *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með endingu: .pdf',
-      })
-      .locator('button')
-      .click()
-    const appealPdfBuffer = await createPdf('Kæra sækjanda')
-    const appealFileChooser = await appealFileChooserPromise
-
-    await appealFileChooser.setFiles({
-      name: 'TestKaera.pdf',
-      mimeType: 'application/pdf',
-      buffer: appealPdfBuffer,
-    })
-
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
-    ])
-    await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalSecondaryButton').click()
-
-    // Overview
-    await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
-    await page.getByRole('button', { name: 'Senda greinargerð' }).click()
-
-    // Send statement
-    await expect(page).toHaveURL(`/greinargerd/${caseId}`)
-    const statementFileChooserPromise = page.waitForEvent('filechooser')
-    await page
-      .locator('section')
-      .filter({
-        hasText:
-          'Greinargerð *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með ending',
-      })
-      .locator('button')
-      .click()
-
-    const statementPdfBuffer = await createPdf('Greinargerð sækjanda')
-    const statementFileChooser = await statementFileChooserPromise
-
-    await statementFileChooser.setFiles({
-      name: 'TestGreinargerd.pdf',
-      mimeType: 'application/pdf',
-      buffer: statementPdfBuffer,
-    })
-
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
-    ])
-    await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalSecondaryButton').click()
+    await prosecutorAppealsCaseTest(prosecutorPage, caseId)
   })
 
   test('judge should receive appealed case', async ({ judgePage }) => {
-    const page = judgePage
-
-    await page.goto(`krafa/yfirlit/${caseId}`)
-    await page
-      .getByRole('button', {
-        name: 'Senda tilkynningu um kæru til Landsréttar',
-      })
-      .click()
-    await page.getByTestId('modalPrimaryButton').click()
+    await judgeReceivesAppealTest(judgePage, caseId)
   })
 
   test('coa judge should submit decision in appeal case', async ({
     coaPage,
   }) => {
-    const page = coaPage
-    await page.goto(`/landsrettur/yfirlit/${caseId}`)
-
-    // Overview
-    await expect(page).toHaveURL(`/landsrettur/yfirlit/${caseId}`)
-    await page.getByTestId('continueButton').click()
-
-    // Appeal case reception
-    await expect(page).toHaveURL(`/landsrettur/kaera/${caseId}`)
-    await page.getByText('Mál nr. *').fill(randomAppealCaseNumber())
-
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-      page.getByText('Mál nr. *').press('Tab'),
-    ])
-    await page
-      .getByTestId('select-assistant')
-      .getByTestId('icon-chevronDown')
-      .click({ delay: 50 })
-    await page.locator('#react-select-assistant-option-0').click()
-    await page.getByTestId('icon-chevronDown').nth(2).click()
-    await page.locator('#react-select-judge-option-0').click()
-    await page.getByTestId('icon-chevronDown').nth(3).click()
-    await page.locator('#react-select-judge-option-0').click()
-    await page.getByTestId('icon-chevronDown').nth(4).click()
-    await page.locator('#react-select-judge-option-0').click()
-    await page.getByTestId('continueButton').click()
-    await page.getByTestId('modalPrimaryButton').click()
-
-    // Ruling
-    await expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`)
-    await Promise.all([
-      page.locator('label').filter({ hasText: 'Staðfesting' }).click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-    ])
-    await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').click()
-    await page
-      .getByPlaceholder('Hver eru úrskurðarorð Landsréttar?')
-      .fill('Test úrskurðarorð Landsréttar')
-    await page
-      .getByPlaceholder('Hver eru úrskurðarorð Landsréttar?')
-      .press('Tab')
-
-    const rulingFileChooserPromise = page.waitForEvent('filechooser')
-    await page.getByText('Velja gögn til að hlaða upp').click()
-
-    const rulingPdfBuffer = await createPdf('Niðurstaða Landsréttar')
-    const rulingFileChooser = await rulingFileChooserPromise
-
-    await rulingFileChooser.setFiles({
-      name: 'TestNidurstada.pdf',
-      mimeType: 'application/pdf',
-      buffer: rulingPdfBuffer,
-    })
-
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
-      verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
-    ])
-
-    await page.getByTestId('continueButton').click()
-    await expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`)
-    await page.getByTestId('continueButton').click()
+    await coaJudgesCompleteAppealCaseTest(coaPage, caseId)
   })
 })

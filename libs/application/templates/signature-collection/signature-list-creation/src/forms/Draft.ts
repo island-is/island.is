@@ -184,7 +184,7 @@ export const Draft: Form = buildForm({
               title: m.listOverviewHeader,
               titleVariant: 'h3',
               space: 'gutter',
-              marginBottom: 5,
+              marginBottom: 3,
             }),
             buildCustomField({
               id: 'createdLists',

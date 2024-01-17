@@ -3,97 +3,97 @@ import { defineMessages } from 'react-intl'
 export const errorMessages = {
   age: defineMessages({
     title: {
-      id: 'slc.application:error.age.title',
+      id: 'sls.application:error.age.title',
       defaultMessage: 'Aldur uppfyllir ekki skilyrði',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.age.summary',
+      id: 'sls.application:error.age.summary',
       defaultMessage: '35 ára aldursmark er ekki náð',
       description: '',
     },
   }),
   citizenship: defineMessages({
     title: {
-      id: 'slc.application:error.citizenship.title',
+      id: 'sls.application:error.citizenship.title',
       defaultMessage: 'Ekki með íslenkst ríkisfang',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.citizenship.summary',
+      id: 'sls.application:error.citizenship.summary',
       defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
       description: '',
     },
   }),
   residency: defineMessages({
     title: {
-      id: 'slc.application:error.residency.title',
+      id: 'sls.application:error.residency.title',
       defaultMessage: 'Ekki með búsetu á Íslandi',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.residency.summary',
+      id: 'sls.application:error.residency.summary',
       defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
       description: '',
     },
   }),
   active: defineMessages({
     title: {
-      id: 'slc.application:error.active.title',
+      id: 'sls.application:error.active.title',
       defaultMessage: 'Engin söfnun meðmæla er virk',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.active.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      id: 'sls.application:error.active.summary',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   signer: defineMessages({
     title: {
-      id: 'slc.application:error.signer.title',
-      defaultMessage: 'Þú hefur núþegar skrifað undir lista í þessari söfnun',
+      id: 'sls.application:error.signer.title',
+      defaultMessage: 'Þú hefur nú þegar skrifað undir lista í þessari söfnun',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.signer.summary',
-      defaultMessage: 'Hægt er að draga meðmæli tilbaka á mínum síðum',
+      id: 'sls.application:error.signer.summary#markdown',
+      defaultMessage: 'Hægt er að draga meðmæli tilbaka inni á Mínum Síðum.',
       description: '',
     },
   }),
   owner: defineMessages({
     title: {
-      id: 'slc.application:error.owner.title',
-      defaultMessage: 'Þú átt núþegar lista í öllum söfnunarsvæðum',
+      id: 'sls.application:error.owner.title',
+      defaultMessage: 'Þú átt nú þegar lista í öllum söfnunarsvæðum',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.owner.title',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      id: 'sls.application:error.owner.summary',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   deniedByService: defineMessages({
     title: {
-      id: 'slc.application:error.deniedByService.title',
+      id: 'sls.application:error.deniedByService.title',
       defaultMessage: 'Etthvað fór úrskeiðis',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.deniedByService.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      id: 'sls.application:error.deniedByService.summary',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   submitFailure: defineMessages({
     title: {
-      id: 'slc.application:error.submitFailure.title',
-      defaultMessage: 'Ekitthvað fór úrskeiðis',
+      id: 'sls.application:error.submitFailure.title',
+      defaultMessage: 'Eitthvað fór úrskeiðis',
       description: '',
     },
     summary: {
-      id: 'slc.application:error.submitFailure.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      id: 'sls.application:error.submitFailure.summary',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
