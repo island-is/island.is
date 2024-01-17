@@ -14,7 +14,7 @@ import { UserProfileAdvania } from '../userProfileAdvania.model'
 import { UserProfile } from '../../user-profile/userProfile.model'
 
 import { ProcessedStatus } from '../types'
-import { hasMatchingEmail } from '../worker.utils'
+import { stringsHaveMatchingValue } from '../worker.utils'
 
 describe('UserProfileWorker', () => {
   jest.setTimeout(30000)
@@ -73,7 +73,7 @@ describe('UserProfileWorker', () => {
         )
 
         return (
-          matchingProfile.email === p.email &&
+          stringsHaveMatchingValue(matchingProfile.email, p.email, true) &&
           matchingProfile.mobilePhoneNumber === p.mobilePhoneNumber
         )
       }),
@@ -162,7 +162,13 @@ describe('UserProfileWorker', () => {
           const profileBefore = userProfilesBeforeMigration[i]
           const profileAfter = userProfilesAfterMigration[i]
 
-          expect(profileBefore.email).not.toBe(profileAfter.email)
+          expect(
+            stringsHaveMatchingValue(
+              profileBefore.email,
+              profileAfter.email,
+              true,
+            ),
+          ).toBe(false)
           expect(profileBefore.mobilePhoneNumber).not.toBe(
             profileAfter.mobilePhoneNumber,
           )
@@ -208,7 +214,13 @@ describe('UserProfileWorker', () => {
             const profileBefore = userProfilesBeforeMigration[i]
             const profileAfter = userProfilesAfterMigration[i]
 
-            expect(profileBefore.email).toBe(profileAfter.email)
+            expect(
+              stringsHaveMatchingValue(
+                profileBefore.email,
+                profileAfter.email,
+                true,
+              ),
+            ).toBe(true)
             expect(profileBefore.mobilePhoneNumber).toBe(
               profileAfter.mobilePhoneNumber,
             )
@@ -267,7 +279,13 @@ describe('UserProfileWorker', () => {
               const profileBefore = userProfilesBeforeMigration[i]
               const profileAfter = userProfilesAfterMigration[i]
 
-              expect(profileBefore.email).toBe(profileAfter.email)
+              expect(
+                stringsHaveMatchingValue(
+                  profileBefore.email,
+                  profileAfter.email,
+                  true,
+                ),
+              ).toBe(true)
               expect(profileBefore.mobilePhoneNumber).toBe(
                 profileAfter.mobilePhoneNumber,
               )
@@ -312,7 +330,13 @@ describe('UserProfileWorker', () => {
       expect(existingUserProfileAfter.nationalId).toEqual(
         migratedUserProfile.ssn,
       )
-      expect(existingUserProfileAfter.email).toEqual(migratedUserProfile.email)
+      expect(
+        stringsHaveMatchingValue(
+          existingUserProfileAfter.email,
+          migratedUserProfile.email,
+          true,
+        ),
+      ).toBe(true)
       expect(existingUserProfileAfter.mobilePhoneNumber).toEqual(
         migratedUserProfile.mobilePhoneNumber,
       )
@@ -358,9 +382,13 @@ describe('UserProfileWorker', () => {
         expect(existingUserProfileAfter.nationalId).toEqual(
           migratedUserProfile.ssn,
         )
-        expect(existingUserProfileAfter.email).toEqual(
-          migratedUserProfile.email,
-        )
+        expect(
+          stringsHaveMatchingValue(
+            existingUserProfileAfter.email,
+            migratedUserProfile.email,
+            true,
+          ),
+        ).toBe(true)
         expect(existingUserProfileAfter.mobilePhoneNumber).toEqual(
           migratedUserProfile.mobilePhoneNumber,
         )
@@ -413,9 +441,13 @@ describe('UserProfileWorker', () => {
           expect(existingUserProfileBefore).not.toEqual(
             existingUserProfileAfter,
           )
-          expect(existingUserProfileBefore.email).not.toEqual(
-            migratedUserProfile.email,
-          )
+          expect(
+            stringsHaveMatchingValue(
+              existingUserProfileBefore.email,
+              migratedUserProfile.email,
+              true,
+            ),
+          ).toBe(false)
           expect(existingUserProfileBefore.mobilePhoneNumber).not.toEqual(
             migratedUserProfile.mobilePhoneNumber,
           )
@@ -423,9 +455,13 @@ describe('UserProfileWorker', () => {
             migratedUserProfile.ssn,
           )
           // Expect email and phone to match after migration
-          expect(existingUserProfileAfter.email).toEqual(
-            migratedUserProfile.email,
-          )
+          expect(
+            stringsHaveMatchingValue(
+              existingUserProfileAfter.email,
+              migratedUserProfile.email,
+              true,
+            ),
+          ).toBe(true)
           expect(existingUserProfileAfter.mobilePhoneNumber).toEqual(
             migratedUserProfile.mobilePhoneNumber,
           )
@@ -490,9 +526,13 @@ describe('UserProfileWorker', () => {
               })
 
               // Assert
-              expect(existingUserProfileAfter.email).not.toEqual(
-                migratedUserProfile.email,
-              )
+              expect(
+                stringsHaveMatchingValue(
+                  existingUserProfileAfter.email,
+                  migratedUserProfile.email,
+                  true,
+                ),
+              ).toBe(false)
               expect(existingUserProfileAfter.mobilePhoneNumber).not.toEqual(
                 migratedUserProfile.mobilePhoneNumber,
               )
@@ -547,9 +587,13 @@ describe('UserProfileWorker', () => {
             })
 
             // Assert
-            expect(existingUserProfileAfter.email).not.toEqual(
-              migratedUserProfile.email,
-            )
+            expect(
+              stringsHaveMatchingValue(
+                existingUserProfileAfter.email,
+                migratedUserProfile.email,
+                true,
+              ),
+            ).toBe(false)
             expect(existingUserProfileAfter.mobilePhoneNumber).not.toEqual(
               migratedUserProfile.mobilePhoneNumber,
             )
@@ -602,7 +646,7 @@ describe('UserProfileWorker', () => {
         )
 
         return (
-          hasMatchingEmail(matchingProfile.email, p.email) &&
+          stringsHaveMatchingValue(matchingProfile.email, p.email, true) &&
           matchingProfile.mobilePhoneNumber === p.mobilePhoneNumber
         )
       }),

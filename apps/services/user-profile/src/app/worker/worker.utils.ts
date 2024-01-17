@@ -4,8 +4,16 @@ import { UserProfileAdvania } from './userProfileAdvania.model'
 const stringHasValue = (value?: string) =>
   typeof value === 'string' && value.length > 0
 
-export const hasMatchingEmail = (left: string, right: string) =>
-  stringHasValue(left) && left?.toLowerCase?.() === right?.toLocaleLowerCase()
+export const stringsHaveMatchingValue = (
+  a?: string,
+  b?: string,
+  forceLowerCase = false,
+) => {
+  const valueOfA = forceLowerCase ? a?.toLowerCase?.() : a
+  const valueOfB = forceLowerCase ? b?.toLowerCase?.() : b
+
+  return stringHasValue(a) && valueOfA === valueOfB
+}
 
 export const hasMatchingContactInfo = (
   migratedProfile: UserProfileAdvania,
@@ -21,7 +29,11 @@ export const hasMatchingContactInfo = (
     stringHasValue(existingPhoneNumber) &&
     existingPhoneNumber === migratedPhoneNumber
 
-  const matchingEmails = hasMatchingEmail(existingEmail, migratedEmail)
+  const matchingEmails = stringsHaveMatchingValue(
+    existingEmail,
+    migratedEmail,
+    true,
+  )
 
   return matchingPhoneNumbers && matchingEmails
 }
