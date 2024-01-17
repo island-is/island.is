@@ -404,6 +404,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
     stepperNamespace,
     showSearchInHeader: false,
     locale: locale as Locale,
+    customAlertBanner: getProjectPage?.alertBanner,
     ...getThemeConfig(getProjectPage),
   }
 }
