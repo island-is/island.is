@@ -424,7 +424,7 @@ export const m = defineMessages({
     description: '',
   },
   gunNumber: {
-    id: 'ir.application:gunValuation',
+    id: 'ir.application:gunNumber',
     defaultMessage: 'Raðnúmer',
     description: '',
   },
@@ -961,9 +961,19 @@ export const m = defineMessages({
     defaultMessage: 'Erfingjar',
     description: '',
   },
+  heirContactInfo: {
+    id: 'ir.application:heirContactInfo',
+    defaultMessage: 'Tengiliðaupplýsingar',
+    description: '',
+  },
   heirAdditionalInfo: {
     id: 'ir.application:heirAdditionalInfo',
     defaultMessage: 'Athugasemdir erfingja',
+    description: '',
+  },
+  heirShare: {
+    id: 'ir.application:heirShare',
+    defaultMessage: 'Arfur og erfðafjárskattur',
     description: '',
   },
   heirAdditionalInfoDescription: {
