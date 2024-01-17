@@ -81,6 +81,7 @@ export type Icon =
   | 'signLanguage'
   | 'listView'
   | 'gridView'
+  | 'swapVertical'
 
 export default {
   filled: {
@@ -165,6 +166,7 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapVertical: 'SwapVertical',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -248,5 +250,6 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapVertical: 'SwapVertical',
   },
 }
