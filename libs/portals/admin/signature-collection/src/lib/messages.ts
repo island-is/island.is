@@ -151,9 +151,29 @@ export const m = defineMessages({
     defaultMessage: 'Leitaðu að nafni eða kennitölu',
     description: '',
   },
-  filterLists: {
-    id: 'admin-portal.signature-collection:filterLists',
-    defaultMessage: 'Sía',
+  sortBy: {
+    id: 'admin-portal.signature-collection:sortBy',
+    defaultMessage: 'Raða eftir',
+    description: '',
+  },
+  sortAlphabeticallyAsc: {
+    id: 'admin-portal.signature-collection:sortAlphabeticallyAsc',
+    defaultMessage: 'A-Ö',
+    description: '',
+  },
+  sortAlphabeticallyDesc: {
+    id: 'admin-portal.signature-collection:sortAlphabeticallyDesc',
+    defaultMessage: 'Ö-A',
+    description: '',
+  },
+  sortDateAsc: {
+    id: 'admin-portal.signature-collection:sortDateAsc',
+    defaultMessage: 'Nýjustu fyrst',
+    description: '',
+  },
+  sortDateDesc: {
+    id: 'admin-portal.signature-collection:sortDateDesc',
+    defaultMessage: 'Elstu fyrst',
     description: '',
   },
   signeeDate: {
