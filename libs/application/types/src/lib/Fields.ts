@@ -62,7 +62,6 @@ export type TableRepeaterFields =
   | 'date'
 
 export type TableRepeaterItem = {
-  id: string
   component: TableRepeaterFields
   /**
    * Defaults to true
@@ -481,7 +480,8 @@ export type TableRepeaterField = BaseField & {
   formTitle?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
-  fields: TableRepeaterItem[]
+  removeButtonTooltipText?: StaticText
+  fields: Record<string, TableRepeaterItem>
   table?: {
     /**
      * List of strings to render,

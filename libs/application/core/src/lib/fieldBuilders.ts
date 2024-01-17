@@ -664,8 +664,14 @@ export function buildActionCardListField(
 export function buildTableRepeaterField(
   data: Omit<TableRepeaterField, 'type' | 'component' | 'children'>,
 ): TableRepeaterField {
-  const { fields, table, addItemButtonText, saveItemButtonText, formTitle } =
-    data
+  const {
+    fields,
+    table,
+    formTitle,
+    addItemButtonText,
+    saveItemButtonText,
+    removeButtonTooltipText,
+  } = data
 
   return {
     ...extractCommonFields(data),
@@ -674,8 +680,9 @@ export function buildTableRepeaterField(
     component: FieldComponents.TABLE_REPEATER,
     fields,
     table,
+    formTitle,
     addItemButtonText,
     saveItemButtonText,
-    formTitle,
+    removeButtonTooltipText,
   }
 }

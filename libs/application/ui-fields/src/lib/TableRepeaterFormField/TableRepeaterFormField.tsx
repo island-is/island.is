@@ -43,12 +43,19 @@ export const TableRepeaterFormField: FC<Props> = ({
   error,
 }) => {
   const {
-    fields: items,
+    fields: rawItems,
     table,
+    formTitle,
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
-    formTitle,
+    removeButtonTooltipText = coreMessages.deleteFieldText,
   } = data
+
+  const items = Object.keys(rawItems).map((key) => ({
+    id: key,
+    ...rawItems[key],
+  }))
+
   const { formatMessage } = useLocale()
   const methods = useFormContext()
   const [activeIndex, setActiveIndex] = useState(-1)
@@ -87,7 +94,7 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const getFieldError = (id: string) => {
     /**
-     * Errors that occur in a field-array have incorrect typing for some reason
+     * Errors that occur in a field-array have incorrect typing
      * This hack is needed to get the correct type
      */
     const errorList = error as unknown as Record<string, string>[] | undefined
@@ -118,7 +125,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                       <Tooltip
                         placement="left"
                         text={formatText(
-                          coreMessages.deleteFieldText,
+                          removeButtonTooltipText,
                           application,
                           formatMessage,
                         )}

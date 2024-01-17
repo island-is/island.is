@@ -94,35 +94,31 @@ export const HomeSupportForm: Form = buildForm({
           formTitle: m.application.contacts.formTitle,
           addItemButtonText: m.application.contacts.addContactButton,
           saveItemButtonText: m.application.contacts.saveContactButton,
-          fields: [
-            {
-              id: 'name',
-              label: applicantInformationMessages.labels.name,
+          fields: {
+            name: {
               component: 'input',
+              label: applicantInformationMessages.labels.name,
               width: 'half',
             },
-            {
-              id: 'email',
-              label: applicantInformationMessages.labels.email,
+            email: {
               component: 'input',
+              label: applicantInformationMessages.labels.email,
               type: 'email',
               width: 'half',
             },
-            {
-              id: 'phone',
-              label: applicantInformationMessages.labels.tel,
+            phone: {
               component: 'input',
+              label: applicantInformationMessages.labels.tel,
               type: 'tel',
               format: '###-####',
               width: 'half',
             },
-            {
-              id: 'relation',
-              label: m.application.contacts.relation,
+            relation: {
               component: 'input',
+              label: m.application.contacts.relation,
               width: 'half',
             },
-          ],
+          },
           table: {
             format: {
               phone: (value) => formatPhoneNumber(value),
