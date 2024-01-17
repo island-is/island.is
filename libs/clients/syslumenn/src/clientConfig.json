@@ -1856,16 +1856,13 @@
         ],
         "responses": {
           "200": {
-            "description": ""
-          },
-          "401": {
             "x-nullable": false,
             "description": "",
             "schema": {
-              "$ref": "#/definitions/ProblemDetails"
+              "$ref": "#/definitions/ThjodskraSvarSkeyti"
             }
           },
-          "default": {
+          "401": {
             "x-nullable": false,
             "description": "",
             "schema": {
@@ -4178,6 +4175,40 @@
       "properties": {
         "stada": {
           "type": "string"
+        }
+      }
+    },
+    "ThjodskraSvarSkeyti": {
+      "type": "object",
+      "required": ["kynkodi"],
+      "properties": {
+        "stada": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "loghHusk": {
+          "type": "string"
+        },
+        "heimili": {
+          "type": "string"
+        },
+        "postaritun": {
+          "type": "string"
+        },
+        "sveitarfelag": {
+          "type": "string"
+        },
+        "svfNr": {
+          "type": "string"
+        },
+        "kynkodi": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
