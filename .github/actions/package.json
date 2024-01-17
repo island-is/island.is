@@ -19,7 +19,7 @@
     "@octokit/rest": "19.0.4",
     "@types/debug": "4.1.7",
     "@types/jest": "^27.4.1",
-    "@types/node": "20.11.4",
+    "@types/node": "20.11.5",
     "debug": "4.3.4",
     "esbuild": "0.15.10",
     "esbuild-runner": "2.2.1",
