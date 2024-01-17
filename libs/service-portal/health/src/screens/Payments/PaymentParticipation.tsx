@@ -64,8 +64,6 @@ export const PaymentPartication = () => {
 
   const status = data?.rightsPortalCopaymentStatus.items[0]
 
-  console.log(billsData)
-
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
       {error || periodsError || billsError ? (
