@@ -180,8 +180,10 @@ export class CacheInvalidationService {
         continue
       }
 
-      for (const url of urls) {
-        promises.push(fetch(`${url}?bypass-cache=${bypassSecret}`))
+      for (const urlWithoutPostfix of urls) {
+        const url = `${urlWithoutPostfix}?bypass-cache=${bypassSecret}`
+        promises.push(fetch(url))
+        logger.info(`Invalidating: ${url}`)
         if (promises.length > MAX_REQUEST_COUNT) {
           await handleRequests()
         }
