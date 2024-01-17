@@ -34,7 +34,7 @@ import { UserProfileClientConfig } from '@island.is/clients/user-profile'
       ],
     }),
 
-    NotificationsModule
+    NotificationsModule,
   ],
 })
 export class AppModule {}
