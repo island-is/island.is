@@ -6,6 +6,10 @@ import { ProgramExtraApplicationField } from './model/programExtraApplicationFie
 import { University } from '../university/model/university'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
+import { UniversityOfAkureyriApplicationClient } from '@island.is/clients/university-application/university-of-akureyri'
+import { IcelandUniversityOfTheArtsApplicationClient } from '@island.is/clients/university-application/iceland-university-of-the-arts'
+import { AgriculturalUniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/agricultural-university-of-iceland'
+import { HolarUniversityApplicationClient } from '@island.is/clients/university-application/holar-university'
 import { IProgram, UniversityNationalIds } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 
@@ -13,8 +17,11 @@ import { logger } from '@island.is/logging'
 export class InternalProgramService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
-
     private readonly universityOfIcelandClient: UniversityOfIcelandApplicationClient,
+    private readonly universityOfAkureyriClient: UniversityOfAkureyriApplicationClient,
+    private readonly icelandUniversityOfTheArtsClient: IcelandUniversityOfTheArtsApplicationClient,
+    private readonly agriculturalUniversityOfIcelandClient: AgriculturalUniversityOfIcelandApplicationClient,
+    private readonly holarUniversityClient: HolarUniversityApplicationClient,
 
     @InjectModel(University)
     private universityModel: typeof University,
@@ -31,13 +38,29 @@ export class InternalProgramService {
 
   async updatePrograms(): Promise<void> {
     Promise.allSettled([
-      await this.doUpdateProgramsForUniversity(
+      this.doUpdateProgramsForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         () => this.reykjavikUniversityClient.getPrograms(),
       ),
-      await this.doUpdateProgramsForUniversity(
+      this.doUpdateProgramsForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         () => this.universityOfIcelandClient.getPrograms(),
+      ),
+      this.doUpdateProgramsForUniversity(
+        UniversityNationalIds.UNIVERSITY_OF_AKUREYRI,
+        () => this.universityOfAkureyriClient.getPrograms(),
+      ),
+      this.doUpdateProgramsForUniversity(
+        UniversityNationalIds.ICELAND_UNIVERSITY_OF_THE_ARTS,
+        () => this.icelandUniversityOfTheArtsClient.getPrograms(),
+      ),
+      this.doUpdateProgramsForUniversity(
+        UniversityNationalIds.AGRICULTURAL_UNIVERSITY_OF_ICELAND,
+        () => this.agriculturalUniversityOfIcelandClient.getPrograms(),
+      ),
+      this.doUpdateProgramsForUniversity(
+        UniversityNationalIds.HOLAR_UNIVERSITY,
+        () => this.holarUniversityClient.getPrograms(),
       ),
     ]).catch((e) => {
       logger.error('Failed to update programs, reason:', e)

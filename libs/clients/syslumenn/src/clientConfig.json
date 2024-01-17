@@ -1242,6 +1242,59 @@
         ]
       }
     },
+    "/api/UpplysingarRadstofunDanarbus": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "UpplysingarRadstofunDanarbus_Post",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "fyrirspurn",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Fyrirspurn"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/UpplysingarUrDanarbuiRadstofunSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/v1/Danarbu/UpplysingarUrDanarbui": {
       "post": {
         "tags": ["Syslumenn"],
@@ -3716,6 +3769,163 @@
         }
       }
     },
+    "UpplysingarUrDanarbuiRadstofunSkeyti": {
+      "type": "object",
+      "properties": {
+        "mogulegSkipti": {
+          "type": "object",
+          "x-dictionaryKey": {
+            "$ref": "#/definitions/DanarbuSkipti"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "audkenni": {
+          "type": "string"
+        },
+        "yfirlit": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DanarbuUpplRadstofun"
+          }
+        },
+        "texti": {
+          "type": "string"
+        }
+      }
+    },
+    "DanarbuSkipti": {
+      "type": "integer",
+      "description": "0 = OpinberSkipti\n1 = EignalaustDanarbu\n2 = SetaiOskiptuBui\n3 = Einkaskipti",
+      "x-enumNames": [
+        "OpinberSkipti",
+        "EignalaustDanarbu",
+        "SetaiOskiptuBui",
+        "Einkaskipti"
+      ],
+      "enum": [0, 1, 2, 3]
+    },
+    "DanarbuUpplRadstofun": {
+      "type": "object",
+      "required": ["kaupmali", "erfdakraVitneskja"],
+      "properties": {
+        "malsnumer": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "danardagur": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "logheimili": {
+          "type": "string"
+        },
+        "erfingar": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Erfingar"
+          }
+        },
+        "erfdaskra": {
+          "type": "string"
+        },
+        "kaupmali": {
+          "type": "boolean"
+        },
+        "erfdakraVitneskja": {
+          "type": "boolean"
+        },
+        "eignir": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EignirDanarbus"
+          }
+        },
+        "mogulegSkipti": {
+          "type": "object",
+          "x-dictionaryKey": {
+            "$ref": "#/definitions/DanarbuSkipti2"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Erfingar": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "tengsl": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "netfang": {
+          "type": "string"
+        },
+        "malsvari": {
+          "$ref": "#/definitions/Malsvari"
+        }
+      }
+    },
+    "Malsvari": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "netfang": {
+          "type": "string"
+        }
+      }
+    },
+    "DanarbuSkipti2": {
+      "type": "integer",
+      "description": "0 = OpinberSkipti\n1 = EignalaustDanarbu\n2 = SetaiOskiptuBui\n3 = Einkaskipti",
+      "x-enumNames": [
+        "OpinberSkipti",
+        "EignalaustDanarbu",
+        "SetaiOskiptuBui",
+        "Einkaskipti"
+      ],
+      "enum": [0, 1, 2, 3]
+    },
+    "Fyrirspurn": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        }
+      }
+    },
     "UpplysingarUrDanarbuiSkeyti": {
       "type": "object",
       "properties": {
@@ -3773,63 +3983,6 @@
           "items": {
             "$ref": "#/definitions/EignirDanarbus"
           }
-        }
-      }
-    },
-    "Erfingar": {
-      "type": "object",
-      "properties": {
-        "kennitala": {
-          "type": "string"
-        },
-        "nafn": {
-          "type": "string"
-        },
-        "heimilisfang": {
-          "type": "string"
-        },
-        "tengsl": {
-          "type": "string"
-        },
-        "simi": {
-          "type": "string"
-        },
-        "netfang": {
-          "type": "string"
-        },
-        "malsvari": {
-          "$ref": "#/definitions/Malsvari"
-        }
-      }
-    },
-    "Malsvari": {
-      "type": "object",
-      "properties": {
-        "kennitala": {
-          "type": "string"
-        },
-        "nafn": {
-          "type": "string"
-        },
-        "heimilisfang": {
-          "type": "string"
-        },
-        "simi": {
-          "type": "string"
-        },
-        "netfang": {
-          "type": "string"
-        }
-      }
-    },
-    "Fyrirspurn": {
-      "type": "object",
-      "properties": {
-        "audkenni": {
-          "type": "string"
-        },
-        "kennitala": {
-          "type": "string"
         }
       }
     },

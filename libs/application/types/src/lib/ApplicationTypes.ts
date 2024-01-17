@@ -47,9 +47,18 @@ export enum ApplicationTypes {
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
+  OLD_AGE_PENSION = 'OldAgePension',
+  HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
+  CAR_RECYCLING = 'CarRecycling',
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
+  ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
+  ENERGY_FUNDS = 'EnergyFunds',
+  HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
+  PENSION_SUPPLEMENT = 'PensionSupplement',
+  TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
 }
 
 export const ApplicationConfigurations = {
@@ -90,11 +99,11 @@ export const ApplicationConfigurations = {
     translation: 'hi.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns',
+    slug: 'breytt-logheimili-barns-old',
     translation: 'crc.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
-    slug: 'breytt-logheimili-barns-v2',
+    slug: 'breytt-logheimili-barns',
     translation: 'crc.application',
   },
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {
@@ -245,16 +254,56 @@ export const ApplicationConfigurations = {
     slug: 'evropska-sjukratryggingakortid',
     translation: 'ehic.application',
   },
+  [ApplicationTypes.OLD_AGE_PENSION]: {
+    slug: 'ellilifeyrir',
+    translation: ['oap.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
+    slug: 'heimilisuppbot',
+    translation: ['hs.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CAR_RECYCLING]: {
+    slug: 'skilavottord',
+    translation: 'rf.cr.application',
+  },
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
-    slug: 'medmaelalisti',
+    slug: 'medmaelasofnun',
     translation: 'slc.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
-    slug: 'maela-med-lista',
+    slug: 'maela-med-frambodi',
     translation: 'sls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
+    slug: 'felagslegur-vidbotarstudningur',
+    translation: [
+      'asfte.application',
+      'sia.application',
+      'uiForms.application',
+    ],
+  },
+  [ApplicationTypes.ENERGY_FUNDS]: {
+    slug: 'rafbila-styrkur',
+    translation: 'ef.application',
+  },
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
+    slug: 'starfsleyfis-vottord',
+    translation: 'hlc.application',
+  },
+  [ApplicationTypes.PENSION_SUPPLEMENT]: {
+    slug: 'uppbot-a-lifeyri',
+    translation: ['ul.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
+    slug: 'eigendaskipti-taekis',
+    translation: 'aosh.tmo.application',
+  },
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
+    slug: 'umradaskipti-taekis',
+    translation: 'aosh.cms.application',
   },
 }

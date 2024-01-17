@@ -21,6 +21,7 @@ import {
   TabSectionSlice,
   Webreader,
 } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   OneColumnText,
@@ -225,8 +226,8 @@ const ProjectPage: Screen<PageProps> = ({
             </Text>
           </Box>
         )}
-        {content && (
-          <Box className="rs_read" paddingBottom={3}>
+        {content?.length > 0 && (
+          <Box className="rs_read" paddingBottom={SLICE_SPACING}>
             {webRichText(content, {
               renderComponent: {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -256,22 +257,10 @@ const ProjectPage: Screen<PageProps> = ({
           </Box>
         )}
         {!renderSlicesAsTabs && (
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-
-          <Stack space={3}>
-            {(subpage ?? projectPage)?.slices.map((slice: Slice) =>
-              slice.__typename === 'OneColumnText' ? (
-                <Box paddingTop={3} className="rs_read">
-                  <SliceMachine
-                    key={slice.id}
-                    slice={slice}
-                    namespace={namespace}
-                    fullWidth={true}
-                    slug={projectPage?.slug}
-                  />
-                </Box>
-              ) : (
+          <Stack space={SLICE_SPACING}>
+            {(subpage ?? projectPage)?.slices.map((slice: Slice, index) => {
+              const sliceCount = (subpage ?? projectPage)?.slices?.length
+              return (
                 <Box className="rs_read">
                   <SliceMachine
                     key={slice.id}
@@ -279,48 +268,55 @@ const ProjectPage: Screen<PageProps> = ({
                     namespace={namespace}
                     fullWidth={true}
                     slug={projectPage?.slug}
+                    marginBottom={
+                      typeof sliceCount === 'number' && index === sliceCount - 1
+                        ? 8
+                        : 0
+                    }
                   />
                 </Box>
-              ),
-            )}
+              )
+            })}
           </Stack>
         )}
       </ProjectWrapper>
 
-      {bottomSlices.map((slice, index) => {
-        if (
-          slice.__typename === 'OneColumnText' &&
-          index === bottomSlices.length - 1
-        ) {
+      <Stack space={SLICE_SPACING}>
+        {bottomSlices.map((slice, index) => {
+          if (
+            slice.__typename === 'OneColumnText' &&
+            index === bottomSlices.length - 1
+          ) {
+            return (
+              <Box paddingBottom={6}>
+                <OneColumnTextSlice slice={slice} />
+              </Box>
+            )
+          }
           return (
-            <Box paddingBottom={6} paddingTop={2}>
-              <OneColumnTextSlice slice={slice} />
-            </Box>
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={projectPage?.slug}
+              fullWidth={true}
+              params={{
+                linkType: 'projectnews',
+                overview: 'projectnewsoverview',
+                containerPaddingBottom: 0,
+                containerPaddingTop: 0,
+                contentPaddingTop: 0,
+                contentPaddingBottom: 0,
+              }}
+              wrapWithGridContainer={
+                slice.__typename === 'ConnectedComponent' ||
+                slice.__typename === 'TabSection' ||
+                slice.__typename === 'PowerBiSlice'
+              }
+            />
           )
-        }
-        return (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={projectPage?.slug}
-            fullWidth={true}
-            params={{
-              linkType: 'projectnews',
-              overview: 'projectnewsoverview',
-              containerPaddingBottom: 0,
-              containerPaddingTop: 0,
-              contentPaddingTop: 0,
-              contentPaddingBottom: 0,
-            }}
-            wrapWithGridContainer={
-              slice.__typename === 'ConnectedComponent' ||
-              slice.__typename === 'TabSection' ||
-              slice.__typename === 'PowerBiSlice'
-            }
-          />
-        )
-      })}
+        })}
+      </Stack>
       <ProjectFooter
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
@@ -408,6 +404,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
     stepperNamespace,
     showSearchInHeader: false,
     locale: locale as Locale,
+    customAlertBanner: getProjectPage?.alertBanner,
     ...getThemeConfig(getProjectPage),
   }
 }

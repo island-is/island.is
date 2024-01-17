@@ -19,3 +19,5 @@ export { ExpandableDescriptionFormField } from './ExpandableDescriptionFormField
 export { LinkFormField } from './LinkFormField/LinkFormField'
 export { PaymentChargeOverviewFormField } from './PaymentChargeOverviewFormField/PaymentChargeOverviewFormField'
 export { ImageFormField } from './ImageFormField/ImageFormField'
+export { PdfLinkButtonFormField } from './PdfLinkButtonFormField/PdfLinkButtonFormField'
+export { NationalIdWithNameFormField } from './NationalIdWithNameFormField/NationalIdWithNameFormField'

@@ -183,6 +183,8 @@ identity-server:
     IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
     IdentityServer__SigningCertificate__Passphrase: '/k8s/identity-server/SigningCertificatePassphrase'
     PersistenceSettings__AccessTokenManagementSettings__ClientSecret: '/k8s/identity-server/ClientSecret'
+    Redaction__UserIdentifiers__Key: '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY'
+    Redaction__UserIdentifiers__KeyId: '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID'
     Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList'
   securityContext:
     allowPrivilegeEscalation: false
@@ -357,6 +359,7 @@ services-auth-ids-api:
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
     SERVERSIDE_FEATURES_ON: ''
+    USER_PROFILE_CLIENT_SCOPE: '@island.is/user-profile:read'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'

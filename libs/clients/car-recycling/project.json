@@ -1,0 +1,36 @@
+{
+  "name": "clients-car-recycling",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/car-recycling/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/car-recycling/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/car-recycling"],
+      "options": {
+        "jestConfig": "libs/clients/car-recycling/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/clients/car-recycling/codegen.yaml"
+      },
+      "inputs": [
+        "default",
+        "{workspaceRoot}/apps/skilavottord/ws/src/api.graphql"
+      ],
+      "outputs": ["{projectRoot}/gen"]
+    }
+  },
+  "implicitDependencies": ["skilavottord-ws"],
+  "tags": ["lib:client", "scope:client"]
+}

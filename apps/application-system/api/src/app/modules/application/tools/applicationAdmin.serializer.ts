@@ -20,8 +20,10 @@ import { IntlService } from '@island.is/cms-translations'
 import { Locale } from '@island.is/shared/types'
 import { getCurrentUser } from '@island.is/auth-nest-tools'
 
-import { Application } from '@island.is/application/api/core'
-import { ApplicationResponseDto } from '../dto/application.response.dto'
+import {
+  Application,
+  ApplicationPaginatedResponse,
+} from '@island.is/application/api/core'
 import { getCurrentLocale } from '../utils/currentLocale'
 import {
   HistoryService,
@@ -35,6 +37,7 @@ import {
   getApplicationNameTranslationString,
   getPaymentStatusForAdmin,
 } from '../utils/application'
+import { ApplicationListAdminResponseDto } from '../dto/applicationAdmin.response.dto'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -56,39 +59,42 @@ export class ApplicationAdminSerializer
     const locale = getCurrentLocale(context)
 
     return next.handle().pipe(
-      map(async (res: Application | Array<Application>) => {
-        const isArray = Array.isArray(res)
+      map(
+        async (
+          res: Application | Array<Application> | ApplicationPaginatedResponse,
+        ) => {
+          const isArray = Array.isArray(res)
 
-        if (isArray) {
-          const applications = res as Application[]
           const showHistory = await this.featureFlagService.getValue(
             Features.applicationSystemHistory,
             false,
             user,
           )
-
-          let histories: History[] = []
-          if (showHistory) {
-            histories = await this.historyService.getStateHistory(
-              applications.map((item) => item.id),
+          if (isArray) {
+            const applications = res as Application[]
+            return this.serializeArray(
+              applications,
+              showHistory,
+              user.nationalId,
+              locale,
             )
           }
+          if ((res as ApplicationPaginatedResponse).rows) {
+            const data = res as ApplicationPaginatedResponse
+            const applications = data.rows as Application[]
 
-          return Promise.all(
-            applications.map((item) =>
-              this.serialize(
-                item,
-                user.nationalId,
-                locale,
-                histories.filter((x) => x.application_id === item.id),
-                showHistory,
-              ),
-            ),
-          )
-        }
+            data.rows = (await this.serializeArray(
+              applications,
+              showHistory,
+              user.nationalId,
+              locale,
+            )) as Application[]
+            return data
+          }
 
-        return this.serialize(res as Application, user.nationalId, locale)
-      }),
+          return this.serialize(res as Application, user.nationalId, locale)
+        },
+      ),
     )
   }
 
@@ -135,7 +141,7 @@ export class ApplicationAdminSerializer
       application.id,
     )
 
-    const dto = plainToInstance(ApplicationResponseDto, {
+    const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
       applicationActors: actors,
@@ -173,5 +179,31 @@ export class ApplicationAdminSerializer
       applicantName: getApplicantName(application),
     })
     return instanceToPlain(dto)
+  }
+
+  async serializeArray(
+    applications: Application[],
+    showHistory: boolean,
+    nationalId: string,
+    locale: Locale,
+  ) {
+    let histories: History[] = []
+    if (showHistory) {
+      histories = await this.historyService.getStateHistory(
+        applications.map((item) => item.id),
+      )
+    }
+
+    return Promise.all(
+      applications.map((item) =>
+        this.serialize(
+          item,
+          nationalId,
+          locale,
+          histories.filter((x) => x.application_id === item.id),
+          showHistory,
+        ),
+      ),
+    )
   }
 }

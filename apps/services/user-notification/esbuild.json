@@ -45,7 +45,9 @@
     "jsonwebtoken",
     "buffer-equal-constant-time",
     "safer-buffer",
-    "jwa"
+    "jwa",
+    "sequelize",
+    "path-scurry"
   ],
   "keepNames": true
 }

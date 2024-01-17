@@ -46,7 +46,20 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       backLink {
         text
         url
-      }   
+      }
+      alertBanner {
+        showAlertBanner
+        bannerVariant
+        title
+        description
+        linkTitle
+        link {
+          slug
+          type
+        }
+        isDismissable
+        dismissedForDays
+      }  
       subtitle
       intro
       content {
@@ -124,6 +137,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         imagePadding
         imageIsFullHeight
         imageObjectFit
+        imageObjectPosition
       }
     }
   }

@@ -1,11 +1,12 @@
+import { useMemo } from 'react'
+import { CSSProperties } from '@vanilla-extract/css'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
-import { CSSProperties } from '@vanilla-extract/css'
-import { useMemo } from 'react'
 
 import * as styles from './RikislogmadurHeader.css'
 
@@ -23,9 +24,13 @@ const getDefaultStyle = (): CSSProperties => {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
-const RikislogmadurHeader = ({ organizationPage }: HeaderProps) => {
+const RikislogmadurHeader = ({
+  organizationPage,
+  logoAltText,
+}: HeaderProps) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
@@ -54,7 +59,7 @@ const RikislogmadurHeader = ({ organizationPage }: HeaderProps) => {
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -71,7 +76,7 @@ const RikislogmadurHeader = ({ organizationPage }: HeaderProps) => {
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             </Hidden>

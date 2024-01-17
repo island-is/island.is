@@ -8,7 +8,8 @@ import {
   ApplicationStatus,
   ApplicationLifecycle,
 } from '@island.is/application/types'
-import { Application } from './application.model'
+import { Application, ApplicationPaginatedResponse } from './application.model'
+import { getTypeIdsForInstitution } from '@island.is/application/utils'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -111,11 +112,64 @@ export class ApplicationService {
     })
   }
 
+  async findAllByInstitutionAndFilters(
+    nationalId: string,
+    page: number,
+    count: number,
+    status?: string,
+    applicantNationalId?: string,
+    from?: string,
+    to?: string,
+  ): Promise<ApplicationPaginatedResponse> {
+    const statuses = status?.split(',')
+    const typeIds = getTypeIdsForInstitution(nationalId)
+    const toDate = to ? new Date(to) : undefined
+    const fromDate = from ? new Date(from) : undefined
+
+    // No applications for this institution ID
+    if (typeIds.length < 1) {
+      return {
+        rows: [],
+        count: 0,
+      }
+    }
+
+    return this.applicationModel.findAndCountAll({
+      where: {
+        ...{ typeId: { [Op.in]: typeIds } },
+        ...(statuses ? { status: { [Op.in]: statuses } } : {}),
+        [Op.and]: [
+          applicantNationalId
+            ? {
+                [Op.or]: [[{ applicant: { [Op.eq]: applicantNationalId } }]],
+              }
+            : {},
+          applicationIsNotSetToBePruned(),
+          fromDate && toDate
+            ? {
+                [Op.and]: [
+                  { created: { [Op.gte]: fromDate } },
+                  { created: { [Op.lte]: toDate } },
+                ],
+              }
+            : {},
+        ],
+        isListed: {
+          [Op.eq]: true,
+        },
+      },
+      limit: count,
+      offset: (page - 1) * count,
+      order: [['modified', 'DESC']],
+    })
+  }
+
   async findAllByNationalIdAndFilters(
     nationalId: string,
     typeId?: string,
     status?: string,
     actor?: string,
+    showPruned?: boolean,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
@@ -136,7 +190,7 @@ export class ApplicationService {
               ...[{ assignees: { [Op.contains]: [nationalId] } }],
             ],
           },
-          applicationIsNotSetToBePruned(),
+          showPruned ? {} : applicationIsNotSetToBePruned(),
         ],
         isListed: {
           [Op.eq]: true,

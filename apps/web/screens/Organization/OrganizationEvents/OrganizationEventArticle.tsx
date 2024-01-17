@@ -229,6 +229,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
                   url={event.video.url}
                   locale={locale}
                   title={event.video.title}
+                  thumbnailImageUrl={event.video.thumbnailImageUrl}
                 />
               </GridColumn>
             )}

@@ -10,6 +10,7 @@ import {
   AlertBanner,
   CaseFilesAccordionItem,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -18,12 +19,13 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
-import CaseOverviewHeader from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/CaseOverviewHeader/CaseOverviewHeader'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
+import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { overview as strings } from './Overview.strings'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -57,7 +59,19 @@ const CourtOfAppealOverview: React.FC<
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CaseOverviewHeader />
+          <CaseOverviewHeader
+            alerts={
+              workingCase.requestAppealRulingNotToBePublished
+                ? [
+                    {
+                      message: formatMessage(
+                        strings.requestAppealRulingNotToBePublished,
+                      ),
+                    },
+                  ]
+                : undefined
+            }
+          />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
@@ -85,7 +99,7 @@ const CourtOfAppealOverview: React.FC<
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
@@ -103,17 +117,26 @@ const CourtOfAppealOverview: React.FC<
                 },
                 {
                   title: formatMessage(core.prosecutorPerson),
-                  value: workingCase.prosecutor?.name,
+                  value: NameAndEmail(
+                    workingCase.prosecutor?.name,
+                    workingCase.prosecutor?.email,
+                  ),
                 },
                 {
                   title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
+                  value: NameAndEmail(
+                    workingCase.judge?.name,
+                    workingCase.judge?.email,
+                  ),
                 },
                 ...(workingCase.registrar
                   ? [
                       {
                         title: formatMessage(core.registrar),
-                        value: workingCase.registrar?.name,
+                        value: NameAndEmail(
+                          workingCase.registrar?.name,
+                          workingCase.registrar.email,
+                        ),
                       },
                     ]
                   : []),

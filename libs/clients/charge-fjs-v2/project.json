@@ -22,7 +22,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8080/r1/IS-DEV/GOV/10021/FJS-Public/getOpenAPI?serviceCode=chargeFJS_v2 -H 'Accept: application/json' > src/clientConfig.json"
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10021/FJS-Public/getOpenAPI?serviceCode=chargeFJS_v2 -H 'Accept: application/json' > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/charge-fjs-v2"

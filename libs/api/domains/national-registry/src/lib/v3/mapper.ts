@@ -10,7 +10,11 @@ import {
   EinstaklingurDTOLogForeldriItem,
   EinstaklingurDTONafnAllt,
 } from '@island.is/clients/national-registry-v3'
-import { mapGender, mapMaritalStatus } from '../shared/mapper'
+import {
+  mapGender,
+  mapMaritalStatus,
+  mapNationalIdType,
+} from '../shared/mapper'
 import {
   Address,
   Person,
@@ -24,12 +28,14 @@ import { ChildCustodyV3, PersonV3 } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
 import * as kennitala from 'kennitala'
-import { isDefined } from '@island.is/shared/utils'
+import { maskString, isDefined } from '@island.is/shared/utils'
 
 export function formatPersonDiscriminated(
   individual?: EinstaklingurDTOAllt | null,
+  nationalId?: string,
+  useFakeData?: boolean,
 ): PersonV3 | null {
-  const person = formatPerson(individual)
+  const person = formatPerson(individual, nationalId)
   if (!person) {
     return null
   }
@@ -38,25 +44,28 @@ export function formatPersonDiscriminated(
     ...person,
     api: 'v3',
     rawData: individual ?? null,
+    useFakeData,
   }
 }
 
 export function formatChildCustody(
   childCustody?: EinstaklingurDTOForsjaItem | null,
+  useFakeData?: boolean,
 ): ChildCustodyV3 | null {
   if (!childCustody?.barnKennitala || !childCustody?.barnNafn) {
     return null
   }
-
   return {
     nationalId: childCustody.barnKennitala,
     fullName: childCustody.barnNafn,
+    useFakeData: useFakeData,
     api: 'v3',
   }
 }
 
 export function formatPerson(
   individual?: EinstaklingurDTOAllt | null,
+  nationalId?: string,
 ): Person | null {
   if (individual === null || !individual?.kennitala || !individual?.nafn) {
     return null
@@ -74,13 +83,17 @@ export function formatPerson(
   return {
     nationalId: individual.kennitala,
     fullName: individual.nafn,
-    nationalIdType: individual.tegundKennitolu ?? null,
+    nationalIdType: mapNationalIdType(individual.tegundEinstaklingsNr ?? -1),
     exceptionFromDirectMarketing: individual.bannmerking === true ?? false,
     gender: mapGender(individual.kyn?.kynKodi ?? ''),
     religion: individual.trufelag?.trufelagHeiti ?? null,
     maritalStatus: mapMaritalStatus(
       individual.hjuskaparstada?.hjuskaparstadaKodi ?? '',
     ),
+    ...(nationalId &&
+      individual.kennitala && {
+        baseId: maskString(individual.kennitala, nationalId),
+      }),
 
     //DEPRECATION LINE -- below shall be removed
     legalResidence: legalResidence ?? null,

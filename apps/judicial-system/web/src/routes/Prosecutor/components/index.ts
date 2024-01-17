@@ -3,7 +3,7 @@ export {
   default as PoliceCaseFiles,
   mapPoliceCaseFileToPoliceCaseFileCheck,
 } from './PoliceCaseFiles/PoliceCaseFiles'
-export { default as IconAndText } from '../../../components/IconAndText/IconAndText'
+export { IconAndText } from '@island.is/judicial-system-web/src/components'
 export {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,

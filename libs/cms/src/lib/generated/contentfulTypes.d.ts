@@ -835,6 +835,9 @@ export interface IEmbeddedVideoFields {
 
   /** url */
   url: string
+
+  /** Thumbnail Image */
+  thumbnailImage: Asset
 }
 
 /** YouTube or Vimeo */
@@ -1338,7 +1341,7 @@ export interface IFrontpageFields {
   slides?: IFrontpageSlider[] | undefined
 
   /** Life Events */
-  lifeEvents?: (ILifeEventPage | IAnchorPage)[] | undefined
+  lifeEvents?: ILifeEventPage[] | undefined
 
   /** Namespace */
   namespace: IUiConfiguration
@@ -1817,48 +1820,57 @@ export interface ILatestNewsSlice extends Entry<ILatestNewsSliceFields> {
 }
 
 export interface ILifeEventPageFields {
-  /** title */
+  /** Title */
   title: string
 
-  /** short title */
+  /** Short Title */
   shortTitle?: string | undefined
 
-  /** slug */
+  /** Slug */
   slug: string
 
-  /** intro */
+  /** Intro */
   intro?: string | undefined
 
-  /** short intro */
+  /** Short Intro */
   shortIntro?: string | undefined
 
-  /** image */
+  /** Image */
   image?: Asset | undefined
 
-  /** thumbnail */
+  /** Thumbnail */
   thumbnail?: Asset | undefined
 
-  /** tiny thumbnail */
+  /** Tiny Thumbnail */
   tinyThumbnail?: Asset | undefined
 
-  /** content */
+  /** Featured Image */
+  featuredImage?: Asset | undefined
+
+  /** Content */
   content: Document
 
-  /** category */
+  /** Featured */
+  featured?: IFeatured[] | undefined
+
+  /** Organizations */
+  organizations?: IOrganization[] | undefined
+
+  /** Category */
   category?: IArticleCategory | undefined
 
-  /** see more text */
+  /** Related Life Events */
+  relatedLifeEvents?: ILifeEventPage[] | undefined
+
+  /** See More Text */
   seeMoreText?: string | undefined
 
-  /** page type */
+  /** Page Type */
   pageType?:
     | 'Life Event'
     | 'Digital Iceland Service'
     | 'Digital Iceland Community Page'
     | undefined
-
-  /** featured image */
-  featuredImage?: Asset | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -2126,6 +2138,18 @@ export interface IManualFields {
 
   /** Chapters */
   chapters: IManualChapter[]
+
+  /** Category */
+  category?: IArticleCategory | undefined
+
+  /** Group */
+  group?: IArticleGroup | undefined
+
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface IManual extends Entry<IManualFields> {
@@ -2817,6 +2841,7 @@ export interface IOrganizationPageFields {
     | 'hms'
     | 'rikissaksoknari'
     | 'vinnueftirlitid'
+    | 'hljodbokasafn-islands'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2877,6 +2902,8 @@ export interface IOrganizationSubpageFields {
         | ITellUsAStory
         | ITwoColumnText
         | IAnchorPageList
+        | ISectionWithVideo
+        | ISectionHeading
       )[]
     | undefined
 
@@ -3130,6 +3157,7 @@ export interface IProjectPageFields {
     | 'gagnasidur-fiskistofu'
     | 'directorate-of-health'
     | 'grindavik'
+    | 'default-v2'
 
   /** Sidebar */
   sidebar: boolean
@@ -3224,6 +3252,9 @@ export interface IProjectPageFields {
 
   /** Namespace */
   namespace?: IUiConfiguration | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -3433,6 +3464,9 @@ export interface IServiceWebPageFields {
 
   /** Slices */
   slices?: IFeaturedArticles[] | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -3526,6 +3560,9 @@ export interface ISliceConnectedComponentFields {
     | 'HousingBenefitCalculator'
     | 'PublicShipSearch'
     | 'Meistaraleyfi/MasterLicences'
+    | 'Vinnueftirlitid/Namskeid'
+    | 'Meðmælalistar/SignatureLists'
+    | 'KilometerFee'
     | undefined
 
   /** Localized JSON */
