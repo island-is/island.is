@@ -17,7 +17,7 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
   const owner: OwnerInput = answers.applicant
   const currentCollection: SignatureCollection = application.externalData
     .currentCollection?.data as SignatureCollection
-
+g
   const subject = 'Nýir meðmælasöfnunar listar stofnaðir'
   const lists: Body[] = currentCollection.areas.map((area) => {
     return {
