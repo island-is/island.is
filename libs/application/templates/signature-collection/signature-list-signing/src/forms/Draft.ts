@@ -75,7 +75,6 @@ export const Draft: Form = buildForm({
                     return (data as SignatureCollectionList[]).map((list) => ({
                       value: list.title,
                       label: list.title,
-
                       disabled: list.maxReached,
                       tag: list.maxReached
                         ? {
