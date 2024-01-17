@@ -25,6 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import IconButton from '../IconButton/IconButton'
 import { strings } from './AppealCaseFilesOverview.strings'
 
 const AppealCaseFilesOverview: React.FC<
@@ -106,35 +107,60 @@ const AppealCaseFilesOverview: React.FC<
         <Text as="h3" variant="h3" marginBottom={1}>
           {formatMessage(strings.title)}
         </Text>
-        {allFiles.map((file) => (
-          <PdfButton
-            key={file.id}
-            renderAs="row"
-            caseId={workingCase.id}
-            title={file.name}
-            disabled={!file.key}
-            handleClick={() => onOpen(file.id)}
-          >
-            {file.category && file.category !== CaseFileCategory.APPEAL_RULING && (
-              <Box display="flex" flexDirection="column">
-                <Text>
-                  {`${formatDate(
-                    fileDate(file.category) ?? file.created,
-                    'dd.MM.y',
-                  )} kl. ${formatDate(
-                    fileDate(file.category) ?? file.created,
-                    constants.TIME_FORMAT,
-                  )}`}
-                </Text>
-                <Text variant="small">
-                  {formatMessage(strings.submittedBy, {
-                    filesCategory: file.category?.includes('PROSECUTOR'),
-                  })}
-                </Text>
-              </Box>
-            )}
-          </PdfButton>
-        ))}
+        {allFiles.map((file) => {
+          const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
+          const isDisabled = !file.key
+
+          return (
+            <PdfButton
+              key={file.id}
+              renderAs="row"
+              caseId={workingCase.id}
+              title={file.name}
+              disabled={isDisabled}
+              handleClick={() => onOpen(file.id)}
+            >
+              {file.category &&
+                file.category !== CaseFileCategory.APPEAL_RULING && (
+                  <Box display="flex" alignItems="center">
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="flexEnd"
+                    >
+                      <Text whiteSpace="nowrap">
+                        {`${formatDate(
+                          fileDate(file.category) ?? file.created,
+                          'dd.MM.y',
+                        )} kl. ${formatDate(
+                          fileDate(file.category) ?? file.created,
+                          constants.TIME_FORMAT,
+                        )}`}
+                      </Text>
+                      <Text variant="small">
+                        {formatMessage(strings.submittedBy, {
+                          filesCategory: prosecutorSubmitted,
+                        })}
+                      </Text>
+                    </Box>
+                    {((prosecutorSubmitted && isProsecutionUser(user)) ||
+                      (!prosecutorSubmitted && isDefenceUser(user))) && (
+                      <Box marginLeft={3}>
+                        <IconButton
+                          icon="ellipsisVertical"
+                          colorScheme="transparent"
+                          onClick={(evt) => {
+                            evt.preventDefault()
+                          }}
+                          disabled={isDisabled}
+                        />
+                      </Box>
+                    )}
+                  </Box>
+                )}
+            </PdfButton>
+          )
+        })}
       </Box>
       {(isProsecutionUser(user) || isDefenceUser(user)) &&
         workingCase.appealState &&
