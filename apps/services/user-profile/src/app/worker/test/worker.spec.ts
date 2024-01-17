@@ -14,6 +14,7 @@ import { UserProfileAdvania } from '../userProfileAdvania.model'
 import { UserProfile } from '../../user-profile/userProfile.model'
 
 import { ProcessedStatus } from '../types'
+import { hasMatchingEmail } from '../worker.utils'
 
 describe('UserProfileWorker', () => {
   jest.setTimeout(30000)
@@ -561,6 +562,51 @@ describe('UserProfileWorker', () => {
         })
       })
     })
+  })
+
+  it.only('should lower case emails coming from advania', async () => {
+    // Arrange
+    const advaniaProfiles = new Array(10).fill(null).map((_, index) => ({
+      ssn: `${index}`,
+      email: `Test${index}@test.Local`,
+      mobilePhoneNumber: `888111${index}`,
+      exported: new Date(2023, 10, 1),
+    }))
+
+    // Act
+    await userProfileAdvaniaModel.bulkCreate(advaniaProfiles)
+    const advaniaProfilesBeforeMigration =
+      await userProfileAdvaniaModel.findAll()
+    const userProfilesBeforeMigration = await userProfileModel.findAll()
+    await workerService.run()
+    const advaniaProfilesAfterMigration =
+      await userProfileAdvaniaModel.findAll()
+    const userProfilesAfterMigration = await userProfileModel.findAll()
+
+    // Assert
+    expect(
+      advaniaProfilesBeforeMigration.every(
+        (p) => p.status === ProcessedStatus.PENDING,
+      ),
+    ).toBe(true)
+    expect(userProfilesBeforeMigration.length).toBe(0)
+    expect(
+      advaniaProfilesAfterMigration.every(
+        (p) => p.status === ProcessedStatus.DONE,
+      ),
+    ).toBe(true)
+    expect(
+      userProfilesAfterMigration.every((p) => {
+        const matchingProfile = advaniaProfilesAfterMigration.find(
+          (ap) => ap.ssn === p.nationalId,
+        )
+
+        return (
+          hasMatchingEmail(matchingProfile.email, p.email) &&
+          matchingProfile.mobilePhoneNumber === p.mobilePhoneNumber
+        )
+      }),
+    ).toBe(true)
   })
 
   afterEach(async () => {
