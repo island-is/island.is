@@ -21,6 +21,7 @@ import {
   GridRow,
   Hidden,
   Hyphen,
+  Icon,
   Inline,
   LoadingDots,
   Stack,
@@ -277,6 +278,22 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     'af',
   )} ${totalPages}`
 
+  const goToPreviousPage = () => {
+    window.scrollTo({ behavior: 'smooth', left: 0, top: 0 })
+    setPage((currentPage) => currentPage - 1)
+  }
+
+  const goToNextPage = () => {
+    window.scrollTo({ behavior: 'smooth', left: 0, top: 0 })
+    setPage((currentPage) => {
+      const newPage = currentPage + 1
+      if (currentPage * ITEMS_PER_PAGE < totalExternalVacancyCount) {
+        setExternalVacanciesPage(newPage)
+      }
+      return newPage
+    })
+  }
+
   return (
     <Box paddingTop={[0, 0, 8]}>
       <HeadWithSocialSharing
@@ -438,8 +455,39 @@ const VacanciesList: Screen<VacanciesListProps> = ({
             </GridColumn>
 
             <GridColumn span="1/3">
-              <Box display="flex" justifyContent="flexEnd">
-                <Text>{pageText}</Text>
+              <Box
+                display="flex"
+                justifyContent="flexEnd"
+                alignItems="center"
+                rowGap={2}
+              >
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  onClick={goToPreviousPage}
+                  cursor="pointer"
+                  style={{
+                    visibility: page > 1 ? 'visible' : 'hidden',
+                  }}
+                >
+                  <Icon icon="chevronBack" />
+                </Box>
+
+                <Box userSelect="none">
+                  <Text>{pageText}</Text>
+                </Box>
+
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  onClick={goToNextPage}
+                  cursor="pointer"
+                  style={{
+                    visibility: page < totalPages ? 'visible' : 'hidden',
+                  }}
+                >
+                  <Icon icon="chevronForward" />
+                </Box>
               </Box>
             </GridColumn>
           </GridRow>
@@ -582,34 +630,13 @@ const VacanciesList: Screen<VacanciesListProps> = ({
               textAlign="center"
             >
               {page > 1 && (
-                <Button
-                  onClick={() => {
-                    window.scrollTo({ behavior: 'smooth', left: 0, top: 0 })
-                    setPage((currentPage) => {
-                      return currentPage - 1
-                    })
-                  }}
-                >
+                <Button onClick={goToPreviousPage}>
                   {n('prevPage', 'Fyrri síða')}
                 </Button>
               )}
               &nbsp;&nbsp;
               {page < totalPages && (
-                <Button
-                  onClick={() => {
-                    window.scrollTo({ behavior: 'smooth', left: 0, top: 0 })
-                    setPage((currentPage) => {
-                      const newPage = currentPage + 1
-                      if (
-                        currentPage * ITEMS_PER_PAGE <
-                        totalExternalVacancyCount
-                      ) {
-                        setExternalVacanciesPage(newPage)
-                      }
-                      return newPage
-                    })
-                  }}
-                >
+                <Button onClick={goToNextPage}>
                   {n('nextPage', 'Næsta síða')}
                 </Button>
               )}
