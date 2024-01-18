@@ -380,6 +380,7 @@ const Layout: Screen<LayoutProps> = ({
                 })
               }
             }}
+            closeButtonLabel={activeLocale === 'is' ? 'Loka' : 'Close'}
           />
         ))}
         <Hidden above="sm">
