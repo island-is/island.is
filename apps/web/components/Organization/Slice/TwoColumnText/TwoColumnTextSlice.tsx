@@ -28,23 +28,41 @@ export const TwoColumnTextSlice: React.FC<
   React.PropsWithChildren<SliceProps>
 > = ({ slice }) => {
   const { activeLocale } = useI18n()
-  const labelId = 'sliceTitle-' + slice.id
+
+  const leftId = 'sliceLeftTitle-' + slice.id
+  const rightId = 'sliceRightTitle-' + slice.id
+
+  const sliceLabelIds = []
+
+  if (slice.leftTitle) {
+    sliceLabelIds.push(leftId)
+  }
+  if (slice.rightTitle) {
+    sliceLabelIds.push(rightId)
+  }
+
+  const ariaLabelledBy = sliceLabelIds.join(' ')
+
   return (
-    <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={ariaLabelledBy ? ariaLabelledBy : undefined}
+    >
       <GridContainer>
         {slice.dividerOnTop && <BorderAbove />}
         <Box>
           <GridRow>
             <GridColumn span={columnSpan} hiddenBelow="lg">
               {slice.leftTitle && (
-                <Text variant="h2" as="h2" id={labelId}>
+                <Text variant="h2" as="h2" id={leftId}>
                   <Hyphen>{slice.leftTitle}</Hyphen>
                 </Text>
               )}
             </GridColumn>
             <GridColumn span={columnSpan} hiddenBelow="lg">
               {slice.rightTitle && (
-                <Text variant="h2" as="h2" id={labelId}>
+                <Text variant="h2" as="h2" id={rightId}>
                   <Hyphen>{slice.rightTitle}</Hyphen>
                 </Text>
               )}
