@@ -62,19 +62,31 @@ export const PaymentPartication = () => {
       },
     })
 
-  const status = data?.rightsPortalCopaymentStatus.items[0]
-
-  return (
-    <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
-      {error || periodsError || billsError ? (
+  if (error) {
+    return (
+      <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
         <AlertMessage
           type="error"
           title={formatMessage(m.errorTitle)}
-          message={formatMessage(m.errorFetch)}
+          message={formatMessage(m.errorNoConnection)}
         />
-      ) : loading ? (
+      </PaymentsWrapper>
+    )
+  }
+
+  if (loading) {
+    return (
+      <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
         <SkeletonLoader space={2} repeat={3} height={24} />
-      ) : status ? (
+      </PaymentsWrapper>
+    )
+  }
+
+  return (
+    <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
+      {loading ? (
+        <SkeletonLoader space={2} repeat={3} height={24} />
+      ) : data?.rightsPortalCopaymentStatus ? (
         <Box>
           <Box borderBottomWidth="standard" borderColor="blueberry200">
             <Stack dividers="blueberry200" space={1}>
@@ -82,25 +94,40 @@ export const PaymentPartication = () => {
                 title={formatMessage(messages.statusOfRights)}
                 titlePadding={2}
                 label={formatMessage(messages.maximumMonthlyPayment)}
-                content={amountFormat(status?.maximumMonthlyPayment ?? 0)}
+                content={amountFormat(
+                  data.rightsPortalCopaymentStatus?.maximumMonthlyPayment ?? 0,
+                )}
               />
               <UserInfoLine
                 label={formatMessage(messages.paymentTarget)}
-                content={amountFormat(status?.maximumPayment ?? 0)}
+                content={amountFormat(
+                  data.rightsPortalCopaymentStatus?.maximumPayment ?? 0,
+                )}
               />
             </Stack>
           </Box>
           <Box marginBottom={SECTION_GAP}>
             <Text variant="small" marginTop={5} marginBottom={2}>
               {formatMessage(messages.paymentParticationExplination, {
-                basePayment: numberFormat(status.basePayment ?? 0),
+                basePayment: numberFormat(
+                  data.rightsPortalCopaymentStatus?.basePayment ?? 0,
+                ),
               })}
             </Text>
           </Box>
         </Box>
       ) : (
         <Box marginBottom={4}>
-          <Problem type="no_data" />
+          <Problem
+            type="no_data"
+            title={'Engin hjálpartæki skráð'}
+            message={
+              'Ef þú telur að þú eigir að vera með skráð tæki, vinsamlegast hafðu samband við þjónustuaðila.'
+            }
+            imgSrc="./assets/images/nodata.svg"
+            titleSize="h3"
+            noBorder={false}
+          />
         </Box>
       )}
       <Box marginBottom={SECTION_GAP}>
@@ -156,7 +183,9 @@ export const PaymentPartication = () => {
                       loading={billsLoading}
                       onExpandCallback={() => getBills(period.id ?? 0)}
                       data={[
-                        { value: period.status?.display ?? '' },
+                        {
+                          value: period.status?.display ?? '',
+                        },
                         { value: period.month ?? '' },
                         {
                           value: amountFormat(period.maximumPayment ?? 0),

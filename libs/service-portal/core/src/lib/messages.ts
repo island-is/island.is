@@ -1025,6 +1025,10 @@ export const m = defineMessages({
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
   },
+  errorNoConnection: {
+    id: 'service.portal:error-no-connection',
+    defaultMessage: 'Villa kom upp í samskiptum við þjónustuaðila',
+  },
   buttonCancel: {
     id: 'service.portal:button.cancel',
     defaultMessage: 'Hætta við',
