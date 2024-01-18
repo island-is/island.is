@@ -1,11 +1,11 @@
 import { Signature } from './signature.dto'
 
-export interface FailedNationalIds {
+export interface NationalIds {
   nationalId: string
   reason?: string
 }
 
 export interface BulkUpload {
-  success: Signature[]
-  failed: FailedNationalIds[]
+  success: NationalIds[]
+  failed: NationalIds[]
 }
