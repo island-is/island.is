@@ -356,7 +356,7 @@ services-auth-ids-api:
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     PUBLIC_URL: 'https://innskra.island.is/api'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    USER_PROFILE_CLIENT_SCOPE: '@island.is/user-profile:read'
+    USER_PROFILE_CLIENT_SCOPE: '["@island.is/user-profile:read"]'
     USER_PROFILE_CLIENT_URL: 'https://service-portal-api.internal.island.is'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'

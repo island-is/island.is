@@ -16,8 +16,6 @@ export enum RatioType {
 
 export enum AnswerValidationConstants {
   PERIOD = 'period',
-  FILEUPLOAD = 'fileUpload',
-  VALIDATE_LATEST_EMPLOYER = 'employers',
 }
 
 export enum ApplicationType {
