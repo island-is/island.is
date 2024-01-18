@@ -251,7 +251,7 @@ export class LicenseServiceService {
         },
         fetch: {
           ...licenseRes.fetch,
-          updated: licenseRes.fetch.updated.toISOString(),
+          updated: licenseRes.fetch.updated.getTime().toString(),
         },
         payload:
           {
@@ -274,7 +274,7 @@ export class LicenseServiceService {
           },
           fetch: {
             ...licenseRes.fetch,
-            updated: licenseRes.fetch.updated.toISOString(),
+            updated: licenseRes.fetch.updated.getTime().toString(),
           },
           payload: undefined,
         },
