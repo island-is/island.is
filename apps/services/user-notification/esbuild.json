@@ -47,6 +47,7 @@
     "safer-buffer",
     "jwa",
     "sequelize",
+    "path-scurry",
     "@mikro-orm/core"
   ],
   "keepNames": true
