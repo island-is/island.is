@@ -3007,10 +3007,10 @@ user-notification:
     min: 1
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '384Mi'
     requests:
-      cpu: '15m'
+      cpu: '150m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -3050,7 +3050,7 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
@@ -3113,11 +3113,11 @@ user-notification-worker:
     min: 1
   resources:
     limits:
-      cpu: '200m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '384Mi'
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: '150m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
