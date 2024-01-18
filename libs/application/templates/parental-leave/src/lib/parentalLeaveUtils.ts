@@ -397,10 +397,7 @@ export const getSpouse = (
   return null
 }
 
-export const getOtherParentOptions = (
-  application: Application,
-  formatMessage: FormatMessage,
-) => {
+export const getOtherParentOptions = (application: Application) => {
   const options: Option[] = [
     {
       value: NO,
@@ -410,9 +407,7 @@ export const getOtherParentOptions = (
     {
       value: SINGLE,
       label: parentalLeaveFormMessages.shared.singleParentOption,
-      subLabel: formatMessage(
-        parentalLeaveFormMessages.shared.singleParentDescription,
-      ),
+      subLabel: parentalLeaveFormMessages.shared.singleParentDescription,
     },
     {
       value: MANUAL,

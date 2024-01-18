@@ -1873,6 +1873,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(application.answers, 'transferRights')
           unset(application.answers, 'personalAllowanceFromSpouse')
           unset(application.answers, 'otherParentRightOfAccess')
+          unset(application.answers, 'otherParentObj.otherParentId')
+          unset(application.answers, 'otherParentObj.otherParentName')
         }
         return context
       }),
