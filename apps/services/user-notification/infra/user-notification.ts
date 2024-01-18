@@ -80,11 +80,11 @@ export const userNotificationServiceSetup = (services: {
     })
     .resources({
       limits: {
-        cpu: '200m',
+        cpu: '400m',
         memory: '384Mi',
       },
       requests: {
-        cpu: '15m',
+        cpu: '150m',
         memory: '256Mi',
       },
     })
@@ -125,6 +125,16 @@ export const userNotificationWorkerSetup = (services: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
+      },
+    })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '150m',
+        memory: '256Mi',
       },
     })
     .secrets({

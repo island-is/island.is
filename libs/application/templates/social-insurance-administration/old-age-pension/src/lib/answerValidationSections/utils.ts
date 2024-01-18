@@ -1,8 +1,6 @@
 import { buildValidationError } from '@island.is/application/core'
 import { StaticText } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
-import { Employer } from '../../types'
-import { RatioType } from '../constants'
 
 export const buildError = (message: StaticText, path: string) =>
   buildValidationError(`${path}`)(message)
@@ -37,21 +35,4 @@ export const validateFieldInDictionary = <T extends Object>(
   } catch (e) {
     // Ignore
   }
-}
-
-export const getTotalRatio = (employers: Employer[]) => {
-  return employers.reduce((accumulator, currentValue) => {
-    if (
-      currentValue.ratioType === RatioType.YEARLY &&
-      currentValue?.ratioYearly
-    ) {
-      return accumulator + +currentValue?.ratioYearly
-    } else if (
-      currentValue.ratioType === RatioType.MONTHLY &&
-      currentValue?.ratioMonthlyAvg
-    ) {
-      return accumulator + +currentValue.ratioMonthlyAvg
-    }
-    return accumulator
-  }, 0)
 }
