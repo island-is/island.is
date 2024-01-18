@@ -23,7 +23,7 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
 
   const appealFileChooser = await appealFileChooserPromise
   await page.waitForTimeout(1000)
-  
+
   await appealFileChooser.setFiles(await createFakePdf('TestKaera.pdf'))
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
