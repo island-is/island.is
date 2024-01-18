@@ -47,7 +47,9 @@ export class SignatureCollectionClientService {
     const current = (
       res
         .map(mapCollectionInfo)
-        .filter((collection) => !!collection) as CollectionInfo[]
+        .filter(
+          (collection) => collection?.isSignatureCollection,
+        ) as CollectionInfo[]
     ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
 
     if (!current) {

@@ -119,8 +119,11 @@ const AppealFiles = () => {
             title={formatMessage(strings.appealCaseFilesTitle)}
             marginBottom={1}
           />
-          <Text marginBottom={3}>
+          <Text marginBottom={3} whiteSpace="pre">
             {formatMessage(strings.appealCaseFilesSubtitle)}
+            {'\n'}
+            {!isDefenceUser(user) &&
+              `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
             fileList={uploadFiles.filter(
