@@ -7,10 +7,6 @@ export enum HouseholdSupplementHousing {
   RENTER = 'renter',
 }
 
-export enum AnswerValidationConstants {
-  FILEUPLOAD = 'fileUpload',
-}
-
 export const AttachmentLabel: {
   [key: string]: MessageDescriptor
 } = {
