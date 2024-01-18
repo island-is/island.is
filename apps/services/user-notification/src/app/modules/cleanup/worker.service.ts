@@ -20,7 +20,9 @@ export class UserNotificationCleanupWorkerService {
 
   async deleteSixMonthsAndOlderNotifications() {
     const rowCountBeforeCleanup = await this.notificationModel.count()
-    const sixMonthsAgo = new Date(new Date().setMonth(new Date().getMonth() - 6));
+    const sixMonthsAgo = new Date(
+      new Date().setMonth(new Date().getMonth() - 6),
+    )
     try {
       const destroyedRows = await this.notificationModel.destroy({
         where: {
