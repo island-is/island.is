@@ -39,7 +39,7 @@ export class UserProfileWorkerService {
     if (!existingUserProfile) {
       return this.userProfileModel.create({
         nationalId: advaniaProfile.ssn,
-        email: advaniaProfile.email,
+        email: advaniaProfile.email?.toLowerCase?.(),
         mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
         lastNudge: null,
         documentNotifications: advaniaProfile.canNudge === true,
@@ -56,7 +56,7 @@ export class UserProfileWorkerService {
     if (existingUserProfile.modified <= advaniaProfile.exported) {
       return this.userProfileModel.upsert({
         nationalId: advaniaProfile.ssn,
-        email: advaniaProfile.email,
+        email: advaniaProfile.email?.toLowerCase?.(),
         mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
         documentNotifications: advaniaProfile.canNudge === true,
         lastNudge: null,
