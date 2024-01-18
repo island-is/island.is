@@ -5,7 +5,10 @@ import { useRouter } from 'next/router'
 import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isDefenceUser } from '@island.is/judicial-system/types'
+import {
+  isDefenceUser,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -18,6 +21,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import {
   CaseAppealDecision,
   CaseFileCategory,
@@ -109,7 +113,6 @@ const Statement = () => {
             </Text>
           )}
         </Box>
-
         {user && (
           <>
             <Box component="section" marginBottom={5}>
@@ -137,13 +140,19 @@ const Statement = () => {
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
               />
             </Box>
-            <Box component="section" marginBottom={10}>
+            <Box
+              component="section"
+              marginBottom={isProsecutionUser(user) ? 5 : 10}
+            >
               <SectionHeading
                 title={formatMessage(strings.uploadStatementCaseFilesTitle)}
                 marginBottom={1}
               />
-              <Text marginBottom={3}>
+              <Text marginBottom={3} whiteSpace="pre">
                 {formatMessage(strings.uploadStatementCaseFilesSubtitle)}
+                {'\n'}
+                {!isDefenceUser(user) &&
+                  `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
               </Text>
               <InputFileUpload
                 fileList={uploadFiles.filter(
@@ -165,6 +174,11 @@ const Statement = () => {
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
               />
             </Box>
+            {isProsecutionUser(user) && (
+              <Box component="section" marginBottom={10}>
+                <RequestAppealRulingNotToBePublishedCheckbox />
+              </Box>
+            )}
           </>
         )}
       </FormContentContainer>

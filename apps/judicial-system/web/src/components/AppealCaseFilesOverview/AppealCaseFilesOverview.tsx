@@ -102,8 +102,8 @@ const AppealCaseFilesOverview: React.FC<
     allFiles &&
     allFiles.length > 0 ? (
     <>
-      <Box marginBottom={2}>
-        <Text as="h3" variant="h3" marginBottom={3}>
+      <Box marginBottom={5}>
+        <Text as="h3" variant="h3" marginBottom={1}>
           {formatMessage(strings.title)}
         </Text>
         {allFiles.map((file) => (
@@ -154,7 +154,6 @@ const AppealCaseFilesOverview: React.FC<
             </Button>
           </Box>
         )}
-
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

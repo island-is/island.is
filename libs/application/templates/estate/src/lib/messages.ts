@@ -684,25 +684,25 @@ export const m = defineMessages({
     description: '',
   },
   acceptAssets: {
-    id: 'es.application:acceptExistenceAssets',
+    id: 'es.application:acceptExistenceAssets#markdown',
     defaultMessage:
       'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
     description: '',
   },
   acceptNoAssets: {
-    id: 'es.application:acceptNoAssets',
+    id: 'es.application:acceptNoAssets#markdown',
     defaultMessage:
       'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
     description: '',
   },
   acceptNoAssetsNoDebts: {
-    id: 'es.application:acceptNoAssetsNoDebts',
+    id: 'es.application:acceptNoAssetsNoDebts#markdown',
     defaultMessage:
       'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
     description: '',
   },
   acceptCorrectAssets: {
-    id: 'es.application:acceptCorrectAssets',
+    id: 'es.application:acceptCorrectAssets#markdown',
     defaultMessage:
       'Ég staðfesti hér með að eftir minni bestu vitund eru upplýsingarnar um eignir réttar.',
     description: '',
@@ -898,7 +898,7 @@ export const m = defineMessages({
     description: '',
   },
   divisionOfEstateByHeirsSubmissionCheckbox: {
-    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
+    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox#markdown',
     defaultMessage: 'Ég hef lesið skilmálana',
     description: '',
   },
@@ -1031,13 +1031,31 @@ export const m = defineMessages({
   },
   inheritanceAdvocateLabel: {
     id: 'es.application:inheritanceAdvocateLabel',
-    defaultMessage: 'Málsvari',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
   inheritanceUnder18Error: {
     id: 'es.application:inheritanceUnder18Error',
     defaultMessage:
       'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceUnder18ErrorAdvocate: {
+    id: 'es.application:inheritanceUnder18ErrorAdvocate',
+    defaultMessage:
+      'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceAgeValidation: {
+    id: 'es.application:inheritanceAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
+    description: '',
+  },
+  heirAdvocateAgeValidation: {
+    id: 'es.application:inheritanceAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
     description: '',
   },
 

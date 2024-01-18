@@ -101,17 +101,6 @@ describe('InternalNotificationController - Send appeal case files updated notifi
       then = await givenWhenThen(uuid())
     })
 
-    console.log(
-      assistantName,
-      assistantEmail,
-      judgeName1,
-      judgeEmail1,
-      judgeName2,
-      judgeEmail2,
-      judgeName3,
-      judgeEmail3,
-    )
-
     it('should send notification to the assigned court of appeal judges and assistant', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({

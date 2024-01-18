@@ -32,12 +32,11 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
-import { STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
+import { SLICE_SPACING, STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
 import {
   Image,
   Organization,
   OrganizationPage,
-  OrganizationTheme,
 } from '@island.is/web/graphql/schema'
 import {
   useLinkResolver,
@@ -201,85 +200,213 @@ export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
 > = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage?.organization?.namespace?.fields ?? '{}'),
+    [organizationPage?.organization?.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
+
+  const organizationLogoAltText = n(
+    'organizationLogoAltText',
+    activeLocale === 'is'
+      ? organizationPage.organization?.title + ' Forsíða'
+      : organizationPage.organization?.title + ' Frontpage',
+  )
+
+  const organizationLogoAltTextFallback =
+    activeLocale === 'is' ? 'Forsíða stofnunar' : 'Organization frontpage'
+
+  const logoAltText = organizationPage.organization?.title
+    ? organizationLogoAltText
+    : organizationLogoAltTextFallback
 
   switch (organizationPage.theme) {
     case 'syslumenn':
-      return <SyslumennHeader organizationPage={organizationPage} />
+      return (
+        <SyslumennHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'sjukratryggingar':
-      return <SjukratryggingarHeader organizationPage={organizationPage} />
+      return (
+        <SjukratryggingarHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'utlendingastofnun':
-      return <UtlendingastofnunHeader organizationPage={organizationPage} />
+      return (
+        <UtlendingastofnunHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'digital_iceland':
-      return <DigitalIcelandHeader organizationPage={organizationPage} />
+      return (
+        <DigitalIcelandHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'hsn':
       return (
         <HeilbrigdisstofnunNordurlandsHeader
           organizationPage={organizationPage}
+          logoAltText={logoAltText}
         />
       )
     case 'hsu':
       return (
         <HeilbrigdisstofnunSudurlandsHeader
           organizationPage={organizationPage}
+          logoAltText={logoAltText}
         />
       )
     case 'landlaeknir':
-      return <LandlaeknirHeader organizationPage={organizationPage} />
+      return (
+        <LandlaeknirHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'fiskistofa':
-      return <FiskistofaHeader organizationPage={organizationPage} />
+      return (
+        <FiskistofaHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'rikislogmadur':
-      return <RikislogmadurHeader organizationPage={organizationPage} />
+      return (
+        <RikislogmadurHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'landskjorstjorn':
-      return <LandskjorstjornHeader organizationPage={organizationPage} />
+      return (
+        <LandskjorstjornHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'landing_page':
       return null
     case 'fjarsysla-rikisins':
-      return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
+      return (
+        <FjarsyslaRikisinsHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'tryggingastofnun':
-      return <TryggingastofnunHeader organizationPage={organizationPage} />
+      return (
+        <TryggingastofnunHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'sak':
-      return <SAkHeader organizationPage={organizationPage} />
+      return (
+        <SAkHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'gev':
-      return <GevHeader organizationPage={organizationPage} />
+      return (
+        <GevHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'hve':
-      return <HveHeader organizationPage={organizationPage} />
+      return (
+        <HveHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'shh':
-      return <ShhHeader organizationPage={organizationPage} />
+      return (
+        <ShhHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'hsa':
       return (
         <HeilbrigdisstofnunAusturlandsHeader
           organizationPage={organizationPage}
+          logoAltText={logoAltText}
         />
       )
     case 'haskolanam':
-      return <UniversityStudiesHeader organizationPage={organizationPage} />
+      return (
+        <UniversityStudiesHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'nti':
       return (
         <IcelandicNaturalDisasterInsuranceHeader
           organizationPage={organizationPage}
+          logoAltText={logoAltText}
         />
       )
     case 'samgongustofa':
-      return <TransportAuthorityHeader organizationPage={organizationPage} />
+      return (
+        <TransportAuthorityHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'geislavarnir-rikisins':
       return (
         <IcelandicRadiationSafetyAuthorityHeader
           organizationPage={organizationPage}
+          logoAltText={logoAltText}
         />
       )
     case 'rettindagaesla-fatlads-folks':
       return (
-        <RettindagaeslaFatladsFolksHeader organizationPage={organizationPage} />
+        <RettindagaeslaFatladsFolksHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
       )
     case 'hms':
-      return <HmsHeader organizationPage={organizationPage} />
+      return (
+        <HmsHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
 
     case 'rikissaksoknari':
-      return <RikissaksoknariHeader organizationPage={organizationPage} />
+      return (
+        <RikissaksoknariHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'vinnueftirlitid':
-      return <VinnueftilitidHeader organizationPage={organizationPage} />
+      return (
+        <VinnueftilitidHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     case 'hljodbokasafn-islands':
-      return <HljodbokasafnIslandsHeader organizationPage={organizationPage} />
+      return (
+        <HljodbokasafnIslandsHeader
+          organizationPage={organizationPage}
+          logoAltText={logoAltText}
+        />
+      )
     default:
       return (
         <DefaultHeader
@@ -311,6 +438,7 @@ export const OrganizationHeader: React.FC<
               ? 'right'
               : 'center'
           }
+          logoAltText={logoAltText}
         />
       )
   }
@@ -346,7 +474,8 @@ export const OrganizationExternalLinks: React.FC<
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
               organizationPage.slug === 'sjukratryggingar' ||
-              organizationPage.slug === 'icelandic-health-insurance'
+              organizationPage.slug === 'icelandic-health-insurance' ||
+              organizationPage.slug === 'iceland-health'
 
             let variant = undefined
             if (
@@ -420,6 +549,7 @@ export const OrganizationFooter: React.FC<
       break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
+    case 'iceland-health':
       OrganizationFooterComponent = (
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
@@ -791,7 +921,7 @@ export const OrganizationWrapper: React.FC<
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
-          paddingBottom={[4, 4, 4]}
+          paddingBottom={[4, 4, 9]}
           isSticky={false}
           fullWidthContent={fullWidthContent}
           sidebarContent={
@@ -955,7 +1085,7 @@ export const OrganizationWrapper: React.FC<
                   <Box
                     className="rs_read"
                     paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}
-                    paddingBottom={6}
+                    paddingBottom={SLICE_SPACING}
                   >
                     <Text variant="default">{pageDescription}</Text>
                   </Box>

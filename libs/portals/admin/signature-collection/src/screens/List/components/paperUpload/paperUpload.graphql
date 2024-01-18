@@ -1,17 +1,7 @@
 mutation BulkUpload($input: SignatureCollectionListBulkUploadInput!) {
   signatureCollectionBulkUploadSignatures(input: $input) {
     success {
-      id
-      listId
-      signee {
-        name
-        nationalId
-
-        address
-      }
-      signatureType
-      active
-      created
+      nationalId
     }
     failed {
       nationalId

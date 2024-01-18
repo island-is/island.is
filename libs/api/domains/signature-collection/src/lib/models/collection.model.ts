@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { SignatureCollectionArea } from './area.model'
+import { SignatureCollectionCandidate } from './candidate.model'
 
 @ObjectType()
 export class SignatureCollection {
@@ -17,4 +18,7 @@ export class SignatureCollection {
 
   @Field(() => Date)
   startTime!: Date
+
+  @Field(() => [SignatureCollectionCandidate])
+  candidates!: SignatureCollectionCandidate[]
 }

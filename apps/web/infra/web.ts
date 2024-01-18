@@ -54,8 +54,8 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/readiness')
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '100m', memory: '256Mi' },
+      limits: { cpu: '400m', memory: '768Mi' },
+      requests: { cpu: '200m', memory: '384Mi' },
     })
     .replicaCount({
       default: 2,

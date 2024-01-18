@@ -14,6 +14,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -74,7 +75,7 @@ const MaybeFormProvider = ({ children }: Props) => {
 }
 
 const FormProvider = ({ children }: Props) => {
-  const { limitedAccess } = useContext(UserContext)
+  const { isAuthenticated, limitedAccess } = useContext(UserContext)
   const router = useRouter()
   const id = typeof router.query.id === 'string' ? router.query.id : undefined
 
@@ -90,7 +91,6 @@ const FormProvider = ({ children }: Props) => {
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
-  const [path, setPath] = useState<string>()
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
@@ -99,7 +99,7 @@ const FormProvider = ({ children }: Props) => {
 
   // Used in exported indicators
   const replacingCase = router.query.id && router.query.id !== caseId
-  const replacingPath = router.pathname !== path
+  const replacingPath = router.pathname !== window.location.pathname
 
   useEffect(() => {
     if (!router.query.id) {
@@ -114,7 +114,6 @@ const FormProvider = ({ children }: Props) => {
     }
 
     setCaseId(router.query.id as string)
-    setPath(router.pathname)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
@@ -153,7 +152,11 @@ const FormProvider = ({ children }: Props) => {
   })
 
   useEffect(() => {
-    if (
+    if (!isAuthenticated && router.pathname !== '/') {
+      window.location.assign(
+        `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
+      )
+    } else if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
       id &&
       (state === 'fetch' || state === 'refresh')
@@ -164,7 +167,15 @@ const FormProvider = ({ children }: Props) => {
         getCase({ variables: { input: { id } } })
       }
     }
-  }, [getCase, getLimitedAccessCase, id, limitedAccess, state])
+  }, [
+    getCase,
+    getLimitedAccessCase,
+    id,
+    isAuthenticated,
+    limitedAccess,
+    router.pathname,
+    state,
+  ])
 
   useEffect(() => {
     let timeout: undefined | NodeJS.Timeout

@@ -20,6 +20,7 @@ import {
   mapOrganizationTheme,
   OrganizationTheme,
 } from './organizationTheme.model'
+import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 
 @ObjectType()
 class ProjectPageThemeProperties extends OrganizationTheme {}
@@ -105,6 +106,9 @@ export class ProjectPage {
 
   @CacheField(() => Namespace, { nullable: true })
   namespace?: Namespace | null
+
+  @CacheField(() => AlertBanner, { nullable: true })
+  alertBanner?: AlertBanner
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -145,4 +149,7 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   contentIsFullWidth: fields.contentIsFullWidth ?? false,
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
   themeProperties: mapProjectPageThemeProperties(fields),
+  alertBanner: fields.alertBanner
+    ? mapAlertBanner(fields.alertBanner)
+    : undefined,
 })

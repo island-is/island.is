@@ -24,7 +24,12 @@ import {
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
-const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
+interface Props {
+  alerts?: { message: string }[]
+}
+
+const CaseOverviewHeader: React.FC<Props> = (props) => {
+  const { alerts } = props
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -74,7 +79,7 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
       </Box>
       {!workingCase.appealRulingDecision && wasAppealedAfterDeadline && (
-        <Box marginBottom={5}>
+        <Box marginBottom={2}>
           <AlertMessage
             message={formatMessage(strings.appealSentAfterDeadline)}
             type="warning"
@@ -84,7 +89,7 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
       {workingCase.appealRulingDecision &&
         workingCase.eventLogs &&
         workingCase.eventLogs.length > 0 && (
-          <Box marginBottom={4} marginTop={8}>
+          <Box marginBottom={2} marginTop={8}>
             {filteredEvents?.map((event, index) => (
               <Box marginBottom={2} key={`event${index}`}>
                 <AlertMessage
@@ -98,46 +103,56 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
             ))}
           </Box>
         )}
-
-      <CaseTitleInfoAndTags />
-      <Box marginBottom={5}>
-        {isRestrictionCase(workingCase.type) &&
-          workingCase.decision !==
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
-          workingCase.state === CaseState.ACCEPTED && (
-            <CaseDates workingCase={workingCase} />
-          )}
+      {alerts?.map((alert) => (
+        <Box key={alert.message} marginBottom={2}>
+          <AlertMessage
+            message={alert.message}
+            type="warning"
+            testid="requestAppealRulingNotToBePublished"
+          />
+        </Box>
+      ))}
+      <Box marginTop={5}>
+        <CaseTitleInfoAndTags />
+        <Box marginBottom={5}>
+          {isRestrictionCase(workingCase.type) &&
+            workingCase.decision !==
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+            workingCase.state === CaseState.ACCEPTED && (
+              <CaseDates workingCase={workingCase} />
+            )}
+        </Box>
+        {workingCase.caseModifiedExplanation && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(m.sections.modifyDatesInfo.title, {
+                caseType: workingCase.type,
+              })}
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.caseModifiedExplanation}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
+        {workingCase.rulingModifiedHistory && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(m.sections.modifyRulingInfo.title)}
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.rulingModifiedHistory}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
       </Box>
-      {workingCase.caseModifiedExplanation && (
-        <Box marginBottom={5}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(m.sections.modifyDatesInfo.title, {
-              caseType: workingCase.type,
-            })}
-            message={
-              <MarkdownWrapper
-                markdown={workingCase.caseModifiedExplanation}
-                textProps={{ variant: 'small' }}
-              />
-            }
-          />
-        </Box>
-      )}
-      {workingCase.rulingModifiedHistory && (
-        <Box marginBottom={5}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(m.sections.modifyRulingInfo.title)}
-            message={
-              <MarkdownWrapper
-                markdown={workingCase.rulingModifiedHistory}
-                textProps={{ variant: 'small' }}
-              />
-            }
-          />
-        </Box>
-      )}
     </>
   )
 }

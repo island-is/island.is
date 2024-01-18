@@ -81,7 +81,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box marginBottom={10}>
-      <Text as="h3" variant="h3" marginBottom={3}>
+      <Text as="h3" variant="h3" marginBottom={1}>
         {formatMessage(m.caseDocuments)}
       </Text>
       <Box marginBottom={2}>

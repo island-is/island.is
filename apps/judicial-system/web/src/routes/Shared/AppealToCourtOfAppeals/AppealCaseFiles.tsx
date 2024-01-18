@@ -9,6 +9,7 @@ import {
   CaseAppealDecision,
   CaseFileCategory,
   isDefenceUser,
+  isProsecutionUser,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -23,6 +24,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   useCase,
@@ -109,14 +111,19 @@ const AppealFiles = () => {
             </Text>
           )}
         </Box>
-
-        <Box component="section" marginBottom={10}>
+        <Box
+          component="section"
+          marginBottom={isProsecutionUser(user) ? 5 : 10}
+        >
           <SectionHeading
             title={formatMessage(strings.appealCaseFilesTitle)}
             marginBottom={1}
           />
-          <Text marginBottom={3}>
+          <Text marginBottom={3} whiteSpace="pre">
             {formatMessage(strings.appealCaseFilesSubtitle)}
+            {'\n'}
+            {!isDefenceUser(user) &&
+              `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
             fileList={uploadFiles.filter(
@@ -140,6 +147,11 @@ const AppealFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
+        {isProsecutionUser(user) && (
+          <Box component="section" marginBottom={10}>
+            <RequestAppealRulingNotToBePublishedCheckbox />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

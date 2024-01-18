@@ -25,6 +25,7 @@ import {
   CourtDocument,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -419,4 +420,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly appealIsolationToDate?: Date
+
+  @IsOptional()
+  @IsEnum(UserRole, { each: true })
+  @ApiPropertyOptional({ enum: UserRole, isArray: true })
+  readonly requestAppealRulingNotToBePublished?: UserRole[]
 }

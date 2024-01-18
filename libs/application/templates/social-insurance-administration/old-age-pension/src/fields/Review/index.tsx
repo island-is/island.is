@@ -34,7 +34,8 @@ import {
 } from '@island.is/application/ui-components'
 import { OnePaymentPerYear } from './review-groups/OnePaymentPerYear'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { States } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 interface ReviewScreenProps {
   application: Application
@@ -54,9 +55,7 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const { applicationType, comment } = getApplicationAnswers(
-    application.answers,
-  )
+  const { applicationType } = getApplicationAnswers(application.answers)
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
@@ -109,13 +108,16 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(oldAgePensionFormMessage.review.overviewTitle)}
+                {formatMessage(
+                  socialInsuranceAdministrationMessage.confirm.overviewTitle,
+                )}
               </Text>
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
                 {formatMessage(
-                  oldAgePensionFormMessage.review.confirmationDescription,
+                  socialInsuranceAdministrationMessage.confirm
+                    .overviewDescription,
                 )}
               </Text>
             </Box>
@@ -142,7 +144,9 @@ export const Review: FC<ReviewScreenProps> = ({
         >
           <Box>
             <Text variant="h2">
-              {formatMessage(oldAgePensionFormMessage.review.overviewTitle)}
+              {formatMessage(
+                socialInsuranceAdministrationMessage.confirm.overviewTitle,
+              )}
             </Text>
           </Box>
 
@@ -159,7 +163,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 disabled={loadingSubmit}
                 onClick={() => handleSubmit('EDIT')}
               >
-                {formatMessage(oldAgePensionFormMessage.review.buttonsEdit)}
+                {formatMessage(
+                  socialInsuranceAdministrationMessage.confirm.editButton,
+                )}
               </Button>
             )}
             <Button
@@ -193,7 +199,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </ReviewGroup>
       )}
       <OnePaymentPerYear {...childProps} />
-      {comment && <Comment {...childProps} />}
+      <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
   )
