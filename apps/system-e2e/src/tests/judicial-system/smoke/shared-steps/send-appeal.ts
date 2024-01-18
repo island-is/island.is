@@ -23,8 +23,9 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
 
   const appealFileChooser = await appealFileChooserPromise
 
-  const appealFile = await createFakePdf('TestKaera.pdf')
-  await appealFileChooser.setFiles(appealFile)
+  await page.waitForTimeout(1000)
+  await appealFileChooser.setFiles(await createFakePdf('TestKaera.pdf'))
+
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
     verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
@@ -49,8 +50,10 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     .locator('button')
     .click()
   const statementFileChooser = await statementFileChooserPromise
-  const statementFile = await createFakePdf('TestGreinargerd.pdf')
-  await statementFileChooser.setFiles(statementFile)
+  await page.waitForTimeout(1000)
+  await statementFileChooser.setFiles(
+    await createFakePdf('TestGreinargerd.pdf'),
+  )
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
     verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
