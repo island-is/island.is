@@ -143,7 +143,7 @@ export const overviewAssets = [
     display: 'flex',
     value: ({ answers }) => {
       const total = getValueViaPath(answers, 'assets.guns.total')
-      return formatCurrency(String(total))
+      return total ? formatCurrency(String(total)) : '0 kr.'
     },
   }),
   buildDividerField({}),

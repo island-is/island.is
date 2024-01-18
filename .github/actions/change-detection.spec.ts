@@ -1,4 +1,5 @@
 import { mkdtemp, writeFile } from 'fs/promises'
+import { tmpdir } from 'os'
 import { join } from 'path'
 import {
   findBestGoodRefBranch,
@@ -27,9 +28,9 @@ describe('Change detection', () => {
     message: string,
   ) => Promise<string>
   beforeEach(async () => {
-    path = await mkdtemp(`${__dirname}/test-data/repo`)
+    path = await mkdtemp(`${tmpdir()}/repo`)
     git = new SimpleGit(path, process.env.SHELL)
-    const r = await git.raw('init', '.')
+    const r = await git.init()
     githubApi = Substitute.for<GitActionStatus>()
     githubApi.getChangedComponents(Arg.all()).mimicks(getChangedComponents)
 

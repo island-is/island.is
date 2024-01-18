@@ -105,10 +105,22 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Almennar upplýsingar',
       description: 'General information',
     },
+    infoSubSectionTitle: {
+      id: 'sia.application:applicant.info.sub.section.title',
+      defaultMessage: 'Upplýsingar um þig',
+      description: 'Information about you',
+    },
     subSectionTitle: {
       id: 'sia.application:info.sub.section.title',
       defaultMessage: 'Netfang og símanúmer',
       description: 'Email and phone number',
+    },
+    infoSubSectionDescription: {
+      id: 'sia.application:applicant.info.sub.section.description#markdown',
+      defaultMessage:
+        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður TR. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
+      description:
+        'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
     },
     subSectionDescription: {
       id: 'sia.application:info.sub.section.description',
@@ -163,6 +175,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     title: {
       id: 'sia.application:period.title',
       defaultMessage: 'Tímabil',
+      description: 'Period',
+    },
+    overviewTitle: {
+      id: 'sia.application:period.overviewTitle',
+      defaultMessage: 'Frá hvaða tíma er sótt um?',
       description: 'Period',
     },
     year: {
@@ -379,9 +396,9 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     attachmentDescription: {
       id: 'sia.application:fileUpload.attachment.description',
       defaultMessage:
-        'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+        'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png',
       description:
-        'The following document types are accepted: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+        'The following document types are accepted: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png',
     },
     attachmentMaxSizeError: {
       id: 'sia.application:fileUpload.attachment.maxSizeError',
