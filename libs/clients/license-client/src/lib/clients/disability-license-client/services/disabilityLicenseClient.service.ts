@@ -97,7 +97,13 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
     if (typeof payload === 'string') {
-      const jsonLicense: OrorkuSkirteini = JSON.parse(payload)
+      let jsonLicense: OrorkuSkirteini
+      try {
+        jsonLicense = JSON.parse(payload)
+      } catch (e) {
+        this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
+        return LicensePkPassAvailability.Unknown
+      }
       return this.checkLicenseValidityForPkPass(jsonLicense)
     }
 

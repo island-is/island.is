@@ -117,7 +117,13 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
     if (typeof payload === 'string') {
-      const jsonLicense: FirearmLicenseDto = JSON.parse(payload)
+      let jsonLicense: FirearmLicenseDto
+      try {
+        jsonLicense = JSON.parse(payload)
+      } catch (e) {
+        this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
+        return LicensePkPassAvailability.Unknown
+      }
       return this.checkLicenseValidityForPkPass(jsonLicense)
     }
     return this.checkLicenseValidityForPkPass(payload as FirearmLicenseDto)

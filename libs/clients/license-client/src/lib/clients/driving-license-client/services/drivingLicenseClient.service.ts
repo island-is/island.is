@@ -51,7 +51,13 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
     if (typeof payload === 'string') {
-      const jsonLicense: DriversLicense = JSON.parse(payload)
+      let jsonLicense: DriversLicense
+      try {
+        jsonLicense = JSON.parse(payload)
+      } catch (e) {
+        this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
+        return LicensePkPassAvailability.Unknown
+      }
       return this.checkLicenseValidity(jsonLicense)
     }
     return this.checkLicenseValidity(payload as DriversLicense)
