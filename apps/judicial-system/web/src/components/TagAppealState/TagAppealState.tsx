@@ -2,13 +2,13 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'
+import { getAppealResultTextByValue } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useStringHelpers } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -25,7 +25,6 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { getAppealResultText } = useStringHelpers()
 
   const getTagVariantForAppealState = (
     state?: CaseAppealState | null,
@@ -67,7 +66,7 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
               ruling === CaseAppealRulingDecision.REPEAL
             ? 'rose'
             : 'blueberry',
-        text: getAppealResultText(ruling),
+        text: getAppealResultTextByValue(ruling),
       }
     }
 
