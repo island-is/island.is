@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
-import isEqual from 'lodash/isEqual'
+import flatten from 'lodash/flatten'
 import {
   parseAsArrayOf,
-  parseAsInteger,
   parseAsString,
   useQueryState,
 } from 'next-usequerystate'
@@ -12,6 +11,7 @@ import { useLazyQuery } from '@apollo/client'
 import {
   Box,
   Breadcrumbs,
+  Button,
   Filter,
   FilterInput,
   FilterMultiChoice,
@@ -23,12 +23,12 @@ import {
   Hyphen,
   Inline,
   LoadingDots,
-  Pagination,
   Stack,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { sortAlpha } from '@island.is/shared/utils'
 import {
   FilterTag,
   HeadWithSocialSharing,
@@ -96,10 +96,8 @@ const VacanciesList: Screen<VacanciesListProps> = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
-  const [page, setPage] = useQueryState('page', {
-    ...parseAsInteger.withDefault(1),
-    scroll: true,
-  })
+  const [page, setPage] = useState(1)
+  const [externalVacanciesPage, setExternalVacanciesPage] = useState(1)
   const [query, setQuery] = useQueryState('q', parseAsString.withDefault(''))
   const [fieldOfWork, setFieldOfWork] = useQueryState(
     'fieldOfWork',
@@ -113,9 +111,9 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     'location',
     parseAsArrayOf(parseAsString),
   )
-  const [externalVacancies, setExternalVacancies] = useState<VacancyListItem[]>(
-    initialExternalVacancies,
-  )
+  const [externalVacancies, setExternalVacancies] = useState<
+    VacancyListItem[][]
+  >([initialExternalVacancies])
   const [totalExternalVacancyCount, setTotalExternalVacancyCount] = useState(
     totalInitialExternalVacancyCount,
   )
@@ -135,24 +133,20 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     },
   }
 
-  const [fetchMore, { loading }] = useLazyQuery<
+  const [fetchExternalVacancies, { loading }] = useLazyQuery<
     GetExternalVacanciesQuery,
     GetExternalVacanciesQueryVariables
   >(GET_EXTERNAL_VACANCIES, {
     onCompleted(data) {
-      if (
-        isEqual(data.externalVacancies.input.page, page) &&
-        isEqual(data.externalVacancies.input.query, query) &&
-        isEqual(data.externalVacancies.input.fieldOfWork, fieldOfWork) &&
-        isEqual(data.externalVacancies.input.institution, institution) &&
-        isEqual(data.externalVacancies.input.location, location)
-      ) {
-        setExternalVacancies(data.externalVacancies.vacancies)
-        setTotalExternalVacancyCount(
-          data.externalVacancies.total ??
-            data.externalVacancies.vacancies.length,
-        )
-      }
+      setExternalVacancies((prev) => {
+        const updated = [...prev]
+        updated[data.externalVacancies.input.page - 1] =
+          data.externalVacancies.vacancies
+        return updated
+      })
+      setTotalExternalVacancyCount(
+        data.externalVacancies.total ?? data.externalVacancies.vacancies.length,
+      )
     },
   })
 
@@ -180,7 +174,8 @@ const VacanciesList: Screen<VacanciesListProps> = ({
   const selectedFilters = extractFilterTags(filterCategories)
 
   const clearFilters = () => {
-    setPage(null)
+    setExternalVacanciesPage(1)
+    setPage(1)
     setQuery(null)
     setFieldOfWork(null)
     setInstitution(null)
@@ -192,10 +187,10 @@ const VacanciesList: Screen<VacanciesListProps> = ({
 
   useDebounce(
     () => {
-      fetchMore({
+      fetchExternalVacancies({
         variables: {
           input: {
-            page,
+            page: externalVacanciesPage,
             query,
             fieldOfWork: parameters.fieldOfWork.state,
             institution: parameters.institution.state,
@@ -205,7 +200,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
       })
     },
     DEBOUNCE_TIME,
-    [page, query, fieldOfWork, institution, location],
+    [externalVacanciesPage, query, fieldOfWork, institution, location],
   )
 
   const { vacancies, totalVacancies } = useMemo(() => {
@@ -256,7 +251,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
       return shouldBeShown
     })
 
-    const list = filteredCmsVacancies.concat(externalVacancies)
+    const list = filteredCmsVacancies.concat(flatten(externalVacancies))
     sortVacancyList(list)
 
     const offset = (page - 1) * ITEMS_PER_PAGE
@@ -275,6 +270,12 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     query,
     totalExternalVacancyCount,
   ])
+
+  const totalPages = Math.ceil(totalVacancies / ITEMS_PER_PAGE) || 1
+  const pageText = `${n('currentPage', 'Síða')} ${page} ${n(
+    'of',
+    'af',
+  )} ${totalPages}`
 
   return (
     <Box paddingTop={[0, 0, 8]}>
@@ -330,7 +331,8 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                 name="filterInput"
                 value={query || ''}
                 onChange={(value) => {
-                  setPage(null)
+                  setPage(1)
+                  setExternalVacanciesPage(1)
                   setQuery(value || null)
                 }}
               />
@@ -357,7 +359,8 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                   name="filterInput"
                   value={query || ''}
                   onChange={(value) => {
-                    setPage(null)
+                    setPage(1)
+                    setExternalVacanciesPage(1)
                     setQuery(value || null)
                   }}
                 />
@@ -370,13 +373,15 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                 parameters[categoryId as keyof typeof parameters]?.setState(
                   selected?.length > 0 ? [...selected] : null,
                 )
-                setPage(null)
+                setPage(1)
+                setExternalVacanciesPage(1)
               }}
               onClear={(categoryId) => {
                 parameters[categoryId as keyof typeof parameters]?.setState(
                   null,
                 )
-                setPage(null)
+                setPage(1)
+                setExternalVacanciesPage(1)
               }}
               categories={filterCategories}
             />
@@ -432,7 +437,11 @@ const VacanciesList: Screen<VacanciesListProps> = ({
               </Box>
             </GridColumn>
 
-            <GridColumn span="1/3" />
+            <GridColumn span="1/3">
+              <Box display="flex" justifyContent="flexEnd">
+                <Text>{pageText}</Text>
+              </Box>
+            </GridColumn>
           </GridRow>
 
           <GridRow rowGap={[3, 3, 6]}>
@@ -561,26 +570,51 @@ const VacanciesList: Screen<VacanciesListProps> = ({
               )
             })}
           </GridRow>
-          {/* TODO: perhaps just have a button to go to previous page or next page, þá þarf kannsi samt að hafa núllstilla síu möguleika */}
-          {typeof totalVacancies === 'number' && (
-            <Box paddingTop={8}>
-              <Pagination
-                variant="blue"
-                page={page}
-                itemsPerPage={ITEMS_PER_PAGE}
-                totalItems={totalVacancies}
-                renderLink={(page, className, children) => (
-                  <button
-                    onClick={() => {
-                      setPage(page === 1 ? null : page)
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </button>
-                )}
-              />
+
+          <Box marginTop={6}>
+            <Box marginTop={0} marginBottom={2} textAlign="center">
+              <Text>{pageText}</Text>
             </Box>
-          )}
+            <Box
+              display="flex"
+              justifyContent="center"
+              marginTop={3}
+              textAlign="center"
+            >
+              {page > 1 && (
+                <Button
+                  onClick={() => {
+                    window.scrollTo({ behavior: 'smooth', left: 0, top: 0 })
+                    setPage((currentPage) => {
+                      return currentPage - 1
+                    })
+                  }}
+                >
+                  {n('prevPage', 'Fyrri síða')}
+                </Button>
+              )}
+              &nbsp;&nbsp;
+              {page < totalPages && (
+                <Button
+                  onClick={() => {
+                    window.scrollTo({ behavior: 'smooth', left: 0, top: 0 })
+                    setPage((currentPage) => {
+                      const newPage = currentPage + 1
+                      if (
+                        currentPage * ITEMS_PER_PAGE <
+                        totalExternalVacancyCount
+                      ) {
+                        setExternalVacanciesPage(newPage)
+                      }
+                      return newPage
+                    })
+                  }}
+                >
+                  {n('nextPage', 'Næsta síða')}
+                </Button>
+              )}
+            </Box>
+          </Box>
         </GridContainer>
       </Box>
     </Box>
@@ -589,7 +623,6 @@ const VacanciesList: Screen<VacanciesListProps> = ({
 
 VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = parseAsString.withDefault('').parseServerSide(query.q)
-  const page = parseAsInteger.withDefault(1).parseServerSide(query.page)
   const institution = parseAsArrayOf(parseAsString).parseServerSide(
     query.institution,
   )
@@ -623,7 +656,7 @@ VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
     externalVacanciesResponse,
     cmsVacanciesResponse,
     locationsResponse,
-    typesResponse,
+    fieldsOfWorkResponse,
     institutionsResponse,
   ] = await Promise.all([
     apolloClient.query<
@@ -633,7 +666,7 @@ VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_EXTERNAL_VACANCIES,
       variables: {
         input: {
-          page,
+          page: 1,
           query: queryString,
           institution,
           location,
@@ -669,6 +702,32 @@ VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
+  const institutionOptions = [
+    ...institutionsResponse.data.externalVacancyInstitutions.options,
+  ]
+  institutionOptions.sort(sortAlpha('label'))
+
+  const locationOptions = [
+    ...locationsResponse.data.externalVacancyLocations.options,
+  ]
+  locationOptions.sort(sortAlpha('label'))
+
+  // Make sure that 'Óstaðbundið' is the first thing in the list
+  {
+    const index = locationOptions.findIndex(({ label }) =>
+      label.includes('Óstaðbundið'),
+    )
+    if (index >= 0) {
+      const option = locationOptions.splice(index, 1)[0]
+      locationOptions.unshift(option)
+    }
+  }
+
+  const fieldOfWorkOptions = [
+    ...fieldsOfWorkResponse.data.externalVacancyFieldsOfWork.options,
+  ]
+  fieldOfWorkOptions.sort(sortAlpha('label'))
+
   return {
     cmsVacancies: cmsVacanciesResponse.data.cmsVacancies.vacancies,
     initialExternalVacancies:
@@ -676,10 +735,9 @@ VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
     totalInitialExternalVacancyCount:
       externalVacanciesResponse.data.externalVacancies.total ??
       externalVacanciesResponse.data.externalVacancies.vacancies.length,
-    institutionOptions:
-      institutionsResponse.data.externalVacancyInstitutions.options,
-    locationOptions: locationsResponse.data.externalVacancyLocations.options,
-    fieldOfWorkOptions: typesResponse.data.externalVacancyFieldsOfWork.options,
+    institutionOptions,
+    locationOptions,
+    fieldOfWorkOptions,
     namespace,
     customAlertBanner: namespace['customAlertBanner'],
   }
