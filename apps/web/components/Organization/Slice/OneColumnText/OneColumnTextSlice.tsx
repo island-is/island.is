@@ -21,7 +21,9 @@ export const OneColumnTextSlice: React.FC<
     <section
       key={slice.id}
       id={slice.id}
-      aria-labelledby={'sliceTitle-' + slice.id}
+      aria-labelledby={
+        slice.showTitle && slice.title ? 'sliceTitle-' + slice.id : undefined
+      }
     >
       <GridContainer>
         {slice.dividerOnTop && <BorderAbove />}
