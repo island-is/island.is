@@ -23,7 +23,10 @@ import {
   RESTRICTION_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  getAppealResultTextByValue,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
   MessageService,
@@ -1995,6 +1998,9 @@ export class NotificationService {
         userHasAccessToRVG: true,
         courtCaseNumber: theCase.courtCaseNumber,
         appealCaseNumber: theCase.appealCaseNumber,
+        appealRulingDecision: getAppealResultTextByValue(
+          theCase.appealRulingDecision,
+        ),
         linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
@@ -2054,6 +2060,9 @@ export class NotificationService {
           court: theCase.court?.name.replace('dómur', 'dómi'),
           courtCaseNumber: theCase.courtCaseNumber,
           appealCaseNumber: theCase.appealCaseNumber,
+          appealRulingDecision: getAppealResultTextByValue(
+            theCase.appealRulingDecision,
+          ),
           linkStart: `<a href="${url}">`,
           linkEnd: '</a>',
         },
