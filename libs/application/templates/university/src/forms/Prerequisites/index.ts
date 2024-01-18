@@ -35,7 +35,7 @@ export const Prerequisites: Form = buildForm({
           title: externalData.dataProvider.pageTitle,
           id: 'approveExternalData',
           subTitle: externalData.dataProvider.subTitle,
-          description: externalData.dataProvider.description,
+          description: '',
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
@@ -60,6 +60,10 @@ export const Prerequisites: Form = buildForm({
               provider: UserProfileApi,
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
+            }),
+            buildDataProviderItem({
+              title: externalData.universityProfile.title,
+              subTitle: externalData.universityProfile.subTitle,
             }),
             buildDataProviderItem({
               provider: UniversityApi,

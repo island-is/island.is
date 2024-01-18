@@ -24,7 +24,7 @@ export const externalData = {
     },
     checkboxLabel: {
       id: 'uni.application:externalData.dataProvider.checkboxLabel',
-      defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
+      defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
       description: 'External data checkbox label',
     },
     submitButton: {
@@ -56,6 +56,19 @@ export const externalData = {
       defaultMessage:
         'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
       description: 'User profile sub title',
+    },
+  }),
+  universityProfile: defineMessages({
+    title: {
+      id: 'uni.application:externalData.universityProfile.title',
+      defaultMessage:
+        'Upplýsingar um námsferil frá mínum síðum island.is og Innu',
+      description: 'University profile title',
+    },
+    subTitle: {
+      id: 'uni.application:externalData.universityProfile.subTitle',
+      defaultMessage: 'Upplýsingar um núverandi námsgráður og skírteini.',
+      description: 'University profile sub title',
     },
   }),
 }
