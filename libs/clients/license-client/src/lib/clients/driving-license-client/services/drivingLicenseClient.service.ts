@@ -21,6 +21,7 @@ import {
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { createPkPassDataInput } from '../drivingLicenseMapper'
+
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
 
@@ -49,6 +50,10 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   }
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    if (typeof payload === 'string') {
+      const jsonLicense: DriversLicense = JSON.parse(payload)
+      return this.checkLicenseValidity(jsonLicense)
+    }
     return this.checkLicenseValidity(payload as DriversLicense)
   }
 

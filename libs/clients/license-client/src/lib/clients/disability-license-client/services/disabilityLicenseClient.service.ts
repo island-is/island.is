@@ -96,6 +96,11 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
   }
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    if (typeof payload === 'string') {
+      const jsonLicense: OrorkuSkirteini = JSON.parse(payload)
+      return this.checkLicenseValidityForPkPass(jsonLicense)
+    }
+
     return this.checkLicenseValidityForPkPass(payload as OrorkuSkirteini)
   }
 

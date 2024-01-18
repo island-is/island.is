@@ -95,6 +95,10 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
   }
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    if (typeof payload === 'string') {
+      const jsonLicense: VinnuvelaDto = JSON.parse(payload)
+      return this.checkLicenseValidityForPkPass(jsonLicense)
+    }
     return this.checkLicenseValidityForPkPass(payload as VinnuvelaDto)
   }
 

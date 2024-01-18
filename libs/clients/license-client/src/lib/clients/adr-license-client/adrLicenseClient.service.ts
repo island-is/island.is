@@ -99,6 +99,10 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
   }
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    if (typeof payload === 'string') {
+      const jsonLicense: AdrDto = JSON.parse(payload)
+      return this.checkLicenseValidityForPkPass(jsonLicense)
+    }
     return this.checkLicenseValidityForPkPass(payload as AdrDto)
   }
 
