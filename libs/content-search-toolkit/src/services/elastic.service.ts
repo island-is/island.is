@@ -118,6 +118,7 @@ export class ElasticService {
         const response = await client.bulk({
           index: index,
           body: requestChunk,
+          refresh: 'wait_for',
         })
 
         // not all errors are thrown log if the response has any errors

@@ -183,7 +183,7 @@ export class CacheInvalidationService {
       for (const urlWithoutPostfix of urls) {
         const url = `${urlWithoutPostfix}?bypass-cache=${bypassSecret}`
         promises.push(fetch(url))
-        logger.info(`Invalidating: ${url}`)
+        logger.info(`Invalidating: ${urlWithoutPostfix}`)
         if (promises.length > MAX_REQUEST_COUNT) {
           await handleRequests()
         }
