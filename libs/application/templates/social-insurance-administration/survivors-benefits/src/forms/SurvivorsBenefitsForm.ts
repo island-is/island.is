@@ -417,7 +417,6 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           title: survivorsBenefitsFormMessage.info.expectingChildTitle,
           condition: (_, externalData) => {
             const { hasSpouse } = getApplicationExternalData(externalData)
-            console.log('hasSpouse: ', hasSpouse)
             // if applicant does not have a spouse, then show question
             if (hasSpouse) return false
             return true

@@ -136,6 +136,16 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data',
   ) as object
 
+  const maritalStatus = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.maritalStatus',
+  ) as string
+
+  const lastModified = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.lastModified',
+  ) as string
+
   const email = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.emailAddress',
@@ -164,6 +174,8 @@ export function getApplicationExternalData(
     bankInfo,
     currencies,
     children,
+    maritalStatus,
+    lastModified,
   }
 }
 
