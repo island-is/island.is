@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
 import flatten from 'lodash/flatten'
 import {
@@ -27,9 +27,10 @@ import {
   Stack,
   Tag,
   Text,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { sortAlpha } from '@island.is/shared/utils'
+import { sortAlpha, stringHash } from '@island.is/shared/utils'
 import {
   FilterTag,
   HeadWithSocialSharing,
@@ -71,16 +72,33 @@ import { sortVacancyList, VACANCY_INTRO_MAX_LENGTH } from './utils'
 import * as styles from './VacanciesList.css'
 
 const ITEMS_PER_PAGE = 8
-const DEBOUNCE_TIME = 300
+const DEBOUNCE_TIME = 100
 
 interface VacanciesListProps {
   cmsVacancies: GetCmsVacanciesQuery['cmsVacancies']['vacancies']
   initialExternalVacancies: GetExternalVacanciesQuery['externalVacancies']['vacancies']
   totalInitialExternalVacancyCount: number
   namespace: Record<string, string>
-  institutionOptions: FilterOptionListResponse['options']
+  cmsInstitutionOptions: FilterOptionListResponse['options']
+  externalInstitutionOptions: FilterOptionListResponse['options']
   locationOptions: FilterOptionListResponse['options']
   fieldOfWorkOptions: FilterOptionListResponse['options']
+  initialHash: number
+}
+
+const hashInputParameters = (
+  query: string | null | undefined,
+  fieldOfWork: string[] | null | undefined,
+  institution: string[] | null | undefined,
+  location: string[] | null | undefined,
+) => {
+  return stringHash(
+    `${query ?? ''}
+    ${(fieldOfWork ?? []).sort().join(',')}
+    ${(institution ?? []).sort().join(',')} ${(location ?? [])
+      .sort()
+      .join(' ')}`,
+  )
 }
 
 const VacanciesList: Screen<VacanciesListProps> = ({
@@ -88,9 +106,11 @@ const VacanciesList: Screen<VacanciesListProps> = ({
   initialExternalVacancies,
   totalInitialExternalVacancyCount,
   namespace,
-  institutionOptions,
   locationOptions,
+  cmsInstitutionOptions,
+  externalInstitutionOptions,
   fieldOfWorkOptions,
+  initialHash,
 }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -113,11 +133,116 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     parseAsArrayOf(parseAsString),
   )
   const [externalVacancies, setExternalVacancies] = useState<
-    VacancyListItem[][]
-  >([initialExternalVacancies])
-  const [totalExternalVacancyCount, setTotalExternalVacancyCount] = useState(
-    totalInitialExternalVacancyCount,
+    Record<
+      string,
+      { total: number; vacancies: Record<number, VacancyListItem[]> }
+    >
+  >({
+    [initialHash]: {
+      vacancies: {
+        1: initialExternalVacancies,
+      },
+      total: totalInitialExternalVacancyCount,
+    },
+  })
+
+  const currentHash = useMemo(() => {
+    return hashInputParameters(query, fieldOfWork, institution, location)
+  }, [fieldOfWork, institution, location, query])
+
+  const a = useCallback(
+    (e?: any) => {
+      const externaler = e ? e : externalVacancies
+      const hash = hashInputParameters(
+        query,
+        fieldOfWork,
+        institution,
+        location,
+      )
+      const filteredCmsVacancies = cmsVacancies.filter((vacancy) => {
+        const searchKeywords = query
+          .replace('´', '')
+          .trim()
+          .toLowerCase()
+          .split(' ')
+
+        const searchTermMatches = searchKeywords.every(
+          (keyword) =>
+            vacancy.title?.toLowerCase()?.includes(keyword) ||
+            vacancy.institutionName?.toLowerCase()?.includes(keyword) ||
+            vacancy.intro?.toLowerCase()?.includes(keyword),
+        )
+
+        let shouldBeShown = searchTermMatches
+
+        if (fieldOfWork && fieldOfWork.length > 0) {
+          shouldBeShown = Boolean(
+            shouldBeShown &&
+              vacancy.fieldOfWork &&
+              fieldOfWork.includes(vacancy.fieldOfWork),
+          )
+        }
+
+        if (location && location.length > 0) {
+          shouldBeShown =
+            shouldBeShown &&
+            Boolean(
+              vacancy.locations?.some(
+                (vacancyLocation) =>
+                  vacancyLocation?.title &&
+                  location.includes(vacancyLocation.title),
+              ),
+            )
+        }
+
+        if (institution && institution.length > 0) {
+          shouldBeShown = Boolean(
+            shouldBeShown &&
+              vacancy.institutionName &&
+              institution.includes(vacancy.institutionName),
+          )
+        }
+
+        return shouldBeShown
+      })
+
+      const external = externaler[hash]
+
+      let list = filteredCmsVacancies
+      let totalVacancies = filteredCmsVacancies.length
+
+      if (external) {
+        const vs = Object.values(external.vacancies)
+        if (external.total) {
+          totalVacancies += external.total
+        } else {
+          totalVacancies += flatten(vs as any).length
+        }
+
+        list = list.concat(flatten(vs as any))
+      }
+
+      sortVacancyList(list)
+
+      const offset = (page - 1) * ITEMS_PER_PAGE
+
+      return {
+        vacancies: list.slice(offset, offset + ITEMS_PER_PAGE),
+        totalVacancies,
+      }
+    },
+    [
+      cmsVacancies,
+      externalVacancies,
+      fieldOfWork,
+      institution,
+      location,
+      page,
+      query,
+    ],
   )
+
+  const [{ vacancies, totalVacancies }, setVacancies] = useState(a())
 
   const parameters = {
     fieldOfWork: {
@@ -139,17 +264,54 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     GetExternalVacanciesQueryVariables
   >(GET_EXTERNAL_VACANCIES, {
     onCompleted(data) {
-      setExternalVacancies((prev) => {
-        const updated = [...prev]
-        updated[data.externalVacancies.input.page - 1] =
-          data.externalVacancies.vacancies
+      const receivedHash = hashInputParameters(
+        data.externalVacancies.input.query,
+        data.externalVacancies.input.fieldOfWork,
+        data.externalVacancies.input.institution,
+        data.externalVacancies.input.location,
+      )
+      setExternalVacancies((prevState) => {
+        const updated = {
+          ...prevState,
+          [receivedHash]: {
+            total:
+              data.externalVacancies.total ??
+              data.externalVacancies.vacancies.length,
+            vacancies: {
+              ...prevState[receivedHash]?.vacancies,
+              [data.externalVacancies.input.page]:
+                data.externalVacancies.vacancies,
+            },
+          },
+        }
+
+        setVacancies(a(updated))
+
         return updated
       })
-      setTotalExternalVacancyCount(
-        data.externalVacancies.total ?? data.externalVacancies.vacancies.length,
-      )
     },
   })
+
+  const institutionOptions = useMemo(() => {
+    if (currentHash === initialHash) {
+      const a = cmsInstitutionOptions.concat(externalInstitutionOptions)
+      a.sort(sortAlpha('label'))
+      return a
+    }
+    const a = externalInstitutionOptions.concat(
+      cmsInstitutionOptions.filter(({ value }) =>
+        vacancies.some((v) => v.institutionName === value),
+      ),
+    )
+    a.sort(sortAlpha('label'))
+    return a
+  }, [
+    cmsInstitutionOptions,
+    currentHash,
+    externalInstitutionOptions,
+    initialHash,
+    vacancies,
+  ])
 
   const filterCategories = [
     {
@@ -173,6 +335,10 @@ const VacanciesList: Screen<VacanciesListProps> = ({
   ]
 
   const selectedFilters = extractFilterTags(filterCategories)
+
+  useEffect(() => {
+    setVacancies(a())
+  }, [a, page])
 
   const clearFilters = () => {
     setExternalVacanciesPage(1)
@@ -204,79 +370,13 @@ const VacanciesList: Screen<VacanciesListProps> = ({
     [externalVacanciesPage, query, fieldOfWork, institution, location],
   )
 
-  const { vacancies, totalVacancies } = useMemo(() => {
-    const filteredCmsVacancies = cmsVacancies.filter((vacancy) => {
-      const searchKeywords = query
-        .replace('´', '')
-        .trim()
-        .toLowerCase()
-        .split(' ')
-
-      const searchTermMatches = searchKeywords.every(
-        (keyword) =>
-          vacancy.title?.toLowerCase()?.includes(keyword) ||
-          vacancy.institutionName?.toLowerCase()?.includes(keyword) ||
-          vacancy.intro?.toLowerCase()?.includes(keyword),
-      )
-
-      let shouldBeShown = searchTermMatches
-
-      if (fieldOfWork && fieldOfWork.length > 0) {
-        shouldBeShown = Boolean(
-          shouldBeShown &&
-            vacancy.fieldOfWork &&
-            fieldOfWork.includes(vacancy.fieldOfWork),
-        )
-      }
-
-      if (location && location.length > 0) {
-        shouldBeShown =
-          shouldBeShown &&
-          Boolean(
-            vacancy.locations?.some(
-              (vacancyLocation) =>
-                vacancyLocation?.title &&
-                location.includes(vacancyLocation.title),
-            ),
-          )
-      }
-
-      if (institution && institution.length > 0) {
-        shouldBeShown = Boolean(
-          shouldBeShown &&
-            vacancy.institutionName &&
-            institution.includes(vacancy.institutionName),
-        )
-      }
-
-      return shouldBeShown
-    })
-
-    const list = filteredCmsVacancies.concat(flatten(externalVacancies))
-    sortVacancyList(list)
-
-    const offset = (page - 1) * ITEMS_PER_PAGE
-
-    return {
-      vacancies: list.slice(offset, offset + ITEMS_PER_PAGE),
-      totalVacancies: filteredCmsVacancies.length + totalExternalVacancyCount,
-    }
-  }, [
-    cmsVacancies,
-    externalVacancies,
-    fieldOfWork,
-    institution,
-    location,
-    page,
-    query,
-    totalExternalVacancyCount,
-  ])
-
   const totalPages = Math.ceil(totalVacancies / ITEMS_PER_PAGE) || 1
-  const pageText = `${n('currentPage', 'Síða')} ${page} ${n(
-    'of',
-    'af',
-  )} ${totalPages}`
+  const pageText =
+    vacancies.length > 0
+      ? `${n('currentPage', 'Síða')} ${page} ${n('of', 'af')} ${totalPages}`
+      : ''
+
+  const totalExternalVacancyCount = externalVacancies[currentHash]?.total ?? 0
 
   const goToPreviousPage = () => {
     window.scrollTo({ behavior: 'smooth', left: 0, top: 0 })
@@ -293,6 +393,9 @@ const VacanciesList: Screen<VacanciesListProps> = ({
       return newPage
     })
   }
+
+  const previousPageText = n('prevPage', 'Fyrri síða')
+  const nextPageText = n('nextPage', 'Næsta síða')
 
   return (
     <Box paddingTop={[0, 0, 8]}>
@@ -460,6 +563,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                 justifyContent="flexEnd"
                 alignItems="center"
                 rowGap={2}
+                userSelect="none"
               >
                 <Box
                   display="flex"
@@ -470,6 +574,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                     visibility: page > 1 ? 'visible' : 'hidden',
                   }}
                 >
+                  <VisuallyHidden>{previousPageText}</VisuallyHidden>
                   <Icon icon="chevronBack" />
                 </Box>
 
@@ -486,6 +591,7 @@ const VacanciesList: Screen<VacanciesListProps> = ({
                     visibility: page < totalPages ? 'visible' : 'hidden',
                   }}
                 >
+                  <VisuallyHidden>{nextPageText}</VisuallyHidden>
                   <Icon icon="chevronForward" />
                 </Box>
               </Box>
@@ -630,15 +736,11 @@ const VacanciesList: Screen<VacanciesListProps> = ({
               textAlign="center"
             >
               {page > 1 && (
-                <Button onClick={goToPreviousPage}>
-                  {n('prevPage', 'Fyrri síða')}
-                </Button>
+                <Button onClick={goToPreviousPage}>{previousPageText}</Button>
               )}
               &nbsp;&nbsp;
               {page < totalPages && (
-                <Button onClick={goToNextPage}>
-                  {n('nextPage', 'Næsta síða')}
-                </Button>
+                <Button onClick={goToNextPage}>{nextPageText}</Button>
               )}
             </Box>
           </Box>
@@ -729,10 +831,19 @@ VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
-  const institutionOptions = [
+  const externalInstitutionOptions = [
     ...institutionsResponse.data.externalVacancyInstitutions.options,
   ]
-  institutionOptions.sort(sortAlpha('label'))
+
+  const fieldSet = new Set<string | number>()
+  for (const vacancy of cmsVacanciesResponse.data.cmsVacancies.vacancies) {
+    if (!vacancy.institutionName) continue
+    fieldSet.add(vacancy.institutionName) // TODO: change to reference identifier of institution later
+  }
+  const cmsInstitutionOptions = Array.from(fieldSet).map((field) => ({
+    label: String(field),
+    value: String(field),
+  }))
 
   const locationOptions = [
     ...locationsResponse.data.externalVacancyLocations.options,
@@ -762,11 +873,18 @@ VacanciesList.getProps = async ({ apolloClient, locale, query }) => {
     totalInitialExternalVacancyCount:
       externalVacanciesResponse.data.externalVacancies.total ??
       externalVacanciesResponse.data.externalVacancies.vacancies.length,
-    institutionOptions,
-    locationOptions,
+    cmsInstitutionOptions,
+    externalInstitutionOptions,
     fieldOfWorkOptions,
+    locationOptions,
     namespace,
     customAlertBanner: namespace['customAlertBanner'],
+    initialHash: hashInputParameters(
+      queryString,
+      fieldOfWork,
+      institution,
+      location,
+    ),
   }
 }
 
