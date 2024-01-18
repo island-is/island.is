@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import router from 'next/router'
@@ -10,6 +10,7 @@ import {
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isPrisonSystemUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -20,12 +21,19 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealState,
+  CaseFile,
   CaseFileCategory,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  TUploadFile,
+  useFileList,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
+import ContextMenu from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
+import { contextMenu } from '../ContextMenu/ContextMenu.strings'
 import { strings } from './AppealCaseFilesOverview.strings'
 
 const AppealCaseFilesOverview: React.FC<
@@ -36,9 +44,11 @@ const AppealCaseFilesOverview: React.FC<
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
+  const { handleRemove } = useS3Upload(workingCase.id)
 
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
+  const [allFiles, setAllFiles] = useState<CaseFile[]>([])
 
   const fileDate = (category: CaseFileCategory) => {
     switch (category) {
@@ -57,47 +67,60 @@ const AppealCaseFilesOverview: React.FC<
     }
   }
 
-  const appealCaseFiles = workingCase.caseFiles?.filter(
-    (caseFile) =>
-      caseFile.category &&
-      ((workingCase.prosecutorPostponedAppealDate &&
-        [
-          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-        ].includes(caseFile.category)) ||
-        (workingCase.prosecutorStatementDate &&
-          [
-            CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-            CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-          ].includes(caseFile.category)) ||
-        (workingCase.accusedPostponedAppealDate &&
-          [
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          ].includes(caseFile.category)) ||
-        (workingCase.defendantStatementDate &&
-          [
-            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-          ].includes(caseFile.category)) ||
-        [
-          CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-          CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-        ].includes(caseFile.category)),
-  )
-
-  const appealRulingFiles = workingCase.caseFiles?.filter(
-    (caseFile) =>
-      (workingCase.appealState === CaseAppealState.COMPLETED ||
-        isCourtOfAppealsUser(user)) &&
-      caseFile.category &&
-      [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
-  )
-
-  const allFiles =
-    user?.role === UserRole.PRISON_SYSTEM_STAFF
-      ? appealRulingFiles
-      : appealCaseFiles?.concat(appealRulingFiles ?? [])
+  useEffect(() => {
+    if (workingCase.caseFiles) {
+      if (isPrisonSystemUser(user)) {
+        setAllFiles(
+          workingCase.caseFiles.filter(
+            (caseFile) =>
+              (workingCase.appealState === CaseAppealState.COMPLETED ||
+                isCourtOfAppealsUser(user)) &&
+              caseFile.category &&
+              [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
+          ),
+        )
+      } else {
+        setAllFiles(
+          workingCase.caseFiles.filter(
+            (caseFile) =>
+              caseFile.category &&
+              ((workingCase.prosecutorPostponedAppealDate &&
+                [
+                  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+                  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+                ].includes(caseFile.category)) ||
+                (workingCase.prosecutorStatementDate &&
+                  [
+                    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+                    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+                  ].includes(caseFile.category)) ||
+                (workingCase.accusedPostponedAppealDate &&
+                  [
+                    CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+                    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+                  ].includes(caseFile.category)) ||
+                (workingCase.defendantStatementDate &&
+                  [
+                    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+                    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+                  ].includes(caseFile.category)) ||
+                [
+                  CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+                  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+                ].includes(caseFile.category)),
+          ),
+        )
+      }
+    }
+  }, [
+    user,
+    workingCase.accusedPostponedAppealDate,
+    workingCase.appealState,
+    workingCase.caseFiles,
+    workingCase.defendantStatementDate,
+    workingCase.prosecutorPostponedAppealDate,
+    workingCase.prosecutorStatementDate,
+  ])
 
   return isCompletedCase(workingCase.state) &&
     allFiles &&
@@ -146,13 +169,30 @@ const AppealCaseFilesOverview: React.FC<
                     {((prosecutorSubmitted && isProsecutionUser(user)) ||
                       (!prosecutorSubmitted && isDefenceUser(user))) && (
                       <Box marginLeft={3}>
-                        <IconButton
-                          icon="ellipsisVertical"
-                          colorScheme="transparent"
-                          onClick={(evt) => {
-                            evt.preventDefault()
-                          }}
-                          disabled={isDisabled}
+                        <ContextMenu
+                          items={[
+                            {
+                              title: formatMessage(contextMenu.deleteFile),
+                              onClick: () =>
+                                handleRemove(file as TUploadFile, () => {
+                                  setAllFiles((prev) =>
+                                    prev.filter((f) => f.id !== file.id),
+                                  )
+                                }),
+                              icon: 'trash',
+                            },
+                          ]}
+                          menuLabel="asd"
+                          disclosure={
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                              onClick={(evt) => {
+                                evt.stopPropagation()
+                              }}
+                              disabled={isDisabled}
+                            />
+                          }
                         />
                       </Box>
                     )}
