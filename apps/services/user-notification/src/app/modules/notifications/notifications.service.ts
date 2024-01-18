@@ -341,6 +341,4 @@ export class NotificationsService {
       )
     }
   }
-
- 
 }

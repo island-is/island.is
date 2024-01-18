@@ -139,9 +139,8 @@ export const userNotificationWorkerSetup = (services: {
     .liveness('/liveness')
     .readiness('/readiness')
 
-
-export const userNotificationCleanUpWorkerSetup  = (): ServiceBuilder<
-typeof serviceCleanupWorkerName
+export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
+  typeof serviceCleanupWorkerName
 > =>
   service(serviceCleanupWorkerName)
     .image(imageName)
@@ -155,7 +154,7 @@ typeof serviceCleanupWorkerName
       postgres: postgresInfo,
     })
     .extraAttributes({
-      dev: { schedule: "@hourly" },
-      staging: { schedule: "@midnight" },
-      prod: { schedule: "@midnight" },
+      dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
     })
