@@ -197,4 +197,9 @@ test.describe.serial('Custody tests', () => {
   }) => {
     await coaJudgesCompleteAppealCaseTest(coaPage, caseId)
   })
+
+  test('prosecutor asks for extension', async ({ prosecutorPage }) => {
+    const page = prosecutorPage
+    await page.goto(`/krafa/yfirlit/${caseId}`)
+  })
 })
