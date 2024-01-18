@@ -3,6 +3,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
 import { Notification } from '../notifications/notification.model'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class UserNotificationCleanupWorkerService {
@@ -18,14 +19,13 @@ export class UserNotificationCleanupWorkerService {
   }
 
   async deleteSixMonthsAndOlderNotifications() {
-    const currentDate = new Date()
-    const sixMonthsAgo = currentDate.setMonth(currentDate.getMonth() - 6) // confirm this ...... test when you know how to probe this worker ...switch to iso ?
     const rowCountBeforeCleanup = await this.notificationModel.count()
+    const sixMonthsAgo = new Date(new Date().setMonth(new Date().getMonth() - 6));
     try {
       const destroyedRows = await this.notificationModel.destroy({
         where: {
           created: {
-            $lt: sixMonthsAgo,
+            [Op.lt]: sixMonthsAgo,
           },
         },
       })

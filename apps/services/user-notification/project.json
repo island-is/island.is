@@ -64,6 +64,13 @@
         "args": ["--job", "worker"]
       }
     },
+    "cleanup": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-user-notification:build",
+        "args": ["--job", "cleanup"]
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {

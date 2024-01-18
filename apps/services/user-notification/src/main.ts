@@ -1,24 +1,18 @@
-import { bootstrap } from '@island.is/infra-nest-server'
+import { bootstrap, processJob } from '@island.is/infra-nest-server'
 import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
-bootstrap({
-  appModule: AppModule,
-  name: 'services-user-notifications',
-  openApi,
-  enableVersioning: true,
-})
+
 
 const job = processJob()
 
-if (job === 'worker') {
-  import('./worker').then((app) => app.worker())
+if (job === 'cleanup') {
+  import('./cleanup').then((app) => app.cleanup())
 } else {
   bootstrap({
     appModule: AppModule,
-    name: 'services-user-profile',
+    name: 'services-user-notifications',
     openApi,
-    port: environment.port,
     enableVersioning: true,
   })
 }
