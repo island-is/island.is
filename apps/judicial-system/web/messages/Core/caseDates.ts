@@ -4,7 +4,7 @@ export const caseDates = defineMessages({
   restrictionExpired: {
     id: 'judicial.system.core:case_dates.restriction_expired_1',
     defaultMessage:
-      '{caseType, select, ADMISSION_TO_FACILITY {Vistun} TRAVEL_BAN {Farbann} other {Gæslu}} lauk {date}',
+      '{caseType, select, ADMISSION_TO_FACILITY {Vistun} TRAVEL_BAN {Farbanni} other {Gæslu}} lauk {date}',
     description: 'Texti sem tilgreinir hvenær gæsla/vistun/farbann lauk',
   },
   restrictionValidTo: {

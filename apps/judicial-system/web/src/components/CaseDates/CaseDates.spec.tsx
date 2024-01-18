@@ -50,7 +50,7 @@ describe('<CaseDates /> expired', () => {
 
     renderCaseDates(theCase)
     expect(
-      screen.getByText('Farbann lauk 15. júní 2022 kl. 19:50'),
+      screen.getByText('Farbann lauki 15. júní 2022 kl. 19:50'),
     ).toBeInTheDocument()
   })
 })
