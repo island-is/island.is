@@ -523,11 +523,6 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage: 'Starfshlutfall vantar',
     description: 'Employer rate missing',
   },
-  employersPhoneNumberInvalid: {
-    id: 'oap.application:employer.phoneNumber.invalid',
-    defaultMessage: 'Símanúmer verður að vera GSM númer',
-    description: 'Phone number must be a GSM number',
-  },
 })
 
 export const inReviewFormMessages = defineMessages({
