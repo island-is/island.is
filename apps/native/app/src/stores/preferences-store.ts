@@ -1,7 +1,10 @@
 import AsyncStorage from '@react-native-community/async-storage'
+import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
+import { getDefaultOptions } from '../utils/get-default-options'
+import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light' | 'efficient'
@@ -79,6 +82,13 @@ export const preferencesStore = create<PreferencesStore>(
     {
       name: 'preferences_04',
       getStorage: () => AsyncStorage,
+      onRehydrateStorage: () => (state, err) => {
+        if (state) {
+          Navigation.setDefaultOptions(
+            getDefaultOptions(getThemeWithPreferences(state)),
+          )
+        }
+      },
     },
   ),
 )

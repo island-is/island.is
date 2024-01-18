@@ -125,9 +125,9 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   }, [info.data, title])
 
   const parseMileage = useCallback(
-    (value?: string) => {
+    (value?: string, allowLower?: boolean) => {
       const mileage = Number(String(value ?? '').replace(/\D/g, ''))
-      if (mileage <= highestMileage) {
+      if (mileage <= highestMileage && !allowLower) {
         Alert.alert(
           intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
           intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooLow' }),
@@ -183,7 +183,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         {
           isPreferred: true,
           onPress(value) {
-            const mileage = parseMileage(value)
+            const mileage = parseMileage(value, true)
             const internalId = data[0].internalId
             if (!mileage) {
               return
