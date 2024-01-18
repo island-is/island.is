@@ -30,6 +30,7 @@ import {
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
   getFosterCareOrAdoptionDesc,
+  getApplicationTypeOptions,
 } from '../lib/parentalLeaveUtils'
 import {
   NO,
@@ -324,19 +325,13 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'applicationType',
           title: parentalLeaveFormMessages.shared.applicationTypeTitle,
           children: [
-            buildMultiField({
-              id: 'applicationTypes',
+            buildRadioField({
+              id: 'applicationType.option',
               title: parentalLeaveFormMessages.shared.applicationTypeTitle,
               description:
                 parentalLeaveFormMessages.shared
                   .applicationParentalLeaveDescription,
-              children: [
-                buildCustomField({
-                  component: 'ApplicationType',
-                  id: 'applicationType.option',
-                  title: '',
-                }),
-              ],
+              options: getApplicationTypeOptions(),
             }),
           ],
         }),
