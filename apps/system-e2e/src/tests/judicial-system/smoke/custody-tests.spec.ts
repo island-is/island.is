@@ -3,7 +3,11 @@ import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
-import { randomPoliceCaseNumber, randomCourtCaseNumber } from '../utils/helpers'
+import {
+  randomPoliceCaseNumber,
+  randomCourtCaseNumber,
+  getDaysFromNow,
+} from '../utils/helpers'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
@@ -12,6 +16,9 @@ test.use({ baseURL: urls.judicialSystemBaseUrl })
 
 test.describe.serial('Custody tests', () => {
   let caseId = ''
+  let extendedCaseId = ''
+  const today = getDaysFromNow()
+  const tomorrow = getDaysFromNow(2)
 
   test('prosecutor should submit a custody request to court', async ({
     prosecutorPage,
@@ -56,7 +63,6 @@ test.describe.serial('Custody tests', () => {
     await expect(page).toHaveURL(`/krafa/fyrirtaka/${caseId}`)
 
     // Court date request
-    const today = new Date().toLocaleDateString('is-IS')
     await page.locator('input[id=arrestDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=arrestDate-time]').fill('00:00')
@@ -201,5 +207,59 @@ test.describe.serial('Custody tests', () => {
   test('prosecutor asks for extension', async ({ prosecutorPage }) => {
     const page = prosecutorPage
     await page.goto(`/krafa/yfirlit/${caseId}`)
+    await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'ExtendCase'),
+    ]).then((values) => {
+      const extendCaseResult = values[1]
+      extendedCaseId = extendCaseResult.data.extendCase.id
+    })
+
+    // Defendant
+    await expect(page).toHaveURL(`/krafa/sakborningur/${extendedCaseId}`)
+    await page.locator('input[name=defender-access-no]').click()
+    await page.getByTestId('continueButton').click()
+
+    // Court date request
+    await expect(page).toHaveURL(`/krafa/fyrirtaka/${extendedCaseId}`)
+    await page.getByPlaceholder('Veldu dagsetningu').click()
+    await page
+      .getByRole('option', { name: 'Choose fimmtudagur, 18. janúar 2024' })
+      .click()
+
+    await page.getByTestId('reqCourtDate-time').click()
+    await page.getByTestId('reqCourtDate-time').fill('10:00')
+    await page.getByTestId('continueButton').click()
+
+    await page.getByTestId('modalSecondaryButton').click()
+
+    // Prosecutor demands
+    await expect(page).toHaveURL(
+      `/krafa/domkrofur-og-lagagrundvollur/${extendedCaseId}`,
+    )
+
+    await page.locator('input[id=reqValidToDate]').fill(tomorrow)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=reqValidToDate-time]').fill('16:00')
+    await page.waitForResponse((response) => {
+      return response.request().url().includes('/graphql')
+    })
+    await page.getByTestId('continueButton').click()
+
+    // Prosecutor statement
+    await expect(page).toHaveURL(`/krafa/greinargerd/${extendedCaseId}`)
+    await page.getByTestId('continueButton').click()
+
+    // Case files
+    await expect(page).toHaveURL(`/krafa/rannsoknargogn/${extendedCaseId}`)
+    await page.getByTestId('continueButton').click()
+
+    // Submit to court
+    await expect(page).toHaveURL(`/krafa/stadfesta/${extendedCaseId}`)
+
+    await page.getByTestId('continueButton').click()
+    await page.getByTestId('modalSecondaryButton').click()
   })
 })

@@ -1,10 +1,13 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
-import subDays from 'date-fns/subDays'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
-import { randomCourtCaseNumber, randomPoliceCaseNumber } from '../utils/helpers'
+import {
+  getDaysFromNow,
+  randomCourtCaseNumber,
+  randomPoliceCaseNumber,
+} from '../utils/helpers'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
@@ -13,6 +16,8 @@ test.use({ baseURL: urls.judicialSystemBaseUrl })
 
 test.describe.serial('Search warrant tests', () => {
   let caseId = ''
+  const today = getDaysFromNow()
+  const yesterday = getDaysFromNow(-1)
 
   test('prosecutor should submit a search warrant request to court', async ({
     prosecutorPage,
@@ -51,7 +56,6 @@ test.describe.serial('Search warrant tests', () => {
     await expect(page).toHaveURL(`/krafa/rannsoknarheimild/fyrirtaka/${caseId}`)
 
     // Court date request
-    const today = new Date().toLocaleDateString('is-IS')
     await page.locator('input[id=reqCourtDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqCourtDate-time]').fill('15:00')
@@ -99,11 +103,6 @@ test.describe.serial('Search warrant tests', () => {
     judgePage,
   }) => {
     const page = judgePage
-    const yesterday = subDays(new Date(), 1).toLocaleDateString('is-IS', {
-      month: '2-digit',
-      day: '2-digit',
-      year: 'numeric',
-    })
 
     await page.goto(`domur/rannsoknarheimild/mottaka/${caseId}`)
     await page.getByTestId('courtCaseNumber').click()
