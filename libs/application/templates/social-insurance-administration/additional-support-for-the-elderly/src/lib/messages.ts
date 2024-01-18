@@ -5,7 +5,7 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   shared: defineMessages({
     applicationTitle: {
       id: 'asfte.application:applicationTitle',
-      defaultMessage: 'Umsókn um félagslegan viðbótarstuðning',
+      defaultMessage: 'Umsókn um félagslegan viðbótarstuðning við aldraða',
       description: 'Application for additional support for the eldery',
     },
   }),
@@ -13,21 +13,8 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   pre: defineMessages({
     skraInformationSubTitle: {
       id: 'asfte.application:prerequisites.national.registry.subtitle',
-      defaultMessage: 'Upplýsingar um þig og maka. Upplýsingar um búsetu.',
-      description:
-        'Information about you and spouse. Information about residence.',
-    },
-    socialInsuranceAdministrationInformationTitle: {
-      id: 'asfte.application:prerequisites.socialInsuranceAdministration.title',
-      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
-      description: 'Information regarding income and circumstances',
-    },
-    socialInsuranceAdministrationInformationDescription: {
-      id: 'asfte.application:prerequisites.socialInsuranceAdministration.description#markdown',
-      defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. \n\nTryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. \n\nFrekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar [hér](https://www.tr.is/tryggingastofnun/personuvernd). \n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
-      description:
-        'Information about email address, phone number and bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. That information can relate to both your income and other circumstances. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd). \n\nIf your income or other circumstances change, you must notify the Social Insurance Administration as this may affect your payments.',
+      defaultMessage: 'Upplýsingar um þig og maka.',
+      description: 'Information about you and spouse.',
     },
     isNotEligibleLabel: {
       id: 'asfte.application:is.not.eligible.label',
@@ -78,14 +65,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
   }),
 }
-
-export const inReviewFormMessages = defineMessages({
-  formTitle: {
-    id: 'asfte.application:inReview.form.title',
-    defaultMessage: 'Umsókn um félagslegan viðbótarstuðning við aldraða',
-    description: 'Application for additional support for the elderly',
-  },
-})
 
 export const statesMessages = defineMessages({
   applicationRejectedDescription: {

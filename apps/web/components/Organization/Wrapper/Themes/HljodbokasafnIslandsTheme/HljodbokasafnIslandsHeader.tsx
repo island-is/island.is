@@ -8,11 +8,12 @@ import * as styles from './HljodbokasafnIslandsHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const HljodbokasafnIslandsHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, logoAltText }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization?.namespace?.fields || '{}'),
@@ -52,6 +53,7 @@ const HljodbokasafnIslandsHeader: React.FC<
       logo={organizationPage.organization?.logo?.url}
       logoHref={linkResolver('organizationpage', [organizationPage.slug]).href}
       className={styles.gridContainer}
+      logoAltText={logoAltText}
     />
   )
 }
