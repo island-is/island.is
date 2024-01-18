@@ -31,7 +31,7 @@ const UtlendingastofnunFooter: React.FC<
   const { linkResolver } = useLinkResolver()
 
   return (
-    <footer aria-labelledby="organizationFooterTitle">
+    <footer>
       <Box className={styles.footerBg} color="white" paddingY={[3, 3, 3, 7]}>
         <GridContainer>
           <Box>
@@ -45,11 +45,9 @@ const UtlendingastofnunFooter: React.FC<
                           <img src={logo} alt="" className={styles.logoStyle} />
                         </Box>
                       )}
-                      <div id="organizationFooterTitle">
-                        <Text variant="h2" color="white">
-                          {title}
-                        </Text>
-                      </div>
+                      <Text variant="h2" color="white">
+                        {title}
+                      </Text>
                     </Box>
                   </Box>
                 </GridColumn>
