@@ -52,7 +52,7 @@ export const serviceSetup = (services: {
       },
     })
     .liveness('/liveness')
-    .readiness('/readiness', {initialDelaySeconds: 20})
+    .readiness('/readiness', { initialDelaySeconds: 20 })
     .resources({
       limits: { cpu: '400m', memory: '768Mi' },
       requests: { cpu: '200m', memory: '384Mi' },

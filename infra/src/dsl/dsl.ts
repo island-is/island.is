@@ -60,26 +60,38 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  liveness(path: string | Partial<HealthProbe>, {initialDelaySeconds = 3, timeoutSeconds = 3}: {initialDelaySeconds?: number, timeoutSeconds?: number} = {}) {
+  liveness(
+    path: string | Partial<HealthProbe>,
+    {
+      initialDelaySeconds = 3,
+      timeoutSeconds = 3,
+    }: { initialDelaySeconds?: number; timeoutSeconds?: number } = {},
+  ) {
     if (typeof path === 'string') {
       this.serviceDef.liveness.path = path
     } else {
       this.serviceDef.liveness = { ...this.serviceDef.liveness, ...path }
     }
-    this.serviceDef.liveness.initialDelaySeconds = initialDelaySeconds;
-    this.serviceDef.liveness.timeoutSeconds = timeoutSeconds;
+    this.serviceDef.liveness.initialDelaySeconds = initialDelaySeconds
+    this.serviceDef.liveness.timeoutSeconds = timeoutSeconds
 
     return this
   }
 
-  readiness(path: string | Partial<HealthProbe>, {initialDelaySeconds = 3, timeoutSeconds = 3}: {initialDelaySeconds?: number, timeoutSeconds?: number} = {}) {
+  readiness(
+    path: string | Partial<HealthProbe>,
+    {
+      initialDelaySeconds = 3,
+      timeoutSeconds = 3,
+    }: { initialDelaySeconds?: number; timeoutSeconds?: number } = {},
+  ) {
     if (typeof path === 'string') {
       this.serviceDef.readiness.path = path
     } else {
       this.serviceDef.readiness = { ...this.serviceDef.readiness, ...path }
     }
-    this.serviceDef.liveness.initialDelaySeconds = initialDelaySeconds;
-    this.serviceDef.liveness.timeoutSeconds = timeoutSeconds;
+    this.serviceDef.liveness.initialDelaySeconds = initialDelaySeconds
+    this.serviceDef.liveness.timeoutSeconds = timeoutSeconds
     return this
   }
 
