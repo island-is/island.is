@@ -8,11 +8,6 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import format from 'date-fns/format'
 
-const importCodeList = {
-  NEWCAR: ['2', '4'],
-  USEDCAR: ['1'],
-}
-
 @Injectable()
 export class EnergyFundsClientService {
   constructor(private defaultApi: DefaultApi) {}
@@ -35,6 +30,7 @@ export class EnergyFundsClientService {
         new Date(vehicle.firstRegistrationDate || ''),
         'yyyy-MM-dd',
       ),
+      carNumber: vehicle.permno || '',
     })
 
     return response.item || []
