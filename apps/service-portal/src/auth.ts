@@ -48,6 +48,8 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.healthHealthcare,
   ApiScope.healthDentists,
   ApiScope.signatureCollection,
+  '@island.is/notifications:read',
+  '@island.is/notifications:write',
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'
