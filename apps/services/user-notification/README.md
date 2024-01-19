@@ -34,18 +34,17 @@ Sign into AWS:
 aws sso login
 ```
 
-Secrets:
+Get secrets:
 ```sh
 yarn get-secrets user-notification
 ```
-
 
 Initalize dependencies:
 ```sh
 yarn dev-init services-user-notification
 ```
 
-### Start Service
+### Start User Notification Service
 ```sh
 yarn dev services-user-notification
 ```
