@@ -2,7 +2,7 @@
 
 ## About
 
-This service manages queueing and storing messages as well a sending push notifications and emails.
+This service queues up notifications, stores notifications in database and sends push and emails.
 
 ## Sequence Diagram
 
