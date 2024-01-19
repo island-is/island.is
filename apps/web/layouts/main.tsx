@@ -249,9 +249,9 @@ const Layout: Screen<LayoutProps> = ({
 
   return (
     <ContentfulLivePreviewProvider
-      locale={activeLocale}
+      locale={activeLocale === 'is' ? 'is-IS' : activeLocale}
       enableInspectorMode={true}
-      enableLiveUpdates={false}
+      enableLiveUpdates={true}
     >
       <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
         <Page component="div">
