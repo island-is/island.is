@@ -17,6 +17,12 @@ export const strings = defineMessages({
       'Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að neðan.',
     description: 'Undirtitill á Gögn ákæru síðu',
   },
+  appealCaseFilesCOASubtitle: {
+    id: 'judicial.system.core:appeal_case_files.appeal_case_files_coa_subtitle',
+    defaultMessage:
+      'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.',
+    description: 'Undirtitill á Gögn ákæru síðu',
+  },
   nextButtonText: {
     id: 'judicial.system.core:appeal_case_files.next_button_text',
     defaultMessage: 'Staðfesta',

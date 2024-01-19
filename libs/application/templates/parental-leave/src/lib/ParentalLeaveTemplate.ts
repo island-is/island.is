@@ -1874,6 +1874,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(application.answers, 'personalAllowanceFromSpouse')
           unset(application.answers, 'otherParentRightOfAccess')
         }
+
+        if (otherParent !== MANUAL) {
+          unset(application.answers, 'otherParentObj.otherParentId')
+          unset(application.answers, 'otherParentObj.otherParentName')
+        }
         return context
       }),
       setOtherParentIdIfSelectedSpouse: assign((context) => {
