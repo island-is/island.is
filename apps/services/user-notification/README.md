@@ -35,6 +35,7 @@ aws sso login
 ```
 
 Get secrets:
+
 ```sh
 yarn get-secrets user-notification
 ```
@@ -46,6 +47,7 @@ yarn dev-init services-user-notification
 ```
 
 ### Start User Notification Service
+
 ```sh
 yarn dev services-user-notification
 ```
