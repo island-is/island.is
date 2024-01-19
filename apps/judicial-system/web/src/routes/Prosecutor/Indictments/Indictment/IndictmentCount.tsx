@@ -29,9 +29,10 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useIndictmentCounts, {
+import {
   UpdateIndictmentCount,
-} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+  useIndictmentCounts,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
@@ -112,10 +113,10 @@ const laws = Object.values(offenseLawsMap)
   .sort(lawsCompare)
 
 function getLawsBroken(
-  offenses: IndictmentCountOffense[],
-  substances?: SubstanceMap,
+  offenses?: IndictmentCountOffense[] | null,
+  substances?: SubstanceMap | null,
 ) {
-  if (offenses.length === 0) {
+  if (!offenses || offenses.length === 0) {
     return []
   }
 
@@ -376,7 +377,7 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
 
     if (update.substances || update.offenses) {
       lawsBroken = getLawsBroken(
-        update.offenses || indictmentCount.offenses || [],
+        update.offenses || indictmentCount.offenses,
         update.substances || indictmentCount.substances,
       )
     }
@@ -412,7 +413,7 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
       <Box marginBottom={1}>
         <Select
           name="policeCaseNumber"
-          options={workingCase.policeCaseNumbers.map((val) => ({
+          options={workingCase.policeCaseNumbers?.map((val) => ({
             value: val,
             label: val,
           }))}
@@ -425,7 +426,7 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
           }}
           value={
             workingCase.policeCaseNumbers
-              .map((val) => ({
+              ?.map((val) => ({
                 value: val,
                 label: val,
               }))

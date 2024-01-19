@@ -10,6 +10,10 @@ export const getCountryByCode = (code: string): Country | undefined => {
   return countryCodes.find((country) => country.code === code) ?? undefined
 }
 
+export const getAllCountryCodes = () => {
+  return countryCodes
+}
+
 export interface Country {
   name: string
   name_is?: string

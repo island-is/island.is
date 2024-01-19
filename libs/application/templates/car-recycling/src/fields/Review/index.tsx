@@ -12,6 +12,8 @@ import { States } from '../../shared/constants'
 import { useMutation } from '@apollo/client'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
+import { getApplicationAnswers } from '../../lib/carRecyclingUtils'
+import { VehicleDto } from '../../shared'
 
 interface ReviewScreenProps {
   application: Application
@@ -54,12 +56,26 @@ export const Review: FC<ReviewScreenProps> = ({
   )
 
   const handleSubmit = async (event: string) => {
+    const { selectedVehicles, allVehicles, canceledVehicles } =
+      getApplicationAnswers(application.answers)
+
+    // Mark the selected vehicles as selected for recycling
+    const selectedVehiclesList = selectedVehicles.map((vehicle: VehicleDto) => {
+      return { ...vehicle, selectedForRecycling: true }
+    })
+
     const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
           event,
-          answers: application.answers,
+          answers: {
+            vehicles: {
+              allVehicles,
+              selectedVehicles: selectedVehiclesList,
+              canceledVehicles,
+            },
+          },
         },
       },
     })

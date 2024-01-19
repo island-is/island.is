@@ -10,8 +10,8 @@ export const sortByIcelandicAlphabet = (arr: string[]): string[] => {
 }
 
 export const compareLocaleIS = (
-  a?: string,
-  b?: string,
+  a?: string | null,
+  b?: string | null,
   maxLength?: number,
 ): number => {
   maxLength = maxLength || Math.max((a || '').length, (b || '').length)

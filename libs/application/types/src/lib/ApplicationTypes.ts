@@ -55,6 +55,8 @@ export enum ApplicationTypes {
   CITIZENSHIP = 'Citizenship',
   ENERGY_FUNDS = 'EnergyFunds',
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
+  TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  UNIVERSITY = 'University',
 }
 
 export const ApplicationConfigurations = {
@@ -281,5 +283,13 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
     slug: 'starfsleyfis-vottord',
     translation: 'hlc.application',
+  },
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
+    slug: 'eigendaskipti-taekis',
+    translation: 'aosh.tmo.application',
+  },
+  [ApplicationTypes.UNIVERSITY]: {
+    slug: 'haskolanam',
+    translation: 'uni.application',
   },
 }

@@ -22,14 +22,14 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   PdfButton,
   PoliceRequestAccordionItem,
+  RestrictionLength,
   RulingInput,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import RestrictionLength from '@island.is/judicial-system-web/src/components/RestrictionLength/RestrictionLength'
 import {
   CaseDecision,
   CaseType,
@@ -42,9 +42,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
+  useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { rcRuling as m } from './Ruling.strings'
@@ -54,9 +54,9 @@ export function getConclusionAutofill(
   workingCase: Case,
   decision: CaseDecision,
   defendant: Defendant,
-  validToDate?: string,
-  isCustodyIsolation?: boolean,
-  isolationToDate?: string,
+  validToDate?: string | null,
+  isCustodyIsolation?: boolean | null,
+  isolationToDate?: string | null,
 ) {
   const isolationEndsBeforeValidToDate =
     validToDate &&

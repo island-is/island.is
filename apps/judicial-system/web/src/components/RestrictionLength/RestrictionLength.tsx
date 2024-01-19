@@ -90,8 +90,8 @@ const RestrictionLength: React.FC<Props> = (props) => {
                   label={formatMessage(strings.isolation)}
                   checked={
                     isCOAUser
-                      ? workingCase.isAppealCustodyIsolation
-                      : workingCase.isCustodyIsolation
+                      ? Boolean(workingCase.isAppealCustodyIsolation)
+                      : Boolean(workingCase.isCustodyIsolation)
                   }
                   onChange={handleIsolationChange}
                   filled
