@@ -91,7 +91,7 @@ export class IndexingService {
               elasticData.add,
               options.locale,
             )
-          }, 2000)
+          }, 8000)
         }
 
         nextPageToken = importerResponseNextPageToken
