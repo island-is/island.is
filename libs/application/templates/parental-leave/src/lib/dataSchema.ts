@@ -19,6 +19,7 @@ import {
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
 import { yearFosterCareOrAdoption, yearInMonths } from '../config'
+import { coreErrorMessages } from '@island.is/application/core'
 
 const PersonalAllowance = z
   .object({
@@ -171,6 +172,14 @@ export const dataSchema = z.object({
           params: errorMessages.otherParentId,
         }),
     })
+    .refine(
+      ({ chooseOtherParent, otherParentId }) =>
+        chooseOtherParent === MANUAL ? !!otherParentId : true,
+      {
+        params: coreErrorMessages.missingAnswer,
+        path: ['otherParentId'],
+      },
+    )
     .optional(),
   otherParent: z.enum([SPOUSE, NO, MANUAL, SINGLE]).optional(),
   otherParentName: z.string().optional(),

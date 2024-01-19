@@ -149,24 +149,6 @@ describe('answerValidators', () => {
     })
   })
 
-  describe('otherParentObj', () => {
-    it('should return error if MANUAL selected and nation id empty', () => {
-      const newAnswer = {
-        chooseOtherParent: MANUAL,
-        otherParentName: 'Spouse Spousson',
-        otherParentId: '',
-      }
-
-      expect(
-        answerValidators['otherParentObj'](newAnswer, application),
-      ).toStrictEqual({
-        message: coreErrorMessages.missingAnswer,
-        path: 'otherParentObj.otherParentId',
-        values: undefined,
-      })
-    })
-  })
-
   describe('requestRights', () => {
     it('should return error if not using all "common" days from multipleBirths and request more days', () => {
       const newAnswer = {
