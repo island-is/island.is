@@ -33,6 +33,7 @@ import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  hasSpouseLessThanAYear,
 } from '../lib/survivorsBenefitsUtils'
 import {
   friendlyFormatIBAN,
@@ -416,10 +417,12 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           id: 'expectingChildSection',
           title: survivorsBenefitsFormMessage.info.expectingChildTitle,
           condition: (_, externalData) => {
-            const { hasSpouse } = getApplicationExternalData(externalData)
-            // if applicant does not have a spouse, then show question
-            if (hasSpouse) return false
-            return true
+            const { hasSpouse } = getApplicationExternalData(externalData)  
+            const spouseLessThanAYear = hasSpouseLessThanAYear(externalData)
+
+            //if no spouse info is found or cohabitation has lasted less than a year, then show question
+            if (hasSpouse === null || spouseLessThanAYear) return true
+            return false
           },
           children: [
             buildMultiField({
