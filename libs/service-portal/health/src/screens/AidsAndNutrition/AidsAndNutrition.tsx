@@ -10,6 +10,7 @@ import { RightsPortalAidOrNutritionType } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
 import Aids from './Aids'
 import Nutrition from './Nutrition'
+import { isDefined } from '@island.is/shared/utils'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -19,26 +20,30 @@ const AidsAndNutrition = () => {
 
   const aidsAndNutrition = data?.rightsPortalPaginatedAidOrNutrition?.data
 
-  const aids = aidsAndNutrition?.filter(
-    (ann) => ann.type === RightsPortalAidOrNutritionType.AID,
-  )
+  const aids =
+    aidsAndNutrition?.filter(
+      (ann) => ann.type === RightsPortalAidOrNutritionType.AID,
+    ) ?? []
 
-  const nutrition = aidsAndNutrition?.filter(
-    (ann) => ann.type === RightsPortalAidOrNutritionType.NUTRITION,
-  )
+  const nutrition =
+    aidsAndNutrition?.filter(
+      (ann) => ann.type === RightsPortalAidOrNutritionType.NUTRITION,
+    ) ?? []
 
   const tabs = [
-    aids &&
-      aids.length > 0 && {
-        label: formatMessage(messages.aids),
-        content: <Aids data={aids} />,
-      },
-    nutrition &&
-      nutrition.length > 0 && {
-        label: formatMessage(messages.nutrition),
-        content: <Nutrition data={nutrition} />,
-      },
-  ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
+    aids.length > 0
+      ? {
+          label: formatMessage(messages.aids),
+          content: <Aids data={aids} />,
+        }
+      : null,
+    nutrition.length > 0
+      ? {
+          label: formatMessage(messages.nutrition),
+          content: <Nutrition data={nutrition} />,
+        }
+      : null,
+  ].filter(isDefined)
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -72,7 +77,7 @@ const AidsAndNutrition = () => {
         />
       )}
 
-      {!loading && !error && tabs.length > 0 && (
+      {!loading && !error && tabs?.length > 0 && (
         <Box>
           {tabs.length === 1 ? (
             <>
