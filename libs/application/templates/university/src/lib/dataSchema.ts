@@ -43,12 +43,12 @@ const EducationDetailsSchema = z.object({
   school: z.string(),
   degreeLevel: z.string(),
   degreeMajor: z.string().optional(),
-  finishedUnits: z.number().optional(),
+  finishedUnits: z.string().optional(),
   averageGrade: z.string().optional(),
   degreeCountry: z.string(),
   beginningDate: z.string(),
   endDate: z.string(),
-  degreeFinished: z.enum([YES, NO]).optional(),
+  degreeFinished: z.array(z.enum([YES])).optional(),
   moreDetails: z.string().optional(),
 })
 
@@ -60,9 +60,9 @@ export const UniversitySchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
   programInformation: ProgramSchema,
-  educationOptions: z.string(),
-  // z.enum(['diploma', 'notFinished', 'exemption', 'thirdLevel'])
-  //   .optional(),
+  educationOptions: z
+    .enum(['diploma', 'notFinished', 'exemption', 'thirdLevel'])
+    .optional(),
   educationDetails: EducationDetailsSchema,
   otherDocuments: otherDocumentsSchema,
 })

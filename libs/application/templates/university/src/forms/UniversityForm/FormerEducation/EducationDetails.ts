@@ -1,9 +1,11 @@
 import {
   buildAlertMessageField,
   buildCheckboxField,
+  buildCustomField,
   buildDateField,
   buildFileUploadField,
   buildMultiField,
+  buildSelectField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
@@ -12,103 +14,147 @@ import { Routes } from '../../../lib/constants'
 import { FormValue, YES } from '@island.is/application/types'
 import { UniversityApplication } from '../../../lib/dataSchema'
 import { FILE_SIZE_LIMIT } from '../../../shared'
-import { useLocale } from '@island.is/localization'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 
 export const EducationDetailsSubSection = buildSubSection({
   id: Routes.EDUCATIONDETAILS,
-  title: formerEducation.general.sectionTitle,
+  title: formerEducation.labels.educationDetails.pageTitle,
   children: [
     buildMultiField({
       id: 'EducationDetailsMultiField',
-      title: 'TODO',
+      title: formerEducation.labels.educationDetails.pageTitle,
       children: [
         buildAlertMessageField({
-          id: `${Routes.EDUCATIONOPTIONS}.innuInformation`,
+          id: `${Routes.EDUCATIONDETAILS}[0].innuInformation`,
           title: '',
-          description:
+          alertType: 'info',
+          message:
             formerEducation.labels.educationDetails.informationAlertDescription,
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption === 'notFinished'
           },
         }),
         buildTextField({
-          id: `${Routes.EDUCATIONOPTIONS}.school`,
+          id: `${Routes.EDUCATIONDETAILS}[0].school`,
           title: formerEducation.labels.educationDetails.schoolLabel,
+          width: 'half',
+          required: true,
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption !== 'exemption' // Every other options shows this field
           },
         }),
-        buildTextField({
-          id: `${Routes.EDUCATIONOPTIONS}.degreeLevel`,
+        buildSelectField({
+          id: `${Routes.EDUCATIONDETAILS}[0].degreeLevel`,
           title: formerEducation.labels.educationDetails.degreeLevelLabel,
+          width: 'half',
+          required: true,
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption !== 'exemption' // Every other options shows this field
+          },
+          options: () => {
+            // TODO insert correct options
+            return [
+              {
+                label: 'Stúdentspróf',
+                value: 'studentsprof',
+              },
+              {
+                label: 'Sveinspróf',
+                value: 'sveinsprof',
+              },
+            ]
           },
         }),
         buildTextField({
-          id: `${Routes.EDUCATIONOPTIONS}.degreeMajor`,
+          id: `${Routes.EDUCATIONDETAILS}[0].degreeMajor`,
           title: formerEducation.labels.educationDetails.degreeMajorLabel,
+          width: 'half',
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
+            console.log('running this', answers)
             const chosenOption = answers.educationOptions
-            return true
+            // console.log('chosenOption', chosenOption)
+            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
           },
         }),
         buildTextField({
-          id: `${Routes.EDUCATIONOPTIONS}.finishedUnits`,
+          id: `${Routes.EDUCATIONDETAILS}[0].finishedUnits`,
           title: formerEducation.labels.educationDetails.finishedUnitsLabel,
+          width: 'half',
+          variant: 'number',
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
           },
         }),
         buildTextField({
-          id: `${Routes.EDUCATIONOPTIONS}.averageGrade`,
+          id: `${Routes.EDUCATIONDETAILS}[0].averageGrade`,
           title: formerEducation.labels.educationDetails.averageGradeLabel,
+          width: 'half',
+          variant: 'number',
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
           },
         }),
-        buildTextField({
-          id: `${Routes.EDUCATIONOPTIONS}.degreeCountry`,
+        buildSelectField({
+          id: `${Routes.EDUCATIONDETAILS}[0].degreeCountry`,
           title: formerEducation.labels.educationDetails.degreeCountryLabel,
+          width: 'half',
+          required: true,
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
+          },
+          options: () => {
+            const countries = getAllCountryCodes()
+            return countries.map((country) => {
+              return {
+                label: country.name_is || country.name,
+                value: country.code,
+              }
+            })
           },
         }),
         buildDateField({
-          id: `${Routes.EDUCATIONOPTIONS}.beginningDate`,
+          id: `${Routes.EDUCATIONDETAILS}[0].beginningDate`,
           title: formerEducation.labels.educationDetails.beginningDateLabel,
+          width: 'half',
+          required: true,
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
           },
         }),
         buildDateField({
-          id: `${Routes.EDUCATIONOPTIONS}.endDate`,
+          id: `${Routes.EDUCATIONDETAILS}[0].endDate`,
           title: formerEducation.labels.educationDetails.endDateLabel,
+          width: 'half',
+          required: true,
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
           },
         }),
         buildCheckboxField({
-          id: `${Routes.EDUCATIONOPTIONS}.degreeFinished`,
-          title:
-            formerEducation.labels.educationDetails.degreeFinishedCheckboxLabel,
+          id: `${Routes.EDUCATIONDETAILS}[0].degreeFinished`,
+          title: '',
+          condition: (formValue: FormValue, externalData) => {
+            const answers = formValue as UniversityApplication
+            const chosenOption = answers.educationOptions
+            return chosenOption === 'diploma'
+          },
           options: () => {
             return [
               {
@@ -121,30 +167,32 @@ export const EducationDetailsSubSection = buildSubSection({
           },
         }),
         buildFileUploadField({
-          id: `${Routes.EDUCATIONOPTIONS}.degreeAttachments`,
+          id: `${Routes.EDUCATIONDETAILS}[0].degreeAttachments`,
           title: formerEducation.labels.educationDetails.degreeFileUploadTitle,
           introduction: '',
+          uploadMultiple: true,
           maxSize: FILE_SIZE_LIMIT,
+          doesNotRequireAnswer: false,
+          // TODO decide which types of file can be uploaded
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
             const chosenOption = answers.educationOptions
-            return true
+            return chosenOption !== 'notFinished'
           },
-          //   uploadHeader:
-          //     supportingDocuments.labels.otherDocuments.birthCertificate,
-          //   uploadDescription:
-          //     supportingDocuments.labels.otherDocuments.acceptedFileTypes,
-          //   uploadButtonLabel:
-          //     supportingDocuments.labels.otherDocuments.buttonText,
+          uploadHeader:
+            formerEducation.labels.educationDetails.degreeFileUploadTitle,
+          uploadDescription:
+            formerEducation.labels.educationDetails.degreeFileUploadDescription,
         }),
         buildTextField({
-          id: `${Routes.EDUCATIONOPTIONS}.moreDetails`,
+          id: `${Routes.EDUCATIONDETAILS}[0].moreDetails`,
+          variant: 'textarea',
           title: formerEducation.labels.educationDetails.moreDetailsLabel,
-          condition: (formValue: FormValue, externalData) => {
-            const answers = formValue as UniversityApplication
-            const chosenOption = answers.educationOptions
-            return true
-          },
+        }),
+        buildCustomField({
+          id: `${Routes.EDUCATIONDETAILS}[1]`,
+          title: '',
+          component: 'EducationDetails',
         }),
       ],
     }),

@@ -77,6 +77,11 @@ export const formerEducation = {
           'Mikilvægt er að setja inn öll gögn frá fyrra námi sem þarf að meta. Nauðsynlegt er að á þeim gögnum komi fram námskeið, einkunnir, loknar einingar ásamt prófgráðu og staðfestingu á námslokum. Hér fyrir neðan eru upplýsingar um stúdentsprófið þitt það er sótt í Innu og allar upplýsingar um námskeið og einkunir verða sendar til háskólana.',
         description: 'Former education page description',
       },
+      addMoreButtonTitle: {
+        id: 'uni.application:formerEducation.educationDetails.addMoreButtonTitle',
+        defaultMessage: 'Bæta við námsferli',
+        description: 'Label for add more button',
+      },
       diplomaInformationLabel: {
         id: 'uni.application:formerEducation.educationDetails.diplomaInformationLabel',
         defaultMessage: 'Stúdentspróf (sótt úr Innu)',
@@ -147,6 +152,16 @@ export const formerEducation = {
         defaultMessage:
           'Athugið að upplýsingar um stúdentspróf koma sjálfkrafa inn frá Innu eftir að prófi er lokið, en hægt er að hlaða inn upplýsingum um annað nám sem skiptir máli  fyrir umsóknina.',
         description: 'Infomration alert description',
+      },
+      degreeFileUploadDescription: {
+        id: 'uni.application:formerEducation.educationDetails.degreeFileUploadDescription',
+        defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+        description: 'File upload description',
+      },
+      degreeFileUploadButtonLabel: {
+        id: 'uni.application:formerEducation.educationDetails.degreeFileUploadButtonLabel',
+        defaultMessage: 'Veldu skjöl til að hlaða upp',
+        description: 'File upload button label',
       },
     }),
     otherDocuments: defineMessages({

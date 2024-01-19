@@ -1,7 +1,4 @@
-import {
-  buildCheckboxField,
-  buildSubSection,
-} from '@island.is/application/core'
+import { buildRadioField, buildSubSection } from '@island.is/application/core'
 import { formerEducation } from '../../../lib/messages/formerEducation'
 import { Routes } from '../../../lib/constants'
 
@@ -9,7 +6,7 @@ export const EducationOptionsSubSection = buildSubSection({
   id: Routes.EDUCATIONOPTIONS,
   title: formerEducation.labels.educationOptions.pageTitle,
   children: [
-    buildCheckboxField({
+    buildRadioField({
       id: `${Routes.EDUCATIONOPTIONS}`,
       title: formerEducation.labels.educationOptions.pageTitle,
       description: formerEducation.labels.educationOptions.pageDescription,
