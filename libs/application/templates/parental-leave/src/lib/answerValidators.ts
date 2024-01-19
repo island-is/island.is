@@ -3,7 +3,6 @@ import { AnswerValidator } from '@island.is/application/core'
 import { AnswerValidationConstants } from '../constants'
 import { employerValidationSection } from './answerValidationSections/employerValidationSection'
 import { fileUploadValidationSection } from './answerValidationSections/fileUploadValidationSection'
-import { multipleBirthValidationSection } from './answerValidationSections/multipleBirthValidationSection'
 import { requestRightsValidationSection } from './answerValidationSections/requestRightsValidationSection'
 import { giveRightsValidationSection } from './answerValidationSections/giveRightsValidationSection'
 import { paymentsValidationSection } from './answerValidationSections/paymentsValidationSection'
@@ -14,7 +13,6 @@ import { validateLatestEmployerValidationSection } from './answerValidationSecti
 const {
   EMPLOYER,
   FILEUPLOAD,
-  MULTIPLE_BIRTHS,
   REQUEST_RIGHTS,
   GIVE_RIGHTS,
   PAYMENTS,
@@ -26,7 +24,6 @@ const {
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: employerValidationSection,
   [FILEUPLOAD]: fileUploadValidationSection,
-  [MULTIPLE_BIRTHS]: multipleBirthValidationSection,
   [REQUEST_RIGHTS]: requestRightsValidationSection,
   [GIVE_RIGHTS]: giveRightsValidationSection,
   [PAYMENTS]: paymentsValidationSection,
