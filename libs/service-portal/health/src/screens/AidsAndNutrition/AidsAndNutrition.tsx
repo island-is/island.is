@@ -40,9 +40,6 @@ const AidsAndNutrition = () => {
       },
   ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
-  if (error && !loading) {
-    return <Problem type="internal_service_error" error={error} />
-  }
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -51,9 +48,14 @@ const AidsAndNutrition = () => {
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
-      {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !aids?.length && !nutrition?.length && (
+      {error && (
+        <Problem noBorder={false} type="internal_service_error" error={error} />
+      )}
+
+      {loading && !error && <SkeletonLoader space={1} height={30} repeat={4} />}
+
+      {!loading && !error && !aids?.length && !nutrition?.length && (
         <Problem
           type="no_data"
           title={formatMessage(messages.noDataFound, {
