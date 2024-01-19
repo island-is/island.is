@@ -326,7 +326,6 @@
     "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@graphql-codegen/typescript-resolvers": "2.7.3",
     "@jeremybarbet/contentful-extension-scripts": "0.22.7",
-    "@nestjs/schedule": "4.0.0",
     "@nestjs/schematics": "10.0.1",
     "@nestjs/testing": "10.0.5",
     "@nx/cypress": "16.9.0",
