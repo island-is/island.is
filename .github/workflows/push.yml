@@ -249,6 +249,7 @@ jobs:
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_OUTPUT
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+          echo "**Monorepo tag:** ${DOCKER_TAG}" >> $GITHUB_STEP_SUMMARY
 
       - name: Send Slack notification
         id: slack
