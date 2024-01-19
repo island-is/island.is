@@ -7282,6 +7282,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@contentful/live-preview@npm:2.15.1":
+  version: 2.15.1
+  resolution: "@contentful/live-preview@npm:2.15.1"
+  dependencies:
+    "@contentful/rich-text-types": ^16.2.0
+    "@contentful/visual-sdk": ^1.0.0-alpha.34
+    "@vercel/stega": ^0.1.0
+    graphql-tag: ^2.12.6
+    json-pointer: ^0.6.2
+    lodash.isequal: ^4.5.0
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: 8765fff09a4dac2fc8ae529bb989b2b9e6968fa106fccc8db0ca76823ed9dfbe22583e854289d7195e25418be4629f716f77ec7f88fcecfb252781bf4654ee73
+  languageName: node
+  linkType: hard
+
 "@contentful/mimetype@npm:^1.4.0":
   version: 1.4.45
   resolution: "@contentful/mimetype@npm:1.4.45"
@@ -7372,6 +7389,13 @@ __metadata:
   version: 15.12.1
   resolution: "@contentful/rich-text-types@npm:15.12.1"
   checksum: 2a0f7b2e39f04dcf00847a61b8497fe8849033180adc76102aed1fa84db9ce0523c9b2321b7949cfa2c0ed7b698d727c44d6be3cd720d5687aeff147e1db085b
+  languageName: node
+  linkType: hard
+
+"@contentful/visual-sdk@npm:^1.0.0-alpha.34":
+  version: 1.0.0-dev-20240108T234655.0
+  resolution: "@contentful/visual-sdk@npm:1.0.0-dev-20240108T234655.0"
+  checksum: 25631d9679197c56e8ec528bcffec255c0419795ac13eeb3a80f0a5189978aa995f67d01408fbed9dce3df52ea413ff976a78e9ae56c52051e584492fbd671d6
   languageName: node
   linkType: hard
 
@@ -18853,6 +18877,13 @@ __metadata:
   peerDependencies:
     webpack: ^4.30.0 || ^5.20.2
   checksum: 1a4c926cb4bc6dfb6a0908cec682576f0a7776814f0a23db6b92f3aadfc315f7597ca3ed61c4690e841f68cab552512d20081f056edb70d652aef4b9d2df4b9b
+  languageName: node
+  linkType: hard
+
+"@vercel/stega@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@vercel/stega@npm:0.1.0"
+  checksum: 3752c444f222b069bcae7180e7c6d6f7a9da85ccc32173e6eadcc7d9a1f66f1f42215bd2ba12e8f133643a19932fd3d0dfd989cd31c42420c2342fed1a1cc1c5
   languageName: node
   linkType: hard
 
@@ -33717,6 +33748,7 @@ __metadata:
     "@contentful/field-editor-single-line": 1.1.8
     "@contentful/forma-36-react-components": 3.78.4
     "@contentful/forma-36-tokens": 0.10.1
+    "@contentful/live-preview": 2.15.1
     "@contentful/node-apps-toolkit": 2.0.2
     "@contentful/react-apps-toolkit": 1.2.15
     "@contentful/rich-text-from-markdown": 15.16.6

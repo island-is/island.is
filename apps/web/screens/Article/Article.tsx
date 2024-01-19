@@ -1,68 +1,74 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
+import { createPortal } from 'react-dom'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+import {
+  useContentfulInspectorMode,
+  useContentfulLiveUpdates,
+} from '@contentful/live-preview/react'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+
 import {
-  Slice as SliceType,
   ProcessEntry,
+  Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
-  Text,
-  Stack,
   Breadcrumbs,
+  Button,
   GridColumn,
   GridRow,
   Link,
   Navigation,
+  Stack,
   TableOfContents,
-  Button,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
+  AppendedArticleComponents,
+  Form,
   HeadWithSocialSharing,
   InstitutionPanel,
   InstitutionsPanel,
   OrganizationFooter,
-  Sticky,
-  Webreader,
-  AppendedArticleComponents,
+  SignLanguageButton,
   Stepper,
   stepperUtils,
-  Form,
-  SignLanguageButton,
+  Sticky,
+  Webreader,
 } from '@island.is/web/components'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
-import { Screen } from '@island.is/web/types'
-import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
-import { CustomNextError } from '@island.is/web/units/errors'
 import {
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
   AllSlicesFragment as Slice,
+  GetNamespaceQuery,
   GetSingleArticleQuery,
-  QueryGetSingleArticleArgs,
   Organization,
+  QueryGetNamespaceArgs,
+  QueryGetSingleArticleArgs,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
-import { createNavigation } from '@island.is/web/utils/navigation'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { SidebarLayout } from '../Layouts/SidebarLayout'
-import { createPortal } from 'react-dom'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { createNavigation } from '@island.is/web/utils/navigation'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
+import { webRichText } from '@island.is/web/utils/richText'
+
 import {
   LinkResolverResponse,
   LinkType,
   useLinkResolver,
 } from '../../hooks/useLinkResolver'
-import { ArticleChatPanel } from './components/ArticleChatPanel'
-import { webRichText } from '@island.is/web/utils/richText'
-import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-import { getOrganizationLink } from '@island.is/web/utils/organization'
+import { SidebarLayout } from '../Layouts/SidebarLayout'
+import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
+import { ArticleChatPanel } from './components/ArticleChatPanel'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -267,11 +273,20 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   return (
     <Stack space={3}>
       {!!article?.category?.slug && (
-        <Box display={['none', 'none', 'block']} printHidden>
+        <Box
+          display={['none', 'none', 'block']}
+          printHidden
+          {...inspectorProps({
+            entryId: article.id,
+            locale: activeLocale,
+            fieldId: 'category',
+          })}
+        >
           <Link
             {...linkResolver('articlecategory', [article.category.slug])}
             skipTab
@@ -290,27 +305,52 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
         </Box>
       )}
       {article?.organization && article.organization.length > 0 && (
-        <InstitutionPanel
-          img={article.organization[0].logo?.url}
-          institutionTitle={n('organization')}
-          institution={article.organization[0].title}
-          locale={activeLocale}
-          linkProps={{
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            href: getOrganizationLink(article.organization[0], activeLocale),
-          }}
-          imgContainerDisplay={['block', 'block', 'none', 'block']}
-        />
+        <Box
+          {...inspectorProps({
+            entryId: article.id,
+            locale: activeLocale,
+            fieldId: 'organization',
+          })}
+        >
+          <InstitutionPanel
+            img={article.organization[0].logo?.url}
+            institutionTitle={n('organization')}
+            institution={article.organization[0].title}
+            locale={activeLocale}
+            linkProps={{
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              href: getOrganizationLink(article.organization[0], activeLocale),
+            }}
+            imgContainerDisplay={['block', 'block', 'none', 'block']}
+          />
+        </Box>
       )}
       {article?.subArticles && article.subArticles.length > 0 && (
-        <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+        <Box
+          {...inspectorProps({
+            entryId: article.id,
+            locale: activeLocale,
+            fieldId: 'subArticles',
+          })}
+        >
+          <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+        </Box>
       )}
-      <RelatedContent
-        title={n('relatedMaterial')}
-        articles={article?.relatedArticles ?? []}
-        otherContent={article?.relatedContent ?? []}
-      />
+      <Box
+        {...(article &&
+          inspectorProps({
+            entryId: article.id,
+            locale: activeLocale,
+            fieldId: 'relatedArticles',
+          }))}
+      >
+        <RelatedContent
+          title={n('relatedMaterial')}
+          articles={article?.relatedArticles ?? []}
+          otherContent={article?.relatedContent ?? []}
+        />
+      </Box>
     </Stack>
   )
 }
@@ -352,6 +392,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const subArticle = article?.subArticles.find((sub) => {
     return sub.slug.split('/').pop() === query.subSlug
   })
+
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   useContentfulId(article?.id ?? '', subArticle?.id)
 
@@ -451,8 +493,19 @@ const ArticleScreen: Screen<ArticleProps> = ({
     [article?.category, article?.group, inStepperView],
   )
 
+  const shouldShowRelatedContent =
+    (article?.relatedArticles && article.relatedArticles.length > 0) ||
+    (article?.relatedContent && article.relatedContent.length > 0)
+
   const content = (
-    <Box paddingTop={subArticle ? 2 : 4}>
+    <Box
+      paddingTop={subArticle ? 2 : 4}
+      {...inspectorProps({
+        entryId: (subArticle ?? article)?.id as string,
+        fieldId: 'content',
+        locale: activeLocale,
+      })}
+    >
       {!inStepperView && (
         <Box className="rs_read">
           {webRichText(
@@ -490,6 +543,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
         display={['block', 'block', 'none']}
         marginTop={7}
         printHidden
+        {...inspectorProps({
+          entryId: article?.id as string,
+          fieldId: 'processEntry',
+          locale: activeLocale,
+        })}
       >
         {/**
          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -504,6 +562,12 @@ const ArticleScreen: Screen<ArticleProps> = ({
             marginTop={[3, 3, 3, 10, 20]}
             marginBottom={[3, 3, 3, 10, 20]}
             printHidden
+            {...(article &&
+              inspectorProps({
+                entryId: article.id,
+                fieldId: 'organization',
+                locale: activeLocale,
+              }))}
           >
             <InstitutionsPanel
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -549,14 +613,21 @@ const ArticleScreen: Screen<ArticleProps> = ({
           </Box>
         )
       }
-      <Box display={['block', 'block', 'none']} printHidden>
+      <Box
+        display={['block', 'block', 'none']}
+        printHidden
+        {...(shouldShowRelatedContent &&
+          article &&
+          inspectorProps({
+            entryId: article.id,
+            fieldId: 'relatedArticles',
+            locale: activeLocale,
+          }))}
+      >
         {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
-          (article.relatedArticles.length > 0 ||
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            article.relatedContent.length > 0) && (
+          shouldShowRelatedContent && (
             <RelatedContent
               title={n('relatedMaterial')}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -571,6 +642,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
       </Box>
     </Box>
   )
+
   return (
     <>
       <HeadWithSocialSharing
@@ -599,7 +671,15 @@ const ArticleScreen: Screen<ArticleProps> = ({
         >
           {inStepperView && (
             <Text color="blueberry600" variant="eyebrow" as="h2">
-              <span id={slugify(article?.title ?? '')} className="rs_read">
+              <span
+                id={slugify(article?.title ?? '')}
+                className="rs_read"
+                {...inspectorProps({
+                  entryId: article?.id as string,
+                  fieldId: 'title',
+                  locale: activeLocale,
+                })}
+              >
                 {article?.title}
               </span>
             </Text>
@@ -632,7 +712,16 @@ const ArticleScreen: Screen<ArticleProps> = ({
           printHidden
         >
           {!!article?.category?.title && (
-            <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+            <Box
+              flexGrow={1}
+              marginRight={6}
+              overflow="hidden"
+              {...inspectorProps({
+                entryId: article.id,
+                fieldId: 'category',
+                locale: activeLocale,
+              })}
+            >
               <Link href={categoryHref} skipTab>
                 <Button
                   preTextIcon="arrowBack"
@@ -648,7 +737,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
             </Box>
           )}
           {article?.organization && article.organization.length > 0 && (
-            <Box minWidth={0}>
+            <Box
+              minWidth={0}
+              {...inspectorProps({
+                entryId: article.id,
+                fieldId: 'organization',
+                locale: activeLocale,
+              })}
+            >
               {article.organization[0].link ? (
                 <Link href={article.organization[0].link} skipTab>
                   <Tag variant="purple" truncate>
@@ -666,7 +762,15 @@ const ArticleScreen: Screen<ArticleProps> = ({
         <Box>
           {!inStepperView && (
             <Text variant="h1" as="h1">
-              <span id={slugify(article?.title ?? '')} className="rs_read">
+              <span
+                id={slugify(article?.title ?? '')}
+                className="rs_read"
+                {...inspectorProps({
+                  entryId: article?.id as string,
+                  fieldId: 'title',
+                  locale: activeLocale,
+                })}
+              >
                 {article?.title}
               </span>
             </Text>
@@ -749,6 +853,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
               display={['none', 'none', 'block']}
               printHidden
               className="rs_read"
+              {...inspectorProps({
+                entryId: article?.id as string,
+                fieldId: 'processEntry',
+                locale: activeLocale,
+              })}
             >
               {/**
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -765,16 +874,32 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 // @ts-ignore make web strict
                 span={[null, '4/7', '5/7', '4/7', '3/7']}
               >
-                <TOC
-                  title={n('tableOfContentTitle')}
-                  body={subArticle ? subArticle.body : article?.body}
-                />
+                <Box
+                  {...inspectorProps({
+                    entryId: (subArticle ?? article)?.id as string,
+                    fieldId: 'showTableOfContents',
+                    locale: activeLocale,
+                  })}
+                >
+                  <TOC
+                    title={n('tableOfContentTitle')}
+                    body={subArticle ? subArticle.body : article?.body}
+                  />
+                </Box>
               </GridColumn>
             </GridRow>
           )}
           {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
-              <span id={slugify(subArticle.title)} className="rs_read">
+              <span
+                id={slugify(subArticle.title)}
+                className="rs_read"
+                {...inspectorProps({
+                  entryId: subArticle.id,
+                  fieldId: 'title',
+                  locale: activeLocale,
+                })}
+              >
                 {subArticle.title}
               </span>
             </Text>
@@ -785,7 +910,17 @@ const ArticleScreen: Screen<ArticleProps> = ({
           mounted &&
           isVisible &&
           createPortal(
-            <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
+            <Box
+              marginTop={5}
+              display={['block', 'block', 'none']}
+              printHidden
+              {...(article &&
+                inspectorProps({
+                  entryId: article.id,
+                  fieldId: 'processEntry',
+                  locale: activeLocale,
+                }))}
+            >
               {/**
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                // @ts-ignore make web strict */}

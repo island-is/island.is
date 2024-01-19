@@ -75,6 +75,7 @@
     "@contentful/field-editor-single-line": "1.1.8",
     "@contentful/forma-36-react-components": "3.78.4",
     "@contentful/forma-36-tokens": "0.10.1",
+    "@contentful/live-preview": "2.15.1",
     "@contentful/node-apps-toolkit": "2.0.2",
     "@contentful/react-apps-toolkit": "1.2.15",
     "@contentful/rich-text-from-markdown": "15.16.6",
