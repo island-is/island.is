@@ -133,7 +133,7 @@ export const TextFieldsRepeater: FC<
 
     forceUpdate()
   }
-  
+
   return (
     <Box>
       {fields.map((repeaterField: any, index) => {
