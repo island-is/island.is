@@ -74,36 +74,38 @@ const Aids = ({ data }: Props) => {
               { value: '' },
             ]}
           />
-          {data.map((rowItem, idx) => (
-            <ExpandRow
-              key={`aids-table-row-${idx}`}
-              data={[
-                {
-                  value: rowItem.name.split('/').join(' / '),
-                },
-                {
-                  value: rowItem.maxUnitRefund ?? '',
-                },
-                {
-                  value:
-                    rowItem.refund.type === 'amount'
-                      ? amountFormat(rowItem.refund.value)
-                      : `${rowItem.refund.value}%`,
-                },
-                {
-                  value: rowItem.available ?? '',
-                },
-                {
-                  value: rowItem.nextAllowedMonth ?? '',
-                },
-                {
-                  value: rowItem.expiring ? expiringIcon : '',
-                },
-              ]}
-            >
-              <NestedTable data={generateFoldedValues(rowItem)} />
-            </ExpandRow>
-          ))}
+          <T.Body>
+            {data.map((rowItem, idx) => (
+              <ExpandRow
+                key={`aids-table-row-${idx}`}
+                data={[
+                  {
+                    value: rowItem.name.split('/').join(' / '),
+                  },
+                  {
+                    value: rowItem.maxUnitRefund ?? '',
+                  },
+                  {
+                    value:
+                      rowItem.refund.type === 'amount'
+                        ? amountFormat(rowItem.refund.value)
+                        : `${rowItem.refund.value}%`,
+                  },
+                  {
+                    value: rowItem.available ?? '',
+                  },
+                  {
+                    value: rowItem.nextAllowedMonth ?? '',
+                  },
+                  {
+                    value: rowItem.expiring ? expiringIcon : '',
+                  },
+                ]}
+              >
+                <NestedTable data={generateFoldedValues(rowItem)} />
+              </ExpandRow>
+            ))}
+          </T.Body>
         </T.Table>
         <DownloadFileButtons
           BoxProps={{

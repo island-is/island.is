@@ -40,42 +40,44 @@ const Nutrition = ({ data }: Props) => {
               { value: formatMessage(messages.nextAvailableRefund) },
             ]}
           />
-          {data.map((rowItem, idx) => (
-            <ExpandRow
-              key={`nutrition-table-row-${idx}`}
-              data={[
-                { value: rowItem.name ?? '' },
-                { value: rowItem.maxUnitRefund ?? '' },
-                {
-                  value:
-                    rowItem.refund.type === 'amount'
-                      ? rowItem.refund.value
-                        ? amountFormat(rowItem.refund.value)
-                        : ''
-                      : rowItem.refund.value
-                      ? `${rowItem.refund.value}%`
-                      : '',
-                },
-                { value: rowItem.available ?? '' },
-                { value: rowItem.nextAllowedMonth ?? '' },
-              ]}
-            >
-              <NestedTable
+          <T.Body>
+            {data.map((rowItem, idx) => (
+              <ExpandRow
+                key={`nutrition-table-row-${idx}`}
                 data={[
+                  { value: rowItem.name ?? '' },
+                  { value: rowItem.maxUnitRefund ?? '' },
                   {
-                    title: formatMessage(messages.availableTo),
-                    value: rowItem.validUntil
-                      ? formatDate(rowItem.validUntil)
-                      : '',
+                    value:
+                      rowItem.refund.type === 'amount'
+                        ? rowItem.refund.value
+                          ? amountFormat(rowItem.refund.value)
+                          : ''
+                        : rowItem.refund.value
+                        ? `${rowItem.refund.value}%`
+                        : '',
                   },
-                  {
-                    title: formatMessage(messages.extraDetail),
-                    value: rowItem.explanation ?? '',
-                  },
+                  { value: rowItem.available ?? '' },
+                  { value: rowItem.nextAllowedMonth ?? '' },
                 ]}
-              />
-            </ExpandRow>
-          ))}
+              >
+                <NestedTable
+                  data={[
+                    {
+                      title: formatMessage(messages.availableTo),
+                      value: rowItem.validUntil
+                        ? formatDate(rowItem.validUntil)
+                        : '',
+                    },
+                    {
+                      title: formatMessage(messages.extraDetail),
+                      value: rowItem.explanation ?? '',
+                    },
+                  ]}
+                />
+              </ExpandRow>
+            ))}
+          </T.Body>
         </T.Table>
         <DownloadFileButtons
           BoxProps={{
