@@ -136,6 +136,10 @@ const HomeSupportTemplate: ApplicationTemplate<
           status: 'completed',
           name: application.general.name.defaultMessage,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: 'submitApplication',
+            shouldPersistToExternalData: true,
+          }),
         },
       },
     },
