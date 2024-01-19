@@ -66,21 +66,20 @@ export const survivorsBenefitsFormMessage: MessageDir = {
     },
     expectingChildTitle: {
       id: 'sb.application:expectingChild.title',
-      defaultMessage:
-        'Áttu von á barni',
+      defaultMessage: 'Áttu von á barni',
       description: 'Are you expecting a child?',
     },
     expectingChildFileUpload: {
       id: 'sb.application:expectingChild.fileUpload',
-      defaultMessage:
-        'Fylgiskjöl vegna væntanlegs barns',
+      defaultMessage: 'Fylgiskjöl vegna væntanlegs barns',
       description: 'File upload for expected child',
     },
     expectingChildFileUploadDescription: {
       id: 'sb.application:expectingChild.fileUpload.description',
       defaultMessage:
         'Hér þarft þú að skila inn staðfestingu á því að þú eigir von á barni.',
-      description: 'Below you must submit confirmation that you are expecting a child.',
+      description:
+        'Below you must submit confirmation that you are expecting a child.',
     },
   }),
 
@@ -88,12 +87,15 @@ export const survivorsBenefitsFormMessage: MessageDir = {
     spouseAllowance: {
       id: 'sb.application:payment.spouse.allowance',
       defaultMessage: 'Viltu nýta persónuafslátt látins maka/sambúðaraðila?',
-      description: 'Would you like to use your deceased spouse\'s personal tax-free allowance?',
+      description:
+        "Would you like to use your deceased spouse's personal tax-free allowance?",
     },
     spouseAllowanceDescription: {
       id: 'sb.application:payment.spouse.allowance.description',
-      defaultMessage: 'Þú getur nýtt þér skattkort maka/sambúðaraðila í átta mánuði eftir andlát hans',
-      description: 'You can use your spouse\'s personal tax-free allowance for eight months after their passing',
+      defaultMessage:
+        'Þú getur nýtt þér skattkort maka/sambúðaraðila í átta mánuði eftir andlát hans',
+      description:
+        "You can use your spouse's personal tax-free allowance for eight months after their passing",
     },
     spouseAllowancePercentage: {
       id: 'sb.application:payment.spouse.allowance.percentage',
@@ -102,11 +104,11 @@ export const survivorsBenefitsFormMessage: MessageDir = {
     },
   }),
 
-  confirm: defineMessages ({
+  confirm: defineMessages({
     spouseAllowance: {
       id: 'sb.application:confirm.spouse.allowance',
       defaultMessage: 'Persónuafsláttur maka',
-      description: 'Spouse\'s personal tax-free allowance',
+      description: "Spouse's personal tax-free allowance",
     },
   }),
 

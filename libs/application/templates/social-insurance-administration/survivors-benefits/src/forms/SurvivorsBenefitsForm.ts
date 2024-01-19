@@ -33,6 +33,7 @@ import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  hasSpouseLessThanAYear,
 } from '../lib/survivorsBenefitsUtils'
 import {
   friendlyFormatIBAN,
@@ -417,9 +418,11 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           title: survivorsBenefitsFormMessage.info.expectingChildTitle,
           condition: (_, externalData) => {
             const { hasSpouse } = getApplicationExternalData(externalData)
-            // if applicant does not have a spouse, then show question
-            if (hasSpouse) return false
-            return true
+            const spouseLessThanAYear = hasSpouseLessThanAYear(externalData)
+
+            //if no spouse info is found or cohabitation has lasted less than a year, then show question
+            if (hasSpouse === null || spouseLessThanAYear) return true
+            return false
           },
           children: [
             buildMultiField({
@@ -449,9 +452,11 @@ export const SurvivorsBenefitsForm: Form = buildForm({
               id: 'fileUpload.expectingChild',
               title: survivorsBenefitsFormMessage.info.expectingChildFileUpload,
               description:
-                survivorsBenefitsFormMessage.info.expectingChildFileUploadDescription,
+                survivorsBenefitsFormMessage.info
+                  .expectingChildFileUploadDescription,
               introduction:
-                survivorsBenefitsFormMessage.info.expectingChildFileUploadDescription,
+                survivorsBenefitsFormMessage.info
+                  .expectingChildFileUploadDescription,
               ...fileUploadSharedProps,
             }),
           ],
@@ -473,7 +478,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-              socialInsuranceAdministrationMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileDescription,
               introduction:
                 socialInsuranceAdministrationMessage.fileUpload

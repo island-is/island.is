@@ -15,6 +15,7 @@ import {
   BankInfo,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
+import addYears from 'date-fns/addYears'
 
 enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
@@ -218,4 +219,19 @@ export function getAttachments(application: Application) {
   }
 
   return attachments
+}
+
+export function hasSpouseLessThanAYear(
+  externalData: Application['externalData'],
+) {
+  const { maritalStatus, lastModified } =
+    getApplicationExternalData(externalData)
+  const today = new Date()
+  const oneYearAgo = addYears(today, -1)
+  const statusLastModified = new Date(lastModified)
+
+  if (maritalStatus === '3' && statusLastModified > oneYearAgo) {
+    return true
+  }
+  return false
 }
