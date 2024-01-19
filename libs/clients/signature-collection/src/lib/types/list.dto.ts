@@ -76,7 +76,7 @@ export function mapList(list: MedmaelalistiDTO): List {
     collectionId: list.medmaelasofnun?.id?.toString() ?? '',
     title: list.listiNafn ?? '',
     startTime: list.medmaelasofnun?.sofnunStart ?? new Date(),
-    endTime: list.medmaelasofnun?.sofnunEnd ?? new Date(),
+    endTime: list.dagsetningLokar ?? new Date(),
 
     candidate: mapCandidate(candidate),
     // TODO: update active functionality

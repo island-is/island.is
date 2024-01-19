@@ -18,6 +18,7 @@ import { Icon } from '../IconRC/Icon'
 
 import * as styles from './Navigation.css'
 import { IconProps } from '../IconRC/types'
+import { VisuallyHidden } from '../VisuallyHidden/VisuallyHidden'
 
 type NavigationContextProps = {
   baseId: string
@@ -79,6 +80,7 @@ interface MobileNavigationDialogProps {
   isVisible: boolean
   onClick: () => void
   menuState: MenuStateReturn
+  mobileNavigationButtonCloseLabel?: string
 }
 
 interface NavigationTreeProps {
@@ -126,6 +128,8 @@ export interface NavigationProps {
    */
   asSpan?: NavigationTreeProps['asSpan']
   titleProps?: NavigationItem
+  mobileNavigationButtonOpenLabel?: string
+  mobileNavigationButtonCloseLabel?: string
 }
 
 // The sidebar nav is not designed to show more than 2 levels.
@@ -160,6 +164,8 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   baseId,
   asSpan,
   expandOnActivation,
+  mobileNavigationButtonOpenLabel = 'Open',
+  mobileNavigationButtonCloseLabel = 'Close',
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeAccordions, setActiveAccordions] = useState<Array<string>>([])
@@ -258,6 +264,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
               titleIcon={titleIcon}
               colorScheme={colorScheme}
               aria-expanded={!mobileMenuOpen}
+              mobileNavigationButtonOpenLabel={mobileNavigationButtonOpenLabel}
             />
           </MenuButton>
           <Menu
@@ -279,6 +286,9 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
               asSpan={asSpan}
               isVisible={mobileMenuOpen}
               menuState={menu}
+              mobileNavigationButtonCloseLabel={
+                mobileNavigationButtonCloseLabel
+              }
               onClick={() => {
                 menu.hide()
               }}
@@ -322,6 +332,7 @@ const MobileNavigationDialog = ({
   onClick,
   menuState,
   asSpan,
+  mobileNavigationButtonCloseLabel,
 }: MobileNavigationDialogProps) => {
   return (
     <Box
@@ -344,6 +355,7 @@ const MobileNavigationDialog = ({
             background={colorSchemeColors[colorScheme]['dividerColor']}
             className={styles.dropdownIcon}
           >
+            <VisuallyHidden>{mobileNavigationButtonCloseLabel}</VisuallyHidden>
             <Icon
               icon={'chevronUp'}
               size="small"
@@ -374,9 +386,15 @@ interface MobileButtonProps {
   title: string
   titleIcon?: Pick<IconProps, 'icon' | 'type'>
   colorScheme: keyof typeof styles.colorScheme
+  mobileNavigationButtonOpenLabel?: string
 }
 
-const MobileButton = ({ title, colorScheme, titleIcon }: MobileButtonProps) => {
+const MobileButton = ({
+  title,
+  colorScheme,
+  titleIcon,
+  mobileNavigationButtonOpenLabel,
+}: MobileButtonProps) => {
   return (
     <Box
       component="span"
@@ -423,6 +441,7 @@ const MobileButton = ({ title, colorScheme, titleIcon }: MobileButtonProps) => {
           background={colorSchemeColors[colorScheme]['dividerColor']}
           className={styles.dropdownIcon}
         >
+          <VisuallyHidden>{mobileNavigationButtonOpenLabel}</VisuallyHidden>
           <Icon
             icon={'chevronDown'}
             size="small"
@@ -498,7 +517,7 @@ export const NavigationTree: FC<
             )
 
             return (
-              <li key={index} className={styles.listItem}>
+              <li key={index} className={styles.listItem} role="menuitem">
                 {/*Note: Need to review usage (e.g. PortalNavigation) if we change the rendered element to something other than FocusableBox.*/}
                 {renderLink(
                   <FocusableBox

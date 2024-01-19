@@ -1,5 +1,5 @@
 import { UserBase } from './user.dto'
-import { MedmaeliBaseDTO } from '../../../gen/fetch'
+import { MedmaeliDTO } from '../../../gen/fetch'
 
 export interface Signee extends UserBase {
   address?: string
@@ -12,9 +12,10 @@ export interface Signature {
   isDigital: boolean
   created: Date
   pageNumber?: number
+  active: boolean
 }
 
-export const mapSignature = (signature: MedmaeliBaseDTO): Signature => {
+export const mapSignature = (signature: MedmaeliDTO): Signature => {
   const isDigital = signature.medmaeliTegundNr === 1
   return {
     id: signature.id?.toString() ?? '',
@@ -28,5 +29,6 @@ export const mapSignature = (signature: MedmaeliBaseDTO): Signature => {
     created: signature.dagsetning ?? new Date(),
     pageNumber:
       !isDigital && signature.bladsidaNr ? signature.bladsidaNr : undefined,
+    active: signature.valid ?? true,
   }
 }
