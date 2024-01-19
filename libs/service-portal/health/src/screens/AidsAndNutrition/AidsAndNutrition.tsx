@@ -54,7 +54,20 @@ const AidsAndNutrition = () => {
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
       {!loading && !aids?.length && !nutrition?.length && (
-        <Problem type="no_data" />
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.noDataFound, {
+            arg: formatMessage(messages.paymentParticipation).toLowerCase(),
+          })}
+          message={formatMessage(messages.noDataFoundDetail, {
+            arg: formatMessage(
+              messages.paymentParticipationVariation,
+            ).toLowerCase(),
+          })}
+          imgSrc="./assets/images/coffee.svg"
+          titleSize="h3"
+          noBorder={false}
+        />
       )}
 
       {!loading && !error && tabs.length > 0 && (

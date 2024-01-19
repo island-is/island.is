@@ -9,6 +9,15 @@ export const messages = defineMessages({
     id: 'sp.health:error-fetch-payment-info',
     defaultMessage: 'Ekki tókst að sækja greiðsluupplýsingar',
   },
+  noDataFound: {
+    id: 'sp.health:no-data-found',
+    defaultMessage: 'Engin {arg} skráð',
+  },
+  noDataFoundDetail: {
+    id: 'sp.health:no-data-found-detail',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráða {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
   from: {
     id: 'sp.health:from',
     defaultMessage: 'Frá',
@@ -122,12 +131,16 @@ export const messages = defineMessages({
     defaultMessage: 'Sjá vottorð',
   },
   statusOfRights: {
-    id: 'sp.health:status-of-rights',
+    id: 'sp.health:status-of-riaghts',
     defaultMessage: 'Réttindastaða',
   },
   paymentParticipation: {
     id: 'sp.health:payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
+  },
+  paymentParticipationVariation: {
+    id: 'sp.health:payment-participation-variation',
+    defaultMessage: 'Greiðsluþátttöku',
   },
   healthInternalServiceErrorTitle: {
     id: 'sp.health:internal-service-error-title',
