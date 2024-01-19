@@ -48,8 +48,8 @@ export class PaymentResolver {
   @Audit()
   async getCopaymentStatus(
     @CurrentUser() user: User,
-  ): Promise<CopaymentStatus | undefined> {
-    return await this.service.getCopaymentStatus(user)
+  ): Promise<CopaymentStatus | null> {
+    return this.service.getCopaymentStatus(user)
   }
 
   @Query(() => CopaymentPeriodResponse, {
