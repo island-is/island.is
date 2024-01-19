@@ -238,15 +238,13 @@ test.describe.serial('Custody tests', () => {
 
     // Court date request
     await expect(page).toHaveURL(`/krafa/fyrirtaka/${extendedCaseId}`)
-    await page.getByPlaceholder('Veldu dagsetningu').click()
-    await page
-      .getByRole('option', { name: 'Choose fimmtudagur, 18. janúar 2024' })
-      .click()
 
+    await page.locator('input[id=reqCourtDate]').fill(today)
+    await page.keyboard.press('Escape')
     await page.getByTestId('reqCourtDate-time').click()
     await page.getByTestId('reqCourtDate-time').fill('10:00')
-    await page.getByTestId('continueButton').click()
 
+    await page.getByTestId('continueButton').click()
     await page.getByTestId('modalSecondaryButton').click()
 
     // Prosecutor demands
