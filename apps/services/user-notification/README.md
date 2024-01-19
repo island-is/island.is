@@ -5,6 +5,7 @@
 This service manages queueing and storing messages as well a sending push notifications and emails.
 
 ## Sequence Diagram
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -23,13 +24,12 @@ sequenceDiagram
     User-Notification-Worker->>User email: sends e-mail
 ```
 
-
-
 ## Running the project:
 
 ### Initial Setup
 
 Sign into AWS:
+
 ```sh
 aws sso login
 ```
@@ -40,6 +40,7 @@ yarn get-secrets user-notification
 ```
 
 Initalize dependencies:
+
 ```sh
 yarn dev-init services-user-notification
 ```
@@ -50,15 +51,19 @@ yarn dev services-user-notification
 ```
 
 ### User Notification Worker
+
 This worker gets messages from the queue and saves to database and sends via push and email.
 Start a worker with this command:
+
 ```sh
 yarn nx run services-user-notification:worker
 ```
 
 ### User Notification Cleanup Worker
-This worker deletes old messages from the database 
+
+This worker deletes old messages from the database
 Start a cleanup worker with this command:
+
 ```sh
 yarn nx run services-user-notification:cleanup
 ```
