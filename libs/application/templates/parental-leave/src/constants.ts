@@ -98,8 +98,6 @@ export enum AnswerValidationConstants {
   EMPLOYER = 'employer',
   FILEUPLOAD = 'fileUpload',
   PAYMENTS = 'payments',
-  OTHER_PARENT = 'otherParentObj',
-  OTHER_PARENT_EMAIL = 'otherParentEmail',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',
   // Check Multiple_Births
