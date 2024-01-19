@@ -49,7 +49,30 @@ const ChildSelector: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       adoptionDate: string
     }[]
   }
+  /*
+  const existingApplications = []
+  existingApplications.push({
+    applicationId: 'new',
+    expectedDateOfBirth: '10.10.2024',
+    adoptionDate: '09.09.2023',
+  })
 
+  existingApplications.push({
+    applicationId: 'new',
+    expectedDateOfBirth: '12.12.2025',
+    adoptionDate: '01.01.2023',
+  }) */
+  /*
+  const children = []
+  children.push({
+    expectedDateOfBirth: 'expectedDateOfBirth',
+    adoptionDate: 'adoptionDate',
+    primaryParentNationalRegistryId: 'primaryParentNationalRegistryId',
+    primaryParentTypeOfApplication: 'primaryParentTypeOfApplication',
+    parentalRelation: ParentalRelations.primary,
+  })*/
+
+  //TODO SETJA í DATASCHEMA validation check
   useEffect(() => {
     if (setBeforeSubmitCallback) {
       setBeforeSubmitCallback(async () => {

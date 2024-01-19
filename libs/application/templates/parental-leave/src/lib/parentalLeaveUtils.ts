@@ -8,6 +8,7 @@ import parseISO from 'date-fns/parseISO'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
 import round from 'lodash/round'
+import get from 'lodash/get'
 
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -71,6 +72,8 @@ import subMonths from 'date-fns/subMonths'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
 import isAfter from 'date-fns/isAfter'
+import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
 
 export function getExpectedDateOfBirthOrAdoptionDate(
   application: Application,
@@ -1787,4 +1790,58 @@ export const setTestBirthAndExpectedDate = (
     birthDate: `${year}${month}${day}`,
     expBirthDate: `${expBirthDateYear}-${expBirthDateMonth}-${expBirthDateDate}`,
   }
+}
+
+export const getChildrenOptions = (application: Application) => {
+  const { children } = getApplicationExternalData(application.externalData) as {
+    children: {
+      expectedDateOfBirth: string
+      adoptionDate: string
+      primaryParentNationalRegistryId?: string
+      primaryParentTypeOfApplication?: string
+      parentalRelation: ParentalRelations
+    }[]
+  }
+
+  const formatDateOfBirth = (value: string) =>
+    format(new Date(value), dateFormat.is)
+
+  return children.map((child, index) => {
+    const subLabel =
+      child.parentalRelation === ParentalRelations.secondary
+        ? {
+            ...parentalLeaveFormMessages.selectChild.secondaryParent,
+            values: {
+              nationalId: child.primaryParentNationalRegistryId ?? '',
+            },
+          }
+        : parentalLeaveFormMessages.selectChild.primaryParent
+
+    return {
+      value: `${index}`,
+      dataTestId: `child-${index}`,
+      label:
+        child.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
+          ? {
+              ...parentalLeaveFormMessages.selectChild.fosterCare,
+              values: {
+                dateOfBirth: formatDateOfBirth(child.adoptionDate),
+              },
+            }
+          : child.primaryParentTypeOfApplication === ADOPTION
+          ? {
+              ...parentalLeaveFormMessages.selectChild.adoption,
+              values: {
+                dateOfBirth: formatDateOfBirth(child.adoptionDate),
+              },
+            }
+          : {
+              ...parentalLeaveFormMessages.selectChild.baby,
+              values: {
+                dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth),
+              },
+            },
+      subLabel,
+    }
+  })
 }

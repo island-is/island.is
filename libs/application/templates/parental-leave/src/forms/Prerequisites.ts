@@ -1,46 +1,46 @@
 import {
-  buildCustomField,
+  buildAlertMessageField,
   buildDataProviderItem,
   buildDataProviderPermissionItem,
+  buildDateField,
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSection,
-  buildSubmitField,
+  buildSelectField,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
   getValueViaPath,
-  buildDateField,
-  buildAlertMessageField,
 } from '@island.is/application/core'
 import { Form, FormModes, UserProfileApi } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { parentalLeaveFormMessages, errorMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import { defaultMultipleBirthsMonths } from '../config'
 import {
-  isEligibleForParentalLeave,
-  getSelectedChild,
+  ADOPTION,
+  NO,
+  OTHER_NO_CHILDREN_FOUND,
+  PERMANENT_FOSTER_CARE,
+  ParentalRelations,
+  YES,
+} from '../constants'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import { errorMessages, parentalLeaveFormMessages } from '../lib/messages'
+import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getApplicationTypeOptions,
+  getChildrenOptions,
+  getFosterCareOrAdoptionDesc,
+  getSelectedChild,
+  isEligibleForParentalLeave,
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
-  getFosterCareOrAdoptionDesc,
-  getApplicationTypeOptions,
 } from '../lib/parentalLeaveUtils'
-import {
-  NO,
-  YES,
-  ParentalRelations,
-  PERMANENT_FOSTER_CARE,
-  OTHER_NO_CHILDREN_FOUND,
-  ADOPTION,
-} from '../constants'
-import { defaultMultipleBirthsMonths } from '../config'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -570,10 +570,19 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'selectedChildScreen',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
               children: [
-                buildCustomField({
+                buildRadioField({
                   id: 'selectedChild',
-                  title: parentalLeaveFormMessages.selectChild.screenTitle,
-                  component: 'ChildSelector',
+                  title:
+                    parentalLeaveFormMessages.selectChild.screenDescription,
+                  options: (application) => {
+                    return getChildrenOptions(application)
+                  },
+                  condition: (_answers, externalData) => {
+                    return (
+                      getApplicationExternalData(externalData).children.length >
+                      0
+                    )
+                  },
                 }),
                 buildRadioField({
                   id: 'multipleBirths.hasMultipleBirths',
