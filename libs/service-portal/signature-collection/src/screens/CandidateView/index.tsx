@@ -9,20 +9,20 @@ import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import { useNavigate } from 'react-router-dom'
 
-const OwnerView = () => {
+const CandidateView = () => {
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const { listsForUser, loadingUserLists } = useGetListsForUser()
   const collectionId = listsForUser[0]?.collectionId
   return (
-    <div>
+    <Box>
+      <IntroHeader
+        title={formatMessage(m.pageTitle)}
+        intro={formatMessage(m.pageDescription)}
+      />
       {!loadingUserLists ? (
         <Box>
-          <IntroHeader
-            title={formatMessage(m.pageTitle)}
-            intro={formatMessage(m.pageDescription)}
-          />
           {listsForUser.length === 0 && (
             <Button
               icon="open"
@@ -54,19 +54,32 @@ const OwnerView = () => {
                       format(new Date(list.endTime), 'dd.MM.yyyy')
                     }
                     text={formatMessage(m.collectionTitle)}
-                    cta={{
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      icon: 'arrowForward',
-                      onClick: () => {
-                        navigate(
-                          SignatureCollectionPaths.ViewList.replace(
-                            ':id',
-                            list.id,
-                          ),
-                        )
-                      },
-                    }}
+                    cta={
+                      new Date(list.endTime) > new Date()
+                        ? {
+                            label: formatMessage(m.viewList),
+                            variant: 'text',
+                            icon: 'arrowForward',
+                            onClick: () => {
+                              navigate(
+                                SignatureCollectionPaths.ViewList.replace(
+                                  ':id',
+                                  list.id,
+                                ),
+                              )
+                            },
+                          }
+                        : undefined
+                    }
+                    tag={
+                      new Date(list.endTime) < new Date()
+                        ? {
+                            label: formatMessage(m.collectionClosed),
+                            variant: 'purple',
+                            outlined: true,
+                          }
+                        : undefined
+                    }
                     progressMeter={{
                       currentProgress: Number(list.numberOfSignatures),
                       maxProgress: list.area.min,
@@ -84,8 +97,8 @@ const OwnerView = () => {
       ) : (
         <Skeleton />
       )}
-    </div>
+    </Box>
   )
 }
 
-export default OwnerView
+export default CandidateView

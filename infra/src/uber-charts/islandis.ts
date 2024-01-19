@@ -127,7 +127,9 @@ const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
 })
 
-const userNotificationService = userNotificationServiceSetup()
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })

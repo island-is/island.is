@@ -428,11 +428,11 @@ api:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '600m'
       memory: '2048Mi'
     requests:
-      cpu: '150m'
-      memory: '512Mi'
+      cpu: '250m'
+      memory: '896Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -1654,6 +1654,7 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+    ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -1735,6 +1736,7 @@ search-indexer-service:
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+      ENVIRONMENT: 'staging'
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'staging-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
@@ -1760,6 +1762,7 @@ search-indexer-service:
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
+    APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   securityContext:
@@ -2509,6 +2512,7 @@ user-notification:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
+    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
@@ -2557,16 +2561,19 @@ user-notification:
     min: 1
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '384Mi'
     requests:
-      cpu: '15m'
+      cpu: '150m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
     DB_PASS: '/k8s/user-notification/DB_PASSWORD'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2597,10 +2604,10 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
-    SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
+    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
@@ -2660,11 +2667,11 @@ user-notification-worker:
     min: 1
   resources:
     limits:
-      cpu: '200m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '384Mi'
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: '150m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
@@ -2672,6 +2679,7 @@ user-notification-worker:
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
     IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2689,7 +2697,7 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'staging'
-    NODE_OPTIONS: '--max-old-space-size=460'
+    NODE_OPTIONS: '--max-old-space-size=691'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
   grantNamespaces:
@@ -2737,10 +2745,10 @@ web:
   resources:
     limits:
       cpu: '400m'
-      memory: '512Mi'
+      memory: '768Mi'
     requests:
-      cpu: '100m'
-      memory: '256Mi'
+      cpu: '200m'
+      memory: '384Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'

@@ -12,10 +12,6 @@ export enum ApplicationReason {
   HALFWAY_HOUSE = 'halfwayHouse', // Dvöl á áfangaheimili
 }
 
-export enum AnswerValidationConstants {
-  FILEUPLOAD = 'fileUpload',
-}
-
 export const AttachmentLabel: {
   [key: string]: MessageDescriptor
 } = {
