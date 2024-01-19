@@ -148,7 +148,7 @@ export const PaymentInformation = ({
           </GridColumn>
         )}
       </GridRow>
-      
+
       <GridRow>
         <GridColumn
           span={['12/12', '12/12', '12/12', '5/12']}
@@ -175,7 +175,7 @@ export const PaymentInformation = ({
             />
           </GridColumn>
         )}
-      </GridRow>                
+      </GridRow>
 
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>

@@ -417,7 +417,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           id: 'expectingChildSection',
           title: survivorsBenefitsFormMessage.info.expectingChildTitle,
           condition: (_, externalData) => {
-            const { hasSpouse } = getApplicationExternalData(externalData)  
+            const { hasSpouse } = getApplicationExternalData(externalData)
             const spouseLessThanAYear = hasSpouseLessThanAYear(externalData)
 
             //if no spouse info is found or cohabitation has lasted less than a year, then show question
@@ -452,9 +452,11 @@ export const SurvivorsBenefitsForm: Form = buildForm({
               id: 'fileUpload.expectingChild',
               title: survivorsBenefitsFormMessage.info.expectingChildFileUpload,
               description:
-                survivorsBenefitsFormMessage.info.expectingChildFileUploadDescription,
+                survivorsBenefitsFormMessage.info
+                  .expectingChildFileUploadDescription,
               introduction:
-                survivorsBenefitsFormMessage.info.expectingChildFileUploadDescription,
+                survivorsBenefitsFormMessage.info
+                  .expectingChildFileUploadDescription,
               ...fileUploadSharedProps,
             }),
           ],
@@ -476,7 +478,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-              socialInsuranceAdministrationMessage.fileUpload
+                socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileDescription,
               introduction:
                 socialInsuranceAdministrationMessage.fileUpload

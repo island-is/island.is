@@ -221,8 +221,11 @@ export function getAttachments(application: Application) {
   return attachments
 }
 
-export function hasSpouseLessThanAYear(externalData: Application['externalData'],) {
-  const { maritalStatus, lastModified } = getApplicationExternalData(externalData)
+export function hasSpouseLessThanAYear(
+  externalData: Application['externalData'],
+) {
+  const { maritalStatus, lastModified } =
+    getApplicationExternalData(externalData)
   const today = new Date()
   const oneYearAgo = addYears(today, -1)
   const statusLastModified = new Date(lastModified)
@@ -231,5 +234,4 @@ export function hasSpouseLessThanAYear(externalData: Application['externalData']
     return true
   }
   return false
-}  
-
+}
