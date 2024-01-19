@@ -27,7 +27,8 @@ export class ApplicationController {
 
   @Get(':id')
   @Documentation({
-    description: 'Get application by ID',
+    description:
+      'Get application by ID (only status for now) for logged in user',
     response: {
       status: 200,
       type: Application,
@@ -51,7 +52,7 @@ export class ApplicationController {
 
   @Post()
   @Documentation({
-    description: 'Create application',
+    description: 'Create application for logged in user',
     response: {
       status: 201,
       type: Application,
@@ -66,7 +67,7 @@ export class ApplicationController {
 
   @Patch(':id')
   @Documentation({
-    description: 'Update application status',
+    description: 'Update application (only status for now) for logged in user',
     response: {
       status: 200,
       type: Application,

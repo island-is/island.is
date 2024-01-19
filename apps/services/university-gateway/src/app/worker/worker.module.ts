@@ -32,6 +32,7 @@ import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../../environments'
 import { InternalProgramService } from '../modules/program/internalProgram.service'
 import { InternalCourseService } from '../modules/course/internalCourse.service'
+import { InternalApplicationService } from '../modules/application/internalApplication.service'
 import { University } from '../modules/university/model/university'
 import { Course } from '../modules/course/model/course'
 import { ProgramCourse } from '../modules/program/model/programCourse'
@@ -78,6 +79,7 @@ import { LoggingModule } from '@island.is/logging'
   providers: [
     InternalProgramService,
     InternalCourseService,
+    InternalApplicationService,
     UniversityGatewayWorkerService,
   ],
 })
