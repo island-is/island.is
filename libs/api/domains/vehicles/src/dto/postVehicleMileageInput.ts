@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
+import { IsOptional, ValidateIf } from 'class-validator'
 
 @InputType()
 export class PostVehicleMileageInput {
@@ -8,8 +9,18 @@ export class PostVehicleMileageInput {
   @Field({ description: 'Example: "ISLAND.IS"' })
   originCode!: string
 
-  @Field()
-  mileage!: string
+  @ValidateIf((dto) => typeof dto.mileageNumber === 'undefined')
+  @Field({
+    nullable: true,
+    description: 'Deprecated. Use "mileageNumber" instead',
+  })
+  @IsOptional()
+  mileage?: string
+
+  @ValidateIf((dto) => typeof dto.mileage === 'undefined')
+  @Field({ nullable: true })
+  @IsOptional()
+  mileageNumber?: number
 }
 
 @InputType()
@@ -20,6 +31,16 @@ export class PutVehicleMileageInput {
   @Field()
   internalId!: number
 
-  @Field()
-  mileage!: string
+  @ValidateIf((dto) => typeof dto.mileageNumber === 'undefined')
+  @Field({
+    nullable: true,
+    description: 'Deprecated. Use "mileageNumber" instead',
+  })
+  @IsOptional()
+  mileage?: string
+
+  @ValidateIf((dto) => typeof dto.mileage === 'undefined')
+  @Field({ nullable: true })
+  @IsOptional()
+  mileageNumber?: number
 }

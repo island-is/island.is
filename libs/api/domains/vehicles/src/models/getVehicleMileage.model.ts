@@ -11,8 +11,14 @@ export class VehicleMileageDetail {
   @Field(() => String, { nullable: true })
   originCode?: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: 'Deprecated. Use "mileageNumber" instead.',
+  })
   mileage?: string | null
+
+  @Field(() => Number, { nullable: true })
+  mileageNumber?: number | null
 
   @Field(() => ID, { nullable: true })
   internalId?: number | null

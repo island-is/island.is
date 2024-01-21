@@ -83,6 +83,7 @@ export interface IAlertBannerFields {
         | 'starfsleyfi'
         | 'loftbru'
         | 'heilsa'
+        | 'fjarmal/stada'
       )[]
     | undefined
 }
@@ -1648,6 +1649,9 @@ export interface IHnippTemplateFields {
   /** Click Action */
   clickAction?: string | undefined
 
+  /** ClickActionWeb */
+  clickActionWeb?: string | undefined
+
   /** Category */
   category?: 'NEW_DOCUMENT' | 'ISLANDIS_LINK' | undefined
 
@@ -1897,6 +1901,8 @@ export interface ILifeEventPageListSliceFields {
   /** List */
   lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
 }
+
+/** !!DO NOT USE!! - This content type has been deprecated. Use Anchor Page List */
 
 export interface ILifeEventPageListSlice
   extends Entry<ILifeEventPageListSliceFields> {
@@ -2759,6 +2765,7 @@ export interface IOrganizationPageFields {
         | ITwoColumnText
         | ISectionWithVideo
         | IAnchorPageList
+        | ISectionWithImage
       )[]
     | undefined
 
@@ -2842,6 +2849,7 @@ export interface IOrganizationPageFields {
     | 'rikissaksoknari'
     | 'vinnueftirlitid'
     | 'hljodbokasafn-islands'
+    | 'thjodskjalasafn'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2904,6 +2912,7 @@ export interface IOrganizationSubpageFields {
         | IAnchorPageList
         | ISectionWithVideo
         | ISectionHeading
+        | ILatestEventsSlice
       )[]
     | undefined
 
