@@ -13,7 +13,7 @@ interface HeaderProps {
   logoAltText: string
 }
 
-const SAKHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
   logoAltText,
 }) => {
@@ -31,7 +31,7 @@ const SAKHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
           <div className={styles.headerBgImageWrapper}>
             <img
               src={n(
-                `sakHeaderLogo`,
+                `sakHeaderBgImage`,
                 'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
               )}
               alt=""
@@ -98,4 +98,4 @@ const SAKHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   )
 }
 
-export default SAKHeader
+export default SAkHeader
