@@ -2,7 +2,6 @@ fragment VehicleMileageDetailFragment on VehicleMileageDetail {
   permno
   readDate
   originCode
-  mileage
   mileageNumber
   internalId
 }
