@@ -100,10 +100,11 @@ export const PaymentOverview = () => {
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
       {error ? (
-        <AlertMessage
-          type="error"
-          title={formatMessage(m.errorTitle)}
-          message={formatMessage(messages.errorFetchPaymentInfo)}
+        <Problem
+          size="small"
+          noBorder={false}
+          type="internal_service_error"
+          error={error}
         />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
@@ -184,10 +185,11 @@ export const PaymentOverview = () => {
             </GridContainer>
             <Box>
               {overviewError ? (
-                <AlertMessage
-                  type="error"
-                  title={formatMessage(m.errorTitle)}
-                  message={formatMessage(messages.errorFetchPaymentInfo)}
+                <Problem
+                  size="small"
+                  noBorder={false}
+                  type="internal_service_error"
+                  error={error}
                 />
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
@@ -266,7 +268,16 @@ export const PaymentOverview = () => {
                   />
                 </>
               ) : (
-                <Problem type="no_data" noBorder />
+                <Box marginTop={2}>
+                  <Problem
+                    type="no_data"
+                    title={formatMessage(messages.searchResultsEmpty)}
+                    message={formatMessage(messages.searchResultsEmptyDetail)}
+                    titleSize="h3"
+                    noBorder={false}
+                    tag={undefined}
+                  />
+                </Box>
               )}
             </Box>
           </Stack>

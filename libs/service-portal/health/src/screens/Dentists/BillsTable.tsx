@@ -5,7 +5,7 @@ import {
   amountFormat,
   DownloadFileButtons,
 } from '@island.is/service-portal/core'
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { Box, LoadingDots, Table as T, Text } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { RightsPortalDentistBill } from '@island.is/api/schema'
 import { exportDentistFile } from '../../utils/FileBreakdown'
@@ -13,6 +13,7 @@ import { Problem } from '@island.is/react-spa/shared'
 
 interface Props {
   bills: Array<RightsPortalDentistBill>
+  loading?: boolean
 }
 
 type TotalBills = {
@@ -20,11 +21,11 @@ type TotalBills = {
   totalCovered: number
 }
 
-const BillsTable = ({ bills }: Props) => {
+const BillsTable = ({ bills, loading = false }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
-  if (!bills.length) {
+  if (!bills.length && !loading) {
     return (
       <Box marginTop={2}>
         <Problem
@@ -52,6 +53,7 @@ const BillsTable = ({ bills }: Props) => {
 
   return (
     <Box marginTop="containerGutter">
+      {loading && <LoadingDots />}
       <T.Table>
         <T.Head>
           <T.Row>

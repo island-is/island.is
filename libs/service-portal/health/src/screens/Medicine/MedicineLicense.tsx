@@ -12,6 +12,7 @@ import { SECTION_GAP } from './constants'
 import { ActionCard, m } from '@island.is/service-portal/core'
 import { HealthPaths } from '../../lib/paths'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const MedicineLicense = () => {
   const { formatMessage } = useLocale()
@@ -27,10 +28,11 @@ export const MedicineLicense = () => {
         <Text>{formatMessage(messages.medicineCalculatorIntroText)}</Text>
       </Box>
       {error ? (
-        <AlertMessage
-          type="error"
-          title={formatMessage(m.errorTitle)}
-          message={formatMessage(m.errorFetch)}
+        <Problem
+          size="small"
+          noBorder={false}
+          type="internal_service_error"
+          error={error}
         />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} />

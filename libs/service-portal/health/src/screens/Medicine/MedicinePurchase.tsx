@@ -37,6 +37,7 @@ import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { exportMedicineFile } from '../../utils/FileBreakdown'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const MedicinePurchase = () => {
   useNamespaces('sp.health')
@@ -59,7 +60,7 @@ export const MedicinePurchase = () => {
   const [bills, setBills] = useState<RightsPortalDrugBill[] | null>(null)
   const [billsLoading, setBillsLoading] = useState<boolean>(false)
 
-  const { data, loading } = useGetDrugsDataQuery()
+  const { data, loading, error } = useGetDrugsDataQuery()
 
   const [getPaymentPeriodsQuery] = useGetDrugsBillsLazyQuery()
 
@@ -101,7 +102,17 @@ export const MedicinePurchase = () => {
         </Text>
         <Text>{formatMessage(messages.medicinePurchaseIntroText)}</Text>
       </Box>
-      {loading && (
+      {error && !loading && (
+        <Box marginBottom={SECTION_GAP}>
+          <Problem
+            size="small"
+            noBorder={false}
+            type="internal_service_error"
+            error={error}
+          />
+        </Box>
+      )}
+      {!error && loading && (
         <Box marginBottom={CONTENT_GAP}>
           <SkeletonLoader
             repeat={4}
@@ -111,7 +122,7 @@ export const MedicinePurchase = () => {
           />
         </Box>
       )}
-      {!!data?.rightsPortalDrugPeriods?.length && (
+      {!error && !loading && !!data?.rightsPortalDrugPeriods?.length && (
         <Box display="flex" flexDirection="column">
           <Box
             display="flex"

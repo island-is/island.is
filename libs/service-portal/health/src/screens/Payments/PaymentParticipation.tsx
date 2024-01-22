@@ -69,10 +69,11 @@ export const PaymentPartication = () => {
   if (error) {
     return (
       <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
-        <AlertMessage
-          type="error"
-          title={formatMessage(m.errorTitle)}
-          message={formatMessage(m.errorNoConnection)}
+        <Problem
+          size="small"
+          noBorder={false}
+          type="internal_service_error"
+          error={error}
         />
       </PaymentsWrapper>
     )
@@ -154,7 +155,7 @@ export const PaymentPartication = () => {
               />
             </Box>
           </Box>
-          {(periods?.rightsPortalCopaymentPeriods?.items.length ?? 0) > 0 && (
+          {(periods?.rightsPortalCopaymentPeriods?.items.length ?? 0) > 0 ? (
             <T.Table>
               <ExpandHeader
                 data={[
@@ -346,6 +347,17 @@ export const PaymentPartication = () => {
                   )}
               </T.Body>
             </T.Table>
+          ) : (
+            <Box marginTop={2}>
+              <Problem
+                type="no_data"
+                title={formatMessage(messages.searchResultsEmpty)}
+                message={formatMessage(messages.searchResultsEmptyDetail)}
+                titleSize="h3"
+                noBorder={false}
+                tag={undefined}
+              />
+            </Box>
           )}
         </Box>
       )}

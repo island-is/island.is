@@ -68,7 +68,7 @@ const Dentists = () => {
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
-      {error && (
+      {error && !loading && (
         <Problem
           size="small"
           noBorder={false}
@@ -152,7 +152,7 @@ const Dentists = () => {
               })}
             />
           </Inline>
-          <BillsTable bills={history ?? []} />
+          <BillsTable bills={history ?? []} loading={loading} />
         </Stack>
       )}
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
