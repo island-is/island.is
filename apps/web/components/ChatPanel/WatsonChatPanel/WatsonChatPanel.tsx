@@ -21,7 +21,7 @@ declare global {
       serviceDesk: {
         skipConnectAgentCard: boolean
       }
-      onLoad: (insance: WatsonInstance) => void
+      onLoad: (instance: WatsonInstance) => void
     }
   }
 }
