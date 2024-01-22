@@ -25,6 +25,7 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
       court: makeCourt(),
       judge: makeJudge(),
       defendants: [defendant1, defendant2],
+      prosectorsOffice: makeProsecutor().institution,
     }
 
     cy.stubAPIResponses()

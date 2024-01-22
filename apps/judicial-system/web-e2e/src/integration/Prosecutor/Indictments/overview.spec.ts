@@ -19,6 +19,7 @@ describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id`, () => {
       ...caseData,
       prosecutor: makeProsecutor(),
       creatingProsecutor: makeProsecutor(),
+      prosecutorsOffice: makeProsecutor().institution,
       court: makeCourt(),
     }
 
@@ -44,6 +45,7 @@ describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id submitted`, () => {
       courtCaseNumber: 'S-test/2023',
       prosecutor: makeProsecutor(),
       creatingProsecutor: makeProsecutor(),
+      prosectorsOffice: makeProsecutor().institution,
       court: makeCourt(),
     }
 

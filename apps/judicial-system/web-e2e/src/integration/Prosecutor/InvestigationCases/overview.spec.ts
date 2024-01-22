@@ -36,6 +36,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     state: CaseState.SUBMITTED,
     prosecutor: makeProsecutor(),
     creatingProsecutor: makeProsecutor(),
+    prosecutorsOffice: makeProsecutor().institution,
     requestedCourtDate: '2020-09-20T19:50:08.033Z',
   }
 

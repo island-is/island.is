@@ -108,16 +108,15 @@ export const ProsecutorCaseInfo: React.FC<
 export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
 }) => {
-  const { courtCaseNumber, prosecutor } = workingCase
   const { formatMessage } = useIntl()
 
   return (
     <Box component="section" marginBottom={5}>
-      {courtCaseNumber && (
+      {workingCase.courtCaseNumber && (
         <Box marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
-              caseNumber: courtCaseNumber,
+              caseNumber: workingCase.courtCaseNumber,
             })}
           </Text>
         </Box>
@@ -133,10 +132,10 @@ export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
         </Box>
       ) : (
         <>
-          {prosecutor?.institution?.name && (
+          {workingCase.prosecutorsOffice && (
             <Entry
               label={formatMessage(core.prosecutor)}
-              value={prosecutor.institution.name}
+              value={workingCase.prosecutorsOffice.name}
             />
           )}
           <Defendants workingCase={workingCase} />

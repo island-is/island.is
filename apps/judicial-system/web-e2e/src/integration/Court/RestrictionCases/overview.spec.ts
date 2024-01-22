@@ -30,6 +30,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
       prosecutor: makeProsecutor(),
+      prosecutorsOffice: makeProsecutor().institution,
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       arrestDate: '2020-09-16T19:50:08.033Z',
       state: CaseState.RECEIVED,

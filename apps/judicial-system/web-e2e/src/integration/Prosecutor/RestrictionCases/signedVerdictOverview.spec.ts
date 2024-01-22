@@ -27,6 +27,7 @@ describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
       state: CaseState.ACCEPTED,
       validToDate: '2022-06-16T19:51:39.466Z',
       creatingProsecutor: prosecutor,
+      prosecutorsOffice: prosecutor.institution,
       caseFiles: [caseFile],
     }
 

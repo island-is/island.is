@@ -28,6 +28,7 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
       ...caseData,
       creatingProsecutor,
       prosecutor,
+      prosecutorsOffice: creatingProsecutor.institution,
       state: CaseState.RECEIVED,
       caseFiles: [
         makeCaseFile({ caseId: caseData.id, name: 'test.pdf' }),
