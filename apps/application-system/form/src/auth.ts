@@ -47,6 +47,7 @@ if (userMocked) {
       ApiScope.carRecycling,
       ApiScope.energyFunds,
       ApiScope.vinnueftirlitid,
+      ApiScope.signatureCollection,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',
