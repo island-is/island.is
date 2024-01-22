@@ -60,10 +60,6 @@ const Dentists = () => {
     }
   }, [dentist?.name, dentist?.id])
 
-  if (error) {
-    return <Problem type="internal_service_error" error={error} />
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -72,10 +68,31 @@ const Dentists = () => {
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
+      {error && (
+        <Problem
+          size="small"
+          noBorder={false}
+          type="internal_service_error"
+          error={error}
+        />
+      )}
 
-      {!loading && !dentist && <Problem type="no_data" />}
+      {!error && !loading && !dentist && (
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.noDataFoundMasculine, {
+            arg: formatMessage(messages.dentistsTitle).toLowerCase(),
+          })}
+          message={formatMessage(messages.noDataFoundDetail, {
+            arg: formatMessage(messages.dentistsTitleVariation).toLowerCase(),
+          })}
+          imgSrc="./assets/images/coffee.svg"
+          titleSize="h3"
+          noBorder={false}
+        />
+      )}
 
-      {wasSuccessfulTransfer && !loading && (
+      {!error && wasSuccessfulTransfer && !loading && (
         <Box width="full" marginTop={4} marginBottom={4}>
           <AlertMessage
             type="success"
@@ -86,7 +103,6 @@ const Dentists = () => {
           />
         </Box>
       )}
-
       {dentistName && dentistId && (
         <Stack space={2}>
           <UserInfoLine
@@ -139,7 +155,6 @@ const Dentists = () => {
           <BillsTable bills={history ?? []} />
         </Stack>
       )}
-
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
     </Box>
   )

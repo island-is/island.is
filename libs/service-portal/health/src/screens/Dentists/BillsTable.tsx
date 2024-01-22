@@ -9,7 +9,7 @@ import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { RightsPortalDentistBill } from '@island.is/api/schema'
 import { exportDentistFile } from '../../utils/FileBreakdown'
-import { SECTION_GAP } from '../Medicine/constants'
+import { Problem } from '@island.is/react-spa/shared'
 
 interface Props {
   bills: Array<RightsPortalDentistBill>
@@ -26,8 +26,15 @@ const BillsTable = ({ bills }: Props) => {
 
   if (!bills.length) {
     return (
-      <Box display="flex" justifyContent="center">
-        <Text>{formatMessage(m.noSearchResults)}</Text>
+      <Box marginTop={2}>
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.searchResultsEmpty)}
+          message={formatMessage(messages.searchResultsEmptyDetail)}
+          titleSize="h3"
+          noBorder={false}
+          tag={undefined}
+        />
       </Box>
     )
   }

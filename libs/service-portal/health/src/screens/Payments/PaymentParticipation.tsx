@@ -116,10 +116,6 @@ export const PaymentPartication = () => {
         <Box marginBottom={4}>
           <Problem
             type="no_data"
-            title={'Engin greiðsluþáttaka skráð'}
-            message={
-              'Ef þú telur að þú eigir að vera með skráða greiðsluþáttöku, vinsamlegast hafðu samband við þjónustuaðila.'
-            }
             imgSrc="./assets/images/coffee.svg"
             titleSize="h3"
             noBorder={false}

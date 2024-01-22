@@ -55,7 +55,12 @@ const AidsAndNutrition = () => {
       />
 
       {error && (
-        <Problem noBorder={false} type="internal_service_error" error={error} />
+        <Problem
+          size="small"
+          noBorder={false}
+          type="internal_service_error"
+          error={error}
+        />
       )}
 
       {loading && !error && <SkeletonLoader space={1} height={30} repeat={4} />}
@@ -64,12 +69,10 @@ const AidsAndNutrition = () => {
         <Problem
           type="no_data"
           title={formatMessage(messages.noDataFound, {
-            arg: formatMessage(messages.paymentParticipation).toLowerCase(),
+            arg: formatMessage(messages.aidsOrNutrition).toLowerCase(),
           })}
-          message={formatMessage(messages.noDataFoundDetail, {
-            arg: formatMessage(
-              messages.paymentParticipationVariation,
-            ).toLowerCase(),
+          message={formatMessage(messages.noDataFoundDetailVariation, {
+            arg: formatMessage(messages.aidsOrNutritionVariation).toLowerCase(),
           })}
           imgSrc="./assets/images/coffee.svg"
           titleSize="h3"
