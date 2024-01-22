@@ -30,7 +30,7 @@ export const GetCurrentCollection = gql`
 `
 export const GetOpenLists = gql`
   query allOpenLists {
-    signatureCollectionAllLists {
+    signatureCollectionAllOpenLists {
       id
       title
       area {
@@ -68,7 +68,7 @@ export const useGetCurrentCollection = () => {
 export const useGetOpenLists = () => {
   const { data, loading } = useQuery<Query>(GetOpenLists)
   const openLists =
-    data?.signatureCollectionAllLists as SignatureCollectionList[]
+    data?.signatureCollectionAllOpenLists as SignatureCollectionList[]
 
   return { openLists, loading }
 }

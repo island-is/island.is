@@ -45,8 +45,8 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.current()
   }
 
-  @BypassAuth()
   @Query(() => [SignatureCollectionList])
+  @Audit()
   async signatureCollectionAllLists(): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allLists()
   }
