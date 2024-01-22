@@ -151,7 +151,9 @@ export class CacheInvalidationService {
         const response = responses[i]
         const url = promises[i].url
         if (response.status === 'fulfilled') {
-          logger.info(`Received response for: ${url}`, response.value)
+          ;(response.value as Response).text().then((value) => {
+            logger.info(`Received response for: ${url}`, value)
+          })
           successfulCacheInvalidationCount += 1
         } else {
           failedCacheInvalidationReasons.push({
