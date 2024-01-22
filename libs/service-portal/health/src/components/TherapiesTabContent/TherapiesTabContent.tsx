@@ -38,10 +38,21 @@ export const TherapiesTabContent = ({
   let dropDownOptions
 
   if (!loading && !data.length) {
-    return <Problem type="no_data" />
+    return (
+      <Problem
+        type="no_data"
+        title={formatMessage(messages.noDataFound, {
+          arg: formatMessage(messages.therapyTitle).toLowerCase(),
+        })}
+        message={formatMessage(messages.noDataFoundDetail, {
+          arg: formatMessage(messages.therapyTitle).toLowerCase(),
+        })}
+        imgSrc="./assets/images/coffee.svg"
+        titleSize="h3"
+        noBorder={false}
+      />
+    )
   }
-
-  console.log(data)
 
   if (data.length > 1) {
     // Sjúkraþjálfun with more subtherapies, display dropdown

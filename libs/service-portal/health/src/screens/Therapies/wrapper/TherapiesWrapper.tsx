@@ -10,10 +10,12 @@ import {
 } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
+import { ApolloError } from '@apollo/client'
+import { Problem } from '@island.is/react-spa/shared'
 
 type Props = {
   children: React.ReactNode
-  error: boolean
+  error?: ApolloError
   loading: boolean
   pathname?: string
 }
@@ -25,20 +27,6 @@ export const TherapiesWrapper = ({
   pathname,
 }: Props) => {
   const { formatMessage } = useLocale()
-
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.therapies).toLowerCase(),
-        })}
-      />
-    )
-  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -56,6 +44,16 @@ export const TherapiesWrapper = ({
             ?.children ?? []
         }
       />
+      {error && !loading && (
+        <Box paddingY={4}>
+          <Problem
+            size="small"
+            noBorder={false}
+            type="internal_service_error"
+            error={error}
+          />
+        </Box>
+      )}
       <Box paddingY={4}>
         {!loading && !error && !children && (
           <Box marginTop={8}>

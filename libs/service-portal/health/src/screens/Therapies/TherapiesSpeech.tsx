@@ -24,7 +24,7 @@ const Therapies = () => {
   return (
     <TherapiesWrapper
       loading={loading}
-      error={!!error}
+      error={error}
       pathname={HealthPaths.HealthTherapiesSpeech}
     >
       <TherapiesTabContent

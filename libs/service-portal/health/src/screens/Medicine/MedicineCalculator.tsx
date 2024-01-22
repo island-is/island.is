@@ -23,11 +23,11 @@ import {
   RightsPortalDrugCalculatorResponse,
 } from '@island.is/api/schema'
 import * as styles from './Medicine.css'
-import { EmptyTable } from '@island.is/service-portal/core'
 import { DrugRow } from './components/DrugRow/DrugRow'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { EmptyTable } from '@island.is/service-portal/core'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8

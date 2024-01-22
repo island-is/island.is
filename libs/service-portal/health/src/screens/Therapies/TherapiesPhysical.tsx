@@ -40,7 +40,7 @@ const Therapies = () => {
   return (
     <TherapiesWrapper
       loading={loading}
-      error={!!error}
+      error={error}
       pathname={HealthPaths.HealthTherapiesPhysical}
     >
       <TherapiesTabContent
