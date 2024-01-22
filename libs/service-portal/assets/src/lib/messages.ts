@@ -950,6 +950,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:application-number',
     defaultMessage: 'Umsóknarnúmer',
   },
+  maxValidDate: {
+    id: 'sp.intellectual-property:max-valid-date',
+    defaultMessage: 'Hámarksgilditími',
+  },
   maxValidObjectionDate: {
     id: 'sp.intellectual-property:max-valid-objection-date',
     defaultMessage: 'Andmælafrestur',

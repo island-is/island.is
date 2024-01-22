@@ -163,6 +163,11 @@ export class IntellectualPropertiesService {
     )
 
     const patent = response[0]
+
+    if (!patent) {
+      return null
+    }
+
     const name = patent.patentName || patent.patentNameInOrgLanguage
 
     if (!patent.applicationNumber || !name) {
