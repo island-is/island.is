@@ -23,7 +23,6 @@ import {
   CaseAppealState,
   CaseFile,
   CaseFileCategory,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
