@@ -10,10 +10,11 @@ import {
   IconMapIcon,
   useBoxStyles,
 } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 import * as styles from './ContextMenu.css'
 
-export interface DropdownMenuProps {
+export interface ContextMenuProps {
   // Aria label for menu
   menuLabel: string
 
@@ -30,13 +31,16 @@ export interface DropdownMenuProps {
 
   // Custom element to be used as the menu button
   disclosure?: ReactElement
+
+  // Space between menu and button
+  offset?: [string | number, string | number]
 }
 
-const ContextMenu = forwardRef<HTMLElement, DropdownMenuProps>(
-  ({ disclosure, menuLabel, items, title }, ref) => {
+const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
+  ({ disclosure, menuLabel, items, title, dataTestId, offset }, ref) => {
     const menu = useMenuState({
       placement: 'bottom-end',
-      unstable_offset: [0, 4],
+      unstable_offset: offset ?? [0, 4],
     })
 
     const menuBoxStyle = useBoxStyles({
@@ -64,13 +68,18 @@ const ContextMenu = forwardRef<HTMLElement, DropdownMenuProps>(
     return (
       <>
         {disclosure ? (
-          <MenuButton ref={ref} {...menu} {...disclosure.props}>
+          <MenuButton
+            ref={ref}
+            {...menu}
+            {...disclosure.props}
+            dataTestId={dataTestId}
+          >
             {(disclosureProps) =>
               React.cloneElement(disclosure, disclosureProps)
             }
           </MenuButton>
         ) : (
-          <MenuButton as={Button} variant="utility" icon="add" {...menu}>
+          <MenuButton as={Button} icon="add" {...menu} dataTestId={dataTestId}>
             {title}
           </MenuButton>
         )}

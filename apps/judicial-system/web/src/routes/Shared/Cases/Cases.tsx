@@ -18,7 +18,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
-  DropdownMenu,
+  ContextMenu,
   Logo,
   PageHeader,
   SectionHeading,
@@ -87,12 +87,12 @@ const CreateCaseButton: React.FC<
 
   return (
     <Box display={['none', 'none', 'block']}>
-      <DropdownMenu
+      <ContextMenu
         dataTestId="createCaseDropdown"
         menuLabel="Tegund kröfu"
-        icon="add"
         items={items}
         title={formatMessage(m.createCaseButton)}
+        offset={[0, 8]}
       />
     </Box>
   )
