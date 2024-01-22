@@ -1,8 +1,11 @@
-import React from 'react'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+import React, { useMemo } from 'react'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
 import * as styles from './SAkHeader.css'
 
 interface HeaderProps {
@@ -13,11 +16,31 @@ const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
 
   return (
-    <Box className={styles.headerBg}>
-      <Box className={styles.headerWrapper}>
+    <div className={styles.headerBg}>
+      <div className={styles.headerWrapper}>
+        <Hidden below="lg">
+          <div className={styles.headerBgImageWrapper}>
+            <img
+              src={n(
+                `sakHeaderBgImage`,
+                'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
+              )}
+              alt=""
+              className={styles.headerBgImage}
+            />
+          </div>
+        </Hidden>
         <SidebarLayout
+          hiddenOnTablet={true}
+          fullWidthContent={true}
+          paddingTop={[0, 0, 0, 8]}
           sidebarContent={
             !!organizationPage.organization?.logo && (
               <Link
@@ -36,7 +59,7 @@ const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
           }
         >
           {!!organizationPage.organization?.logo && (
-            <Hidden above="sm">
+            <Hidden above="md">
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -51,23 +74,25 @@ const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
               </Link>
             </Hidden>
           )}
+
           <Box
-            className={styles.title}
-            textAlign={['center', 'center', 'left']}
+            marginTop={[2, 2, 2, 6]}
+            textAlign={['center', 'center', 'center', 'left']}
           >
             <Link
+              className={styles.titleWrapper}
               href={
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
               <Text variant="h1" as="h1" color="white">
-                {organizationPage.title}
+                <span className={styles.title}>{organizationPage.title}</span>
               </Text>
             </Link>
           </Box>
         </SidebarLayout>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 
