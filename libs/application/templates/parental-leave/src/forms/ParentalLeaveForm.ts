@@ -984,11 +984,24 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.file',
-              title: parentalLeaveFormMessages.attachmentScreen.title,
+              id: 'fileUpload.employmentTerminationCertificateFile',
+              title:
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateTitle,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen.description,
-              maxSize: FILE_SIZE_LIMIT,
+                parentalLeaveFormMessages.attachmentScreen
+                  .employmentTerminationCertificateDescription,
+              condition: (answers) => {
+                const { applicationType, employerLastSixMonths, isNotStillEmployed } =
+                  getApplicationAnswers(answers)
+
+                return (
+                  (applicationType === PARENTAL_GRANT ||
+                    applicationType === PARENTAL_GRANT_STUDENTS) &&
+                  employerLastSixMonths === YES &&
+                  isNotStillEmployed === true
+                )
+              },
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',
@@ -999,28 +1012,11 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUpload.employmentTerminationCertificateFile',
-              title:
-                parentalLeaveFormMessages.attachmentScreen
-                  .employmentTerminationCertificateTitle,
+              id: 'fileUpload.file',
+              title: parentalLeaveFormMessages.attachmentScreen.title,
               introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .employmentTerminationCertificateDescription,
-              condition: (answers) => {
-                const { applicationType, employerLastSixMonths, employers } =
-                  getApplicationAnswers(answers)
-
-                const isNotStillEmployed = employers?.some(
-                  (employer) => employer.stillEmployed === NO,
-                )
-
-                return (
-                  (applicationType === PARENTAL_GRANT ||
-                    applicationType === PARENTAL_GRANT_STUDENTS) &&
-                  employerLastSixMonths === YES &&
-                  isNotStillEmployed
-                )
-              },
+                parentalLeaveFormMessages.attachmentScreen.description,
+              maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
               uploadAccept: '.pdf',

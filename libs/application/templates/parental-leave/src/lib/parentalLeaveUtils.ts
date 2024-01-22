@@ -807,10 +807,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
       } as EmployerRow)
     }
   }
+
   const employerLastSixMonths = getValueViaPath(
     answers,
     'employerLastSixMonths',
   ) as YesOrNo
+
+  const isNotStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === NO,
+  )
 
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
@@ -991,6 +996,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUsage,
     employers,
     employerLastSixMonths,
+    isNotStillEmployed,
     employerNationalRegistryId,
     employerReviewerNationalRegistryId,
     shareInformationWithOtherParent,
@@ -1666,6 +1672,14 @@ export const synchronizeVMSTPeriods = (
     }
   }
 }
+
+// export const isNotStillEmployed = (application: Application) => {
+//   const { employers } = getApplicationAnswers(application.answers)
+
+//   return employers?.some(
+//     (employer) => employer.stillEmployed === NO,
+//   )
+// }
 
 export const isParentalGrant = (application: Application) => {
   const { applicationType } = getApplicationAnswers(application.answers)

@@ -28,8 +28,8 @@ const {
 } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
-  [EMPLOYER]: employerValidationSection,
-  [FILEUPLOAD]: fileUploadValidationSection,
+  //[EMPLOYER]: employerValidationSection,
+  //[FILEUPLOAD]: fileUploadValidationSection,
   [MULTIPLE_BIRTHS]: multipleBirthValidationSection,
   [OTHER_PARENT]: otherParentValidationSection,
   [OTHER_PARENT_EMAIL]: otherParentEmailValidationSection,
@@ -38,5 +38,5 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PAYMENTS]: paymentsValidationSection,
   [VALIDATE_LATEST_PERIOD]: validateLatestPeriodValidationSection,
   [VALIDATE_PERIODS]: validatePeriodsValidationSection,
-  [EMPLOYERS]: validateLatestEmployerValidationSection,
+  //[EMPLOYERS]: validateLatestEmployerValidationSection,
 }
