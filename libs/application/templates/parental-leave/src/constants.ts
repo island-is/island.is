@@ -100,8 +100,6 @@ export enum AnswerValidationConstants {
   PAYMENTS = 'payments',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',
-  // Check Multiple_Births
-  MULTIPLE_BIRTHS = 'multipleBirths',
   // When attempting to continue from the periods repeater main screen
   // this validator will get called to validate all of the periods
   VALIDATE_PERIODS = 'validatedPeriods',

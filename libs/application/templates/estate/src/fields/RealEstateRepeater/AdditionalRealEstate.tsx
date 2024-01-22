@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
