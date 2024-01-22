@@ -23,7 +23,7 @@ import {
   RightsPortalDrugCalculatorResponse,
 } from '@island.is/api/schema'
 import * as styles from './Medicine.css'
-import { EmptyTable } from './components/EmptyTable/EmptyTable'
+import { EmptyTable } from '@island.is/service-portal/core'
 import { DrugRow } from './components/DrugRow/DrugRow'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
