@@ -75,7 +75,7 @@ const CandidateView = () => {
                       new Date(list.endTime) < new Date()
                         ? {
                             label: formatMessage(m.collectionClosed),
-                            variant: 'purple',
+                            variant: 'red',
                             outlined: true,
                           }
                         : undefined
