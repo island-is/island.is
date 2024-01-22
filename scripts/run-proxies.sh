@@ -47,6 +47,21 @@ containerer() {
   cmd $builder_cmd "$@"
 }
 
+print_usage() {
+  echo "Usage: $0 [options] [proxy...]"
+  echo "Options:"
+  echo "  -h, --help            Show this help message"
+  echo "  -f, --force           Remove any existing containers every time"
+  echo "  -s, --remove-containers-on-start"
+  echo "                        Remove containers on start"
+  echo "  -x, --remove-containers-on-fail"
+  echo "                        Remove containers on fail"
+  echo "  -i, --interval        Restart interval (default: 1)"
+  echo "  -r, --restart-max-retries"
+  echo "                        Max number of restart retries (default: 3)"
+  echo "  -n, --dry             Dry run"
+}
+
 parse_cli() {
   while [ $# -gt 0 ]; do
     local arg="$1"
@@ -82,10 +97,23 @@ parse_cli() {
       RESTART_INTERVAL_TIME="${opt}"
       shift
       ;;
+    -r | --restart-max-retries)
+      RESTART_MAX_RETRIES="${opt}"
+      shift
+      ;;
+
+    -n | --dry)
+      DRY=true
+      ;;
+
     --)
       shift
       ARGS+=("$@")
       break
+      ;;
+    -h | --help)
+      print_usage
+      exit 0
       ;;
     *)
       PROXIES+=("$arg")
