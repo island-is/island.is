@@ -20,6 +20,9 @@ export const iconCircle = style({
   alignItems: 'center',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
   ...themeUtils.responsiveStyle({
+    xs: {
+      margin: '32px auto 0',
+    },
     md: {
       marginTop: 32,
       paddingTop: 0,
@@ -57,7 +60,6 @@ export const navigation = style({
 })
 
 export const title = style({
-  color: '#FFFFFF',
   ...themeUtils.responsiveStyle({
     lg: {
       display: 'block',

@@ -87,7 +87,7 @@ const SAKHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" as="h1" color="blue600" fontWeight="semiBold">
+              <Text variant="h1" as="h1" color="white">
                 <span className={styles.title}>{organizationPage.title}</span>
               </Text>
             </Link>
