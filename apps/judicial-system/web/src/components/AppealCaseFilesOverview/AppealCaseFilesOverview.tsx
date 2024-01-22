@@ -181,7 +181,7 @@ const AppealCaseFilesOverview: React.FC<
                               icon: 'trash',
                             },
                           ]}
-                          menuLabel="asd"
+                          menuLabel="Opna valmöguleika á skjali"
                           disclosure={
                             <IconButton
                               icon="ellipsisVertical"
