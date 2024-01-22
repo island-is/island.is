@@ -574,6 +574,7 @@ export const PrerequisitesForm: Form = buildForm({
                   id: 'selectedChild',
                   title:
                     parentalLeaveFormMessages.selectChild.screenDescription,
+                  required: true,
                   options: (application) => {
                     return getChildrenOptions(application)
                   },
