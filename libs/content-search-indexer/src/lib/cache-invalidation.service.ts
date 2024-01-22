@@ -138,17 +138,28 @@ export class CacheInvalidationService {
 
     const bypassSecret = environment.bypassCacheSecret
 
-    const promises: Promise<unknown>[] = []
+    const promises: { url: string; promise: Promise<unknown> }[] = []
     let successfulCacheInvalidationCount = 0
-    const failedCacheInvalidationReasons = []
+    const failedCacheInvalidationReasons: { url: string; reason: unknown }[] =
+      []
 
     const handleRequests = async () => {
-      const responses = await Promise.allSettled(promises)
-      for (const response of responses) {
+      const responses = await Promise.allSettled(
+        promises.map(({ promise }) => promise),
+      )
+      for (let i = 0; i < responses.length; i += 1) {
+        const response = responses[i]
+        const url = promises[i].url
         if (response.status === 'fulfilled') {
+          ;(response.value as Response).text().then((value) => {
+            logger.info(`Received response for: ${url}`, value)
+          })
           successfulCacheInvalidationCount += 1
         } else {
-          failedCacheInvalidationReasons.push(response.reason)
+          failedCacheInvalidationReasons.push({
+            url,
+            reason: response.reason,
+          })
         }
       }
       promises.length = 0
@@ -182,7 +193,14 @@ export class CacheInvalidationService {
 
       for (const urlWithoutPostfix of urls) {
         const url = `${urlWithoutPostfix}?bypass-cache=${bypassSecret}`
-        promises.push(fetch(url))
+        promises.push({
+          url: urlWithoutPostfix,
+          promise: fetch(url, {
+            headers: {
+              'Cache-Control': 'no-cache',
+            },
+          }),
+        })
         logger.info(`Invalidating: ${urlWithoutPostfix}`)
         if (promises.length > MAX_REQUEST_COUNT) {
           await handleRequests()
