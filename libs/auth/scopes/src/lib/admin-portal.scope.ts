@@ -7,9 +7,11 @@ export enum AdminPortalScope {
   icelandicNamesRegistry = '@admin.island.is/icelandic-names-registry',
   documentProvider = '@admin.island.is/document-provider',
   applicationSystem = '@admin.island.is/application-system',
+  applicationSystemInstitution = '@admin.island.is/application-system:institution',
   idsAdmin = '@admin.island.is/auth',
   idsAdminSuperUser = '@admin.island.is/auth:admin',
   petitionsAdmin = '@admin.island.is/petitions',
   serviceDesk = '@admin.island.is/service-desk',
-  signatureCollection = '@admin.island.is/signature-collection',
+  signatureCollectionProcess = '@admin.island.is/signature-collection:process',
+  signatureCollectionManage = '@admin.island.is/signature-collection:manage',
 }

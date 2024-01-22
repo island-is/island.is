@@ -65,7 +65,14 @@ const Sidemenu = ({
           isMobile ? styles.fullScreen : styles.dropdown,
           styles.container,
         )}
-        style={!isMobile ? { right: rightPosition } : undefined}
+        style={
+          !isMobile
+            ? {
+                left: rightPosition ?? '75%', // 75% represents a somewhat correct position of the sidebar if the calculation of getBoundingClientRect fails
+                transform: 'translateX(-100%)',
+              }
+            : undefined
+        }
       >
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
           <Box

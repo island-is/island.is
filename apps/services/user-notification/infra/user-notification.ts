@@ -1,7 +1,14 @@
+import {
+  Base,
+  Client,
+  NationalRegistry,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
+const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const dbName = `${serviceName.replace('-', '_')}`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
@@ -13,9 +20,9 @@ const postgresInfo = {
   passwordSecret: `/k8s/${serviceName}/DB_PASSWORD`,
 }
 
-export const userNotificationServiceSetup = (): ServiceBuilder<
-  typeof serviceName
-> =>
+export const userNotificationServiceSetup = (services: {
+  userProfileApi: ServiceBuilder<typeof serviceWorkerName>
+}): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(imageName)
     .namespace(serviceName)
@@ -31,11 +38,19 @@ export const userNotificationServiceSetup = (): ServiceBuilder<
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      USER_PROFILE_CLIENT_URL: ref(
+        (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
+      ),
     })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
+      IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
+    .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/readiness')
     .ingress({
@@ -65,11 +80,11 @@ export const userNotificationServiceSetup = (): ServiceBuilder<
     })
     .resources({
       limits: {
-        cpu: '200m',
+        cpu: '400m',
         memory: '384Mi',
       },
       requests: {
-        cpu: '15m',
+        cpu: '150m',
         memory: '256Mi',
       },
     })
@@ -92,12 +107,13 @@ export const userNotificationWorkerSetup = (services: {
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
-      IDENTITY_SERVER_PATH: {
+      EMAIL_REGION: 'eu-west-1',
+      IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      SERVICE_USER_PROFILE_BASEPATH: ref(
+      USER_PROFILE_CLIENT_URL: ref(
         (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
       ),
       USER_NOTIFICATION_APP_PROTOCOL: {
@@ -111,11 +127,44 @@ export const userNotificationWorkerSetup = (services: {
         prod: 'cdn.contentful.com',
       },
     })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '150m',
+        memory: '256Mi',
+      },
+    })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
-      USER_NOTIFICATION_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
-      USER_NOTIFICATION_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
+      IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
+    .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/readiness')
+
+export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
+  typeof serviceCleanupWorkerName
+> =>
+  service(serviceCleanupWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceCleanupWorkerName)
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
+    .postgres(postgresInfo)
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: postgresInfo,
+    })
+    .extraAttributes({
+      dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })

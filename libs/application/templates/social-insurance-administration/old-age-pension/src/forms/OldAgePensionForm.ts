@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -22,19 +21,13 @@ import {
   FormValue,
   NO,
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
   YES,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import {
-  ApplicationType,
-  Employment,
-  RatioType,
-  maritalStatuses,
-} from '../lib/constants'
+import { ApplicationType, Employment, RatioType } from '../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -55,7 +48,7 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {
   BankAccountType,
-  FILE_SIZE_LIMIT,
+  fileUploadSharedProps,
   IS,
   MONTHS,
   TaxLevelOptions,
@@ -78,16 +71,15 @@ export const OldAgePensionForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'info',
-          title:
-            oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
               title:
-                oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle,
+                socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
               description:
-                oldAgePensionFormMessage.applicant
-                  .applicantInfoSubSectionDescription,
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.name',
@@ -177,78 +169,6 @@ export const OldAgePensionForm: Form = buildForm({
                       .socialInsuranceAdministrationApplicant
                       .data as ApplicantInfo
                     return data.phoneNumber
-                  },
-                }),
-                buildDescriptionField({
-                  id: 'applicantInfo.descriptionField',
-                  space: 'containerGutter',
-                  titleVariant: 'h5',
-                  title:
-                    oldAgePensionFormMessage.applicant
-                      .applicantInfoMaritalTitle,
-                  condition: (_, externalData) => {
-                    const { hasSpouse } =
-                      getApplicationExternalData(externalData)
-                    if (hasSpouse) return true
-                    return false
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.maritalStatus',
-                  title:
-                    oldAgePensionFormMessage.applicant
-                      .applicantInfoMaritalStatus,
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
-                    return maritalStatuses[data.maritalStatus]
-                  },
-                  condition: (_, externalData) => {
-                    const { maritalStatus } =
-                      getApplicationExternalData(externalData)
-                    if (maritalStatus) return true
-                    return false
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.spouseName',
-                  title:
-                    oldAgePensionFormMessage.applicant.applicantInfoSpouseName,
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
-                    return data.name
-                  },
-                  condition: (_, externalData) => {
-                    const { spouseName } =
-                      getApplicationExternalData(externalData)
-                    if (spouseName) return true
-                    return false
-                  },
-                }),
-                buildTextField({
-                  id: 'applicantInfo.spouseID',
-                  title:
-                    socialInsuranceAdministrationMessage.confirm.nationalId,
-                  format: '######-####',
-                  width: 'half',
-                  backgroundColor: 'white',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouse
-                    return kennitala.format(data.nationalId)
-                  },
-                  condition: (_, externalData) => {
-                    const { spouseNationalId } =
-                      getApplicationExternalData(externalData)
-                    if (spouseNationalId) return true
-                    return false
                   },
                 }),
               ],
@@ -645,21 +565,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.selfEmployedDescription,
               introduction:
                 oldAgePensionFormMessage.fileUpload.selfEmployedDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
               condition: (answers) => {
                 const { employmentStatus } = getApplicationAnswers(answers)
 
@@ -704,7 +610,6 @@ export const OldAgePensionForm: Form = buildForm({
                       title: '',
                       width: 'half',
                       space: 3,
-                      required: true,
                       options: [
                         {
                           value: RatioType.YEARLY,
@@ -754,7 +659,7 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [
         // Period is from 65 year old birthday or last
         // 2 years if applicant is 67+ to 6 month ahead
@@ -821,21 +726,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
               introduction:
                 oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
               condition: (answers, externalData) => {
                 return isEarlyRetirement(answers, externalData)
               },
@@ -853,21 +744,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.pensionFileDescription,
               introduction:
                 oldAgePensionFormMessage.fileUpload.pensionFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
             }),
           ],
         }),
@@ -886,21 +763,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
               introduction:
                 oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+              ...fileUploadSharedProps,
               condition: (answers) => {
                 const { applicationType } = getApplicationAnswers(answers)
 
@@ -926,24 +789,12 @@ export const OldAgePensionForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.fileUpload
                   .additionalFileTitle,
               description:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+                socialInsuranceAdministrationMessage.fileUpload
+                  .additionalFileDescription,
               introduction:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
                 socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentHeader,
-              uploadDescription:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentDescription,
-              uploadButtonLabel:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .attachmentButton,
-              uploadMultiple: true,
+                  .additionalFileDescription,
+              ...fileUploadSharedProps,
             }),
           ],
         }),

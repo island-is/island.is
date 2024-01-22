@@ -65,7 +65,7 @@ export class ElasticService {
   }
 
   // this can partially succeed
-  async bulk(index: string, documents: SyncRequest) {
+  async bulk(index: string, documents: SyncRequest, refresh = false) {
     logger.info('Processing documents', {
       index,
       added: documents.add.length,
@@ -103,10 +103,14 @@ export class ElasticService {
       return false
     }
 
-    await this.bulkRequest(index, requests)
+    await this.bulkRequest(index, requests, refresh)
   }
 
-  async bulkRequest(index: string, requests: Record<string, unknown>[]) {
+  async bulkRequest(
+    index: string,
+    requests: Record<string, unknown>[],
+    refresh = false,
+  ) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
       const client = await this.getClient()
@@ -118,6 +122,7 @@ export class ElasticService {
         const response = await client.bulk({
           index: index,
           body: requestChunk,
+          refresh: refresh ? 'true' : undefined,
         })
 
         // not all errors are thrown log if the response has any errors

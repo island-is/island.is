@@ -1,12 +1,13 @@
 import React from 'react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, LinkV2, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './InfoCard.css'
 
 interface Defender {
@@ -28,6 +29,17 @@ interface Props {
   defenders?: Defender[]
 }
 
+export const NameAndEmail = (name?: string | null, email?: string | null) => [
+  ...(name ? [<Text key={name}>{name}</Text>] : []),
+  ...(email
+    ? [
+        <LinkV2 href={`mailto:${email}`} key={email} className={link}>
+          <Text as="span">{email}</Text>
+        </LinkV2>,
+      ]
+    : []),
+]
+
 const UniqueDefenders: React.FC<
   React.PropsWithChildren<UniqueDefendersProps>
 > = (props) => {
@@ -47,15 +59,18 @@ const UniqueDefenders: React.FC<
       </Text>
       {uniqueDefenders.map((defender, index) =>
         defender?.name ? (
-          <Box display="flex" key={defender.name}>
-            <Text>
-              {`${defender.name}${defender.email ? `, ${defender.email}` : ''}${
-                defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''
-              }`}
+          <Box display="flex" key={defender.name} role="paragraph">
+            <Text as="span">{defender.name}</Text>
+            {defender.email && <Text as="span" whiteSpace="pre">{`, `}</Text>}
+            {NameAndEmail(null, defender.email)}
+            <Text as="span">
+              {defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''}
             </Text>
           </Box>
         ) : (
-          <Text key={index}>Hefur ekki verið skráður</Text>
+          <Text key={`defender_not_registered_${index}`}>
+            Hefur ekki verið skráður
+          </Text>
         ),
       )}
     </>
@@ -112,7 +127,11 @@ const InfoCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
       <Box className={styles.infoCardDataContainer}>
         {data.map((dataItem, index) => {
           return (
-            <Box data-testid={`infoCardDataContainer${index}`} key={index}>
+            <Box
+              data-testid={`infoCardDataContainer${index}`}
+              key={dataItem.title}
+              marginBottom={1}
+            >
               <Text variant="h4">{dataItem.title}</Text>
               {typeof dataItem.value === 'string' ? (
                 <Text>{dataItem.value}</Text>
@@ -127,7 +146,11 @@ const InfoCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <Box className={styles.infoCardCourtOfAppealDataContainer}>
           {courtOfAppealData.map((dataItem, index) => {
             return (
-              <Box data-testid={`infoCardDataContainer${index}`} key={index}>
+              <Box
+                data-testid={`infoCardDataContainer${index}`}
+                key={dataItem.title}
+                margin={1}
+              >
                 <Text variant="h4">{dataItem.title}</Text>
                 {typeof dataItem.value === 'string' ? (
                   <Text>{dataItem.value}</Text>

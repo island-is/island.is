@@ -1,16 +1,20 @@
 import React from 'react'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
 import * as styles from './SAkHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
+  logoAltText,
 }) => {
   const { linkResolver } = useLinkResolver()
 
@@ -29,7 +33,7 @@ const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="landlaeknir-logo"
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -46,7 +50,7 @@ const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="landlaeknir-logo"
+                  alt={logoAltText}
                 />
               </Link>
             </Hidden>

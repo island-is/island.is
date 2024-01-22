@@ -28,7 +28,6 @@ import {
   PoliceRequestAccordionItem,
   RestrictionLength,
   RulingInput,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
@@ -128,7 +127,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const router = useRouter()
 
-  const { user } = useContext(UserContext)
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
@@ -353,15 +351,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
               label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
-              <CaseFileList
-                caseId={workingCase.id}
-                files={caseFiles}
-                canOpenFiles={
-                  user &&
-                  (user.id === workingCase.judge?.id ||
-                    user.id === workingCase.registrar?.id)
-                }
-              />
+              <CaseFileList caseId={workingCase.id} files={caseFiles} />
             </AccordionItem>
           </Accordion>
           <Box component="section" marginBottom={5}></Box>

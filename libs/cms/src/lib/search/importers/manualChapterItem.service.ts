@@ -14,8 +14,6 @@ import { mapManualChapterItem } from '../../models/manualChapterItem.model'
 @Injectable()
 export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
-    logger.info('Processing sync data for manual chapter items')
-
     // only process manuals that contain chapter items
     return entries.filter((entry) => {
       return (
@@ -51,9 +49,11 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
       }
     }
 
-    logger.info('Mapping manuals chapter items', {
-      count: chapterItems.length,
-    })
+    if (chapterItems.length > 0) {
+      logger.info('Mapping manuals chapter items', {
+        count: chapterItems.length,
+      })
+    }
 
     return chapterItems
       .map<MappedData | boolean>(({ item, manual, chapter }) => {
