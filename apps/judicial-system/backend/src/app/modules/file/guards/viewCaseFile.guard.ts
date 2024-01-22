@@ -9,7 +9,7 @@ import {
 import {
   CaseAppealState,
   CaseState,
-  completedCaseStates,
+  isCompletedCase,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isPrisonSystemUser,
@@ -46,18 +46,15 @@ export class ViewCaseFileGuard implements CanActivate {
 
     if (
       isDistrictCourtUser(user) &&
-      [
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        ...completedCaseStates,
-      ].includes(theCase.state)
+      ([CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state) ||
+        isCompletedCase(theCase.state))
     ) {
       return true
     }
 
     if (
       isCourtOfAppealsUser(user) &&
-      completedCaseStates.includes(theCase.state) &&
+      isCompletedCase(theCase.state) &&
       theCase.appealState &&
       [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED].includes(
         theCase.appealState,

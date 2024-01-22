@@ -1,20 +1,20 @@
-import React from 'react';
-import {Image} from 'react-native';
-import styled from 'styled-components/native';
-import {dynamicColor} from '../../utils';
-import {font} from '../../utils/font';
-import chevronForward from '../../assets/icons/chevron-forward.png';
-import {Avatar} from '../avatar/avatar';
+import React from 'react'
+import { Image } from 'react-native'
+import styled from 'styled-components/native'
+import chevronForward from '../../assets/icons/chevron-forward.png'
+import { dynamicColor } from '../../utils'
+import { font } from '../../utils/font'
+import { Avatar } from '../avatar/avatar'
 
 const Host = styled.View`
   display: flex;
   flex-direction: row;
-  padding: ${({theme}) => theme.spacing[3]}px;
-  padding-right: ${({theme}) => theme.spacing[1]}px;
-  border-radius: ${({theme}) => theme.border.radius.large};
-  border-width: ${({theme}) => theme.border.width.standard}px;
+  padding: ${({ theme }) => theme.spacing[3]}px;
+  padding-right: ${({ theme }) => theme.spacing[1]}px;
+  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
-    ({theme}) => ({
+    ({ theme }) => ({
       light: theme.color.blue200,
       dark: theme.shades.dark.shade300,
     }),
@@ -22,47 +22,47 @@ const Host = styled.View`
   )};
   align-items: center;
   justify-content: space-between;
-`;
+`
 
 const Content = styled.View`
   flex: 1;
-`;
+`
 
 const ImageWrap = styled.View`
-  margin-right: ${({theme}) => theme.spacing[3]}px;
-`;
+  margin-right: ${({ theme }) => theme.spacing[3]}px;
+`
 
 const Title = styled.Text`
-  padding-right: ${({theme}) => theme.spacing[1]}px;
-  margin-bottom: ${({theme}) => theme.spacing[1]}px;
+  padding-right: ${({ theme }) => theme.spacing[1]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 
   ${font({
     fontWeight: '600',
     lineHeight: 24,
     fontSize: 18,
   })}
-`;
+`
 
 const Text = styled.Text`
-  padding-right: ${({theme}) => theme.spacing[2]}px;
+  padding-right: ${({ theme }) => theme.spacing[2]}px;
 
   ${font({
     fontWeight: '300',
     lineHeight: 24,
     fontSize: 16,
   })}
-`;
+`
 
 const Icon = styled.View`
   margin-left: auto;
-`;
+`
 
 interface FamilyMemberCardProps {
-  name: string;
-  nationalId: string;
+  name: string
+  nationalId: string
 }
 
-export function FamilyMemberCard({name, nationalId}: FamilyMemberCardProps) {
+export function FamilyMemberCard({ name, nationalId }: FamilyMemberCardProps) {
   return (
     <Host>
       <ImageWrap>
@@ -73,8 +73,8 @@ export function FamilyMemberCard({name, nationalId}: FamilyMemberCardProps) {
         <Text>{nationalId}</Text>
       </Content>
       <Icon>
-        <Image source={chevronForward} style={{width: 24, height: 24}} />
+        <Image source={chevronForward} style={{ width: 24, height: 24 }} />
       </Icon>
     </Host>
-  );
+  )
 }

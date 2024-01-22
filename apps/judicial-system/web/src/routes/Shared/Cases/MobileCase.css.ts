@@ -6,6 +6,7 @@ export const card = style({
   display: 'flex',
   position: 'relative',
   flexDirection: 'row',
+  justifyContent: 'space-between',
   padding: `${theme.spacing[2]}px`,
   textAlign: 'left',
   backgroundColor: theme.color.white,
@@ -19,4 +20,8 @@ export const card = style({
   ':hover': {
     borderColor: theme.color.blue400,
   },
+})
+
+export const loadingContainer = style({
+  padding: `0 ${theme.spacing[1]}`,
 })

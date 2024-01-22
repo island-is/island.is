@@ -9,7 +9,7 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  completedCaseStates,
+  isCompletedCase,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -21,11 +21,11 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './CaseInfo.strings'
 
-const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
-  policeCaseNumbers,
-}) => (
+const PoliceCaseNumbersTags: React.FC<{
+  policeCaseNumbers?: string[] | null
+}> = ({ policeCaseNumbers }) => (
   <Box display="flex" flexWrap="wrap">
-    {policeCaseNumbers.map((policeCaseNumber, index) => (
+    {policeCaseNumbers?.map((policeCaseNumber, index) => (
       <Box marginTop={1} marginRight={1} key={`${policeCaseNumber}-${index}`}>
         <Tag disabled>{policeCaseNumber}</Tag>
       </Box>
@@ -46,7 +46,7 @@ const Entry: React.FC<
 export const getDefendantLabel = (
   formatMessage: IntlShape['formatMessage'],
   defendants: Defendant[],
-  type: CaseType,
+  type?: CaseType | null,
 ) => {
   if (!isIndictmentCase(type)) {
     return formatMessage(core.defendant, {
@@ -123,7 +123,7 @@ export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
         </Box>
       )}
       {isIndictmentCase(workingCase.type) &&
-      completedCaseStates.includes(workingCase.state) ? (
+      isCompletedCase(workingCase.state) ? (
         <Box marginTop={1}>
           <Text as="h5" variant="h5">
             {formatMessage(strings.rulingDate, {

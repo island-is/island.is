@@ -10,7 +10,10 @@ import {
 } from '../../../apps/application-system/api/infra/application-system-api'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
-import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
+import {
+  serviceSetup as servicePortalApiSetup,
+  workerSetup as servicePortalUserProfileWorker,
+} from '../../../apps/services/user-profile/infra/service-portal-api'
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
@@ -63,14 +66,19 @@ import { ServiceBuilder } from '../dsl/dsl'
 
 const endorsement = endorsementServiceSetup({})
 
+const skilavottordWs = skilavottordWsSetup()
+const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
+
 const documentsService = serviceDocumentsSetup()
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
+  skilavottordWs,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
+const servicePortalWorker = servicePortalUserProfileWorker()
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
@@ -112,9 +120,6 @@ const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
 
-const skilavottordWs = skilavottordWsSetup()
-const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
-
 const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
@@ -122,7 +127,9 @@ const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
 })
 
-const userNotificationService = userNotificationServiceSetup()
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
@@ -137,6 +144,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     api,
     consultationPortal,
@@ -168,6 +176,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     api,
     consultationPortal,
@@ -199,6 +208,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     consultationPortal,
     api,
@@ -243,4 +253,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
+  universityGatewayWorker,
 ]

@@ -1,5 +1,6 @@
 import { Type } from '@nestjs/common'
 import { SequelizeOptionsFactory } from '@nestjs/sequelize'
+import { TestingModuleBuilder } from '@nestjs/testing'
 
 import { User } from '@island.is/auth-nest-tools'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -12,6 +13,7 @@ interface SetupOptions {
   SequelizeConfigService: Type<SequelizeOptionsFactory>
   user?: User
   dbType?: 'sqlite' | 'postgres'
+  override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
 }
 
 export const setupApp = ({
@@ -19,6 +21,7 @@ export const setupApp = ({
   SequelizeConfigService,
   user = createCurrentUser(),
   dbType = 'sqlite',
+  override = (builder) => builder,
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
   return testServer({
@@ -28,15 +31,18 @@ export const setupApp = ({
       useAuth({ auth: user }),
       useDatabase({ type: dbType, provider: SequelizeConfigService }),
     ],
+    override: (builder: TestingModuleBuilder) => override(builder),
   })
 }
 
 export const setupAppWithoutAuth = async ({
   AppModule,
   SequelizeConfigService,
+  override = (builder) => builder,
 }: SetupOptions): Promise<TestApp> =>
   testServer({
     appModule: AppModule,
     enableVersioning: true,
     hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    override: (builder: TestingModuleBuilder) => override(builder),
   })

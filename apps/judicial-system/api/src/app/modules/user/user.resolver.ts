@@ -18,7 +18,8 @@ import { BackendApi } from '../../data-sources'
 import { CreateUserInput } from './dto/createUser.input'
 import { UpdateUserInput } from './dto/updateUser.input'
 import { UserQueryInput } from './dto/user.input'
-import { User } from './user.model'
+import { UsersQueryInput } from './dto/users.input'
+import { User } from './models/user.model'
 
 @Resolver(() => User)
 export class UserResolver {
@@ -33,14 +34,22 @@ export class UserResolver {
   users(
     @CurrentGraphQlUser() user: TUser,
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Args('input', { type: () => UsersQueryInput, nullable: true })
+    input?: UsersQueryInput,
   ): Promise<User[]> {
     this.logger.debug('Getting all users')
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_USERS,
-      backendApi.getUsers(),
-      (users: TUser[]) => users.map((user) => user.id),
+      backendApi.getUsers().then((users) => {
+        if (!input?.role) {
+          return users
+        }
+
+        return users.filter((user) => input.role?.includes(user.role))
+      }),
+      (users: User[]) => users.map((user) => user.id),
     )
   }
 
@@ -58,7 +67,7 @@ export class UserResolver {
       user.id,
       AuditedAction.GET_USER,
       backendApi.getUser(input.id),
-      (user: TUser) => user.id,
+      (user: User) => user.id,
     )
   }
 

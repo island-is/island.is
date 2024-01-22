@@ -8,6 +8,7 @@ import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { FILE_TYPES_ALLOWED } from '../../shared'
 
 export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
   const { setValue } = useFormContext()
@@ -42,7 +43,10 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
                 key={x.countryId}
                 application={application}
                 id={`${field.id}[${index}].attachment`}
-                header={`Sakavottorð - ${
+                accept={FILE_TYPES_ALLOWED}
+                header={`${formatMessage(
+                  supportingDocuments.labels.otherDocuments.criminalRecord,
+                )} - ${
                   countryOptions.find((z) => z.id?.toString() === x.countryId)
                     ?.name
                 }`}

@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -14,6 +15,8 @@ import { funeralCost } from './sections/funeralCost'
 import { applicant } from './sections/applicant'
 import { dataCollection } from './sections/dataCollection'
 import { deceased } from './sections/deceased'
+import { YES } from '../lib/constants'
+import { applicationInfo } from './sections/applicationInfo'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',
@@ -24,10 +27,11 @@ export const form: Form = buildForm({
   children: [
     deceased,
     dataCollection,
+    applicationInfo,
     applicant,
     assets,
-    debts,
     funeralCost,
+    debts,
     business,
     heirs,
     buildSection({
@@ -37,8 +41,21 @@ export const form: Form = buildForm({
         buildMultiField({
           id: 'finalStep',
           title: m.readyToSubmit,
-          description: '',
+          description: m.beforeSubmitStatement,
           children: [
+            buildCheckboxField({
+              id: 'confirmAction',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: m.inheritanceReportSubmissionCheckbox,
+                },
+              ],
+            }),
             buildSubmitField({
               id: 'inheritanceReport.submit',
               title: '',

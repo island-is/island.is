@@ -238,7 +238,11 @@ describe('MeClientsController with auth', () => {
     clientType   | typeSpecificDefaults
     ${'web'}     | ${{}}
     ${'machine'} | ${{ allowOfflineAccess: false, requirePkce: false }}
-    ${'native'}  | ${{ absoluteRefreshTokenLifetime: 365 * 24 * 60 * 60, requireClientSecret: false, slidingRefreshTokenLifetime: 90 * 24 * 60 * 60 }}
+    ${'native'} | ${{
+  absoluteRefreshTokenLifetime: 365 * 24 * 60 * 60,
+  requireClientSecret: false,
+  slidingRefreshTokenLifetime: 90 * 24 * 60 * 60,
+}}
   `(
     'should create $clientType client with correct defaults',
     async ({ clientType, typeSpecificDefaults }) => {
@@ -323,13 +327,23 @@ describe('MeClientsController with auth', () => {
   )
 
   it.each`
-    value                                   | typeSpecificDefaults
-    ${'none'}                               | ${{}}
-    ${'allowOfflineAccess and requirePkce'} | ${{ allowOfflineAccess: false, requirePkce: false }}
-    ${'refreshTokenExpiration'}             | ${{ refreshTokenExpiration: RefreshTokenExpiration.Sliding }}
-    ${'all values'}                         | ${{ ...clientForCreateTest }}
+    value | typeSpecificDefaults
+    ${'super admin fields'} | ${{
+  supportsCustomDelegation: true,
+  supportsLegalGuardians: true,
+  supportsProcuringHolders: true,
+  supportsPersonalRepresentatives: true,
+  promptDelegations: true,
+  requireApiScopes: true,
+  requireConsent: false,
+  allowOfflineAccess: true,
+  requirePkce: false,
+  supportTokenExchange: true,
+  accessTokenLifetime: 100,
+  customClaims: [{ type: 'claim1', value: 'value1' }],
+}}
   `(
-    'should create client with correct none default values for $value',
+    'should create client with default values for $value as normal user',
     async ({ typeSpecificDefaults }) => {
       // Arrange
       const app = await setupApp({
@@ -341,6 +355,107 @@ describe('MeClientsController with auth', () => {
       const clientModel = app.get(getModelToken(Client))
       const newClientId = '@test.is/new-test-client'
       await createTestClientData(app, user)
+      const newClient = {
+        ...typeSpecificDefaults,
+        clientId: newClientId,
+        clientName: 'test-client',
+        clientType: 'web',
+      }
+
+      // Act
+      const res = await server
+        .post(`/v2/me/tenants/${tenantId}/clients`)
+        .send(newClient)
+
+      // Assert - response
+      expect(res.status).toEqual(201)
+      expect(res.body).toEqual({
+        clientId: newClientId,
+        clientType: newClient.clientType,
+        tenantId,
+        displayName: typeSpecificDefaults.displayName ?? [
+          {
+            locale: 'is',
+            value: newClient.clientName,
+          },
+        ],
+        refreshTokenExpiration: typeSpecificDefaults.refreshTokenExpiration
+          ? typeSpecificDefaults.refreshTokenExpiration
+          : translateRefreshTokenExpiration(
+              clientBaseAttributes.refreshTokenExpiration,
+            ),
+        absoluteRefreshTokenLifetime:
+          typeSpecificDefaults.absoluteRefreshTokenLifetime ??
+          clientBaseAttributes.absoluteRefreshTokenLifetime,
+        slidingRefreshTokenLifetime:
+          typeSpecificDefaults.slidingRefreshTokenLifetime ??
+          clientBaseAttributes.slidingRefreshTokenLifetime,
+        accessTokenLifetime: clientBaseAttributes.accessTokenLifetime,
+        allowOfflineAccess: clientBaseAttributes.allowOfflineAccess,
+        redirectUris: [],
+        postLogoutRedirectUris: [],
+        requireApiScopes: false,
+        requireConsent: false,
+        requirePkce: true,
+        supportTokenExchange: false,
+        supportsCustomDelegation: false,
+        supportsLegalGuardians: false,
+        supportsPersonalRepresentatives: false,
+        supportsProcuringHolders: false,
+        promptDelegations: false,
+        customClaims: [],
+      })
+
+      // Assert - db record
+      const dbClient = await clientModel.findByPk(newClientId, {
+        include: [{ model: ClientGrantType, as: 'allowedGrantTypes' }],
+      })
+
+      expect(dbClient).toMatchObject({
+        ...clientBaseAttributes,
+        allowRememberConsent: clientBaseAttributes.allowRememberConsent
+          ? '1'
+          : '0',
+        clientId: newClientId,
+        clientType: newClient.clientType,
+        clientName: newClient.clientName,
+        domainName: tenantId,
+
+        slidingRefreshTokenLifetime:
+          typeSpecificDefaults.slidingRefreshTokenLifetime ??
+          clientBaseAttributes.slidingRefreshTokenLifetime,
+        absoluteRefreshTokenLifetime:
+          typeSpecificDefaults.absoluteRefreshTokenLifetime ??
+          clientBaseAttributes.absoluteRefreshTokenLifetime,
+        accessTokenLifetime: clientBaseAttributes.accessTokenLifetime,
+        allowOfflineAccess: clientBaseAttributes.allowOfflineAccess,
+        requirePkce: clientBaseAttributes.requirePkce,
+        refreshTokenExpiration: translateRefreshTokenExpiration(
+          typeSpecificDefaults.refreshTokenExpiration,
+        ),
+      })
+    },
+  )
+
+  it.each`
+    value                                   | typeSpecificDefaults
+    ${'none'}                               | ${{}}
+    ${'allowOfflineAccess and requirePkce'} | ${{ allowOfflineAccess: false, requirePkce: false }}
+    ${'refreshTokenExpiration'}             | ${{ refreshTokenExpiration: RefreshTokenExpiration.Sliding }}
+    ${'all values'}                         | ${{ ...clientForCreateTest }}
+  `(
+    'super user should create client with correct none default values for $value',
+    async ({ typeSpecificDefaults }) => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: superUser,
+      })
+      const server = request(app.getHttpServer())
+      const clientModel = app.get(getModelToken(Client))
+      const newClientId = '@test.is/new-test-client'
+      await createTestClientData(app, superUser)
       const newClient = {
         ...typeSpecificDefaults,
         clientId: newClientId,

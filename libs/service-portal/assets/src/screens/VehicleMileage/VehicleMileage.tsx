@@ -23,6 +23,7 @@ import {
   icelandLocalTime,
 } from '@island.is/service-portal/core'
 
+import { isReadDateToday } from '../../utils/readDate'
 import { vehicleMessage as messages } from '../../lib/messages'
 import {
   useGetUsersMileageQuery,
@@ -125,6 +126,8 @@ const VehicleMileage = () => {
     data?.vehicleMileageDetails?.requiresMileageRegistration
 
   const actionLoading = putActionLoading || postActionLoading
+  const hasUserPostAccess =
+    data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
 
   if ((error || requiresMileageRegistration === false) && !loading) {
     return <Problem type="not_found" />
@@ -162,28 +165,34 @@ const VehicleMileage = () => {
                   </GridColumn>
                 ) : (
                   <GridColumn span={['8/8', '8/8', '8/8', '5/8']}>
-                    {isFormEditable ? (
-                      <>
+                    {hasUserPostAccess ? (
+                      isFormEditable ? (
+                        <>
+                          <Text as="h3" variant="h5">
+                            {formatMessage(messages.mileageSuccessFormTitle)}
+                          </Text>
+                          <Text variant="default" paddingTop={1}>
+                            {formatMessage(messages.mileageSuccessFormText, {
+                              date: icelandLocalTime(
+                                updateData?.vehicleMileagePost?.readDate ??
+                                  details?.[0].readDate ??
+                                  undefined,
+                              ),
+                            })}
+                          </Text>
+                        </>
+                      ) : canRegisterMileage === true ? (
                         <Text as="h3" variant="h5">
-                          {formatMessage(messages.mileageSuccessFormTitle)}
+                          {formatMessage(messages.vehicleMileageInputTitle)}
                         </Text>
-                        <Text variant="default" paddingTop={1}>
-                          {formatMessage(messages.mileageSuccessFormText, {
-                            date: icelandLocalTime(
-                              updateData?.vehicleMileagePost?.readDate ??
-                                details?.[0].readDate ??
-                                undefined,
-                            ),
-                          })}
+                      ) : (
+                        <Text as="h3" variant="h5">
+                          {formatMessage(messages.mileageAlreadyRegistered)}
                         </Text>
-                      </>
-                    ) : canRegisterMileage === true ? (
-                      <Text as="h3" variant="h5">
-                        {formatMessage(messages.vehicleMileageInputTitle)}
-                      </Text>
+                      )
                     ) : (
                       <Text as="h3" variant="h5">
-                        {formatMessage(messages.mileageAlreadyRegistered)}
+                        {formatMessage(messages.mileageYouAreNotAllowed)}
                       </Text>
                     )}
                   </GridColumn>
@@ -206,7 +215,10 @@ const VehicleMileage = () => {
                     size="xs"
                     maxLength={12}
                     error={errors.odometerStatus?.message}
-                    disabled={!isFormEditable && !canRegisterMileage}
+                    disabled={
+                      (!isFormEditable && !canRegisterMileage) ||
+                      !hasUserPostAccess
+                    }
                     defaultValue={''}
                     onChange={(e) => setFormValue(e.target.value)}
                     rules={{
@@ -215,10 +227,21 @@ const VehicleMileage = () => {
                           // Input number must be higher than the highest known mileage registration value
 
                           if (details) {
-                            // If we're in editing mode, we want to find the highest number ignoring the most recent one.
-                            const [, ...rest] = details
+                            // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
+                            const confirmedRegistrations = details.filter(
+                              (item) => {
+                                if (item.readDate) {
+                                  const isIslandIsReadingToday =
+                                    item.originCode === ORIGIN_CODE &&
+                                    isReadDateToday(new Date(item.readDate))
+                                  return !isIslandIsReadingToday
+                                }
+                                return true
+                              },
+                            )
+
                             const detailArray = isFormEditable
-                              ? rest
+                              ? confirmedRegistrations
                               : [...details]
 
                             const highestRegistration = Math.max(

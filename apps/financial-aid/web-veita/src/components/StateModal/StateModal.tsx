@@ -161,11 +161,11 @@ const StateModal = ({
             }
             saveStateApplication(applicationId, selected, undefined, comment)
           }}
-          headline="Skrifaðu hvaða gögn vantar"
+          headline="Skrifaðu hvaða upplýsingar og/eða gögn vantar"
           submitButtonText="Senda á umsækjanda"
-          errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
-          prefixText="Til þess að hægt sé að meta umsóknina þarft þú að senda okkur"
-          postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+          defaultErrorMessage="Þú þarft að gera grein fyrir hvaða upplýsingar og/eða gögn vantar í umsóknina"
+          prefixText="Til þess að hægt sé að ljúka afgreiðslu umsóknarinnar þurfa eftirfarandi upplýsingar að liggja fyrir."
+          postfixText="Upplýsingarnar sendir þú inn á stöðusíðu umsóknarinnar."
           municipalityEmail={applicationMunicipality?.email}
         />
         <AcceptModal
@@ -201,10 +201,10 @@ const StateModal = ({
           }}
           headline="Skrifaðu ástæðu synjunar"
           submitButtonText="Synja og senda á umsækjanda"
-          errorMessage="Þú þarft að greina frá ástæðu synjunar"
+          defaultErrorMessage="Þú þarft að greina frá ástæðu synjunar"
           prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
             new Date(applicationCreated).getMonth(),
-          )} hefur verið synjað`}
+          )} hefur verið synjað.`}
           postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
           municipalityEmail={applicationMunicipality?.email}
         />

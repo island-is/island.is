@@ -85,7 +85,9 @@ export class ChildrenService {
     for (const child of children) {
       const parentalLeavesEntitlements =
         await this.getParentalLeavesEntitlements(
-          new Date(child.expectedDateOfBirth),
+          child.expectedDateOfBirth === ''
+            ? new Date(child.adoptionDate!)
+            : new Date(child.expectedDateOfBirth),
           nationalId,
         )
 

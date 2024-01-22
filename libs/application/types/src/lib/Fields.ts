@@ -119,6 +119,8 @@ export enum FieldTypes {
   LINK = 'LINK',
   PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
   IMAGE = 'IMAGE',
+  PDF_LINK_BUTTON = 'PDF_LINK_BUTTON',
+  NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
 }
 
 export enum FieldComponents {
@@ -143,6 +145,8 @@ export enum FieldComponents {
   LINK = 'LinkFormField',
   PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
   IMAGE = 'ImageFormField',
+  PDF_LINK_BUTTON = 'PdfLinkButtonFormField',
+  NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -368,6 +372,36 @@ export interface ImageField extends BaseField {
   titleVariant?: TitleVariants
 }
 
+export interface PdfLinkButtonField extends BaseField {
+  readonly type: FieldTypes.PDF_LINK_BUTTON
+  component: FieldComponents.PDF_LINK_BUTTON
+  verificationDescription: StaticText
+  verificationLinkTitle: StaticText
+  verificationLinkUrl: StaticText
+  getPdfFiles?: (application: Application) => {
+    base64: string
+    buttonText?: StaticText
+    customButtonText?: { is: string; en: string }
+    filename: string
+  }[]
+  setViewPdfFile?: (file: { base64: string; filename: string }) => void
+}
+
+export interface NationalIdWithNameField extends BaseField {
+  readonly type: FieldTypes.NATIONAL_ID_WITH_NAME
+  component: FieldComponents.NATIONAL_ID_WITH_NAME
+  disabled?: boolean
+  required?: boolean
+  customNationalIdLabel?: StaticText
+  customNameLabel?: StaticText
+  onNationalIdChange?: (s: string) => void
+  onNameChange?: (s: string) => void
+  nationalIdDefaultValue?: string
+  nameDefaultValue?: string
+  errorMessage?: string
+  minAgePerson?: number
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -391,3 +425,5 @@ export type Field =
   | LinkField
   | PaymentChargeOverviewField
   | ImageField
+  | PdfLinkButtonField
+  | NationalIdWithNameField

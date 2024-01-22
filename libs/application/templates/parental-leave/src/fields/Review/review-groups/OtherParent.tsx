@@ -76,7 +76,9 @@ export const OtherParent = ({
               label={formatMessage(
                 parentalLeaveFormMessages.shared.otherParentID,
               )}
-              value={formatKennitala(otherParentId!)}
+              value={
+                otherParentId ? formatKennitala(otherParentId) : otherParentId
+              }
             />
           </GridColumn>
         </GridRow>

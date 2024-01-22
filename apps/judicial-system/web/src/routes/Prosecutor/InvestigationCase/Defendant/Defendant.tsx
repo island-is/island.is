@@ -14,8 +14,11 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
-import { prosecutorShouldSelectDefenderForInvestigationCase } from '@island.is/judicial-system/types'
+import {
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
+import { prosecutorCanSelectDefenderForInvestigationCase } from '@island.is/judicial-system/types'
 import {
   core,
   defendant as m,
@@ -28,9 +31,9 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseOrigin,
   CaseType,
@@ -38,8 +41,10 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import {
+  useCase,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -60,7 +65,7 @@ const Defendant = () => {
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = React.useState<CaseType>()
+  const [caseType, setCaseType] = React.useState<CaseType | null>()
 
   useEffect(() => {
     if (workingCase.id) {
@@ -293,7 +298,7 @@ const Defendant = () => {
                     workingCase.id
                       ? {
                           value: workingCase.type,
-                          label: capitalize(caseTypes[workingCase.type]),
+                          label: capitalize(formatCaseType(workingCase.type)),
                         }
                       : undefined
                   }
@@ -405,7 +410,7 @@ const Defendant = () => {
             </Box>
           </Box>
           <AnimatePresence>
-            {prosecutorShouldSelectDefenderForInvestigationCase(
+            {prosecutorCanSelectDefenderForInvestigationCase(
               workingCase.type,
             ) && (
               <motion.section
