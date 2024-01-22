@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { mileageDeprication } from '../dto/postVehicleMileageInput'
 
 @ObjectType()
 export class VehicleMileageDetail {
@@ -13,7 +14,7 @@ export class VehicleMileageDetail {
 
   @Field(() => String, {
     nullable: true,
-    description: 'Deprecated. Use "mileageNumber" instead.',
+    ...mileageDeprication,
   })
   mileage?: string | null
 

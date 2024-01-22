@@ -1,6 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional, ValidateIf } from 'class-validator'
 
+export const mileageDeprication = {
+  description:
+    'Deprecated. Use {mileageNumber} instead. Keeping in for backwards compatibility',
+  deprecationReason: 'Third party service wants this as an integer.',
+}
+
 @InputType()
 export class PostVehicleMileageInput {
   @Field()
@@ -12,7 +18,7 @@ export class PostVehicleMileageInput {
   @ValidateIf((dto) => typeof dto.mileageNumber === 'undefined')
   @Field({
     nullable: true,
-    description: 'Deprecated. Use "mileageNumber" instead',
+    ...mileageDeprication,
   })
   @IsOptional()
   mileage?: string
@@ -34,7 +40,7 @@ export class PutVehicleMileageInput {
   @ValidateIf((dto) => typeof dto.mileageNumber === 'undefined')
   @Field({
     nullable: true,
-    description: 'Deprecated. Use "mileageNumber" instead',
+    ...mileageDeprication,
   })
   @IsOptional()
   mileage?: string
