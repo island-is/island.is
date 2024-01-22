@@ -39,18 +39,66 @@ const ProgramSchema = z.object({
   examLocation: z.string().optional(), // TODO make conditional requirement if the mode of delivery Online is chosen
 })
 
-const EducationDetailsSchema = z.object({
-  school: z.string(),
-  degreeLevel: z.string(),
-  degreeMajor: z.string().optional(),
-  finishedUnits: z.string().optional(),
-  averageGrade: z.string().optional(),
-  degreeCountry: z.string(),
-  beginningDate: z.string(),
-  endDate: z.string(),
-  degreeFinished: z.array(z.enum([YES])).optional(),
-  moreDetails: z.string().optional(),
-})
+export const RepeateableEducationDetailsSchema = z
+  .object({
+    school: z.string(),
+    degreeLevel: z.string(),
+    degreeMajor: z.string().optional(),
+    finishedUnits: z.string().optional(),
+    averageGrade: z.string().optional(),
+    degreeCountry: z.string(),
+    beginningDate: z.string(),
+    endDate: z.string(),
+    degreeFinished: z.array(z.enum([YES])).optional(),
+    moreDetails: z.string().optional(),
+    degreeAttachments: z.array(FileDocumentSchema),
+    wasRemoved: z.string(),
+  })
+  .refine(
+    ({ wasRemoved, school }) => {
+      console.log('school here', school)
+      return wasRemoved === 'true' || (school && school.length > 0)
+    },
+    {
+      path: ['school'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, degreeLevel }) => {
+      return wasRemoved === 'true' || (degreeLevel && degreeLevel.length > 0)
+    },
+    {
+      path: ['degreeLevel'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, degreeCountry }) => {
+      return (
+        wasRemoved === 'true' || (degreeCountry && degreeCountry.length > 0)
+      )
+    },
+    {
+      path: ['degreeCountry'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, beginningDate }) => {
+      return (
+        wasRemoved === 'true' || (beginningDate && beginningDate.length > 0)
+      )
+    },
+    {
+      path: ['beginningDate'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, endDate }) => {
+      return wasRemoved === 'true' || (endDate && endDate.length > 0)
+    },
+    {
+      path: ['endDate'],
+    },
+  )
 
 const otherDocumentsSchema = z.object({
   degreeAttachments: FileDocumentSchema,
@@ -63,7 +111,7 @@ export const UniversitySchema = z.object({
   educationOptions: z
     .enum(['diploma', 'notFinished', 'exemption', 'thirdLevel'])
     .optional(),
-  educationDetails: EducationDetailsSchema,
+  educationDetails: z.array(RepeateableEducationDetailsSchema),
   otherDocuments: otherDocumentsSchema,
 })
 

@@ -28,6 +28,7 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
   const programs = externalData.programs.data as Array<ProgramBase>
   const locations = ['location1 '] // TODO application.externalData.locations
 
+  console.log('programs', programs)
   const programAnswer = getValueViaPath(
     answers,
     `${Routes.PROGRAMINFORMATION}.program`,

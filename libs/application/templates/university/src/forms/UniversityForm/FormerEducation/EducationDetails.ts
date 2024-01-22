@@ -36,6 +36,11 @@ export const EducationDetailsSubSection = buildSubSection({
             return chosenOption === 'notFinished'
           },
         }),
+        buildCustomField({
+          id: `${Routes.EDUCATIONDETAILS}[0].wasRemoved`,
+          title: '',
+          component: 'HiddenTextInput',
+        }),
         buildTextField({
           id: `${Routes.EDUCATIONDETAILS}[0].school`,
           title: formerEducation.labels.educationDetails.schoolLabel,
@@ -77,7 +82,6 @@ export const EducationDetailsSubSection = buildSubSection({
           width: 'half',
           condition: (formValue: FormValue, externalData) => {
             const answers = formValue as UniversityApplication
-            console.log('running this', answers)
             const chosenOption = answers.educationOptions
             // console.log('chosenOption', chosenOption)
             return chosenOption === 'diploma' || chosenOption === 'thirdLevel'
@@ -190,7 +194,7 @@ export const EducationDetailsSubSection = buildSubSection({
           title: formerEducation.labels.educationDetails.moreDetailsLabel,
         }),
         buildCustomField({
-          id: `${Routes.EDUCATIONDETAILS}[1]`,
+          id: `${Routes.EDUCATIONDETAILS}`,
           title: '',
           component: 'EducationDetails',
         }),

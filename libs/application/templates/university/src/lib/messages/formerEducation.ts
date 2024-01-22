@@ -82,6 +82,11 @@ export const formerEducation = {
         defaultMessage: 'Bæta við námsferli',
         description: 'Label for add more button',
       },
+      deleteItemButtonTitle: {
+        id: 'uni.application:formerEducation.educationDetails.deleteItemButtonTitle',
+        defaultMessage: 'Fjarlægja námsferil',
+        description: 'Label for delete education item button',
+      },
       diplomaInformationLabel: {
         id: 'uni.application:formerEducation.educationDetails.diplomaInformationLabel',
         defaultMessage: 'Stúdentspróf (sótt úr Innu)',
