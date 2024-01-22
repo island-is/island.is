@@ -8,7 +8,23 @@ import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
+import type { WatsonInstance } from './types'
 import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
+
+declare global {
+  interface Window {
+    watsonAssistantChatOptions: {
+      showCloseAndRestartButton: boolean
+      pageLinkConfig: {
+        linkIDs: Record<string, Record<string, string>>
+      }
+      serviceDesk: {
+        skipConnectAgentCard: boolean
+      }
+      onLoad: (insance: WatsonInstance) => void
+    }
+  }
+}
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -44,14 +60,12 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
   const n = useNamespaceStrict(namespace)
 
-  const watsonInstance = useRef(null)
+  const watsonInstance = useRef<WatsonInstance | null>(null)
   const [isButtonVisible, setIsButtonVisible] = useState(false)
 
   useEffect(() => {
     if (Object.keys(namespace).length === 0) {
       return () => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         watsonInstance?.current?.destroy()
       }
     }
@@ -60,9 +74,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const windowObject: any = window
-    windowObject.watsonAssistantChatOptions = {
+    window.watsonAssistantChatOptions = {
       showCloseAndRestartButton: true,
       pageLinkConfig: {
         // If there is a query param of wa_lid=<linkID> then in the background a message will be sent and the chat will open
@@ -79,8 +91,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         skipConnectAgentCard: true,
       },
       ...props,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       onLoad: (instance) => {
         watsonInstance.current = instance
         if (cssVariables) {
@@ -115,8 +125,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
     return () => {
       scriptElement?.remove()
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       watsonInstance?.current?.destroy()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,8 +136,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     <ChatBubble
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
       isVisible={isButtonVisible}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       onClick={watsonInstance.current?.openWindow}
       pushUp={pushUp}
     />
