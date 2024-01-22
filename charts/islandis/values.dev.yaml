@@ -3161,7 +3161,7 @@ web:
       path: '/liveness'
       timeoutSeconds: 3
     readiness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/readiness'
       timeoutSeconds: 3
   hpa:
