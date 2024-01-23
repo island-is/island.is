@@ -98,15 +98,9 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
    * By setting the continue_onboarding to false, the user won´t be forced to finish the onboarding.
    */
   const getIDSLink = (linkPath: IdsUserProfileLinks) => {
-    const { search, pathname, protocol, host } = window.location
-
-    const searchParams = new URLSearchParams(search)
-    searchParams.set('continue_onboarding', 'false')
-    const returnUrl = encodeURIComponent(
-      `${protocol}//${host}${pathname}?${searchParams.toString()}`,
-    )
-
-    return `${authority}${linkPath}?returnUrl=${returnUrl}`
+    return `${authority}${linkPath}?continue_onboarding=false&returnUrl=${encodeURIComponent(
+      window.location.toString(),
+    )}`
   }
 
   const isFlagEnabled = async () => {
