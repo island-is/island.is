@@ -1,14 +1,13 @@
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
 import isSameMonth from 'date-fns/isSameMonth'
 import isThisMonth from 'date-fns/isThisMonth'
-import getDaysInMonth from 'date-fns/getDaysInMonth'
 import parseISO from 'date-fns/parseISO'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import differenceInDays from 'date-fns/differenceInDays'
 import round from 'lodash/round'
-import get from 'lodash/get'
 
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -20,46 +19,35 @@ import {
   RepeaterProps,
 } from '@island.is/application/types'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
-import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import {
-  YES,
-  NO,
+  ADOPTION,
   MANUAL,
-  SPOUSE,
-  StartDateOptions,
-  ParentalRelations,
-  TransferRightsOption,
+  NO,
+  OTHER_NO_CHILDREN_FOUND,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  SINGLE,
   PERMANENT_FOSTER_CARE,
-  ADOPTION,
-  OTHER_NO_CHILDREN_FOUND,
+  ParentalRelations,
+  SINGLE,
+  SPOUSE,
+  StartDateOptions,
   States,
+  TransferRightsOption,
+  YES,
 } from '../constants'
+import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
+import { parentalLeaveFormMessages } from '../lib/messages'
 
-import {
-  calculatePeriodLength,
-  daysToMonths,
-  monthsToDays,
-} from '../lib/directorateOfLabour.utils'
-import {
-  YesOrNo,
-  Period,
-  PersonInformation,
-  ChildInformation,
-  ChildrenAndExistingApplications,
-  PregnancyStatusAndRightsResults,
-  EmployerRow,
-  Files,
-  OtherParentObj,
-  VMSTPeriod,
-} from '../types'
 import { FormatMessage } from '@island.is/localization'
-import { currentDateStartTime } from './parentalLeaveTemplateUtils'
+import { dateFormat } from '@island.is/shared/constants'
+import format from 'date-fns/format'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
+import subDays from 'date-fns/subDays'
+import subMonths from 'date-fns/subMonths'
 import {
   additionalSingleParentMonths,
   daysInMonth,
@@ -67,13 +55,24 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import subDays from 'date-fns/subDays'
-import subMonths from 'date-fns/subMonths'
-import isBefore from 'date-fns/isBefore'
-import isEqual from 'date-fns/isEqual'
-import isAfter from 'date-fns/isAfter'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
+import {
+  calculatePeriodLength,
+  daysToMonths,
+  monthsToDays,
+} from '../lib/directorateOfLabour.utils'
+import {
+  ChildInformation,
+  ChildrenAndExistingApplications,
+  EmployerRow,
+  Files,
+  OtherParentObj,
+  Period,
+  PersonInformation,
+  PregnancyStatusAndRightsResults,
+  VMSTPeriod,
+  YesOrNo,
+} from '../types'
+import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
 export function getExpectedDateOfBirthOrAdoptionDate(
   application: Application,
