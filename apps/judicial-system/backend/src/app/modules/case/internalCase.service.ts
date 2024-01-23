@@ -48,9 +48,8 @@ import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { Institution } from '../institution'
 import { PoliceService } from '../police'
-import { User, UserService } from '../user'
+import { UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -462,6 +461,7 @@ export class InternalCaseService {
             prosecutorId:
               creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
             courtId: creator.institution?.defaultCourtId,
+            prosecutorsOfficeId: creator.institution?.id,
           },
           { transaction },
         )
@@ -481,19 +481,6 @@ export class InternalCaseService {
         .then(
           (defendant) =>
             this.caseModel.findByPk(defendant.caseId, {
-              include: [
-                { model: Institution, as: 'court' },
-                {
-                  model: User,
-                  as: 'creatingProsecutor',
-                  include: [{ model: Institution, as: 'institution' }],
-                },
-                {
-                  model: User,
-                  as: 'prosecutor',
-                  include: [{ model: Institution, as: 'institution' }],
-                },
-              ],
               transaction,
             }) as Promise<Case>,
         )
@@ -586,6 +573,15 @@ export class InternalCaseService {
             this.config.archiveEncryptionKey,
             { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
           ).toString(),
+          // To decrypt:
+          // JSON.parse(
+          //   Base64.fromBase64(
+          //     CryptoJS.AES.decrypt(
+          //       archive,
+          //       this.config.archiveEncryptionKey,
+          //     ).toString(CryptoJS.enc.Base64),
+          //   ),
+          // )
         },
         { transaction },
       )
@@ -612,7 +608,7 @@ export class InternalCaseService {
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
         theCase.prosecutor?.nationalId ?? '',
-        theCase.creatingProsecutor?.institution?.nationalId ?? '',
+        theCase.prosecutorsOffice?.nationalId ?? '',
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
