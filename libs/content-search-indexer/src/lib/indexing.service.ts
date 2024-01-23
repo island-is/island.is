@@ -1,3 +1,4 @@
+import { Entry } from 'contentful'
 import { Injectable } from '@nestjs/common'
 
 import { ElasticService } from '@island.is/content-search-toolkit'
@@ -13,7 +14,7 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
-import { Entry } from 'contentful'
+import { CacheInvalidationService } from './cache-invalidation.service'
 
 type SyncStatus = {
   running?: boolean
@@ -27,6 +28,7 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly cmsSyncService: CmsSyncService,
+    private readonly cacheInvalidationService: CacheInvalidationService,
   ) {
     // add importer service to this array to make it import
     this.importers = [this.cmsSyncService]
@@ -74,12 +76,29 @@ export class IndexingService {
           return true
         }
 
+        const isIncrementalUpdate = syncType === 'fromLast'
+
         const {
           nextPageToken: importerResponseNextPageToken,
           postSyncOptions: importerResponsePostSyncOptions,
           ...elasticData
         } = importerResponse
-        await this.elasticService.bulk(elasticIndex, elasticData)
+        await this.elasticService.bulk(
+          elasticIndex,
+          elasticData,
+          isIncrementalUpdate,
+        )
+
+        // Invalidate cached pages in the background if we are performing an incremental update
+        if (isIncrementalUpdate) {
+          // Wait for some time to make sure data is properly indexed
+          setTimeout(() => {
+            this.cacheInvalidationService.invalidateCache(
+              elasticData.add,
+              options.locale,
+            )
+          }, 8000)
+        }
 
         nextPageToken = importerResponseNextPageToken
         postSyncOptions = importerResponsePostSyncOptions

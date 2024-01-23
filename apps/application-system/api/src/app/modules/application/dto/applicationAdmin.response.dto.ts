@@ -1,6 +1,6 @@
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
-import { IsBoolean, IsString, IsDate } from 'class-validator'
+import { IsBoolean, IsString, IsDate, IsArray, IsNumber } from 'class-validator'
 import { BaseApplicationResponseDto } from './application.response.dto'
 
 export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto {
@@ -28,4 +28,16 @@ export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto 
     super(partial)
     Object.assign(this, partial)
   }
+}
+
+export class ApplicationAdminPaginatedResponse {
+  @ApiProperty({ type: [ApplicationListAdminResponseDto] })
+  @Expose()
+  @IsArray()
+  rows!: ApplicationListAdminResponseDto[]
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  count!: number
 }

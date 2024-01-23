@@ -102,27 +102,6 @@ applicationTest.describe('Car recycling', () => {
               name: label(carRecyclingMessages.conclusionScreen.title),
             }),
           ).toBeVisible()
-          await page
-            .getByRole('button', {
-              name: label(
-                carRecyclingMessages.conclusionScreen.buttonsViewApplication,
-              ),
-            })
-            .click()
-        },
-      )
-
-      await applicationTest.step(
-        'Check that review application header is visible',
-        async () => {
-          await expect(
-            page
-              .locator('form')
-              .getByRole('paragraph')
-              .filter({
-                hasText: label(carRecyclingMessages.review.carsSectionTitle),
-              }),
-          ).toBeVisible()
         },
       )
     },

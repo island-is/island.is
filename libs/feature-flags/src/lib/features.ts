@@ -17,10 +17,17 @@ export enum Features {
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   oldAgePensionApplication = 'isOldAgePensionEnable',
+  householdSupplementApplication = 'isHouseholdSupplementEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
+  energyFunds = 'isEnergyFundsEnabled',
   carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
+  healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  pensionSupplementApplication = 'isPensionSupplementEnable',
+  transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
+  additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
+  ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -44,9 +51,11 @@ export enum Features {
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
+  //Enable intellectual properties fetch
+  isIntellectualPropertyModuleEnabled = 'isIntellectualPropertyModuleEnabled',
+
   // Application delegation flags
   isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
-  transportAuthorityApplicationsCustomDelegation = 'isTransportAuthorityApplicationsCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
@@ -56,6 +65,12 @@ export enum Features {
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
+
+  // Disable new login restrictions
+  disableNewDeviceLogins = 'disableNewDeviceLogins',
+
+  // Notifications
+  isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
 }
 
 export enum ServerSideFeature {

@@ -14,6 +14,7 @@ query GetUsersMileage($input: GetVehicleMileageInput!) {
     editing
     canRegisterMileage
     requiresMileageRegistration
+    canUserRegisterVehicleMileage
   }
 }
 

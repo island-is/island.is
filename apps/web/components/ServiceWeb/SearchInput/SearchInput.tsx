@@ -77,8 +77,8 @@ export const SearchInput = ({
     GetSupportSearchResultsQuery,
     GetSupportSearchResultsQueryVariables
   >(GET_SUPPORT_SEARCH_RESULTS_QUERY, {
-    onCompleted: () => {
-      updateOptions()
+    onCompleted: (newData) => {
+      updateOptions(newData)
     },
   })
 
@@ -134,8 +134,10 @@ export const SearchInput = ({
     }
   }
 
-  const updateOptions = () => {
-    const options = ((data?.searchResults?.items as Array<SupportQna>) || [])
+  const updateOptions = (newData?: GetSupportSearchResultsQuery) => {
+    const options = (
+      ((newData ?? data)?.searchResults?.items as Array<SupportQna>) || []
+    )
       .filter(
         (item) => item.category?.slug && item.organization?.slug && item.slug,
       )

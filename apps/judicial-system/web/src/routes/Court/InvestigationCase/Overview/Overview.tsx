@@ -13,7 +13,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
@@ -40,6 +40,7 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import {
   useCase,
   useOnceOn,
@@ -138,7 +139,7 @@ const Overview = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },
@@ -158,11 +159,14 @@ const Overview = () => {
               },
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: workingCase.prosecutor?.name,
+                value: NameAndEmail(
+                  workingCase.prosecutor?.name,
+                  workingCase.prosecutor?.email,
+                ),
               },
               {
                 title: formatMessage(core.caseType),
-                value: capitalize(caseTypes[workingCase.type]),
+                value: capitalize(formatCaseType(workingCase.type)),
               },
             ]}
             defendants={
@@ -179,7 +183,7 @@ const Overview = () => {
             }
             defenders={[
               {
-                name: workingCase.defenderName ?? '',
+                name: workingCase.defenderName,
                 defenderNationalId: workingCase.defenderNationalId,
                 sessionArrangement: workingCase.sessionArrangements,
                 email: workingCase.defenderEmail,

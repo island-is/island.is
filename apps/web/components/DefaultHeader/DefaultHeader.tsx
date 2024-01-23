@@ -10,13 +10,16 @@ export interface DefaultHeaderProps {
   image?: string
   background?: string
   title: string
+  underTitle?: string
   logo?: string
   logoHref?: string
   titleColor?: TextProps['color']
   imagePadding?: string
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
+  imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
+  logoAltText?: string
 }
 
 export const DefaultHeader: React.FC<
@@ -26,13 +29,16 @@ export const DefaultHeader: React.FC<
   image,
   background,
   title,
+  underTitle,
   logo,
   logoHref,
   titleColor = 'dark400',
   imagePadding = '20px',
   imageIsFullHeight = true,
   imageObjectFit = 'contain',
+  imageObjectPosition = 'center',
   className,
+  logoAltText,
 }) => {
   const imageProvided = !!image
   const logoProvided = !!logo
@@ -51,7 +57,7 @@ export const DefaultHeader: React.FC<
                   borderRadius="circle"
                   background="white"
                 >
-                  <img className={styles.logo} src={logo} alt="" />
+                  <img className={styles.logo} src={logo} alt={logoAltText} />
                 </Box>
               </LinkWrapper>
             </div>
@@ -93,7 +99,11 @@ export const DefaultHeader: React.FC<
                       borderRadius="circle"
                       background="white"
                     >
-                      <img className={styles.logo} src={logo} alt="" />
+                      <img
+                        className={styles.logo}
+                        src={logo}
+                        alt={logoAltText}
+                      />
                     </Box>
                   </LinkWrapper>
                 </Hidden>
@@ -102,6 +112,11 @@ export const DefaultHeader: React.FC<
                 <Text variant="h1" as="h1" color={titleColor}>
                   {title}
                 </Text>
+                {underTitle && (
+                  <Text fontWeight="regular" color={titleColor}>
+                    {underTitle}
+                  </Text>
+                )}
               </div>
             </div>
           </div>
@@ -111,6 +126,7 @@ export const DefaultHeader: React.FC<
                 style={{
                   padding: imagePadding,
                   objectFit: imageObjectFit,
+                  objectPosition: imageObjectPosition,
                   height: imageIsFullHeight ? '100%' : undefined,
                 }}
                 className={styles.headerImage}

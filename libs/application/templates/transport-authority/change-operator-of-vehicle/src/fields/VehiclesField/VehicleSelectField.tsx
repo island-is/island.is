@@ -3,12 +3,12 @@ import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useState } from 'react'
 import {
   Box,
-  CategoryCard,
   SkeletonLoader,
   AlertMessage,
   Bullet,
   BulletList,
   InputError,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import {
   VehiclesCurrentVehicle,
@@ -91,13 +91,15 @@ export const VehicleSelectField: FC<
             !response?.vehicleOperatorChangeChecksByPermno?.isDebtLess ||
             !!response?.vehicleOperatorChangeChecksByPermno
               ?.validationErrorMessages?.length
-          setPlate(disabled ? '' : currentVehicle.permno || '')
-          setValue(
-            'pickVehicle.plate',
-            disabled ? '' : currentVehicle.permno || '',
-          )
+          const permno = disabled ? '' : currentVehicle.permno || ''
+
+          setPlate(permno)
+          setValue('pickVehicle.plate', permno)
           setValue('pickVehicle.color', currentVehicle.color || undefined)
           setValue('pickVehicle.type', currentVehicle.make || undefined)
+          if (permno) setValue('vehicleInfo.plate', permno)
+          if (permno) setValue('vehicleInfo.type', currentVehicle.make)
+
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -131,10 +133,11 @@ export const VehicleSelectField: FC<
         ) : (
           <Box>
             {selectedVehicle && (
-              <CategoryCard
-                colorScheme={disabled ? 'red' : 'blue'}
+              <ActionCard
+                backgroundColor={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
+                focused={true}
               />
             )}
             {selectedVehicle && disabled && (

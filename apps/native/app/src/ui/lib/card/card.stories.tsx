@@ -1,40 +1,46 @@
-import {theme} from '../../utils/theme';
-import {boolean, number, text, withKnobs, select} from '@storybook/addon-knobs';
-import {storiesOf} from '@storybook/react-native';
-import React from 'react';
-import {ImageSourcePropType, View} from 'react-native';
-import agencyLogo from '../../assets/card/agency-logo.png';
-import logo from '../../assets/card/logo-64w.png';
-import illustrationSrc from '../../assets/illustrations/digital-services-m3.png';
-import {Badge} from '../badge/badge';
-import {LicenceCard} from './licence-card';
-import {NotificationCard} from './notification-card';
-import {StatusCard} from './status-card';
-import {WelcomeCard} from './welcome-card';
-import {VehicleCard} from './vehicle-card';
-import {UserCard} from './user-card';
-import {FamilyMemberCard} from './family-member-card';
+import {
+  boolean,
+  number,
+  select,
+  text,
+  withKnobs,
+} from '@storybook/addon-knobs'
+import { storiesOf } from '@storybook/react-native'
+import React from 'react'
+import { ImageSourcePropType, View } from 'react-native'
+import logo from '../../assets/card/logo-64w.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
+import { theme } from '../../utils/theme'
+import { Badge } from '../badge/badge'
+import { FamilyMemberCard } from './family-member-card'
+import { LicenceCard } from './licence-card'
+import { NotificationCard } from './notification-card'
+import { StatusCard } from './status-card'
+import { UserCard } from './user-card'
+import { VehicleCard } from './vehicle-card'
+import { WelcomeCard } from './welcome-card'
 
-const CenterView = ({children}: any) => (
+const CenterView = ({ children }: any) => (
   <View
     style={{
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
-    }}>
+    }}
+  >
     {children}
   </View>
-);
+)
 
 storiesOf('Cards', module)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Welcome Card', () => {
     const description = text(
       'Description',
       'Í þessari fyrstu útgáfu af appinu geturðu nálgast rafræn skjöl og skírteini, fengið tilkynningar og séð stöðu umsókna.',
-    );
+    )
     return (
       <WelcomeCard
         description={description}
@@ -44,7 +50,7 @@ storiesOf('Cards', module)
           light: theme.color.purple100,
         }}
       />
-    );
+    )
   })
   .add('Licence Card', () => {
     const type = select(
@@ -59,13 +65,13 @@ storiesOf('Cards', module)
         'CovidCertificate',
       ],
       'DriversLicense',
-    );
+    )
     const status = select(
       'Licence Card Status',
       ['VALID', 'NOT_VALID'],
       'VALID',
-    );
-    const title = text('Licence Card Title', 'Ökuskýrteini');
+    )
+    const title = text('Licence Card Title', 'Ökuskýrteini')
     return (
       <LicenceCard
         title={title}
@@ -73,14 +79,14 @@ storiesOf('Cards', module)
         date={new Date()}
         type="DriversLicense"
       />
-    );
+    )
   })
   .add('Notification Card', () => {
-    const title = text('Notification Card Title', 'Ökuskýrteini');
+    const title = text('Notification Card Title', 'Ökuskýrteini')
     const message = text(
       'Notification Card Message',
       'Skýrteini frá Lögreglusjóra nú aðgengilegt í appinu',
-    );
+    )
     return (
       <NotificationCard
         id="story-demo"
@@ -91,10 +97,10 @@ storiesOf('Cards', module)
         unread={boolean('Is Unread', true)}
         onPress={() => console.log('test')}
       />
-    );
+    )
   })
   .add('Vehicle Card', () => {
-    const title = text('Vehicle Card Title', 'BMW 318');
+    const title = text('Vehicle Card Title', 'BMW 318')
     return (
       <VehicleCard
         title={title}
@@ -102,34 +108,34 @@ storiesOf('Cards', module)
         number="ph-676"
         date={new Date()}
       />
-    );
+    )
   })
   .add('Family Member Card', () => {
     return (
       <FamilyMemberCard name="Jón Gunnar Jónsson" nationalId="2501873219" />
-    );
+    )
   })
   .add('User Card', () => {
-    const userName = text('User name', 'Jón Jónsson');
-    const ssn = text('Ssn number', '010125-4529');
-    const actionTitle = text('Action Title', 'Skoða upplýsingar');
+    const userName = text('User name', 'Jón Jónsson')
+    const ssn = text('Ssn number', '010125-4529')
+    const actionTitle = text('Action Title', 'Skoða upplýsingar')
     return (
       <UserCard
         name={userName}
         ssn={ssn}
         actions={[
-          {text: actionTitle, onPress: () => console.log('Action press')},
+          { text: actionTitle, onPress: () => console.log('Action press') },
         ]}
       />
-    );
+    )
   })
   .add('Notification Card With Actions', () => {
-    const title = text('Notification Card Title', 'Ökuskýrteini');
+    const title = text('Notification Card Title', 'Ökuskýrteini')
     const message = text(
       'Notification Card Message',
       'Skýrteini frá Lögreglusjóra nú aðgengilegt í appinu',
-    );
-    const actionTitle = text('Notification Action Title', 'Opna');
+    )
+    const actionTitle = text('Notification Action Title', 'Opna')
     return (
       <NotificationCard
         id="story-demo"
@@ -140,23 +146,23 @@ storiesOf('Cards', module)
         unread={boolean('Is Unread', true)}
         onPress={() => console.log('test')}
         actions={[
-          {text: actionTitle, onPress: () => console.log('Action press')},
+          { text: actionTitle, onPress: () => console.log('Action press') },
         ]}
       />
-    );
+    )
   })
   .add('Status Card', () => {
-    const title = text('Status Card Title', 'Fæðingarorlof 1/3');
-    const description = text('Status Card Description', 'Skipting orlofstíma');
-    const badgeTitle = text('Badge Status Card Title', 'Vantar gögn');
+    const title = text('Status Card Title', 'Fæðingarorlof 1/3')
+    const description = text('Status Card Description', 'Skipting orlofstíma')
+    const badgeTitle = text('Badge Status Card Title', 'Vantar gögn')
     const options = {
       range: true,
       min: 0,
       max: 100,
       step: 20,
-    };
-    const progress = number('Status Card Progess', 66, options);
-    const actionTitle = text('Status Card Action Title', 'Opna Umsókn');
+    }
+    const progress = number('Status Card Progess', 66, options)
+    const actionTitle = text('Status Card Action Title', 'Opna Umsókn')
     return (
       <StatusCard
         title={title}
@@ -173,5 +179,5 @@ storiesOf('Cards', module)
           },
         ]}
       />
-    );
-  });
+    )
+  })

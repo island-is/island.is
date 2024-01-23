@@ -123,6 +123,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/social-insurance-administration/old-age-pension'
     ),
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/household-supplement'
+    ),
   [ApplicationTypes.CAR_RECYCLING]: () =>
     import('@island.is/application/templates/car-recycling'),
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
@@ -137,6 +141,24 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/directorate-of-immigration/citizenship'
     ),
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
+    ),
+  [ApplicationTypes.ENERGY_FUNDS]: () =>
+    import('@island.is/application/templates/energy-funds'),
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: () =>
+    import('@island.is/application/templates/healthcare-license-certificate'),
+  [ApplicationTypes.PENSION_SUPPLEMENT]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/pension-supplement'
+    ),
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: () =>
+    import(
+      '@island.is/application/templates/aosh/transfer-of-machine-ownership'
+    ),
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: () =>
+    import('@island.is/application/templates/aosh/change-machine-supervisor'),
 }
 
 export default templates

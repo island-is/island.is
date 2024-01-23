@@ -32,7 +32,7 @@ const InputModal = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <Text variant="h3" marginBottom={2}>
+          <Text variant="h3" marginBottom={4}>
             {headline}
           </Text>
 
@@ -49,7 +49,7 @@ const InputModal = ({
             </Text>
           </div>
 
-          <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
+          <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
             <Button variant="ghost" onClick={onCancel}>
               Hætta við
             </Button>

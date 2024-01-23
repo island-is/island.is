@@ -343,15 +343,25 @@ export class CaseController {
       case CaseTransition.COMPLETE_APPEAL:
         if (
           isRestrictionCase(theCase.type) &&
-          (theCase.decision === CaseDecision.ACCEPTING ||
-            theCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
           theCase.state === CaseState.ACCEPTED &&
-          theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED
+          (theCase.decision === CaseDecision.ACCEPTING ||
+            theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
         ) {
-          // The court of appeals has modified the ruling of a restriction case
-          update.validToDate = theCase.appealValidToDate
-          update.isCustodyIsolation = theCase.isAppealCustodyIsolation
-          update.isolationToDate = theCase.appealIsolationToDate
+          if (
+            theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
+            theCase.appealRulingDecision ===
+              CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
+          ) {
+            // The court of appeals has modified the ruling of a restriction case
+            update.validToDate = theCase.appealValidToDate
+            update.isCustodyIsolation = theCase.isAppealCustodyIsolation
+            update.isolationToDate = theCase.appealIsolationToDate
+          } else if (
+            theCase.appealRulingDecision === CaseAppealRulingDecision.REPEAL
+          ) {
+            // The court of appeals has repealed the ruling of a restriction case
+            update.validToDate = nowFactory()
+          }
         }
         break
     }

@@ -1,0 +1,11 @@
+mutation BulkUpload($input: SignatureCollectionListBulkUploadInput!) {
+  signatureCollectionBulkUploadSignatures(input: $input) {
+    success {
+      nationalId
+    }
+    failed {
+      nationalId
+      reason
+    }
+  }
+}

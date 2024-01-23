@@ -184,6 +184,15 @@ export class AuthController {
     return res.redirect('/?villa=innskraning-ogild')
   }
 
+  @Get('callback')
+  async deprecatedAuth(@Res() res: Response) {
+    this.logger.debug(
+      'Received login request through a deprecated authentication system',
+    )
+
+    res.redirect('/?villa=innskraning-gomul')
+  }
+
   @Get('logout')
   logout(@Res() res: Response, @Req() req: Request) {
     this.logger.debug('Received logout request')
@@ -211,7 +220,7 @@ export class AuthController {
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
 
-    if (user && this.authService.validateUser(user)) {
+    if (user) {
       return {
         userId: user.id,
         userNationalId: user.nationalId,
@@ -231,7 +240,7 @@ export class AuthController {
     } else {
       const defender = await this.authService.findDefender(authUser.nationalId)
 
-      if (defender && this.authService.validateUser(defender)) {
+      if (defender) {
         return {
           userId: defender.id,
           userNationalId: defender.nationalId,
@@ -240,6 +249,7 @@ export class AuthController {
         }
       }
     }
+
     return undefined
   }
 

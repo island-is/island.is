@@ -647,6 +647,13 @@ export const notifications = {
         'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description: 'Texti í pósti til Landsréttar þegar að kæra er móttekin',
     },
+    text: {
+      id: 'judicial.system.backend:notifications.case_appeal_received_by_court.text',
+      defaultMessage:
+        'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. Sjá nánar á rettarvorslugatt.island.is',
+      description:
+        'Texti í SMS-i á vaktsíma dómara eða dómritara þegar að kærumál er móttekið af dómara',
+    },
   }),
   caseAppealStatement: defineMessages({
     subject: {
@@ -662,6 +669,20 @@ export const notifications = {
       description: 'Texti í pósti til aðila máls þegar greinargerð er send',
     },
   }),
+  caseAppealCaseFilesUpdated: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_appeal_case_files_updated.subject',
+      defaultMessage:
+        'Ný gögn í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { ({appealCaseNumber})}}',
+      description: 'Fyrirsögn í pósti til aðila máls þegar ný gögn eru send',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_appeal_case_files_updated.body',
+      defaultMessage:
+        'Ný gögn hafa borist vegna kæru í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { (Landsréttarmál nr. {appealCaseNumber})}}. {appealCaseNumber, select, NONE {} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      description: 'Texti í pósti til aðila máls þegar ný gögn eru send',
+    },
+  }),
   caseAppealCompleted: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.case_appeal_completed.subject',
@@ -670,9 +691,9 @@ export const notifications = {
       description: 'Fyrirsögn í pósti til aðila máls þegar kæru er lokið',
     },
     body: {
-      id: 'judicial.system.backend:notifications.case_appeal_completed.body_v2',
+      id: 'judicial.system.backend:notifications.case_appeal_completed.body_v3',
       defaultMessage:
-        'Landsréttur hefur úrskurðað í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+        'Landsréttur hefur úrskurðað í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). Niðurstaða Landsréttar: {appealRulingDecision}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til aðila máls þegar kæru er lokið',
     },
   }),
