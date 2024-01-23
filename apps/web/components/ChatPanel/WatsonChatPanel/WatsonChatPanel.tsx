@@ -108,7 +108,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           ...props,
           onLoad: (instance) => {
             watsonInstance.current = instance
-            if (cssVariables) {
+            if (Object.keys(cssVariables).length > 0) {
               instance.updateCSSVariables(cssVariables)
             }
             if (Object.keys(languagePack).length > 0) {
