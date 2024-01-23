@@ -33,6 +33,17 @@ const getScriptSource = (version: string) => {
   return `${URL}/versions/${version}/${FILENAME}`
 }
 
+const loadScript = (
+  options: Window['watsonAssistantChatOptions'],
+  version = 'latest',
+) => {
+  window.watsonAssistantChatOptions = options
+  const scriptElement = document.createElement('script')
+  scriptElement.src = getScriptSource(version)
+  document.head.appendChild(scriptElement)
+  return scriptElement
+}
+
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const { activeLocale } = useI18n()
 
@@ -61,7 +72,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const n = useNamespaceStrict(namespace)
 
   const watsonInstance = useRef<WatsonInstance | null>(null)
-  const [isButtonVisible, setIsButtonVisible] = useState(false)
+  const [hasButtonBeenClicked, setHasButtonBeenClicked] = useState(false)
 
   useEffect(() => {
     if (Object.keys(namespace).length === 0) {
@@ -74,69 +85,76 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
 
-    window.watsonAssistantChatOptions = {
-      showCloseAndRestartButton: true,
-      pageLinkConfig: {
-        // If there is a query param of wa_lid=<linkID> then in the background a message will be sent and the chat will open
-        linkIDs: {
-          t10: {
-            text: n('t10', 'Tala við manneskju'),
+    let scriptElement: HTMLScriptElement | null = null
+
+    if (hasButtonBeenClicked)
+      scriptElement = loadScript(
+        {
+          showCloseAndRestartButton: true,
+          pageLinkConfig: {
+            // If there is a query param of wa_lid=<linkID> then in the background a message will be sent and the chat will open
+            linkIDs: {
+              t10: {
+                text: n('t10', 'Tala við manneskju'),
+              },
+              t11: {
+                text: n('t11', 'Hæ Askur'),
+              },
+            },
           },
-          t11: {
-            text: n('t11', 'Hæ Askur'),
+          serviceDesk: {
+            skipConnectAgentCard: true,
+          },
+          ...props,
+          onLoad: (instance) => {
+            watsonInstance.current = instance
+            if (cssVariables) {
+              instance.updateCSSVariables(cssVariables)
+            }
+            if (Object.keys(languagePack).length > 0) {
+              instance.updateLanguagePack(languagePack)
+            }
+            if (
+              // Askur - Útlendingastofnun
+              props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+            ) {
+              onAuthenticatedWatsonAssistantChatLoad(
+                instance,
+                namespace,
+                activeLocale,
+                'directorateOfImmigration',
+              )
+            }
+
+            if (onLoad) {
+              onLoad(instance)
+            }
+
+            instance.render().then(() => {
+              instance.openWindow()
+            })
           },
         },
-      },
-      serviceDesk: {
-        skipConnectAgentCard: true,
-      },
-      ...props,
-      onLoad: (instance) => {
-        watsonInstance.current = instance
-        if (cssVariables) {
-          instance.updateCSSVariables(cssVariables)
-        }
-        if (Object.keys(languagePack).length > 0) {
-          instance.updateLanguagePack(languagePack)
-        }
-        if (
-          // Askur - Útlendingastofnun
-          props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
-        ) {
-          onAuthenticatedWatsonAssistantChatLoad(
-            instance,
-            namespace,
-            activeLocale,
-            'directorateOfImmigration',
-          )
-        }
-
-        if (onLoad) {
-          onLoad(instance)
-        }
-
-        instance.render().then(() => setIsButtonVisible(true))
-      },
-    }
-
-    const scriptElement = document.createElement('script')
-    scriptElement.src = getScriptSource(version)
-    document.head.appendChild(scriptElement)
+        version,
+      )
 
     return () => {
-      scriptElement?.remove()
       watsonInstance?.current?.destroy()
+      scriptElement?.remove()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace])
+  }, [namespace, hasButtonBeenClicked])
 
   if (showLauncher) return null
 
   return (
     <ChatBubble
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-      isVisible={isButtonVisible}
-      onClick={watsonInstance.current?.openWindow}
+      isVisible={true}
+      onClick={() => {
+        watsonInstance.current?.openWindow()
+        setHasButtonBeenClicked(true)
+      }}
       pushUp={pushUp}
     />
   )
