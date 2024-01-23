@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "charts": "scripts/generate-chart-values.sh",
+    "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
     "cli": "node -r esbuild-register src/cli/cli.ts"
   },
   "license": "MIT",
