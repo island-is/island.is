@@ -63,7 +63,6 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'description',
   'demands',
   'lawsBroken',
-  'legalBasis',
   'requestedOtherRestrictions',
   'caseFacts',
   'legalArguments',
