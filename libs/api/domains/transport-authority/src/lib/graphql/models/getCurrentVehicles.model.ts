@@ -47,12 +47,18 @@ export class VehicleOperatorChangeChecksByPermno {
 
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
+
+  @Field(() => BasicVehicleInformation, { nullable: true })
+  basicVehicleInformation?: BasicVehicleInformation | null
 }
 
 @ObjectType()
 export class VehiclePlateOrderChecksByPermno {
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
+
+  @Field(() => BasicVehicleInformation, { nullable: true })
+  basicVehicleInformation?: BasicVehicleInformation | null
 }
 
 @ObjectType()

@@ -31,6 +31,11 @@ export type VehiclesCurrentVehicleWithOperatorChangeChecks = {
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 
+export type CurrentVehiclesAndRecords = {
+  totalRecords: number
+  vehicles: VehiclesCurrentVehicle[]
+}
+
 export type OperatorField = {
   nationalId: string
   name: string
