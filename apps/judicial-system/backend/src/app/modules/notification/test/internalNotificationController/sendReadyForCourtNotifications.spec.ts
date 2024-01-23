@@ -315,7 +315,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       id: courtId,
       name: 'Héraðsdómur Reykjavíkur',
     } as Institution
-    const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' },
+    const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' }
 
     const theCase = {
       id: caseId,
@@ -362,7 +362,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       id: courtId,
       name: 'Héraðsdómur Reykjavíkur',
     } as Institution
-    const prosecutorsOffice ={ name: 'Lögreglan á höfuðborgarsvæðinu' }
+    const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' }
 
     const theCase = {
       id: caseId,
