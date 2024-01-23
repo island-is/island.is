@@ -21,9 +21,17 @@ export async function getSsmParams(
       client.getParameters({ Names, WithDecryption: true }),
     ),
   )
-  return allParams
+  const params = allParams
     .map(({ Parameters }) =>
       Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
     )
     .reduce((p, c) => ({ ...p, ...c }), {})
+  console.log({
+    chunks,
+    numChunks: chunks.length,
+    allParams,
+    sampleAllParams: allParams[0]?.Parameters ?? null,
+    params,
+  })
+  return params
 }

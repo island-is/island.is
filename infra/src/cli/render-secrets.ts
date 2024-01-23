@@ -15,7 +15,7 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 }
 
 export const renderSecretsCommand = async (service: string) => {
-  renderSecrets(service).catch((error) => {
+  return renderSecrets(service).catch((error) => {
     if (error.name === 'CredentialsProviderError') {
       logger.error(
         'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
@@ -23,7 +23,7 @@ export const renderSecretsCommand = async (service: string) => {
     } else {
       logger.error(error)
     }
-    process.exit(1)
+    return {} as ReturnType<typeof renderSecrets>
   })
 }
 
@@ -62,11 +62,14 @@ export const renderSecrets = async (service: string) => {
   const values = await getSsmParams(
     secretRequests.map(([_, ssmName]) => ssmName),
   )
+  const envMap = Object.fromEntries(
+    secretRequests.map(([envName, ssmName]) => [envName, values[ssmName]]),
+  )
 
-  secretRequests.forEach(([envName, ssmName]) => {
-    const escapedValue = values[ssmName]
-      .replace(/\s+/g, ' ')
-      .replace(/'/g, "'\\''")
-    logger.debug(`export ${envName}='${escapedValue}'`)
+  console.log('### envMap', envMap)
+  Object.entries(envMap).forEach(([key, value]) => {
+    const escapedValue = value.replace(/\n/g, '\\n').replace(/"/g, '\\"')
+    logger.debug(`export ${key}='${escapedValue}'`)
   })
+  return envMap
 }
