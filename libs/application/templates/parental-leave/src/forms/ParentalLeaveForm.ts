@@ -1,6 +1,7 @@
 import addDays from 'date-fns/addDays'
 
 import {
+  buildAlertMessageField,
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
@@ -549,26 +550,75 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'isSelfEmployed.benefits',
               title: '',
               children: [
-                buildCustomField({
-                  component: 'SelfEmployed',
-                  id: 'isSelfEmployed',
-                  childInputIds: [
-                    'isReceivingUnemploymentBenefits',
-                    'isSelfEmployed',
-                  ],
+                buildDescriptionField({
+                  id: 'isSelfEmployed.description',
                   title: parentalLeaveFormMessages.selfEmployed.title,
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,
+                  titleVariant: 'h2',
                 }),
-                buildCustomField({
-                  component: 'UnEmploymentBenefits',
-                  id: 'isReceivingUnemploymentBenefits',
+                buildRadioField({
+                  id: 'isSelfEmployed',
+                  title: '',
+                  width: 'half',
+                  required: true,
+                  defaultValue: NO,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildDescriptionField({
+                  id: 'isReceivingUnemploymentBenefits.description',
                   title:
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsTitle,
                   description:
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsDescription,
+                  titleVariant: 'h2',
+                  condition: (answers) =>
+                    (
+                      answers as {
+                        isSelfEmployed: string
+                      }
+                    )?.isSelfEmployed !== YES,
+                }),
+                buildAlertMessageField({
+                  id: 'isReceivingUnemploymentBenefits.alertMessage',
+                  title: parentalLeaveFormMessages.employer.alertTitle,
+                  message: parentalLeaveFormMessages.employer.alertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  condition: (answers) =>
+                    (
+                      answers as {
+                        isSelfEmployed: string
+                      }
+                    )?.isSelfEmployed !== YES,
+                }),
+                buildRadioField({
+                  id: 'isReceivingUnemploymentBenefits',
+                  title: '',
+                  width: 'half',
+                  required: true,
+                  defaultValue: NO,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
+                  ],
                   condition: (answers) =>
                     (
                       answers as {
@@ -599,6 +649,11 @@ export const ParentalLeaveForm: Form = buildForm({
                     },
                   ],
                   condition: (answers) =>
+                    (
+                      answers as {
+                        isSelfEmployed: string
+                      }
+                    )?.isSelfEmployed !== YES &&
                     (
                       answers as {
                         isReceivingUnemploymentBenefits: string
