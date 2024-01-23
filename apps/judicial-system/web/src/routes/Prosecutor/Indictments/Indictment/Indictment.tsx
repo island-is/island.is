@@ -206,7 +206,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
 
     if (workingCase.defendants && workingCase.defendants.length > 0) {
       indictmentIntroductionAutofill = [
-        workingCase.prosecutor?.institution?.name?.toUpperCase(),
+        workingCase.prosecutorsOffice?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),

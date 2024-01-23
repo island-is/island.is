@@ -109,7 +109,7 @@ const CourtOfAppealOverview: React.FC<
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),
