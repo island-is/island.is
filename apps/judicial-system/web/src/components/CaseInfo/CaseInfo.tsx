@@ -132,7 +132,7 @@ export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
         </Box>
       ) : (
         <>
-          {workingCase.prosecutorsOffice && (
+          {workingCase.prosecutorsOffice?.name && (
             <Entry
               label={formatMessage(core.prosecutor)}
               value={workingCase.prosecutorsOffice.name}
