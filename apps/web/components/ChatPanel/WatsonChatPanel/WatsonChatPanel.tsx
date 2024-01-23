@@ -46,6 +46,7 @@ const loadScript = (
 
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const { activeLocale } = useI18n()
+  const [loading, setLoading] = useState(false)
 
   const {
     version = 'latest',
@@ -87,7 +88,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
     let scriptElement: HTMLScriptElement | null = null
 
-    if (hasButtonBeenClicked)
+    if (hasButtonBeenClicked) {
+      setLoading(true)
       scriptElement = loadScript(
         {
           showCloseAndRestartButton: true,
@@ -130,13 +132,21 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
               onLoad(instance)
             }
 
-            instance.render().then(() => {
-              instance.openWindow()
-            })
+            instance
+              .render()
+              .then(() => {
+                instance.openWindow()
+                setLoading(false)
+              })
+              .catch((err) => {
+                setLoading(false)
+                throw err
+              })
           },
         },
         version,
       )
+    }
 
     return () => {
       watsonInstance?.current?.destroy()
@@ -156,6 +166,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         setHasButtonBeenClicked(true)
       }}
       pushUp={pushUp}
+      loading={loading}
     />
   )
 }
