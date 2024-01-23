@@ -9,7 +9,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
-import { deceasedInfoFields } from './Sections/deceasedInfoFields'
+import { estateInfoSelection } from './Sections/estateInfoSelection'
 
 export const getForm = ({
   allowDivisionOfEstate = false,
@@ -27,11 +27,11 @@ export const getForm = ({
         id: 'selectEstate',
         title: '',
         children: [
+          estateInfoSelection,
           buildMultiField({
             id: 'estate',
             title: m.prerequisitesTitle,
             children: [
-              ...deceasedInfoFields,
               buildDescriptionField({
                 id: 'applicationInfo',
                 space: 'containerGutter',
