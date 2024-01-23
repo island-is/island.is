@@ -1,26 +1,20 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import {
+  ActionCard,
   AlertMessage,
   Box,
-  Bullet,
-  BulletList,
-  SkeletonLoader,
-  InputError,
-  ActionCard,
   Button,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { GetVehicleDetailInput } from '@island.is/api/schema'
-import { information, applicationCheck, error } from '../../lib/messages'
+import { VehiclesCurrentVehicle } from '../../shared'
+import { information } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
-import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '../../shared'
+import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
+import { GetVehicleDetailInput } from '@island.is/api/schema'
 
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
@@ -28,7 +22,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleFindField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
-> = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
+> = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
@@ -44,26 +38,23 @@ export const VehicleFindField: FC<
     setButtonDisabled(value.length !== 5)
     setPlate(value)
   }
+  const [plate, setPlate] = useState<string>(
+    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
+  )
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedVehicle, setSelectedVehicle] =
-    useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
+    useState<VehiclesCurrentVehicle | null>(
       currentVehicle && currentVehicle.permno
         ? {
             permno: currentVehicle.permno,
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            isDebtLess: true,
-            validationErrorMessages: [],
           }
         : null,
     )
-  const [plate, setPlate] = useState<string>(
-    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
-  )
 
   const getVehicleDetails = useLazyVehicleDetails()
-
   const findVehicleByPlate = () => {
     setIsLoading(true)
     if (plate) {
@@ -82,25 +73,15 @@ export const VehicleFindField: FC<
             color:
               response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
                 ?.color || '',
-            isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
-            validationErrorMessages:
-              response?.vehicleOwnerchangeChecksByPermno
-                ?.validationErrorMessages,
           })
 
-          const disabled =
-            !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
-            !!response?.vehicleOwnerchangeChecksByPermno
-              ?.validationErrorMessages?.length
-          const permno = disabled ? '' : plate || ''
-
-          setPlate(permno)
+          setPlate(plate)
           setValue(
             'pickVehicle.type',
             response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
               ?.make,
           )
-          setValue('pickVehicle.plate', permno)
+          setValue('pickVehicle.plate', plate)
           setValue(
             'pickVehicle.color',
             response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
@@ -111,8 +92,8 @@ export const VehicleFindField: FC<
             response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
               ?.requireMileage || false,
           )
-          if (permno) setValue('vehicleInfo.plate', permno)
-          if (permno)
+          if (plate) setValue('vehicleInfo.plate', plate)
+          if (plate)
             setValue(
               'vehicleInfo.type',
               response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
@@ -128,7 +109,6 @@ export const VehicleFindField: FC<
         })
     }
   }
-
   const getVehicleDetailsCallback = useCallback(
     async ({ permno }: GetVehicleDetailInput) => {
       const { data } = await getVehicleDetails({
@@ -138,15 +118,6 @@ export const VehicleFindField: FC<
     },
     [getVehicleDetails],
   )
-
-  const disabled =
-    selectedVehicle &&
-    (!selectedVehicle.isDebtLess ||
-      !!selectedVehicle.validationErrorMessages?.length)
-
-  useEffect(() => {
-    setFieldLoadingState?.(isLoading)
-  }, [isLoading])
 
   return (
     <Box>
@@ -195,66 +166,15 @@ export const VehicleFindField: FC<
             )}
             {selectedVehicle && !vehicleNotFound && (
               <ActionCard
-                backgroundColor={disabled ? 'red' : 'blue'}
+                backgroundColor={'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
                 focused={true}
               />
             )}
-            {selectedVehicle && disabled && (
-              <Box marginTop={2}>
-                <AlertMessage
-                  type="error"
-                  title={formatMessage(
-                    information.labels.pickVehicle.hasErrorTitle,
-                  )}
-                  message={
-                    <Box>
-                      <BulletList>
-                        {!selectedVehicle.isDebtLess && (
-                          <Bullet>
-                            {formatMessage(
-                              information.labels.pickVehicle.isNotDebtLessTag,
-                            )}
-                          </Bullet>
-                        )}
-                        {!!selectedVehicle.validationErrorMessages?.length &&
-                          selectedVehicle.validationErrorMessages?.map(
-                            (error) => {
-                              const message = formatMessage(
-                                getValueViaPath(
-                                  applicationCheck.validation,
-                                  error.errorNo || '',
-                                ),
-                              )
-                              const defaultMessage = error.defaultMessage
-                              const fallbackMessage =
-                                formatMessage(
-                                  applicationCheck.validation
-                                    .fallbackErrorMessage,
-                                ) +
-                                ' - ' +
-                                error.errorNo
-
-                              return (
-                                <Bullet>
-                                  {message || defaultMessage || fallbackMessage}
-                                </Bullet>
-                              )
-                            },
-                          )}
-                      </BulletList>
-                    </Box>
-                  }
-                />
-              </Box>
-            )}
           </Box>
         )}
       </Box>
-      {!isLoading && plate.length === 0 && (errors as any)?.pickVehicle && (
-        <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
-      )}
     </Box>
   )
 }

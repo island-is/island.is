@@ -12,14 +12,14 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { GetVehicleDetailInput } from '@island.is/api/schema'
-import { information, applicationCheck, error } from '../../lib/messages'
+import { information, error } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
+  VehiclesCurrentVehicleWithPlateOrderChecks,
 } from '../../shared'
 
 interface VehicleSearchFieldProps {
@@ -46,14 +46,13 @@ export const VehicleFindField: FC<
   }
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedVehicle, setSelectedVehicle] =
-    useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
+    useState<VehiclesCurrentVehicleWithPlateOrderChecks | null>(
       currentVehicle && currentVehicle.permno
         ? {
             permno: currentVehicle.permno,
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            isDebtLess: true,
             validationErrorMessages: [],
           }
         : null,
@@ -74,48 +73,46 @@ export const VehicleFindField: FC<
           console.log('response', response)
           setSelectedVehicle({
             permno:
-              response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+              response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation
                 ?.permno || '',
             make:
-              response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+              response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation
                 ?.make || '',
             color:
-              response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+              response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation
                 ?.color || '',
-            isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
             validationErrorMessages:
-              response?.vehicleOwnerchangeChecksByPermno
+              response?.vehiclePlateOrderChecksByPermno
                 ?.validationErrorMessages,
           })
 
           const disabled =
-            !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
-            !!response?.vehicleOwnerchangeChecksByPermno
-              ?.validationErrorMessages?.length
+            !!response?.vehiclePlateOrderChecksByPermno?.validationErrorMessages
+              ?.length
           const permno = disabled ? '' : plate || ''
 
           setPlate(permno)
           setValue(
             'pickVehicle.type',
-            response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+            response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation
               ?.make,
           )
           setValue('pickVehicle.plate', permno)
           setValue(
             'pickVehicle.color',
-            response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+            response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation
               ?.color || undefined,
           )
           setValue(
             'pickVehicle.requireMilage',
-            response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+            response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation
               ?.requireMileage || false,
           )
           if (permno) setValue('vehicleInfo.plate', permno)
           if (permno)
             setValue(
               'vehicleInfo.type',
-              response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+              response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation
                 ?.make,
             )
           setVehicleNotFound(false)
@@ -140,9 +137,7 @@ export const VehicleFindField: FC<
   )
 
   const disabled =
-    selectedVehicle &&
-    (!selectedVehicle.isDebtLess ||
-      !!selectedVehicle.validationErrorMessages?.length)
+    selectedVehicle && !!selectedVehicle.validationErrorMessages?.length
 
   useEffect(() => {
     setFieldLoadingState?.(isLoading)
@@ -211,34 +206,20 @@ export const VehicleFindField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {!selectedVehicle.isDebtLess && (
-                          <Bullet>
-                            {formatMessage(
-                              information.labels.pickVehicle.isNotDebtLessTag,
-                            )}
-                          </Bullet>
-                        )}
                         {!!selectedVehicle.validationErrorMessages?.length &&
                           selectedVehicle.validationErrorMessages?.map(
-                            (error) => {
-                              const message = formatMessage(
-                                getValueViaPath(
-                                  applicationCheck.validation,
-                                  error.errorNo || '',
-                                ),
-                              )
-                              const defaultMessage = error.defaultMessage
+                            (err) => {
+                              const defaultMessage = err.defaultMessage
                               const fallbackMessage =
                                 formatMessage(
-                                  applicationCheck.validation
-                                    .fallbackErrorMessage,
+                                  error.validationFallbackErrorMessage,
                                 ) +
                                 ' - ' +
-                                error.errorNo
+                                err.errorNo
 
                               return (
                                 <Bullet>
-                                  {message || defaultMessage || fallbackMessage}
+                                  {defaultMessage || fallbackMessage}
                                 </Bullet>
                               )
                             },

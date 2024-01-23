@@ -1,11 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, InputError } from '@island.is/island-ui/core'
 import { FC } from 'react'
-import { VehiclesCurrentVehicle } from '../../shared'
-import { VehicleSelectField } from './VehicleSelectField'
+import { CurrentVehiclesAndRecords } from '../../shared'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useLocale } from '@island.is/localization'
 import { error } from '../../lib/messages'
+import { VehicleFindField } from './VehicleFindField'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -13,16 +13,25 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const currentVehicleList = application.externalData.currentVehicleList
-    .data as VehiclesCurrentVehicle[]
+    .data as CurrentVehiclesAndRecords
   return (
     <Box paddingTop={2}>
-      {currentVehicleList.length > 10 ? (
-        <VehicleSelectField
-          currentVehicleList={currentVehicleList}
+      {currentVehicleList.totalRecords > 5 ? (
+        <VehicleFindField
+          currentVehicleList={currentVehicleList.vehicles}
           {...props}
         />
       ) : (
-        <VehicleRadioField currentVehicleList={currentVehicleList} {...props} />
+        // currentVehicleList.totalRecords > 5 ? (
+        //   <VehicleSelectField
+        //     currentVehicleList={currentVehicleList.vehicles}
+        //     {...props}
+        //   />
+        // ) :
+        <VehicleRadioField
+          currentVehicleList={currentVehicleList?.vehicles}
+          {...props}
+        />
       )}
       {(errors as any)?.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
