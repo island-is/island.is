@@ -6,6 +6,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   NationalRegistryCohabitantsApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   HealthInsuranceApi,

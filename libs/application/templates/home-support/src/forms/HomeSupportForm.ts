@@ -270,35 +270,9 @@ export const HomeSupportForm: Form = buildForm({
               condition: (answers) =>
                 !!(answers as HomeSupport)?.applicant?.phoneNumber,
               value: ({ answers }) =>
-                (answers as HomeSupport).applicant.phoneNumber,
-            }),
-            buildDividerField({}),
-
-            // Contacts
-            buildDescriptionField({
-              id: 'applicantOverview',
-              title: m.application.contacts.sectionTitle,
-              titleVariant: 'h4',
-            }),
-            buildKeyValueField({
-              label: applicantInformationMessages.labels.name,
-              colSpan: '6/12',
-              value: 'Mockmundur Testson',
-            }),
-            buildKeyValueField({
-              label: applicantInformationMessages.labels.nationalId,
-              colSpan: '6/12',
-              value: '1234567890',
-            }),
-            buildKeyValueField({
-              label: applicantInformationMessages.labels.email,
-              colSpan: '6/12',
-              value: 'test€xamplecom',
-            }),
-            buildKeyValueField({
-              label: applicantInformationMessages.labels.tel,
-              colSpan: '6/12',
-              value: '888-8888',
+                formatPhoneNumber(
+                  (answers as HomeSupport).applicant.phoneNumber,
+                ),
             }),
             buildDividerField({}),
 
