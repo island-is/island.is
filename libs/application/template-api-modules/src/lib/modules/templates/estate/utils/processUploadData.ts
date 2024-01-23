@@ -105,16 +105,12 @@ export const generateRawUploadData = (
         answers?.estateWithoutAssets?.estateDebtsExist ?? 'false',
       ),
     },
-    ...(answers.representative?.name
-      ? {
-          representative: {
-            email: answers.representative.email ?? '',
-            name: answers.representative.name,
-            phoneNumber: answers.representative.phone ?? '',
-            ssn: answers.representative.nationalId ?? '',
-          },
-        }
-      : { representative: undefined }),
+    representative: {
+      email: answers.representative?.email ?? '',
+      name: answers.representative?.name ?? '',
+      phoneNumber: answers.representative?.phone ?? '',
+      ssn: answers.representative?.nationalId ?? '',
+    },
     ...(answers.deceasedWithUndividedEstate?.spouse?.nationalId
       ? {
           deceasedWithUndividedEstate: {

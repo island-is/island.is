@@ -31,10 +31,10 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
         max: 10
-        min: 3
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -52,9 +52,9 @@ air-discount-scheme-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
+    default: 2
     max: 10
-    min: 3
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -114,10 +114,10 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
         max: 10
-        min: 3
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -156,9 +156,9 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 3
+    default: 2
     max: 10
-    min: 3
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -205,10 +205,10 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
         max: 10
-        min: 3
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -227,9 +227,9 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 3
+    default: 2
     max: 10
-    min: 3
+    min: 2
   resources:
     limits:
       cpu: '200m'
@@ -301,6 +301,7 @@ api:
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
+    USER_NOTIFICATION_CLIENT_URL: 'https://user-notification-xrd.internal.island.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -2712,7 +2713,7 @@ web:
       path: '/liveness'
       timeoutSeconds: 3
     readiness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/readiness'
       timeoutSeconds: 3
   hpa:

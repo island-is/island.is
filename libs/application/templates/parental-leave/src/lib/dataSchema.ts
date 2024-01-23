@@ -20,21 +20,30 @@ import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
 import { yearFosterCareOrAdoption, yearInMonths } from '../config'
 import { coreErrorMessages } from '@island.is/application/core'
+import { defaultMultipleBirthsMonths } from '../config'
 
 const PersonalAllowance = z
   .object({
     usePersonalAllowance: z.enum([YES, NO]),
-    usage: z
-      .string()
-      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
-      .optional(),
+    usage: z.string().optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
   .refine(
-    (schema) =>
-      schema.usePersonalAllowance === YES ? !!schema.useAsMuchAsPossible : true,
+    ({ usePersonalAllowance, useAsMuchAsPossible }) =>
+      usePersonalAllowance === YES ? !!useAsMuchAsPossible : true,
     {
       path: ['useAsMuchAsPossible'],
+    },
+  )
+  .refine(
+    ({ usePersonalAllowance, usage, useAsMuchAsPossible }) =>
+      usePersonalAllowance === YES && useAsMuchAsPossible === NO
+        ? usage
+          ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
+          : false
+        : true,
+    {
+      path: ['usage'],
     },
   )
 
@@ -209,13 +218,39 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
-  multipleBirths: z.object({
-    hasMultipleBirths: z.enum([YES, NO]),
-    multipleBirths: z
-      .string()
-      .refine((v) => !isNaN(Number(v)))
-      .optional(),
-  }),
+  multipleBirths: z
+    .object({
+      hasMultipleBirths: z.enum([YES, NO]),
+      multipleBirths: z.string().optional(),
+    })
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES ? !!multipleBirths : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.missingMultipleBirthsAnswer,
+      },
+    )
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES && multipleBirths
+          ? Number(multipleBirths) >= 2
+          : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.tooFewMultipleBirthsAnswer,
+      },
+    )
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES && multipleBirths
+          ? Number(multipleBirths) <= defaultMultipleBirthsMonths + 1
+          : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.tooManyMultipleBirthsAnswer,
+      },
+    ),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
 })

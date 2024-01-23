@@ -18,8 +18,8 @@ export async function coaJudgesCompleteAppealCaseTest(
   await page.getByText('Mál nr. *').fill(appealCaseNumber)
 
   await Promise.all([
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     page.getByText('Mál nr. *').press('Tab'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
   ])
   await page.getByTestId('select-assistant').click()
   await Promise.all([
