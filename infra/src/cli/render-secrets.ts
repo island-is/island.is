@@ -66,9 +66,11 @@ export const renderSecrets = async (service: string) => {
     secretRequests.map(([envName, ssmName]) => [envName, values[ssmName]]),
   )
 
-  console.log('### envMap', envMap)
+  logger.debug('env when rendering', { envMap })
   Object.entries(envMap).forEach(([key, value]) => {
-    const escapedValue = value.replace(/\n/g, '\\n').replace(/"/g, '\\"')
+    const escapedValue = (value ?? '')
+      .replace(/\n/g, '\\n')
+      .replace(/"/g, '\\"')
     logger.debug(`export ${key}='${escapedValue}'`)
   })
   return envMap
