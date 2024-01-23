@@ -200,7 +200,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+                  "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
                 }
               }
             }
@@ -334,6 +334,39 @@
         }
       }
     },
+    "/Medmaelalistar/AddListarAdmin": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedmaelalistiRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Medmaelalistar/{ID}": {
       "get": {
         "tags": ["Medmaelalistar"],
@@ -384,7 +417,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -678,7 +711,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
+                  }
                 }
               }
             }
@@ -778,9 +813,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
                 }
               }
             }
@@ -915,7 +948,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -1260,6 +1293,11 @@
             "type": "array",
             "items": { "type": "string" }
           },
+          "medMedmaeliAnnarListi": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "medmaeliKenn": { "type": "array", "items": { "type": "string" } },
           "medmaeli": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
@@ -1297,8 +1335,12 @@
       }
     },
     "securitySchemes": {
-      "Bearer": { "type": "http", "scheme": "Bearer", "bearerFormat": "Bearer" }
+      "IslandIs": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Bearer"
+      }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [{ "IslandIs": [] }]
 }

@@ -38,6 +38,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
+  QueryGetServiceWebPageArgs,
   QuerySearchResultsArgs,
   SearchableContentTypes,
   SupportQna,
@@ -46,6 +47,7 @@ import { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
   GET_SUPPORT_SEARCH_RESULTS_QUERY,
 } from '../../queries'
 import ContactBanner from '../ContactBanner/ContactBanner'
@@ -60,6 +62,7 @@ interface ServiceSearchProps {
   organization?: Organization
   searchResults: GetSupportSearchResultsQuery['searchResults']
   locale: Locale
+  serviceWebPage?: Query['getServiceWebPage']
 }
 
 const ServiceSearch: Screen<ServiceSearchProps> = ({
@@ -69,6 +72,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   organization,
   searchResults,
   locale,
+  serviceWebPage,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
@@ -153,6 +157,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
           ? 'Leitaðu á þjónustuvefnum'
           : 'Search the service web',
       )}
+      pageData={serviceWebPage}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -384,6 +389,9 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
       data: { searchResults },
     },
     namespace,
+    {
+      data: { getServiceWebPage },
+    },
   ] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
@@ -423,6 +431,15 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
         // map data here to reduce data processing in component
         return JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')
       }),
+    apolloClient.query<Query, QueryGetServiceWebPageArgs>({
+      query: GET_SERVICE_WEB_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   if (searchResults.items.length === 0 && page > 1) {
@@ -438,6 +455,7 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
     organization: organization?.data?.getOrganization,
     searchResults,
     locale: locale as Locale,
+    serviceWebPage: getServiceWebPage,
   }
 }
 

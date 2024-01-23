@@ -9,6 +9,9 @@ export class SignatureCollectionSignature {
   @Field()
   listId!: string
 
+  @Field({ nullable: true })
+  listTitle?: string
+
   @Field(() => Date)
   created!: Date
 
@@ -20,4 +23,7 @@ export class SignatureCollectionSignature {
 
   @Field(() => Boolean)
   isDigital!: boolean
+
+  @Field(() => Number, { nullable: true })
+  pageNumber?: number
 }

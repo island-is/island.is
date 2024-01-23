@@ -64,6 +64,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
         'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun.',
       description: 'english translation',
     },
+    socialInsuranceAdministrationInformationTitle: {
+      id: 'sia.application:prerequisites.socialInsuranceAdministration.title',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Information regarding income and circumstances',
+    },
     socialInsuranceAdministrationDataDescription: {
       id: 'sia.application:prerequisites.socialInsuranceAdministration.data.description',
       defaultMessage:
@@ -81,6 +86,12 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
         'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna hér (https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
       description: 'english translation',
     },
+    socialInsuranceAdministrationPrivacyWithoutIncomeDescription: {
+      id: 'sia.application:prerequisites.socialInsuranceAdministration.privacy.without.income.description#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna hér (https://www.tr.is/tryggingastofnun/personuvernd).',
+      description: 'english translation',
+    },
     startApplication: {
       id: 'sia.application:prerequisites.start.application',
       defaultMessage: 'Hefja umsókn',
@@ -94,10 +105,22 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Almennar upplýsingar',
       description: 'General information',
     },
+    infoSubSectionTitle: {
+      id: 'sia.application:applicant.info.sub.section.title',
+      defaultMessage: 'Upplýsingar um þig',
+      description: 'Information about you',
+    },
     subSectionTitle: {
       id: 'sia.application:info.sub.section.title',
       defaultMessage: 'Netfang og símanúmer',
       description: 'Email and phone number',
+    },
+    infoSubSectionDescription: {
+      id: 'sia.application:applicant.info.sub.section.description#markdown',
+      defaultMessage:
+        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður TR. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
+      description:
+        'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
     },
     subSectionDescription: {
       id: 'sia.application:info.sub.section.description',
@@ -116,12 +139,47 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
     },
+    applicantMaritalTitle: {
+      id: 'sia.application:info.applicant.martial.title',
+      defaultMessage: 'Hjúskaparstaða þín',
+      description: 'Your marital status',
+    },
+    applicantMaritalStatus: {
+      id: 'sia.application:info.applicant.marital.status',
+      defaultMessage: 'Hjúskaparstaða',
+      description: 'Marital status',
+    },
+    applicantSpouseName: {
+      id: 'sia.application:info.applicant.spouse.name',
+      defaultMessage: 'Nafn maka',
+      description: `Spouse's name`,
+    },
+    applicantAddress: {
+      id: 'sia.application:info.applicant.address',
+      defaultMessage: 'Póstfang',
+      description: 'Postal address',
+    },
+    applicantPostalcode: {
+      id: 'sia.application:info.applicant.postalcode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Postal code',
+    },
+    applicantMunicipality: {
+      id: 'sia.application:info.applicant.municipality',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Municipality',
+    },
   }),
 
   period: defineMessages({
     title: {
       id: 'sia.application:period.title',
       defaultMessage: 'Tímabil',
+      description: 'Period',
+    },
+    overviewTitle: {
+      id: 'sia.application:period.overviewTitle',
+      defaultMessage: 'Frá hvaða tíma er sótt um?',
       description: 'Period',
     },
     year: {
@@ -337,8 +395,10 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     attachmentDescription: {
       id: 'sia.application:fileUpload.attachment.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'The following document types are accepted: .pdf',
+      defaultMessage:
+        'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png',
+      description:
+        'The following document types are accepted: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png',
     },
     attachmentMaxSizeError: {
       id: 'sia.application:fileUpload.attachment.maxSizeError',
@@ -349,6 +409,13 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:fileUpload.additionalFile.title',
       defaultMessage: 'Fylgiskjöl viðbótargögn',
       description: 'Additional attachments',
+    },
+    additionalFileDescription: {
+      id: 'sia.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar ef þú telur þörf á.',
+      description:
+        'Below you can submit additional data to the Social Insurance Administration, if need be.',
     },
     additionalDocumentsEditSubmit: {
       id: 'sia.application:fileUpload.additionalDocumentsEditSubmit',

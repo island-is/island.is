@@ -29,7 +29,7 @@ const SjukratryggingarFooter: React.FC<
   const { linkResolver } = useLinkResolver()
 
   return (
-    <footer aria-labelledby="organizationFooterTitle">
+    <footer>
       <Box className={styles.footerBg} color="white" paddingTop={5}>
         <GridContainer>
           <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>

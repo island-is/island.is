@@ -1,10 +1,17 @@
 import { useParams } from 'react-router-dom'
 import { useGetCertificateByIdQuery } from './MedicineCertificate.generated'
-import { Box, Icon, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Icon,
+  SkeletonLoader,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { GoBack, UserInfoLine } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { HealthPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   type: string
@@ -16,7 +23,7 @@ export const MedicineCertificate = () => {
 
   const { formatMessage, formatDateFns } = useLocale()
 
-  const { data } = useGetCertificateByIdQuery({
+  const { data, loading, error } = useGetCertificateByIdQuery({
     variables: {
       input: {
         id: parseInt(params.id),
@@ -26,15 +33,20 @@ export const MedicineCertificate = () => {
 
   const certificate = data?.rightsPortalGetCertificateById
 
+  const isLoading = loading && !error && !data
+  const hasError = error && !loading && !data
+
   return (
     <Box paddingTop={4}>
       <Stack dividers="blueberry200" space={1}>
-        <GoBack
-          path={HealthPaths.HealthMedicineCertificates}
-          label={formatMessage(messages.medicineLicenseIntroTitle)}
-        />
-        {certificate && (
+        {isLoading && <SkeletonLoader height={35} space={2} repeat={4} />}
+        {hasError && <Problem error={error} />}
+        {certificate && !isLoading && (
           <>
+            <GoBack
+              path={HealthPaths.HealthMedicineCertificates}
+              label={formatMessage(messages.medicineLicenseIntroTitle)}
+            />
             {certificate.drugName && (
               <UserInfoLine
                 paddingY={3}

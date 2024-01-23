@@ -105,6 +105,8 @@ import { SocialInsuranceAdministrationModule } from './social-insurance-administ
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
+import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
+import { ChangeMachineSupervisorTemplateService } from './aosh/change-machine-supervisor/change-machine-supervisor.service'
 import { SignatureListCreationModule } from './signature-collection/signature-list-creation/signature-list-creation.module'
 import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
 import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
@@ -170,6 +172,7 @@ export const modules = [
   SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
   HomeSupportModule,
+  ChangeMachineSupervisorTemplateModule,
 ]
 
 export const services = [
@@ -230,4 +233,5 @@ export const services = [
   SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
   HomeSupportService,
+  ChangeMachineSupervisorTemplateService,
 ]
