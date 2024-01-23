@@ -9,7 +9,6 @@ import {
   expandClaims,
   expandDebts,
   expandEstateMembers,
-  expandRepresentative,
   expandStocks,
   trueOrHasYes,
 } from './mappers'
