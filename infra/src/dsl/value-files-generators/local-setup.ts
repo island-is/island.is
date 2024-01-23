@@ -99,14 +99,12 @@ export const getLocalrunValueFile = async (
         await writeFile(
           join(rootDir, `.env.${serviceNXName}`),
           Object.entries(svc.env)
-            .map(
-              ([name, value]) =>
-                `export ${name}='${value
-                  // Replace all hostnames with localhost
-                  .replace(/(https?:\/\/)?([^:]+)/g, '$1localhost')
-                  .replace(/'/g, "'\\''")
-                  .replace(/[\n\r]/g, '')}'`,
-            )
+            .map(([name, value]) => {
+              return `export ${name}='${value
+                // Replace all hostnames with localhost
+                .replace(/'/g, "'\\''")
+                .replace(/[\n\r]/g, '')}'`
+            })
             .join('\n'),
           { encoding: 'utf-8' },
         )
