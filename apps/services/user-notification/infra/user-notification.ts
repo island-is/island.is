@@ -93,7 +93,7 @@ export const userNotificationWorkerSetup = (services: {
   userProfileApi: ServiceBuilder<typeof serviceWorkerName>
 }): ServiceBuilder<typeof serviceWorkerName> =>
   service(serviceWorkerName)
-    .replicaCount({default: 0, min: 0, max: 0})
+    .replicaCount({ default: 0, min: 0, max: 0 })
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceWorkerName)
