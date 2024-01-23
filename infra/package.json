@@ -7,7 +7,7 @@
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
     "postinstall": "yarn update",
     "update": "yarn update:packagejson",
-    "update:packagejson": "node -r esbuild-register src/update-package-json.ts",
+    "update:packagejson": "node -r esbuild-register scripts/update-package-json.ts",
     "cli": "node -r esbuild-register src/cli/cli.ts"
   },
   "license": "MIT",

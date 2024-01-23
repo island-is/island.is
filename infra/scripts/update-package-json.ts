@@ -1,5 +1,14 @@
+/**
+ * This script compares package.json from the root of the monorepo
+ * with package.json in infra and updates if needed
+ * (the package.json from the monorepo being the source of truth)
+ *
+ * This is because a major drift was between those two files.
+ *
+ * This script is run when `yarn install` is called from the infra folder.
+ */
 import { writeFileSync } from 'fs'
-import { dirname, resolve } from 'path'
+import { resolve } from 'path'
 
 const root = resolve(__dirname, '..')
 const mainRoot = resolve(root, '..')
@@ -33,11 +42,11 @@ Object.keys(rootPackageJson.devDependencies).forEach((key) => {
 })
 
 if (changed) {
-  console.log(`Updating dependencies`)
+  console.log('🔄 Updating dependencies')
   writeFileSync(
     resolve(root, 'package.json'),
     JSON.stringify(rootPackageJson, null, 2),
   )
-  console.log('Please run yarn again')
+  console.error('⚠️ Please run yarn again')
   process.exit(1)
 }
