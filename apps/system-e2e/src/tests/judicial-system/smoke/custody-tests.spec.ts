@@ -7,6 +7,7 @@ import {
   randomPoliceCaseNumber,
   randomCourtCaseNumber,
   getDaysFromNow,
+  createFakePdf,
 } from '../utils/helpers'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
@@ -24,6 +25,25 @@ test.describe.serial('Custody tests', () => {
     prosecutorPage,
   }) => {
     const page = prosecutorPage
+
+    await page.route('**/api/graphql', (route, request) => {
+      const requestJSON = request.postDataJSON()
+
+      if (requestJSON.operationName === 'CreateCase') {
+        const modifiedData = requestJSON
+
+        modifiedData.variables.input = {
+          ...modifiedData.variables.input,
+          defenderNationalId: '0909090909',
+        }
+        route.continue({
+          method: 'POST',
+          postData: JSON.stringify(modifiedData),
+        })
+      } else {
+        route.continue()
+      }
+    })
 
     // Case list
     await page.goto('/krofur')
@@ -51,7 +71,8 @@ test.describe.serial('Custody tests', () => {
     await page
       .locator('input[name=defenderEmail]')
       .fill('jl-auto-defender@kolibri.is')
-    await page.locator('input[name=defender-access-no]').click()
+    await page.locator('input[id=defender-access-ready-for-court]').click()
+
     await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
     await expect(
       page.getByRole('button', { name: 'Óskir um fyrirtöku' }),
@@ -155,17 +176,7 @@ test.describe.serial('Custody tests', () => {
     await page.keyboard.press('Escape')
     await page.locator('input[id=courtDate-time]').fill('09:00')
     await page.keyboard.press('Tab')
-    await page
-      .locator('input[id=react-select-defenderName-input]')
-      .fill('Saul Goodmann')
-    await page.locator('#react-select-defenderName-option-0').click()
-    await page
-      .locator('input[name=defenderEmail]')
-      .fill('jl-auto-defender@kolibri.is')
-    await Promise.all([
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-      page.keyboard.press('Tab'),
-    ])
+
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalSecondaryButton').click()
 
@@ -210,6 +221,71 @@ test.describe.serial('Custody tests', () => {
 
   test('judge should receive appealed case', async ({ judgePage }) => {
     await judgeReceivesAppealTest(judgePage, caseId)
+  })
+
+  test('defender should be able to send a statement and does not see prosecutor case files', async ({
+    defenderPage,
+  }) => {
+    const page = defenderPage
+    await page.goto(`/verjandi/krafa/${caseId}`)
+
+    await expect(page.getByText('TestKaerugognSaekjanda.pdf')).toHaveCount(0)
+    await expect(
+      page.getByText('TestGreinargerdargognSaekjanda.pdf'),
+    ).toHaveCount(0)
+
+    await page.getByRole('button', { name: 'Senda greinargerð' }).click()
+
+    const statementFileChooserPromise = page.waitForEvent('filechooser')
+    await page
+      .locator('section')
+      .filter({
+        hasText:
+          'Greinargerð *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með ending',
+      })
+      .locator('button')
+      .click()
+
+    const statementFileChooser = await statementFileChooserPromise
+    await page.waitForTimeout(1000)
+    await statementFileChooser.setFiles(
+      await createFakePdf('TestGreinargerdVerjanda.pdf'),
+    )
+    await Promise.all([
+      verifyRequestCompletion(
+        page,
+        '/api/graphql',
+        'LimitedAccessCreatePresignedPost',
+      ),
+      verifyRequestCompletion(page, '/api/graphql', 'LimitedAccessCreateFile'),
+    ])
+
+    const statementCaseFileChooserPromise = page.waitForEvent('filechooser')
+    await page
+      .locator('section')
+      .filter({
+        hasText:
+          'GögnEf ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim upp hér að n',
+      })
+      .locator('button')
+      .click()
+
+    const statementCaseFileChooser = await statementCaseFileChooserPromise
+
+    await statementCaseFileChooser.setFiles(
+      await createFakePdf('TestGreinargerdVerjandaGogn.pdf'),
+    )
+    await Promise.all([
+      verifyRequestCompletion(
+        page,
+        '/api/graphql',
+        'LimitedAccessCreatePresignedPost',
+      ),
+      verifyRequestCompletion(page, '/api/graphql', 'LimitedAccessCreateFile'),
+    ])
+
+    await page.getByTestId('continueButton').click()
+    await page.getByTestId('modalSecondaryButton').click()
   })
 
   test('coa judge should submit decision in appeal case', async ({

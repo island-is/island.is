@@ -30,6 +30,27 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
     verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
   ])
 
+  const appealCaseFileChooserPromise = page.waitForEvent('filechooser')
+  await page
+    .locator('section')
+    .filter({
+      hasText:
+        'GögnEf ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að neðan. At',
+    })
+    .locator('button')
+    .first()
+    .click()
+  const appealCaseFileChooser = await appealCaseFileChooserPromise
+  await page.waitForTimeout(1000)
+
+  await appealCaseFileChooser.setFiles(
+    await createFakePdf('TestKaerugognSaekjanda.pdf'),
+  )
+  await Promise.all([
+    verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
+    verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
+  ])
+
   await page.getByTestId('continueButton').click()
   await page.getByTestId('modalSecondaryButton').click()
 
@@ -51,12 +72,34 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
   const statementFileChooser = await statementFileChooserPromise
   await page.waitForTimeout(1000)
   await statementFileChooser.setFiles(
-    await createFakePdf('TestGreinargerd.pdf'),
+    await createFakePdf('TestGreinargerdSaekjanda.pdf'),
   )
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
     verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
   ])
+
+  const statementCaseFileChooserPromise = page.waitForEvent('filechooser')
+  await page
+    .locator('section')
+    .filter({
+      hasText:
+        'GögnEf ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim upp hér að n',
+    })
+    .locator('button')
+    .click()
+
+  const statementCaseFileChooser = await statementCaseFileChooserPromise
+  await page.waitForTimeout(1000)
+
+  await statementCaseFileChooser.setFiles(
+    await createFakePdf('TestGreinargerdargognSaekjanda.pdf'),
+  )
+  await Promise.all([
+    verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
+    verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
+  ])
+
   await page.getByTestId('continueButton').click()
   await page.getByTestId('modalSecondaryButton').click()
 }
