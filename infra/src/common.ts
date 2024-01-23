@@ -55,7 +55,11 @@ export async function runCommand({
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error'
 
-const logLevelEnv = (process.env.LOG_LEVEL ?? 'info').toLowerCase()
+const logLevelEnv = (
+  process.env.LOG_LEVEL ??
+  (process.env.DEBUG ? 'debug' : null) ??
+  'info'
+).toLowerCase()
 export const LOG_LEVEL: LogLevel =
   (
     {
