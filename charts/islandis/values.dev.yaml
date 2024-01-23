@@ -3150,10 +3150,7 @@ web:
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.dev01.devland.is'
   grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'api-catalogue'
-    - 'application-system'
-    - 'consultation-portal'
+    - 'search-indexer'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
