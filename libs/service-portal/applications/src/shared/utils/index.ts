@@ -51,7 +51,7 @@ export const sortApplicationsOrganizations = (
     return
   }
   apps.forEach((elem) => {
-    const inst = institutionMapper[elem.typeId] ?? 'INSTITUTION_MISSING'
+    const inst = institutionMapper[elem.typeId].slug ?? 'INSTITUTION_MISSING'
     institutions.push({
       value: inst,
       label: organizations.find((x) => x.slug === inst)?.title ?? inst,
@@ -104,7 +104,7 @@ export const getFilteredApplicationsByStatus = (
       // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
       // otherwise it filters it.
       (activeInstitution !== ''
-        ? institutionMapper[application.typeId] === activeInstitution
+        ? institutionMapper[application.typeId].slug === activeInstitution
         : true),
   )
   return sortApplicationsStatus(filteredApps)

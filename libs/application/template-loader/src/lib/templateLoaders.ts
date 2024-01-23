@@ -149,10 +149,16 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/energy-funds'),
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: () =>
     import('@island.is/application/templates/healthcare-license-certificate'),
+  [ApplicationTypes.PENSION_SUPPLEMENT]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/pension-supplement'
+    ),
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: () =>
     import(
       '@island.is/application/templates/aosh/transfer-of-machine-ownership'
     ),
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: () =>
+    import('@island.is/application/templates/aosh/change-machine-supervisor'),
 }
 
 export default templates

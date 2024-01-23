@@ -114,6 +114,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
       ],
       workingCase,
       setWorkingCase,
+      false,
     )
   }
 
@@ -191,6 +192,24 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 }
                 onChange={() =>
                   handleRulingDecisionChange(CaseAppealRulingDecision.CHANGED)
+                }
+                backgroundColor="white"
+                large
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                name="case-decision"
+                id="case-decision-changed-significantly"
+                label={formatMessage(appealRuling.decisionChangedSignificantly)}
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
+                }
+                onChange={() =>
+                  handleRulingDecisionChange(
+                    CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY,
+                  )
                 }
                 backgroundColor="white"
                 large

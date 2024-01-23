@@ -9,6 +9,7 @@ import {
   ApplicationResponseDtoStatusEnum,
   ApplicationResponseDtoTypeIdEnum,
 } from '../../gen/fetch'
+import { PageInfoDto } from '@island.is/nest/pagination'
 
 registerEnumType(ApplicationResponseDtoTypeIdEnum, {
   name: 'ApplicationResponseDtoTypeIdEnum',
@@ -182,6 +183,14 @@ export class ApplicationAdmin {
 
   @Field(() => String, { nullable: true })
   paymentStatus?: string
+}
+
+@ObjectType()
+export class ApplicationAdminPaginatedResponse {
+  @Field(() => [ApplicationAdmin])
+  rows!: ApplicationAdmin[]
+  @Field(() => Number)
+  count!: number
 }
 
 @ObjectType()

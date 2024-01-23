@@ -100,3 +100,12 @@ export const messageArrowBorder = style({
   borderRight: '10px solid transparent',
   borderTop: `10px solid ${blue400}`,
 })
+
+export const loadingDots = style({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  margin: 'auto',
+  left: 0,
+  right: 0,
+})

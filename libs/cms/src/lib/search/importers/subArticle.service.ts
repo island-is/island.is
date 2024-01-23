@@ -27,9 +27,6 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
   }
 
   processSyncData(entries: processSyncDataInput<ISubArticle>) {
-    if (entries.length > 0) {
-      logger.info('Processing sync data for subarticles')
-    }
     return entries.reduce(
       (processedEntries: ISubArticle[], entry: Entry<any>) => {
         if (this.validateSubArticle(entry)) {
@@ -77,7 +74,9 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
   }
 
   doMapping(entries: ISubArticle[]) {
-    logger.info('Mapping subarticles', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping subarticles', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {

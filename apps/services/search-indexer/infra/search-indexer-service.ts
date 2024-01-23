@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const envs = {
   APPLICATION_URL: 'http://search-indexer-service',
@@ -26,6 +26,7 @@ const envs = {
     staging: 'loftbru.staging01.devland.is',
     prod: 'loftbru.island.is',
   },
+  ENVIRONMENT: ref((h) => h.env.type),
 }
 export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
   service('search-indexer-service')
@@ -36,6 +37,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
       API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN',
       API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN',
+      APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
     })
     .env(envs)
     .initContainer({
@@ -139,3 +141,4 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
       staging: { progressDeadlineSeconds: 25 * 60 },
       prod: { progressDeadlineSeconds: 25 * 60 },
     })
+    .grantNamespaces('islandis')

@@ -21,7 +21,7 @@ export interface List {
 }
 
 export function getSlug(id: number | string): string {
-  return `/umsoknir/maela-med-lista/?candidate=${id}`
+  return `/umsoknir/maela-med-frambodi/?candidate=${id}`
 }
 
 export function mapListBase(
@@ -76,7 +76,7 @@ export function mapList(list: MedmaelalistiDTO): List {
     collectionId: list.medmaelasofnun?.id?.toString() ?? '',
     title: list.listiNafn ?? '',
     startTime: list.medmaelasofnun?.sofnunStart ?? new Date(),
-    endTime: list.medmaelasofnun?.sofnunEnd ?? new Date(),
+    endTime: list.dagsetningLokar ?? new Date(),
 
     candidate: mapCandidate(candidate),
     // TODO: update active functionality

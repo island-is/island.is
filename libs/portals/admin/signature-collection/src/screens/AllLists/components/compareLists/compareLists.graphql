@@ -2,6 +2,7 @@ mutation BulkCompare($input: SignatureCollectionNationalIdsInput!) {
   signatureCollectionBulkCompareSignaturesAllLists(input: $input) {
     id
     listId
+    listTitle
     signee {
       name
       nationalId
