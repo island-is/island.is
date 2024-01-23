@@ -46,7 +46,7 @@ function broken(name: string) {
     },
   }
 }
-export const renderers: { [name: string]: OutputFormat<ServiceOutputType> } = {
+export const renderers = {
   broken: broken('broken'),
   helm: HelmOutput,
   localrun: LocalrunOutput({ secrets: SecretOptions.withSecrets }),

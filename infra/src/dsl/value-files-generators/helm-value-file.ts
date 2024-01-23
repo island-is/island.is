@@ -31,7 +31,7 @@ export const getHelmValueFile = (
           }),
         }
       : {}
-  const servicesAndMocks = { ...helmServices, ...mocks }
+  const servicesAndMocks: Services<HelmService> = { ...helmServices, ...mocks }
   Object.values(servicesAndMocks)
     .filter((s) => s.grantNamespacesEnabled)
     .forEach(({ namespace, grantNamespaces }) =>
