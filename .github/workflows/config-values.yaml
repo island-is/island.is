@@ -93,7 +93,7 @@ jobs:
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          ./infra/scripts/generate-chart-values.sh
+          yarn --cwd infra charts
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
 
   check-secrets:
