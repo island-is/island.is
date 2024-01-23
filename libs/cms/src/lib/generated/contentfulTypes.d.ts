@@ -1341,7 +1341,7 @@ export interface IFrontpageFields {
   slides?: IFrontpageSlider[] | undefined
 
   /** Life Events */
-  lifeEvents?: (ILifeEventPage | IAnchorPage)[] | undefined
+  lifeEvents?: ILifeEventPage[] | undefined
 
   /** Namespace */
   namespace: IUiConfiguration
@@ -1820,48 +1820,57 @@ export interface ILatestNewsSlice extends Entry<ILatestNewsSliceFields> {
 }
 
 export interface ILifeEventPageFields {
-  /** title */
+  /** Title */
   title: string
 
-  /** short title */
+  /** Short Title */
   shortTitle?: string | undefined
 
-  /** slug */
+  /** Slug */
   slug: string
 
-  /** intro */
+  /** Intro */
   intro?: string | undefined
 
-  /** short intro */
+  /** Short Intro */
   shortIntro?: string | undefined
 
-  /** image */
+  /** Image */
   image?: Asset | undefined
 
-  /** thumbnail */
+  /** Thumbnail */
   thumbnail?: Asset | undefined
 
-  /** tiny thumbnail */
+  /** Tiny Thumbnail */
   tinyThumbnail?: Asset | undefined
 
-  /** content */
+  /** Featured Image */
+  featuredImage?: Asset | undefined
+
+  /** Content */
   content: Document
 
-  /** category */
+  /** Featured */
+  featured?: IFeatured[] | undefined
+
+  /** Organizations */
+  organizations?: IOrganization[] | undefined
+
+  /** Category */
   category?: IArticleCategory | undefined
 
-  /** see more text */
+  /** Related Life Events */
+  relatedLifeEvents?: ILifeEventPage[] | undefined
+
+  /** See More Text */
   seeMoreText?: string | undefined
 
-  /** page type */
+  /** Page Type */
   pageType?:
     | 'Life Event'
     | 'Digital Iceland Service'
     | 'Digital Iceland Community Page'
     | undefined
-
-  /** featured image */
-  featuredImage?: Asset | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -3243,6 +3252,9 @@ export interface IProjectPageFields {
 
   /** Namespace */
   namespace?: IUiConfiguration | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -3452,6 +3464,9 @@ export interface IServiceWebPageFields {
 
   /** Slices */
   slices?: IFeaturedArticles[] | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {

@@ -25,6 +25,8 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getEligibleDesc,
+  getEligibleLabel,
 } from '../lib/oldAgePensionUtils'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
@@ -64,16 +66,16 @@ export const PrerequisitesForm: Form = buildForm({
                     oldAgePensionFormMessage.pre
                       .retirementPensionApplicationDescription,
                 },
-                // {
-                //   value: ApplicationType.HALF_OLD_AGE_PENSION,
-                //   dataTestId: 'half-old-age-pension',
-                //   label:
-                //     oldAgePensionFormMessage.pre
-                //       .halfRetirementPensionApplicationTitle,
-                //   subLabel:
-                //     oldAgePensionFormMessage.pre
-                //       .halfRetirementPensionApplicationDescription,
-                // },
+                {
+                  value: ApplicationType.HALF_OLD_AGE_PENSION,
+                  dataTestId: 'half-old-age-pension',
+                  label:
+                    oldAgePensionFormMessage.pre
+                      .halfRetirementPensionApplicationTitle,
+                  subLabel:
+                    oldAgePensionFormMessage.pre
+                      .halfRetirementPensionApplicationDescription,
+                },
                 {
                   value: ApplicationType.SAILOR_PENSION,
                   dataTestId: 'sailor-pension',
@@ -111,7 +113,11 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryResidenceHistoryApi,
-                  title: '',
+                  title:
+                    socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+                  subTitle:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationInformationDescription,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistrySpouseApi,
@@ -120,15 +126,20 @@ export const PrerequisitesForm: Form = buildForm({
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationApplicantApi,
                   title:
-                    oldAgePensionFormMessage.pre
+                    socialInsuranceAdministrationMessage.pre
                       .socialInsuranceAdministrationInformationTitle,
                   subTitle:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationDescription,
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationDataDescription,
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
-                  title: '',
+                  title:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationPrivacyTitle,
+                  subTitle:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationPrivacyDescription,
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationCurrenciesApi,
@@ -198,7 +209,7 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildMultiField({
           id: 'isNotEligible',
-          title: oldAgePensionFormMessage.pre.isNotEligibleLabel,
+          title: getEligibleLabel,
           condition: (_, externalData) => {
             const { isEligible } = getApplicationExternalData(externalData)
             // Show if applicant is not eligible
@@ -208,8 +219,7 @@ export const PrerequisitesForm: Form = buildForm({
             buildDescriptionField({
               id: 'isNotEligible',
               title: '',
-              description:
-                oldAgePensionFormMessage.pre.isNotEligibleDescription,
+              description: getEligibleDesc,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
@@ -228,7 +238,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [],
     }),
     buildSection({

@@ -2,14 +2,16 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubmitField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
-import { Application } from '@island.is/api/schema'
+import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 
 export const Draft: Form = buildForm({
@@ -30,6 +32,58 @@ export const Draft: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'selectCandidateSection',
+      title: m.selectCandidate,
+      condition: (_, externalData) => {
+        const lists = getValueViaPath(
+          externalData,
+          'getList.data',
+          [],
+        ) as SignatureCollectionList[]
+        return lists.length > 1
+      },
+      children: [
+        buildMultiField({
+          id: 'selectCandidateSection',
+          title: m.selectCandidate,
+          description: m.selectCandidateDescription,
+          children: [
+            buildRadioField({
+              id: 'listId',
+              title: '',
+              backgroundColor: 'white',
+              defaultValue: '',
+              options: ({
+                externalData: {
+                  getList: { data },
+                },
+              }) => {
+                return (data as SignatureCollectionList[]).map((list) => ({
+                  value: list.id,
+                  label: list.title,
+                  disabled:
+                    list.maxReached || new Date(list.endTime) < new Date(),
+                  tag: list.maxReached
+                    ? {
+                        label: m.selectCandidateMaxReached.defaultMessage,
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : new Date(list.endTime) < new Date()
+                    ? {
+                        label: m.selectCandidateListExpired.defaultMessage,
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : undefined,
+                }))
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'signeeInfo',
       title: m.information,
       children: [
@@ -39,9 +93,43 @@ export const Draft: Form = buildForm({
           description: m.listDescription,
           children: [
             buildDescriptionField({
+              id: 'candidateInfoHeader',
+              title: m.candidateInformationHeader,
+              titleVariant: 'h3',
+            }),
+            buildTextField({
+              id: 'candidateName',
+              title: m.name,
+              width: 'full',
+              readOnly: true,
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists = getValueViaPath(
+                  externalData,
+                  'getList.data',
+                  [],
+                ) as SignatureCollectionList[]
+
+                if (lists.length === 1) {
+                  return lists[0].candidate.name
+                }
+
+                const candidateName = lists.find(
+                  (list) => list.id === answers.listId,
+                )?.candidate.name
+
+                return candidateName
+              },
+            }),
+            buildDescriptionField({
+              id: 'spaceDivider',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDescriptionField({
               id: 'signeeInfoHeader',
               title: m.signeeInformationHeader,
               titleVariant: 'h3',
+              space: 'containerGutter',
             }),
             buildTextField({
               id: 'signee.name',
@@ -64,7 +152,8 @@ export const Draft: Form = buildForm({
               title: m.countryArea,
               width: 'half',
               readOnly: true,
-              defaultValue: 'Sunnlendingafjórðungur',
+              defaultValue: ({ externalData }: Application) =>
+                externalData.canSign?.data.area.name,
             }),
             buildTextField({
               id: 'signee.address',

@@ -1,6 +1,6 @@
 import { defineTemplateApi } from '@island.is/application/types'
 
-export { NationalRegistryUserApi } from '@island.is/application/types'
+export { IdentityApi } from '@island.is/application/types'
 
 export const CurrentVehiclesApi = defineTemplateApi({
   action: 'getCurrentVehiclesWithDetails',

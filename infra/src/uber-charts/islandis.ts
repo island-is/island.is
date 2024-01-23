@@ -10,7 +10,10 @@ import {
 } from '../../../apps/application-system/api/infra/application-system-api'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
-import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
+import {
+  serviceSetup as servicePortalApiSetup,
+  workerSetup as servicePortalUserProfileWorker,
+} from '../../../apps/services/user-profile/infra/service-portal-api'
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
@@ -75,6 +78,7 @@ const appSystemApi = appSystemApiSetup({
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
+const servicePortalWorker = servicePortalUserProfileWorker()
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
@@ -123,7 +127,9 @@ const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
 })
 
-const userNotificationService = userNotificationServiceSetup()
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
@@ -138,6 +144,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     api,
     consultationPortal,
@@ -169,6 +176,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     api,
     consultationPortal,
@@ -200,6 +208,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     consultationPortal,
     api,
@@ -244,4 +253,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
+  universityGatewayWorker,
 ]

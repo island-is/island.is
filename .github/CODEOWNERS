@@ -88,6 +88,7 @@
 /libs/portals/admin/icelandic-names-registry                                                             @island-is/juni
 /libs/api/domains/signature-collection                                                                   @island-is/juni
 /libs/clients/signature-collection                                                                       @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/signature-collection                    @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -157,6 +158,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/vehicles-mileage/                                                                          @island-is/hugsmidjan
+/libs/clients/user-notification/                                                                         @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
