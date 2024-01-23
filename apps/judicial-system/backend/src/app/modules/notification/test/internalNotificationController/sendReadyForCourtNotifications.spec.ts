@@ -54,7 +54,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
     prosecutor: {
       name: 'Derrick',
       email: 'derrick@dummy.is',
-      institution: { name: 'Héraðsdómur Derricks' },
     },
     courtId,
     court: { name: 'Héraðsdómur Reykjavíkur' },
@@ -64,6 +63,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     defenderName: 'Saul Goodman',
     defenderEmail: 'saul@dummy.is',
     requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+    prosecutorsOffice: { name: 'Héraðsdómur Derricks' },
   } as Case
   const notificationDto = {
     user: { id: userId } as User,
@@ -315,9 +315,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       id: courtId,
       name: 'Héraðsdómur Reykjavíkur',
     } as Institution
-    const prosecutor = {
-      institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
-    } as User
+    const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' }
 
     const theCase = {
       id: caseId,
@@ -329,7 +327,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       },
       courtId,
       court,
-      prosecutor,
+      prosecutorsOffice,
     } as unknown as Case
 
     beforeEach(async () => {
@@ -364,9 +362,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       id: courtId,
       name: 'Héraðsdómur Reykjavíkur',
     } as Institution
-    const prosecutor = {
-      institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
-    } as User
+    const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' }
 
     const theCase = {
       id: caseId,
@@ -385,7 +381,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       },
       courtId,
       court,
-      prosecutor,
+      prosecutorsOffice,
     } as unknown as Case
 
     beforeEach(async () => {

@@ -137,6 +137,11 @@ export const userNotificationWorkerSetup = (services: {
         memory: '256Mi',
       },
     })
+    .replicaCount({
+      min: 1,
+      max: 2,
+      default: 1,
+    })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
       IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
