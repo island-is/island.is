@@ -8,6 +8,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
+const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const dbName = `${serviceName.replace('-', '_')}`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
@@ -99,6 +100,7 @@ export const userNotificationWorkerSetup = (services: {
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .postgres(postgresInfo)
+    .replicaCount({default: 0, min: 0, max: 0})
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
@@ -147,3 +149,23 @@ export const userNotificationWorkerSetup = (services: {
     .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/readiness')
+
+export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
+  typeof serviceCleanupWorkerName
+> =>
+  service(serviceCleanupWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceCleanupWorkerName)
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
+    .postgres(postgresInfo)
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: postgresInfo,
+    })
+    .extraAttributes({
+      dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })
