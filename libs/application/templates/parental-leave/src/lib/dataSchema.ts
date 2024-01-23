@@ -25,17 +25,25 @@ import { defaultMultipleBirthsMonths } from '../config'
 const PersonalAllowance = z
   .object({
     usePersonalAllowance: z.enum([YES, NO]),
-    usage: z
-      .string()
-      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
-      .optional(),
+    usage: z.string().optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
   .refine(
-    (schema) =>
-      schema.usePersonalAllowance === YES ? !!schema.useAsMuchAsPossible : true,
+    ({ usePersonalAllowance, useAsMuchAsPossible }) =>
+      usePersonalAllowance === YES ? !!useAsMuchAsPossible : true,
     {
       path: ['useAsMuchAsPossible'],
+    },
+  )
+  .refine(
+    ({ usePersonalAllowance, usage, useAsMuchAsPossible }) =>
+      usePersonalAllowance === YES && useAsMuchAsPossible === NO
+        ? usage
+          ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
+          : false
+        : true,
+    {
+      path: ['usage'],
     },
   )
 
