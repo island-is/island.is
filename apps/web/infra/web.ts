@@ -67,5 +67,6 @@ export const serviceSetup = (services: {
       staging: { basicAuth: '/k8s/web/basic_auth' },
       prod: {},
     })
+    .grantNamespaces('search-indexer')
   return web
 }
