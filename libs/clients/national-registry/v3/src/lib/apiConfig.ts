@@ -1,11 +1,16 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+import {
+  ConfigType,
+  LazyDuringDevScope,
+  XRoadConfig,
+} from '@island.is/nest/config'
 
 import { Configuration } from '../../gen/fetch'
 import { NationalRegistryV3ClientConfig } from './nationalRegistryV3.config'
 
 export const ApiConfig = {
   provide: 'NationalRegistryV3ClientProviderConfiguration',
+  scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof NationalRegistryV3ClientConfig>,

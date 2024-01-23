@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNationalId } from '@island.is/nest/core'
 import { Type } from 'class-transformer'
 
-export class ArgumentDto {
+class ArgumentDto {
   @IsString()
   @ApiProperty({ example: 'key' })
   key!: string

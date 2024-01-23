@@ -15,7 +15,6 @@ export class ScopesGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ])
-
     const actorScopes = this.reflector.getAllAndOverride<string[]>(
       ACTOR_SCOPES_KEY,
       [context.getHandler(), context.getClass()],

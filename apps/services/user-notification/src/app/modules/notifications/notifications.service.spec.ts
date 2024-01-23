@@ -90,7 +90,7 @@ describe('NotificationsService', () => {
 
   it('should validate true argument count match', () => {
     const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto.args,
+      mockCreateHnippNotificationDto,
       mockHnippTemplate,
     )
     expect(mockCreateHnippNotificationDto.args.length).toBe(2)
@@ -104,7 +104,7 @@ describe('NotificationsService', () => {
       { key: 'arg3', value: 'extra' },
     ]
     const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto.args,
+      mockCreateHnippNotificationDto,
       mockHnippTemplate,
     )
     expect(mockCreateHnippNotificationDto.args.length).toBe(3)
@@ -113,7 +113,7 @@ describe('NotificationsService', () => {
   it('should validate false on argument count mismatch -', () => {
     mockCreateHnippNotificationDto.args = [{ key: 'arg2', value: 'world' }]
     const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto.args,
+      mockCreateHnippNotificationDto,
       mockHnippTemplate,
     )
     expect(mockCreateHnippNotificationDto.args.length).toBe(1)
@@ -123,7 +123,7 @@ describe('NotificationsService', () => {
   it('should validate false on argument count mismatch 0', () => {
     mockCreateHnippNotificationDto.args = []
     const counts = service.validateArgCounts(
-      mockCreateHnippNotificationDto.args,
+      mockCreateHnippNotificationDto,
       mockHnippTemplate,
     )
     expect(mockCreateHnippNotificationDto.args.length).toBe(0)
@@ -136,7 +136,7 @@ describe('NotificationsService', () => {
       { key: 'arg2', value: 'world' },
     ]
     const template = service.formatArguments(
-      mockCreateHnippNotificationDto.args,
+      mockCreateHnippNotificationDto,
       mockHnippTemplate,
     )
     expect(template.notificationBody).toEqual('Demo body hello')

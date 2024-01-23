@@ -68,9 +68,6 @@ export enum Features {
 
   // Disable new login restrictions
   disableNewDeviceLogins = 'disableNewDeviceLogins',
-
-  // Notifications
-  isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
 }
 
 export enum ServerSideFeature {
