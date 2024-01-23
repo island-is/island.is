@@ -6,7 +6,6 @@ import { TestApp } from '@island.is/testing/nest'
 import { EmailVerification } from '../src/app/user-profile/emailVerification.model'
 import { SmsVerification } from '../src/app/user-profile/smsVerification.model'
 import { UserProfile } from '../src/app/user-profile/userProfile.model'
-import { UserDeviceTokens } from '../src/app/user-profile/userDeviceTokens.model'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -57,21 +56,12 @@ export class FixtureFactory {
   }) {
     const verificationModel = this.get(SmsVerification)
 
-    return verificationModel.create<SmsVerification>({
+    return await verificationModel.create<SmsVerification>({
       nationalId,
       mobilePhoneNumber,
       smsCode,
       confirmed: false,
       tries: tries,
-    })
-  }
-
-  async createUserDeviceToken({ nationalId, deviceToken }) {
-    const userDeviceTokenModel = this.get(UserDeviceTokens)
-
-    return userDeviceTokenModel.create<UserDeviceTokens>({
-      nationalId,
-      deviceToken,
     })
   }
 }

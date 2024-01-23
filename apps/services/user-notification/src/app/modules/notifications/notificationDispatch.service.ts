@@ -5,7 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
 import { isDefined } from './utils'
 import { FIREBASE_PROVIDER } from '../../../constants'
-import { V2UsersApi } from '@island.is/clients/user-profile'
+import { UserProfileApi } from '@island.is/clients/user-profile'
 
 export class PushNotificationError extends Error {
   constructor(public readonly firebaseErrors: firebaseAdmin.FirebaseError[]) {
@@ -38,7 +38,7 @@ export class NotificationDispatchService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(FIREBASE_PROVIDER) private firebase: firebaseAdmin.app.App,
-    private userProfileApi: V2UsersApi,
+    private userProfileApi: UserProfileApi,
   ) {}
 
   async sendPushNotification({
@@ -51,8 +51,8 @@ export class NotificationDispatchService {
     messageId: string
   }): Promise<void> {
     const deviceTokensResponse =
-      await this.userProfileApi.userTokenControllerFindUserDeviceToken({
-        xParamNationalId: nationalId,
+      await this.userProfileApi.userTokenControllerGetDeviceTokens({
+        nationalId,
       })
 
     const tokens = deviceTokensResponse.map((token) => token.deviceToken)

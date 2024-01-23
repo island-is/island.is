@@ -9,7 +9,7 @@ import {
 import * as kennitala from 'kennitala'
 
 import { Documentation } from '@island.is/nest/swagger'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
@@ -19,7 +19,7 @@ import { UserProfileService } from './user-profile.service'
 const namespace = '@island.is/user-profile/v2/users'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@Scopes(UserProfileScope.system, UserProfileScope.admin)
+@Scopes(UserProfileScope.system)
 @ApiTags('v2/users')
 @ApiSecurity('oauth2', [UserProfileScope.system])
 @Controller({
@@ -28,7 +28,10 @@ const namespace = '@island.is/user-profile/v2/users'
 })
 @Audit({ namespace })
 export class UserProfileController {
-  constructor(private readonly userProfileService: UserProfileService) {}
+  constructor(
+    private readonly auditService: AuditService,
+    private readonly userProfileService: UserProfileService,
+  ) {}
 
   @Get('/.national-id')
   @Documentation({
@@ -46,7 +49,7 @@ export class UserProfileController {
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })
-  async findUserProfile(
+  findUserProfile(
     @Headers('X-Param-National-Id') nationalId: string,
   ): Promise<UserProfileDto> {
     if (!kennitala.isValid(nationalId)) {
