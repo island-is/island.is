@@ -32,6 +32,8 @@ export const getHelmValueFile = (
         }
       : {}
   const servicesAndMocks: Services<HelmService> = { ...helmServices, ...mocks }
+
+  // Grant namespaces to services that don't have them
   Object.values(servicesAndMocks)
     .filter((s) => s.grantNamespacesEnabled)
     .forEach(({ namespace, grantNamespaces }) =>
