@@ -293,6 +293,7 @@ export interface Case {
   isAppealCustodyIsolation?: boolean
   appealIsolationToDate?: string
   requestAppealRulingNotToBePublished?: UserRole[]
+  prosecutorsOffice?: Institution
 }
 
 export interface CaseListEntry
