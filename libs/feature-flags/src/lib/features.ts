@@ -26,6 +26,7 @@ export enum Features {
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
+  homeSupport = 'isHomeSupportEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

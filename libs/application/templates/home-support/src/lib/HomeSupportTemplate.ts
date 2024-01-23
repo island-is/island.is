@@ -1,14 +1,10 @@
 import {
-  Application,
   ApplicationContext,
   ApplicationConfigurations,
-  ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  defineTemplateApi,
-  PendingAction,
   NationalRegistryCohabitantsApi,
 } from '@island.is/application/types'
 import {
@@ -24,6 +20,8 @@ import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
+import { isEligibleForApplication } from '../utils'
+import { Features } from '@island.is/feature-flags'
 
 type HomeSupportEvent =
   | { type: DefaultEvents.APPROVE }
@@ -45,6 +43,7 @@ const HomeSupportTemplate: ApplicationTemplate<
   name: application.general.name,
   dataSchema: HomeSupportSchema,
   translationNamespaces: [configuration.translation],
+  featureFlag: Features.homeSupport,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -90,9 +89,37 @@ const HomeSupportTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.DRAFT,
+          SUBMIT: [
+            {
+              target: States.DRAFT,
+              cond: isEligibleForApplication,
+            },
+            {
+              target: States.NOT_ELIGIBLE,
+            },
+          ],
+        },
+      },
+      [States.NOT_ELIGIBLE]: {
+        meta: {
+          status: 'rejected',
+          name: application.general.name.defaultMessage,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: TWENTY_FOUR_HOURS_IN_MS,
           },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/NotEligible').then((val) =>
+                  Promise.resolve(val.NotEligible),
+                ),
+              delete: true,
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DRAFT]: {
@@ -127,11 +154,11 @@ const HomeSupportTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: States.IN_REVIEW,
+            target: States.SUBMITTED,
           },
         },
       },
-      [States.IN_REVIEW]: {
+      [States.SUBMITTED]: {
         meta: {
           status: 'completed',
           name: application.general.name.defaultMessage,
