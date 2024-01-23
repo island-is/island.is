@@ -88,7 +88,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
     let scriptElement: HTMLScriptElement | null = null
 
-    if (hasButtonBeenClicked) {
+    if (hasButtonBeenClicked || showLauncher) {
       setLoading(true)
       scriptElement = loadScript(
         {
@@ -135,7 +135,9 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             instance
               .render()
               .then(() => {
-                instance.openWindow()
+                if (!showLauncher) {
+                  instance.openWindow()
+                }
                 setLoading(false)
               })
               .catch((err) => {
@@ -153,7 +155,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
       scriptElement?.remove()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace, hasButtonBeenClicked])
+  }, [namespace, hasButtonBeenClicked, showLauncher])
 
   if (showLauncher) return null
 
