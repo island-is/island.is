@@ -144,7 +144,7 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
             }),
             ...(courtClaim.format?.institution && {
               institution: formatInstitutionName(
-                workingCase.creatingProsecutor?.institution?.name,
+                workingCase.prosecutorsOffice?.name,
               ),
             }),
             ...(courtClaim.format?.live && {
