@@ -23,14 +23,10 @@ export const disabled = style({
 
 export const fileNameContainer = style({
   marginRight: theme.spacing[2],
-<<<<<<< HEAD
-  wordBreak: 'break-all',
-=======
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       flexBasis: '70%',
     },
   },
->>>>>>> 3fa5f9dcd417dcf8ab1098343f3d7031e8dc8a68
 })
