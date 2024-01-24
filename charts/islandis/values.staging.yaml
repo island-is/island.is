@@ -1657,10 +1657,8 @@ search-indexer-service:
     ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'islandis'
-  grantNamespacesEnabled: true
+  grantNamespaces: []
+  grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -2793,6 +2791,7 @@ web:
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
+    - 'search-indexer'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
