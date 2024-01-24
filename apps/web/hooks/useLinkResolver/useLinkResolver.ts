@@ -259,7 +259,7 @@ export const routesTemplate = {
     is: '/haskolanam-temp',
     en: '/en/university-studies',
   },
-  oskalisti_thjodarinnar: {
+  oskalistithjodarinnar: {
     is: '/oskalisti-thjodarinnar',
     en: '',
   },
