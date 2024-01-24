@@ -23,9 +23,9 @@ export const MedicineLicense = () => {
     <MedicineWrapper pathname={HealthPaths.HealthMedicineCertificates}>
       <Box marginBottom={SECTION_GAP}>
         <Text variant="h5" marginBottom={1}>
-          {formatMessage(messages.medicineCalculatorIntroTitle)}
+          {formatMessage(messages.medicineLicenseTitle)}
         </Text>
-        <Text>{formatMessage(messages.medicineCalculatorIntroText)}</Text>
+        <Text>{formatMessage(messages.medicineLicenseIntroText)}</Text>
       </Box>
       {error ? (
         <Problem
