@@ -46,9 +46,7 @@ const CommentsAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
               {formatMessage(commentsAccordion.caseResentExplanation)}
             </Text>
           </Box>
-          <Text whiteSpace="breakSpaces">
-            <MarkdownWrapper markdown={workingCase.caseResentExplanation} />
-          </Text>
+          <MarkdownWrapper markdown={workingCase.caseResentExplanation} />
         </>
       )}
     </AccordionItem>

@@ -136,6 +136,8 @@ const ProjectPage: Screen<PageProps> = ({
   const shouldDisplayWebReader =
     projectNamespace?.shouldDisplayWebReader ?? true
 
+  const pageSlices = (subpage ?? projectPage)?.slices ?? []
+
   return (
     <>
       <HeadWithSocialSharing
@@ -256,10 +258,10 @@ const ProjectPage: Screen<PageProps> = ({
             />
           </Box>
         )}
-        {!renderSlicesAsTabs && (
+        {!renderSlicesAsTabs && pageSlices.length > 0 && (
           <Stack space={SLICE_SPACING}>
-            {(subpage ?? projectPage)?.slices.map((slice: Slice, index) => {
-              const sliceCount = (subpage ?? projectPage)?.slices?.length
+            {pageSlices.map((slice: Slice, index) => {
+              const sliceCount = pageSlices.length
               return (
                 <Box className="rs_read">
                   <SliceMachine
