@@ -1,11 +1,7 @@
 import { z } from 'zod'
 import { error } from './messages'
 import { AnswerOption, InputFields } from './types'
-import {
-  Ministries,
-  REGLUGERDIR_ID,
-  UNDIRSKRIFT_RADHERRA_ID,
-} from './constants'
+import { REGLUGERDIR_ID } from './constants'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -19,7 +15,7 @@ export const dataSchema = z.object({
     })
     .refine((schema) => schema.approveExternalData === AnswerOption.YES, {
       params: error.dataGathering,
-      path: [InputFields.prerequisites.approveExternalData.split('.')[1]],
+      path: InputFields.prerequisites.approveExternalData.split('.').slice(1),
     }),
   case: z
     .object({
@@ -42,11 +38,38 @@ export const dataSchema = z.object({
       signatureType: z.string().refine((v) => v && v.length > 0, {
         params: error.emptyFieldError,
       }),
-      signatureContents: z.string().refine((v) => v && v.length > 0, {
-        params: error.emptyFieldError,
+      signatureContent: z.string().optional(),
+      signature: z.object({
+        regular: z.array(
+          z.object({
+            institution: z.string(),
+            date: z.string(),
+            members: z.array(
+              z.object({
+                textAbove: z.string().optional(),
+                name: z.string(),
+                textBelow: z.string().optional(),
+                textAfter: z.string().optional(),
+              }),
+            ),
+          }),
+        ),
+        committee: z.object({
+          institution: z.string(),
+          date: z.string(),
+          chairman: z.object({
+            textAbove: z.string().optional(),
+            name: z.string(),
+            textBelow: z.string().optional(),
+            textAfter: z.string().optional(),
+          }),
+          members: z.object({
+            name: z.string(),
+            textBelow: z.string().optional(),
+          }),
+        }),
+        additionalSignature: z.string().optional(),
       }),
-      signatureDate: z.string().optional(), // only if singatureType is ministry
-      signatureMinistry: z.string().optional(), // only if singatureType is ministry
     })
     .superRefine((caseSchema, ctx) => {
       if (caseSchema.category === REGLUGERDIR_ID) {
@@ -54,36 +77,7 @@ export const dataSchema = z.object({
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             params: error.emptyFieldError,
-            path: [InputFields.case.subCategory.split('.')[1]],
-          })
-        }
-      }
-
-      if (caseSchema.signatureType === UNDIRSKRIFT_RADHERRA_ID) {
-        if (!caseSchema.signatureDate?.length) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: error.emptyFieldError,
-            path: [InputFields.case.signatureDate.split('.')[1]],
-          })
-        }
-
-        if (!caseSchema.signatureMinistry) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: error.emptyFieldError,
-            path: [InputFields.case.signatureMinistry.split('.')[1]],
-          })
-        }
-
-        if (
-          !caseSchema.signatureMinistry ||
-          !Ministries.includes(caseSchema.signatureMinistry)
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: error.invalidMinsitry,
-            path: [InputFields.case.signatureMinistry.split('.')[1]],
+            path: InputFields.case.subCategory.split('.').slice(1),
           })
         }
       }
@@ -109,7 +103,7 @@ export const dataSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           params: error.emptyFieldError,
-          path: [InputFields.publishingPreferences.date.split('.')[1]],
+          path: InputFields.publishingPreferences.date.split('.').slice(1),
         })
       }
     }),

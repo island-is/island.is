@@ -18,7 +18,43 @@ export const newCase = {
       defaultMessage: 'Grunnupplýsingar',
       description: 'Title of the new case section',
     },
+    additonalSignature: {
+      id: 'ojoi.application:newCase.general.additonalSignature',
+      defaultMessage: 'Aukaundirritun',
+      description: 'Title of the additional signature',
+    },
+    committeeMembers: {
+      id: 'ojoi.application:newCase.general.committeeMembers',
+      defaultMessage: 'Einstaklingar nefndar',
+      description: 'Title of the committee members',
+    },
+    preview: {
+      id: 'ojoi.application:newCase.general.preview',
+      defaultMessage: 'Sýnishorn',
+      description: 'Title of the preview',
+    },
+    signedBy: {
+      id: 'ojoi.application:newCase.general.signedBy',
+      defaultMessage: 'Undirritað af',
+      description: 'Title of the signed by',
+    },
   }),
+  tabs: {
+    regular: defineMessages({
+      label: {
+        id: 'ojoi.application:newCase.tabs.regular.label',
+        defaultMessage: 'Hefðbundin undirritun',
+        description: 'Label for the regular signature tab',
+      },
+    }),
+    committee: defineMessages({
+      label: {
+        id: 'ojoi.application:newCase.tabs.committee.label',
+        defaultMessage: 'Undirritun nefndar',
+        description: 'Label for the committee signature tab',
+      },
+    }),
+  },
   modal: defineMessages({
     title: {
       id: 'ojoi.application:newCase.modal.title',
@@ -46,9 +82,9 @@ export const newCase = {
     },
     intro: {
       id: 'ojoi.application:newCase.signatureChapter.intro',
-      defaultMessage: 'Undirritaðu með því að skrifa nafn þitt hér að neðan',
-      description:
+      defaultMessage:
         'Hér má velja þá uppsetningu undirrritana sem best á við. Mikilvægt er að tryggja samræmi við frumtexta, til dæmis varðandi stað og dagsetningu.',
+      description: 'Intro of the signature chapter',
     },
   }),
   buttons: {
@@ -64,6 +100,27 @@ export const newCase = {
         id: 'ojoi.application:newCase.buttons.copyLastSignature.label',
         defaultMessage: 'Afrita síðustu undirskrift',
         description: 'Label for the copy last signature button',
+      },
+    }),
+    addCommitteeMember: defineMessages({
+      label: {
+        id: 'ojoi.application:newCase.buttons.addCommitteeMember.label',
+        defaultMessage: 'Bæta við nefndarmanni',
+        description: 'Label for the add committee member button',
+      },
+    }),
+    addPerson: defineMessages({
+      label: {
+        id: 'ojoi.application:newCase.buttons.addPerson.label',
+        defaultMessage: 'Bæta við persónu',
+        description: 'Label for the add person button',
+      },
+    }),
+    addInstitution: defineMessages({
+      label: {
+        id: 'ojoi.application:newCase.buttons.addInstitution.label',
+        defaultMessage: 'Bæta við stað/stofnun',
+        description: 'Label for the add institution button',
       },
     }),
   },
@@ -140,24 +197,64 @@ export const newCase = {
         description: 'Placeholder for the signature type input',
       },
     }),
-    signatureDate: defineMessages({
-      label: {
-        id: 'ojoi.application:newCase.inputs.signatureDateInput.label',
-        defaultMessage: 'Undirritunardagur',
-        description: 'Label for the signature date input',
-      },
-    }),
-    signatureMinistry: defineMessages({
-      label: {
-        id: 'ojoi.application:newCase.inputs.signatureMinistryInput.label',
-        defaultMessage: 'Ráðuneyti',
-        description: 'Label for the signature ministry input',
-      },
-      placeholder: {
-        id: 'ojoi.application:newCase.inputs.signatureMinistryInput.placeholder',
-        defaultMessage: 'Sláðu inn undirritunarstofnun',
-        description: 'Placeholder for the signature ministry input',
-      },
-    }),
+    signature: {
+      institution: defineMessages({
+        label: {
+          id: 'ojoi.application:newCase.inputs.signatureInstitutionInput.label',
+          defaultMessage: 'Staður/stofnun',
+          description: 'Label for the signature place / institution input',
+        },
+        placeholder: {
+          id: 'ojoi.application:newCase.inputs.signatureInstitutionInput.placeholder',
+          defaultMessage: 'Reykjavík',
+          description: 'Placeholder for the signature place input',
+        },
+      }),
+      date: defineMessages({
+        label: {
+          id: 'ojoi.application:newCase.inputs.signatureDateInput.label',
+          defaultMessage: 'Dagsetning',
+          description: 'Label for the signature date input',
+        },
+        placeholder: {
+          id: 'ojoi.application:newCase.inputs.signatureDateInput.placeholder',
+          defaultMessage: '01.02.2024',
+          description: 'Placeholder for the signature date input',
+        },
+      }),
+      textAbove: defineMessages({
+        label: {
+          id: 'ojoi.application:newCase.inputs.signatureTextAboveInput.label',
+          defaultMessage: 'Texti yfir',
+          description: 'Label for the signature text above input',
+        },
+      }),
+      textAfter: defineMessages({
+        label: {
+          id: 'ojoi.application:newCase.inputs.signatureTextAfterInput.label',
+          defaultMessage: 'Texti eftir',
+          description: 'Label for the signature text after input',
+        },
+      }),
+      textBelow: defineMessages({
+        label: {
+          id: 'ojoi.application:newCase.inputs.signatureTextBelowInput.label',
+          defaultMessage: 'Texti undir',
+          description: 'Label for the signature text below input',
+        },
+      }),
+      name: defineMessages({
+        label: {
+          id: 'ojoi.application:newCase.inputs.signatureNameInput.label',
+          defaultMessage: 'Nafn',
+          description: 'Label for the signature name input',
+        },
+        placeholder: {
+          id: 'ojoi.application:newCase.inputs.signatureNameInput.placeholder',
+          defaultMessage: 'Undirritari',
+          description: 'Placeholder for the signature name input',
+        },
+      }),
+    },
   },
 }

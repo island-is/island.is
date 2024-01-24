@@ -55,7 +55,8 @@ export const isValidPhone = (phone: string) => {
   return parsePhoneNumberFromString(phone, 'IS')?.isValid() ?? false
 }
 
-export const mapDepartmentToId = (department: string) => {
+export const mapDepartmentToId = (department?: string) => {
+  if (!department) return ''
   const s = department.toLowerCase()
   switch (s) {
     case 'a-deild':
@@ -69,6 +70,20 @@ export const mapDepartmentToId = (department: string) => {
   }
 }
 
+export const mapIdToDepartment = (id?: string) => {
+  if (!id) return ''
+  switch (id) {
+    case '0':
+      return 'A deild'
+    case '1':
+      return 'B deild'
+    case '2':
+      return 'C deild'
+    default:
+      return ''
+  }
+}
+
 // Move this logic to the API when possible?
 export const isValidMinsitry = (ministry?: string) =>
-  ministry && Ministries.includes(ministry.toLocaleLowerCase())
+  ministry && Ministries.find((m) => m.startsWith(ministry)) ? true : false

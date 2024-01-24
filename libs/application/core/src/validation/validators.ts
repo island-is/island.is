@@ -23,14 +23,10 @@ function populateError(
   error.forEach((element) => {
     const defaultZodError = element.message === 'Invalid input'
     const path = pathToError || element.path
-    console.log(element)
     let message = formatMessage(coreErrorMessages.defaultError)
     if (element.code === ZodIssueCode.custom) {
       const namespaceRegex = /^\w*\.\w*:.*/g
       const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
-      console.log(element.params)
-      console.log(includeNamespace, !defaultZodError)
-
       if (includeNamespace) {
         message = formatMessage(element.params as StaticTextObject)
       } else if (!defaultZodError) {
@@ -64,7 +60,6 @@ export function validateAnswers({
     }
   } catch (e) {
     const zodErrors: ZodIssue[] = e.errors
-    console.log(zodErrors)
     return populateError(zodErrors, e.path, formatMessage)
   }
   return undefined

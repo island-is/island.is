@@ -187,20 +187,6 @@ export const Draft: Form = buildForm({
               paddingX: 4,
               value: format(new Date(), 'dd.MM.yyyy'),
             }),
-            // buildKeyValueField({
-            //   display: 'flex',
-            //   label: summary.properties.fastTrack,
-            //   divider: true,
-            //   paddingY: 3,
-            //   paddingX: 4,
-            //   value: ({ answers }) => {
-            //     console.log(answers)
-            //     return (answers as answerSchemas).publishingPreferences
-            //       .fastTrack === AnswerOption.YES
-            //       ? general.yes
-            //       : general.no
-            //   },
-            // }),
             buildKeyValueField({
               display: 'flex',
               label: summary.properties.fastTrack,

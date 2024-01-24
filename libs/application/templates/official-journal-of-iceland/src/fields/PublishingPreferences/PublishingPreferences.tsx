@@ -27,8 +27,6 @@ export const PublishingPreferences = ({
   const today = new Date()
   const maxEndDate = addYears(today, 5)
 
-  console.log(errors)
-
   return (
     <>
       <FormIntro

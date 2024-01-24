@@ -231,8 +231,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         screen,
       )
 
-      console.log(extractedAnswers)
-
       response = await updateApplication({
         variables: {
           input: {

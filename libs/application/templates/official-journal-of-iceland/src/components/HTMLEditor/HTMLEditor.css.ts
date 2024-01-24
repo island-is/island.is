@@ -12,6 +12,7 @@ import {
   readOnly,
 } from './EditorInput.css'
 import { recipe } from '@vanilla-extract/recipes'
+import { transform } from 'pdfkit'
 
 const { color, typography, border } = theme
 
@@ -499,7 +500,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     h3::before,
     h4::before,
     h5::before,
-    h6::before
+    h6::before,
     `,
     addLegened(),
   )
@@ -523,6 +524,78 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     fontWeight: typography.regular,
     color: color.blue400,
     pointerEvents: 'none', // hax to prevent link clicks :/
+  })
+
+  global('.signatures', {
+    display: 'grid',
+    gap: '1ch',
+    gridTemplateColumns: '1fr 1fr 1fr',
+  })
+
+  global('.signature__group + .signature__group', {
+    marginTop: '3ch',
+  })
+
+  global('.signatures.single', {
+    gridTemplateColumns: '1fr',
+  })
+
+  global('.signatures.double', {
+    gridTemplateColumns: '1fr 1fr',
+  })
+
+  global('.signature', {
+    marginTop: '0',
+    fontSize: 16,
+    fontWeight: typography.semiBold,
+    textAlign: 'center',
+  })
+
+  global('.signature__title', {
+    marginTop: '0',
+    marginBottom: '1ch',
+    fontSize: 14,
+    fontStyle: 'italic',
+    fontWeight: typography.regular,
+    textAlign: 'center',
+  })
+
+  global('.signature__textAbove', {
+    marginTop: 0,
+    marginBottom: 0,
+    fontSize: 14,
+    fontStyle: 'normal',
+    fontWeight: typography.regular,
+    textAlign: 'center',
+  })
+
+  global('.signature__nameWrapper', {
+    lineHeight: 1.2,
+    textAlign: 'center',
+    fontSize: 14,
+  })
+
+  global('.signature__name', {
+    fontWeight: typography.semiBold,
+    marginBottom: '0',
+  })
+
+  global('.signature__textAfter', {
+    fontSize: 14,
+    fontWeight: typography.regular,
+  })
+
+  global('.signature__textBelow', {
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: typography.regular,
+  })
+
+  global('.signature__footer', {
+    marginTop: '2ch',
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: typography.semiBold,
   })
 
   global('.section__title', {

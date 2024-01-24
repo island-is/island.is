@@ -15,8 +15,15 @@ export const InputFields = {
     documentContents: 'case.documentContents',
     signatureType: 'case.signatureType',
     signatureContents: 'case.signatureContents',
-    signatureDate: 'case.signatureDate',
-    signatureMinistry: 'case.ministry',
+    signature: {
+      institution: 'case.signature.institution',
+      date: 'case.signature.date',
+      mainSignatures: 'case.signature.mainSignatures',
+      additonalSignatures: {
+        name: 'case.signature.additonalSignatures.name',
+        textBelow: 'case.signature.additonalSignatures.textBelow',
+      },
+    },
   },
   additionsAndDocuments: {
     files: 'additionsAndDocuments.files',
@@ -30,6 +37,11 @@ export const InputFields = {
   },
 }
 
+export type RegularSignatureState =
+  answerSchemas['case']['signature']['regular']
+export type CommitteeSignatureState =
+  answerSchemas['case']['signature']['committee']
+
 export enum TemplateApiActions {
   getOptions = 'getOptions',
 }
@@ -40,7 +52,7 @@ export type NestedType<T> = {
     : string
 }
 
-type Override<T1, T2> = Omit<T1, keyof T2> & T2
+export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
 type StatusProvider = 'success' | 'failure'
 

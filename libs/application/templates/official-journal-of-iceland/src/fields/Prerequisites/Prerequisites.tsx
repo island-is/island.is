@@ -10,9 +10,6 @@ import { getErrorViaPath } from '@island.is/application/core'
 
 export const Prerequisites = ({ application, errors }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
-
-  console.log(errors)
-
   return (
     <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
       <FormIntro

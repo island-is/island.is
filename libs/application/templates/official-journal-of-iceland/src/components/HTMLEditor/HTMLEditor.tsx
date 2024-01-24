@@ -1,18 +1,39 @@
 import { HTMLText } from '@island.is/regulations'
 import { Editor, EditorFileUploader } from '@island.is/regulations-tools/Editor'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Controller } from 'react-hook-form'
 import { classes, editorWrapper, errorStyle } from './HTMLEditor.css'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 type Props = {
+  title?: string
   name: string
-  defaultValue?: HTMLText
+  value: HTMLText
   config?: React.ComponentProps<typeof Editor>['config']
+  onChange?: (value: HTMLText) => void
   error?: string
+  readOnly?: boolean
 }
 
-export const HTMLEditor = ({ name, defaultValue, config, error }: Props) => {
-  const valueRef = useRef(() => defaultValue ?? '')
+export const HTMLEditor = ({
+  title,
+  name,
+  value,
+  config,
+  error,
+  onChange,
+  readOnly = false,
+}: Props) => {
+  const valueRef = useRef(() => value)
+  const editorRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (value !== valueRef.current()) {
+      valueRef.current = () => value
+      if (editorRef.current) {
+        editorRef.current.innerHTML = value
+      }
+    }
+  }, [value])
 
   const fileUploader = (): EditorFileUploader => async (blob) => {
     throw new Error('Not implemented')
@@ -21,23 +42,31 @@ export const HTMLEditor = ({ name, defaultValue, config, error }: Props) => {
   return (
     <Controller
       name={name}
-      defaultValue={defaultValue}
-      render={({ field: { onChange } }) => {
+      defaultValue={valueRef.current()}
+      render={({ field: { onChange: updateFormValue } }) => {
         return (
           <>
+            {title && (
+              <Text marginBottom={2} variant="h5">
+                {title}
+              </Text>
+            )}
             <Box
               className={editorWrapper({
                 error: !!error,
               })}
             >
               <Editor
+                disabled={readOnly}
+                elmRef={editorRef}
                 config={config}
                 fileUploader={fileUploader}
                 valueRef={valueRef}
-                onChange={() => onChange(valueRef.current())}
                 classes={classes}
-                onBlur={() => onChange(valueRef.current())}
-                onFocus={() => onChange(valueRef.current())}
+                onBlur={() => {
+                  updateFormValue(valueRef.current())
+                  onChange && onChange(valueRef.current())
+                }}
               />
             </Box>
             {error && <div className={errorStyle}>{error}</div>}
