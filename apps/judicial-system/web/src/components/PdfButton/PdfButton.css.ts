@@ -28,5 +28,5 @@ export const fileNameContainer = style({
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       flexBasis: '70%',
     },
-  }, 
+  },
 })
