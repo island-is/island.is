@@ -575,14 +575,28 @@ export const PrerequisitesForm: Form = buildForm({
                   title: parentalLeaveFormMessages.selectChild.screenTitle,
                   component: 'ChildSelector',
                 }),
-                buildCustomField({
-                  component: 'HasMultipleBirths',
+                buildRadioField({
                   id: 'multipleBirths.hasMultipleBirths',
                   title:
                     parentalLeaveFormMessages.selectChild.multipleBirthsName,
                   description:
                     parentalLeaveFormMessages.selectChild
                       .multipleBirthsDescription,
+                  space: 6,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'has-multiple-births',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-has-multiple-births',
+                      value: NO,
+                    },
+                  ],
                   condition: (answers, externalData) =>
                     !!answers.selectedChild &&
                     getSelectedChild(answers, externalData)

@@ -47,17 +47,7 @@ export const Overview: FC<
       buyerOperator || {},
     )
 
-    // const resApprove = await submitApplication({
-    //   variables: {
-    //     input: {
-    //       id: application.id,
-    //       event: DefaultEvents.APPROVE,
-    //       answers: approveAnswers,
-    //     },
-    //   },
-    // })
-    //if (resApprove?.data) {
-    await submitApplication({
+    const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
@@ -66,7 +56,10 @@ export const Overview: FC<
         },
       },
     })
-    //}
+    if (res?.data) {
+      // Takes them to the next state (which loads the relevant form)
+      refetch?.()
+    }
     setLoading(false)
   }
 

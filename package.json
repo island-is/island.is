@@ -59,6 +59,8 @@
     "check-tags": "yarn ts scripts/check-tags.ts",
     "charts": "cd ./infra && yarn install > /dev/null && yarn charts",
     "infra": "cd ./infra && yarn install > /dev/null && yarn cli",
+    "run-proxies": "./scripts/run-proxies.sh",
+    "proxies": "yarn run-proxies",
     "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {

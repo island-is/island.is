@@ -18,8 +18,8 @@ export async function coaJudgesCompleteAppealCaseTest(
   await page.getByText('Mál nr. *').fill(appealCaseNumber)
 
   await Promise.all([
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     page.getByText('Mál nr. *').press('Tab'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
   ])
   await page.getByTestId('select-assistant').click()
   await Promise.all([
@@ -44,7 +44,11 @@ export async function coaJudgesCompleteAppealCaseTest(
   ])
 
   await page.getByTestId('continueButton').click()
-  await page.getByTestId('modalPrimaryButton').click()
+
+  await Promise.all([
+    page.getByTestId('modalPrimaryButton').click(),
+    verifyRequestCompletion(page, '/api/graphql', 'SendNotification'),
+  ])
 
   // Ruling
   await expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`)
@@ -52,11 +56,16 @@ export async function coaJudgesCompleteAppealCaseTest(
     page.locator('label').filter({ hasText: 'Staðfesting' }).click(),
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
   ])
+
   await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').click()
   await page
     .getByPlaceholder('Hver eru úrskurðarorð Landsréttar?')
     .fill('Test úrskurðarorð Landsréttar')
-  await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').press('Tab')
+
+  await Promise.all([
+    page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').press('Tab'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+  ])
 
   const rulingFileChooserPromise = page.waitForEvent('filechooser')
   await page.getByText('Velja gögn til að hlaða upp').click()

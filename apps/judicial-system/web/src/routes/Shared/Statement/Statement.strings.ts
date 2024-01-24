@@ -35,7 +35,7 @@ export const statement = defineMessages({
     description: 'Lýsing á Hlaða upp gögnum á greinargerðarskjá',
   },
   appealCaseFilesCOASubtitle: {
-    id: 'judicial.system.core:appeal_case_files.appeal_case_files_coa_subtitle',
+    id: 'judicial.system.core:statement.appeal_case_files_coa_subtitle',
     defaultMessage:
       'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.',
     description: 'Lýsing á Hlaða upp gögnum á greinargerðarskjá',
