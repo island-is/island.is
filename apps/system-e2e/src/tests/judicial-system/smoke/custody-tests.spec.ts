@@ -160,7 +160,11 @@ test.describe.serial('Custody tests', () => {
       page.keyboard.press('Tab'),
     ])
     await page.getByText('Veldu dómara/aðstoðarmann').click()
-    await page.getByTestId('select-judge').getByText('Test Dómari').click()
+    await page
+      .getByTestId('select-judge')
+      .getByText('Test Dómari')
+      .last()
+      .click()
     await page.getByTestId('continueButton').click()
 
     // Overview
