@@ -31,10 +31,10 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -54,9 +54,9 @@ air-discount-scheme-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -116,10 +116,10 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -162,9 +162,9 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -211,10 +211,10 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -237,9 +237,9 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '200m'
@@ -1657,8 +1657,10 @@ search-indexer-service:
     ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'islandis'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -2631,7 +2633,7 @@ user-notification-worker:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -2663,7 +2665,7 @@ user-notification-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
