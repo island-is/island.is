@@ -10,7 +10,6 @@ import {
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
-  isPrisonSystemUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -68,50 +67,39 @@ const AppealCaseFilesOverview: React.FC<
 
   useEffect(() => {
     if (workingCase.caseFiles) {
-      const appealRulingFiles = workingCase.caseFiles.filter(
-        (caseFile) =>
-          (workingCase.appealState === CaseAppealState.COMPLETED ||
-            isCourtOfAppealsUser(user)) &&
-          caseFile.category &&
-          [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
+      setAllFiles(
+        workingCase.caseFiles.filter(
+          (caseFile) =>
+            caseFile.category &&
+            ((workingCase.prosecutorPostponedAppealDate &&
+              [
+                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+              ].includes(caseFile.category)) ||
+              (workingCase.prosecutorStatementDate &&
+                [
+                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+                ].includes(caseFile.category)) ||
+              (workingCase.accusedPostponedAppealDate &&
+                [
+                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+                ].includes(caseFile.category)) ||
+              (workingCase.defendantStatementDate &&
+                [
+                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+                ].includes(caseFile.category)) ||
+              [
+                CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+                CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+              ].includes(caseFile.category) ||
+              ((workingCase.appealState === CaseAppealState.COMPLETED ||
+                isCourtOfAppealsUser(user)) &&
+                [CaseFileCategory.APPEAL_RULING].includes(caseFile.category))),
+        ),
       )
-
-      if (isPrisonSystemUser(user)) {
-        setAllFiles(appealRulingFiles)
-      } else {
-        setAllFiles(
-          workingCase.caseFiles
-            .filter(
-              (caseFile) =>
-                caseFile.category &&
-                ((workingCase.prosecutorPostponedAppealDate &&
-                  [
-                    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-                    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-                  ].includes(caseFile.category)) ||
-                  (workingCase.prosecutorStatementDate &&
-                    [
-                      CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-                      CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-                    ].includes(caseFile.category)) ||
-                  (workingCase.accusedPostponedAppealDate &&
-                    [
-                      CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-                      CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-                    ].includes(caseFile.category)) ||
-                  (workingCase.defendantStatementDate &&
-                    [
-                      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-                      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-                    ].includes(caseFile.category)) ||
-                  [
-                    CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-                    CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-                  ].includes(caseFile.category)),
-            )
-            .concat(appealRulingFiles),
-        )
-      }
     }
   }, [
     user,
