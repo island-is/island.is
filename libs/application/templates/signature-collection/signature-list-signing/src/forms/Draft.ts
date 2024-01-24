@@ -19,7 +19,7 @@ export const Draft: Form = buildForm({
   title: m.applicationName,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'screen1',
@@ -53,6 +53,7 @@ export const Draft: Form = buildForm({
               title: '',
               backgroundColor: 'white',
               defaultValue: '',
+              required: true,
               options: ({
                 externalData: {
                   getList: { data },
