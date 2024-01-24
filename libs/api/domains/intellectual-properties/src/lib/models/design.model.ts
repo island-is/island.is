@@ -3,12 +3,18 @@ import { Person } from './person.model'
 import { Specification } from './specification.model'
 import { ApplicationLifecycle } from './applicationLifecycle.model'
 import { Classification } from './classification.model'
+import { IntellectualProperty } from './intellectualProperty.model'
 
-@ObjectType('IntellectualPropertiesDesign')
-export class Design {
+@ObjectType('IntellectualPropertiesDesign', {
+  implements: () => IntellectualProperty,
+})
+export class Design implements IntellectualProperty {
   @Field()
-  hId!: string
+  id!: string
 
+  /*@Field()
+  hId!: string
+*/
   @Field({ nullable: true })
   applicationNumber?: string
 

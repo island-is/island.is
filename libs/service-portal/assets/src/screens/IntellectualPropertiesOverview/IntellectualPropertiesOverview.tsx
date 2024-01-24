@@ -80,17 +80,17 @@ const IntellectualPropertiesOverview = () => {
           ?.map((ip, index) => {
             switch (ip.__typename) {
               case 'IntellectualPropertiesDesign':
-                if (!ip.hId) {
+                if (!ip.id) {
                   return null
                 }
                 return generateActionCard(
                   index,
                   ip.specification?.description,
-                  ip.hId,
+                  ip.id,
                   undefined,
                   AssetsPaths.AssetsIntellectualPropertiesDesign.replace(
                     ':id',
-                    ip.hId,
+                    ip.id,
                   ),
                   ip.status,
                 )
@@ -110,11 +110,11 @@ const IntellectualPropertiesOverview = () => {
                 return generateActionCard(
                   index,
                   ip.text,
-                  ip.vmId,
+                  ip.id,
                   ip.type,
                   AssetsPaths.AssetsIntellectualPropertiesTrademark.replace(
                     ':id',
-                    ip.vmId ?? '',
+                    ip.id ?? '',
                   ),
                   ip.status,
                 )
