@@ -3,7 +3,11 @@ import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
-import { randomPoliceCaseNumber, randomCourtCaseNumber } from '../utils/helpers'
+import {
+  randomPoliceCaseNumber,
+  randomCourtCaseNumber,
+  getDaysFromNow,
+} from '../utils/helpers'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
@@ -12,6 +16,9 @@ test.use({ baseURL: urls.judicialSystemBaseUrl })
 
 test.describe.serial('Custody tests', () => {
   let caseId = ''
+  let extendedCaseId = ''
+  const today = getDaysFromNow()
+  const tomorrow = getDaysFromNow(2)
 
   test('prosecutor should submit a custody request to court', async ({
     prosecutorPage,
@@ -46,6 +53,10 @@ test.describe.serial('Custody tests', () => {
       .fill('jl-auto-defender@kolibri.is')
     await page.locator('input[name=defender-access-no]').click()
     await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
+    await expect(
+      page.getByRole('button', { name: 'Óskir um fyrirtöku' }),
+    ).toBeVisible()
+
     await Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase'),
@@ -53,23 +64,25 @@ test.describe.serial('Custody tests', () => {
       const createCaseResult = values[1]
       caseId = createCaseResult.data.createCase.id
     })
-    await expect(page).toHaveURL(`/krafa/fyrirtaka/${caseId}`)
 
     // Court date request
-    const today = new Date().toLocaleDateString('is-IS')
+    await expect(page).toHaveURL(`/krafa/fyrirtaka/${caseId}`)
     await page.locator('input[id=arrestDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=arrestDate-time]').fill('00:00')
     await page.locator('input[id=reqCourtDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqCourtDate-time]').fill('15:00')
+    await expect(
+      page.getByRole('button', { name: 'Dómkröfur og lagagrundvöllur' }),
+    ).toBeVisible()
     await page.getByRole('button', { name: 'Halda áfram' }).click()
     await page.getByRole('button', { name: 'Halda áfram með kröfu' }).click()
+
+    // Prosecutor demands
     await expect(page).toHaveURL(
       `/krafa/domkrofur-og-lagagrundvollur/${caseId}`,
     )
-
-    // Prosecutor demands
     await page.locator('input[id=reqValidToDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqValidToDate-time]').fill('16:00')
@@ -79,6 +92,9 @@ test.describe.serial('Custody tests', () => {
     await page.locator('textarea[name=lawsBroken]').click({ delay: 50 })
     await page.keyboard.type('Einhver lög voru brotin', { delay: 50 })
     await page.getByTestId('checkbox').first().click()
+    await expect(
+      page.getByRole('button', { name: 'Greinargerð' }),
+    ).toBeVisible()
     await page.getByRole('button', { name: 'Halda áfram' }).click()
     await expect(page).toHaveURL(`/krafa/greinargerd/${caseId}`)
 
@@ -92,16 +108,20 @@ test.describe.serial('Custody tests', () => {
     await page.keyboard.type('Þetta er ekki löglegt')
     await page.locator('textarea[name=comments]').click()
     await page.keyboard.type('Sakborningur er hættulegur')
+    await expect(
+      page.getByRole('button', { name: 'Rannsóknargögn' }),
+    ).toBeVisible()
     await page.getByRole('button', { name: 'Halda áfram' }).click()
-    await expect(page).toHaveURL(`/krafa/rannsoknargogn/${caseId}`)
 
     // Case files
+    await expect(page).toHaveURL(`/krafa/rannsoknargogn/${caseId}`)
     await page.locator('textarea[name=caseFilesComments]').click()
     await page.keyboard.type('Engin gögn fylgja')
+    await expect(page.getByRole('button', { name: 'Samantekt' })).toBeVisible()
     await page.getByRole('button', { name: 'Halda áfram' }).click()
-    await expect(page).toHaveURL(`/krafa/stadfesta/${caseId}`)
 
     // Submit to court
+    await expect(page).toHaveURL(`/krafa/stadfesta/${caseId}`)
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
     await expect(page).toHaveURL('/krofur')
@@ -196,5 +216,62 @@ test.describe.serial('Custody tests', () => {
     coaPage,
   }) => {
     await coaJudgesCompleteAppealCaseTest(coaPage, caseId)
+  })
+
+  test('prosecutor asks for extension', async ({ prosecutorPage }) => {
+    const page = prosecutorPage
+    await page.goto(`/krafa/yfirlit/${caseId}`)
+    await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'ExtendCase'),
+    ]).then((values) => {
+      const extendCaseResult = values[1]
+      extendedCaseId = extendCaseResult.data.extendCase.id
+    })
+
+    // Defendant
+    await expect(page).toHaveURL(`/krafa/sakborningur/${extendedCaseId}`)
+    await page.locator('input[name=defender-access-no]').click()
+    await page.getByTestId('continueButton').click()
+
+    // Court date request
+    await expect(page).toHaveURL(`/krafa/fyrirtaka/${extendedCaseId}`)
+
+    await page.locator('input[id=reqCourtDate]').fill(today)
+    await page.keyboard.press('Escape')
+    await page.getByTestId('reqCourtDate-time').click()
+    await page.getByTestId('reqCourtDate-time').fill('10:00')
+
+    await page.getByTestId('continueButton').click()
+    await page.getByTestId('modalSecondaryButton').click()
+
+    // Prosecutor demands
+    await expect(page).toHaveURL(
+      `/krafa/domkrofur-og-lagagrundvollur/${extendedCaseId}`,
+    )
+
+    await page.locator('input[id=reqValidToDate]').fill(tomorrow)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=reqValidToDate-time]').fill('16:00')
+    await page.waitForResponse((response) => {
+      return response.request().url().includes('/graphql')
+    })
+    await page.getByTestId('continueButton').click()
+
+    // Prosecutor statement
+    await expect(page).toHaveURL(`/krafa/greinargerd/${extendedCaseId}`)
+    await page.getByTestId('continueButton').click()
+
+    // Case files
+    await expect(page).toHaveURL(`/krafa/rannsoknargogn/${extendedCaseId}`)
+    await page.getByTestId('continueButton').click()
+
+    // Submit to court
+    await expect(page).toHaveURL(`/krafa/stadfesta/${extendedCaseId}`)
+
+    await page.getByTestId('continueButton').click()
+    await page.getByTestId('modalSecondaryButton').click()
   })
 })

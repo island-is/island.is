@@ -85,6 +85,13 @@ export class SignatureListSigningService extends BaseTemplateApiService {
       areaId,
       onlyActive: true,
     })
+    // If candidateId existed or if there is only one list, check if maxReached
+    if (lists.length === 1) {
+      const { maxReached } = lists[0]
+      if (maxReached) {
+        throw new TemplateApiError(errorMessages.maxReached, 405)
+      }
+    }
     return lists
   }
 }
