@@ -118,6 +118,11 @@ export const m = defineMessages({
     defaultMessage: 'Hámarki meðmæla náð',
     description: '',
   },
+  selectCandidateListExpired: {
+    id: 'sls.application:selectCandidateListExpired',
+    defaultMessage: 'Söfnuninni lokið',
+    description: '',
+  },
   listDateTil: {
     id: 'sls.application:listDateTil',
     defaultMessage: 'Lokadagur',

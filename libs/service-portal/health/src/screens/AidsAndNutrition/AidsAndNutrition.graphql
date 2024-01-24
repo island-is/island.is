@@ -12,6 +12,7 @@ query GetAidsAndNutrition {
       nextAllowedMonth
       location
       maxUnitRefund
+      maxMonthlyAmount
       allowed12MonthPeriod
       refund {
         type
