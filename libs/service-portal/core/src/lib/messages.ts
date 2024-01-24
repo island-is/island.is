@@ -459,9 +459,9 @@ export const m = defineMessages({
     id: 'service.portal:family-child',
     defaultMessage: 'Barn',
   },
-  petitions: {
-    id: 'service.portal:petitions',
-    defaultMessage: 'Listar',
+  generalPetitions: {
+    id: 'service.portal:general-petitions',
+    defaultMessage: 'Almennir undirskriftalistar',
   },
   viewPetition: {
     id: 'service.portal:viewPetition',
@@ -637,6 +637,10 @@ export const m = defineMessages({
   mySettings: {
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
+  },
+  lists: {
+    id: 'service.portal:lists',
+    defaultMessage: 'Listar',
   },
   delegation: {
     id: 'service.portal:delegation',

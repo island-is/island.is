@@ -34,6 +34,12 @@ export const statement = defineMessages({
       'Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim upp hér að neðan.',
     description: 'Lýsing á Hlaða upp gögnum á greinargerðarskjá',
   },
+  appealCaseFilesCOASubtitle: {
+    id: 'judicial.system.core:appeal_case_files.appeal_case_files_coa_subtitle',
+    defaultMessage:
+      'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.',
+    description: 'Lýsing á Hlaða upp gögnum á greinargerðarskjá',
+  },
   nextButtonText: {
     id: 'judicial.system.core:statement.next_button_text',
     defaultMessage: 'Senda greinargerð',
