@@ -99,7 +99,7 @@ export const userNotificationWorkerSetup = (services: {
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .postgres(postgresInfo)
-    .replicaCount({ default: 1, max: 2, min: 1 })
+    .replicaCount({ default: 1, max: 3, min: 1 })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
