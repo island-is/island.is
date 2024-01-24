@@ -144,7 +144,7 @@ export const messages = defineMessages({
     defaultMessage: 'Sjá vottorð',
   },
   statusOfRights: {
-    id: 'sp.health:status-of-riaghts',
+    id: 'sp.health:status-of-rights',
     defaultMessage: 'Réttindastaða',
   },
   paymentParticipation: {
