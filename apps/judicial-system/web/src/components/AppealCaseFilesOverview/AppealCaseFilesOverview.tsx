@@ -155,36 +155,40 @@ const AppealCaseFilesOverview: React.FC<
                         })}
                       </Text>
                     </Box>
-                    {((prosecutorSubmitted && isProsecutionUser(user)) ||
-                      (!prosecutorSubmitted && isDefenceUser(user))) && (
-                      <Box marginLeft={3}>
-                        <ContextMenu
-                          items={[
-                            {
-                              title: formatMessage(contextMenu.deleteFile),
-                              onClick: () =>
-                                handleRemove(file as TUploadFile, () => {
-                                  setAllFiles((prev) =>
-                                    prev.filter((f) => f.id !== file.id),
-                                  )
-                                }),
-                              icon: 'trash',
-                            },
-                          ]}
-                          menuLabel="Opna valmöguleika á skjali"
-                          disclosure={
-                            <IconButton
-                              icon="ellipsisVertical"
-                              colorScheme="transparent"
-                              onClick={(evt) => {
-                                evt.stopPropagation()
-                              }}
-                              disabled={isDisabled}
-                            />
-                          }
-                        />
-                      </Box>
-                    )}
+                    {(file.category ===
+                      CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE ||
+                      file.category ===
+                        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE) &&
+                      ((prosecutorSubmitted && isProsecutionUser(user)) ||
+                        (!prosecutorSubmitted && isDefenceUser(user))) && (
+                        <Box marginLeft={3}>
+                          <ContextMenu
+                            items={[
+                              {
+                                title: formatMessage(contextMenu.deleteFile),
+                                onClick: () =>
+                                  handleRemove(file as TUploadFile, () => {
+                                    setAllFiles((prev) =>
+                                      prev.filter((f) => f.id !== file.id),
+                                    )
+                                  }),
+                                icon: 'trash',
+                              },
+                            ]}
+                            menuLabel="Opna valmöguleika á skjali"
+                            disclosure={
+                              <IconButton
+                                icon="ellipsisVertical"
+                                colorScheme="transparent"
+                                onClick={(evt) => {
+                                  evt.stopPropagation()
+                                }}
+                                disabled={isDisabled}
+                              />
+                            }
+                          />
+                        </Box>
+                      )}
                   </Box>
                 )}
             </PdfButton>
