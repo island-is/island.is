@@ -32,6 +32,10 @@ export class SignatureCollectionService {
   ): Promise<SignatureCollectionSuccess> {
     return { success: signee.isOwner }
   }
+  
+  async test(user: User): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.test(user)
+  }
 
   async currentCollectionInfo(): Promise<SignatureCollectionInfo> {
     return await this.signatureCollectionClientService.currentCollectionInfo()

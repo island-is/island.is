@@ -3,6 +3,7 @@ import {
   ConfigType,
   LazyDuringDevScope,
   XRoadConfig,
+  IdsClientConfig,
 } from '@island.is/nest/config'
 
 import { Configuration } from '../../gen/fetch'
@@ -13,12 +14,29 @@ export const ApiConfiguration = {
   scope: LazyDuringDevScope,
   useFactory: (
     config: ConfigType<typeof SignatureCollectionClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
     xroadConfig: ConfigType<typeof XRoadConfig>,
   ) => {
+    console.log({
+      mode: 'tokenExchange',
+      issuer: idsClientConfig.issuer,
+      clientId: idsClientConfig.clientId,
+      clientSecret: idsClientConfig.clientSecret,
+      scope: config.scope,
+    })
     return new Configuration({
-      fetchApi: createEnhancedFetch({
+      fetchApi:   createEnhancedFetch({
         name: 'clients-signature-collection',
         organizationSlug: 'thjodskra-islands',
+        autoAuth: idsClientConfig.isConfigured
+        ? {
+            mode: 'auto',
+            issuer: idsClientConfig.issuer,
+            clientId: idsClientConfig.clientId,
+            clientSecret: idsClientConfig.clientSecret,
+            scope: config.scope,
+          }
+        : undefined,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
@@ -26,5 +44,5 @@ export const ApiConfiguration = {
       },
     })
   },
-  inject: [SignatureCollectionClientConfig.KEY, XRoadConfig.KEY],
+  inject: [SignatureCollectionClientConfig.KEY,  IdsClientConfig.KEY, XRoadConfig.KEY,],
 }

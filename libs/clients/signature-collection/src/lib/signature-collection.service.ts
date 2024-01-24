@@ -29,6 +29,7 @@ import { BulkUpload } from './types/bulkUpload.dto'
 import { Success, mapReasons } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class SignatureCollectionClientService {
@@ -38,6 +39,38 @@ export class SignatureCollectionClientService {
     private signatureApi: MedmaeliApi,
     private candidateApi: FrambodApi,
   ) {}
+
+  private getListsApiWithAuth(auth: Auth) {
+    return this.listsApi.withMiddleware(
+      new AuthMiddleware(auth, {
+        forwardUserInfo: false,
+        tokenExchangeOptions: {
+          issuer: 'https://identity-server.dev01.devland.is',
+          clientId: '@island.is/clients/dev',
+          clientSecret: 'AzNw3K0jMkmq3mxF2svt8YvXU',
+          scope: '@skra.is/signature-collection',
+        },
+      }),
+    )
+  }
+
+  private getCollectionsApiWithAuth(auth: Auth) {
+    return this.collectionsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private getSignatureApiWithAuth(auth: Auth) {
+    return this.signatureApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private getCandidateApiWithAuth(auth: Auth) {
+    return this.signatureApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async test(auth: Auth): Promise<Success> {
+    const res = await this.getListsApiWithAuth(auth).medmaelalistarTokenGet()
+    console.log('TOKEN', res)
+    return { success: true }
+  }
 
   async currentCollectionInfo(): Promise<CollectionInfo> {
     // includeInactive: false will return collections as active until electionday for collection has passed
