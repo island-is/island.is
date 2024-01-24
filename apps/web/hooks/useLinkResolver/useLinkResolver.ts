@@ -259,6 +259,10 @@ export const routesTemplate = {
     is: '/haskolanam-temp',
     en: '/en/university-studies',
   },
+  oskalisti_thjodarinnar: {
+    is: '/oskalisti-thjodarinnar',
+    en: '',
+  },
   homepage: {
     is: '/',
     en: '/en',
@@ -266,10 +270,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  oskalisti_tjodarinnar: {
-    is: '/oskalisti-thjodarinnar',
-    en: '',
   },
 }
 
