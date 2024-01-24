@@ -54,20 +54,12 @@ query Case($input: CaseQueryInput!) {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     prosecutor {
       id
       name
       title
       email
-      institution {
-        id
-        name
-      }
     }
     sharedWithProsecutorsOffice {
       id
@@ -243,6 +235,10 @@ query Case($input: CaseQueryInput!) {
       eventType
       nationalId
       userRole
+    }
+    prosecutorsOffice {
+      id
+      name
     }
   }
 }

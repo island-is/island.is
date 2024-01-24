@@ -141,3 +141,4 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
       staging: { progressDeadlineSeconds: 25 * 60 },
       prod: { progressDeadlineSeconds: 25 * 60 },
     })
+    .grantNamespaces('nginx-ingress-external', 'islandis')
