@@ -36,6 +36,6 @@ export const headerWrapper = style({
 })
 
 export const headerLogo = style({
-  width: 70,
-  maxHeight: 70,
+  width: 80,
+  maxHeight: 80,
 })

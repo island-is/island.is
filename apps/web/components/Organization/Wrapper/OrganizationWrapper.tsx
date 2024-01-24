@@ -89,10 +89,7 @@ import {
   SjukratryggingarHeader,
 } from './Themes/SjukratryggingarTheme'
 import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
-import {
-  ThjodskjalasafnHeader,
-  ThjodskjalasafnFooter,
-} from './Themes/ThjodskjalasafnTheme'
+import { ThjodskjalasafnHeader } from './Themes/ThjodskjalasafnTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import {
   TryggingastofnunFooter,
@@ -145,7 +142,7 @@ const blueberryThemes = [
 
 const lightThemes = [
   'digital_iceland',
-  'default',
+  // 'default',
   'fiskistofa',
   'landing_page',
   'tryggingastofnun',
@@ -420,37 +417,41 @@ export const OrganizationHeader: React.FC<
       )
     default:
       return (
-        <DefaultHeader
-          fullWidth={organizationPage.themeProperties.fullWidth ?? false}
-          image={organizationPage.defaultHeaderImage?.url}
-          background={getBackgroundStyle(organizationPage.themeProperties)}
-          title={organizationPage.title}
-          logo={organizationPage.organization?.logo?.url}
-          logoHref={
-            linkResolver('organizationpage', [organizationPage.slug]).href
-          }
-          titleColor={
-            (organizationPage.themeProperties
-              .textColor as DefaultHeaderProps['titleColor']) ?? 'dark400'
-          }
-          imagePadding={organizationPage.themeProperties.imagePadding || '20px'}
-          imageIsFullHeight={
-            organizationPage.themeProperties.imageIsFullHeight ?? true
-          }
-          imageObjectFit={
-            organizationPage.themeProperties.imageObjectFit === 'cover'
-              ? 'cover'
-              : 'contain'
-          }
-          imageObjectPosition={
-            organizationPage.themeProperties.imageObjectPosition === 'left'
-              ? 'left'
-              : organizationPage.themeProperties.imageObjectPosition === 'right'
-              ? 'right'
-              : 'center'
-          }
+        <ThjodskjalasafnHeader
+          organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
+        // <DefaultHeader
+        //   fullWidth={organizationPage.themeProperties.fullWidth ?? false}
+        //   image={organizationPage.defaultHeaderImage?.url}
+        //   background={getBackgroundStyle(organizationPage.themeProperties)}
+        //   title={organizationPage.title}
+        //   logo={organizationPage.organization?.logo?.url}
+        //   logoHref={
+        //     linkResolver('organizationpage', [organizationPage.slug]).href
+        //   }
+        //   titleColor={
+        //     (organizationPage.themeProperties
+        //       .textColor as DefaultHeaderProps['titleColor']) ?? 'dark400'
+        //   }
+        //   imagePadding={organizationPage.themeProperties.imagePadding || '20px'}
+        //   imageIsFullHeight={
+        //     organizationPage.themeProperties.imageIsFullHeight ?? true
+        //   }
+        //   imageObjectFit={
+        //     organizationPage.themeProperties.imageObjectFit === 'cover'
+        //       ? 'cover'
+        //       : 'contain'
+        //   }
+        //   imageObjectPosition={
+        //     organizationPage.themeProperties.imageObjectPosition === 'left'
+        //       ? 'left'
+        //       : organizationPage.themeProperties.imageObjectPosition === 'right'
+        //       ? 'right'
+        //       : 'center'
+        //   }
+        //   logoAltText={logoAltText}
+        // />
       )
   }
 }
@@ -744,17 +745,6 @@ export const OrganizationFooter: React.FC<
             }
           />
           <Divider />
-        </>
-      )
-      break
-    case 'thjodskjalasafn':
-    case 'national-archives':
-      OrganizationFooterComponent = (
-        <>
-          <ThjodskjalasafnFooter
-            heading={organization.title}
-            columns={organization.footerItems}
-          />
         </>
       )
       break
