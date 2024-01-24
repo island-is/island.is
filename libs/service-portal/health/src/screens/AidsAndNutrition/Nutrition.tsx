@@ -46,7 +46,11 @@ const Nutrition = ({ data }: Props) => {
                 key={`nutrition-table-row-${idx}`}
                 data={[
                   { value: rowItem.name ?? '' },
-                  { value: rowItem.maxUnitRefund ?? '' },
+                  {
+                    value: rowItem.maxMonthlyAmount
+                      ? amountFormat(rowItem.maxMonthlyAmount)
+                      : '',
+                  },
                   {
                     value:
                       rowItem.refund.type === 'amount'
