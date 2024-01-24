@@ -1,3 +1,4 @@
+import { Error500 } from '../components'
 import initApollo from '../graphql/client'
 import { HOME_GET_TYPES } from '../graphql/queries.graphql'
 import { HomeGetTypesQuery } from '../graphql/queries.graphql.generated'
@@ -7,6 +8,7 @@ import { ArrOfTypes } from '../types/interfaces'
 
 interface HomeProps {
   types: ArrOfTypes
+  is500: boolean
 }
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
@@ -30,13 +32,15 @@ export const getServerSideProps = async (ctx) => {
     console.error(e)
   }
   return {
-    redirect: {
-      destination: '/500',
+    props: {
+      types: null,
+      is500: true,
     },
   }
 }
 
-export const Index = ({ types }: HomeProps) => {
+export const Index = ({ types, is500 }: HomeProps) => {
+  if (is500) return <Error500 />
   return <Home types={types} />
 }
 
