@@ -178,7 +178,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                value: `${workingCase.prosecutorsOffice?.name}`,
               },
               ...(workingCase.judge
                 ? [
