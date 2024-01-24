@@ -3252,6 +3252,9 @@ export interface IProjectPageFields {
 
   /** Namespace */
   namespace?: IUiConfiguration | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
