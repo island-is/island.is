@@ -30,6 +30,7 @@ import {
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
   getFosterCareOrAdoptionDesc,
+  getApplicationTypeOptions,
 } from '../lib/parentalLeaveUtils'
 import {
   NO,
@@ -324,19 +325,13 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'applicationType',
           title: parentalLeaveFormMessages.shared.applicationTypeTitle,
           children: [
-            buildMultiField({
-              id: 'applicationTypes',
+            buildRadioField({
+              id: 'applicationType.option',
               title: parentalLeaveFormMessages.shared.applicationTypeTitle,
               description:
                 parentalLeaveFormMessages.shared
                   .applicationParentalLeaveDescription,
-              children: [
-                buildCustomField({
-                  component: 'ApplicationType',
-                  id: 'applicationType.option',
-                  title: '',
-                }),
-              ],
+              options: getApplicationTypeOptions(),
             }),
           ],
         }),
@@ -580,14 +575,28 @@ export const PrerequisitesForm: Form = buildForm({
                   title: parentalLeaveFormMessages.selectChild.screenTitle,
                   component: 'ChildSelector',
                 }),
-                buildCustomField({
-                  component: 'HasMultipleBirths',
+                buildRadioField({
                   id: 'multipleBirths.hasMultipleBirths',
                   title:
                     parentalLeaveFormMessages.selectChild.multipleBirthsName,
                   description:
                     parentalLeaveFormMessages.selectChild
                       .multipleBirthsDescription,
+                  space: 6,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'has-multiple-births',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-has-multiple-births',
+                      value: NO,
+                    },
+                  ],
                   condition: (answers, externalData) =>
                     !!answers.selectedChild &&
                     getSelectedChild(answers, externalData)

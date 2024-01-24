@@ -13,24 +13,7 @@ export class ContentSearchResolver {
   async searchResults(
     @Args('query') query: SearcherInput,
   ): Promise<SearchResult> {
-    let response = await this.contentSearchService.find(query)
-    if (!response.items.length) {
-      let found = false
-      query.tags = (query.tags ?? []).map((tag) => {
-        if (tag?.type === 'organization' && tag.key === 'iceland-health') {
-          found = true
-          return {
-            ...tag,
-            key: 'icelandic-health-insurance',
-          }
-        }
-        return tag
-      })
-      if (found) {
-        response = await this.contentSearchService.find(query)
-      }
-    }
-    return response
+    return this.contentSearchService.find(query)
   }
 
   @Query(() => WebSearchAutocomplete)
