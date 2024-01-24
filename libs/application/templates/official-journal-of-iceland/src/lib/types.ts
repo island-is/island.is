@@ -16,13 +16,7 @@ export const InputFields = {
     signatureType: 'case.signatureType',
     signatureContents: 'case.signatureContents',
     signature: {
-      institution: 'case.signature.institution',
-      date: 'case.signature.date',
-      mainSignatures: 'case.signature.mainSignatures',
-      additonalSignatures: {
-        name: 'case.signature.additonalSignatures.name',
-        textBelow: 'case.signature.additonalSignatures.textBelow',
-      },
+      additonalSignature: 'case.signature.additonalSignature',
     },
   },
   additionsAndDocuments: {

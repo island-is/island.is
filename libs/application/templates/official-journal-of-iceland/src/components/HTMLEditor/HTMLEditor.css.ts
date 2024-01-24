@@ -598,6 +598,14 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     fontWeight: typography.semiBold,
   })
 
+  global('.signature__additional', {
+    fontStyle: 'italic',
+    fontSize: 14,
+    textAlign: 'right',
+  })
+
+  // END OF SIGNATURES
+
   global('.section__title', {
     marginTop: '3rem',
     marginBottom: '.333rem',

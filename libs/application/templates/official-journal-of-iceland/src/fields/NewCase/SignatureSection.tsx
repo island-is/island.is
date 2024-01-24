@@ -15,6 +15,7 @@ import {
 import { useFormatMessage } from '../../hooks'
 import { useLocale } from '@island.is/localization'
 import { Signatures } from '../../components/Signatures/Signatures'
+import { AdditionalSignature } from '../../components/Signatures/Additional'
 type Props = Pick<OJOIFieldBaseProps, 'errors' | 'application'>
 
 const emptyChairman = {
@@ -60,6 +61,8 @@ export const SignatureSection = ({ application, errors }: Props) => {
       ],
     })
 
+  const [additonalSignature, setAdditionalSignature] = useState('')
+
   return (
     <FormGroup
       title={f(newCase.signatureChapter.title)}
@@ -76,13 +79,22 @@ export const SignatureSection = ({ application, errors }: Props) => {
           committeeState={committeeSignatures}
           setCommitteeState={setCommitteeSignatures}
         />
+        <AdditionalSignature
+          application={application}
+          errors={errors}
+          signature={additonalSignature}
+          setSignature={setAdditionalSignature}
+        />
       </Box>
       <Box width="full">
         <HTMLEditor
           title={f(newCase.general.preview)}
           value={
             tabSelected === 'regular'
-              ? regularSignatureTemplate(regularSignatures)
+              ? regularSignatureTemplate({
+                  signatureGroups: regularSignatures,
+                  additionalSignature: additonalSignature,
+                })
               : ''
           }
           config={signatureConfig}

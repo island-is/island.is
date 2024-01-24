@@ -1,9 +1,15 @@
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { RegularSignatureState } from '../../../lib/types'
 
-export const regularSignatureTemplate = (
-  signatureGroups: RegularSignatureState,
-): HTMLText => {
+type SignatureTemplateParams = {
+  signatureGroups: RegularSignatureState
+  additionalSignature?: string
+}
+
+export const regularSignatureTemplate = ({
+  signatureGroups,
+  additionalSignature,
+}: SignatureTemplateParams): HTMLText => {
   const results = signatureGroups
     .map((signatureGroup) => {
       const className =
@@ -35,6 +41,7 @@ export const regularSignatureTemplate = (
               })
               .join('')}
           </div>
+          <p class="signature__additional">${additionalSignature}</p>
         </div>`
     })
 
