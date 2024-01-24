@@ -267,6 +267,11 @@ export const routesTemplate = {
     is: '/undirskriftalistar',
     en: '/en/petitions',
   },
+  oskalisti_tjodarinnar: {
+    is: '/oskalisti-thjodarinnar',
+    en: '',
+  },
+  
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name
