@@ -10,7 +10,7 @@ interface HomeProps {
   types: ArrOfTypes
   is500: boolean
 }
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps = async () => {
   const client = initApollo()
 
   try {
