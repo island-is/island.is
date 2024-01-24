@@ -22,8 +22,9 @@ const postgresInfo = {
 
 export const userNotificationServiceSetup = (services: {
   userProfileApi: ServiceBuilder<typeof serviceWorkerName>
-}): ServiceBuilder<typeof serviceName> =>
-  service(serviceName)
+}): ServiceBuilder<typeof serviceName> => {
+  console.log('hehe')
+  return service(serviceName)
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceName)
@@ -89,11 +90,14 @@ export const userNotificationServiceSetup = (services: {
       },
     })
     .grantNamespaces('nginx-ingress-internal')
+}
 
 export const userNotificationWorkerSetup = (services: {
   userProfileApi: ServiceBuilder<typeof serviceWorkerName>
-}): ServiceBuilder<typeof serviceWorkerName> =>
-  service(serviceWorkerName)
+}): ServiceBuilder<typeof serviceWorkerName> => {
+  console.log('hehe2')
+
+  return service(serviceWorkerName)
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceWorkerName)
@@ -153,11 +157,14 @@ export const userNotificationWorkerSetup = (services: {
     .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/readiness')
+}
 
 export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
   typeof serviceCleanupWorkerName
-> =>
-  service(serviceCleanupWorkerName)
+> => {
+  console.log(`What is love`)
+  process.exit(1)
+  return service(serviceCleanupWorkerName)
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceCleanupWorkerName)
@@ -173,3 +180,4 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
       staging: { schedule: '@midnight' },
       prod: { schedule: '@midnight' },
     })
+}
