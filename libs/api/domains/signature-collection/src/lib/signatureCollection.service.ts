@@ -23,6 +23,10 @@ export class SignatureCollectionService {
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
 
+  async test(user: User): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.test(user)
+  }
+
   async isOwner(nationalId: string): Promise<SignatureCollectionSuccess> {
     return await this.signatureCollectionClientService.isOwner(nationalId)
   }

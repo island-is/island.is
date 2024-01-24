@@ -33,6 +33,15 @@ export class SignatureCollectionResolver {
 
   @Query(() => SignatureCollectionSuccess)
   @Audit()
+  async signatureCollectionTest(
+    @CurrentUser() user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    console.log('user', user)
+    return this.signatureCollectionService.test(user)
+  }
+
+  @Query(() => SignatureCollectionSuccess)
+  @Audit()
   async signatureCollectionIsOwner(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSuccess> {
