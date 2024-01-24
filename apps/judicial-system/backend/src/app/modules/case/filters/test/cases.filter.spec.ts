@@ -51,8 +51,7 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
+            { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
@@ -106,8 +105,7 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
+            { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },

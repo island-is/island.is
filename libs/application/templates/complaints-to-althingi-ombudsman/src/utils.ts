@@ -6,6 +6,7 @@ import {
   OmbudsmanComplaintTypeEnum,
 } from './shared/constants'
 import { complainedFor } from './lib/messages'
+import format from 'date-fns/format'
 
 export const isGovernmentComplainee = (answers: Answer) => {
   return (
@@ -35,6 +36,9 @@ const getDateAYearBack = () => {
   d.setFullYear(aYearAgo)
   return d
 }
+
+export const formatDate = (date: Date): string =>
+  date ? format(new Date(date), 'dd.MM.yyyy') : ''
 
 export const isDecisionDateOlderThanYear = (answers: Answer) => {
   // Checks if date exists and if it's older than a year

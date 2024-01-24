@@ -321,7 +321,7 @@ export class NotificationService {
       const courtEnd = new Date(theCase.courtDate.getTime() + 30 * 60000)
 
       const icalendar = new ICalendar({
-        title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.creatingProsecutor?.institution?.name} gegn X`,
+        title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutorsOffice?.name} gegn X`,
         location: `${theCase.court?.name} - ${
           theCase.courtRoom
             ? `Dómsalur ${theCase.courtRoom}`
@@ -376,7 +376,7 @@ export class NotificationService {
       this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
-      theCase.prosecutor?.institution?.name,
+      theCase.prosecutorsOffice?.name,
     )
 
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
@@ -656,7 +656,7 @@ export class NotificationService {
     const html = formatPrisonCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,
-      theCase.creatingProsecutor?.institution?.name,
+      theCase.prosecutorsOffice?.name,
       theCase.court?.name,
       theCase.courtDate,
       theCase.defendants && theCase.defendants.length > 0
@@ -696,7 +696,7 @@ export class NotificationService {
       theCase.judge?.name,
       theCase.registrar?.name,
       theCase.prosecutor?.name,
-      theCase.creatingProsecutor?.institution?.name,
+      theCase.prosecutorsOffice?.name,
       theCase.sessionArrangements,
     )
 
@@ -1202,7 +1202,7 @@ export class NotificationService {
     const html = formatPrisonRevokedEmailNotification(
       this.formatMessage,
       theCase.type,
-      theCase.creatingProsecutor?.institution?.name,
+      theCase.prosecutorsOffice?.name,
       theCase.court?.name,
       theCase.courtDate,
       theCase.defenderName,
