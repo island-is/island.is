@@ -326,10 +326,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildAsyncSelectField({
                   condition: (answers) => {
-                    const { applicationType, useUnion } = getApplicationAnswers(answers)
+                    const { applicationType, useUnion } =
+                      getApplicationAnswers(answers)
                     return (
-                      applicationType === PARENTAL_LEAVE &&
-                      useUnion === YES
+                      applicationType === PARENTAL_LEAVE && useUnion === YES
                     )
                   },
                   title: parentalLeaveFormMessages.shared.union,
@@ -380,11 +380,12 @@ export const ParentalLeaveForm: Form = buildForm({
                       dataTestId: 'dont-use-private-pension-fund',
                       value: NO,
                     },
-                  ],  
+                  ],
                 }),
                 buildAsyncSelectField({
                   condition: (answers) => {
-                    const { applicationType, usePrivatePensionFund } = getApplicationAnswers(answers)
+                    const { applicationType, usePrivatePensionFund } =
+                      getApplicationAnswers(answers)
                     return (
                       applicationType === PARENTAL_LEAVE &&
                       usePrivatePensionFund === YES
@@ -413,7 +414,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildSelectField({
                   condition: (answers) => {
-                    const { applicationType, usePrivatePensionFund } = getApplicationAnswers(answers)
+                    const { applicationType, usePrivatePensionFund } =
+                      getApplicationAnswers(answers)
                     return (
                       applicationType === PARENTAL_LEAVE &&
                       usePrivatePensionFund === YES

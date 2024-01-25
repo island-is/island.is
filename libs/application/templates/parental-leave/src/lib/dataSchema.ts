@@ -99,57 +99,55 @@ export const dataSchema = z.object({
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
-  payments: z.object({
-    bank: z.string().refine(
-      (b) => {
-        const bankAccount = formatBankInfo(b)
-        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
-      },
-      { params: errorMessages.bank },
-    ),
-    useUnion: z.enum([YES, NO]),
-    usePrivatePensionFund: z.enum([YES, NO]),
-    pensionFund: z.string().optional(),
-    privatePensionFund: z.string().optional(),
-    privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
-    union: z.string().optional()
-  })
-  .refine(
-    ({ pensionFund }) =>
-      pensionFund === undefined ? false
-      : true,
-    {
+  payments: z
+    .object({
+      bank: z.string().refine(
+        (b) => {
+          const bankAccount = formatBankInfo(b)
+          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+        },
+        { params: errorMessages.bank },
+      ),
+      useUnion: z.enum([YES, NO]),
+      usePrivatePensionFund: z.enum([YES, NO]),
+      pensionFund: z.string().optional(),
+      privatePensionFund: z.string().optional(),
+      privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
+      union: z.string().optional(),
+    })
+    .refine(({ pensionFund }) => (pensionFund === undefined ? false : true), {
       path: ['pensionFund'],
       params: coreErrorMessages.missingAnswer,
-    },
-  )
-  .refine(
-    ({ useUnion, union }) =>
-      useUnion === YES && union === undefined ? false
-      : true,
-    {  
-      path: ['union'],
-      params: coreErrorMessages.missingAnswer,
-    },
-  )
-  .refine(
-    ({ usePrivatePensionFund, privatePensionFund }) =>
-      usePrivatePensionFund === YES && privatePensionFund === undefined ? false
-      : true,
-    {  
-      path: ['privatePensionFund'],
-      params: coreErrorMessages.missingAnswer,
-    },
-  )
-  .refine(
-    ({ usePrivatePensionFund, privatePensionFundPercentage }) =>
-      usePrivatePensionFund === YES && privatePensionFundPercentage === undefined ? false
-      : true,
-    {  
-      path: ['privatePensionFundPercentage'],
-      params: coreErrorMessages.missingAnswer,
-    },
-  ),
+    })
+    .refine(
+      ({ useUnion, union }) =>
+        useUnion === YES && union === undefined ? false : true,
+      {
+        path: ['union'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
+    .refine(
+      ({ usePrivatePensionFund, privatePensionFund }) =>
+        usePrivatePensionFund === YES && privatePensionFund === undefined
+          ? false
+          : true,
+      {
+        path: ['privatePensionFund'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
+    .refine(
+      ({ usePrivatePensionFund, privatePensionFundPercentage }) =>
+        usePrivatePensionFund === YES &&
+        privatePensionFundPercentage === undefined
+          ? false
+          : true,
+      {
+        path: ['privatePensionFundPercentage'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    ),
   shareInformationWithOtherParent: z.enum([YES, NO]),
   // We don't have away to validate companyId yet because isCompany return false on personal business ID
   employerNationalRegistryId: z.string().refine((n) => kennitala.isValid(n), {
