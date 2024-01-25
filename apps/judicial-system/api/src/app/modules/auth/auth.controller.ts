@@ -140,7 +140,7 @@ export class AuthController {
 
         const loginUrl = `${this.config.issuer}/connect/authorize?${params}`
 
-        return res
+        res
           .cookie(name, { redirectRoute }, options)
           .cookie(
             CODE_VERIFIER_COOKIE.name,
