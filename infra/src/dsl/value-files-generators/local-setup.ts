@@ -69,6 +69,7 @@ export const getLocalrunValueFile = async (
       ? { PORT: runtime.ports[name].toString() }
       : {}
     const serviceNXName = await mapServiceToNXname(name)
+    logger.debug('Process service', { name, service, serviceNXName })
     dockerComposeServices[name] = {
       env: Object.assign(
         {},
@@ -87,9 +88,10 @@ export const getLocalrunValueFile = async (
     }
   }
 
+  const firstService = Object.keys(dockerComposeServices)[0]
   logger.debug('Dump all env values to files', {
     dockerComposeServices,
-    'my-service.env': dockerComposeServices['my-service'].env,
+    [`${firstService}.env`]: dockerComposeServices[firstService]?.env,
   })
   await Promise.all(
     Object.entries(dockerComposeServices).map(
