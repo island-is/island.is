@@ -214,7 +214,6 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewEstateBankInfoTitle',
     title: m.estateBankInfo,
-    // description: m.estateBankInfoDescription,
     titleVariant: 'h3',
     space: 'gutter',
   }),
