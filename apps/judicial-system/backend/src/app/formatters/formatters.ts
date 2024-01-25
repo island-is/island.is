@@ -702,7 +702,7 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
       ),
       formatMessage(core.and),
     ),
-    prosecutorName: theCase.prosecutor?.institution?.name,
+    prosecutorName: theCase.prosecutorsOffice?.name,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

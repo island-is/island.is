@@ -375,6 +375,7 @@ const useCase = () => {
     updates: UpdateCase[],
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    retrieveAllUpdates = true,
   ) => {
     try {
       const updatesToCase: UpdateCase = formatUpdates(updates, workingCase)
@@ -396,7 +397,14 @@ const useCase = () => {
         throw new Error()
       }
 
-      setWorkingCase((theCase) => ({ ...theCase, ...(newWorkingCase as Case) }))
+      if (retrieveAllUpdates) {
+        setWorkingCase((theCase) => ({ ...theCase, ...newWorkingCase }))
+      } else {
+        setWorkingCase((theCase) => ({
+          ...theCase,
+          ...updatesToCase,
+        }))
+      }
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
     }

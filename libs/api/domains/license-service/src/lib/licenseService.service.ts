@@ -231,7 +231,7 @@ export class LicenseServiceService {
       if (lp) {
         licenseUserData.pkpassStatus = licenseService.clientSupportsPkPass
           ? (licenseService.licenseIsValidForPkPass?.(
-              licenseRes.data,
+              lp.rawData,
             ) as unknown as GenericUserLicensePkPassStatus) ??
             GenericUserLicensePkPassStatus.Unknown
           : GenericUserLicensePkPassStatus.NotAvailable
@@ -251,7 +251,7 @@ export class LicenseServiceService {
         },
         fetch: {
           ...licenseRes.fetch,
-          updated: licenseRes.fetch.updated.toISOString(),
+          updated: licenseRes.fetch.updated.getTime().toString(),
         },
         payload:
           {
@@ -274,7 +274,7 @@ export class LicenseServiceService {
           },
           fetch: {
             ...licenseRes.fetch,
-            updated: licenseRes.fetch.updated.toISOString(),
+            updated: licenseRes.fetch.updated.getTime().toString(),
           },
           payload: undefined,
         },

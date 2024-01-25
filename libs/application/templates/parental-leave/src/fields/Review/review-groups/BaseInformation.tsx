@@ -80,8 +80,11 @@ export const BaseInformation = ({
       triggerValidation
     >
       {applicantName !== '' && (
-        <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={2}
+          >
             <DataValue
               label={formatMessage(
                 parentalLeaveFormMessages.applicant.fullName,
@@ -89,7 +92,10 @@ export const BaseInformation = ({
               value={applicantName}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={2}
+          >
             <DataValue
               label={formatMessage(
                 parentalLeaveFormMessages.applicant.nationalId,
@@ -101,7 +107,10 @@ export const BaseInformation = ({
       )}
 
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={[2, 2, 2, 0]}
+        >
           <DataValue
             label={formatMessage(parentalLeaveFormMessages.applicant.email)}
             value={applicantEmail}

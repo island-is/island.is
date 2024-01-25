@@ -31,10 +31,10 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -54,9 +54,9 @@ air-discount-scheme-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -116,10 +116,10 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -162,9 +162,9 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -211,10 +211,10 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -237,9 +237,9 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '200m'
@@ -311,6 +311,7 @@ api:
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
+    USER_NOTIFICATION_CLIENT_URL: 'http://user-notification-xrd.internal.staging01.devland.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -2560,10 +2561,10 @@ user-notification:
     min: 1
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '384Mi'
     requests:
-      cpu: '15m'
+      cpu: '150m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2581,48 +2582,32 @@ user-notification:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
     create: true
     name: 'user-notification'
-user-notification-worker:
+user-notification-cleanup-worker:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
-    - '--job=worker'
+    - '--job=cleanup'
   command:
     - 'node'
   enabled: true
   env:
-    CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    EMAIL_REGION: 'eu-west-1'
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    MAIN_QUEUE_NAME: 'user-notification'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
-    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
-    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
-    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
-    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
-    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
-    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2671,6 +2656,108 @@ user-notification-worker:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '@midnight'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-cleanup-worker'
+    create: true
+    name: 'user-notification-cleanup-worker'
+user-notification-worker:
+  args:
+    - '--no-experimental-fetch'
+    - 'main.js'
+    - '--job=worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    CONTENTFUL_HOST: 'cdn.contentful.com'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'user_notification'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'user_notification'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_REGION: 'eu-west-1'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    MAIN_QUEUE_NAME: 'user-notification'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    SERVERSIDE_FEATURES_ON: ''
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
+    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/readiness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 2
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'user_notification'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'user_notification'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+  namespace: 'user-notification'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 2
+    min: 1
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '384Mi'
+    requests:
+      cpu: '150m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
@@ -2704,6 +2791,7 @@ web:
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
+    - 'search-indexer'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2711,7 +2799,7 @@ web:
       path: '/liveness'
       timeoutSeconds: 3
     readiness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/readiness'
       timeoutSeconds: 3
   hpa:
