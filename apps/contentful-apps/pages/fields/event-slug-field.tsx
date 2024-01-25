@@ -17,12 +17,10 @@ const slugifyDate = (value: string) => {
 const EventSlugField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [value, setValue] = useState(sdk.field.getValue() ?? '')
-  const [initialRender, setInitialRender] = useState(true)
+  const initialRender = useRef(true)
   const [hasEntryBeenPublished, setHasEntryBeenPublished] = useState(
     Boolean(sdk.entry.getSys()?.firstPublishedAt),
   )
-  const initialTitleChange = useRef(true)
-  const initialDateChange = useRef(true)
 
   useEffect(() => {
     sdk.entry.onSysChanged((newSys) => {
@@ -32,8 +30,8 @@ const EventSlugField = () => {
 
   useDebounce(
     () => {
-      if (initialRender) {
-        setInitialRender(false)
+      if (initialRender.current) {
+        initialRender.current = false
         return
       }
       sdk.field.setValue(value)
@@ -43,18 +41,10 @@ const EventSlugField = () => {
   )
 
   useEffect(() => {
-    if (initialRender) {
-      return
-    }
-
     const unsubscribeFromTitleValueChanges = sdk.entry.fields.title
       .getForLocale(sdk.field.locale)
       .onValueChanged((newTitle) => {
         if (!newTitle || hasEntryBeenPublished) {
-          return
-        }
-        if (initialTitleChange.current) {
-          initialTitleChange.current = false
           return
         }
         const date = sdk.entry.fields.startDate.getValue()
@@ -74,10 +64,6 @@ const EventSlugField = () => {
         if (!title || hasEntryBeenPublished) {
           return
         }
-        if (initialDateChange.current) {
-          initialDateChange.current = false
-          return
-        }
         setValue(`${slugify(title)}${date ? '-' + slugifyDate(date) : ''}`)
       })
 
@@ -87,7 +73,6 @@ const EventSlugField = () => {
     }
   }, [
     hasEntryBeenPublished,
-    initialRender,
     sdk.entry.fields.startDate,
     sdk.entry.fields.title,
     sdk.field.locale,
