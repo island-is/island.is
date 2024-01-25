@@ -6,9 +6,7 @@ import { ArborgWorkpoinClientConfig } from './arborgWorkpoint.config'
 
 export const ApiConfiguration = {
   provide: 'WorkPointArborgClientApiConfiguration',
-  // Necessary because of cache-manager.
-  // eslint-disable-next-line local-rules/no-async-module-init
-  useFactory: async (
+  useFactory: (
     config: ConfigType<typeof ArborgWorkpoinClientConfig>,
     xroadConfig: ConfigType<typeof XRoadConfig>,
   ) => {
