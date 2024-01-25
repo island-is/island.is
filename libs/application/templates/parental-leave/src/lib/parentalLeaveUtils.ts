@@ -37,6 +37,8 @@ import {
   ADOPTION,
   OTHER_NO_CHILDREN_FOUND,
   States,
+  NO_UNION,
+  NO_PRIVATE_PENSION_FUND,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -656,18 +658,19 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
-  const useUnion = getValueViaPath(answers, 'useUnion') as YesOrNo
+  const useUnion = getValueViaPath(answers, 'payments.useUnion') as YesOrNo
 
-  const union = getValueViaPath(answers, 'payments.union') as string
+  const union = getValueViaPath(answers, 'payments.union') as string //, NO_UNION) as string
 
   const usePrivatePensionFund = getValueViaPath(
     answers,
-    'usePrivatePensionFund',
+    'payments.usePrivatePensionFund',
   ) as YesOrNo
 
   const privatePensionFund = getValueViaPath(
     answers,
     'payments.privatePensionFund',
+    //NO_PRIVATE_PENSION_FUND,
   ) as string
 
   const privatePensionFundPercentage = getValueViaPath(
@@ -677,7 +680,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as string
 
   let isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
-  // olf Empployer obj
+  // old employer obj
   if (!isSelfEmployed) {
     isSelfEmployed = getValueViaPath(
       answers,

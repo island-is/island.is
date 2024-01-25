@@ -140,9 +140,9 @@ export const Payments = ({
       canCloseEdit={checkPaymentErrors([
         'payments.bank',
         'payments.pensionFund',
-        'useUnion',
+        'payments.useUnion',
         'payments.union',
-        'usePrivatePensionFund',
+        'payments.usePrivatePensionFund',
         'payments.privatePensionFund',
         'payments.privatePensionFundPercentage',
       ])}
