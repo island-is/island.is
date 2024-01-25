@@ -274,7 +274,7 @@ Then you need to update the Helm charts. Add `SECRET_FEATURE` to `HIDDEN_FEATURE
 Then run the script
 
 ```
-./infra/scripts/generate-chart-values.sh judicial-system
+yarn charts
 ```
 
 You can now use the `FeatureContext` to hide `SECRET_FEATURE` in the UI.

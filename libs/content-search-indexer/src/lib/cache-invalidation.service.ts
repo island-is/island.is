@@ -131,9 +131,6 @@ export class CacheInvalidationService {
         const response = responses[i]
         const url = promises[i].url
         if (response.status === 'fulfilled') {
-          ;(response.value as Response).text().then((value) => {
-            logger.info(`Received response for: ${url}`, { data: value })
-          })
           successfulCacheInvalidationCount += 1
         } else {
           failedCacheInvalidationReasons.push({
@@ -167,7 +164,9 @@ export class CacheInvalidationService {
       try {
         urls = generateInvalidationUrls(baseUrl, JSON.parse(item.response))
       } catch {
-        logger.warn(`Generating invalidation url failed for: ${item._id}`)
+        logger.warn(
+          `Generating invalidation url failed for document with id: ${item._id}`,
+        )
         continue
       }
 
@@ -181,7 +180,6 @@ export class CacheInvalidationService {
             },
           }),
         })
-        logger.info(`Invalidating: ${urlWithoutPostfix}`)
         if (promises.length > MAX_REQUEST_COUNT) {
           await handleRequests()
         }
