@@ -211,9 +211,7 @@ export const HomeSupportForm: Form = buildForm({
         buildMultiField({
           id: 'exemptionSection',
           title: m.application.exemption.sectionTitle,
-          description: ({ externalData, answers }) => {
-            return 'Þú ert með tekjur undir framfærslu o.s.fv...'
-          },
+          description: m.application.exemption.description,
           children: [
             buildCheckboxField({
               id: 'exemption',

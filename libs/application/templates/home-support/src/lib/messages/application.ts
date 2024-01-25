@@ -123,6 +123,12 @@ export const application = {
       defaultMessage: 'Undanþága',
       description: 'Exemption section title',
     },
+    description: {
+      id: 'hst.exemption:description#markdown',
+      defaultMessage:
+        'Ef þú ert með tekjur undir framfærsluviðmiði Tryggingastofnunar, sem er grunnlífeyrir TR, getur þú sótt um undanþágu frá gjaldskyldu hvað varðar aðstoð við þrif.\n\nHámarkstekjur fyrir undanþágu er **333.194** kr á mánuði fyrir einstaklinga og **657.194** kr fyrir hjón og sambýlisfólk. ',
+      description: 'Exemption description',
+    },
     checkboxText: {
       id: 'hst.exemption:checkbox.text',
       defaultMessage: 'Ég vil sækja um undanþágu',
