@@ -38,7 +38,7 @@ const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
       onClick={onClick ? () => onClick(id) : undefined}
       aria-label={onClick ? `Opna ${name}` : undefined}
     >
-      <Box>
+      <Box component="p">
         <Text fontWeight="semiBold" as="span">
           {name}
         </Text>
