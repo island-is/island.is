@@ -21,8 +21,6 @@ export const deceasedInfoFields = [
     label: m.nameOfTheDeceased,
     value: (application) => {
       const data = getEstateDataFromApplication(application)
-      console.log('applciation is ', application)
-      console.log('got estate data ', data)
       return isEstateInfo(data) ? data.estate.nameOfDeceased : ''
     },
     width: 'half',
