@@ -10,6 +10,7 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 : "${RESTART_MAX_RETRIES:=3}"
 : "${DRY:=}"
 
+ARGS=()
 PROXIES=()
 PROXY_PIDS=()
 
@@ -105,6 +106,11 @@ parse_cli() {
       DRY=true
       ;;
 
+    --)
+      shift
+      ARGS+=("$@")
+      break
+      ;;
     -h | --help)
       print_usage
       exit 0
@@ -116,6 +122,7 @@ parse_cli() {
     shift
   done
   # echo "DEBUG: PROXIES=${PROXIES[*]}"
+  # echo "DEBUG: ARGS=${ARGS[*]}"
   # echo "DEBUG: REMOVE_CONTAINERS_ON_START=${REMOVE_CONTAINERS_ON_START}"
   # echo "DEBUG: REMOVE_CONTAINERS_ON_FAIL=${REMOVE_CONTAINERS_ON_FAIL}"
   # echo "DEBUG: REMOVE_CONTAINERS_FORCE=${REMOVE_CONTAINERS_FORCE}"
@@ -126,13 +133,18 @@ parse_cli() {
     return
   fi
 
+  local unknown_proxies
+  unknown_proxies=()
   for proxy in "${PROXIES[@]}"; do
     if ! [[ "$proxy" =~ ^(es|soffia|xroad|redis|db)$ ]]; then
-      # Exit with error if there are unknown proxies
-      echo "Unknown proxies: $proxy"
-      exit 1
+      unknown_proxies+=("$proxy")
     fi
   done
+  # Exit with error if there are unknown proxies
+  if [[ "${unknown_proxies[*]-}" != "" ]]; then
+    echo "Unknown proxies: '${unknown_proxies[*]}'"
+    exit 1
+  fi
 }
 
 run-proxy() {
@@ -173,11 +185,11 @@ run-proxy() {
   esac
 
   cmd "$DIR"/_run-aws-eks-commands.js proxy \
-  --namespace "${namespace}" \
-  --service "${service}" \
-  --port "${service_port}" \
-  --proxy-port "${host_port}" \
-  --cluster "${CLUSTER:-dev-cluster01}"
+    --namespace "${namespace}" \
+    --service "${service}" \
+    --port "${service_port}" \
+    --proxy-port "${host_port}" \
+    --cluster "${CLUSTER:-dev-cluster01}"
 }
 run-db-proxy() {
   run-proxy 5432 5432 db
@@ -197,10 +209,26 @@ run-xroad-proxy() {
 
 parse_cli "$@"
 
+loop_proxy() {
+  local proxy="${1}"
+  local container_name="socat-$proxy"
+  [ "$proxy" == "es" ] && container_name="es-proxy"
+
+  while true; do
+    run-"${proxy}"-proxy "${ARGS[@]}" || echo "Exit code for $proxy proxy: $?"
+    if [ -n "${REMOVE_CONTAINERS_ON_FAIL:-}" ]; then
+      echo "Removing container $container_name on fail..."
+      containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
+    fi
+    echo "Restarting $proxy proxy in $RESTART_INTERVAL_TIME seconds..."
+    sleep "$RESTART_INTERVAL_TIME"
+  done
+}
+
 main() {
   PROXY_PIDS=()
   for proxy in "${PROXIES[@]}"; do
-        if [ -z "$proxy" ]; then continue; fi
+    if [ -z "$proxy" ]; then continue; fi
     local container_name="socat-$proxy"
     [ "$proxy" == "es" ] && container_name="es-proxy"
 
@@ -213,10 +241,10 @@ main() {
     echo "Starting $proxy proxy"
     (
       for ((i = 1; i <= RESTART_MAX_RETRIES; i++)); do
-        run-"${proxy}"-proxy || echo "Exit code for $proxy proxy: $?"
+        run-"${proxy}"-proxy "${ARGS[@]-}" || echo "Exit code for $proxy proxy: $?"
         if [ -n "${REMOVE_CONTAINERS_ON_FAIL:-}" ]; then
-        echo "Removing container $container_name on fail..."
-        containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
+          echo "Removing container $container_name on fail..."
+          containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
         fi
         echo "Restarting $proxy proxy in $RESTART_INTERVAL_TIME seconds..."
         sleep "$RESTART_INTERVAL_TIME"
