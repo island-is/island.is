@@ -7,6 +7,7 @@ import { PaymentPlan } from './models/paymentPlan.model'
 import { handle404 } from '@island.is/clients/middlewares'
 import { PaymentGroup } from './models/paymentGroup'
 import { isDefined } from '@island.is/shared/utils'
+import addYears from 'date-fns/addYears'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -20,7 +21,7 @@ export class SocialInsuranceService {
     year?: number,
   ): Promise<PaymentPlan | undefined> {
     const res = await this.socialInsuranceApi
-      .getPaymentPlan(user, year ?? 2023)
+      .getPaymentPlan(user, year ?? addYears(new Date(), -1).getFullYear())
       .catch(handle404)
 
     if (!res) {
@@ -83,8 +84,8 @@ export class SocialInsuranceService {
         .filter(isDefined) ?? []
 
     return {
-      nextPayment: res.nextPayment ?? 1234,
-      previousPayment: res.previousPayment ?? 9876,
+      nextPayment: res.nextPayment ?? undefined,
+      previousPayment: res.previousPayment ?? undefined,
       paymentGroups: paymentGroups,
     }
   }
