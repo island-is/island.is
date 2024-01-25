@@ -9,6 +9,28 @@ export const messages = defineMessages({
     id: 'sp.health:error-fetch-payment-info',
     defaultMessage: 'Ekki tókst að sækja greiðsluupplýsingar',
   },
+  noDataFound: {
+    id: 'sp.health:no-data-found',
+    defaultMessage: 'Engin {arg} skráð',
+  },
+  noDataFoundMasculine: {
+    id: 'sp.health:no-data-found-masculine',
+    defaultMessage: 'Engir {arg} skráðir',
+  },
+  noDataFoundFeminine: {
+    id: 'sp.health:no-data-found-feminine',
+    defaultMessage: 'Engar {arg} skráðar',
+  },
+  noDataFoundDetail: {
+    id: 'sp.health:no-data-found-detail',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráða {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundDetailVariation: {
+    id: 'sp.health:no-data-found-detail-variation',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráð {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
   from: {
     id: 'sp.health:from',
     defaultMessage: 'Frá',
@@ -129,6 +151,10 @@ export const messages = defineMessages({
     id: 'sp.health:payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
   },
+  paymentParticipationVariation: {
+    id: 'sp.health:payment-participation-variation',
+    defaultMessage: 'Greiðsluþátttöku',
+  },
   healthInternalServiceErrorTitle: {
     id: 'sp.health:internal-service-error-title',
     defaultMessage: 'Ekki tókst að sækja gögn frá Sjúkratryggingum',
@@ -204,6 +230,10 @@ export const messages = defineMessages({
     id: 'sp.health:dentists-title',
     defaultMessage: 'Tannlæknar',
   },
+  dentistsTitleVariation: {
+    id: 'sp.health:dentists-title-variation',
+    defaultMessage: 'Tannlækna',
+  },
   dentistsDescription: {
     id: 'sp.health:dentists-intro',
     defaultMessage:
@@ -271,6 +301,14 @@ export const messages = defineMessages({
   aidsAndNutritionTitle: {
     id: 'sp.health:aids-and-nutrition-title',
     defaultMessage: 'Hjálpartæki og næring',
+  },
+  aidsOrNutrition: {
+    id: 'sp.health:aids-or-nutrition',
+    defaultMessage: 'Hjálpartæki eða næring',
+  },
+  aidsOrNutritionVariation: {
+    id: 'sp.health:aids-or-nutrition-variation',
+    defaultMessage: 'Hjálpartæki eða næringu',
   },
   aidsAndNutritionDescription: {
     id: 'sp.health:aids-and-nutrition-description',
@@ -345,6 +383,14 @@ export const messages = defineMessages({
   noData: {
     id: 'sp.health:no-data',
     defaultMessage: 'Engin gögn fundust',
+  },
+  searchResultsEmpty: {
+    id: 'sp.health:search-results-empty',
+    defaultMessage: 'Engin gögn',
+  },
+  searchResultsEmptyDetail: {
+    id: 'sp.health:search-results-empty-detail',
+    defaultMessage: 'Engar færslur eru innan þeirra skilyrða sem valin eru',
   },
   chooseTherapy: {
     id: 'sp.health:choose-therapy',
@@ -520,6 +566,10 @@ export const messages = defineMessages({
   nextAvailableRefund: {
     id: 'sp.health:next-available-unit-refund',
     defaultMessage: 'Næst heimild til úttektar',
+  },
+  timeRemainingOfRefund: {
+    id: 'sp.health:time-remaining-of-refund',
+    defaultMessage: 'Innan við 60 dagar eftir af heimild',
   },
   location: {
     id: 'sp.health:location',
@@ -790,7 +840,7 @@ export const messages = defineMessages({
   },
   medicineSearchForDrug: {
     id: 'sp.health:medicine-search-for-drug',
-    defaultMessage: 'Leita að lyf',
+    defaultMessage: 'Leita að lyfi',
   },
   medicineForm: {
     id: 'sp.health:medicine-form',

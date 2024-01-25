@@ -1,3 +1,6 @@
+import { Page } from '@playwright/test'
+import { verifyRequestCompletion } from '../../../support/api-tools'
+
 export function randomPoliceCaseNumber() {
   return `007-${new Date().getFullYear()}-${Math.floor(Math.random() * 100000)}`
 }
@@ -17,10 +20,39 @@ export function getDaysFromNow(days = 0) {
   return new Date(new Date().getTime() + daysAdded).toLocaleDateString('is-IS')
 }
 
-export async function createFakePdf(title: string) {
+async function createFakePdf(title: string) {
   return {
     name: title,
     mimeType: 'application/pdf',
     buffer: Buffer.from(new ArrayBuffer(0)),
   }
+}
+
+export async function uploadDocument(
+  page: Page,
+  clickButton: () => Promise<void>,
+  fileName: string,
+  isLimitedAccess = false,
+) {
+  const fileChooserPromise = page.waitForEvent('filechooser')
+  await clickButton()
+
+  const fileChooser = await fileChooserPromise
+  await page.waitForTimeout(1000)
+  await fileChooser.setFiles(await createFakePdf(fileName))
+
+  await Promise.all([
+    verifyRequestCompletion(
+      page,
+      '/api/graphql',
+      isLimitedAccess
+        ? 'LimitedAccessCreatePresignedPost'
+        : 'CreatePresignedPost',
+    ),
+    verifyRequestCompletion(
+      page,
+      '/api/graphql',
+      isLimitedAccess ? 'LimitedAccessCreateFile' : 'CreateFile',
+    ),
+  ])
 }

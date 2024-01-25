@@ -1,17 +1,16 @@
 import { Box, SkeletonLoader, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
-  ErrorScreen,
   IntroHeader,
   SJUKRATRYGGINGAR_SLUG,
-  m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
-import AidsTable from './AidsTable'
-import NutritionTable from './NutritionTable'
 import { RightsPortalAidOrNutritionType } from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
+import Aids from './Aids'
+import Nutrition from './Nutrition'
+import { isDefined } from '@island.is/shared/utils'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -21,54 +20,31 @@ const AidsAndNutrition = () => {
 
   const aidsAndNutrition = data?.rightsPortalPaginatedAidOrNutrition?.data
 
-  const aids = aidsAndNutrition?.filter(
-    (ann) => ann.type === RightsPortalAidOrNutritionType.AID,
-  )
+  const aids =
+    aidsAndNutrition?.filter(
+      (ann) => ann.type === RightsPortalAidOrNutritionType.AID,
+    ) ?? []
 
-  const nutrition = aidsAndNutrition?.filter(
-    (ann) => ann.type === RightsPortalAidOrNutritionType.NUTRITION,
-  )
+  const nutrition =
+    aidsAndNutrition?.filter(
+      (ann) => ann.type === RightsPortalAidOrNutritionType.NUTRITION,
+    ) ?? []
 
   const tabs = [
-    aids &&
-      aids.length > 0 && {
-        label: formatMessage(messages.aids),
-        content: (
-          <AidsTable
-            data={aids}
-            footnote={formatMessage(messages['aidsDisclaimer'])}
-            link={formatMessage(messages['aidsDescriptionLink'])}
-            linkText={formatMessage(messages.aidsDescriptionInfo)}
-          />
-        ),
-      },
-    nutrition &&
-      nutrition.length > 0 && {
-        label: formatMessage(messages.nutrition),
-        content: (
-          <NutritionTable
-            data={nutrition}
-            footnote={formatMessage(messages['nutritionDisclaimer'])}
-            link={formatMessage(messages['nutritionDescriptionLink'])}
-            linkText={formatMessage(messages.nutritionDescriptionInfo)}
-          />
-        ),
-      },
-  ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
+    aids.length > 0
+      ? {
+          label: formatMessage(messages.aids),
+          content: <Aids data={aids} />,
+        }
+      : null,
+    nutrition.length > 0
+      ? {
+          label: formatMessage(messages.nutrition),
+          content: <Nutrition data={nutrition} />,
+        }
+      : null,
+  ].filter(isDefined)
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.aidsAndNutrition).toLowerCase(),
-        })}
-      />
-    )
-  }
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -77,17 +53,34 @@ const AidsAndNutrition = () => {
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
-      {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !aids?.length && !nutrition?.length && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
+      {error && (
+        <Problem
+          size="small"
+          noBorder={false}
+          type="internal_service_error"
+          error={error}
+        />
       )}
 
-      {!loading && !error && tabs.length > 0 && (
+      {loading && !error && <SkeletonLoader space={1} height={30} repeat={4} />}
+
+      {!loading && !error && !aids?.length && !nutrition?.length && (
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.noDataFound, {
+            arg: formatMessage(messages.aidsOrNutrition).toLowerCase(),
+          })}
+          message={formatMessage(messages.noDataFoundDetailVariation, {
+            arg: formatMessage(messages.aidsOrNutritionVariation).toLowerCase(),
+          })}
+          imgSrc="./assets/images/coffee.svg"
+          titleSize="h3"
+          noBorder={false}
+        />
+      )}
+
+      {!loading && !error && tabs?.length > 0 && (
         <Box>
           {tabs.length === 1 ? (
             <>

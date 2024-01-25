@@ -86,7 +86,7 @@ const CreateCaseButton: React.FC<
   }, [formatMessage, user?.role])
 
   return (
-    <Box display={['none', 'none', 'block']}>
+    <Box>
       <ContextMenu
         dataTestId="createCaseDropdown"
         menuLabel="Tegund kröfu"
