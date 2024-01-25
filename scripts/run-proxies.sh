@@ -148,7 +148,7 @@ parse_cli() {
 }
 
 run-proxy() {
-  local service_port="${1}"
+    local service_port="${1}"
   local host_port="${2}"
   local service_name="${3}"
   local service
@@ -185,11 +185,11 @@ run-proxy() {
   esac
 
   cmd "$DIR"/_run-aws-eks-commands.js proxy \
-    --namespace "${namespace}" \
-    --service "${service}" \
-    --port "${service_port}" \
-    --proxy-port "${host_port}" \
-    --cluster "${CLUSTER:-dev-cluster01}"
+  --namespace "${namespace}" \
+     --service "${service}" \
+     --port "${service_port}" \
+     --proxy-port "${host_port}" \
+     --cluster "${CLUSTER:-dev-cluster01}"
 }
 run-db-proxy() {
   run-proxy 5432 5432 db
@@ -228,7 +228,7 @@ loop_proxy() {
 main() {
   PROXY_PIDS=()
   for proxy in "${PROXIES[@]}"; do
-    if [ -z "$proxy" ]; then continue; fi
+        if [ -z "$proxy" ]; then continue; fi
     local container_name="socat-$proxy"
     [ "$proxy" == "es" ] && container_name="es-proxy"
 
@@ -241,10 +241,10 @@ main() {
     echo "Starting $proxy proxy"
     (
       for ((i = 1; i <= RESTART_MAX_RETRIES; i++)); do
-        run-"${proxy}"-proxy "${ARGS[@]}" || echo "Exit code for $proxy proxy: $?"
+        run-"${proxy}"-proxy "${ARGS[@]-}" || echo "Exit code for $proxy proxy: $?"
         if [ -n "${REMOVE_CONTAINERS_ON_FAIL:-}" ]; then
-          echo "Removing container $container_name on fail..."
-          containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
+        echo "Removing container $container_name on fail..."
+        containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
         fi
         echo "Restarting $proxy proxy in $RESTART_INTERVAL_TIME seconds..."
         sleep "$RESTART_INTERVAL_TIME"
