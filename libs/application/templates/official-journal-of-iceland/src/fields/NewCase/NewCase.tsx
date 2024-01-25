@@ -36,7 +36,7 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
     title: answers?.case?.title ?? '',
     template: answers?.case?.template ?? '',
     documentContents: answers?.case?.documentContents ?? '',
-    signatureType: answers?.case?.signatureType ?? '',
+    signatureType: answers?.case?.signatureType ?? 'regular',
   })
 
   const onSave = (template: typeof state) => {
@@ -47,7 +47,7 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
       subCategory: template.subCategory ?? '',
       template: template.template ?? '',
       title: template.title ?? '',
-      signatureType: template.signatureType ?? '',
+      signatureType: template.signatureType ?? 'regular',
     }
 
     setValue(InputFields.case.category, newState.category, {
@@ -66,6 +66,9 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
       shouldValidate: true,
     })
     setValue(InputFields.case.title, newState.title, { shouldValidate: true })
+    setValue(InputFields.case.signatureType, newState.signatureType, {
+      shouldValidate: true,
+    })
 
     setState(newState)
     setModalToggle(false)

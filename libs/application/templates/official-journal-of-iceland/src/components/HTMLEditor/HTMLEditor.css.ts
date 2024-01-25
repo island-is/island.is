@@ -529,7 +529,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
   global('.signatures', {
     display: 'grid',
     gap: '1ch',
-    gridTemplateColumns: '1fr 1fr 1fr',
+    gridTemplateColumns: '1fr 1fr',
   })
 
   global('.signature__group + .signature__group', {
@@ -542,6 +542,14 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 
   global('.signatures.double', {
     gridTemplateColumns: '1fr 1fr',
+  })
+
+  global('.signatures.triple', {
+    gridTemplateColumns: '1fr 1fr 1fr',
+  })
+
+  global('.signatures.chairman', {
+    marginBottom: '2ch',
   })
 
   global('.signature', {
@@ -599,6 +607,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
   })
 
   global('.signature__additional', {
+    marginTop: '2ch',
     fontStyle: 'italic',
     fontSize: 14,
     textAlign: 'right',

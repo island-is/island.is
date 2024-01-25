@@ -1,5 +1,8 @@
-import { useState } from 'react'
-import { regularSignatureTemplate } from '../../components/HTMLEditor/templates/signatures'
+import { useEffect, useState } from 'react'
+import {
+  committeeSignatureTemplate,
+  regularSignatureTemplate,
+} from '../../components/HTMLEditor/templates/signatures'
 import { getErrorViaPath } from '@island.is/application/core'
 import { Box, StringOption } from '@island.is/island-ui/core'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
@@ -11,11 +14,12 @@ import {
   InputFields,
   OJOIFieldBaseProps,
   RegularSignatureState,
+  SignatureType,
 } from '../../lib/types'
 import { useFormatMessage } from '../../hooks'
-import { useLocale } from '@island.is/localization'
 import { Signatures } from '../../components/Signatures/Signatures'
 import { AdditionalSignature } from '../../components/Signatures/Additional'
+import { useFormContext } from 'react-hook-form'
 type Props = Pick<OJOIFieldBaseProps, 'errors' | 'application'>
 
 const emptyChairman = {
@@ -36,13 +40,12 @@ const emptyRegularSignature = {
   members: [{ ...emptyChairman }],
 }
 
-export type TabLabel = 'regular' | 'committee'
-
 export const SignatureSection = ({ application, errors }: Props) => {
   const { f } = useFormatMessage(application)
   const { answers } = application
+  const { setValue } = useFormContext()
 
-  const [tabSelected, setTabSelected] = useState<TabLabel>('regular')
+  const [tabSelected, setTabSelected] = useState<SignatureType>('regular')
 
   const [regularSignatures, setRegularSignatures] =
     useState<RegularSignatureState>(
@@ -58,8 +61,17 @@ export const SignatureSection = ({ application, errors }: Props) => {
       },
       members: answers?.case?.signature?.committee.members ?? [
         { ...emptyCommitteeMember },
+        { ...emptyCommitteeMember },
       ],
     })
+
+  useEffect(() => {
+    setValue('case.signature.committee', committeeSignatures)
+  }, [JSON.stringify(committeeSignatures)])
+
+  useEffect(() => {
+    setValue('case.signature.regular', regularSignatures)
+  }, [JSON.stringify(regularSignatures)])
 
   const [additonalSignature, setAdditionalSignature] = useState('')
 
@@ -95,7 +107,10 @@ export const SignatureSection = ({ application, errors }: Props) => {
                   signatureGroups: regularSignatures,
                   additionalSignature: additonalSignature,
                 })
-              : ''
+              : committeeSignatureTemplate({
+                  signature: committeeSignatures,
+                  additionalSignature: additonalSignature,
+                })
           }
           config={signatureConfig}
           readOnly

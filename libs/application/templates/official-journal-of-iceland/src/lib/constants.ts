@@ -38,3 +38,6 @@ export const Ministries = [
   'umhverfis-, orku- og loftslagsráðuneytið',
   'utanríkisráðuneytið',
 ]
+
+export const MEMBER_INDEX = '{memberIndex}'
+export const INSTITUTION_INDEX = '{institutionIndex}'

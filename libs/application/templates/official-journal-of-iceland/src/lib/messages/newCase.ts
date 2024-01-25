@@ -38,6 +38,11 @@ export const newCase = {
       defaultMessage: 'Undirritað af',
       description: 'Title of the signed by',
     },
+    chairman: {
+      id: 'ojoi.application:newCase.general.chairman',
+      defaultMessage: 'Formaður',
+      description: 'Title of the chairman',
+    },
   }),
   tabs: {
     regular: defineMessages({

@@ -2,8 +2,6 @@ import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Ministries, emailRegex } from './constants'
-import isValid from 'date-fns/isValid'
-import parse from 'date-fns/parse'
 
 const isWeekday = (date: Date) => {
   const day = date.getDay()

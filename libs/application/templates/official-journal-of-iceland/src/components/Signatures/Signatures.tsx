@@ -1,19 +1,22 @@
 import { Box, Tabs } from '@island.is/island-ui/core'
 import {
   CommitteeSignatureState,
+  InputFields,
   OJOIFieldBaseProps,
   RegularSignatureState,
+  SignatureType,
 } from '../../lib/types'
 import { useFormatMessage } from '../../hooks'
 import { newCase } from '../../lib/messages'
 
 import * as styles from './Signatures.css'
 import { RegularSignature } from './Regular'
-import { TabLabel } from '../../fields/NewCase/SignatureSection'
+import { CommitteeSignature } from './Committee'
+import { useFormContext } from 'react-hook-form'
 
 type Props = Pick<OJOIFieldBaseProps, 'application' | 'errors'> & {
-  selectedTab: TabLabel
-  setSelectedTab: (tab: TabLabel) => void
+  selectedTab: SignatureType
+  setSelectedTab: (tab: SignatureType) => void
   regularState: RegularSignatureState
   setRegularState: (state: RegularSignatureState) => void
   committeeState: CommitteeSignatureState
@@ -31,7 +34,7 @@ export const Signatures = ({
   setCommitteeState,
 }: Props) => {
   const { f } = useFormatMessage(application)
-
+  const { setValue } = useFormContext()
   const tabs = [
     {
       id: 'regular',
@@ -39,8 +42,8 @@ export const Signatures = ({
       content: (
         <Box className={styles.tabWrapper}>
           <RegularSignature
-            addSignature
             state={regularState}
+            errors={errors}
             setState={setRegularState}
           />
         </Box>
@@ -49,14 +52,25 @@ export const Signatures = ({
     {
       id: 'committee',
       label: f(newCase.tabs.committee.label),
-      content: <Box className={styles.tabWrapper}>Committee</Box>,
+      content: (
+        <Box className={styles.tabWrapper}>
+          <CommitteeSignature
+            errors={errors}
+            state={committeeState}
+            setState={setCommitteeState}
+          />
+        </Box>
+      ),
     },
   ]
 
   return (
     <Tabs
-      selected="regular"
-      onChange={(id) => setSelectedTab(id as TabLabel)}
+      selected={selectedTab}
+      onChange={(id) => {
+        setValue(InputFields.case.signatureType, id)
+        setSelectedTab(id as SignatureType)
+      }}
       label="Hello"
       tabs={tabs}
     />

@@ -1,24 +1,34 @@
-import { Box, Button, DatePicker, Input, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
 import { newCase } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { RegularSignatureState } from '../../lib/types'
+import {
+  InputFields,
+  OJOIFieldBaseProps,
+  RegularSignatureState,
+} from '../../lib/types'
 import cloneDeep from 'lodash/cloneDeep'
+import {
+  DatePickerController,
+  InputController,
+} from '@island.is/shared/form-fields'
+import { INSTITUTION_INDEX, MEMBER_INDEX } from '../../lib/constants'
+import { getErrorViaPath } from '@island.is/application/core'
 
-type Props = {
+type Props = Pick<OJOIFieldBaseProps, 'errors'> & {
   state: RegularSignatureState
   setState: (state: RegularSignatureState) => void
   addSignature?: boolean
 }
 
-type EmptySignatureGroup = RegularSignatureState[0]
+type EmptySignatureGroup = NonNullable<RegularSignatureState>[0]
 
-type EmptySignature = EmptySignatureGroup['members'][0]
+type EmptySignature = NonNullable<EmptySignatureGroup['members']>[0]
 
-type MemberKey = keyof RegularSignatureState[0]['members'][0]
+type MemberKey = keyof EmptySignature
 
-type InstitutionKey = keyof Omit<RegularSignatureState[0], 'members'>
+type InstitutionKey = keyof Omit<EmptySignatureGroup, 'members'>
 
 const emptySignature: EmptySignature = {
   textAbove: '',
@@ -33,7 +43,7 @@ const emptySignatureGroup: EmptySignatureGroup = {
   members: [cloneDeep(emptySignature)],
 }
 
-export const RegularSignature = ({ state, setState }: Props) => {
+export const RegularSignature = ({ state, setState, errors }: Props) => {
   const { formatMessage: f, formatDateFns } = useLocale()
 
   const onChangeSignature = (
@@ -44,7 +54,7 @@ export const RegularSignature = ({ state, setState }: Props) => {
   ) => {
     const newState = [...state]
     const group = newState[groupIndex]
-    if (!group) return
+    if (!group.members) return
     const signature = group.members[signatureIndex]
     if (!signature) return
     signature[key] = value
@@ -57,7 +67,7 @@ export const RegularSignature = ({ state, setState }: Props) => {
     // get the signature group
     const newState = [...state]
     const group = newState[groupIndex]
-    if (!group) return
+    if (!group.members) return
     group.members.splice(signatureIndex, 1)
     newState[groupIndex] = group
     setState(newState)
@@ -66,7 +76,7 @@ export const RegularSignature = ({ state, setState }: Props) => {
   const onAddSignature = (groupIndex: number) => {
     const newState = [...state]
     const group = newState[groupIndex]
-    if (!group) return
+    if (!group.members) return
     group.members.push(cloneDeep(emptySignature))
     newState[groupIndex] = group
     setState(newState)
@@ -101,32 +111,48 @@ export const RegularSignature = ({ state, setState }: Props) => {
       {state.map((signatureGroup, index) => (
         <Box className={styles.signatureGroupWrapper} key={index}>
           <Box className={styles.signatureGroup}>
-            <Input
-              name={`institution-${index}`}
+            <InputController
+              id={InputFields.case.signature.regular.institution.replace(
+                INSTITUTION_INDEX,
+                `${index}`,
+              )}
+              name={InputFields.case.signature.regular.institution.replace(
+                INSTITUTION_INDEX,
+                `${index}`,
+              )}
               label={f(newCase.inputs.signature.institution.label)}
               defaultValue={signatureGroup.institution}
               backgroundColor="blue"
               onChange={(e) =>
                 onChangeSignatureGroup(index, 'institution', e.target.value)
               }
-              size="sm"
-            />
-            <DatePicker
-              name={`date-${index}`}
-              label={f(newCase.inputs.signature.date.label)}
-              placeholderText={f(newCase.inputs.signature.date.placeholder)}
-              backgroundColor="blue"
-              size="sm"
-              selected={
-                signatureGroup.date ? new Date(signatureGroup.date) : undefined
-              }
-              handleChange={(date) =>
-                onChangeSignatureGroup(
-                  index,
-                  'date',
-                  formatDateFns(date, 'dd. MMMM yyyy'),
+              error={
+                errors &&
+                getErrorViaPath(
+                  errors,
+                  InputFields.case.signature.regular.institution.replace(
+                    INSTITUTION_INDEX,
+                    `${index}`,
+                  ),
                 )
               }
+              size="sm"
+            />
+            <DatePickerController
+              id={InputFields.case.signature.regular.date.replace(
+                INSTITUTION_INDEX,
+                `${index}`,
+              )}
+              name={InputFields.case.signature.regular.date.replace(
+                INSTITUTION_INDEX,
+                `${index}`,
+              )}
+              label={f(newCase.inputs.signature.date.label)}
+              placeholder={f(newCase.inputs.signature.date.placeholder)}
+              backgroundColor="blue"
+              size="sm"
+              defaultValue={signatureGroup.date}
+              onChange={(date) => onChangeSignatureGroup(index, 'date', date)}
             />
             {index > 0 && (
               <Box className={styles.removeInputGroup}>
@@ -142,11 +168,25 @@ export const RegularSignature = ({ state, setState }: Props) => {
             <Text variant="h5" marginBottom={2}>
               {f(newCase.general.signedBy)}
             </Text>
-            {signatureGroup.members.map((signature, i) => (
+            {signatureGroup.members?.map((signature, i) => (
               <Box className={styles.inputGroup} key={`${index}-${i}`}>
                 <Box className={styles.inputWrapper}>
-                  <Input
-                    name={`textAbove-${index}-${i}`}
+                  <InputController
+                    id={InputFields.case.signature.regular.members.textAbove
+                      .replace(INSTITUTION_INDEX, `${index}`)
+                      .replace(MEMBER_INDEX, `${i}`)}
+                    name={InputFields.case.signature.regular.members.textAbove
+                      .replace(INSTITUTION_INDEX, `${index}`)
+                      .replace(MEMBER_INDEX, `${i}`)}
+                    error={
+                      errors &&
+                      getErrorViaPath(
+                        errors,
+                        InputFields.case.signature.regular.members.textAbove
+                          .replace(INSTITUTION_INDEX, `${index}`)
+                          .replace(MEMBER_INDEX, `${i}`),
+                      )
+                    }
                     label={f(newCase.inputs.signature.textAbove.label)}
                     defaultValue={signature.textAbove}
                     backgroundColor="blue"
@@ -155,8 +195,22 @@ export const RegularSignature = ({ state, setState }: Props) => {
                       onChangeSignature(index, i, 'textAbove', e.target.value)
                     }
                   />
-                  <Input
-                    name={`name-${index}-${i}`}
+                  <InputController
+                    id={InputFields.case.signature.regular.members.name
+                      .replace(INSTITUTION_INDEX, `${index}`)
+                      .replace(MEMBER_INDEX, `${i}`)}
+                    error={
+                      errors &&
+                      getErrorViaPath(
+                        errors,
+                        InputFields.case.signature.regular.members.name
+                          .replace(INSTITUTION_INDEX, `${index}`)
+                          .replace(MEMBER_INDEX, `${i}`),
+                      )
+                    }
+                    name={InputFields.case.signature.regular.members.name
+                      .replace(INSTITUTION_INDEX, `${index}`)
+                      .replace(MEMBER_INDEX, `${i}`)}
                     label={f(newCase.inputs.signature.name.label)}
                     defaultValue={signature.name}
                     backgroundColor="blue"
@@ -167,8 +221,19 @@ export const RegularSignature = ({ state, setState }: Props) => {
                   />
                 </Box>
                 <Box className={styles.inputWrapper}>
-                  <Input
-                    name={`textAfter-${index}-${i}`}
+                  <InputController
+                    id={InputFields.case.signature.regular.members.textAfter
+                      .replace(INSTITUTION_INDEX, `${index}`)
+                      .replace(MEMBER_INDEX, `${i}`)}
+                    error={
+                      errors &&
+                      getErrorViaPath(
+                        errors,
+                        InputFields.case.signature.regular.members.textAfter
+                          .replace(INSTITUTION_INDEX, `${index}`)
+                          .replace(MEMBER_INDEX, `${i}`),
+                      )
+                    }
                     label={f(newCase.inputs.signature.textAfter.label)}
                     defaultValue={signature.textAfter}
                     backgroundColor="blue"
@@ -177,8 +242,19 @@ export const RegularSignature = ({ state, setState }: Props) => {
                       onChangeSignature(index, i, 'textAfter', e.target.value)
                     }
                   />
-                  <Input
-                    name={`textBelow-${index}-${i}`}
+                  <InputController
+                    id={InputFields.case.signature.regular.members.textBelow
+                      .replace(INSTITUTION_INDEX, `${index}`)
+                      .replace(MEMBER_INDEX, `${i}`)}
+                    error={
+                      errors &&
+                      getErrorViaPath(
+                        errors,
+                        InputFields.case.signature.regular.members.textBelow
+                          .replace(INSTITUTION_INDEX, `${index}`)
+                          .replace(MEMBER_INDEX, `${i}`),
+                      )
+                    }
                     label={f(newCase.inputs.signature.textBelow.label)}
                     defaultValue={signature.textBelow}
                     backgroundColor="blue"

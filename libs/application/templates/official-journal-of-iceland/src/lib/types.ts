@@ -1,6 +1,7 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { StringOption as Option } from '@island.is/island-ui/core'
-import type { answerSchemas } from './dataSchema'
+import { dataSchema, type answerSchemas } from './dataSchema'
+import { INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
 
 export const InputFields = {
   prerequisites: {
@@ -16,6 +17,30 @@ export const InputFields = {
     signatureType: 'case.signatureType',
     signatureContents: 'case.signatureContents',
     signature: {
+      regular: {
+        institution: `case.signature.regular-${INSTITUTION_INDEX}.institution`,
+        date: `case.signature.regular-${INSTITUTION_INDEX}.date`,
+        members: {
+          textAbove: `case.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAbove`,
+          name: `case.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.name`,
+          textBelow: `case.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textBelow`,
+          textAfter: `case.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAfter`,
+        },
+      },
+      committee: {
+        institution: 'case.signature.committee.institution',
+        date: 'case.signature.committee.date',
+        chairman: {
+          textAbove: 'case.signature.committee.chairman.textAbove',
+          name: 'case.signature.committee.chairman.name',
+          textAfter: 'case.signature.committee.chairman.textAfter',
+          textBelow: 'case.signature.committee.chairman.textBelow',
+        },
+        members: {
+          name: `case.signature.committee.members-${MEMBER_INDEX}.name`,
+          textBelow: `case.signature.committee.members-${MEMBER_INDEX}.textBelow`,
+        },
+      },
       additonalSignature: 'case.signature.additonalSignature',
     },
   },
@@ -31,6 +56,9 @@ export const InputFields = {
   },
 }
 
+type PartialRequired<T, K extends keyof T> = Partial<T> & Required<Pick<T, K>>
+
+export type SignatureType = 'regular' | 'committee'
 export type RegularSignatureState =
   answerSchemas['case']['signature']['regular']
 export type CommitteeSignatureState =
@@ -62,7 +90,6 @@ type Options = {
   categories: Option[]
   subCategories: Option[]
   templates: Option[]
-  signatureTypes: Option[]
 }
 
 export interface ExternalData {
