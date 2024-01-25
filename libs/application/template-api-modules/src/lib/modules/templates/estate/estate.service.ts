@@ -215,7 +215,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
     // We deep copy the pdfData since the transform function
     // for the PDF creation mutates the object
 
-    console.log('uploadData', JSON.stringify(uploadData, null, 2))
     const pdfData = structuredClone(uploadData)
 
     const attachments: Attachment[] = []
