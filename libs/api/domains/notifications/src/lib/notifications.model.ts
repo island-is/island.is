@@ -5,16 +5,14 @@ import {
   InputType,
   ObjectType,
   registerEnumType,
+  Int,
 } from '@nestjs/graphql'
 import { PageInfoDto } from '@island.is/nest/pagination'
+import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
 
-// TODO move to/import from client
-export enum NotificationStatus {
-  READ = 'READ',
-  UNREAD = 'UNREAD',
-}
-
-registerEnumType(NotificationStatus, { name: 'NotificationStatus' })
+registerEnumType(RenderedNotificationDtoStatusEnum, {
+  name: 'NotificationStatus',
+})
 
 @ObjectType('NotificationMetadata')
 export class NotificationMetadata {
@@ -30,8 +28,8 @@ export class NotificationMetadata {
   @Field(() => GraphQLISODateTime, { nullable: true })
   read?: Date
 
-  @Field(() => NotificationStatus)
-  status!: NotificationStatus
+  @Field(() => RenderedNotificationDtoStatusEnum)
+  status!: RenderedNotificationDtoStatusEnum
 }
 
 @ObjectType('NotificationSender')
@@ -69,7 +67,7 @@ export class NotificationMessage {
 
 @ObjectType('Notification')
 export class Notification {
-  @Field(() => ID)
+  @Field(() => Int)
   id!: number
 
   @Field(() => ID)
@@ -90,24 +88,24 @@ export class Notification {
 
 @ObjectType('NotificationMessageCounts')
 export class NotificationMessageCounts {
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   totalCount?: number
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   unreadCount?: number
 }
 
 @InputType('NotificationsInput')
 export class NotificationsInput {
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   first?: number
 
-  @Field({
+  @Field(() => Int, {
     nullable: true,
   })
   after?: number
 
-  @Field({
+  @Field(() => Int, {
     nullable: true,
     defaultValue: 10,
   })

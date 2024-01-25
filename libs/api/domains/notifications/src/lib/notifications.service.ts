@@ -42,8 +42,6 @@ export class NotificationsService {
       after: input?.after ? String(input?.after) : undefined,
     })
 
-    this.logger.info({ notifications })
-
     if (!notifications.data) {
       this.logger.debug('no notification found')
       return null
@@ -53,7 +51,7 @@ export class NotificationsService {
       data: notifications.data.map((item) => notificationMapper(item)),
       messageCounts: {
         totalCount: notifications.totalCount,
-        unreadCount: undefined, // TODO: Not currently returned
+        unreadCount: undefined, // TODO: Add when service supports unreadCount
       },
       pageInfo: notifications.pageInfo,
     }

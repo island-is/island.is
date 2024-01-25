@@ -4,10 +4,10 @@
 import { User } from '@island.is/auth-nest-tools'
 import {
   Notification,
-  NotificationStatus,
   NotificationsInput,
   NotificationsResponse,
 } from './notifications.model'
+import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
 import { Locale } from '@island.is/shared/types'
 import { faker } from '@island.is/shared/mocking'
 
@@ -41,7 +41,9 @@ export function generateMockNotification(user: User | null): Notification {
     metadata: {
       sent,
       read: isRead ? faker.date.between(sent, new Date()) : undefined,
-      status: isRead ? NotificationStatus.READ : NotificationStatus.UNREAD,
+      status: isRead
+        ? RenderedNotificationDtoStatusEnum.Read
+        : RenderedNotificationDtoStatusEnum.Unread,
     },
     sender: {
       name: faker.company.companyName(),
@@ -93,7 +95,7 @@ export function mockNotificationsResponse(
   const totalCount = notifications.length
   const unreadCount = notifications.filter(
     (notification) =>
-      notification.metadata.status === NotificationStatus.UNREAD,
+      notification.metadata.status === RenderedNotificationDtoStatusEnum.Unread,
   ).length
 
   const after = paging?.after ? decodeBase64(String(paging.after)) : undefined
@@ -167,7 +169,7 @@ export function markMockNotificationRead(
   }
 
   notification.metadata.read = new Date()
-  notification.metadata.status = NotificationStatus.READ
+  notification.metadata.status = RenderedNotificationDtoStatusEnum.Read
 
   generated.set(key, notifications)
 

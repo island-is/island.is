@@ -1,5 +1,5 @@
 import { RenderedNotificationDto } from '@island.is/clients/user-notification'
-import { Notification, NotificationStatus } from '../lib/notifications.model'
+import { Notification } from '../lib/notifications.model'
 
 export const notificationMapper = (
   notification: RenderedNotificationDto,
@@ -10,10 +10,7 @@ export const notificationMapper = (
     sent: notification.created,
     created: notification.created,
     updated: notification.updated,
-    status:
-      notification.status === 'read'
-        ? NotificationStatus.READ
-        : NotificationStatus.UNREAD,
+    status: notification.status,
   },
   sender: {
     name: '',
