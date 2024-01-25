@@ -158,10 +158,14 @@ const AppealCaseFilesOverview: React.FC<
                         })}
                       </Text>
                     </Box>
-                    {(file.category ===
-                      CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE ||
-                      file.category ===
-                        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE) &&
+                    {[
+                      CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+                      CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+                      CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+                      CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+                      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+                      CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+                    ].includes(file.category) &&
                       ((prosecutorSubmitted && isProsecutionUser(user)) ||
                         (!prosecutorSubmitted && isDefenceUser(user))) && (
                         <Box marginLeft={3}>
