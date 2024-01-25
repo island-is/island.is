@@ -1,7 +1,5 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  m,
-  ErrorScreen,
   EmptyState,
   UserInfoLine,
   IntroHeader,
@@ -22,6 +20,7 @@ import HistoryTable from './HistoryTable'
 import subYears from 'date-fns/subYears'
 import { HealthPaths } from '../../lib/paths'
 import { messages as hm } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -60,14 +59,11 @@ const HealthCenter = () => {
 
   if (error && !loading) {
     return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.healthCenter).toLowerCase(),
-        })}
+      <Problem
+        size="small"
+        noBorder={false}
+        type="internal_service_error"
+        error={error}
       />
     )
   }
