@@ -150,6 +150,7 @@ describe('infra CLI', () => {
       // Arrange
       const argv = {
         services: ['my-service'],
+        withSecrets: SecretOptions.withSecrets,
       }
 
       // Act
@@ -163,8 +164,8 @@ describe('infra CLI', () => {
       expect(
         JSON.parse(result.services['my-service'].env['JSON_URLS'])?.array,
       ).toStrictEqual([
-        'http://localhost:8080/some/slug',
-        'http://localhost:8080/some/slug',
+        'http://localhost/some/slug',
+        'http://localhost/some/slug',
       ])
       expect(result).toMatchSnapshot()
     })

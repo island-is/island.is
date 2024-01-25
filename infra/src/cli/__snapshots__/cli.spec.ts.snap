@@ -14,7 +14,7 @@ Object {
       "env": Object {
         "ARRAY_SECRET": "[\\"ITEM1\\",\\"ITEM2\\"]",
         "JSON_SECRET": "{\\"key\\": [\\"value\\"]}",
-        "JSON_URLS": "{ \\"string\\": \\"https://localhost/slug\\", \\"object\\": {\\"key\\": \\"https://localhost/slug\\"}, \\"array\\": [\\"https://localhost/slug\\", \\"https://localhost/slug\\"]}",
+        "JSON_URLS": "{ \\"string\\": \\"http://localhost/slug\\", \\"object\\": {\\"key\\": \\"http://localhost/slug\\"}, \\"array\\": [\\"http://localhost/slug\\", \\"http://localhost/slug\\"]}",
         "PROD_MODE": "true",
         "REMOTE_URL_ENV": "http://localhost/some/slug-path",
         "SERVERSIDE_FEATURES_ON": "",
