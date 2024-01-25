@@ -17,7 +17,7 @@ import {
 import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { general } from './messages'
-import { AnswerOption, OJOIApplication, TemplateApiActions } from './types'
+import { TemplateApiActions } from './types'
 
 export enum ApplicationStates {
   PREREQUISITS = 'prerequisites',
