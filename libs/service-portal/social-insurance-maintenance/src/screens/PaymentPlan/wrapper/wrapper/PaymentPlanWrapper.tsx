@@ -36,7 +36,9 @@ export const PaymentPlanWrapper = ({
           coreMessages.socialInsuranceMaintenanceDescription,
         )}
         serviceProviderSlug={'tryggingastofnun'}
-        serviceProviderTooltip="Eitthvað tooltip"
+        serviceProviderTooltip={formatMessage(
+          coreMessages.socialInsuranceTooltip,
+        )}
       />
       <TabNavigation
         label={formatMessage(m.paymentPlan)}
@@ -48,14 +50,6 @@ export const PaymentPlanWrapper = ({
         }
       />
       {!loading && !error && children && <Box marginTop={[6]}>{children}</Box>}
-      <Box>
-        <Text variant="small" marginTop={5} marginBottom={2}>
-          Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-          vulputate libero et velit interdum, ac aliquet odio mattis. Class
-          aptent taciti sociosqu ad litora torquent per conubia nostra, per
-          inceptos himenaeos.
-        </Text>
-      </Box>
     </Box>
   )
 }

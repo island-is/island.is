@@ -23,7 +23,7 @@ import {
 } from '@island.is/island-ui/core'
 import { UserInfoLine, m as coreMessages } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import addYears from 'date-fns/addYears'
 import { PaymentGroupTableRow } from '../../components'
 import { PaymentPlanWrapper } from './wrapper/wrapper/PaymentPlanWrapper'
@@ -33,8 +33,8 @@ const PaymentPlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  /*const [getPaymentPlanQuery, { data, loading, error }] =
-    useGetPaymentPlanLazyQuery()*/
+  const [getPaymentPlanQuery, { data, loading, error }] =
+    useGetPaymentPlanLazyQuery()
 
   const yearOptions = useMemo(() => {
     const years = generateYears(addYears(new Date(), -120), new Date(), 'desc')
@@ -42,101 +42,15 @@ const PaymentPlan = () => {
   }, [])
 
   const [selectedYear, setSelectedYear] = useState(yearOptions[0])
-  /*
+
   useEffect(() => {
     getPaymentPlanQuery({
       variables: { input: { year: selectedYear.value } },
     })
-  }, [selectedYear, getPaymentPlanQuery])*/
-
-  const error = undefined
-  const loading = false
+  }, [selectedYear, getPaymentPlanQuery])
 
   if (error) {
     return <Problem type="internal_service_error" error={error} />
-  }
-
-  const data: GetPaymentPlanQuery = {
-    socialInsurancePaymentPlan: {
-      nextPayment: 9000000,
-      previousPayment: 6486834,
-      paymentGroups: [
-        {
-          __typename: 'SocialInsurancePaymentGroup',
-          type: 'Greiðslugreiði',
-          totalYearCumulativeAmount: 126890409,
-          payments: [
-            {
-              type: 'Vasapeningar',
-              monthlyPaymentHistory: [
-                {
-                  monthIndex: 3,
-                  amount: 900000,
-                },
-              ],
-              totalYearCumulativeAmount: 40000,
-            },
-            {
-              type: 'Desemberruppbót á heimilisuppbót',
-              monthlyPaymentHistory: [
-                {
-                  monthIndex: 5,
-                  amount: 1,
-                },
-              ],
-              totalYearCumulativeAmount: 90930000,
-            },
-          ],
-          monthlyPaymentHistory: [
-            {
-              monthIndex: 1,
-              amount: 80,
-            },
-            {
-              monthIndex: 8,
-              amount: 4578,
-            },
-          ],
-        },
-        {
-          __typename: 'SocialInsurancePaymentGroup',
-          type: 'viðskiptavild',
-          totalYearCumulativeAmount: 78489,
-          payments: [
-            {
-              type: 'Greiðar',
-              monthlyPaymentHistory: [
-                {
-                  monthIndex: 1,
-                  amount: 450000,
-                },
-              ],
-              totalYearCumulativeAmount: 2,
-            },
-            {
-              type: 'Innheimtur',
-              monthlyPaymentHistory: [
-                {
-                  monthIndex: 8,
-                  amount: -784593,
-                },
-              ],
-              totalYearCumulativeAmount: 909462430000,
-            },
-          ],
-          monthlyPaymentHistory: [
-            {
-              monthIndex: 1,
-              amount: 80,
-            },
-            {
-              monthIndex: 8,
-              amount: 4578,
-            },
-          ],
-        },
-      ],
-    },
   }
 
   return (
@@ -200,17 +114,6 @@ const PaymentPlan = () => {
                 }}
               >
                 {formatMessage(coreMessages.print)}
-              </Button>
-            </GridColumn>
-            <GridColumn>
-              <Button
-                size="small"
-                variant="utility"
-                icon="download"
-                iconType="outline"
-                onClick={() => console.log('clicked download')}
-              >
-                {formatMessage(coreMessages.getDocument)}
               </Button>
             </GridColumn>
           </GridRow>
