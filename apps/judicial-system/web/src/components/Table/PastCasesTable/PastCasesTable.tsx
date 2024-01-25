@@ -143,7 +143,10 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
               <CreatedDate created={column.created} />
             </td>
             <td>
-              <Box marginRight={1} marginBottom={1}>
+              <Box
+                marginRight={column.appealState ? 1 : 0}
+                marginBottom={column.appealState ? 1 : 0}
+              >
                 <TagCaseState
                   caseState={column.state}
                   caseType={column.type}
