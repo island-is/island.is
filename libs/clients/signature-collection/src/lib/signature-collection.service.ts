@@ -42,7 +42,8 @@ export class SignatureCollectionClientService {
 
   private getListsApiWithAuth(auth: Auth) {
     return this.listsApi.withMiddleware(
-      new AuthMiddleware(auth, {
+      new AuthMiddleware(auth, 
+        {
         forwardUserInfo: false,
         tokenExchangeOptions: {
           issuer: 'https://identity-server.dev01.devland.is',
@@ -50,7 +51,8 @@ export class SignatureCollectionClientService {
           clientSecret: 'AzNw3K0jMkmq3mxF2svt8YvXU',
           scope: '@skra.is/signature-collection',
         },
-      }),
+      }
+      ),
     )
   }
 

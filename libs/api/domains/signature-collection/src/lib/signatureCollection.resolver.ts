@@ -40,10 +40,17 @@ import { CurrentRole } from './decorators/role.decorator'
 export class SignatureCollectionResolver {
   constructor(private signatureCollectionService: SignatureCollectionService) {}
 
+  @UseGuards(RolesGuard)
+  @RolesRules(
+    UserRole.CANDIDATE_OWNER,
+    UserRole.CANDIDATE_COLLECTOR,
+    UserRole.USER,
+  )
   @Query(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionTest(
     @CurrentUser() user: User,
+    @CurrentRole() role: UserRole,
   ): Promise<SignatureCollectionSuccess> {
     console.log('user', user)
     return this.signatureCollectionService.test(user)

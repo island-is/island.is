@@ -25,7 +25,7 @@ export const ApiConfiguration = {
       scope: config.scope,
     })
     return new Configuration({
-      fetchApi:   createEnhancedFetch({
+      fetchApi: createEnhancedFetch({
         name: 'clients-signature-collection',
         organizationSlug: 'thjodskra-islands',
         autoAuth: idsClientConfig.isConfigured
