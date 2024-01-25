@@ -11,6 +11,7 @@ import {
   SecretOptions,
 } from '../dsl/output-generators/map-to-localrun'
 import { renderLocalServices } from './render-local-mocks'
+import { SSM } from '@aws-sdk/client-ssm'
 
 const MockEnvironment: EnvironmentConfig = {
   auroraHost: 'a',
@@ -27,9 +28,6 @@ const MockEnvironment: EnvironmentConfig = {
 }
 
 jest.mock('../uber-charts/all-charts')
-const ActualCharts: typeof Charts = jest.requireActual(
-  '../uber-charts/all-charts',
-).Charts
 
 jest.mock('../dsl/consts', () => ({
   rootDir: '.',
@@ -41,7 +39,7 @@ jest.spyOn(console, 'log').mockImplementation(() => {})
 jest.spyOn(console, 'error')
 
 jest.mock('@aws-sdk/client-ssm', () => ({
-  SSM: jest.fn().mockImplementation(() => ({
+  SSM: jest.fn(() => ({
     getParameters: jest.fn(() => ({
       Parameters: [
         {
@@ -60,70 +58,30 @@ jest.mock('@aws-sdk/client-ssm', () => ({
           Name: '/k8s/my-service/ARRAY_SECRET',
           Value: '["ITEM1","ITEM2"]',
         },
+        {
+          Name: '/k8s/my-service/JSON_URLS',
+          Value: `{ ${[
+            '"string": "https://example.com/slug"',
+            '"object": {"key": "https://example.com/slug"}',
+            '"array": ["https://example.com/slug", "https://example.com/slug"]',
+          ].join(', ')}}`,
+        },
       ],
     })),
   })),
 }))
 
 describe('infra CLI', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
+  beforeEach(() => {})
   describe('render-secrets command', () => {
-    const sut = service('my-service').env({
-      A: 'A',
-      B: ref((ctx) => `${ctx.svc('https://www.website.tld')}/some/slug-path`),
-      C: '[redis.cluster.1,redis.cluster.2]',
-    })
-    let serviceDef: Awaited<ReturnType<typeof getLocalrunValueFile>>
-    let apiServiceDef: ServiceBuilder<any>
     beforeEach(async () => {
-      // jest.clearAllMocks()
-      const runtime = new Localhost()
-      serviceDef = await getLocalrunValueFile(
-        runtime,
-        await generateOutput({
-          runtime: runtime,
-          services: [sut],
-          outputFormat: LocalrunOutput({ secrets: SecretOptions.noSecrets }),
-          env: MockEnvironment,
-        }),
-      )
-      apiServiceDef = ActualCharts.islandis.dev.filter(
-        (svc) => svc.name() === 'api',
-      )[0]
-      Charts.islandis = {
-        dev: [apiServiceDef],
-        staging: [],
-        prod: [],
-      }
-
       const myServiceSetup = (): ServiceBuilder<'my-service'> =>
-        service('my-service')
-          .image('my-service')
-          .namespace('my-service')
-          .initContainer({
-            containers: [
-              { command: 'npx', args: ['sequelize-cli', 'db:migrate'] },
-            ],
-            postgres: {},
-          })
-          .env({
-            IDENTITY_SERVER_ISSUER_URL: {
-              dev: 'https://identity-server.dev01.devland.is',
-              staging: 'https://identity-server.staging01.devland.is',
-              prod: 'https://innskra.island.is',
-            },
-          })
-          .secrets({
-            A: '/k8s/my-service/A',
-          })
-          .liveness('/liveness')
-          .readiness('/readiness')
-          .grantNamespaces('islandis', 'application-system')
+        service('my-service').secrets({
+          A: '/k8s/my-service/A',
+        })
 
       Charts.islandis = {
-        dev: [myServiceSetup(), apiServiceDef],
+        dev: [myServiceSetup()],
         staging: [],
         prod: [],
       }
@@ -153,46 +111,37 @@ describe('infra CLI', () => {
   })
 
   describe('render-local-env', () => {
-    let myService: ServiceBuilder<'my-service'>
     beforeEach(async () => {
       const myServiceSetup = () =>
         service('my-service')
-          .image('my-service')
-          .namespace('my-service')
-          .initContainer({
-            containers: [
-              { command: 'npx', args: ['sequelize-cli', 'db:migrate'] },
-            ],
-            postgres: {},
-          })
           .env({
-            IDENTITY_SERVER_ISSUER_URL: {
-              dev: 'https://identity-server.dev01.devland.is',
-              staging: 'https://identity-server.staging01.devland.is',
-              prod: 'https://innskra.island.is',
-            },
+            REMOTE_URL_ENV: 'https://www.website.tld/some/slug-path',
           })
           .secrets({
-            A: '/k8s/my-service/A',
+            JSON_SECRET: '/k8s/my-service/JSON_SECRET',
+            ARRAY_SECRET: '/k8s/my-service/ARRAY_SECRET',
           })
-          .liveness('/liveness')
-          .readiness('/readiness')
-          .grantNamespaces('islandis', 'application-system')
-      myService = myServiceSetup()
+      const myService = myServiceSetup()
+      Charts.islandis = {
+        dev: [myService],
+        staging: [],
+        prod: [],
+      }
     })
 
     it('should map all URIs to localhost', async () => {
       // Arrange
       const argv = {
         services: ['my-service'],
-        json: true,
-        'no-update-secrets': true,
       }
 
       // Act
       const result = await renderLocalServices(argv)
 
       // Assert
+      expect(result.services['my-service'].env['REMOTE_URL_ENV']).toMatch(
+        /http:\/\/localhost:\d+\/some\/slug-path/,
+      )
       expect(result).toMatchSnapshot()
     })
   })
