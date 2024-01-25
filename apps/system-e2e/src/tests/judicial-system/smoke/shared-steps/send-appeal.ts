@@ -1,6 +1,5 @@
 import { Page, expect } from '@playwright/test'
-import { verifyRequestCompletion } from '../../../../support/api-tools'
-import { createFakePdf } from '../../utils/helpers'
+import { uploadDocument } from '../../utils/helpers'
 
 export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
   await page.goto(`krafa/yfirlit/${caseId}`)
@@ -10,25 +9,28 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
 
   // Send appeal
   await expect(page).toHaveURL(`/kaera/${caseId}`)
-  const appealFileChooserPromise = page.waitForEvent('filechooser')
-  await page
-    .locator('section')
-    .filter({
-      hasText:
-        'Kæra *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með endingu: .pdf',
-    })
-    .locator('button')
-    .first()
-    .click()
 
-  const appealFileChooser = await appealFileChooserPromise
-  await page.waitForTimeout(1000)
+  await uploadDocument(
+    page,
+    async () => {
+      await page
+        .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
+        .nth(1)
+        .click()
+    },
+    'TestKaera.pdf',
+  )
 
-  await appealFileChooser.setFiles(await createFakePdf('TestKaera.pdf'))
-  await Promise.all([
-    verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
-    verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
-  ])
+  await uploadDocument(
+    page,
+    async () => {
+      await page
+        .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
+        .nth(3)
+        .click()
+    },
+    'TestKaerugognSaekjanda.pdf',
+  )
 
   await page.getByTestId('continueButton').click()
   await page.getByTestId('modalSecondaryButton').click()
@@ -39,24 +41,29 @@ export async function prosecutorAppealsCaseTest(page: Page, caseId: string) {
 
   // Send statement
   await expect(page).toHaveURL(`/greinargerd/${caseId}`)
-  const statementFileChooserPromise = page.waitForEvent('filechooser')
-  await page
-    .locator('section')
-    .filter({
-      hasText:
-        'Greinargerð *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með ending',
-    })
-    .locator('button')
-    .click()
-  const statementFileChooser = await statementFileChooserPromise
-  await page.waitForTimeout(1000)
-  await statementFileChooser.setFiles(
-    await createFakePdf('TestGreinargerd.pdf'),
+
+  await uploadDocument(
+    page,
+    async () => {
+      await page
+        .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
+        .nth(1)
+        .click()
+    },
+    'TestGreinargerdSaekjanda.pdf',
   )
-  await Promise.all([
-    verifyRequestCompletion(page, '/api/graphql', 'CreatePresignedPost'),
-    verifyRequestCompletion(page, '/api/graphql', 'CreateFile'),
-  ])
+
+  await uploadDocument(
+    page,
+    async () => {
+      await page
+        .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
+        .nth(3)
+        .click()
+    },
+    'TestGreinargerdargognSaekjanda.pdf',
+  )
+
   await page.getByTestId('continueButton').click()
   await page.getByTestId('modalSecondaryButton').click()
 }
