@@ -573,7 +573,8 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'selectedChild',
-                  title:
+                  title: '',
+                  description:
                     parentalLeaveFormMessages.selectChild.screenDescription,
                   required: true,
                   options: (application) => {
