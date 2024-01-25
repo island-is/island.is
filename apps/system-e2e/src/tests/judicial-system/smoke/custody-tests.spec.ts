@@ -7,7 +7,7 @@ import {
   randomPoliceCaseNumber,
   randomCourtCaseNumber,
   getDaysFromNow,
-  createFakePdf,
+  uploadDocument,
 } from '../utils/helpers'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
@@ -240,53 +240,29 @@ test.describe.serial('Custody tests', () => {
 
     await page.getByRole('button', { name: 'Senda greinargerð' }).click()
 
-    const statementFileChooserPromise = page.waitForEvent('filechooser')
-    await page
-      .locator('section')
-      .filter({
-        hasText:
-          'Greinargerð *Dragðu skjöl hingað til að hlaða uppTekið er við skjölum með ending',
-      })
-      .locator('button')
-      .click()
-
-    const statementFileChooser = await statementFileChooserPromise
-    await page.waitForTimeout(1000)
-    await statementFileChooser.setFiles(
-      await createFakePdf('TestGreinargerdVerjanda.pdf'),
+    await uploadDocument(
+      page,
+      async () => {
+        await page
+          .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
+          .nth(1)
+          .click()
+      },
+      'TestGreinargerdVerjanda.pdf',
+      true,
     )
-    await Promise.all([
-      verifyRequestCompletion(
-        page,
-        '/api/graphql',
-        'LimitedAccessCreatePresignedPost',
-      ),
-      verifyRequestCompletion(page, '/api/graphql', 'LimitedAccessCreateFile'),
-    ])
 
-    const statementCaseFileChooserPromise = page.waitForEvent('filechooser')
-    await page
-      .locator('section')
-      .filter({
-        hasText:
-          'GögnEf ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim upp hér að n',
-      })
-      .locator('button')
-      .click()
-
-    const statementCaseFileChooser = await statementCaseFileChooserPromise
-
-    await statementCaseFileChooser.setFiles(
-      await createFakePdf('TestGreinargerdVerjandaGogn.pdf'),
+    await uploadDocument(
+      page,
+      async () => {
+        await page
+          .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
+          .nth(2)
+          .click()
+      },
+      'TestGreinargerdVerjanda.pdf',
+      true,
     )
-    await Promise.all([
-      verifyRequestCompletion(
-        page,
-        '/api/graphql',
-        'LimitedAccessCreatePresignedPost',
-      ),
-      verifyRequestCompletion(page, '/api/graphql', 'LimitedAccessCreateFile'),
-    ])
 
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalSecondaryButton').click()
