@@ -16,6 +16,7 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
         {
           name: m.paymentPlan,
           path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentPlan,
+          breadcrumbHide: true,
           navHide: true,
         },
         {

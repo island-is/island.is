@@ -20,16 +20,19 @@ export class SocialInsuranceService {
     user: User,
     year?: number,
   ): Promise<PaymentPlan | undefined> {
-    const res = await this.socialInsuranceApi
-      .getPaymentPlan(user, year ?? addYears(new Date(), -1).getFullYear())
-      .catch(handle404)
+    const [paymentPlan, payments] = await Promise.all([
+      this.socialInsuranceApi
+        .getPaymentPlan(user, year ?? addYears(new Date(), -1).getFullYear())
+        .catch(handle404),
+      this.socialInsuranceApi.getPayments(user).catch(handle404),
+    ])
 
-    if (!res) {
+    if (!paymentPlan && !payments) {
       return undefined
     }
 
     const paymentGroups: Array<PaymentGroup> =
-      res.paymentPlan?.groups
+      paymentPlan?.paymentPlan?.groups
         ?.map((g) => {
           if (!g.group) {
             return null
@@ -83,10 +86,17 @@ export class SocialInsuranceService {
         })
         .filter(isDefined) ?? []
 
-    return {
-      nextPayment: res.nextPayment ?? undefined,
-      previousPayment: res.previousPayment ?? undefined,
+    const data = {
+      nextPayment: payments?.nextPayment ?? undefined,
+      previousPayment: payments?.previousPayment ?? undefined,
       paymentGroups: paymentGroups,
     }
+
+    //if no data
+    if (!data.nextPayment && !data.previousPayment && !paymentGroups.length) {
+      return undefined
+    }
+
+    return data
   }
 }

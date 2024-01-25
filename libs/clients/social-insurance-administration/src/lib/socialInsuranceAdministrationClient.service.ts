@@ -10,6 +10,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -40,6 +41,14 @@ export class SocialInsuranceAdministrationClientService {
     return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
       year: year ? year.toString() : undefined,
     })
+  }
+
+  getPayments(
+    user: User,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments> {
+    return this.paymentPlanApiWithAuth(
+      user,
+    ).apiProtectedV1PaymentPlanLegitimatepaymentsGet()
   }
 
   sendApplication(

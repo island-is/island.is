@@ -1278,6 +1278,113 @@
         }
       }
     },
+    "/api/protected/v1/PaymentPlan/legitimatepayments": {
+      "get": {
+        "tags": ["PaymentPlan"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.LegitimatePayments"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.LegitimatePayments"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.LegitimatePayments"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/Test/hello": {
       "get": {
         "tags": ["Test"],
@@ -1840,37 +1947,6 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Api.Services.Domain.Finance.Models.PaymentPlan": {
-        "type": "object",
-        "properties": {
-          "latestChanges": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.PaymentPlanChangeDto"
-          },
-          "groups": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.PaymentPlanGroup"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.Finance.Models.PaymentPlanChangeDto": {
-        "type": "object",
-        "properties": {
-          "nationalId": { "type": "string", "nullable": true },
-          "trackNumber": { "type": "string", "nullable": true },
-          "user": { "type": "string", "nullable": true },
-          "updatedDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "description": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.Api.Services.Domain.Finance.Models.PaymentPlanGroup": {
         "type": "object",
         "properties": {
@@ -2104,12 +2180,9 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto": {
+      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.LegitimatePayments": {
         "type": "object",
         "properties": {
-          "paymentPlan": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.PaymentPlan"
-          },
           "nextPayment": {
             "type": "number",
             "format": "double",
@@ -2119,6 +2192,28 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlan": {
+        "type": "object",
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.PaymentPlanGroup"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto": {
+        "type": "object",
+        "properties": {
+          "paymentPlan": {
+            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlan"
           }
         },
         "additionalProperties": false
