@@ -33,8 +33,10 @@ export function generateMockNotification(user: User | null): Notification {
   const uuid = faker.datatype.uuid()
   const isRead = faker.datatype.boolean()
   const sent = faker.date.past()
+  const num = faker.datatype.number(1000)
 
   return {
+    id: num,
     notificationId: uuid,
     metadata: {
       sent,
@@ -94,7 +96,7 @@ export function mockNotificationsResponse(
       notification.metadata.status === NotificationStatus.UNREAD,
   ).length
 
-  const after = paging?.after ? decodeBase64(paging.after) : undefined
+  const after = paging?.after ? decodeBase64(String(paging.after)) : undefined
 
   const indexOfAfterItem = after
     ? notifications.findIndex(
@@ -124,7 +126,6 @@ export function mockNotificationsResponse(
       totalCount,
       unreadCount,
     },
-    totalCount,
     pageInfo: {
       hasNextPage,
       hasPreviousPage,
@@ -137,21 +138,17 @@ export function mockNotificationsResponse(
 export function getMockNotification(
   locale: Locale,
   user: User | null,
-  notificationId: string,
+  id: number,
 ): Notification | null {
   const notifications = generated.get(generateKey(user, locale))
 
-  return (
-    notifications?.find(
-      (notification) => notification.notificationId === notificationId,
-    ) ?? null
-  )
+  return notifications?.find((notification) => notification.id === id) ?? null
 }
 
 export function markMockNotificationRead(
   locale: Locale,
   user: User | null,
-  notificationId: string,
+  id: number,
 ): Notification | null {
   const key = generateKey(user, locale)
 
@@ -162,7 +159,7 @@ export function markMockNotificationRead(
   }
 
   const notification = notifications?.find(
-    (notification) => notification.notificationId === notificationId,
+    (notification) => notification.id === id,
   )
 
   if (!notification) {

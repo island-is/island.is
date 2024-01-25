@@ -13,8 +13,8 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const LOG_CATEGORY = 'notifications-resolver'
 
-@Resolver()
 @UseGuards(IdsUserGuard)
+@Resolver()
 export class NotificationsResolver {
   constructor(
     private readonly service: NotificationsService,
@@ -31,7 +31,7 @@ export class NotificationsResolver {
     input: NotificationsInput,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
-  ) {
+  ): Promise<NotificationsResponse | null> {
     let notifications
 
     try {
@@ -54,21 +54,17 @@ export class NotificationsResolver {
   })
   async getNotification(
     @CurrentUser() user: User,
-    @Args('notificationId', { type: () => String, nullable: false })
-    notificationId: string,
+    @Args('id', { type: () => Number, nullable: false })
+    id: number,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ) {
     let notification
     try {
-      notification = await this.service.getNotification(
-        notificationId,
-        locale,
-        user,
-      )
+      notification = await this.service.getNotification(id, locale, user)
     } catch (e) {
       this.logger.error('failed to get notification by id', {
-        notificationId,
+        id,
         locale,
         category: LOG_CATEGORY,
         error: e,
@@ -78,7 +74,7 @@ export class NotificationsResolver {
 
     if (!notification) {
       this.logger.info('notification not found', {
-        notificationId,
+        id,
         locale,
         category: LOG_CATEGORY,
       })
@@ -94,22 +90,18 @@ export class NotificationsResolver {
   })
   async markNotificationAsRead(
     @CurrentUser() user: User,
-    @Args('notificationId', { type: () => String, nullable: false })
-    notificationId: string,
+    @Args('id', { type: () => Number, nullable: false })
+    id: number,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ) {
     let result
 
     try {
-      result = await this.service.markNotificationAsRead(
-        notificationId,
-        locale,
-        user,
-      )
+      result = await this.service.markNotificationAsRead(id, locale, user)
     } catch (e) {
       this.logger.error('failed to mark notification as read', {
-        notificationId,
+        id,
         locale,
         category: LOG_CATEGORY,
         error: e,
