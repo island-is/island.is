@@ -1161,6 +1161,10 @@ export const m = defineMessages({
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
   },
+  socialInsuranceTooltip: {
+    id: 'service.portal:social-insurance-tooltip',
+    defaultMessage: 'Tryggingastofnun hefur umsjón með gögnum um framfærslu.',
+  },
   vehiclesTooltip: {
     id: 'service.portal:vehicles-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
