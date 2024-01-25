@@ -20,17 +20,37 @@ export const m = defineMessages({
   },
   createListButton: {
     id: 'sp.signatureCollection:createListButton',
-    defaultMessage: 'Stofna',
-    description: '',
-  },
-  myListsHeader: {
-    id: 'sp.signatureCollection:myListsHeader',
-    defaultMessage: 'Listar stofnaðir af mér',
+    defaultMessage: 'Stofna söfnun',
     description: '',
   },
   collectionTitle: {
     id: 'sp.signatureCollection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  myListsDescription: {
+    id: 'sp.signatureCollection:myListsDescription',
+    defaultMessage: 'Yfirlit safnanna sem þú hefur stofnað:',
+    description: '',
+  },
+  copyLinkButton: {
+    id: 'sp.signatureCollection:copyLinkButton',
+    defaultMessage: 'Afrita hlekk',
+    description: '',
+  },
+  copyLinkDescription: {
+    id: 'sp.signatureCollection:copyLinkDescription',
+    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila.',
+    description: '',
+  },
+  copyLinkSuccess: {
+    id: 'sp.signatureCollection:copyLinkSuccess',
+    defaultMessage: 'Hlekkur afritaður',
+    description: '',
+  },
+  copyLinkError: {
+    id: 'sp.signatureCollection:copyLinkError',
+    defaultMessage: 'Ekki tókst að afrita hlekk',
     description: '',
   },
   endTime: {
