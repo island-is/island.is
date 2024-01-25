@@ -36,6 +36,10 @@ jest.mock('../dsl/consts', () => ({
   COMMON_SECRETS: {},
 }))
 
+// Mock console.log
+jest.spyOn(console, 'log').mockImplementation(() => {})
+jest.spyOn(console, 'error')
+
 jest.mock('@aws-sdk/client-ssm', () => ({
   SSM: jest.fn().mockImplementation(() => ({
     getParameters: jest.fn(() => ({
