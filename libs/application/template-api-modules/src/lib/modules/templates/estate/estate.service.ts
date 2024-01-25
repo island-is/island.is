@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { TemplateApiModuleActionProps } from '../../../types'
-import { NationalRegistry, UploadData } from './types'
+import { NationalRegistry } from './types'
 import {
   Attachment,
   DataUploadResponse,
@@ -178,7 +178,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
       ?.data as NationalRegistry
 
     const externalData = application.externalData.syslumennOnEntry?.data as {
-      estates: Array<EstateSchema['estate']>
+      estate?: EstateSchema['estate']
+      estates?: Array<EstateSchema['estate']>
     }
 
     const applicantData = application.answers
@@ -200,7 +201,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const uploadDataId = 'danarbusskipti1.0'
     const answers = application.answers as unknown as EstateSchema
 
-    const estateData = externalData.estates.find((estate) => estate.caseNumber)
+    let estateData = externalData.estates?.find((estate) => estate.caseNumber)
+    // TODO: Remove the singular estate property in the future when
+    //       legacy applications clear out of the system
+    estateData = estateData ?? externalData.estate ?? undefined
     if (!estateData) {
       throw new Error(
         '[estate]: Selected casenumber not present in external data. Should not happen',
@@ -210,6 +214,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const uploadData = generateRawUploadData(answers, estateData, application)
     // We deep copy the pdfData since the transform function
     // for the PDF creation mutates the object
+
+    console.log('uploadData', JSON.stringify(uploadData, null, 2))
     const pdfData = structuredClone(uploadData)
 
     const attachments: Attachment[] = []
