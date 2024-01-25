@@ -240,6 +240,7 @@ const useS3Upload = (caseId: string) => {
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPost
         : createPresignedPost
+      const filesUploaded = []
 
       const getPresignedPost = async (file: TUploadFile) => {
         const { data } = await mutation({
@@ -288,13 +289,14 @@ const useS3Upload = (caseId: string) => {
             newFileId,
           )
 
-          return true
+          filesUploaded.push(file)
         } catch (e) {
           toast.error(formatMessage(strings.uploadFailed))
           updateFile({ ...file, status: 'error' })
-          return false
         }
       }
+
+      return filesUploaded.length === files.length
     },
     [
       limitedAccess,

@@ -10,7 +10,6 @@ import {
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
-  isPrisonSystemUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -49,67 +48,61 @@ const AppealCaseFilesOverview: React.FC<
   const { user, limitedAccess } = useContext(UserContext)
   const [allFiles, setAllFiles] = useState<CaseFile[]>([])
 
-  const fileDate = (category: CaseFileCategory) => {
-    switch (category) {
+  const fileDate = (file: CaseFile) => {
+    switch (file.category) {
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
-        return workingCase.prosecutorPostponedAppealDate
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+        return workingCase.appealedDate
       case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
       case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
         return workingCase.prosecutorStatementDate
-      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
-      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
-        return workingCase.accusedPostponedAppealDate
+
       case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
       case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
         return workingCase.defendantStatementDate
+      default: {
+        return file.created
+      }
     }
   }
 
   useEffect(() => {
     if (workingCase.caseFiles) {
-      if (isPrisonSystemUser(user)) {
-        setAllFiles(
-          workingCase.caseFiles.filter(
-            (caseFile) =>
-              (workingCase.appealState === CaseAppealState.COMPLETED ||
-                isCourtOfAppealsUser(user)) &&
-              caseFile.category &&
-              [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
-          ),
-        )
-      } else {
-        setAllFiles(
-          workingCase.caseFiles.filter(
-            (caseFile) =>
-              caseFile.category &&
-              ((workingCase.prosecutorPostponedAppealDate &&
+      setAllFiles(
+        workingCase.caseFiles.filter(
+          (caseFile) =>
+            caseFile.category &&
+            ((workingCase.prosecutorPostponedAppealDate &&
+              [
+                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+              ].includes(caseFile.category)) ||
+              (workingCase.prosecutorStatementDate &&
                 [
-                  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-                  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
                 ].includes(caseFile.category)) ||
-                (workingCase.prosecutorStatementDate &&
-                  [
-                    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-                    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-                  ].includes(caseFile.category)) ||
-                (workingCase.accusedPostponedAppealDate &&
-                  [
-                    CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-                    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-                  ].includes(caseFile.category)) ||
-                (workingCase.defendantStatementDate &&
-                  [
-                    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-                    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-                  ].includes(caseFile.category)) ||
+              (workingCase.accusedPostponedAppealDate &&
                 [
-                  CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-                  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-                ].includes(caseFile.category)),
-          ),
-        )
-      }
+                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+                ].includes(caseFile.category)) ||
+              (workingCase.defendantStatementDate &&
+                [
+                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+                ].includes(caseFile.category)) ||
+              [
+                CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+                CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+              ].includes(caseFile.category) ||
+              ((workingCase.appealState === CaseAppealState.COMPLETED ||
+                isCourtOfAppealsUser(user)) &&
+                [CaseFileCategory.APPEAL_RULING].includes(caseFile.category))),
+        ),
+      )
     }
   }, [
     user,
@@ -152,10 +145,10 @@ const AppealCaseFilesOverview: React.FC<
                     >
                       <Text whiteSpace="nowrap">
                         {`${formatDate(
-                          fileDate(file.category) ?? file.created,
+                          fileDate(file),
                           'dd.MM.y',
                         )} kl. ${formatDate(
-                          fileDate(file.category) ?? file.created,
+                          fileDate(file),
                           constants.TIME_FORMAT,
                         )}`}
                       </Text>
@@ -165,36 +158,44 @@ const AppealCaseFilesOverview: React.FC<
                         })}
                       </Text>
                     </Box>
-                    {((prosecutorSubmitted && isProsecutionUser(user)) ||
-                      (!prosecutorSubmitted && isDefenceUser(user))) && (
-                      <Box marginLeft={3}>
-                        <ContextMenu
-                          items={[
-                            {
-                              title: formatMessage(contextMenu.deleteFile),
-                              onClick: () =>
-                                handleRemove(file as TUploadFile, () => {
-                                  setAllFiles((prev) =>
-                                    prev.filter((f) => f.id !== file.id),
-                                  )
-                                }),
-                              icon: 'trash',
-                            },
-                          ]}
-                          menuLabel="Opna valmöguleika á skjali"
-                          disclosure={
-                            <IconButton
-                              icon="ellipsisVertical"
-                              colorScheme="transparent"
-                              onClick={(evt) => {
-                                evt.stopPropagation()
-                              }}
-                              disabled={isDisabled}
-                            />
-                          }
-                        />
-                      </Box>
-                    )}
+                    {[
+                      CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+                      CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+                      CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+                      CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+                      CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+                      CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+                    ].includes(file.category) &&
+                      ((prosecutorSubmitted && isProsecutionUser(user)) ||
+                        (!prosecutorSubmitted && isDefenceUser(user))) && (
+                        <Box marginLeft={3}>
+                          <ContextMenu
+                            items={[
+                              {
+                                title: formatMessage(contextMenu.deleteFile),
+                                onClick: () =>
+                                  handleRemove(file as TUploadFile, () => {
+                                    setAllFiles((prev) =>
+                                      prev.filter((f) => f.id !== file.id),
+                                    )
+                                  }),
+                                icon: 'trash',
+                              },
+                            ]}
+                            menuLabel="Opna valmöguleika á skjali"
+                            disclosure={
+                              <IconButton
+                                icon="ellipsisVertical"
+                                colorScheme="transparent"
+                                onClick={(evt) => {
+                                  evt.stopPropagation()
+                                }}
+                                disabled={isDisabled}
+                              />
+                            }
+                          />
+                        </Box>
+                      )}
                   </Box>
                 )}
             </PdfButton>
