@@ -26,22 +26,6 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
           serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
           serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
-        <LinkV2
-          href={formatMessage(
-            messages.readAboutPaymentParticipationSystemsLink,
-          )}
-        >
-          <Button
-            size="small"
-            variant="text"
-            icon="open"
-            iconType="outline"
-            as="span"
-            unfocusable
-          >
-            {formatMessage(messages.readAboutPaymentParticipationSystems)}
-          </Button>
-        </LinkV2>
       </Box>
 
       <TabNavigation

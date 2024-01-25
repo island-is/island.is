@@ -38,10 +38,6 @@ jobs:
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           # ENVS=("dev" "staging")
           ENVS=("dev" "staging" "prod")
-          if [[ $GIT_BRANCH =~ ^release\/ ]]; then
-            echo "Adding prod environments to test set"
-            ENVS+=("prod")
-          fi
           ENVS_JSON=$(printf '%s\n' "${ENVS[@]}" | jq -R . | jq -s . | tr -d '[:space:]')
           echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
 
@@ -93,7 +89,7 @@ jobs:
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          ./infra/scripts/generate-chart-values.sh
+          yarn --cwd infra charts
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
 
   check-secrets:

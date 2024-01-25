@@ -68,6 +68,11 @@ export const m = defineMessages({
     defaultMessage: 'Söfnuninni lokið',
     description: '',
   },
+  collectionMaxReached: {
+    id: 'sp.signatureCollection:collectionMaxReached',
+    defaultMessage: 'Hámarki meðmæla náð',
+    description: '',
+  },
 
   /* Signee View */
   mySigneeListsHeader: {

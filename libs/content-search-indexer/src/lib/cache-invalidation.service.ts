@@ -106,35 +106,15 @@ const MAX_REQUEST_COUNT = 10
 @Injectable()
 export class CacheInvalidationService {
   private getBaseUrl() {
-    let baseUrl = 'https://island.is'
-
-    switch (environment.runtimeEnvironment) {
-      case 'prod':
-        baseUrl = 'https://island.is'
-        break
-      case 'staging':
-        baseUrl = 'https://beta.staging01.devland.is'
-        break
-      case 'dev':
-        baseUrl = 'https://beta.dev01.devland.is'
-        break
-      case 'local':
-        baseUrl = 'http://localhost:4200'
-        break
-      default:
-        return ''
+    let baseUrl = 'http://web.islandis.svc.cluster.local'
+    if (environment.runtimeEnvironment === 'local') {
+      baseUrl = 'http://localhost:4200'
     }
-
     return baseUrl
   }
 
   async invalidateCache(items: MappedData[], locale: ElasticsearchIndexLocale) {
     const baseUrl = this.getBaseUrl()
-
-    if (!baseUrl) {
-      logger.warn('Could not get cache invalidation base url')
-      return
-    }
 
     const bypassSecret = environment.bypassCacheSecret
 
@@ -151,9 +131,6 @@ export class CacheInvalidationService {
         const response = responses[i]
         const url = promises[i].url
         if (response.status === 'fulfilled') {
-          ;(response.value as Response).text().then((value) => {
-            logger.info(`Received response for: ${url}`, { data: value })
-          })
           successfulCacheInvalidationCount += 1
         } else {
           failedCacheInvalidationReasons.push({
@@ -187,7 +164,9 @@ export class CacheInvalidationService {
       try {
         urls = generateInvalidationUrls(baseUrl, JSON.parse(item.response))
       } catch {
-        logger.warn(`Generating invalidation url failed for: ${item._id}`)
+        logger.warn(
+          `Generating invalidation url failed for document with id: ${item._id}`,
+        )
         continue
       }
 
@@ -201,7 +180,6 @@ export class CacheInvalidationService {
             },
           }),
         })
-        logger.info(`Invalidating: ${urlWithoutPostfix}`)
         if (promises.length > MAX_REQUEST_COUNT) {
           await handleRequests()
         }

@@ -6,6 +6,7 @@ export const tab = style({
   padding: '10px',
   width: '100%',
   outline: 0,
+  fontWeight: 'lighter',
   backgroundColor: theme.color.white,
   ':after': {
     content: '""',
@@ -20,6 +21,7 @@ export const tab = style({
 
 export const tabSelected = style({
   color: theme.color.blue400,
+  fontWeight: theme.typography.semiBold,
   ':after': {
     backgroundColor: theme.color.blue400,
   },
