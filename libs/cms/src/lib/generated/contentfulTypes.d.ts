@@ -144,7 +144,6 @@ export interface IAnchorPageFields {
   pageType?:
     | 'Digital Iceland Service'
     | 'Digital Iceland Community Page'
-    | 'Life Event'
     | undefined
 
   /** featured image */
@@ -1864,13 +1863,6 @@ export interface ILifeEventPageFields {
 
   /** See More Text */
   seeMoreText?: string | undefined
-
-  /** Page Type */
-  pageType?:
-    | 'Life Event'
-    | 'Digital Iceland Service'
-    | 'Digital Iceland Community Page'
-    | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1883,32 +1875,6 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ILifeEventPageListSliceFields {
-  /** Title */
-  title?: string | undefined
-
-  /** List */
-  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
-}
-
-export interface ILifeEventPageListSlice
-  extends Entry<ILifeEventPageListSliceFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2759,6 +2725,7 @@ export interface IOrganizationPageFields {
         | ITwoColumnText
         | ISectionWithVideo
         | IAnchorPageList
+        | ISectionWithImage
       )[]
     | undefined
 
@@ -4787,7 +4754,6 @@ export type CONTENT_TYPE =
   | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
-  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'
