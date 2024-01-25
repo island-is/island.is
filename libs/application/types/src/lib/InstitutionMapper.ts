@@ -2,7 +2,23 @@ import { ApplicationTypes } from './ApplicationTypes'
 import { InstitutionTypes } from './InstitutionTypes'
 import { InstitutionNationalIds } from './InstitutionNationalIds'
 
-export const institutionMapper = {
+interface Institution {
+  nationalId: InstitutionNationalIds
+  slug: InstitutionTypes
+}
+
+export const institutionMapper: Record<
+  Partial<ApplicationTypes>,
+  Institution
+> = {
+  [ApplicationTypes.CARAMEL]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.NEW_TYPE_OF_APPLICATION]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+  },
   [ApplicationTypes.EXAMPLE]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
