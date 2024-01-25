@@ -647,10 +647,7 @@ export class CmsContentfulService {
     return (result.items as types.IMenu[]).map(mapMenu)[0] ?? null
   }
 
-  async getAnchorPage(
-    slug: string,
-    lang: string,
-  ): Promise<AnchorPage | null> {
+  async getAnchorPage(slug: string, lang: string): Promise<AnchorPage | null> {
     const params = {
       ['content_type']: 'anchorPage',
       'fields.slug': slug,
@@ -660,9 +657,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
       .catch(errorHandler('getAnchorPage'))
 
-    return (
-      (result.items as types.IAnchorPage[]).map(mapAnchorPage)[0] ?? null
-    )
+    return (result.items as types.IAnchorPage[]).map(mapAnchorPage)[0] ?? null
   }
 
   async getAnchorPages(lang: string): Promise<AnchorPage[]> {
