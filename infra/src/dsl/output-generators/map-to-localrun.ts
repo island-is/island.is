@@ -32,11 +32,11 @@ const serializeService = async (
   service: ServiceDefinitionForEnv,
   deployment: ReferenceResolver,
   withSecrets: boolean,
-  env1: EnvironmentConfig,
+  env: EnvironmentConfig,
 ): Promise<SerializeSuccess<LocalrunService> | SerializeErrors> => {
   logger.debug('Serializing service', {
     service: service.name,
-    env: env1,
+    env,
   })
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
@@ -44,7 +44,7 @@ const serializeService = async (
   const serviceDef = service
   const result: LocalrunService = {
     env: {
-      SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
+      SERVERSIDE_FEATURES_ON: env.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
       )}`,
@@ -69,7 +69,7 @@ const serializeService = async (
       service,
       deployment,
       serviceDef.env,
-      env1,
+      env,
     )
     mergeObjects(result.env, envs)
   }
@@ -78,7 +78,7 @@ const serializeService = async (
   if (Object.keys(serviceDef.secrets).length > 0 && withSecrets) {
     logger.debug('Retrieving secrets', {
       service: service.name,
-      env: env1,
+      env: env,
     })
     const secrets = await retrieveSecrets(serviceDef.secrets)
     mergeObjects(result.env, secrets)
@@ -91,7 +91,7 @@ const serializeService = async (
         ...acc,
         [initContainer.name!]: {
           env: {
-            SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
+            SERVERSIDE_FEATURES_ON: env.featuresOn.join(','),
           },
         },
       }),
@@ -104,7 +104,7 @@ const serializeService = async (
           service,
           deployment,
           serviceDef.initContainers.envs,
-          env1,
+          env,
         )
         Object.values(initContainers).forEach((initContainer) =>
           mergeObjects(initContainer.env, envs),
@@ -141,6 +141,13 @@ const serializeService = async (
     mergeObjects(result.env, env)
     // mergeObjects(secrets, secrets)
     addToErrors(errors)
+  }
+
+  // Map all external URLs to localhost
+  for (const [key, value] of Object.entries(result.env)) {
+    if (value.startsWith('https://')) {
+      result.env[key] = value.replace(/https:\/\/[^/:]+/g, 'http://localhost')
+    }
   }
 
   const allErrors = getErrors()

@@ -141,7 +141,7 @@ describe('infra CLI', () => {
 
       // Assert
       expect(result.services['my-service'].env['REMOTE_URL_ENV']).toMatch(
-        /http:\/\/localhost:\d+\/some\/slug-path/,
+        /http:\/\/localhost(:\d+)?\/some\/slug-path/,
       )
       expect(result).toMatchSnapshot()
     })

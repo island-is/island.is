@@ -89,6 +89,7 @@ export const getLocalrunValueFile = async (
 
   logger.debug('Dump all env values to files', {
     dockerComposeServices,
+    'my-service.env': dockerComposeServices['my-service'].env,
   })
   await Promise.all(
     Object.entries(dockerComposeServices).map(
@@ -104,10 +105,23 @@ export const getLocalrunValueFile = async (
                 !EXCLUDED_ENVIRONMENT_NAMES.includes(name) && !!value,
             )
             .map(([name, value]) => {
-              return `export ${name}='${value
-                // Replace all hostnames with localhost
+              // Basic shell sanitation
+              const escapedValue = value
                 .replace(/'/g, "'\\''")
-                .replace(/[\n\r]/g, '')}'`
+                .replace(/[\n\r]/g, '')
+              const localizedValue = escapedValue
+              //   .replace(
+              //   /^(https?:\/\/)[^/]+(?=$|\/)/g,
+              //   '$1localhost',
+              // )
+              const exportedKeyValue = `export ${name}='${localizedValue}'`
+              logger.debug('Env rewrite debug', {
+                escapedValue,
+                localizedValue,
+                exportedKeyValue,
+              })
+
+              return exportedKeyValue
             })
             .join('\n'),
           { encoding: 'utf-8' },

@@ -12,8 +12,11 @@ Object {
         "yarn nx serve my-service",
       ],
       "env": Object {
-        "IDENTITY_SERVER_ISSUER_URL": "https://identity-server.dev01.devland.is",
+        "ARRAY_SECRET": "[\\"ITEM1\\",\\"ITEM2\\"]",
+        "JSON_SECRET": "{\\"key\\": [\\"value\\"]}",
+        "JSON_URLS": "{ \\"string\\": \\"https://localhost/slug\\", \\"object\\": {\\"key\\": \\"https://localhost/slug\\"}, \\"array\\": [\\"https://localhost/slug\\", \\"https://localhost/slug\\"]}",
         "PROD_MODE": "true",
+        "REMOTE_URL_ENV": "http://localhost/some/slug-path",
         "SERVERSIDE_FEATURES_ON": "",
       },
     },
