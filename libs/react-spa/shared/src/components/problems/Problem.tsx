@@ -68,6 +68,7 @@ export const Problem = ({
   size = 'large',
   error,
   title,
+  titleSize,
   message,
   tag,
   imgSrc,
@@ -133,7 +134,9 @@ export const Problem = ({
       return <NotFound {...defaultProps} tag={tag ?? formatMessage(m.error)} />
 
     case ProblemTypes.noData:
-      return <NoData {...defaultProps} size={size} tag={tag} />
+      return (
+        <NoData {...defaultProps} size={size} tag={tag} titleSize={titleSize} />
+      )
 
     default:
       return <ProblemTemplate {...fallbackProps} />

@@ -8,6 +8,9 @@ import {
   Table as T,
   Button,
   Select,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import {
   DownloadFileButtons,
@@ -19,7 +22,7 @@ import {
 import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { SECTION_GAP } from '../Medicine/constants'
+import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import * as styles from './Payments.css'
 import {
   useGetPaymentOverviewLazyQuery,
@@ -31,6 +34,7 @@ import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const PaymentOverview = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -96,10 +100,11 @@ export const PaymentOverview = () => {
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
       {error ? (
-        <AlertMessage
-          type="error"
-          title={formatMessage(m.errorTitle)}
-          message={formatMessage(messages.errorFetchPaymentInfo)}
+        <Problem
+          size="small"
+          noBorder={false}
+          type="internal_service_error"
+          error={error}
         />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
@@ -124,57 +129,67 @@ export const PaymentOverview = () => {
             </Stack>
           </Box>
 
-          <Box>
-            <Text marginBottom={2} variant="h5">
-              {formatMessage(messages.invoices)}
-            </Text>
-            <Box
-              marginBottom={SECTION_GAP}
-              display="flex"
-              flexDirection="column"
-              rowGap={2}
-            >
-              <Box display="flex" columnGap={2}>
-                <DatePicker
-                  size="xs"
-                  label={formatMessage(m.dateFrom)}
-                  placeholderText={formatMessage(m.chooseDate)}
-                  handleChange={(date) => setStartDate(date)}
-                  selected={startDate}
-                />
-                <DatePicker
-                  size="xs"
-                  label={formatMessage(m.dateTo)}
-                  placeholderText={formatMessage(m.chooseDate)}
-                  handleChange={(date) => setEndDate(date)}
-                  selected={endDate}
-                />
-              </Box>
-              {!!options?.length && (
-                <Box display="flex" alignItems="center" columnGap={2}>
-                  <Select
-                    value={
-                      selectedOptionId
-                        ? options?.find((opt) => opt.value === selectedOptionId)
-                        : options[0]
-                    }
-                    size="sm"
-                    name="service"
-                    options={options}
-                    onChange={(opt) => setSelectedOptionId(opt?.value ?? null)}
+          <Stack space={SECTION_GAP}>
+            <Text variant="h5">{formatMessage(messages.invoices)}</Text>
+            <GridContainer>
+              <GridRow marginBottom={CONTENT_GAP}>
+                <GridColumn span={'1/2'}>
+                  <DatePicker
+                    size="xs"
+                    label={formatMessage(m.dateFrom)}
+                    placeholderText={formatMessage(m.chooseDate)}
+                    handleChange={(date) => setStartDate(date)}
+                    backgroundColor="blue"
+                    selected={startDate}
                   />
-                  <Button size="medium" onClick={() => onFetchBills()}>
-                    Sækja
-                  </Button>
-                </Box>
+                </GridColumn>
+                <GridColumn span={'1/2'}>
+                  <DatePicker
+                    size="xs"
+                    label={formatMessage(m.dateTo)}
+                    placeholderText={formatMessage(m.chooseDate)}
+                    handleChange={(date) => setEndDate(date)}
+                    backgroundColor="blue"
+                    selected={endDate}
+                  />
+                </GridColumn>
+              </GridRow>
+              {!!options?.length && (
+                <GridRow alignItems="flexEnd">
+                  <GridColumn span={'5/8'}>
+                    <Select
+                      value={
+                        selectedOptionId
+                          ? options?.find(
+                              (opt) => opt.value === selectedOptionId,
+                            )
+                          : options[0]
+                      }
+                      label={formatMessage(messages.typeofService)}
+                      size="xs"
+                      name="service"
+                      options={options}
+                      backgroundColor="blue"
+                      onChange={(opt) =>
+                        setSelectedOptionId(opt?.value ?? null)
+                      }
+                    />
+                  </GridColumn>
+                  <GridColumn span={'3/8'}>
+                    <Button fluid size="medium" onClick={() => onFetchBills()}>
+                      {formatMessage(m.get)}
+                    </Button>
+                  </GridColumn>
+                </GridRow>
               )}
-            </Box>
-            <Box marginBottom={SECTION_GAP}>
+            </GridContainer>
+            <Box>
               {overviewError ? (
-                <AlertMessage
-                  type="error"
-                  title={formatMessage(m.errorTitle)}
-                  message={formatMessage(messages.errorFetchPaymentInfo)}
+                <Problem
+                  size="small"
+                  noBorder={false}
+                  type="internal_service_error"
+                  error={error}
                 />
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
@@ -253,14 +268,19 @@ export const PaymentOverview = () => {
                   />
                 </>
               ) : (
-                <AlertMessage
-                  type="warning"
-                  title={formatMessage(m.noData)}
-                  message={formatMessage(m.noDataFound)}
-                />
+                <Box marginTop={2}>
+                  <Problem
+                    type="no_data"
+                    title={formatMessage(messages.searchResultsEmpty)}
+                    message={formatMessage(messages.searchResultsEmptyDetail)}
+                    titleSize="h3"
+                    noBorder={false}
+                    tag={undefined}
+                  />
+                </Box>
               )}
             </Box>
-          </Box>
+          </Stack>
         </Box>
       )}
     </PaymentsWrapper>
