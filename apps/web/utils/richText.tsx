@@ -37,6 +37,7 @@ import {
   ShipSearchBoxedInput,
   SidebarShipSearchInput,
   SliceDropdown,
+  SpecificHousingBenefitSupportCalculator,
   StraddlingStockCalculator,
   TableSlice,
   TemporaryEventLicencesList,
@@ -112,6 +113,8 @@ export const webRenderConnectedComponent = (
       )
     case 'KilometerFee':
       return <KilometerFee slice={slice} />
+    case 'SpecificHousingBenefitSupportCalculator':
+      return <SpecificHousingBenefitSupportCalculator slice={slice} />
     default:
       break
   }
