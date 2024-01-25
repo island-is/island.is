@@ -145,7 +145,6 @@ const renderSlice = (
       return <EventSlice slice={slice} />
     case 'LatestNewsSlice':
       return <LatestNewsSlice slice={slice} slug={slug} {...params} />
-    case 'LifeEventPageListSlice':
     case 'AnchorPageListSlice':
       return (
         <AnchorPageListSlice slice={slice} namespace={namespace} {...params} />
