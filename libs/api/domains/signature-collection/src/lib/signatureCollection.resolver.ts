@@ -28,11 +28,11 @@ import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
 import { RolesGuard } from './guards/roles.guard'
 import { RolesRules } from './decorators/roles-rules.decorator'
-import { UserRole } from './utils/role.types'
 import { CollectionGuard } from './guards/collection.guard'
 import { CurrentCollection } from './decorators/current-collection.decorator'
 import { CurrentSignee } from './decorators/signee.decorator'
 import { CurrentRole } from './decorators/role.decorator'
+import { UserRole, UserWithRole } from '@island.is/clients/signature-collection'
 
 @UseGuards(IdsUserGuard, CollectionGuard)
 @Resolver()
@@ -45,15 +45,17 @@ export class SignatureCollectionResolver {
     UserRole.CANDIDATE_OWNER,
     UserRole.CANDIDATE_COLLECTOR,
     UserRole.USER,
+    UserRole.ADMIN_PROCESSOR,
+    UserRole.ADMIN_MANAGER,
   )
   @Query(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionTest(
-    @CurrentUser() user: User,
-    @CurrentRole() role: UserRole,
+    // @CurrentUser() user: User,
+    @CurrentRole() role: UserWithRole,
   ): Promise<SignatureCollectionSuccess> {
-    console.log('user', user)
-    return this.signatureCollectionService.test(user)
+    console.log("UserWithRole",role)
+    return this.signatureCollectionService.test(role)
   }
 
   @Query(() => SignatureCollectionSuccess)

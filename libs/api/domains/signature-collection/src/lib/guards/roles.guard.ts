@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
-import { UserRole } from '../utils/role.types'
 import { getRequest } from '@island.is/auth-nest-tools'
+import { UserRole } from '@island.is/clients/signature-collection'
 
 @Injectable()
 export class RolesGuard implements CanActivate {

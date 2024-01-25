@@ -13,13 +13,12 @@ import {
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
-import { SignatureCollectionClientService } from '@island.is/clients/signature-collection'
+import { SignatureCollectionClientService, UserWithRole, UserRole } from '@island.is/clients/signature-collection';
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
-import { UserRole } from './utils/role.types'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -33,8 +32,10 @@ export class SignatureCollectionService {
     return { success: signee.isOwner }
   }
   
-  async test(user: User): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.test(user)
+  async test(user: UserWithRole, ): Promise<SignatureCollectionSuccess> {
+    const res = await this.signatureCollectionClientService.test(user)
+    const res2 = await this.signatureCollectionClientService.test2(user)
+    return res2
   }
 
   async currentCollectionInfo(): Promise<SignatureCollectionInfo> {

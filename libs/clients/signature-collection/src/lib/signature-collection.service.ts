@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import {
-  EinstaklingurKosningInfoDTO,
   FrambodApi,
   MedmaelalistarApi,
   MedmaelasofnunApi,
@@ -14,6 +13,8 @@ import {
   BulkUploadInput,
   CanCreateInput,
   CanSignInput,
+  UserWithRole,
+  UserRole,
 } from './signature-collection.types'
 import {
   Collection,
@@ -29,50 +30,68 @@ import { BulkUpload } from './types/bulkUpload.dto'
 import { Success, mapReasons } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import { IdsClientConfig } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
+import { AdminProcessListApi } from './apis'
+type Api = MedmaelalistarApi | MedmaelasofnunApi | MedmaeliApi | FrambodApi | AdminProcessListApi
 
 @Injectable()
 export class SignatureCollectionClientService {
   constructor(
+    @Inject(IdsClientConfig.KEY)
+    private idsClientConfig: ConfigType<typeof IdsClientConfig>,
     private listsApi: MedmaelalistarApi,
     private collectionsApi: MedmaelasofnunApi,
     private signatureApi: MedmaeliApi,
     private candidateApi: FrambodApi,
+    private adminProcessListsApi: AdminProcessListApi,
   ) {}
 
-  private getListsApiWithAuth(auth: Auth) {
-    return this.listsApi.withMiddleware(
-      new AuthMiddleware(auth, 
-        {
-        forwardUserInfo: false,
-        tokenExchangeOptions: {
-          issuer: 'https://identity-server.dev01.devland.is',
-          clientId: '@island.is/clients/dev',
-          clientSecret: 'AzNw3K0jMkmq3mxF2svt8YvXU',
-          scope: '@skra.is/signature-collection',
-        },
-      }
-      ),
-    )
+  private tokenExchangeOptions(role: UserRole) {
+    const scopeForRole = {
+      [UserRole.ADMIN_MANAGER]: '@skra.is/signature-collection:manage',
+      [UserRole.ADMIN_PROCESSOR]: '@skra.is/signature-collection:process',
+      [UserRole.CANDIDATE_COLLECTOR]: '@skra.is/signature-collection',
+      [UserRole.CANDIDATE_OWNER]: '@skra.is/signature-collection',
+      [UserRole.USER]: '@skra.is/signature-collection',
+      [UserRole.UNAUTHENTICATED]: '@skra.is/signature-collection',
+    }
+    return {
+      forwardUserInfo: false,
+      tokenExchangeOptions: {
+        issuer: this.idsClientConfig.issuer,
+        clientId: this.idsClientConfig.clientId,
+        clientSecret: this.idsClientConfig.clientSecret,
+        scope: scopeForRole[role],
+      },
+    }
   }
 
-  private getCollectionsApiWithAuth(auth: Auth) {
-    return this.collectionsApi.withMiddleware(new AuthMiddleware(auth))
+  private getApiWithAuth<T extends Api>(api: T, auth: UserWithRole) {
+    return api.withMiddleware(
+      new AuthMiddleware(auth)//, this.tokenExchangeOptions(auth.role)),
+    ) as T
   }
 
-  private getSignatureApiWithAuth(auth: Auth) {
-    return this.signatureApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private getCandidateApiWithAuth(auth: Auth) {
-    return this.signatureApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async test(auth: Auth): Promise<Success> {
-    const res = await this.getListsApiWithAuth(auth).medmaelalistarTokenGet()
+  async test(auth: UserWithRole): Promise<Success> {
+    const res = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarTokenGet()
     console.log('TOKEN', res)
     return { success: true }
   }
+
+  async test2(auth: UserWithRole): Promise<Success> {
+    const res = await this.getApiWithAuth(
+      this.adminProcessListsApi,
+      auth,
+    ).medmaelalistarTokenGet()
+    console.log('TOKEN 2', res)
+    return { success: true }
+  }
+
 
   async currentCollectionInfo(): Promise<CollectionInfo> {
     // includeInactive: false will return collections as active until electionday for collection has passed
@@ -151,6 +170,8 @@ export class SignatureCollectionClientService {
       name: area.nafn ?? '',
     }))
   }
+
+  // TODO: Admin create
 
   async createLists({
     collectionId,

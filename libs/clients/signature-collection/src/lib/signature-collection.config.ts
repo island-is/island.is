@@ -5,6 +5,7 @@ import { NationalRegistryScope } from '@island.is/auth/scopes';
 const schema = z.object({
   xRoadServicePath: z.string(),
   scope: z.array(z.string()),
+  scopeAdminProcess: z.array(z.string()),
   clientId: z.string(),
 })
 
@@ -21,6 +22,8 @@ export const SignatureCollectionClientConfig = defineConfig<
     scope: [
       NationalRegistryScope.signatureCollection,
     ],
+    scopeAdminProcess: [ NationalRegistryScope.signatureCollectionProcess,
+          ],
     clientId: '@island.is/clients/api'
   }),
 })

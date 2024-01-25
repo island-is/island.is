@@ -1,6 +1,8 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
 import { List } from './types/list.dto'
 
+import { User } from "@island.is/auth-nest-tools";
+
 export enum ListState {
   Open = 'open',
   Closed = 'closed',
@@ -75,3 +77,15 @@ export enum ReasonKey {
   AlreadySigned = 'alreadySigned',
   NotOwner = 'notOwner',
 }
+
+
+export enum UserRole {
+  ADMIN_MANAGER = 'ADMIN_MANAGER',
+  ADMIN_PROCESSOR = 'ADMIN_PROCESSOR',
+  CANDIDATE_OWNER = 'CANDIDATE_OWNER',
+  CANDIDATE_COLLECTOR = 'CANDIDATE_COLLECTOR',
+  USER = 'USER',
+  UNAUTHENTICATED = 'UNAUTHENTICATED',
+}
+
+export type UserWithRole = User & { role: UserRole }

@@ -1,9 +1,9 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { UserRole } from '../utils/role.types'
 import { SignatureCollectionService } from '../signatureCollection.service'
 import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
 import { User, getRequest } from '@island.is/auth-nest-tools'
+import { UserRole } from '@island.is/clients/signature-collection'
 
 @Injectable()
 export class CollectionGuard implements CanActivate {
