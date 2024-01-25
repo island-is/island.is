@@ -44,7 +44,7 @@ export interface Months {
   june?: number
   july?: number
   august?: number
-  septembe?: number
+  september?: number
   october?: number
   november?: number
   december?: number
