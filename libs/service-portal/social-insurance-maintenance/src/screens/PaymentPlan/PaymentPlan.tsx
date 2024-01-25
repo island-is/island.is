@@ -107,19 +107,6 @@ const PaymentPlan = () => {
                     value={selectedYear}
                   />
                 </GridColumn>
-                <GridColumn>
-                  <Button
-                    size="small"
-                    variant="utility"
-                    icon="print"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      window.print()
-                    }}
-                  >
-                    {formatMessage(coreMessages.print)}
-                  </Button>
-                </GridColumn>
               </GridRow>
             </GridContainer>
           </Box>
