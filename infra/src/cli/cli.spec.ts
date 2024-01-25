@@ -120,6 +120,7 @@ describe('infra CLI', () => {
           .secrets({
             JSON_SECRET: '/k8s/my-service/JSON_SECRET',
             ARRAY_SECRET: '/k8s/my-service/ARRAY_SECRET',
+            JSON_URLS: '/k8s/my-service/JSON_URLS',
           })
       const myService = myServiceSetup()
       Charts.islandis = {
@@ -142,6 +143,29 @@ describe('infra CLI', () => {
       expect(result.services['my-service'].env['REMOTE_URL_ENV']).toMatch(
         /http:\/\/localhost:\d+\/some\/slug-path/,
       )
+      expect(result).toMatchSnapshot()
+    })
+
+    it('should map all secrets to localhost', async () => {
+      // Arrange
+      const argv = {
+        services: ['my-service'],
+      }
+
+      // Act
+      const result = await renderLocalServices(argv)
+
+      // Assert
+      expect(
+        JSON.parse(result.services['my-service'].env['JSON_SECRET']),
+      ).toStrictEqual({ key: ['value'] })
+      // localhost rewrite
+      expect(
+        JSON.parse(result.services['my-service'].env['JSON_URLS'])?.array,
+      ).toStrictEqual([
+        'http://localhost:8080/some/slug',
+        'http://localhost:8080/some/slug',
+      ])
       expect(result).toMatchSnapshot()
     })
   })
