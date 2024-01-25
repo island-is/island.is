@@ -45,6 +45,7 @@ const Dentists = () => {
         dateTo: selectedDateTo,
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
