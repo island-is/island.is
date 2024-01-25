@@ -50,7 +50,9 @@ const NutritionTable = ({ data, footnote, link, linkText }: Props) => {
           expiring={rowItem.expiring}
           visibleValues={[
             rowItem.name ?? '',
-            rowItem.maxUnitRefund ?? '',
+            rowItem.maxMonthlyAmount
+              ? amountFormat(rowItem.maxMonthlyAmount)
+              : '',
             rowItem.refund.type === 'amount'
               ? rowItem.refund.value
                 ? amountFormat(rowItem.refund.value)
