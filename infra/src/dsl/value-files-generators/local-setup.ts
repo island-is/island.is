@@ -99,6 +99,10 @@ export const getLocalrunValueFile = async (
         await writeFile(
           join(rootDir, `.env.${serviceNXName}`),
           Object.entries(svc.env)
+            .filter(
+              ([name, value]) =>
+                !EXCLUDED_ENVIRONMENT_NAMES.includes(name) && !!value,
+            )
             .map(([name, value]) => {
               return `export ${name}='${value
                 // Replace all hostnames with localhost
