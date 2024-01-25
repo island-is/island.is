@@ -38,7 +38,6 @@ export async function uploadDocument(
   await clickButton()
 
   const fileChooser = await fileChooserPromise
-  await page.waitForTimeout(1000)
   await fileChooser.setFiles(await createFakePdf(fileName))
 
   await Promise.all([
