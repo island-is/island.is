@@ -2707,7 +2707,6 @@ export interface IOrganizationPageFields {
   slices?:
     | (
         | IAccordionSlice
-        | ILifeEventPageListSlice
         | IBigBulletList
         | IDistricts
         | IEmailSignup
@@ -2851,7 +2850,6 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
-        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
