@@ -6,7 +6,7 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
   name: m.socialInsuranceMaintenance,
   path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceRoot,
   icon: {
-    icon: 'gridView',
+    icon: 'cardWithCheckmark',
   },
   children: [
     {
