@@ -37,8 +37,6 @@ import {
   ADOPTION,
   OTHER_NO_CHILDREN_FOUND,
   States,
-  NO_UNION,
-  NO_PRIVATE_PENSION_FUND,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -660,7 +658,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const useUnion = getValueViaPath(answers, 'payments.useUnion') as YesOrNo
 
-  const union = getValueViaPath(answers, 'payments.union') as string //, NO_UNION) as string
+  const union = getValueViaPath(answers, 'payments.union') as string
 
   const usePrivatePensionFund = getValueViaPath(
     answers,
@@ -670,7 +668,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const privatePensionFund = getValueViaPath(
     answers,
     'payments.privatePensionFund',
-    //NO_PRIVATE_PENSION_FUND,
   ) as string
 
   const privatePensionFundPercentage = getValueViaPath(
