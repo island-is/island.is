@@ -18,13 +18,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/auth/delegation-api/gen/fetch -i apps/services/auth/delegation-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
-      "outputs": ["{workspaceRoot}/libs/clients/auth/delegation-api/gen"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-auth-delegation-api"],
   "tags": ["lib:client", "scope:client"]
 }

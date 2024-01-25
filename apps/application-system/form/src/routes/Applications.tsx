@@ -50,11 +50,10 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const { search } = useLocation()
 
   const query = React.useMemo(() => new URLSearchParams(search), [search])
-
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
-  /*
+
   const [template, setTemplate] = useState<
     | ApplicationTemplate<
         ApplicationContext,
@@ -62,7 +61,11 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
         EventObject
       >
     | undefined
-  >(undefined)*/
+  >(undefined)
+
+  const queryParam = template?.initialQueryParameter
+    ? query.get(template?.initialQueryParameter)
+    : null
 
   useApplicationNamespaces(type)
 
@@ -95,6 +98,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       variables: {
         input: {
           typeId: type,
+          initialQuery: queryParam,
         },
       },
     })

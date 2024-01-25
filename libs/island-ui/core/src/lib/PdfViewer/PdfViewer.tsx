@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, ReactNode } from 'react'
 import { Box } from '../Box/Box'
 import type { Document, Page, Outline, pdfjs } from 'react-pdf'
 import * as styles from './PdfViewer.css'
@@ -7,11 +7,14 @@ import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
 import cn from 'classnames'
 
+const pdfError = 'Villa kom upp við að birta skjal, reyndu aftur síðar.'
+
 export interface PdfViewerProps {
   file: string
   showAllPages?: boolean
   scale?: number
   autoWidth?: boolean
+  errorComponent?: ReactNode
 }
 interface PdfProps {
   numPages: number
@@ -30,6 +33,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   showAllPages = false,
   scale = 1,
   autoWidth = true,
+  errorComponent,
 }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
@@ -60,12 +64,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   }
 
   if (pdfLibError) {
-    return (
-      <AlertMessage
-        type="error"
-        title="Villa kom upp við að birta skjal, reyndu aftur síðar."
-      />
-    )
+    return errorComponent ?? <AlertMessage type="error" title={pdfError} />
   }
 
   if (pdfLib) {
@@ -76,6 +75,8 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           onLoadSuccess={onDocumentLoadSuccess}
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
+          error={errorComponent ?? pdfError}
+          externalLinkTarget="_blank"
         >
           {showAllPages ? (
             [...Array(numPages)].map((x, page) => (
@@ -83,14 +84,14 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
                 key={`page_${page + 1}`}
                 pageNumber={page + 1}
                 renderTextLayer={false}
-                renderAnnotationLayer={false}
+                renderAnnotationLayer={true}
                 scale={scale}
               />
             ))
           ) : (
             <pdfLib.Page
               renderTextLayer={false}
-              renderAnnotationLayer={false}
+              renderAnnotationLayer={true}
               pageNumber={pageNumber}
               scale={scale}
             />
@@ -101,7 +102,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           marginTop={2}
           marginBottom={4}
           className={cn({
-            [`${styles.displayNone}`]: showAllPages,
+            [`${styles.displayNone}`]: showAllPages || numPages <= 1,
           })}
         >
           <Pagination

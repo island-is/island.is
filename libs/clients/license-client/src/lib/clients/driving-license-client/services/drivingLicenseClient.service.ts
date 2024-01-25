@@ -21,6 +21,7 @@ import {
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { createPkPassDataInput } from '../drivingLicenseMapper'
+
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'drivinglicense-service'
 
@@ -49,6 +50,16 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   }
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    if (typeof payload === 'string') {
+      let jsonLicense: DriversLicense
+      try {
+        jsonLicense = JSON.parse(payload)
+      } catch (e) {
+        this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
+        return LicensePkPassAvailability.Unknown
+      }
+      return this.checkLicenseValidity(jsonLicense)
+    }
     return this.checkLicenseValidity(payload as DriversLicense)
   }
 
@@ -129,25 +140,16 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     return payload
   }
 
-  async getLicense(user: User): Promise<Result<DriversLicense | null>> {
+  async getLicenses(user: User): Promise<Result<Array<DriversLicense>>> {
     const licenseResponse = await this.fetchLicense(user)
     if (!licenseResponse.ok) {
       return licenseResponse
     }
 
-    //the user ain't got no license
-    if (!licenseResponse.data) {
-      return {
-        ok: true,
-        data: null,
-      }
+    return {
+      ok: true,
+      data: licenseResponse.data ? [licenseResponse.data] : [],
     }
-
-    return licenseResponse
-  }
-
-  async getLicenseDetail(user: User): Promise<Result<DriversLicense | null>> {
-    return this.getLicense(user)
   }
 
   async getPkPass(user: User): Promise<Result<Pass>> {

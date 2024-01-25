@@ -96,10 +96,21 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
   }
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    if (typeof payload === 'string') {
+      let jsonLicense: OrorkuSkirteini
+      try {
+        jsonLicense = JSON.parse(payload)
+      } catch (e) {
+        this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
+        return LicensePkPassAvailability.Unknown
+      }
+      return this.checkLicenseValidityForPkPass(jsonLicense)
+    }
+
     return this.checkLicenseValidityForPkPass(payload as OrorkuSkirteini)
   }
 
-  async getLicense(user: User): Promise<Result<OrorkuSkirteini | null>> {
+  async getLicenses(user: User): Promise<Result<Array<OrorkuSkirteini>>> {
     const licenseData = await this.fetchLicense(user)
     if (!licenseData.ok) {
       return licenseData
@@ -123,12 +134,8 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
 
     return {
       ok: true,
-      data,
+      data: data ? [data] : [],
     }
-  }
-
-  async getLicenseDetail(user: User): Promise<Result<OrorkuSkirteini | null>> {
-    return this.getLicense(user)
   }
 
   private async createPkPassPayload(

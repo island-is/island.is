@@ -4,6 +4,7 @@ import { EstateTypes, YES, NO } from './constants'
 import * as kennitala from 'kennitala'
 import {
   customZodError,
+  isNumericalString,
   isValidEmail,
   isValidPhoneNumber,
   isValidString,
@@ -16,7 +17,7 @@ const asset = z
     marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    share: z.number().optional(),
+    share: z.number(),
   })
   .refine(
     ({ enabled, marketValue }) => {
@@ -32,6 +33,14 @@ const asset = z
     },
     {
       path: ['assetNumber'],
+    },
+  )
+  .refine(
+    ({ share }) => {
+      return share ? share > 0 && share <= 100 : true
+    },
+    {
+      path: ['share'],
     },
   )
   .refine(
@@ -63,6 +72,7 @@ export const estateSchema = z.object({
     }),
     email: customZodError(z.string().email(), m.errorEmail),
     address: z.string(),
+    relationToDeceased: z.string().optional(),
   }),
 
   selectedEstate: z.enum([
@@ -78,6 +88,7 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
+        relationWithApplicant: z.string().optional(),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
@@ -97,33 +108,36 @@ export const estateSchema = z.object({
           .optional(),
       })
       .refine(
-        ({ nationalId, advocate }) => {
-          return kennitala.info(nationalId as string).age < 18 ? advocate : true
+        ({ foreignCitizenship, nationalId }) => {
+          return !foreignCitizenship?.length
+            ? nationalId && kennitala.isValid(nationalId)
+            : true
         },
         {
           path: ['nationalId'],
         },
       )
 
-      /* Validating email and phone depending on whether the field is enabled */
+      /* Validating email and phone of member depending on whether the field is 
+          enabled and whether member has advocate */
       .refine(
-        ({ enabled, phone }) => {
-          return enabled ? isValidPhoneNumber(phone) : true
+        ({ enabled, advocate, phone }) => {
+          return enabled && !advocate ? isValidPhoneNumber(phone) : true
         },
         {
           path: ['phone'],
         },
       )
       .refine(
-        ({ enabled, email }) => {
-          return enabled ? isValidEmail(email) : true
+        ({ enabled, advocate, email }) => {
+          return enabled && !advocate ? isValidEmail(email) : true
         },
         {
           path: ['email'],
         },
       )
 
-      /* phone and email validation for advocates */
+      /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
           return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
@@ -177,7 +191,9 @@ export const estateSchema = z.object({
     })
     .refine(
       ({ selection, spouse }) => {
-        return selection === YES ? !!spouse?.nationalId : true
+        return selection === YES
+          ? spouse?.nationalId && kennitala.isValid(spouse?.nationalId)
+          : true
       },
       {
         path: ['spouse', 'nationalId'],
@@ -213,6 +229,7 @@ export const estateSchema = z.object({
     .object({
       accountNumber: z.string(),
       balance: z.string(),
+      total: z.number().optional(),
     })
     .refine(
       ({ accountNumber, balance }) => {
@@ -238,6 +255,7 @@ export const estateSchema = z.object({
     .object({
       publisher: z.string(),
       value: z.string(),
+      nationalId: z.string().optional(),
     })
     .refine(
       ({ publisher, value }) => {
@@ -255,6 +273,16 @@ export const estateSchema = z.object({
         path: ['publisher'],
       },
     )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId && nationalId !== ''
+          ? kennitala.isValid(nationalId)
+          : true
+      },
+      {
+        path: ['nationalId'],
+      },
+    )
     .array()
     .optional(),
 
@@ -262,15 +290,16 @@ export const estateSchema = z.object({
   stocks: z
     .object({
       organization: z.string(),
-      nationalId: z.string(),
+      nationalId: z.string().optional(),
       faceValue: z.string(),
       rateOfExchange: z.string(),
       value: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
-      ({ organization, nationalId, faceValue, rateOfExchange }) => {
-        return organization !== '' || faceValue !== '' || rateOfExchange !== ''
+      // only validate nationalId if it is not empty
+      ({ nationalId }) => {
+        return nationalId !== ''
           ? nationalId && kennitala.isValid(nationalId)
           : true
       },
@@ -291,7 +320,7 @@ export const estateSchema = z.object({
     .refine(
       ({ organization, nationalId, faceValue, rateOfExchange }) => {
         return organization !== '' || nationalId !== '' || rateOfExchange !== ''
-          ? faceValue !== ''
+          ? isNumericalString(faceValue)
           : true
       },
       {
@@ -301,7 +330,7 @@ export const estateSchema = z.object({
     .refine(
       ({ organization, nationalId, faceValue, rateOfExchange }) => {
         return nationalId !== '' || faceValue !== '' || organization !== ''
-          ? rateOfExchange !== ''
+          ? isNumericalString(rateOfExchange)
           : true
       },
       {
@@ -378,6 +407,36 @@ export const estateSchema = z.object({
         path: ['nationalId'],
       },
     )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || creditorName !== '' || balance !== ''
+          ? isValidString(loanIdentity)
+          : true
+      },
+      {
+        path: ['loanIdentity'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || creditorName !== '' || loanIdentity !== ''
+          ? isValidString(balance)
+          : true
+      },
+      {
+        path: ['balance'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || balance !== '' || loanIdentity !== ''
+          ? isValidString(creditorName)
+          : true
+      },
+      {
+        path: ['creditorName'],
+      },
+    )
     .array()
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
@@ -385,16 +444,16 @@ export const estateSchema = z.object({
   // is: Umboðsmaður
   representative: z
     .object({
-      name: z.string().or(z.undefined()),
-      nationalId: z.string().or(z.undefined()),
-      phone: z.string(),
-      email: z.string(),
+      name: z.string().optional(),
+      nationalId: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return name !== '' || nationalId !== '' || phone !== ''
-          ? isValidEmail(email)
+        return !!name || !!nationalId || !!phone
+          ? email && isValidEmail(email)
           : true
       },
       {
@@ -403,8 +462,8 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return name !== '' || nationalId !== '' || email !== ''
-          ? isValidPhoneNumber(phone)
+        return !!name || !!nationalId || !!email
+          ? phone && isValidPhoneNumber(phone)
           : true
       },
       {
@@ -413,8 +472,10 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return name !== '' || phone !== '' || email !== ''
-          ? nationalId && kennitala.isPerson(nationalId)
+        return !!name || !!phone || !!email
+          ? nationalId &&
+              kennitala.isPerson(nationalId) &&
+              kennitala.info(nationalId).age >= 18
           : true
       },
       {
@@ -423,9 +484,7 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        return phone !== '' || email !== '' || nationalId !== ''
-          ? isValidString(name)
-          : true
+        return !!phone || !!email || !!nationalId ? isValidString(name) : true
       },
       {
         path: ['name'],
@@ -456,5 +515,6 @@ export const estateSchema = z.object({
     ),
 
   confirmAction: z.array(z.enum([YES])).length(1),
+  confirmActionAssetsAndDebt: z.array(z.enum([YES])).length(1),
   confirmActionUndividedEstate: z.array(z.enum([YES])).length(1),
 })

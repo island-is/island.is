@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -83,7 +84,7 @@ export const personalInfo = buildMultiField({
       space: 'containerGutter',
     }),
     buildCheckboxField({
-      id: 'personalInfo.hasDisabilityDiscount',
+      id: 'personalInfo.disabilityCheckbox',
       title: '',
       large: false,
       backgroundColor: 'white',
@@ -96,13 +97,15 @@ export const personalInfo = buildMultiField({
       ],
     }),
     buildCustomField({
-      id: 'noDisabilityInfo',
+      id: 'personalInfo.disabilityAlertMessage',
       title: '',
-      component: 'NoDisabilityRecordInfo',
+      component: 'HasDisabilityLicenseMessage',
       doesNotRequireAnswer: true,
-      condition: (answers) =>
-        (answers.personalInfo as PersonalInfo)?.hasDisabilityDiscount[0] ===
-        YES,
+      condition: (answers) => {
+        return (
+          (answers.personalInfo as PersonalInfo)?.disabilityCheckbox[0] === YES
+        )
+      },
     }),
   ],
 })

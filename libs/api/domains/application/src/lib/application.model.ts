@@ -11,6 +11,7 @@ import {
 } from '../../gen/fetch'
 import { FormItemDtoTypeEnum } from '../../gen/fetch/models/FormItemDto'
 import { FieldDtoTypeEnum } from '../../gen/fetch/models/FieldDto'
+import { PageInfoDto } from '@island.is/nest/pagination'
 
 registerEnumType(ApplicationResponseDtoTypeIdEnum, {
   name: 'ApplicationResponseDtoTypeIdEnum',
@@ -293,6 +294,12 @@ export class ApplicationAdmin {
   @Field(() => [String])
   applicantActors!: string[]
 
+  @Field(() => Date, { nullable: true })
+  pruneAt?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
+
   @Field(() => String)
   state!: string
 
@@ -319,6 +326,14 @@ export class ApplicationAdmin {
 
   @Field(() => String, { nullable: true })
   paymentStatus?: string
+}
+
+@ObjectType()
+export class ApplicationAdminPaginatedResponse {
+  @Field(() => [ApplicationAdmin])
+  rows!: ApplicationAdmin[]
+  @Field(() => Number)
+  count!: number
 }
 
 @ObjectType()

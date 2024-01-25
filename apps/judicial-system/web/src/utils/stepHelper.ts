@@ -4,16 +4,15 @@ import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
-  CaseFileCategory,
-  IndictmentSubtype,
-  Notification,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import {
+  CaseAppealState,
   CaseCustodyRestrictions,
+  CaseFileCategory,
   CaseType,
   Gender,
+  Notification,
+  NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -57,8 +56,11 @@ export const getRestrictionTagVariant = (
   }
 }
 
-export const kb = (bytes?: number) => {
-  return bytes ? Math.ceil(bytes / 1024) : ''
+export const fileSize = (bytes?: number) => {
+  if (!bytes) return ''
+
+  const kb = Math.ceil(bytes / 1024)
+  return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
 }
 
 export const getAppealEndDate = (rulingDate: string) => {
@@ -115,7 +117,7 @@ export const isTrafficViolationCase = (workingCase: Case): boolean => {
 
 export const hasSentNotification = (
   notificationType: NotificationType,
-  notifications?: Notification[],
+  notifications?: Notification[] | null,
 ) => {
   if (!notifications || notifications.length === 0) {
     return false
@@ -129,7 +131,17 @@ export const hasSentNotification = (
     return false
   }
 
-  return notificationsOfType[0].recipients.some(
-    (recipient) => recipient.success,
+  return Boolean(
+    notificationsOfType[0].recipients?.some((recipient) => recipient.success),
+  )
+}
+
+export const isReopenedCOACase = (
+  appealState?: CaseAppealState | null,
+  notifications?: Notification[] | null,
+): boolean => {
+  return (
+    appealState !== CaseAppealState.COMPLETED &&
+    hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
   )
 }

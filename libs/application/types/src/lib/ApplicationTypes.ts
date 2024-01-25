@@ -49,6 +49,18 @@ export enum ApplicationTypes {
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   NEW_TYPE_OF_APPLICATION = 'NewTypeOfApplication',
   CARAMEL = 'Caramel',
+  OLD_AGE_PENSION = 'OldAgePension',
+  HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
+  CAR_RECYCLING = 'CarRecycling',
+  SIGNATURE_LIST_CREATION = 'SignatureListCreation',
+  SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
+  CITIZENSHIP = 'Citizenship',
+  ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
+  ENERGY_FUNDS = 'EnergyFunds',
+  HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
+  PENSION_SUPPLEMENT = 'PensionSupplement',
+  TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
 }
 
 export enum ApplicationFormTypes {
@@ -117,12 +129,12 @@ export const ApplicationConfigurations: Record<
     formType: ApplicationFormTypes.STATIC,
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns',
+    slug: 'breytt-logheimili-barns-old',
     translation: 'crc.application',
     formType: ApplicationFormTypes.STATIC,
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
-    slug: 'breytt-logheimili-barns-v2',
+    slug: 'breytt-logheimili-barns',
     translation: 'crc.application',
     formType: ApplicationFormTypes.STATIC,
   },
@@ -315,5 +327,65 @@ export const ApplicationConfigurations: Record<
     slug: 'ny-umsoknartegund',
     translation: 'ntoa.application',
     formType: ApplicationFormTypes.DYNAMIC,
+  },
+  [ApplicationTypes.OLD_AGE_PENSION]: {
+    slug: 'ellilifeyrir',
+    translation: 'oap.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
+    slug: 'heimilisuppbot',
+    translation: 'hs.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.CAR_RECYCLING]: {
+    slug: 'skilavottord',
+    translation: 'rf.cr.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+    slug: 'medmaelasofnun',
+    translation: 'slc.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+    slug: 'maela-med-frambodi',
+    translation: 'sls.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.CITIZENSHIP]: {
+    slug: 'rikisborgararettur',
+    translation: 'doi.cs.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
+    slug: 'felagslegur-vidbotarstudningur',
+    translation: 'asfte.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.ENERGY_FUNDS]: {
+    slug: 'rafbila-styrkur',
+    translation: 'ef.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
+    slug: 'starfsleyfis-vottord',
+    translation: 'hlc.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.PENSION_SUPPLEMENT]: {
+    slug: 'uppbot-a-lifeyri',
+    translation: 'ul.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
+    slug: 'eigendaskipti-taekis',
+    translation: 'aosh.tmo.application',
+    formType: ApplicationFormTypes.STATIC,
+  },
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
+    slug: 'umradaskipti-taekis',
+    translation: 'aosh.cms.application',
+    formType: ApplicationFormTypes.STATIC,
   },
 }

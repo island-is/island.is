@@ -1,4 +1,5 @@
 import { FormValue, ExternalData } from './Application'
+import { User } from 'user'
 
 export enum Comparators {
   EQUALS = 'eq',
@@ -7,8 +8,8 @@ export enum Comparators {
   GTE = 'gte',
   LT = 'lt',
   LTE = 'lte',
-  CONTAINS = 'contains',
-  NOT_CONTAINS = 'notcontains',
+  CONTAINS = 'in',
+  NOT_CONTAINS = 'nin',
 }
 
 export enum AllOrAny {
@@ -25,18 +26,27 @@ type BaseStaticCheck = {
 type QuestionCheck = BaseStaticCheck & {
   questionId: string
   externalDataId?: never
+  userPropId?: never
 }
 
 type ExternalDataCheck = BaseStaticCheck & {
   questionId?: never
   externalDataId: string
+  userPropId?: never
 }
 
-export type StaticCheck = QuestionCheck | ExternalDataCheck
+type UserPropCheck = BaseStaticCheck & {
+  questionId?: never
+  externalDataId?: never
+  userPropId: string
+}
+
+export type StaticCheck = QuestionCheck | ExternalDataCheck | UserPropCheck
 
 export type DynamicCheck = (
   formValue: FormValue,
   externalData: ExternalData,
+  user: User | null,
 ) => boolean
 
 export type SingleConditionCheck = StaticCheck | DynamicCheck

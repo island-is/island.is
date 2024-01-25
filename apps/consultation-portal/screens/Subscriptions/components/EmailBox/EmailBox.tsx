@@ -9,11 +9,21 @@ import { useRouter } from 'next/router'
 import localization from '../../Subscriptions.json'
 import { ActionCard } from '../../../../components'
 
+interface EmailBoxProps {
+  email: string
+  emailVerified: boolean
+  getUserEmailLoading: boolean
+}
+
 const emailIsValid = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
-export const EmailBox = () => {
+export const EmailBox = ({
+  email,
+  emailVerified,
+  getUserEmailLoading,
+}: EmailBoxProps) => {
   const loc = localization['emailBox']
   const { isAuthenticated, userLoading } = useUser()
   const [isVerified, setIsVerified] = useState<boolean>(false)
@@ -29,9 +39,6 @@ export const EmailBox = () => {
     },
   )
   const router = useRouter()
-  const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
-    isAuthenticated: isAuthenticated,
-  })
 
   useEffect(() => {
     if (!getUserEmailLoading) {

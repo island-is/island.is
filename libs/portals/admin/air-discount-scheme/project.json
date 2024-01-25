@@ -24,7 +24,7 @@
         "passWithNoTests": true
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "output": "libs/portals/admin/air-discount-scheme/src/**/*.codegen.ts",

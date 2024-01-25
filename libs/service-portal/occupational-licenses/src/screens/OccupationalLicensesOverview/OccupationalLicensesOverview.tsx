@@ -7,7 +7,7 @@ import {
   FootNote,
   m,
   ErrorScreen,
-  ISLAND_SYSLUMENN_ID,
+  ISLAND_SYSLUMENN_SLUG,
 } from '@island.is/service-portal/core'
 import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
@@ -20,6 +20,7 @@ import {
   OccupationalLicensesError,
   OccupationalLicensesErrorStatus,
 } from '@island.is/api/schema'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({})
@@ -78,7 +79,7 @@ const OccupationalLicensesOverview = () => {
       <IntroHeader
         title={m.occupationaLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
-        serviceProviderID={ISLAND_SYSLUMENN_ID}
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
         serviceProviderTooltip={formatMessage(m.occupationalLicenseTooltip)}
       />
       {data?.occupationalLicenses?.errors.map((err) => {
@@ -97,14 +98,19 @@ const OccupationalLicensesOverview = () => {
             <AlertMessage type="info" message={formatMessage(om.noLicenses)} />
           ) : (
             data?.occupationalLicenses?.items.map((license, index) => {
+              const isEducation =
+                license.__typename === 'OccupationalLicensesEducationalLicense'
               return (
                 <LicenceActionCard
                   key={index}
-                  type={license.profession}
+                  type={
+                    isEducation
+                      ? license.profession
+                      : `${license.profession} - ${license.type}`
+                  }
                   validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
                   url={generateUrl(
-                    license.__typename ===
-                      'OccupationalLicensesEducationalLicense'
+                    isEducation
                       ? OccupationalLicensesPaths.OccupationalLicensesEducationDetail
                       : OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
                     license.id,
@@ -122,7 +128,9 @@ const OccupationalLicensesOverview = () => {
           )}
         </Stack>
       </Box>
-      <FootNote serviceProviderID={ISLAND_SYSLUMENN_ID} />
+      <FootNote
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+      />
     </Box>
   )
 }

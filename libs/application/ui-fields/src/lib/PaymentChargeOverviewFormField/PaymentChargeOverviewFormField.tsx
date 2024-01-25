@@ -1,68 +1,82 @@
-import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
+import { formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   PaymentChargeOverviewField,
 } from '@island.is/application/types'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
-import { applicationUiFields as m } from '../../messages'
+import { FC } from 'react'
 
-interface PaymentChargeOverviewFieldProps extends FieldBaseProps {
+const formatIsk = (value: number): string =>
+  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+
+interface Props extends FieldBaseProps {
   field: PaymentChargeOverviewField
 }
 
 export const PaymentChargeOverviewFormField: FC<
-  React.PropsWithChildren<PaymentChargeOverviewFieldProps>
-> = ({ field, application }) => {
-  const { externalData } = application
+  React.PropsWithChildren<Props>
+> = ({ application, field }) => {
   const { formatMessage } = useLocale()
 
-  const { chargeItemCode: code } = field
+  // get list of selected charge items with info
+  const selectedChargeList = field.getSelectedChargeItems(application)
+  const allChargeWithInfoList = application?.externalData?.payment?.data as [
+    {
+      priceAmount: number
+      chargeItemName: string
+      chargeItemCode: string
+    },
+  ]
+  const selectedChargeWithInfoList = selectedChargeList.map((charge) => {
+    const chargeWithInfo = allChargeWithInfoList.find(
+      (chargeWithInfo) =>
+        chargeWithInfo.chargeItemCode === charge.chargeItemCode,
+    )
+    return { ...chargeWithInfo, extraLabel: charge.extraLabel }
+  })
 
-  const items = externalData.paymentCatalog.data as {
-    priceAmount: number
-    chargeItemCode: string
-    chargeItemName: string
-  }[]
-
-  const item = items?.find(({ chargeItemCode }) => chargeItemCode === code)
+  // calculate total price for all selected charge items
+  const totalPrice = selectedChargeWithInfoList.reduce(
+    (sum, charge) => sum + (charge?.priceAmount || 0),
+    0,
+  )
 
   return (
-    <Box paddingTop="smallGutter">
-      <Columns alignY="bottom" space="gutter">
-        <Column>
-          <Box marginBottom="gutter">
-            <Text variant="h4">
-              {formatText(m.overviewPaymentCharge, application, formatMessage)}
+    <Box>
+      <Box>
+        <Text variant="h5">
+          {formatText(field.forPaymentLabel, application, formatMessage)}
+        </Text>
+        {selectedChargeWithInfoList.map((charge) => (
+          <Box
+            paddingTop={1}
+            display="flex"
+            justifyContent="spaceBetween"
+            key={charge?.chargeItemCode}
+          >
+            <Text>
+              {charge?.chargeItemName}
+              {charge?.extraLabel
+                ? ' - ' +
+                  formatText(charge.extraLabel, application, formatMessage)
+                : ''}
             </Text>
-            <Text marginTop="smallGutter">{item?.chargeItemName}</Text>
+            <Text>{formatIsk(charge?.priceAmount || 0)}</Text>
           </Box>
-        </Column>
-        <Column>
-          <Box display="flex" justifyContent="flexEnd" marginBottom="gutter">
-            <Text>{item?.priceAmount?.toLocaleString('de-DE') + ' kr.'}</Text>
-          </Box>
-        </Column>
-      </Columns>
-      <Divider />
-      <Columns alignY="bottom" space="gutter">
-        <Column>
-          <Box marginTop="gutter">
-            <Text variant="h5">
-              {formatText(m.overviewPaymentTotal, application, formatMessage)}
-            </Text>
-          </Box>
-        </Column>
-        <Column>
-          <Box display="flex" justifyContent="flexEnd">
-            <Text variant="h4" color="blue400">
-              {item?.priceAmount?.toLocaleString('de-DE') + ' kr.'}
-            </Text>
-          </Box>
-        </Column>
-      </Columns>
+        ))}
+      </Box>
+      <Box paddingY={3}>
+        <Divider />
+      </Box>
+      <Box paddingBottom={4} display="flex" justifyContent="spaceBetween">
+        <Text variant="h5">
+          {formatText(field.totalLabel, application, formatMessage)}
+        </Text>
+        <Text color="blue400" variant="h3">
+          {formatIsk(totalPrice)}
+        </Text>
+      </Box>
     </Box>
   )
 }

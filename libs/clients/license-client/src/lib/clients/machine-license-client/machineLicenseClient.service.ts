@@ -95,16 +95,30 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
   }
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+    if (typeof payload === 'string') {
+      let jsonLicense: VinnuvelaDto
+      try {
+        jsonLicense = JSON.parse(payload)
+      } catch (e) {
+        this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
+        return LicensePkPassAvailability.Unknown
+      }
+      return this.checkLicenseValidityForPkPass(jsonLicense)
+    }
     return this.checkLicenseValidityForPkPass(payload as VinnuvelaDto)
   }
 
-  async getLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
+  async getLicenses(user: User): Promise<Result<Array<VinnuvelaDto>>> {
     const licenseData = await this.fetchLicense(user)
-    return licenseData
-  }
 
-  async getLicenseDetail(user: User): Promise<Result<VinnuvelaDto | null>> {
-    return this.getLicense(user)
+    if (licenseData.ok) {
+      return {
+        ok: true,
+        data: licenseData.data ? [licenseData.data] : [],
+      }
+    }
+
+    return licenseData
   }
 
   private async createPkPassPayload(

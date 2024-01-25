@@ -27,7 +27,7 @@ export class OrganizationSubpage {
   url!: Array<string>
 
   @Field({ nullable: true })
-  intro!: string
+  intro?: string
 
   @CacheField(() => [SliceUnion], { nullable: true })
   description?: Array<typeof SliceUnion>

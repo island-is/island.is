@@ -6,12 +6,10 @@ import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
-  caseTypes,
-  formatDate,
+  formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
-  completedCaseStates,
+  isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -21,25 +19,29 @@ import {
   AppealCaseFilesOverview,
   CaseDates,
   CaseResentExplanation,
+  CaseTitleInfoAndTags,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   InfoCard,
   MarkdownWrapper,
   Modal,
-  OverviewHeader,
   PageHeader,
   PageLayout,
   PdfButton,
-  RestrictionTags,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealDecision,
+  CaseState,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
-import { api } from '../../services'
-import { conclusion } from '../../components/Conclusion/Conclusion.strings'
+import { NameAndEmail } from '../../components/InfoCard/InfoCard'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 
@@ -53,22 +55,23 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { title, description, child } = useAppealAlertBanner(
-    workingCase,
-    () => setModalVisible('ConfirmAppealAfterDeadline'),
-    () => setModalVisible('ConfirmStatementAfterDeadline'),
-  )
+  const { title, description, child, isLoadingAppealBanner } =
+    useAppealAlertBanner(
+      workingCase,
+      () => setModalVisible('ConfirmAppealAfterDeadline'),
+      () => setModalVisible('ConfirmStatementAfterDeadline'),
+    )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const shouldDisplayAlertBanner =
-    completedCaseStates.includes(workingCase.state) &&
+    isCompletedCase(workingCase.state) &&
     (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
       workingCase.hasBeenAppealed)
 
   return (
     <>
-      {shouldDisplayAlertBanner && (
+      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
         <AlertBanner variant="warning" title={title} description={description}>
           {child}
         </AlertBanner>
@@ -80,7 +83,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
       >
         <PageHeader title={formatMessage(titles.defender.caseOverview)} />
         <FormContentContainer>
-          {!completedCaseStates.includes(workingCase.state) &&
+          {!isCompletedCase(workingCase.state) &&
             workingCase.caseResentExplanation && (
               <Box marginBottom={5}>
                 <CaseResentExplanation
@@ -89,38 +92,14 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               </Box>
             )}
           <Box marginBottom={5}>
-            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Box>
-                <OverviewHeader dataTestid="caseTitle" />
-                {completedCaseStates.includes(workingCase.state) && (
-                  <Box>
-                    <Text variant="h5">
-                      {formatMessage(strings.rulingDate, {
-                        rulingDate: `${formatDate(
-                          workingCase.rulingDate,
-                          'PPP',
-                        )} kl. ${formatDate(
-                          workingCase.rulingDate,
-                          constants.TIME_FORMAT,
-                        )}`,
-                      })}
-                    </Text>
-                  </Box>
-                )}
-              </Box>
-              {completedCaseStates.includes(workingCase.state) && (
-                <Box display="flex" flexDirection="column">
-                  <RestrictionTags workingCase={workingCase} />
-                </Box>
-              )}
-            </Box>
-            {completedCaseStates.includes(workingCase.state) &&
+            <CaseTitleInfoAndTags />
+            {isCompletedCase(workingCase.state) &&
               isRestrictionCase(workingCase.type) &&
               workingCase.state === CaseState.ACCEPTED && (
                 <CaseDates workingCase={workingCase} />
               )}
           </Box>
-          {completedCaseStates.includes(workingCase.state) &&
+          {isCompletedCase(workingCase.state) &&
             workingCase.caseModifiedExplanation && (
               <Box marginBottom={5}>
                 <AlertMessage
@@ -137,12 +116,26 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 />
               </Box>
             )}
+          {workingCase.appealRulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(strings.rulingModifiedTitle)}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.appealRulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           <Box marginBottom={6}>
             <InfoCard
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
@@ -154,7 +147,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),
@@ -162,13 +155,19 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.prosecutorPerson),
-                  value: workingCase.prosecutor?.name,
+                  value: NameAndEmail(
+                    workingCase.prosecutor?.name,
+                    workingCase.prosecutor?.email,
+                  ),
                 },
                 ...(workingCase.judge
                   ? [
                       {
                         title: formatMessage(core.judge),
-                        value: workingCase.judge?.name,
+                        value: NameAndEmail(
+                          workingCase.judge?.name,
+                          workingCase.judge?.email,
+                        ),
                       },
                     ]
                   : []),
@@ -177,7 +176,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   ? [
                       {
                         title: formatMessage(core.caseType),
-                        value: capitalize(caseTypes[workingCase.type]),
+                        value: capitalize(formatCaseType(workingCase.type)),
                       },
                     ]
                   : []),
@@ -185,7 +184,10 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   ? [
                       {
                         title: formatMessage(core.registrar),
-                        value: workingCase.registrar?.name,
+                        value: NameAndEmail(
+                          workingCase.registrar?.name,
+                          workingCase.registrar?.email,
+                        ),
                       },
                     ]
                   : []),
@@ -242,7 +244,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               }
             />
           </Box>
-          {completedCaseStates.includes(workingCase.state) && (
+          {isCompletedCase(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
                 title={formatMessage(conclusion.title)}
@@ -261,10 +263,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           <AppealCaseFilesOverview />
 
-          {(workingCase.requestSharedWithDefender ||
-            completedCaseStates.includes(workingCase.state)) && (
+          {(workingCase.requestSharedWithDefender ===
+            RequestSharedWithDefender.READY_FOR_COURT ||
+            workingCase.requestSharedWithDefender ===
+              RequestSharedWithDefender.COURT_DATE ||
+            isCompletedCase(workingCase.state)) && (
             <Box marginBottom={10}>
-              <Text as="h3" variant="h3" marginBottom={3}>
+              <Text as="h3" variant="h3" marginBottom={1}>
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
@@ -274,8 +279,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title={formatMessage(core.pdfButtonRequest)}
                   pdfType={'request'}
                 />
-
-                {completedCaseStates.includes(workingCase.state) && (
+                {isCompletedCase(workingCase.state) && (
                   <>
                     <PdfButton
                       renderAs="row"
@@ -358,7 +362,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
-              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`,
+              )
             }}
             onSecondaryButtonClick={() => {
               setModalVisible('NoModal')

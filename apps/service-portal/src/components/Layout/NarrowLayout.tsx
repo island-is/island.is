@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import {
   Box,
   Navigation,
@@ -30,23 +30,23 @@ interface NarrowLayoutProps {
 
 export type SubNavItemType = NavigationItem & { enabled?: boolean }
 
-export const NarrowLayout: FC<NarrowLayoutProps> = ({
+export const NarrowLayout = ({
   children,
   pathname,
   height,
   activeParent,
-}) => {
+}: NarrowLayoutProps) => {
   const { formatMessage } = useLocale()
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
-  const mapChildren = (item: ServicePortalNavigationItem): any => {
+  const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {
       return {
         title: formatMessage(item.name),
         href: item.path,
-        active: item.path && pathname.includes(item.path),
+        active: item.path ? pathname.includes(item.path) : undefined,
         items: item.children
           .filter((x) => !x.navHide)
           .map((child) => {

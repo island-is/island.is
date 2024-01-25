@@ -29,7 +29,7 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/shared-modules/delegations/src/**/*.{ts,tsx}'"
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "output": "libs/portals/shared-modules/delegations/src/**/*.generated.ts",

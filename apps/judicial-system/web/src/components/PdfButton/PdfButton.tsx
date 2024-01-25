@@ -8,7 +8,7 @@ import * as styles from './PdfButton.css'
 
 interface Props {
   caseId: string
-  title: string
+  title?: string | null
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'
@@ -59,7 +59,9 @@ const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
   ) : (
     <Box
       data-testid={`${pdfType || ''}PDFButton`}
-      className={`${styles.pdfRow} ${disabled ? '' : styles.cursor}`}
+      className={`${styles.pdfRow} ${
+        disabled ? styles.disabled : styles.cursor
+      }`}
       onClick={() => {
         if (disabled) {
           return

@@ -1,8 +1,12 @@
 import {
-  assistantNotificationRule,
-  judgeNotificationRule,
+  courtOfAppealsAssistantNotificationRule,
+  courtOfAppealsJudgeNotificationRule,
+  courtOfAppealsRegistrarNotificationRule,
+  defenderNotificationRule,
+  districtCourtAssistantNotificationRule,
+  districtCourtJudgeNotificationRule,
+  districtCourtRegistrarNotificationRule,
   prosecutorNotificationRule,
-  registrarNotificationRule,
 } from '../../guards/rolesRules'
 import { NotificationController } from '../../notification.controller'
 
@@ -17,11 +21,15 @@ describe('NotificationController - Send case notification rules', () => {
     )
   })
 
-  it('should give permission to five roles', () => {
-    expect(rules).toHaveLength(4)
+  it('should give permission to roles', () => {
+    expect(rules).toHaveLength(8)
     expect(rules).toContain(prosecutorNotificationRule)
-    expect(rules).toContain(judgeNotificationRule)
-    expect(rules).toContain(registrarNotificationRule)
-    expect(rules).toContain(assistantNotificationRule)
+    expect(rules).toContain(districtCourtJudgeNotificationRule)
+    expect(rules).toContain(districtCourtRegistrarNotificationRule)
+    expect(rules).toContain(districtCourtAssistantNotificationRule)
+    expect(rules).toContain(courtOfAppealsJudgeNotificationRule)
+    expect(rules).toContain(courtOfAppealsRegistrarNotificationRule)
+    expect(rules).toContain(courtOfAppealsAssistantNotificationRule)
+    expect(rules).toContain(defenderNotificationRule)
   })
 })

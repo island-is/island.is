@@ -48,8 +48,8 @@ export const dataSchema = z.object({
     phoneNumber: z
       .string()
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
-    hasDisabilityDiscount: z.array(z.string()).optional(),
-    hasDisabilityDiscountChecked: z.boolean().optional(),
+    disabilityCheckbox: z.array(z.string()).optional(),
+    hasDisabilityLicense: z.boolean().optional(),
   }),
   childsPersonalInfo: z.object({
     name: z.string().min(1),

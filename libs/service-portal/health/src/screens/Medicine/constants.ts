@@ -1,9 +1,3 @@
-export enum MedicineTabs {
-  BILLS = 'lyfjakaup',
-  CALCULATOR = 'reiknivel',
-  LICENSE = 'skirteini',
-}
-
 export const SECTION_GAP = 5
 export const CONTENT_GAP = 2
 export const CONTENT_GAP_LG = 3

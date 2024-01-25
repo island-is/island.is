@@ -52,7 +52,7 @@
         "parallel": true
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "output": "libs/service-portal/education/src/**/*.generated.ts",

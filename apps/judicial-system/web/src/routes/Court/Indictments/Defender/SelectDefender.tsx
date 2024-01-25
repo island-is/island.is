@@ -8,10 +8,10 @@ import {
   BlueBox,
   DefenderInput,
   DefenderNotFound,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { defender as m } from './Defender.strings'
 
@@ -84,7 +84,7 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 accused: formatMessage(core.indictmentDefendant, { gender }),
               }),
             )}
-            checked={defendant.defendantWaivesRightToCounsel}
+            checked={Boolean(defendant.defendantWaivesRightToCounsel)}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               toggleDefendantWaivesRightToCounsel(
                 workingCase.id,

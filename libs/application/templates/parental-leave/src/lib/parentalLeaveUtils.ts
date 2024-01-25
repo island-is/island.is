@@ -95,6 +95,10 @@ export function getBeginningOfThisMonth(): Date {
   return addDays(today, today.getDate() * -1 + 1)
 }
 
+export function getBeginningOfMonth3MonthsAgo(): Date {
+  return addMonths(getBeginningOfThisMonth(), -3)
+}
+
 export function getLastDayOfLastMonth(): Date {
   const today = new Date()
   return addDays(today, today.getDate() * -1)
@@ -393,10 +397,7 @@ export const getSpouse = (
   return null
 }
 
-export const getOtherParentOptions = (
-  application: Application,
-  formatMessage: FormatMessage,
-) => {
+export const getOtherParentOptions = (application: Application) => {
   const options: Option[] = [
     {
       value: NO,
@@ -406,9 +407,7 @@ export const getOtherParentOptions = (
     {
       value: SINGLE,
       label: parentalLeaveFormMessages.shared.singleParentOption,
-      subLabel: formatMessage(
-        parentalLeaveFormMessages.shared.singleParentDescription,
-      ),
+      subLabel: parentalLeaveFormMessages.shared.singleParentDescription,
     },
     {
       value: MANUAL,
@@ -435,15 +434,14 @@ export const getOtherParentOptions = (
   return options
 }
 
-export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
+export const getApplicationTypeOptions = () => {
   const options: Option[] = [
     {
       value: PARENTAL_LEAVE,
       dataTestId: 'parental-leave',
       label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle,
-      subLabel: formatMessage(
+      subLabel:
         parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
-      ),
     },
     {
       value: PARENTAL_GRANT,
@@ -451,20 +449,18 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
       label:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantUnemployedTitle,
-      subLabel: formatMessage(
+      subLabel:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantUnemployedSubTitle,
-      ),
     },
     {
       value: PARENTAL_GRANT_STUDENTS,
       dataTestId: 'parental-grant-students',
       label:
         parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
-      subLabel: formatMessage(
+      subLabel:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantStudentSubTitle,
-      ),
     },
   ]
   return options
@@ -954,6 +950,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as EmployerRow[]
 
+  const language = getValueViaPath(answers, 'applicant.language') as string
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -1019,6 +1017,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     addPeriods,
     tempPeriods,
     tempEmployers,
+    language,
   }
 }
 
@@ -1239,6 +1238,9 @@ export const getLastValidPeriodEndDate = (
   application: Application,
 ): Date | null => {
   const { periods } = getApplicationAnswers(application.answers)
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
 
   if (periods.length === 0) {
     return null
@@ -1254,6 +1256,10 @@ export const getLastValidPeriodEndDate = (
 
   const today = new Date()
   const beginningOfMonth = getBeginningOfThisMonth()
+
+  if (!applicationFundId || applicationFundId === '') {
+    if (lastEndDate > getBeginningOfMonth3MonthsAgo()) return lastEndDate
+  }
 
   // LastPeriod's endDate is in current month
   if (isThisMonth(lastEndDate)) {
@@ -1285,6 +1291,9 @@ export const getMinimumStartDate = (application: Application): Date => {
   const expectedDateOfBirthOrAdoptionDate =
     getExpectedDateOfBirthOrAdoptionDate(application)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
 
   const today = new Date()
   if (lastPeriodEndDate) {
@@ -1303,12 +1312,20 @@ export const getMinimumStartDate = (application: Application): Date => {
     }
 
     const beginningOfMonth = getBeginningOfThisMonth()
+    const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
     const leastStartDate = addMonths(
       expectedDateOfBirthOrAdoptionDateDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
-    if (leastStartDate.getTime() >= beginningOfMonth.getTime()) {
+
+    if (leastStartDate >= beginningOfMonth3MonthsAgo) {
       return leastStartDate
+    } else {
+      if (!applicationFundId || applicationFundId === '')
+        return beginningOfMonth3MonthsAgo
+      if (leastStartDate >= beginningOfMonth) {
+        return leastStartDate
+      }
     }
 
     return beginningOfMonth
@@ -1323,10 +1340,11 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       const start = parseISO(period.startDate)
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
+      const periodLength = calculatePeriodLength(start, end)
 
       const calculatedLength = period.daysToUse
         ? Number(period.daysToUse)
-        : calculatePeriodLength(start, end, percentage)
+        : Math.round(periodLength * percentage)
 
       return total + calculatedLength
     }, 0),

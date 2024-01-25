@@ -5,11 +5,6 @@ import { useRouter } from 'next/router'
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseState,
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import {
   errors,
   icRequestedHearingArrangements as m,
   titles,
@@ -19,22 +14,27 @@ import {
   FormContext,
   FormFooter,
   Modal,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  CaseTransition,
+  Institution,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
@@ -48,7 +48,7 @@ const HearingArrangements = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { courts } = useInstitution()
+  const { districtCourts } = useInstitution()
   const { formatMessage } = useIntl()
   const {
     sendNotification,
@@ -132,7 +132,7 @@ const HearingArrangements = () => {
           titles.prosecutor.investigationCases.hearingArrangements,
         )}
       />
-      {user && courts && (
+      {user && districtCourts && (
         <>
           <FormContentContainer>
             <Box marginBottom={7}>
@@ -145,7 +145,7 @@ const HearingArrangements = () => {
             <Box component="section" marginBottom={5}>
               <SelectCourt
                 workingCase={workingCase}
-                courts={courts}
+                courts={districtCourts}
                 onChange={handleCourtChange}
               />
             </Box>

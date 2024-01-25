@@ -19,7 +19,10 @@ import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
-import { ApplicationApplicationsAdminInput } from './application-admin/dto/applications-applications-admin-input'
+import {
+  ApplicationApplicationsAdminInput,
+  ApplicationApplicationsInstitutionAdminInput,
+} from './application-admin/dto/applications-applications-admin-input'
 
 @Injectable()
 export class ApplicationService {
@@ -85,6 +88,24 @@ export class ApplicationService {
     })
   }
 
+  async findAllInstitutionAdmin(
+    user: User,
+    locale: Locale,
+    input: ApplicationApplicationsInstitutionAdminInput,
+  ) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerFindAllInstitutionAdmin({
+      nationalId: input.nationalId,
+      page: input.page,
+      count: input.count,
+      locale,
+      status: input.status?.join(','),
+      applicantNationalId: input.applicantNationalId,
+      from: input.from,
+      to: input.to,
+    })
+  }
   async create(input: CreateApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerCreate({
       createApplicationDto: input,

@@ -64,18 +64,19 @@ cli() {
 }
 
 clean_generated() {
-  find . -type f \( -name "openapi.yaml" \
+  find . -not -path "./.cache/*" -type f \( -name "openapi.yaml" \
     -o -name "api.graphql" \
     -o -name "schema.d.ts" \
     -o -name "schema.tsx" \
     -o -name "schema.ts" \
     -o -path "*/gen/graphql.ts" \
+    -o -path "*/*.generated.ts" \
     -o -name "possibleTypes.json" \
     -o -name "fragmentTypes.json" \
     \) "$(dry && echo -print || echo -delete)"
 
   # shellcheck disable=SC2046
-  find . -type d \( -path '*/gen/fetch' \) -exec $(dry && echo 'echo') rm -rf '{}' +
+  find . -not -path "./.cache/*" -type d \( -path '*/gen/fetch' \) -exec $(dry && echo 'echo') rm -rf '{}' +
 }
 
 clean_caches() {

@@ -1,7 +1,7 @@
 import { Application, ApplicationStatus } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/types'
 import { Organization } from '@island.is/shared/types'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ApplicationsPaths } from '../../lib/paths'
 import {
   ApplicationOverViewStatus,
   FilterValues,
@@ -51,7 +51,7 @@ export const sortApplicationsOrganizations = (
     return
   }
   apps.forEach((elem) => {
-    const inst = institutionMapper[elem.typeId] ?? 'INSTITUTION_MISSING'
+    const inst = institutionMapper[elem.typeId].slug ?? 'INSTITUTION_MISSING'
     institutions.push({
       value: inst,
       label: organizations.find((x) => x.slug === inst)?.title ?? inst,
@@ -68,13 +68,13 @@ export const sortApplicationsOrganizations = (
 }
 
 export const mapLinkToStatus = (link: string) => {
-  if (link === ServicePortalPath.ApplicationInProgressApplications) {
+  if (link === ApplicationsPaths.ApplicationInProgressApplications) {
     return ApplicationOverViewStatus.inProgress
   }
-  if (link === ServicePortalPath.ApplicationIncompleteApplications) {
+  if (link === ApplicationsPaths.ApplicationIncompleteApplications) {
     return ApplicationOverViewStatus.incomplete
   }
-  if (link === ServicePortalPath.ApplicationCompleteApplications) {
+  if (link === ApplicationsPaths.ApplicationCompleteApplications) {
     return ApplicationOverViewStatus.completed
   }
   return ApplicationOverViewStatus.all
@@ -104,7 +104,7 @@ export const getFilteredApplicationsByStatus = (
       // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
       // otherwise it filters it.
       (activeInstitution !== ''
-        ? institutionMapper[application.typeId] === activeInstitution
+        ? institutionMapper[application.typeId].slug === activeInstitution
         : true),
   )
   return sortApplicationsStatus(filteredApps)

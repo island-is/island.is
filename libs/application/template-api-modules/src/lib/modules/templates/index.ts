@@ -89,9 +89,28 @@ import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book
 import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
 import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
+import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
+import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
+import { HealthcareLicenseCertificateModule } from './healthcare-license-certificate/healthcare-license-certificate.module'
+import { HealthcareLicenseCertificateService } from './healthcare-license-certificate/healthcare-license-certificate.service'
+
+import { EnergyFundsModule } from './energy-funds/energy-funds.module'
+import { EnergyFundsService } from './energy-funds/energy-funds.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
+import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
+import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
+import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
+import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
+import { CarRecyclingModule } from './car-recycling/car-recycling.module'
+import { CarRecyclingService } from './car-recycling/car-recycling.service'
+import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
+import { ChangeMachineSupervisorTemplateService } from './aosh/change-machine-supervisor/change-machine-supervisor.service'
+import { SignatureListCreationModule } from './signature-collection/signature-list-creation/signature-list-creation.module'
+import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
+import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
+import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -142,6 +161,15 @@ export const modules = [
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
+  SocialInsuranceAdministrationModule,
+  CarRecyclingModule,
+  CitizenshipModule,
+  EnergyFundsModule,
+  HealthcareLicenseCertificateModule,
+  SignatureListCreationModule,
+  SignatureListSigningModule,
+  TransferOfMachineOwnershipTemplateModule,
+  ChangeMachineSupervisorTemplateModule,
 ]
 
 export const services = [
@@ -193,4 +221,13 @@ export const services = [
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
+  SocialInsuranceAdministrationService,
+  CarRecyclingService,
+  CitizenshipService,
+  EnergyFundsService,
+  HealthcareLicenseCertificateService,
+  SignatureListCreationService,
+  SignatureListSigningService,
+  TransferOfMachineOwnershipTemplateService,
+  ChangeMachineSupervisorTemplateService,
 ]

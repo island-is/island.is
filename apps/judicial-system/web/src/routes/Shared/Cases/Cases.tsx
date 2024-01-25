@@ -1,18 +1,15 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
-import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
-  CaseTransition,
-  completedCaseStates,
-  isCourtRole,
+  isCompletedCase,
+  isDistrictCourtUser,
   isIndictmentCase,
-  isProsecutionRole,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -24,21 +21,25 @@ import {
   DropdownMenu,
   Logo,
   PageHeader,
-  PastCasesTable,
   SectionHeading,
   SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
 import {
+  PastCasesTable,
+  TableSkeleton,
+} from '@island.is/judicial-system-web/src/components/Table'
+import {
+  CaseListEntry,
+  CaseState,
+  CaseTransition,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import ActiveCases from './ActiveCases'
+import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
@@ -103,19 +104,10 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutionUser = user && isProsecutionRole(user?.role)
-  const isDistrictCourtUser = user && isCourtRole(user?.role)
+  const { transitionCase, isTransitioningCase, isSendingNotification } =
+    useCase()
 
-  const {
-    transitionCase,
-    isTransitioningCase,
-    isSendingNotification,
-    getCaseToOpen,
-  } = useCase()
-
-  const { data, error, loading, refetch } = useQuery<{
-    cases?: CaseListEntry[]
-  }>(CasesQuery, {
+  const { data, error, loading, refetch } = useCasesQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -132,26 +124,23 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [CaseListEntry[], CaseListEntry[]] =
-    useMemo(() => {
-      if (!resCases) {
-        return [[], []]
+  const [allActiveCases, allPastCases] = useMemo(() => {
+    if (!resCases) {
+      return [[], []]
+    }
+
+    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
+      return c.state !== CaseState.DELETED
+    })
+
+    return partition(casesWithoutDeleted, (c) => {
+      if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
+        return !isCompletedCase(c.state)
+      } else {
+        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
       }
-
-      const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
-        return c.state !== CaseState.DELETED
-      })
-
-      return partition(casesWithoutDeleted, (c) => {
-        if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
-          return !completedCaseStates.includes(c.state)
-        } else {
-          return !(
-            completedCaseStates.includes(c.state) && c.rulingSignatureDate
-          )
-        }
-      })
-    }, [isDistrictCourtUser, resCases])
+    })
+  }, [resCases, user])
 
   const {
     filter,
@@ -173,18 +162,15 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }
 
-  const handleRowClick = (id: string) => {
-    getCaseToOpen(id)
-  }
-
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={styles.logoContainer}>
         <Logo />
-        {isProsecutionUser ? <CreateCaseButton user={user} /> : null}
+        {user && isProsecutionUser(user) ? (
+          <CreateCaseButton user={user} />
+        ) : null}
       </div>
-
       <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
         <Select
           name="filter-cases"
@@ -197,7 +183,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
           value={filter}
         />
       </Box>
-
       {error ? (
         <div
           className={styles.infoContainer}
@@ -218,7 +203,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
             ) : activeCases.length > 0 ? (
               <ActiveCases
                 cases={activeCases}
-                onRowClick={handleRowClick}
                 isDeletingCase={isTransitioningCase || isSendingNotification}
                 onDeleteCase={deleteCase}
               />
@@ -239,7 +223,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
           cases={pastCases}
-          onRowClick={handleRowClick}
           loading={loading || isFiltering}
           testid="pastCasesTable"
         />

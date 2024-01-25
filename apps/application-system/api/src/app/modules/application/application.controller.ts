@@ -348,7 +348,7 @@ export class ApplicationController<
     user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const { typeId } = application
+    const { typeId, initialQuery } = application
     const template = await this.templateService.getApplicationTemplate(typeId)
 
     if (template === null) {
@@ -379,7 +379,8 @@ export class ApplicationController<
       | 'status'
       | 'typeId'
     > = {
-      answers: {},
+      answers:
+        template.initialQueryParameter && initialQuery ? { initialQuery } : {},
       applicant: user.nationalId,
       assignees: [],
       applicantActors: user.actor ? [user.actor.nationalId] : [],

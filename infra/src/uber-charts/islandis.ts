@@ -10,7 +10,10 @@ import {
 } from '../../../apps/application-system/api/infra/application-system-api'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
-import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
+import {
+  serviceSetup as servicePortalApiSetup,
+  workerSetup as servicePortalUserProfileWorker,
+} from '../../../apps/services/user-profile/infra/service-portal-api'
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
@@ -34,6 +37,7 @@ import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-ac
 
 import {
   userNotificationServiceSetup,
+  userNotificationCleanUpWorkerSetup,
   userNotificationWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
@@ -44,6 +48,11 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
+
+import {
+  serviceSetup as universityGatewaySetup,
+  workerSetup as universityGatewayWorkerSetup,
+} from '../../../apps/services/university-gateway/infra/university-gateway'
 
 import {
   serviceSetup as sessionsServiceSetup,
@@ -58,14 +67,19 @@ import { ServiceBuilder } from '../dsl/dsl'
 
 const endorsement = endorsementServiceSetup({})
 
+const skilavottordWs = skilavottordWsSetup()
+const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
+
 const documentsService = serviceDocumentsSetup()
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
+  skilavottordWs,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
+const servicePortalWorker = servicePortalUserProfileWorker()
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
@@ -80,6 +94,9 @@ const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
 
+const universityGatewayService = universityGatewaySetup()
+const universityGatewayWorker = universityGatewayWorkerSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -90,6 +107,7 @@ const api = apiSetup({
   regulationsAdminBackend: rabBackend,
   sessionsApi: sessionsService,
   authAdminApi,
+  universityGatewayApi: universityGatewayService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -103,9 +121,6 @@ const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
 
-const skilavottordWs = skilavottordWsSetup()
-const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
-
 const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
@@ -113,10 +128,14 @@ const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
 })
 
-const userNotificationService = userNotificationServiceSetup()
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
+const userNotificationCleanupWorkerService =
+  userNotificationCleanUpWorkerSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -128,6 +147,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     api,
     consultationPortal,
@@ -149,6 +169,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -159,6 +180,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     api,
     consultationPortal,
@@ -180,6 +202,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -190,6 +213,7 @@ export const Services: EnvironmentServices = {
     appSystemForm,
     servicePortal,
     servicePortalApi,
+    servicePortalWorker,
     adminPortal,
     consultationPortal,
     api,
@@ -211,6 +235,7 @@ export const Services: EnvironmentServices = {
     githubActionsCache,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -219,6 +244,8 @@ export const Services: EnvironmentServices = {
     sessionsWorker,
     sessionsGeoip,
     contentfulApps,
+    universityGatewayService,
+    universityGatewayWorker,
   ],
 }
 
@@ -229,7 +256,9 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
+  userNotificationCleanupWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
+  universityGatewayWorker,
 ]

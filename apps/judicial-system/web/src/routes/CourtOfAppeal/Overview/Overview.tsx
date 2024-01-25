@@ -2,13 +2,15 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AlertBanner,
   CaseFilesAccordionItem,
   Conclusion,
+  conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -17,12 +19,13 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { overview as strings } from './Overview.strings'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -30,7 +33,8 @@ const CourtOfAppealOverview: React.FC<
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { title, description } = useAppealAlertBanner(workingCase)
+  const { title, description, isLoadingAppealBanner } =
+    useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -40,7 +44,13 @@ const CourtOfAppealOverview: React.FC<
 
   return (
     <>
-      <AlertBanner variant="warning" title={title} description={description} />
+      {!isLoadingAppealBanner && (
+        <AlertBanner
+          variant="warning"
+          title={title}
+          description={description}
+        />
+      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -49,7 +59,19 @@ const CourtOfAppealOverview: React.FC<
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CourtOfAppealCaseOverviewHeader />
+          <CaseOverviewHeader
+            alerts={
+              workingCase.requestAppealRulingNotToBePublished
+                ? [
+                    {
+                      message: formatMessage(
+                        strings.requestAppealRulingNotToBePublished,
+                      ),
+                    },
+                  ]
+                : undefined
+            }
+          />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
@@ -77,7 +99,7 @@ const CourtOfAppealOverview: React.FC<
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
@@ -87,7 +109,7 @@ const CourtOfAppealOverview: React.FC<
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),
@@ -95,17 +117,26 @@ const CourtOfAppealOverview: React.FC<
                 },
                 {
                   title: formatMessage(core.prosecutorPerson),
-                  value: workingCase.prosecutor?.name,
+                  value: NameAndEmail(
+                    workingCase.prosecutor?.name,
+                    workingCase.prosecutor?.email,
+                  ),
                 },
                 {
                   title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
+                  value: NameAndEmail(
+                    workingCase.judge?.name,
+                    workingCase.judge?.email,
+                  ),
                 },
                 ...(workingCase.registrar
                   ? [
                       {
                         title: formatMessage(core.registrar),
-                        value: workingCase.registrar?.name,
+                        value: NameAndEmail(
+                          workingCase.registrar?.name,
+                          workingCase.registrar.email,
+                        ),
                       },
                     ]
                   : []),
@@ -125,6 +156,7 @@ const CourtOfAppealOverview: React.FC<
             <Conclusion
               title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
+              judgeName={workingCase.judge?.name}
             />
           </Box>
           <CaseFilesOverview />

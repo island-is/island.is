@@ -26,8 +26,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn nx run clients-air-discount-scheme:schemas/build-openapi $NX_OPTIONS",
-          "yarn nx run clients-air-discount-scheme:schemas/external-openapi-generator $NX_OPTIONS",
+          "yarn nx run clients-air-discount-scheme:codegen/backend-client $NX_OPTIONS",
           "yarn nx run air-discount-scheme-backend:dev-services",
           "yarn nx run air-discount-scheme-backend:migrate"
         ],

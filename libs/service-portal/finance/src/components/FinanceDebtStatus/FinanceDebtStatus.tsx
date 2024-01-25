@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import {
@@ -14,9 +13,7 @@ interface Props {
   debtStatusData: any
 }
 
-const FinanceDebtStatus: FC<React.PropsWithChildren<Props>> = ({
-  debtStatusData,
-}) => {
+const FinanceDebtStatus = ({ debtStatusData }: Props) => {
   const { formatMessage } = useLocale()
   useNamespaces('sp.finance-schedule')
 

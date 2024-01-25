@@ -9,6 +9,8 @@ export enum GenericLicenseType {
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
   PCard = 'PCard',
+  Ehic = 'Ehic',
+  Passport = 'Passport',
 }
 
 /**
@@ -22,7 +24,9 @@ export enum GenericLicenseOrganizationSlug {
   AdrLicense = 'vinnueftirlitid',
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
-  PCard = 'sýslumenn',
+  PCard = 'syslumenn',
+  EHIC = 'sjukratryggingar-islands',
+  Passport = 'thjodskra-islands',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -31,6 +35,9 @@ export enum GenericLicenseProviderId {
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
+  DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
+  IcelandicHealthInsurance = 'IcelandicHealthInsurance', // Sjúkratryggingar Íslands
+  RegistersIceland = 'RegistersIceland', // Þjóðskrá
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
@@ -60,6 +67,11 @@ export enum GenericUserLicensePkPassStatus {
   Available = 'Available',
   NotAvailable = 'NotAvailable',
   Unknown = 'Unknown',
+}
+
+export enum GenericUserLicenseMetaLinksType {
+  External = 'External',
+  Download = 'Download',
 }
 
 export type GenericLicenseProvider = {
@@ -103,6 +115,8 @@ export type GenericLicenseDataField = {
   label?: string
   value?: string
   description?: string
+  //if any functionality comes attached to said data field, f.x. renewLicense
+  link?: GenericUserLicenseMetaLinks
   hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
 }
@@ -110,10 +124,13 @@ export type GenericLicenseDataField = {
 export type GenericUserLicenseMetaLinks = {
   label?: string
   value?: string
+  name?: string
+  type?: GenericUserLicenseMetaLinksType
 }
 
 export type GenericUserLicenseMetadata = {
   links?: GenericUserLicenseMetaLinks[]
+  licenseId?: string
   licenseNumber: string
   expired: boolean | null
   expireDate?: string
@@ -131,7 +148,7 @@ export type GenericLicenseUserdata = {
 }
 
 export type GenericLicenseFetchResult = {
-  data: unknown
+  data: Array<unknown>
   fetch: GenericLicenseFetch
 }
 
@@ -265,10 +282,10 @@ export interface GenericLicenseClient<LicenseType> {
 
 export interface GenericLicenseMapper {
   parsePayload: (
-    payload?: unknown,
+    payload: Array<unknown>,
     locale?: Locale,
     labels?: GenericLicenseLabels,
-  ) => GenericUserLicensePayload | null
+  ) => Array<GenericUserLicensePayload>
 }
 
 export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'
@@ -278,3 +295,5 @@ export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
+
+export const DEFAULT_LICENSE_ID = 'default'

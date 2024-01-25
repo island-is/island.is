@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useLocalStorage } from 'react-use'
 import cn from 'classnames'
 import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
@@ -19,25 +20,32 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
-  isExtendedCourtRole,
-  isProsecutionRole,
+  isDistrictCourtUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
+  TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
-import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import {
+  ColumnCaseType,
+  SortButton,
+} from '@island.is/judicial-system-web/src/components/Table'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
-  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
-import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCaseList,
+  useViewport,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
@@ -46,13 +54,12 @@ import * as styles from './Cases.css'
 
 interface Props {
   cases: CaseListEntry[]
-  onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
 const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
+  const { cases, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
 
@@ -65,13 +72,16 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecution = user?.role && isProsecutionRole(user.role)
-  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
-
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'createdAt',
-    direction: 'descending',
-  })
+  const { width } = useViewport()
+  const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(
+    'sortConfig',
+    {
+      column: 'courtDate',
+      direction: 'descending',
+    },
+  )
+  const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
+    useCaseList()
 
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
@@ -124,16 +134,15 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
-  const { width } = useViewport()
-
   return width < theme.breakpoints.md ? (
     <>
       {cases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            onClick={() => onRowClick(theCase.id)}
+            onClick={() => handleOpenCase(theCase.id)}
             theCase={theCase}
-            isCourtRole={isCourt}
+            isCourtRole={isDistrictCourtUser(user)}
+            isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
@@ -164,7 +173,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('defendant')}
               sortAsc={getClassNamesFor('defendant') === 'ascending'}
               sortDes={getClassNamesFor('defendant') === 'descending'}
-              isActive={sortConfig.column === 'defendant'}
+              isActive={sortConfig?.column === 'defendant'}
               dataTestid="accusedNameSortButton"
             />
           </th>
@@ -179,7 +188,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('createdAt')}
               sortAsc={getClassNamesFor('createdAt') === 'ascending'}
               sortDes={getClassNamesFor('createdAt') === 'descending'}
-              isActive={sortConfig.column === 'createdAt'}
+              isActive={sortConfig?.column === 'createdAt'}
               dataTestid="createdAtSortButton"
             />
           </th>
@@ -198,7 +207,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('courtDate')}
               sortAsc={getClassNamesFor('courtDate') === 'ascending'}
               sortDes={getClassNamesFor('courtDate') === 'descending'}
-              isActive={sortConfig.column === 'courtDate'}
+              isActive={sortConfig?.column === 'courtDate'}
             />
           </th>
           <th></th>
@@ -219,8 +228,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 data-testid="custody-cases-table-row"
                 role="button"
                 aria-label="Opna kröfu"
+                aria-disabled={isDeletingCase || isOpeningCaseId === c.id}
                 onClick={() => {
-                  user?.role && onRowClick(c.id)
+                  handleOpenCase(c.id)
                 }}
               >
                 <td className={styles.td}>
@@ -245,13 +255,13 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         as="span"
                         variant="small"
                         color="dark400"
-                        title={c.policeCaseNumbers.join(', ')}
+                        title={c.policeCaseNumbers?.join(', ')}
                       >
                         {displayFirstPlusRemaining(c.policeCaseNumbers)}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span" title={c.policeCaseNumbers.join(', ')}>
+                    <Text as="span" title={c.policeCaseNumbers?.join(', ')}>
                       {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
                     </Text>
                   )}
@@ -295,22 +305,24 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 </td>
                 <td className={styles.td}>
                   <Text as="span">
-                    {format(parseISO(c.created), 'd.M.y', {
+                    {format(parseISO(c.created ?? ''), 'd.M.y', {
                       locale: localeIS,
                     })}
                   </Text>
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Box marginRight={1} marginBottom={1}>
+                  <Box
+                    marginRight={c.appealState ? 1 : 0}
+                    marginBottom={c.appealState ? 1 : 0}
+                  >
                     <TagCaseState
                       caseState={c.state}
                       caseType={c.type}
-                      isCourtRole={isCourt}
+                      isCourtRole={isDistrictCourtUser(user)}
                       isValidToDateInThePast={c.isValidToDateInThePast}
                       courtDate={c.courtDate}
                     />
                   </Box>
-
                   {c.appealState && (
                     <TagAppealState
                       appealState={c.appealState}
@@ -336,35 +348,48 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     </>
                   )}
                 </td>
-
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecution &&
-                    (c.state === CaseState.NEW ||
-                      c.state === CaseState.DRAFT ||
-                      c.state === CaseState.SUBMITTED ||
-                      c.state === CaseState.RECEIVED) && (
-                      <Box
-                        data-testid="deleteCase"
-                        component="button"
-                        aria-label="Viltu afturkalla kröfu?"
-                        className={styles.deleteButton}
-                        onClick={async (evt) => {
-                          evt.stopPropagation()
+                  <AnimatePresence exitBeforeEnter initial={false}>
+                    {isOpeningCaseId === c.id && showLoading ? (
+                      <div className={styles.deleteButtonWrapper}>
+                        <LoadingIndicator />
+                      </div>
+                    ) : (
+                      isProsecutionUser(user) &&
+                      (c.state === CaseState.NEW ||
+                        c.state === CaseState.DRAFT ||
+                        c.state === CaseState.SUBMITTED ||
+                        c.state === CaseState.RECEIVED) && (
+                        <motion.button
+                          key={`${c.id}-delete`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          data-testid="deleteCase"
+                          aria-label="Viltu afturkalla kröfu?"
+                          className={cn(
+                            styles.deleteButton,
+                            styles.deleteButtonWrapper,
+                          )}
+                          onClick={async (evt) => {
+                            evt.stopPropagation()
 
-                          await new Promise((resolve) => {
-                            setRequestToRemoveIndex(
-                              requestToRemoveIndex === i ? undefined : i,
-                            )
+                            await new Promise((resolve) => {
+                              setRequestToRemoveIndex(
+                                requestToRemoveIndex === i ? undefined : i,
+                              )
 
-                            resolve(true)
-                          })
+                              resolve(true)
+                            })
 
-                          await controls.start('isDeleting')
-                        }}
-                      >
-                        <Icon icon="close" color="blue400" />
-                      </Box>
+                            await controls.start('isDeleting')
+                          }}
+                        >
+                          <Icon icon="close" color="blue400" />
+                        </motion.button>
+                      )
                     )}
+                  </AnimatePresence>
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
                   <Button

@@ -1,13 +1,4 @@
-import { ExpandRow } from '@island.is/service-portal/core'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
-import { FC } from 'react'
-import * as styles from './ExpiringExpandedTableRow.css'
+import { ExpandRow, NestedTable } from '@island.is/service-portal/core'
 
 interface Props {
   expiring: boolean
@@ -15,11 +6,11 @@ interface Props {
   foldedValues: Array<{ title: string; value?: string | number }>
 }
 
-export const ExpiringExpandedTableRow: FC<React.PropsWithChildren<Props>> = ({
+export const ExpiringExpandedTableRow = ({
   expiring,
   visibleValues,
   foldedValues,
-}) => {
+}: Props) => {
   return (
     <ExpandRow
       forceBackgroundColor={expiring}
@@ -28,26 +19,7 @@ export const ExpiringExpandedTableRow: FC<React.PropsWithChildren<Props>> = ({
         return { value: val }
       })}
     >
-      <Box padding={2} background="blue100">
-        <GridContainer className={styles.grid}>
-          <GridRow>
-            {foldedValues.map((item, i) => (
-              <GridColumn key={i} className={styles.col} span="4/12">
-                <Box className={styles.innerCol}>
-                  <Text fontWeight="semiBold" variant="medium" as="span">
-                    {item.title}
-                  </Text>
-                </Box>
-                <Box className={styles.innerCol}>
-                  <Text variant="medium" as="span">
-                    {item.value}
-                  </Text>
-                </Box>
-              </GridColumn>
-            ))}
-          </GridRow>
-        </GridContainer>
-      </Box>
+      <NestedTable data={foldedValues} />
     </ExpandRow>
   )
 }

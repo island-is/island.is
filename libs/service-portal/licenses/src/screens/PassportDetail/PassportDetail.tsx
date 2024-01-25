@@ -46,6 +46,7 @@ const NotifyLostLink = (text: string, link: string) => (
   <LinkResolver href={link}>
     <Button
       as="span"
+      unfocusable
       variant="utility"
       size="small"
       icon="open"
@@ -138,6 +139,7 @@ const PassportDetail = () => {
                         icon="open"
                         iconType="outline"
                         as="span"
+                        unfocusable
                       >
                         {formatMessage(m.passportRenew)}
                       </Button>

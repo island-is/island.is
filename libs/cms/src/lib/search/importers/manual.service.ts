@@ -8,20 +8,22 @@ import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 import { mapManual } from '../../models/manual.model'
 
+export const isManual = (entry: Entry<IManualFields>): entry is IManual =>
+  entry.sys.contentType.sys.id === 'manual' &&
+  !!entry.fields.title &&
+  !!entry.fields.slug
+
 @Injectable()
 export class ManualSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
-    logger.info('Processing sync data for manuals')
-
     // only process manuals that we consider not to be empty
-    return entries.filter(
-      (entry: Entry<IManualFields>): entry is IManual =>
-        entry.sys.contentType.sys.id === 'manual' && !!entry.fields.title,
-    )
+    return entries.filter(isManual)
   }
 
   doMapping(entries: IManual[]) {
-    logger.info('Mapping manuals', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping manuals', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
@@ -46,6 +48,25 @@ export class ManualSyncService implements CmsSyncProvider<IManual> {
             tags.push({
               key: mapped.organization.slug,
               type: 'organization',
+            })
+          }
+
+          if (mapped.category?.slug) {
+            tags.push({
+              key: mapped.category.slug,
+              type: 'category',
+            })
+          }
+          if (mapped.group?.slug) {
+            tags.push({
+              key: mapped.group.slug,
+              type: 'group',
+            })
+          }
+          if (mapped.subgroup?.slug) {
+            tags.push({
+              key: mapped.subgroup.slug,
+              type: 'subgroup',
             })
           }
 

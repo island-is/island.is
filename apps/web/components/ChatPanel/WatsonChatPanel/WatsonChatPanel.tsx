@@ -1,12 +1,30 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { useMemo, useEffect, useRef, useState } from 'react'
-import { ChatBubble } from '../ChatBubble'
+
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
-import { useI18n } from '@island.is/web/i18n'
 import { useNamespaceStrict } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+
+import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
-import { onDirectorateOfImmigrationChatLoad } from './utils'
+import type { WatsonInstance } from './types'
+import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
+
+declare global {
+  interface Window {
+    watsonAssistantChatOptions: {
+      showCloseAndRestartButton: boolean
+      pageLinkConfig: {
+        linkIDs: Record<string, Record<string, string>>
+      }
+      serviceDesk: {
+        skipConnectAgentCard: boolean
+      }
+      onLoad: (instance: WatsonInstance) => void
+    }
+  }
+}
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -15,8 +33,20 @@ const getScriptSource = (version: string) => {
   return `${URL}/versions/${version}/${FILENAME}`
 }
 
+const loadScript = (
+  options: Window['watsonAssistantChatOptions'],
+  version = 'latest',
+) => {
+  window.watsonAssistantChatOptions = options
+  const scriptElement = document.createElement('script')
+  scriptElement.src = getScriptSource(version)
+  document.head.appendChild(scriptElement)
+  return scriptElement
+}
+
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const { activeLocale } = useI18n()
+  const [loading, setLoading] = useState(false)
 
   const {
     version = 'latest',
@@ -42,14 +72,12 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
   const n = useNamespaceStrict(namespace)
 
-  const watsonInstance = useRef(null)
-  const [isButtonVisible, setIsButtonVisible] = useState(false)
+  const watsonInstance = useRef<WatsonInstance | null>(null)
+  const [hasButtonBeenClicked, setHasButtonBeenClicked] = useState(false)
 
   useEffect(() => {
     if (Object.keys(namespace).length === 0) {
       return () => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         watsonInstance?.current?.destroy()
       }
     }
@@ -58,70 +86,89 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const windowObject: any = window
-    windowObject.watsonAssistantChatOptions = {
-      showCloseAndRestartButton: true,
-      pageLinkConfig: {
-        // If there is a query param of wa_lid=<linkID> then in the background a message will be sent and the chat will open
-        linkIDs: {
-          t10: {
-            text: n('t10', 'Tala við manneskju'),
+    let scriptElement: HTMLScriptElement | null = null
+
+    if (hasButtonBeenClicked || showLauncher) {
+      setLoading(true)
+      scriptElement = loadScript(
+        {
+          showCloseAndRestartButton: true,
+          pageLinkConfig: {
+            // If there is a query param of wa_lid=<linkID> then in the background a message will be sent and the chat will open
+            linkIDs: {
+              t10: {
+                text: n('t10', 'Tala við manneskju'),
+              },
+              t11: {
+                text: n('t11', 'Hæ Askur'),
+              },
+            },
           },
-          t11: {
-            text: n('t11', 'Hæ Askur'),
+          serviceDesk: {
+            skipConnectAgentCard: true,
+          },
+          ...props,
+          onLoad: (instance) => {
+            watsonInstance.current = instance
+            if (Object.keys(cssVariables).length > 0) {
+              instance.updateCSSVariables(cssVariables)
+            }
+            if (Object.keys(languagePack).length > 0) {
+              instance.updateLanguagePack(languagePack)
+            }
+            if (
+              // Askur - Útlendingastofnun
+              props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+            ) {
+              onAuthenticatedWatsonAssistantChatLoad(
+                instance,
+                namespace,
+                activeLocale,
+                'directorateOfImmigration',
+              )
+            }
+
+            if (onLoad) {
+              onLoad(instance)
+            }
+
+            instance
+              .render()
+              .then(() => {
+                if (!showLauncher) {
+                  instance.openWindow()
+                }
+                setLoading(false)
+              })
+              .catch((err) => {
+                setLoading(false)
+                throw err
+              })
           },
         },
-      },
-      serviceDesk: {
-        skipConnectAgentCard: true,
-      },
-      ...props,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      onLoad: (instance) => {
-        watsonInstance.current = instance
-        if (cssVariables) {
-          instance.updateCSSVariables(cssVariables)
-        }
-        if (Object.keys(languagePack).length > 0) {
-          instance.updateLanguagePack(languagePack)
-        }
-        if (props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54') {
-          onDirectorateOfImmigrationChatLoad(instance)
-        }
-
-        if (onLoad) {
-          onLoad(instance)
-        }
-
-        instance.render().then(() => setIsButtonVisible(true))
-      },
+        version,
+      )
     }
-
-    const scriptElement = document.createElement('script')
-    scriptElement.src = getScriptSource(version)
-    document.head.appendChild(scriptElement)
 
     return () => {
-      scriptElement?.remove()
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       watsonInstance?.current?.destroy()
+      scriptElement?.remove()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace])
+  }, [namespace, hasButtonBeenClicked, showLauncher])
 
   if (showLauncher) return null
 
   return (
     <ChatBubble
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-      isVisible={isButtonVisible}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      onClick={watsonInstance.current?.openWindow}
+      isVisible={true}
+      onClick={() => {
+        watsonInstance.current?.openWindow()
+        setHasButtonBeenClicked(true)
+      }}
       pushUp={pushUp}
+      loading={loading}
     />
   )
 }

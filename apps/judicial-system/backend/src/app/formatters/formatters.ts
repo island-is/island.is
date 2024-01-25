@@ -6,15 +6,15 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   capitalize,
-  caseTypes,
   enumerate,
+  formatCaseType,
   formatDate,
   formatNationalId,
   getSupportedCaseCustodyRestrictions,
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import type { Gender } from '@island.is/judicial-system/types'
+import type { Gender, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -117,7 +117,7 @@ export function formatCourtHeadsUpSmsNotification(
 
   const newCaseText = formatMessage(notifications.courtHeadsUp.newCaseText, {
     caseType: type,
-    courtTypeName: caseTypes[type],
+    courtTypeName: formatCaseType(type),
   })
 
   return [newCaseText, prosecutorText, arrestDateText, requestedCourtDateText]
@@ -133,7 +133,7 @@ export function formatCourtReadyForCourtSmsNotification(
 ): string {
   const submittedCaseText = formatMessage(
     notifications.courtReadyForCourt.submittedCase,
-    { caseType: type, courtTypeName: caseTypes[type] },
+    { caseType: type, courtTypeName: formatCaseType(type) },
   )
   const prosecutorText = getProsecutorText(
     formatMessage,
@@ -186,12 +186,12 @@ export function formatProsecutorReadyForCourtEmailNotification(
     ? formatMessage(
         notifications.readyForCourt.investigationCaseReadyForCourtSubject,
         {
-          caseType: caseTypes[caseType],
+          caseType: formatCaseType(caseType),
         },
       )
     : formatMessage(notifications.readyForCourt.subject, {
         isIndictmentCase: isIndictmentCase(caseType),
-        caseType: caseTypes[caseType],
+        caseType: formatCaseType(caseType),
       })
 
   const body = formatMessage(notifications.readyForCourt.prosecutorHtml, {
@@ -223,7 +223,7 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   return formatMessage(notifications.prosecutorReceivedByCourt, {
     court,
     caseType,
-    caseTypeName: caseTypes[type],
+    caseTypeName: formatCaseType(type),
     courtCaseNumber,
   })
 }
@@ -251,7 +251,7 @@ export function formatProsecutorCourtDateEmailNotification(
             : isInvestigationCase(type)
             ? 'withPrefix'
             : 'noPrefix',
-        courtTypeName: caseTypes[type],
+        courtTypeName: formatCaseType(type),
       })
   const courtDateText = formatMessage(cf.courtDate, {
     isIndictment: isIndictmentCase(type),
@@ -578,7 +578,7 @@ export function formatDefenderRevokedEmailNotification(
             : isInvestigationCase(type)
             ? 'withPrefix'
             : 'noPrefix',
-        courtTypeName: caseTypes[type],
+        courtTypeName: formatCaseType(type),
       })
   const defendantNationalIdText = defendantNoNationalId
     ? defendantNationalId || 'NONE'
@@ -656,6 +656,35 @@ export function formatDefenderAssignedEmailNotification(
   return { body, subject }
 }
 
+export function formatCourtOfAppealJudgeAssignedEmailNotification(
+  formatMessage: FormatMessage,
+  caseNumber: string,
+  isForeperson: boolean,
+  forepersonName: string,
+  role: UserRole,
+  overviewUrl: string,
+) {
+  const subject = formatMessage(notifications.COAJudgeAssigned.subject, {
+    caseNumber,
+  })
+
+  const body = isForeperson
+    ? formatMessage(notifications.COAJudgeAssigned.forepersonBody, {
+        caseNumber,
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
+    : formatMessage(notifications.COAJudgeAssigned.body, {
+        role,
+        caseNumber,
+        foreperson: forepersonName,
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
+
+  return { body, subject }
+}
+
 export function formatCourtIndictmentReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   theCase: Case,
@@ -673,7 +702,7 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
       ),
       formatMessage(core.and),
     ),
-    prosecutorName: theCase.prosecutor?.institution?.name,
+    prosecutorName: theCase.prosecutorsOffice?.name,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

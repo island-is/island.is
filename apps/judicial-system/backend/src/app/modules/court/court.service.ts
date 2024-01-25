@@ -346,21 +346,22 @@ export class CourtService {
           return ''
         }
 
-        this.eventService.postErrorEvent(
-          'Failed to create an email',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-            subject: this.mask(subject),
-            recipients,
-            fromEmail,
-            fromName,
-          },
-          reason,
-        )
+        // Temporarily disabled because of a bug in court system communication
+        // this.eventService.postErrorEvent(
+        //   'Failed to create an email',
+        //   {
+        //     caseId,
+        //     actor: user.name,
+        //     institution: user.institution?.name,
+        //     courtId,
+        //     courtCaseNumber,
+        //     subject: this.mask(subject),
+        //     recipients,
+        //     fromEmail,
+        //     fromName,
+        //   },
+        //   reason,
+        // )
 
         throw reason
       })
@@ -430,6 +431,13 @@ export class CourtService {
           return ''
         }
 
+        const sanitizedReason = JSON.stringify(reason)
+          .replace(
+            /Participant with id: \d{10}/g,
+            'Participant with id: **********',
+          )
+          .replace(/\) gegn(.*?)'/g, ') gegn **********')
+
         this.eventService.postErrorEvent(
           'Failed to update case with defendant',
           {
@@ -440,10 +448,10 @@ export class CourtService {
             courtCaseNumber,
             defenderEmail,
           },
-          reason,
+          JSON.parse(sanitizedReason),
         )
 
-        throw reason
+        throw JSON.parse(sanitizedReason)
       })
   }
 

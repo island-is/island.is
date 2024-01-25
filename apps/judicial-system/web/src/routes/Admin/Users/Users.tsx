@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -12,45 +11,43 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { errors, titles } from '@island.is/judicial-system-web/messages'
-import { Loading } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  Institution,
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
+import {
+  Loading,
+  PageHeader,
+} from '@island.is/judicial-system-web/src/components'
+import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  InstitutionsQuery,
-  UsersQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useUsersQuery } from './users.generated'
 import * as styles from './Users.css'
-
-interface UserData {
-  users: User[]
-}
-interface InstitutionData {
-  institutions: Institution[]
-}
 
 export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()
-  const { data, error, loading } = useQuery<UserData>(UsersQuery, {
+  const {
+    allInstitutions,
+    loading: institutionsLoading,
+    loaded: institutionsLoaded,
+  } = useInstitution()
+  const {
+    data: usersData,
+    error: usersError,
+    loading: usersLoading,
+  } = useUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const { data: rawInstitutions, loading: loadingInstitutions } =
-    useQuery<InstitutionData>(InstitutionsQuery, {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
-
-  const users = data?.users.filter((u) => {
+  const users = usersData?.users?.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
       : true
@@ -60,20 +57,25 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
-  const userRoleToString = (userRole: UserRole) => {
+  const userRoleToString = (userRole?: UserRole | null) => {
     switch (userRole) {
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
       case UserRole.PROSECUTOR_REPRESENTATIVE:
         return 'Fulltrúi'
-      case UserRole.JUDGE:
+      case UserRole.DISTRICT_COURT_JUDGE:
+      case UserRole.COURT_OF_APPEALS_JUDGE:
         return 'Dómari'
-      case UserRole.REGISTRAR:
+      case UserRole.DISTRICT_COURT_REGISTRAR:
+      case UserRole.COURT_OF_APPEALS_REGISTRAR:
         return 'Dómritari'
-      case UserRole.ASSISTANT:
+      case UserRole.DISTRICT_COURT_ASSISTANT:
+      case UserRole.COURT_OF_APPEALS_ASSISTANT:
         return 'Aðstoðarmaður dómara'
       case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
+      default:
+        return 'Óþekkt'
     }
   }
 
@@ -103,12 +105,14 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <Select
             name="institutions"
             options={
-              rawInstitutions?.institutions.map((i) => {
-                return { label: i.name, value: i.id }
-              }) || []
+              institutionsLoaded
+                ? allInstitutions.map((i) => {
+                    return { label: i.name ?? '', value: i.id }
+                  })
+                : []
             }
             placeholder="Veldu stofnun"
-            isDisabled={loadingInstitutions}
+            isDisabled={institutionsLoading}
             onChange={(selectedOption) =>
               setSelectedInstitution(selectedOption?.value)
             }
@@ -148,6 +152,11 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
                   Virkur
                 </Text>
               </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
+                <Text as="span" fontWeight="regular">
+                  Innskráningar
+                </Text>
+              </Box>
             </tr>
           </thead>
           <tbody>
@@ -176,6 +185,15 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
                 </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
+                  <Text as="span">
+                    {user.latestLogin
+                      ? `${formatDate(user.latestLogin, 'yyy-MM-dd HH:mm')} - ${
+                          user.loginCount
+                        }`
+                      : ''}
+                  </Text>
+                </Box>
               </tr>
             ))}
           </tbody>
@@ -189,12 +207,12 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           />
         </Box>
       )}
-      {loading && (
+      {(institutionsLoading || usersLoading) && (
         <Box width="full">
           <Loading />
         </Box>
       )}
-      {error && (
+      {usersError && (
         <div data-testid="users-error">
           <AlertMessage
             title={formatMessage(errors.failedToFetchDataFromDbTitle)}

@@ -25,6 +25,7 @@ import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
 import { ErrorShell } from '../components/ErrorShell'
+import { useAuth } from '@island.is/auth/react'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -36,6 +37,7 @@ export const FormShell: FC<
 > = ({ application, nationalRegistryId, form, dataSchema }) => {
   const [updateForbidden, setUpdateForbidden] = useState(false)
   const { setInfo } = useHeaderInfo()
+  const { userInfo: user } = useAuth()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
@@ -47,6 +49,7 @@ export const FormShell: FC<
       screens: [],
       sections: [],
       historyReason: 'initial',
+      user,
     },
     initializeReducer,
   )

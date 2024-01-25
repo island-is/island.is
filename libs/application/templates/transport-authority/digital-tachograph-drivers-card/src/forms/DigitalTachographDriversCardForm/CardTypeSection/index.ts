@@ -92,7 +92,7 @@ export const cardTypeSection = buildSection({
           },
         }),
         buildTextField({
-          id: 'newestCard.isValid',
+          id: 'newestCard.isValidText',
           title: cardType.labels.newestCard.isValid,
           backgroundColor: 'white',
           width: 'half',

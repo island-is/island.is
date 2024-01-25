@@ -10,55 +10,59 @@ import {
   StaticCheck,
 } from '@island.is/application/types'
 import { getValueViaPath } from './formUtils'
+import { User } from 'user'
 
 function applyStaticConditionalCheck(
   formValue: FormValue,
   externalData: ExternalData,
   check: StaticCheck,
+  user: User | null,
 ): boolean {
-  const { value, questionId, comparator, externalDataId } = check
+  const { value, questionId, comparator, externalDataId, userPropId } = check
   let isValid = false
-  let answer
+  let valueViaPath
   if (questionId) {
-    answer = getValueViaPath(formValue, questionId) as Answer
+    valueViaPath = getValueViaPath(formValue, questionId) as Answer
   } else if (externalDataId) {
-    answer = getValueViaPath(externalData, externalDataId) as Answer
+    valueViaPath = getValueViaPath(externalData, externalDataId) as Answer
+  } else if (userPropId && user) {
+    valueViaPath = getValueViaPath(user, userPropId) as Answer
   }
   switch (comparator) {
     case Comparators.EQUALS:
-      isValid = answer === value
+      isValid = valueViaPath === value
       break
     case Comparators.NOT_EQUAL:
-      isValid = answer !== value
+      isValid = valueViaPath !== value
       break
     case Comparators.GT:
-      if (answer) {
-        isValid = answer > value
+      if (valueViaPath) {
+        isValid = valueViaPath > value
       }
       break
     case Comparators.GTE:
-      if (answer) {
-        isValid = answer >= value
+      if (valueViaPath) {
+        isValid = valueViaPath >= value
       }
       break
     case Comparators.LT:
-      if (answer) {
-        isValid = answer < value
+      if (valueViaPath) {
+        isValid = valueViaPath < value
       }
       break
     case Comparators.LTE:
-      if (answer) {
-        isValid = answer <= value
+      if (valueViaPath) {
+        isValid = valueViaPath <= value
       }
       break
     case Comparators.CONTAINS:
-      if (answer && Array.isArray(answer)) {
-        isValid = answer.includes(value)
+      if (valueViaPath && Array.isArray(valueViaPath)) {
+        isValid = valueViaPath.includes(value)
       }
       break
     case Comparators.NOT_CONTAINS:
-      if (answer && Array.isArray(answer)) {
-        isValid = !answer.includes(value)
+      if (valueViaPath && Array.isArray(valueViaPath)) {
+        isValid = !valueViaPath.includes(value)
       }
       break
   }
@@ -69,6 +73,7 @@ export function shouldShowFormItem(
   formItem: FormItem,
   formValue: FormValue,
   externalData: ExternalData = {},
+  user: User | null,
 ): boolean {
   const { condition } = formItem
   if (!condition) {
@@ -76,7 +81,7 @@ export function shouldShowFormItem(
   }
 
   if (typeof condition === 'function') {
-    return condition(formValue, externalData)
+    return condition(formValue, externalData, user)
   }
 
   if (condition.isMultiCheck) {
@@ -86,12 +91,13 @@ export function shouldShowFormItem(
       const conditionalCheck: SingleConditionCheck = check[i]
       let isValid: boolean
       if (typeof conditionalCheck === 'function') {
-        isValid = conditionalCheck(formValue, externalData)
+        isValid = conditionalCheck(formValue, externalData, user)
       } else {
         isValid = applyStaticConditionalCheck(
           formValue,
           externalData,
           conditionalCheck,
+          user,
         )
       }
 
@@ -110,5 +116,6 @@ export function shouldShowFormItem(
     formValue,
     externalData,
     condition as StaticCheck,
+    user,
   )
 }
