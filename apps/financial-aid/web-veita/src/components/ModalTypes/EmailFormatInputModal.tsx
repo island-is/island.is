@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, ChangeEvent } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 import { Box } from '@island.is/island-ui/core'
@@ -94,7 +94,8 @@ const EmailFormatInputModal = ({
           setHasError(true)
           return
         }
-        onSaveApplication(ref.current.innerText)
+        const modifiedHtml = ref.current.innerHTML.replace(/<br\s*\/?>/g, '\n')
+        onSaveApplication(modifiedHtml)
       }}
       submitButtonText={submitButtonText}
       isModalVisable={isModalVisable}
