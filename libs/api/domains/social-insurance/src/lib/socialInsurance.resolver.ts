@@ -11,10 +11,16 @@ import {
 import { UseGuards } from '@nestjs/common'
 import { SocialInsuranceService } from './socialInsurance.service'
 import { PaymentPlan } from './models/paymentPlan.model'
-import { SocialInsurancePaymentPlanInput } from './dtos/paymentPlan.input'
+import { PaymentPlanInput } from './dtos/paymentPlan.input'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.servicePortalSocialInsurancePageEnabled)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/api/social-insurance' })
 export class SocialInsuranceResolver {
@@ -27,7 +33,7 @@ export class SocialInsuranceResolver {
   @Audit()
   async getPaymentPlan(
     @CurrentUser() user: User,
-    @Args('input') input: SocialInsurancePaymentPlanInput,
+    @Args('input') input: PaymentPlanInput,
   ) {
     return this.service.getPaymentPlan(user, input.year)
   }

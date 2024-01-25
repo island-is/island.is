@@ -1,7 +1,7 @@
 import { InputType, Field, Int } from '@nestjs/graphql'
 
-@InputType()
-export class SocialInsurancePaymentPlanInput {
+@InputType('SocialInsurancePaymentPlanInput')
+export class PaymentPlanInput {
   @Field(() => Int)
   year?: number
 }
