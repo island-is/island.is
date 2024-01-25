@@ -274,6 +274,9 @@
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
       ],
+      "@island.is/application/templates/aosh/change-machine-supervisor": [
+        "libs/application/templates/aosh/change-machine-supervisor/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
         "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
       ],
@@ -433,11 +436,17 @@
       "@island.is/application/templates/social-insurance-administration-core/*": [
         "libs/application/templates/social-insurance-administration/core/src/*"
       ],
+      "@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly": [
+        "libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/src/index.ts"
+      ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/pension-supplement": [
+        "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
@@ -701,6 +710,9 @@
       ],
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"
+      ],
+      "@island.is/clients/user-notification": [
+        "libs/clients/user-notification/src/index.ts"
       ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"

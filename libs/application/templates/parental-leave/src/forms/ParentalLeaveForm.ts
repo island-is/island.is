@@ -40,9 +40,9 @@ import {
   getStartDateTitle,
   getMultipleBirthRequestDays,
   getMinimumStartDate,
-  getLastDayOfLastMonth,
   allowOtherParentToUsePersonalAllowance,
   getBeginningOfMonth3MonthsAgo,
+  getOtherParentOptions,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -183,10 +183,10 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
               children: [
-                buildCustomField({
-                  component: 'OtherParent',
+                buildRadioField({
                   id: 'otherParentObj.chooseOtherParent',
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
+                  options: (application) => getOtherParentOptions(application),
                 }),
                 buildTextField({
                   id: 'otherParentObj.otherParentName',
@@ -417,23 +417,48 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.personalAllowance.description,
               children: [
-                buildCustomField({
-                  component: 'PersonalAllowance',
+                buildRadioField({
                   id: 'personalAllowance.usePersonalAllowance',
                   title: parentalLeaveFormMessages.personalAllowance.useYours,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-personal-finance',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-personal-finance',
+                      value: NO,
+                    },
+                  ],
                 }),
-                buildCustomField({
-                  component: 'PersonalUseAsMuchAsPossible',
+                buildRadioField({
                   id: 'personalAllowance.useAsMuchAsPossible',
+                  title:
+                    parentalLeaveFormMessages.personalAllowance
+                      .useAsMuchAsPossible,
+                  width: 'half',
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-as-much-as-possible',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-as-much-as-possible',
+                      value: NO,
+                    },
+                  ],
                   condition: (answers) =>
                     (
                       answers as {
                         personalAllowance: { usePersonalAllowance: string }
                       }
                     )?.personalAllowance?.usePersonalAllowance === YES,
-                  title:
-                    parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossible,
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',
@@ -461,6 +486,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '1%',
                   variant: 'number',
                   width: 'half',
+                  maxLength: 4,
                 }),
               ],
             }),
@@ -479,15 +505,41 @@ export const ParentalLeaveForm: Form = buildForm({
                 )
               },
               children: [
-                buildCustomField({
-                  component: 'PersonalAllowance',
+                buildRadioField({
                   id: 'personalAllowanceFromSpouse.usePersonalAllowance',
                   title:
                     parentalLeaveFormMessages.personalAllowance.useFromSpouse,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-personal-finance',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-personal-finance',
+                      value: NO,
+                    },
+                  ],
                 }),
-                buildCustomField({
-                  component: 'SpouseUseAsMuchAsPossible',
+                buildRadioField({
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
+                  title:
+                    parentalLeaveFormMessages.personalAllowance
+                      .useAsMuchAsPossibleFromSpouse,
+                  width: 'half',
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
+                  ],
                   condition: (answers) =>
                     (
                       answers as {
@@ -497,9 +549,6 @@ export const ParentalLeaveForm: Form = buildForm({
                       }
                     )?.personalAllowanceFromSpouse?.usePersonalAllowance ===
                       YES && allowOtherParent(answers),
-                  title:
-                    parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossibleFromSpouse,
                 }),
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
@@ -532,6 +581,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '1%',
                   variant: 'number',
                   width: 'half',
+                  maxLength: 4,
                 }),
               ],
             }),

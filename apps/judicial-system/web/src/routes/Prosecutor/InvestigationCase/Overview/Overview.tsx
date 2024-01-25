@@ -40,6 +40,7 @@ import {
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import {
   CaseState,
   CaseTransition,
@@ -174,13 +175,16 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                value: `${workingCase.prosecutorsOffice?.name}`,
               },
               ...(workingCase.judge
                 ? [
                     {
                       title: formatMessage(core.judge),
-                      value: workingCase.judge.name,
+                      value: NameAndEmail(
+                        workingCase.judge?.name,
+                        workingCase.judge?.email,
+                      ),
                     },
                   ]
                 : []),
@@ -198,13 +202,19 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 ? [
                     {
                       title: formatMessage(core.registrar),
-                      value: workingCase.registrar.name,
+                      value: NameAndEmail(
+                        workingCase.registrar?.name,
+                        workingCase.registrar?.email,
+                      ),
                     },
                   ]
                 : []),
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: workingCase.prosecutor?.name,
+                value: NameAndEmail(
+                  workingCase.prosecutor?.name,
+                  workingCase.prosecutor?.email,
+                ),
               },
               {
                 title: formatMessage(core.caseType),

@@ -4,7 +4,12 @@ import {
   AttachmentLabel,
   AttachmentTypes,
 } from './constants'
-import { Application, YesOrNo, YES } from '@island.is/application/types'
+import {
+  Application,
+  YesOrNo,
+  YES,
+  ExternalData,
+} from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
@@ -151,6 +156,26 @@ export function getApplicationExternalData(
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
 
+  const spouseName = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.name',
+  ) as string
+
+  const spouseNationalId = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.nationalId',
+  ) as string
+
+  const maritalStatus = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.maritalStatus',
+  ) as string
+
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
+
   return {
     cohabitants,
     applicantName,
@@ -159,6 +184,10 @@ export function getApplicationExternalData(
     email,
     currencies,
     isEligible,
+    spouseName,
+    spouseNationalId,
+    maritalStatus,
+    hasSpouse,
   }
 }
 
@@ -238,12 +267,7 @@ export function getAttachments(application: Application) {
 
 // returns available years. Available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableYears(application: Application) {
-  const { applicantNationalId } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  if (!applicantNationalId) return []
+export function getAvailableYears() {
   const today = new Date()
   const twoYearsBackInTime = subYears(
     today.setMonth(today.getMonth() + 1),
@@ -264,15 +288,7 @@ export function getAvailableYears(application: Application) {
 
 // returns available months for selected year, since available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableMonths(
-  application: Application,
-  selectedYear: string,
-) {
-  const { applicantNationalId } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  if (!applicantNationalId) return []
+export function getAvailableMonths(selectedYear: string) {
   if (!selectedYear) return []
 
   const twoYearsBackInTime = subYears(new Date(), 2)
@@ -286,4 +302,10 @@ export function getAvailableMonths(
   }
 
   return months
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
 }

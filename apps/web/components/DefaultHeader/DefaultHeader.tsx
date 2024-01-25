@@ -19,6 +19,7 @@ export interface DefaultHeaderProps {
   imageObjectFit?: 'contain' | 'cover'
   imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
+  logoAltText?: string
 }
 
 export const DefaultHeader: React.FC<
@@ -37,6 +38,7 @@ export const DefaultHeader: React.FC<
   imageObjectFit = 'contain',
   imageObjectPosition = 'center',
   className,
+  logoAltText,
 }) => {
   const imageProvided = !!image
   const logoProvided = !!logo
@@ -55,7 +57,7 @@ export const DefaultHeader: React.FC<
                   borderRadius="circle"
                   background="white"
                 >
-                  <img className={styles.logo} src={logo} alt="" />
+                  <img className={styles.logo} src={logo} alt={logoAltText} />
                 </Box>
               </LinkWrapper>
             </div>
@@ -97,7 +99,11 @@ export const DefaultHeader: React.FC<
                       borderRadius="circle"
                       background="white"
                     >
-                      <img className={styles.logo} src={logo} alt="" />
+                      <img
+                        className={styles.logo}
+                        src={logo}
+                        alt={logoAltText}
+                      />
                     </Box>
                   </LinkWrapper>
                 </Hidden>

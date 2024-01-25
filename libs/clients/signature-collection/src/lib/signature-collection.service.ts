@@ -42,13 +42,16 @@ export class SignatureCollectionClientService {
   async currentCollectionInfo(): Promise<CollectionInfo> {
     // includeInactive: false will return collections as active until electionday for collection has passed
     const res = await this.collectionsApi.medmaelasofnunGet({
-      includeInactive: false,
+      includeInactive: true,
     })
-    const current = (
-      res
-        .map(mapCollectionInfo)
-        .filter((collection) => !!collection) as CollectionInfo[]
-    ).sort((a, b) => (a.endTime > b.endTime ? 1 : -1))[0]
+    const current = (res.map(mapCollectionInfo) as CollectionInfo[])
+      .filter(
+        (collection) =>
+          collection?.isSignatureCollection &&
+          // Do not include collections not started
+          collection?.startTime < new Date(),
+      )
+      .sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
 
     if (!current) {
       throw new Error('No current collection')
@@ -93,8 +96,8 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async getLists(input: GetListInput): Promise<List[]> {
-    const params = await this.getListsParams(input)
+  async getLists(input?: GetListInput): Promise<List[]> {
+    const params = await this.getListsParams({ ...input })
     const lists = await this.listsApi.medmaelalistarGet(params)
     return lists.map((list) => mapList(list))
   }
@@ -110,7 +113,9 @@ export class SignatureCollectionClientService {
     const signatures = await this.listsApi.medmaelalistarIDMedmaeliGet({
       iD: parseInt(listId),
     })
-    return signatures.map((signature) => mapSignature(signature))
+    return signatures
+      .map((signature) => mapSignature(signature))
+      .filter((s) => s.active)
   }
 
   async getAreas(collectionId?: number) {
@@ -357,7 +362,7 @@ export class SignatureCollectionClientService {
       iD: parseInt(listId),
       requestBody: nationalIds,
     })
-    return signaturesFound.map(mapSignature)
+    return signaturesFound.map(mapSignature).filter((s) => s.active)
   }
 
   async compareBulkSignaturesOnAllLists(
@@ -370,18 +375,35 @@ export class SignatureCollectionClientService {
         iD: id,
         requestBody: nationalIds,
       })
-    return signaturesFound.map(mapSignature)
+    // Get listTitle for signatures
+    const allLists = await this.getLists()
+    const listNameIndexer: Record<string, string> = allLists.reduce(
+      (acc, list) => ({ ...acc, [list.id]: list.title }),
+      {},
+    )
+    const signaturesMapped = signaturesFound
+      .map(mapSignature)
+      .filter((s) => s.active)
+    signaturesMapped.forEach((signature) => {
+      signature.listTitle = listNameIndexer[signature.listId]
+    })
+    return signaturesMapped
   }
 
   //   TODO: DelegateList
   //   TODO: UndelegateList
 
-  async extendDeadline(listId: string, newEndDate: Date): Promise<List> {
+  async extendDeadline(listId: string, newEndDate: Date): Promise<Success> {
     const list = await this.listsApi.medmaelalistarIDExtendTimePatch({
       iD: parseInt(listId),
       newEndDate: newEndDate,
     })
-    return mapList(list)
+    const { dagsetningLokar } = list
+    return {
+      success: dagsetningLokar
+        ? newEndDate.getTime() === dagsetningLokar.getTime()
+        : false,
+    }
   }
 
   async bulkUploadSignatures({
@@ -398,8 +420,14 @@ export class SignatureCollectionClientService {
     })
     return {
       success:
-        signatures?.medmaeli?.map((signature) => mapSignature(signature)) ?? [],
+        signatures.medmaeliKenn?.map((nationalId) => ({
+          nationalId,
+        })) ?? [],
       failed: [
+        ...(signatures.medMedmaeliAnnarListi?.map((nationalId) => ({
+          nationalId,
+          reason: 'Þegar meðmæli á öðrum lista',
+        })) ?? []),
         ...(signatures.medMedmaeliALista?.map((nationalId) => ({
           nationalId,
           reason: 'Þegar meðmæli á lista',

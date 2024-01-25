@@ -451,9 +451,9 @@ export const m = defineMessages({
     id: 'service.portal:family-child',
     defaultMessage: 'Barn',
   },
-  petitions: {
-    id: 'service.portal:petitions',
-    defaultMessage: 'Listar',
+  generalPetitions: {
+    id: 'service.portal:general-petitions',
+    defaultMessage: 'Almennir undirskriftalistar',
   },
   viewPetition: {
     id: 'service.portal:viewPetition',
@@ -630,6 +630,10 @@ export const m = defineMessages({
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
   },
+  lists: {
+    id: 'service.portal:lists',
+    defaultMessage: 'Listar',
+  },
   delegation: {
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
@@ -793,6 +797,10 @@ export const m = defineMessages({
   noData: {
     id: 'service.portal:no-data-found-simple',
     defaultMessage: 'Engin gögn fundust',
+  },
+  noSearchResults: {
+    id: 'service.portal:no-search-resulsts',
+    defaultMessage: 'Engar niðurstöður',
   },
   noDataFoundDetail: {
     id: 'service.portal:no-data-found-detail',
@@ -973,6 +981,10 @@ export const m = defineMessages({
     id: 'service.portal:datepicker-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
+  pick: {
+    id: 'service.portal:pick',
+    defaultMessage: 'Velja',
+  },
   clearFilter: {
     id: 'service.portal:clear-filter',
     defaultMessage: 'Hreinsa síu',
@@ -1012,6 +1024,10 @@ export const m = defineMessages({
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
+  },
+  errorNoConnection: {
+    id: 'service.portal:error-no-connection',
+    defaultMessage: 'Villa kom upp í samskiptum við þjónustuaðila',
   },
   buttonCancel: {
     id: 'service.portal:button.cancel',

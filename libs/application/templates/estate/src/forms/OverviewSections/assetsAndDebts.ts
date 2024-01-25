@@ -59,7 +59,10 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) => getMarketValueShare(answers),
+    description: ({ answers }: Application) => {
+      const total = getMarketValueShare(answers)
+      return total
+    },
     condition: (answers) =>
       !!getSumFromAnswers<EstateAsset>(
         answers,
