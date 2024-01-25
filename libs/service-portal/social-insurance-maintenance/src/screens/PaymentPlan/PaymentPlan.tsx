@@ -58,9 +58,9 @@ const PaymentPlan = () => {
         )}
       />
       {error && !loading ? (
-        <Problem error={error} type="internal_service_error" />
+        <Problem error={error} type="internal_service_error" noBorder={false} />
       ) : !error && !loading && !data?.socialInsurancePaymentPlan ? (
-        <Problem type="no_data" />
+        <Problem type="no_data" noBorder={false} />
       ) : (
         <Box>
           <Stack space={1}>
