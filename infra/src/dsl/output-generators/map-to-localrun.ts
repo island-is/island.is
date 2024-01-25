@@ -144,11 +144,12 @@ const serializeService = async (
   }
 
   // Map all external URLs to localhost
-  for (const [key, value] of Object.entries(result.env)) {
-    if (value.startsWith('https://')) {
-      result.env[key] = value.replace(/https:\/\/[^/:]+/g, 'http://localhost')
-    }
-  }
+  // for (const [key, value] of Object.entries(result.env)) {
+  //   result.env[key] = value.replace(
+  //     /\b(?:(http|ftp|\w+)s?):\/\/[^/]+(?=$|\/)/g,
+  //     '$1://localhost',
+  //   )
+  // }
 
   const allErrors = getErrors()
   return allErrors.length === 0
