@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`infra CLI render-local-env should map all URIs to localhost 1`] = `
+Object {
+  "mocks": "docker run --name mountebank -it --rm -p 2525:2525 -v /var/home/person/islandis/island.is/infra/mountebank-imposter-config.json:/app/default.json:z docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json",
+  "services": Object {
+    "my-service": Object {
+      "commands": Array [
+        "cd \\".\\"",
+        ". ./.env.my-service",
+        "echo \\"Starting my-service in $PWD\\"",
+        "yarn nx serve my-service",
+      ],
+      "env": Object {
+        "IDENTITY_SERVER_ISSUER_URL": "https://identity-server.dev01.devland.is",
+        "PROD_MODE": "true",
+        "SERVERSIDE_FEATURES_ON": "",
+      },
+    },
+  },
+}
+`;
