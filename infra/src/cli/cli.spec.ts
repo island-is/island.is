@@ -34,7 +34,6 @@ jest.mock('../dsl/consts', () => ({
   COMMON_SECRETS: {},
 }))
 
-// Mock console.log
 jest.spyOn(console, 'log').mockImplementation(() => {})
 jest.spyOn(console, 'error')
 

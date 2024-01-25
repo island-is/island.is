@@ -44,7 +44,7 @@ export async function renderLocalServices({
     const commandedServices = Object.entries(
       renderedLocalServices.services,
     ).map(([k, v]) => [k, `(${(v.commands ?? []).join(' && ')})`])
-    console.log(
+    logger.info(
       (json ? (s: any) => JSON.stringify(s, null, 2) : (s: any) => s)({
         mocks: renderedLocalServices.mocks,
         services: Object.fromEntries(commandedServices),
