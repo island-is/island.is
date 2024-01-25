@@ -48,20 +48,23 @@ const AppealCaseFilesOverview: React.FC<
   const { user, limitedAccess } = useContext(UserContext)
   const [allFiles, setAllFiles] = useState<CaseFile[]>([])
 
-  const fileDate = (category: CaseFileCategory) => {
-    switch (category) {
+  const fileDate = (file: CaseFile) => {
+    switch (file.category) {
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
-        return workingCase.prosecutorPostponedAppealDate
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+        return workingCase.appealedDate
       case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
       case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
         return workingCase.prosecutorStatementDate
-      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
-      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
-        return workingCase.accusedPostponedAppealDate
+
       case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
       case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
         return workingCase.defendantStatementDate
+      default: {
+        return file.created
+      }
     }
   }
 
@@ -142,10 +145,10 @@ const AppealCaseFilesOverview: React.FC<
                     >
                       <Text whiteSpace="nowrap">
                         {`${formatDate(
-                          fileDate(file.category) ?? file.created,
+                          fileDate(file),
                           'dd.MM.y',
                         )} kl. ${formatDate(
-                          fileDate(file.category) ?? file.created,
+                          fileDate(file),
                           constants.TIME_FORMAT,
                         )}`}
                       </Text>
