@@ -44,6 +44,7 @@ export type Icon =
   | 'home'
   | 'informationCircle'
   | 'link'
+  | 'location'
   | 'lockClosed'
   | 'lockOpened'
   | 'logOut'
@@ -129,6 +130,7 @@ export default {
     home: 'Home',
     informationCircle: 'InformationCircle',
     link: 'Link',
+    location: 'Location',
     lockClosed: 'LockClosed',
     lockOpened: 'LockOpened',
     logOut: 'LogOut',
@@ -213,6 +215,7 @@ export default {
     home: 'HomeOutline',
     informationCircle: 'InformationCircleOutline',
     link: 'LinkOutline',
+    location: 'LocationOutline',
     lockClosed: 'LockClosedOutline',
     lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
