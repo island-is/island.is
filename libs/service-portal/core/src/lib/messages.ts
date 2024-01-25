@@ -1263,20 +1263,20 @@ export const m = defineMessages({
     defaultMessage: 'Hljóð á',
   },
   socialInsuranceMaintenance: {
-    id: 'service-portal:social-insurance-maintenance',
+    id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
   },
   socialInsuranceMaintenanceDescription: {
-    id: 'service-portal:social-insurance-maintenance-description',
+    id: 'service.portal:social-insurance-maintenance-description',
     defaultMessage:
       'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
   },
   paymentPlan: {
-    id: 'service-portal:payment-plan',
+    id: 'service.portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
   },
   paymentsReasoning: {
-    id: 'service-portal:payments-reasoning',
+    id: 'service.portal:payments-reasoning',
     defaultMessage: 'Forsenda greiðslna',
   },
   january: {
