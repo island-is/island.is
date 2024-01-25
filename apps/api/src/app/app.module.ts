@@ -74,7 +74,6 @@ import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
-import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-registry'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
@@ -92,6 +91,8 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
+import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-registry'
+import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
@@ -125,12 +126,7 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
-import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
-import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
-import {
-  HealthDirectorateClientConfig,
-  HealthDirectorateClientModule,
-} from '@island.is/clients/health-directorate'
+import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
