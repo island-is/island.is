@@ -2,6 +2,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useGetPaymentPlanLazyQuery } from './PaymentPlan.generated'
 import {
   ExpandHeader,
+  FootNote,
   IntroHeader,
   amountFormat,
   generateYears,
@@ -10,7 +11,6 @@ import { Problem } from '@island.is/react-spa/shared'
 import {
   Box,
   Text,
-  Button,
   Table,
   Select,
   Stack,
@@ -52,6 +52,7 @@ const PaymentPlan = () => {
         intro={formatMessage(
           coreMessages.socialInsuranceMaintenanceDescription,
         )}
+        fixedImgWidth
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip={formatMessage(
           coreMessages.socialInsuranceTooltip,
@@ -192,6 +193,7 @@ const PaymentPlan = () => {
           </Box>
         </>
       )}
+      <FootNote serviceProviderSlug="tryggingastofnun" />
     </Box>
   )
 }
