@@ -123,7 +123,7 @@ const SigneeView = () => {
                 <Text variant="h2" marginTop={[5, 0]}>
                   {formatMessage(m.unSignModalMessage)}
                 </Text>
-                <Box marginTop={10} display="flex" justifyContent="center">
+                <Box marginTop={[5, 10]} display="flex" justifyContent="center">
                   <Button
                     loading={loading}
                     onClick={() => {
@@ -158,7 +158,7 @@ const SigneeView = () => {
                     }
                     text={formatMessage(m.collectionTitle)}
                     cta={
-                      new Date(list.endTime) > new Date()
+                      new Date(list.endTime) > new Date() && !list.maxReached
                         ? {
                             label: formatMessage(m.signList),
                             variant: 'text',
@@ -176,6 +176,12 @@ const SigneeView = () => {
                       new Date(list.endTime) < new Date()
                         ? {
                             label: formatMessage(m.collectionClosed),
+                            variant: 'red',
+                            outlined: true,
+                          }
+                        : list.maxReached
+                        ? {
+                            label: formatMessage(m.collectionMaxReached),
                             variant: 'red',
                             outlined: true,
                           }
