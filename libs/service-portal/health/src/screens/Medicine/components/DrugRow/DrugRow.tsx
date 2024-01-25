@@ -37,18 +37,22 @@ export const DrugRow: React.FC<Props> = ({
 
   return (
     <>
-      <T.Data>{drug.name}</T.Data>
-      <T.Data>{drug.strength}</T.Data>
-      <T.Data>
+      <T.Data text={{ variant: 'medium' }}>{drug.name}</T.Data>
+      <T.Data text={{ variant: 'medium' }}>{drug.strength}</T.Data>
+      <T.Data text={{ variant: 'medium' }}>
         <QuantityCounter
           quantity={quantity}
           handleDecrement={handleDecrement}
           handleIncrement={handleIncrement}
         />
       </T.Data>
-      <T.Data>{amountFormat(drug.totalPrice ?? 0)}</T.Data>
-      <T.Data>{amountFormat(drug.totalPaidIndividual ?? 0)}</T.Data>
-      <T.Data>
+      <T.Data text={{ variant: 'medium' }}>
+        {amountFormat(drug.totalPrice ?? 0)}
+      </T.Data>
+      <T.Data text={{ variant: 'medium' }}>
+        {amountFormat(drug.totalPaidIndividual ?? 0)}
+      </T.Data>
+      <T.Data text={{ variant: 'medium' }} align="center">
         <button onClick={handleRemove}>
           <Icon icon="trash" color="blue400" type="outline" size="small" />
         </button>

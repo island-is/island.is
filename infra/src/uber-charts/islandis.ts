@@ -37,6 +37,7 @@ import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-ac
 
 import {
   userNotificationServiceSetup,
+  userNotificationCleanUpWorkerSetup,
   userNotificationWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
@@ -133,6 +134,8 @@ const userNotificationService = userNotificationServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
+const userNotificationCleanupWorkerService =
+  userNotificationCleanUpWorkerSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -166,6 +169,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -198,6 +202,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -230,6 +235,7 @@ export const Services: EnvironmentServices = {
     githubActionsCache,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -250,6 +256,7 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
+  userNotificationCleanupWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,

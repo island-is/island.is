@@ -1,12 +1,38 @@
 #!/bin/bash
 
 set -euo pipefail
-# set -x
+if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 
 : "${REMOVE_CONTAINERS_ON_START:=}"
 : "${REMOVE_CONTAINERS_ON_FAIL:=}"
 : "${REMOVE_CONTAINERS_FORCE:=}"
-: "${RESTART_INTERVAL_TIME:=3}"
+: "${RESTART_INTERVAL_TIME:=1}"
+: "${RESTART_MAX_RETRIES:=3}"
+: "${DRY:=}"
+
+ARGS=()
+PROXIES=()
+PROXY_PIDS=()
+
+trap cleanup SIGINT
+
+cleanup() {
+  echo "Cleaning up..."
+  # Terminate all background processes (proxy restarts)
+  kill "${PROXY_PIDS[@]}" 2>/dev/null || true
+  wait "${PROXY_PIDS[@]}"
+  exit 0
+}
+
+cmd() {
+  if [ -z "${DRY:-}" ]; then
+    "$@"
+    return $?
+  fi
+  if [[ -n "${DEBUG:-}" ]]; then
+    echo "DRY:" "$*"
+  fi
+}
 
 containerer() {
   local builder_cmd
@@ -18,11 +44,23 @@ containerer() {
     echo "Please install podman or docker"
     exit 1
   fi
-  $builder_cmd "$@"
+  cmd $builder_cmd "$@"
 }
 
-ARGS=()
-PROXIES=()
+print_usage() {
+  echo "Usage: $0 [options] [proxy...]"
+  echo "Options:"
+  echo "  -h, --help            Show this help message"
+  echo "  -f, --force           Remove any existing containers every time"
+  echo "  -s, --remove-containers-on-start"
+  echo "                        Remove containers on start"
+  echo "  -x, --remove-containers-on-fail"
+  echo "                        Remove containers on fail"
+  echo "  -i, --interval        Restart interval (default: 1)"
+  echo "  -r, --restart-max-retries"
+  echo "                        Max number of restart retries (default: 3)"
+  echo "  -n, --dry             Dry run"
+}
 
 show_help() {
   cat <<EOF
@@ -68,7 +106,7 @@ parse_cli() {
     fi
     # echo "DEBUG: arg=$arg opt=$opt value=$value negative=$negative"
     case $arg in
-    -f | --remove-containers | --force)
+    -f | --remove-containers | --force | --replace)
       REMOVE_CONTAINERS_ON_START="$value"
       REMOVE_CONTAINERS_ON_FAIL="$value"
       REMOVE_CONTAINERS_FORCE="$value"
@@ -83,14 +121,23 @@ parse_cli() {
       RESTART_INTERVAL_TIME="${opt}"
       shift
       ;;
-    -h | --help)
-      show_help
-      exit
+    -r | --restart-max-retries)
+      RESTART_MAX_RETRIES="${opt}"
+      shift
       ;;
+
+    -n | --dry)
+      DRY=true
+      ;;
+
     --)
       shift
       ARGS+=("$@")
       break
+      ;;
+    -h | --help)
+      print_usage
+      exit 0
       ;;
     *)
       PROXIES+=("$arg")
@@ -103,9 +150,13 @@ parse_cli() {
   # echo "DEBUG: REMOVE_CONTAINERS_ON_START=${REMOVE_CONTAINERS_ON_START}"
   # echo "DEBUG: REMOVE_CONTAINERS_ON_FAIL=${REMOVE_CONTAINERS_ON_FAIL}"
   # echo "DEBUG: REMOVE_CONTAINERS_FORCE=${REMOVE_CONTAINERS_FORCE}"
-  if [ ${#PROXIES[@]} -eq 0 ]; then
+
+  # Return early if no proxies
+  if [ "${#PROXIES[@]}" -eq 0 ]; then
     PROXIES=("es" "soffia" "xroad" "redis" "db")
+    return
   fi
+
   local unknown_proxies
   unknown_proxies=()
   for proxy in "${PROXIES[@]}"; do
@@ -120,35 +171,112 @@ parse_cli() {
   fi
 }
 
+run-proxy() {
+  local service_port="${1}"
+  local host_port="${2}"
+  local service_name="${3}"
+  local service
+  local namespace
+  local DIR
+  DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+  shift 3
+
+  case "${service_name}" in
+  "es")
+    service="es-proxy"
+    namespace="es-proxy"
+    ;;
+  "soffia")
+    service="socat-soffia"
+    namespace="socat"
+    ;;
+  "xroad")
+    service="socat-xroad"
+    namespace="socat"
+    ;;
+  "redis")
+    service="socat-redis"
+    namespace="socat"
+    ;;
+  "db")
+    service="socat-db"
+    namespace="socat"
+    ;;
+  *)
+    echo "Unknown service: ${service_name}"
+    exit 1
+    ;;
+  esac
+
+  cmd "$DIR"/_run-aws-eks-commands.js proxy \
+    --namespace "${namespace}" \
+    --service "${service}" \
+    --port "${service_port}" \
+    --proxy-port "${host_port}" \
+    --cluster "${CLUSTER:-dev-cluster01}"
+}
+run-db-proxy() {
+  run-proxy 5432 5432 db
+}
+run-redis-proxy() {
+  run-proxy 6379 6379 redis
+}
+run-es-proxy() {
+  run-proxy 9200 9200 es "$@"
+}
+run-soffia-proxy() {
+  run-proxy 443 8443 soffia
+}
+run-xroad-proxy() {
+  run-proxy 80 8081 xroad
+}
+
 parse_cli "$@"
 
-main() {
-  for proxy in "${PROXIES[@]}"; do
-    if [ -z "$proxy" ]; then continue; fi
-    local container_name
-    container_name="$(grep -oP '(?<=--service )\S+' "./scripts/run-$proxy-proxy.sh")"
-    if [ "$proxy" == "es" ]; then container_name="es-proxy"; fi
-    if [ -n "${REMOVE_CONTAINERS_ON_START:-}" ] && containerer ps -a | grep -q "$container_name"; then
-      echo "Removing containers on start..."
-      containerer stop ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
+loop_proxy() {
+  local proxy="${1}"
+  local container_name="socat-$proxy"
+  [ "$proxy" == "es" ] && container_name="es-proxy"
+
+  while true; do
+    run-"${proxy}"-proxy "${ARGS[@]}" || echo "Exit code for $proxy proxy: $?"
+    if [ -n "${REMOVE_CONTAINERS_ON_FAIL:-}" ]; then
+      echo "Removing container $container_name on fail..."
       containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
     fi
+    echo "Restarting $proxy proxy in $RESTART_INTERVAL_TIME seconds..."
+    sleep "$RESTART_INTERVAL_TIME"
+  done
+}
+
+main() {
+  PROXY_PIDS=()
+  for proxy in "${PROXIES[@]}"; do
+    if [ -z "$proxy" ]; then continue; fi
+    local container_name="socat-$proxy"
+    [ "$proxy" == "es" ] && container_name="es-proxy"
+
+    if [ -n "${REMOVE_CONTAINERS_ON_START:-}" ]; then
+      echo "Removing container for '$proxy' on start..."
+      containerer stop "$container_name" 2>/dev/null || true
+      containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name" || echo "Failed to remove $container_name"
+    fi
+
     echo "Starting $proxy proxy"
     (
-      while true; do
-        code=0
-        "./scripts/run-$proxy-proxy.sh" "${ARGS[@]}" || code=$?
-        echo "Exit code for $proxy proxy: $code"
-        if [ $code -eq 1 ]; then exit 1; fi
-        echo "Restarting $proxy proxy in $RESTART_INTERVAL_TIME seconds..."
-        sleep "$RESTART_INTERVAL_TIME"
+      for ((i = 1; i <= RESTART_MAX_RETRIES; i++)); do
+        run-"${proxy}"-proxy "${ARGS[@]}" || echo "Exit code for $proxy proxy: $?"
         if [ -n "${REMOVE_CONTAINERS_ON_FAIL:-}" ]; then
           echo "Removing container $container_name on fail..."
           containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
         fi
+        echo "Restarting $proxy proxy in $RESTART_INTERVAL_TIME seconds..."
+        sleep "$RESTART_INTERVAL_TIME"
       done
     ) &
+    PROXY_PIDS+=("$!")
   done
   wait
 }
+
 main

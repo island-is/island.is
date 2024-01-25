@@ -54,19 +54,11 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     prosecutor {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     sharedWithProsecutorsOffice {
       id
@@ -222,5 +214,9 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     isAppealCustodyIsolation
     appealIsolationToDate
     requestAppealRulingNotToBePublished
+    prosecutorsOffice {
+      id
+      name
+    }
   }
 }
