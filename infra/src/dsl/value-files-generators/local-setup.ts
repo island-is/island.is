@@ -4,7 +4,7 @@ import {
   Services,
 } from '../types/output-types'
 import { Localhost } from '../localhost-runtime'
-import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
+import { shouldIncludeEnv } from '../../cli/render-env-vars'
 import { readFile, writeFile } from 'fs/promises'
 import { globSync } from 'glob'
 import { join } from 'path'
@@ -74,7 +74,7 @@ export const getLocalrunValueFile = async (
       env: Object.assign(
         {},
         Object.entries(service.env)
-          .filter(([name]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name))
+          .filter(shouldIncludeEnv)
           .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
         { PROD_MODE: 'true' },
         portConfig,
@@ -102,10 +102,7 @@ export const getLocalrunValueFile = async (
         await writeFile(
           join(rootDir, `.env.${serviceNXName}`),
           Object.entries(svc.env)
-            .filter(
-              ([name, value]) =>
-                !EXCLUDED_ENVIRONMENT_NAMES.includes(name) && !!value,
-            )
+            .filter(([name, value]) => shouldIncludeEnv(name) && !!value)
             .map(([name, value]) => {
               // Basic shell sanitation
               const escapedValue = value
