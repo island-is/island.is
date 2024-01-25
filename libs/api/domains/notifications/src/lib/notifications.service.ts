@@ -1,7 +1,11 @@
-import { User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
+import {
+  UpdateNotificationDtoStatusEnum,
+  UserNotificationApi,
+} from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
 import {
   MarkNotificationReadResponse,
@@ -9,78 +13,93 @@ import {
   NotificationsInput,
   NotificationsResponse,
 } from './notifications.model'
-import {
-  generateMockNotifications,
-  getMockNotification,
-  getMockNotifications,
-  markMockNotificationRead,
-  mockNotificationsResponse,
-} from './notifications.mock'
+import { notificationMapper } from '../utils/helpers'
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private userNotificationApi: UserNotificationApi,
   ) {}
+
+  userNotificationsWAuth(auth: Auth) {
+    return this.userNotificationApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
   async getNotifications(
     locale: Locale,
-    user: User | null,
+    user: User,
     input?: NotificationsInput,
   ): Promise<NotificationsResponse | null> {
-    this.logger.debug('getting potential mocked notifications')
-    let mockNotifications = getMockNotifications(locale, user)
+    this.logger.debug('getting potential notifications')
+    const notifications = await this.userNotificationsWAuth(
+      user,
+    ).meNotificationsControllerFindMany({
+      locale,
+      limit: input?.limit,
+      before: input?.first ? String(input?.first) : undefined,
+      after: input?.after ? String(input?.after) : undefined,
+    })
 
-    if (!mockNotifications) {
-      this.logger.debug('no mock notifications found, generating')
-      mockNotifications = generateMockNotifications(locale, user)
+    this.logger.info({ notifications })
+
+    if (!notifications.data) {
+      this.logger.debug('no notification found')
+      return null
     }
 
-    this.logger.debug('creating paged mock notifications response')
-    const mockResponse: NotificationsResponse = mockNotificationsResponse(
-      mockNotifications,
-      input,
-    )
-
-    return Promise.resolve(mockResponse)
+    return {
+      data: notifications.data.map((item) => notificationMapper(item)),
+      messageCounts: {
+        totalCount: notifications.totalCount,
+        unreadCount: undefined, // TODO: Not currently returned
+      },
+      pageInfo: notifications.pageInfo,
+    }
   }
 
   async getNotification(
-    id: string,
+    id: number,
     locale: Locale,
-    user: User | null,
+    user: User,
   ): Promise<NotificationResponse | null> {
-    this.logger.debug('getting potential single mocked notification')
-    const mockNotification = getMockNotification(locale, user, id)
+    this.logger.debug('getting potential single notification')
+    const notification = await this.userNotificationsWAuth(
+      user,
+    ).meNotificationsControllerFindOne({ locale, id })
 
-    if (!mockNotification) {
-      this.logger.debug('no mock notification found')
+    if (!notification) {
+      this.logger.debug('no notification found')
       return null
     }
 
-    return Promise.resolve({ data: mockNotification })
+    return { data: notificationMapper(notification) }
   }
 
   async markNotificationAsRead(
-    id: string,
+    id: number,
     locale: Locale,
-    user: User | null,
+    user: User,
   ): Promise<MarkNotificationReadResponse | null> {
     this.logger.debug(
-      'getting potential single mocked notification and marking as read',
+      'getting potential single notification and marking as read',
     )
-    const mockNotificationMarkedAsRead = markMockNotificationRead(
-      locale,
+    const notification = await this.userNotificationsWAuth(
       user,
+    ).meNotificationsControllerUpdate({
+      locale,
       id,
-    )
+      updateNotificationDto: {
+        status: UpdateNotificationDtoStatusEnum.Read,
+      },
+    })
 
-    if (!mockNotificationMarkedAsRead) {
-      this.logger.debug('no mock notification found to mark as read')
+    if (!notification) {
+      this.logger.debug('no notification found to mark as read')
       return null
     }
 
-    return Promise.resolve({ data: mockNotificationMarkedAsRead })
+    return { data: notificationMapper(notification) }
   }
 }

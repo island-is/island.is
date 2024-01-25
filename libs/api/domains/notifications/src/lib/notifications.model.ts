@@ -22,6 +22,12 @@ export class NotificationMetadata {
   sent!: Date
 
   @Field(() => GraphQLISODateTime, { nullable: true })
+  updated?: Date
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  created?: Date
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
   read?: Date
 
   @Field(() => NotificationStatus)
@@ -39,14 +45,14 @@ export class NotificationSender {
 
 @ObjectType('NoticiationRecipient')
 export class NotificationRecipient {
-  @Field()
-  nationalId!: string
+  @Field({ nullable: true })
+  nationalId?: string
 }
 
 @ObjectType('NotificationLink')
 export class NotificationLink {
-  @Field()
-  uri!: string
+  @Field({ nullable: true })
+  uri?: string
 }
 
 @ObjectType('NotificationMessage')
@@ -63,6 +69,9 @@ export class NotificationMessage {
 
 @ObjectType('Notification')
 export class Notification {
+  @Field(() => ID)
+  id!: number
+
   @Field(() => ID)
   notificationId!: string
 
@@ -81,11 +90,11 @@ export class Notification {
 
 @ObjectType('NotificationMessageCounts')
 export class NotificationMessageCounts {
-  @Field()
-  totalCount!: number
+  @Field({ nullable: true })
+  totalCount?: number
 
-  @Field()
-  unreadCount!: number
+  @Field({ nullable: true })
+  unreadCount?: number
 }
 
 @InputType('NotificationsInput')
@@ -96,7 +105,13 @@ export class NotificationsInput {
   @Field({
     nullable: true,
   })
-  after?: string
+  after?: number
+
+  @Field({
+    nullable: true,
+    defaultValue: 10,
+  })
+  limit?: number
 }
 
 @ObjectType('Notifications')
@@ -106,9 +121,6 @@ export class NotificationsResponse {
 
   @Field(() => NotificationMessageCounts)
   messageCounts!: NotificationMessageCounts
-
-  @Field()
-  totalCount!: number
 
   @Field(() => PageInfoDto)
   pageInfo!: PageInfoDto
