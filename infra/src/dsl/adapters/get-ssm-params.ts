@@ -26,7 +26,7 @@ export async function getSsmParams(
       Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
     )
     .reduce((p, c) => ({ ...p, ...c }), {})
-  logger.debug({
+  logger.debug('get-ssm-params return debug', {
     chunks,
     numChunks: chunks.length,
     allParams,
