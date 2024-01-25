@@ -2308,10 +2308,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { isSelfEmployed } = getApplicationAnswers(application.answers)
 
         if (isSelfEmployed === YES) {
-          set(application.answers, 'isReceivingUnemploymentBenefits', NO)
           set(
             application.answers,
-            'unemploymentBenefits',
+            'employment.isReceivingUnemploymentBenefits',
+            NO,
+          )
+          set(
+            application.answers,
+            'employment.unemploymentBenefits',
             NO_UNEMPLOYED_BENEFITS,
           )
         }
@@ -2330,7 +2334,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (isReceivingUnemploymentBenefits === NO) {
           set(
             application.answers,
-            'unemploymentBenefits',
+            'employment.unemploymentBenefits',
             NO_UNEMPLOYED_BENEFITS,
           )
           unset(application.answers, 'fileUpload.benefitsFile')

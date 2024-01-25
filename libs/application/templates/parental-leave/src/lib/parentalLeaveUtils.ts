@@ -676,31 +676,50 @@ export function getApplicationAnswers(answers: Application['answers']) {
     '0',
   ) as string
 
-  let isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
-  // olf Empployer obj
+  let isSelfEmployed = getValueViaPath(
+    answers,
+    'employment.isSelfEmployed',
+  ) as YesOrNo
+  // Old values
   if (!isSelfEmployed) {
-    isSelfEmployed = getValueViaPath(
-      answers,
-      'employer.isSelfEmployed',
-    ) as YesOrNo
+    isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
+    if (!isSelfEmployed) {
+      isSelfEmployed = getValueViaPath(
+        answers,
+        'employer.isSelfEmployed',
+      ) as YesOrNo
+    }
   }
 
   let isReceivingUnemploymentBenefits = getValueViaPath(
     answers,
-    'isReceivingUnemploymentBenefits',
+    'employment.isReceivingUnemploymentBenefits',
   ) as YesOrNo
-
+  // Old values
   if (!isReceivingUnemploymentBenefits) {
     isReceivingUnemploymentBenefits = getValueViaPath(
       answers,
-      'isRecivingUnemploymentBenefits',
+      'isReceivingUnemploymentBenefits',
     ) as YesOrNo
+    if (!isReceivingUnemploymentBenefits) {
+      isReceivingUnemploymentBenefits = getValueViaPath(
+        answers,
+        'isRecivingUnemploymentBenefits',
+      ) as YesOrNo
+    }
   }
 
-  const unemploymentBenefits = getValueViaPath(
+  let unemploymentBenefits = getValueViaPath(
     answers,
-    'unemploymentBenefits',
+    'employment.unemploymentBenefits',
   ) as string
+  // Old values
+  if (!unemploymentBenefits) {
+    unemploymentBenefits = getValueViaPath(
+      answers,
+      'unemploymentBenefits',
+    ) as string
+  }
 
   const isResidenceGrant = getValueViaPath(
     answers,

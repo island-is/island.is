@@ -34,7 +34,7 @@ export const Employment = ({
       editAction={() =>
         goToScreen?.(
           applicationType === PARENTAL_LEAVE
-            ? 'isSelfEmployed.benefits'
+            ? 'employment'
             : 'employerLastSixMonths',
         )
       }

@@ -130,8 +130,10 @@ describe('Parental Leave Application Template', () => {
             otherParentObj: {
               otherParentId,
             },
-            isSelfEmployed: 'no',
-            isReceivingUnemploymentBenefits: 'no',
+            employment: {
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
+            },
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -187,9 +189,11 @@ describe('Parental Leave Application Template', () => {
               chooseOtherParent: SPOUSE,
               otherParentId,
             },
-            isSelfEmployed: 'no',
+            employment: {
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
+            },
             selectedChild: '0',
-            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -257,9 +261,11 @@ describe('Parental Leave Application Template', () => {
               chooseOtherParent: SPOUSE,
               otherParentId,
             },
-            isSelfEmployed: 'yes',
+            employment: {
+              isSelfEmployed: 'yes',
+              isReceivingUnemploymentBenefits: 'no',
+            },
             selectedChild: '0',
-            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -316,8 +322,10 @@ describe('Parental Leave Application Template', () => {
                     email: 'selfemployed@test.test',
                   },
                 ],
-                isSelfEmployed: YES,
-                isReceivingUnemploymentBenefits: 'no',
+                employment: {
+                  isSelfEmployed: YES,
+                  isReceivingUnemploymentBenefits: 'no',
+                },
                 applicationType: {
                   option: PARENTAL_LEAVE,
                 },
@@ -328,11 +336,15 @@ describe('Parental Leave Application Template', () => {
           const [hasChanged, newState, newApplication] = helper.changeState({
             type: DefaultEvents.SUBMIT,
           })
+          const newApplicationOtherParentId = (
+            newApplication.answers as {
+              otherParentObj: { otherParentId: string }
+            }
+          )?.otherParentObj?.otherParentId
+
           expect(hasChanged).toBe(true)
           expect(newState).toBe('vinnumalastofnunApproval')
-          expect(newApplication.answers.otherParentObj.otherParentId).toEqual(
-            otherParentId,
-          )
+          expect(newApplicationOtherParentId).toEqual(otherParentId)
         })
       })
     })
@@ -347,8 +359,10 @@ describe('Parental Leave Application Template', () => {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
+              employment: {
+                isSelfEmployed: 'no',
+                isReceivingUnemploymentBenefits: 'no',
+              },
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -379,8 +393,10 @@ describe('Parental Leave Application Template', () => {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
+              employment: {
+                isSelfEmployed: 'no',
+                isReceivingUnemploymentBenefits: 'no',
+              },
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -409,8 +425,10 @@ describe('Parental Leave Application Template', () => {
                 usage: '0',
                 useAsMuchAsPossible: YES,
               },
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
+              employment: {
+                isSelfEmployed: 'no',
+                isReceivingUnemploymentBenefits: 'no',
+              },
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -441,9 +459,6 @@ describe('Parental Leave Application Template', () => {
                 usePersonalAllowance: YES,
                 usage: '0',
                 useAsMuchAsPossible: YES,
-              },
-              employer: {
-                isSelfEmployed: 'no',
               },
             },
           }),
@@ -480,8 +495,10 @@ describe('Parental Leave Application Template', () => {
                 privatePensionFundPercentage: '',
               },
               usePrivatePensionFund: NO,
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
+              employment: {
+                isSelfEmployed: 'no',
+                isReceivingUnemploymentBenefits: 'no',
+              },
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -520,8 +537,10 @@ describe('Parental Leave Application Template', () => {
                 privatePensionFundPercentage: '0',
               },
               useUnion: NO,
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
+              employment: {
+                isSelfEmployed: 'no',
+                isReceivingUnemploymentBenefits: 'no',
+              },
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -552,9 +571,11 @@ describe('Parental Leave Application Template', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              isSelfEmployed: 'yes',
-              isReceivingUnemploymentBenefits: 'yes',
-              unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              employment: {
+                isSelfEmployed: 'yes',
+                isReceivingUnemploymentBenefits: 'yes',
+                unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              },
               fileUpload: {
                 selfEmployedFile: [],
                 benefitsFile: [],
@@ -568,9 +589,11 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
-          isSelfEmployed: 'yes',
-          isReceivingUnemploymentBenefits: 'no',
-          unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+          employment: {
+            isSelfEmployed: 'yes',
+            isReceivingUnemploymentBenefits: 'no',
+            unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+          },
           fileUpload: {
             selfEmployedFile: [],
           },
@@ -590,9 +613,11 @@ describe('Parental Leave Application Template', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
-              unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+              employment: {
+                isSelfEmployed: 'no',
+                isReceivingUnemploymentBenefits: 'no',
+                unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+              },
               fileUpload: {
                 selfEmployedFile: [],
               },
@@ -605,9 +630,11 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
-          isSelfEmployed: 'no',
-          isReceivingUnemploymentBenefits: 'no',
-          unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+          employment: {
+            isSelfEmployed: 'no',
+            isReceivingUnemploymentBenefits: 'no',
+            unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+          },
           fileUpload: {},
           applicationType: {
             option: PARENTAL_LEAVE,
@@ -628,9 +655,11 @@ describe('Parental Leave Application Template', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
-              unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              employment: {
+                isSelfEmployed: 'no',
+                isReceivingUnemploymentBenefits: 'no',
+                unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              },
               fileUpload: {
                 benefitsFile: [],
               },
@@ -643,9 +672,11 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
-          isSelfEmployed: 'no',
-          isReceivingUnemploymentBenefits: 'no',
-          unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+          employment: {
+            isSelfEmployed: 'no',
+            isReceivingUnemploymentBenefits: 'no',
+            unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+          },
           fileUpload: {},
           applicationType: {
             option: PARENTAL_LEAVE,
@@ -666,9 +697,11 @@ describe('Parental Leave Application Template', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'yes',
-              unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              employment: {
+                isSelfEmployed: 'no',
+                isReceivingUnemploymentBenefits: 'yes',
+                unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              },
               fileUpload: {
                 benefitsFile: [],
               },
@@ -681,9 +714,11 @@ describe('Parental Leave Application Template', () => {
         )
 
         const answer = {
-          isSelfEmployed: 'no',
-          isReceivingUnemploymentBenefits: 'yes',
-          unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+          employment: {
+            isSelfEmployed: 'no',
+            isReceivingUnemploymentBenefits: 'yes',
+            unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+          },
           fileUpload: {},
           applicationType: {
             option: PARENTAL_LEAVE,
@@ -886,8 +921,10 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            isSelfEmployed: 'no',
-            isReceivingUnemploymentBenefits: 'no',
+            employment: {
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
+            },
             applicationType: {
               option: PARENTAL_LEAVE,
             },

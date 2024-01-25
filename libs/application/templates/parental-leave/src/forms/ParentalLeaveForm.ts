@@ -589,26 +589,26 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'employmentSubSection',
+          title: parentalLeaveFormMessages.employer.subSection,
           condition: (answers) => {
             const { applicationType } = getApplicationAnswers(answers)
             return applicationType === PARENTAL_LEAVE
           },
-          id: 'selfEmployed',
-          title: parentalLeaveFormMessages.employer.subSection,
           children: [
             buildMultiField({
-              id: 'isSelfEmployed.benefits',
+              id: 'employment',
               title: '',
               children: [
                 buildDescriptionField({
-                  id: 'isSelfEmployed.description',
+                  id: 'employment.isSelfEmployed.description',
                   title: parentalLeaveFormMessages.selfEmployed.title,
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,
                   titleVariant: 'h2',
                 }),
                 buildRadioField({
-                  id: 'isSelfEmployed',
+                  id: 'employment.isSelfEmployed',
                   title: '',
                   width: 'half',
                   required: true,
@@ -625,7 +625,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   ],
                 }),
                 buildDescriptionField({
-                  id: 'isReceivingUnemploymentBenefits.description',
+                  id: 'employment.isReceivingUnemploymentBenefits.description',
                   title:
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsTitle,
@@ -633,28 +633,24 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsDescription,
                   titleVariant: 'h2',
-                  condition: (answers) =>
-                    (
-                      answers as {
-                        isSelfEmployed: string
-                      }
-                    )?.isSelfEmployed !== YES,
+                  condition: (answers) => {
+                    const { isSelfEmployed } = getApplicationAnswers(answers)
+                    return isSelfEmployed !== YES
+                  },
                 }),
                 buildAlertMessageField({
-                  id: 'isReceivingUnemploymentBenefits.alertMessage',
+                  id: 'employment.isReceivingUnemploymentBenefits.alertMessage',
                   title: parentalLeaveFormMessages.employer.alertTitle,
                   message: parentalLeaveFormMessages.employer.alertDescription,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
-                  condition: (answers) =>
-                    (
-                      answers as {
-                        isSelfEmployed: string
-                      }
-                    )?.isSelfEmployed !== YES,
+                  condition: (answers) => {
+                    const { isSelfEmployed } = getApplicationAnswers(answers)
+                    return isSelfEmployed !== YES
+                  },
                 }),
                 buildRadioField({
-                  id: 'isReceivingUnemploymentBenefits',
+                  id: 'employment.isReceivingUnemploymentBenefits',
                   title: '',
                   width: 'half',
                   required: true,
@@ -669,15 +665,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       value: NO,
                     },
                   ],
-                  condition: (answers) =>
-                    (
-                      answers as {
-                        isSelfEmployed: string
-                      }
-                    )?.isSelfEmployed !== YES,
+                  condition: (answers) => {
+                    const { isSelfEmployed } = getApplicationAnswers(answers)
+                    return isSelfEmployed !== YES
+                  },
                 }),
                 buildSelectField({
-                  id: 'unemploymentBenefits',
+                  id: 'employment.unemploymentBenefits',
                   title:
                     parentalLeaveFormMessages.employer.unemploymentBenefits,
                   options: [
@@ -698,17 +692,15 @@ export const ParentalLeaveForm: Form = buildForm({
                       value: UnEmployedBenefitTypes.other,
                     },
                   ],
-                  condition: (answers) =>
-                    (
-                      answers as {
-                        isSelfEmployed: string
-                      }
-                    )?.isSelfEmployed !== YES &&
-                    (
-                      answers as {
-                        isReceivingUnemploymentBenefits: string
-                      }
-                    )?.isReceivingUnemploymentBenefits === YES,
+                  condition: (answers) => {
+                    const { isSelfEmployed, isReceivingUnemploymentBenefits } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      isSelfEmployed !== YES &&
+                      isReceivingUnemploymentBenefits === YES
+                    )
+                  },
                 }),
               ],
             }),
@@ -894,17 +886,7 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               condition: (answers) => {
-                const isSelfEmployed =
-                  (
-                    answers as {
-                      employer: {
-                        isSelfEmployed: string
-                      }
-                    }
-                  )?.employer?.isSelfEmployed === YES
-                const isNewSelfEmployed =
-                  (answers as { isSelfEmployed: string })?.isSelfEmployed ===
-                  YES
+                const { isSelfEmployed } = getApplicationAnswers(answers)
                 const hasOldSelfEmployedFile =
                   (
                     answers as {
@@ -916,10 +898,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   )?.employer?.selfEmployed?.file?.length > 0
 
-                return (
-                  (isSelfEmployed || isNewSelfEmployed) &&
-                  !hasOldSelfEmployedFile
-                )
+                return isSelfEmployed === YES && !hasOldSelfEmployedFile
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
@@ -961,30 +940,18 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.benefitDescription,
               condition: (answers) => {
-                const isReceivingUnemploymentBenefits =
-                  (
-                    answers as {
-                      isReceivingUnemploymentBenefits: YesOrNo
-                    }
-                  )?.isReceivingUnemploymentBenefits === YES
-                const unemploymentBenefitsFromUnion =
-                  (
-                    answers as {
-                      unemploymentBenefits: string
-                    }
-                  )?.unemploymentBenefits === UnEmployedBenefitTypes.union
-                const unemploymentBenefitsFromXjúkratryggingar =
-                  (
-                    answers as {
-                      unemploymentBenefits: string
-                    }
-                  )?.unemploymentBenefits ===
-                  UnEmployedBenefitTypes.healthInsurance
+                const {
+                  isReceivingUnemploymentBenefits,
+                  isSelfEmployed,
+                  unemploymentBenefits,
+                } = getApplicationAnswers(answers)
 
                 return (
-                  isReceivingUnemploymentBenefits &&
-                  (unemploymentBenefitsFromUnion ||
-                    unemploymentBenefitsFromXjúkratryggingar)
+                  isSelfEmployed === NO &&
+                  isReceivingUnemploymentBenefits === YES &&
+                  (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+                    unemploymentBenefits ===
+                      UnEmployedBenefitTypes.healthInsurance)
                 )
               },
               maxSize: FILE_SIZE_LIMIT,
