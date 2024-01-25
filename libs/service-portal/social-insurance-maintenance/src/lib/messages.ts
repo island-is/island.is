@@ -5,6 +5,10 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:maintenance',
     defaultMessage: 'Framfærsla',
   },
+  maintenanceFooter: {
+    id: 'sp.social-insurance-maintenance:maintenance-footer',
+    defaultMessage: ' ',
+  },
   paymentPlan: {
     id: 'sp.social-insurance-maintenance:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
