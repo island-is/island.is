@@ -66,6 +66,9 @@ jest.mock('@aws-sdk/client-ssm', () => ({
 }))
 
 describe('infra CLI', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
   describe('render-secrets command', () => {
     const sut = service('my-service').env({
       A: 'A',
@@ -150,21 +153,44 @@ describe('infra CLI', () => {
   })
 
   describe('render-local-env', () => {
+    let myService: ServiceBuilder<'my-service'>
+    beforeEach(async () => {
+      const myServiceSetup = () =>
+        service('my-service')
+          .image('my-service')
+          .namespace('my-service')
+          .initContainer({
+            containers: [
+              { command: 'npx', args: ['sequelize-cli', 'db:migrate'] },
+            ],
+            postgres: {},
+          })
+          .env({
+            IDENTITY_SERVER_ISSUER_URL: {
+              dev: 'https://identity-server.dev01.devland.is',
+              staging: 'https://identity-server.staging01.devland.is',
+              prod: 'https://innskra.island.is',
+            },
+          })
+          .secrets({
+            A: '/k8s/my-service/A',
+          })
+          .liveness('/liveness')
+          .readiness('/readiness')
+          .grantNamespaces('islandis', 'application-system')
+      myService = myServiceSetup()
+    })
+
     it('should map all URIs to localhost', async () => {
       // Arrange
       const argv = {
-        service: ['my-service'],
+        services: ['my-service'],
         json: true,
         'no-update-secrets': true,
       }
 
       // Act
-      const result = await renderLocalServices(argv.service, {
-        dryRun: true,
-        json: true,
-        print: true,
-        noUpdateSecrets: true,
-      })
+      const result = await renderLocalServices(argv)
 
       // Assert
       expect(result).toMatchSnapshot()

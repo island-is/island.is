@@ -57,13 +57,14 @@ const cli = yargs(process.argv.slice(2))
     'Render environment variables needed by service.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
       return yargs
-        .option('service', { demandOption: true, array: true })
+        .option('service', { demandOption: true, array: true, type: 'string' })
         .option('json', { type: 'boolean', default: false })
         .option('dry', { type: 'boolean', default: true })
         .option('no-update-secrets', { type: 'boolean', default: false })
     },
     async (argv) =>
-      await renderLocalServices(argv.service as string[], {
+      await renderLocalServices({
+        services: argv.service,
         dryRun: argv.dry,
         json: argv.json,
         print: true,

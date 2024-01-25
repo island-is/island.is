@@ -6,10 +6,19 @@ import { logger, runCommand } from '../common'
 import { ChildProcess } from 'child_process'
 import { LocalrunValueFile } from '../dsl/types/output-types'
 
-export async function renderLocalServices(
-  services: string[],
-  { print = false, json = false, dryRun = false, noUpdateSecrets = false } = {},
-): Promise<LocalrunValueFile> {
+export async function renderLocalServices({
+  services,
+  print = false,
+  json = false,
+  dryRun = false,
+  noUpdateSecrets = false,
+}: {
+  services: string[]
+  print?: boolean
+  json?: boolean
+  dryRun?: boolean
+  noUpdateSecrets?: boolean
+}): Promise<LocalrunValueFile> {
   logger.debug('renderLocalServices', {
     services,
     print,
@@ -70,7 +79,8 @@ export async function runLocalServices(
   // Add the service itself to the list of dependencies
   dependencies.push(...services)
 
-  const renderedLocalServices = await renderLocalServices(services, {
+  const renderedLocalServices = await renderLocalServices({
+    services,
     print,
     json,
     dryRun,
