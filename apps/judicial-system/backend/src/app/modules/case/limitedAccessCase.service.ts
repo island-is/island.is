@@ -54,7 +54,6 @@ export const attributes: (keyof Case)[] = [
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
-  'creatingProsecutorId',
   'prosecutorId',
   'courtCaseNumber',
   'courtDate',
@@ -90,6 +89,8 @@ export const attributes: (keyof Case)[] = [
   'appealRulingDecision',
   'appealReceivedByCourtDate',
   'appealRulingModifiedHistory',
+  'requestAppealRulingNotToBePublished',
+  'prosecutorsOfficeId',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -102,12 +103,8 @@ export interface LimitedAccessUpdateCase
   > {}
 
 export const include: Includeable[] = [
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
-  {
-    model: User,
-    as: 'creatingProsecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
   {
     model: User,
     as: 'prosecutor',
@@ -165,6 +162,7 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
         CaseFileCategory.COURT_RECORD,
         CaseFileCategory.COVER_LETTER,

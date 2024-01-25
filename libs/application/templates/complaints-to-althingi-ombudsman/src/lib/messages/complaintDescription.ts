@@ -9,8 +9,10 @@ export const complaintDescription = {
     },
     decisionInfo: {
       id: 'ctao.application:complaintDescription.decisionInfo',
-      defaultMessage:
-        'Í kvörtun á að lýsa þeirri úrlausn eða háttsemi sem er tilefni kvörtunar. Hér skalt þú reyna að lýsa því hvað í meðferð stjórnvalda eða annarra á máli þínu þú ert ósátt/-ur við. Lýsing kvörtunar þarf ekki að vera flókin, t.d. er ekki nauðsynlegt að vísa til lagareglna.',
+      defaultMessage: `Í kvörtun á að lýsa þeirri úrlausn eða háttsemi sem er tilefni kvörtunar. 
+        Hér skalt þú reyna að lýsa því hvað í meðferð stjórnvalda eða annarra á máli þínu þú ert ósátt/-ur við. 
+        Lýsing kvörtunar þarf ekki að vera flókin, t.d. er ekki nauðsynlegt að vísa til lagareglna. 
+        Ef þú vilt láta nánari rökstuðning fylgja á sérstöku skjali geturðu sent það sem viðhengi í lok kvörtunarferlisins.`,
       description: 'Page description when complaint type is decision',
     },
     alertTitle: {
@@ -35,6 +37,11 @@ export const complaintDescription = {
       id: 'ctao.application:complaintDescription.decisionPlaceholder',
       defaultMessage: 'Veldu dagsetningu',
       description: 'Decision date placeholder',
+    },
+    proceedingsDateTitle: {
+      id: 'ctao.application:complaintDescription.proceedingsTitle',
+      defaultMessage: 'Hvenær átti athöfn sér stað?',
+      description: 'Proceeding event date',
     },
     complaintDescriptionTitle: {
       id: 'ctao.application:complaintDescription.descriptionTitle',

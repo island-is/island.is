@@ -1,14 +1,42 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, TaxLevelOptions, Employment } from './constants'
-import { errorMessages, validatorErrorMessages } from './messages'
+import {
+  ApplicationType,
+  Employment,
+  RatioType,
+  employeeRatio,
+} from './constants'
 import {
   formatBankInfo,
   validIBAN,
   validSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { NO, YES } from '@island.is/application/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  BankAccountType,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { validatorErrorMessages } from './messages'
+import { filterValidEmployers } from './oldAgePensionUtils'
+import { Employer } from '../types'
+
+const getTotalRatio = (employers: Employer[]) => {
+  return employers.reduce((accumulator, currentValue) => {
+    if (
+      currentValue.ratioType === RatioType.YEARLY &&
+      currentValue?.ratioYearly
+    ) {
+      return accumulator + +currentValue?.ratioYearly
+    } else if (
+      currentValue.ratioType === RatioType.MONTHLY &&
+      currentValue?.ratioMonthlyAvg
+    ) {
+      return accumulator + +currentValue.ratioMonthlyAvg
+    }
+    return accumulator
+  }, 0)
+}
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -53,11 +81,25 @@ export const dataSchema = z.object({
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
   }),
+  fileUpload: z.object({
+    fishermen: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requireAttachment,
+      }),
+    earlyRetirement: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requireAttachment,
+      }),
+  }),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
       .array(FileSchema)
       .refine((a) => a.length !== 0, {
-        params: validatorErrorMessages.requireAttachment,
+        params: errorMessages.requireAttachment,
       }),
   }),
   employment: z
@@ -73,7 +115,7 @@ export const dataSchema = z.object({
           ? selfEmployedAttachment.length !== 0
           : true,
       {
-        params: validatorErrorMessages.requireAttachment,
+        params: errorMessages.requireAttachment,
         path: ['selfEmployedAttachment'],
       },
     ),
@@ -142,6 +184,166 @@ export const dataSchema = z.object({
       ({ currency, bankAccountType }) =>
         bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
       { path: ['currency'] },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES
+          ? !(
+              Number(personalAllowanceUsage) < 1 ||
+              Number(personalAllowanceUsage) > 100
+            )
+          : true,
+      {
+        path: ['personalAllowanceUsage'],
+        params: errorMessages.personalAllowance,
+      },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES ? !!personalAllowanceUsage : true,
+      { path: ['personalAllowanceUsage'] },
+    ),
+  employers: z
+    .array(
+      z
+        .object({
+          email: z
+            .string()
+            .email()
+            .refine((x) => x.trim().length > 0, {
+              params: validatorErrorMessages.employerEmailMissing,
+            }),
+          ratioType: z
+            .enum([RatioType.MONTHLY, RatioType.YEARLY])
+            .optional()
+            .refine((x) => !!x, {
+              params: validatorErrorMessages.employerRatioTypeMissing,
+            }),
+          phoneNumber: z
+            .string()
+            .refine((v) => validateOptionalPhoneNumber(v), {
+              params: errorMessages.phoneNumber,
+            }),
+          ratioYearly: z.string().optional(),
+          ratioMonthlyAvg: z.string().optional(),
+        })
+        .refine(
+          ({ ratioType, ratioYearly }) =>
+            ratioType === RatioType.YEARLY ? !!ratioYearly : true,
+          {
+            path: ['ratioYearly'],
+            params: validatorErrorMessages.employerRatioMissing,
+          },
+        )
+        .refine(
+          ({ ratioType, ratioYearly }) =>
+            ratioType === RatioType.YEARLY && !!ratioYearly
+              ? Number(ratioYearly) <= employeeRatio
+              : true,
+          {
+            path: ['ratioYearly'],
+            params: validatorErrorMessages.employersRatioMoreThan50,
+          },
+        )
+        .refine(
+          ({ ratioType, ratioYearly }) =>
+            ratioType === RatioType.YEARLY && !!ratioYearly
+              ? Number(ratioYearly) > 0
+              : true,
+          {
+            path: ['ratioYearly'],
+            params: validatorErrorMessages.employersRatioLessThan0,
+          },
+        )
+        .refine(
+          ({ ratioType, ratioMonthlyAvg }) =>
+            ratioType === RatioType.MONTHLY ? !!ratioMonthlyAvg : true,
+          {
+            path: ['ratioMonthlyAvg'],
+            params: validatorErrorMessages.employerRatioMissing,
+          },
+        )
+        .refine(
+          ({ ratioType, ratioMonthlyAvg }) =>
+            ratioType === RatioType.MONTHLY && !!ratioMonthlyAvg
+              ? Number(ratioMonthlyAvg) <= employeeRatio
+              : true,
+          {
+            path: ['ratioMonthlyAvg'],
+            params: validatorErrorMessages.employersRatioMoreThan50,
+          },
+        )
+        .refine(
+          ({ ratioType, ratioMonthlyAvg }) =>
+            ratioType === RatioType.MONTHLY && !!ratioMonthlyAvg
+              ? Number(ratioMonthlyAvg) > 0
+              : true,
+          {
+            path: ['ratioMonthlyAvg'],
+            params: validatorErrorMessages.employersRatioLessThan0,
+          },
+        ),
+    )
+    .refine(
+      (e) => {
+        const index = e.length - 1
+        if (index < 0) {
+          return true
+        }
+        const employer = e[index]
+
+        return e.findIndex((item) => item.email === employer.email) === index
+      },
+      (e) => ({
+        params: validatorErrorMessages.employerEmailDuplicate,
+        path: [`${e.length - 1}`, 'email'],
+      }),
+    )
+    .refine(
+      (e) => {
+        const index = e.length - 1
+        if (index < 0) {
+          return true
+        }
+        const employer = e[index]
+        const otherEmployers = e.slice(0, index)
+        const validOtherEmployers = filterValidEmployers(otherEmployers)
+        const totalRatio = getTotalRatio(validOtherEmployers)
+
+        return employer.ratioType === RatioType.YEARLY && !!employer.ratioYearly
+          ? Number(employer.ratioYearly) > employeeRatio
+            ? true
+            : Number(employer.ratioYearly) + totalRatio <= employeeRatio
+          : true
+      },
+      (e) => ({
+        params: validatorErrorMessages.totalEmployersRatioMoreThan50,
+        path: [`${e.length - 1}`, 'ratioYearly'],
+      }),
+    )
+    .refine(
+      (e) => {
+        const index = e.length - 1
+        if (index < 0) {
+          return true
+        }
+        const employer = e[index]
+        const otherEmployers = e.slice(0, index)
+        const validOtherEmployers = filterValidEmployers(otherEmployers)
+        const totalRatio = getTotalRatio(validOtherEmployers)
+
+        return employer.ratioType === RatioType.MONTHLY &&
+          !!employer.ratioMonthlyAvg
+          ? Number(employer.ratioMonthlyAvg) > employeeRatio
+            ? true
+            : Number(employer.ratioMonthlyAvg) + totalRatio <= employeeRatio
+          : true
+      },
+      (e) => ({
+        params: validatorErrorMessages.totalEmployersRatioMoreThan50,
+        path: [`${e.length - 1}`, 'ratioMonthlyAvg'],
+      }),
     ),
 })
+
 export type SchemaFormValues = z.infer<typeof dataSchema>

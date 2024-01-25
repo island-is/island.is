@@ -27,7 +27,6 @@ import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { GetAnchorPageInput } from './dto/getAnchorPage.input'
 import { GetAnchorPagesInput } from './dto/getAnchorPages.input'
-import { GetAnchorPagesInCategoryInput } from './dto/getAnchorPagesInCategory.input'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
@@ -102,6 +101,12 @@ import { Manual } from './models/manual.model'
 import { GetSingleManualInput } from './dto/getSingleManual.input'
 import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
 import { EntryTitle } from './models/entryTitle.model'
+import { LifeEventPage } from './models/lifeEventPage.model'
+import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
+import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
+import { CategoryPage } from './models/categoryPage.model'
+import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -201,11 +206,12 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => Organization, { nullable: true })
-  getOrganization(
+  async getOrganization(
     @Args('input') input: GetOrganizationInput,
   ): Promise<Organization | null> {
+    const slug = input?.slug ?? ''
     return this.cmsContentfulService.getOrganization(
-      input?.slug ?? '',
+      slug,
       input?.lang ?? 'is-IS',
     )
   }
@@ -223,7 +229,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => OrganizationPage, { nullable: true })
-  getOrganizationPage(
+  async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
@@ -234,7 +240,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => OrganizationSubpage, { nullable: true })
-  getOrganizationSubpage(
+  async getOrganizationSubpage(
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
     return this.cmsElasticsearchService.getSingleOrganizationSubpage(
@@ -245,7 +251,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => ServiceWebPage, { nullable: true })
-  getServiceWebPage(
+  async getServiceWebPage(
     @Args('input') input: GetServiceWebPageInput,
   ): Promise<ServiceWebPage | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
@@ -340,11 +346,27 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => [AnchorPage])
-  getAnchorPagesInCategory(
-    @Args('input') input: GetAnchorPagesInCategoryInput,
-  ): Promise<AnchorPage[]> {
-    return this.cmsContentfulService.getAnchorPagesInCategory(
+  @Query(() => LifeEventPage, { nullable: true })
+  getLifeEventPage(
+    @Args('input') input: GetLifeEventPageInput,
+  ): Promise<LifeEventPage | null> {
+    return this.cmsContentfulService.getLifeEventPage(input.slug, input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [LifeEventPage])
+  getLifeEvents(
+    @Args('input') input: GetLifeEventsInput,
+  ): Promise<LifeEventPage[]> {
+    return this.cmsContentfulService.getLifeEvents(input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [LifeEventPage])
+  getLifeEventsInCategory(
+    @Args('input') input: GetLifeEventsInCategoryInput,
+  ): Promise<LifeEventPage[]> {
+    return this.cmsContentfulService.getLifeEventsInCategory(
       input.lang,
       input.slug,
     )
@@ -402,7 +424,9 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => [Article])
-  getArticles(@Args('input') input: GetArticlesInput): Promise<Article[]> {
+  async getArticles(
+    @Args('input') input: GetArticlesInput,
+  ): Promise<Article[]> {
     return this.cmsElasticsearchService.getArticles(
       getElasticsearchIndex(input.lang),
       input,
@@ -433,7 +457,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => EventList)
-  getEvents(@Args('input') input: GetEventsInput): Promise<EventList> {
+  async getEvents(@Args('input') input: GetEventsInput): Promise<EventList> {
     return this.cmsElasticsearchService.getEvents(
       getElasticsearchIndex(input.lang),
       input,
@@ -442,7 +466,9 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => [String])
-  getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
+  async getNewsDates(
+    @Args('input') input: GetNewsDatesInput,
+  ): Promise<string[]> {
     return this.cmsElasticsearchService.getNewsDates(
       getElasticsearchIndex(input.lang),
       input,
@@ -451,7 +477,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => NewsList)
-  getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
+  async getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
     return this.cmsElasticsearchService.getNews(
       getElasticsearchIndex(input.lang),
       input,
@@ -499,7 +525,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => [SupportQNA])
-  getFeaturedSupportQNAs(
+  async getFeaturedSupportQNAs(
     @Args('input') input: GetFeaturedSupportQNAsInput,
   ): Promise<SupportQNA[]> {
     return this.cmsElasticsearchService.getFeaturedSupportQNAs(
@@ -542,7 +568,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => [SupportCategory])
-  getSupportCategoriesInOrganization(
+  async getSupportCategoriesInOrganization(
     @Args('input') input: GetSupportCategoriesInOrganizationInput,
   ): Promise<SupportCategory[]> {
     return this.cmsContentfulService.getSupportCategoriesInOrganization(input)
@@ -550,7 +576,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => EnhancedAssetSearchResult)
-  getPublishedMaterial(
+  async getPublishedMaterial(
     @Args('input') input: GetPublishedMaterialInput,
   ): Promise<EnhancedAssetSearchResult> {
     return this.cmsElasticsearchService.getPublishedMaterial(
@@ -583,6 +609,17 @@ export class CmsResolver {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
       getElasticsearchIndex(input.lang),
       { type: 'webManual', slug: input.slug },
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [CategoryPage], { nullable: true })
+  async getCategoryPages(
+    @Args('input') input: GetCategoryPagesInput,
+  ): Promise<typeof CategoryPage[] | null> {
+    return this.cmsElasticsearchService.getCategoryPages(
+      getElasticsearchIndex(input.lang),
+      input,
     )
   }
 
@@ -630,6 +667,7 @@ export class LatestEventsSliceResolver {
       getElasticsearchIndex(input.lang),
       input,
     )
+
     return eventsList.items
   }
 }

@@ -4,15 +4,10 @@ import cn from 'classnames'
 import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
-import router from 'next/router'
+import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
-} from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
@@ -27,9 +22,11 @@ import {
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useCaseList,
+  useSortCases,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
 
@@ -46,12 +43,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
   const { cases, showingCompletedCases, loading } = props
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
-
-  const handleRowClick = (id: string, type: CaseType) => {
-    isIndictmentCase(type)
-      ? router.push(`${DEFENDER_INDICTMENT_ROUTE}/${id}`)
-      : router.push(`${DEFENDER_ROUTE}/${id}`)
-  }
+  const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =
+    useCaseList()
 
   return (
     <Box marginBottom={7}>
@@ -94,7 +87,6 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   isActive={isActiveColumn('createdAt')}
                 />
               </th>
-
               <th className={cn(styles.th, styles.largeColumn)}>
                 <Text as="span" fontWeight="regular">
                   {formatMessage(tables.state)}
@@ -113,15 +105,15 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   </Text>
                 </th>
               )}
+              <th></th>
             </tr>
           </thead>
-
           <tbody>
             {sortedData?.map((c: CaseListEntry) => (
               <tr
                 className={cn(styles.tableRowContainer)}
                 key={c.id}
-                onClick={() => handleRowClick(c.id, c.type)}
+                onClick={() => handleOpenCase(c.id)}
               >
                 <td className={styles.td}>
                   <CourtCaseNumber
@@ -144,7 +136,10 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   <CreatedDate created={c.created} />
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Box marginRight={1} marginBottom={1}>
+                  <Box
+                    marginRight={c.appealState ? 1 : 0}
+                    marginBottom={c.appealState ? 1 : 0}
+                  >
                     <TagCaseState
                       caseState={c.state}
                       caseType={c.type}
@@ -190,6 +185,13 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                     )}
                   </td>
                 )}
+                <td>
+                  <AnimatePresence>
+                    {isOpeningCaseId === c.id && showLoading && (
+                      <LoadingIndicator />
+                    )}
+                  </AnimatePresence>
+                </td>
               </tr>
             ))}
           </tbody>

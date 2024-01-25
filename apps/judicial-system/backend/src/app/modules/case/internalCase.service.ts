@@ -17,7 +17,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { caseTypes } from '@island.is/judicial-system/formatters'
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -25,8 +25,9 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  completedCaseStates,
+  isCompletedCase,
   isIndictmentCase,
+  isProsecutionUser,
   isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -47,9 +48,8 @@ import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { Institution } from '../institution'
 import { PoliceService } from '../police'
-import { User, UserService } from '../user'
+import { UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -62,7 +62,6 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'description',
   'demands',
   'lawsBroken',
-  'legalBasis',
   'requestedOtherRestrictions',
   'caseFacts',
   'legalArguments',
@@ -197,7 +196,7 @@ export class InternalCaseService {
 
       return true
     } catch (error) {
-      this.logger.error(
+      this.logger.warn(
         `Failed to upload signed ruling pdf to court for case ${theCase.id}`,
         { error },
       )
@@ -232,7 +231,7 @@ export class InternalCaseService {
       return true
     } catch (error) {
       // Log and ignore this error. The court record can be uploaded manually.
-      this.logger.error(
+      this.logger.warn(
         `Failed to upload court record pdf to court for case ${theCase.id}`,
         { error },
       )
@@ -248,7 +247,7 @@ export class InternalCaseService {
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.request, {
-          caseType: caseTypes[theCase.type],
+          caseType: formatCaseType(theCase.type),
           date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
         })
 
@@ -269,7 +268,7 @@ export class InternalCaseService {
       })
       .catch((error) => {
         // Tolerate failure, but log error
-        this.logger.error(
+        this.logger.warn(
           `Failed to upload request pdf to court for case ${theCase.id}`,
           { error },
         )
@@ -282,7 +281,7 @@ export class InternalCaseService {
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
-    if (completedCaseStates.includes(theCase.state)) {
+    if (isCompletedCase(theCase.state)) {
       try {
         return await this.awsS3Service.getObject(
           `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
@@ -344,9 +343,9 @@ export class InternalCaseService {
 
     await this.awsS3Service
       .putObject(
-        `indictments/${
-          completedCaseStates.includes(theCase.state) ? 'completed/' : ''
-        }${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        `indictments/${isCompletedCase(theCase.state) ? 'completed/' : ''}${
+          theCase.id
+        }/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString('binary'),
       )
       .catch((reason) => {
@@ -396,7 +395,7 @@ export class InternalCaseService {
       })
       .catch((error) => {
         // Tolerate failure, but log error
-        this.logger.error(
+        this.logger.warn(
           `Failed to upload case files record pdf to court for case ${theCase.id}`,
           { error },
         )
@@ -426,35 +425,26 @@ export class InternalCaseService {
   }
 
   async create(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    let prosecutorId: string | undefined
-    let courtId: string | undefined
+    const creator = await this.userService
+      .findByNationalId(caseToCreate.prosecutorNationalId)
+      .catch(() => undefined)
 
-    if (caseToCreate.prosecutorNationalId) {
-      const prosecutor = await this.userService
-        .findByNationalId(caseToCreate.prosecutorNationalId)
-        .catch(() => undefined) // Tolerate failure
-
-      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `User ${
-            prosecutor?.id ?? 'unknown'
-          } is not registered as a prosecutor`,
-        )
-      } else {
-        prosecutorId = prosecutor.id
-        courtId = prosecutor.institution?.defaultCourtId
-      }
+    if (!creator) {
+      throw new BadRequestException('Creating user not found')
     }
 
-    // If case is marked with heightened security, there needs to be a valid prosecutor
-    // assigned to it so that it doesn't get lost in the system
+    if (!isProsecutionUser(creator)) {
+      throw new BadRequestException(
+        'Creating user is not registered as a prosecution user',
+      )
+    }
+
     if (
-      caseToCreate.isHeightenedSecurityLevel &&
-      (!caseToCreate.prosecutorNationalId || !prosecutorId)
+      creator.role === UserRole.PROSECUTOR_REPRESENTATIVE &&
+      !isIndictmentCase(caseToCreate.type)
     ) {
       throw new BadRequestException(
-        'A valid prosecutor is required for heightened security cases',
+        'Creating user is registered as a representative and can only create indictments',
       )
     }
 
@@ -467,9 +457,11 @@ export class InternalCaseService {
               ? CaseState.DRAFT
               : undefined,
             origin: CaseOrigin.LOKE,
-            creatingProsecutorId: prosecutorId,
-            prosecutorId,
-            courtId,
+            creatingProsecutorId: creator.id,
+            prosecutorId:
+              creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
+            courtId: creator.institution?.defaultCourtId,
+            prosecutorsOfficeId: creator.institution?.id,
           },
           { transaction },
         )
@@ -489,19 +481,6 @@ export class InternalCaseService {
         .then(
           (defendant) =>
             this.caseModel.findByPk(defendant.caseId, {
-              include: [
-                { model: Institution, as: 'court' },
-                {
-                  model: User,
-                  as: 'creatingProsecutor',
-                  include: [{ model: Institution, as: 'institution' }],
-                },
-                {
-                  model: User,
-                  as: 'prosecutor',
-                  include: [{ model: Institution, as: 'institution' }],
-                },
-              ],
               transaction,
             }) as Promise<Case>,
         )
@@ -594,6 +573,15 @@ export class InternalCaseService {
             this.config.archiveEncryptionKey,
             { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
           ).toString(),
+          // To decrypt:
+          // JSON.parse(
+          //   Base64.fromBase64(
+          //     CryptoJS.AES.decrypt(
+          //       archive,
+          //       this.config.archiveEncryptionKey,
+          //     ).toString(CryptoJS.enc.Base64),
+          //   ),
+          // )
         },
         { transaction },
       )
@@ -620,7 +608,7 @@ export class InternalCaseService {
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
         theCase.prosecutor?.nationalId ?? '',
-        theCase.creatingProsecutor?.institution?.nationalId ?? '',
+        theCase.prosecutorsOffice?.nationalId ?? '',
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {

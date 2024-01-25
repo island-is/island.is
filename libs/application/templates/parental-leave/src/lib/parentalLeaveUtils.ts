@@ -397,10 +397,7 @@ export const getSpouse = (
   return null
 }
 
-export const getOtherParentOptions = (
-  application: Application,
-  formatMessage: FormatMessage,
-) => {
+export const getOtherParentOptions = (application: Application) => {
   const options: Option[] = [
     {
       value: NO,
@@ -410,9 +407,7 @@ export const getOtherParentOptions = (
     {
       value: SINGLE,
       label: parentalLeaveFormMessages.shared.singleParentOption,
-      subLabel: formatMessage(
-        parentalLeaveFormMessages.shared.singleParentDescription,
-      ),
+      subLabel: parentalLeaveFormMessages.shared.singleParentDescription,
     },
     {
       value: MANUAL,
@@ -439,15 +434,14 @@ export const getOtherParentOptions = (
   return options
 }
 
-export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
+export const getApplicationTypeOptions = () => {
   const options: Option[] = [
     {
       value: PARENTAL_LEAVE,
       dataTestId: 'parental-leave',
       label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle,
-      subLabel: formatMessage(
+      subLabel:
         parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle,
-      ),
     },
     {
       value: PARENTAL_GRANT,
@@ -455,20 +449,18 @@ export const getApplicationTypeOptions = (formatMessage: FormatMessage) => {
       label:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantUnemployedTitle,
-      subLabel: formatMessage(
+      subLabel:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantUnemployedSubTitle,
-      ),
     },
     {
       value: PARENTAL_GRANT_STUDENTS,
       dataTestId: 'parental-grant-students',
       label:
         parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
-      subLabel: formatMessage(
+      subLabel:
         parentalLeaveFormMessages.shared
           .applicationParentalGrantStudentSubTitle,
-      ),
     },
   ]
   return options
@@ -1348,10 +1340,11 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       const start = parseISO(period.startDate)
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
+      const periodLength = calculatePeriodLength(start, end)
 
       const calculatedLength = period.daysToUse
         ? Number(period.daysToUse)
-        : calculatePeriodLength(start, end, percentage)
+        : Math.round(periodLength * percentage)
 
       return total + calculatedLength
     }, 0),

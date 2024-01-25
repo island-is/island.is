@@ -15,9 +15,8 @@ import {
 import * as styles from './Layout.css'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader, ServicePortalPaths } from '@island.is/service-portal/core'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
-import { ServicePortalPaths } from '../../lib/paths'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -43,13 +42,23 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
+  const [activeChild, setActiveChild] = useState<
+    PortalNavigationItem | undefined
+  >()
 
   useEffect(() => {
-    setNavItems(
-      activeParent?.children?.filter((item) => !item.navHide) || undefined,
-    )
+    const visibleNavItems =
+      activeParent?.children?.filter((item) => !item.navHide) || undefined
+    setNavItems(visibleNavItems)
+
+    const activeVisibleChild = visibleNavItems?.filter(
+      (item) => item.active,
+    )?.[0]
+    setActiveChild(activeVisibleChild)
   }, [activeParent?.children])
 
+  const activeDescription =
+    activeChild?.description || activeParent?.description
   return (
     <Box
       as="main"
@@ -106,10 +115,13 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                     <IntroHeader
                       title={activeParent?.name || ''}
                       intro={activeParent?.heading}
-                      serviceProviderSlug={activeParent?.serviceProvider}
+                      serviceProviderSlug={
+                        activeChild?.serviceProvider ??
+                        activeParent?.serviceProvider
+                      }
                       serviceProviderTooltip={
-                        activeParent?.description
-                          ? formatMessage(activeParent.description)
+                        activeDescription
+                          ? formatMessage(activeDescription)
                           : undefined
                       }
                       backgroundColor="white"

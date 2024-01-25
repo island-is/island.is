@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+
 import {
   Box,
   GridContainer,
@@ -7,11 +7,13 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+
 import * as styles from './LandskjorstjornHeader.css'
 
 const getDefaultStyle = () => {
@@ -25,10 +27,12 @@ const getDefaultStyle = () => {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const LandskjorstjornHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
+  logoAltText,
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
@@ -60,7 +64,7 @@ const LandskjorstjornHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                   <img
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
-                    alt="organization logo"
+                    alt={logoAltText}
                   />
                 </Link>
               )
@@ -78,7 +82,7 @@ const LandskjorstjornHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                   <img
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
-                    alt="organization logo"
+                    alt={logoAltText}
                   />
                 </Link>
               </Hidden>

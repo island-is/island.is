@@ -1,9 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { ISectionWithImage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
-import { Html, mapHtml } from './html.model'
 import { SystemMetadata } from '@island.is/shared/types'
 import { CacheField } from '@island.is/nest/graphql'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class SectionWithImage {
@@ -16,8 +16,8 @@ export class SectionWithImage {
   @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
-  @CacheField(() => Html, { nullable: true })
-  html?: Html | null
+  @CacheField(() => [SliceUnion], { nullable: true })
+  content?: Array<typeof SliceUnion>
 }
 
 export const mapSectionWithImage = ({
@@ -28,5 +28,5 @@ export const mapSectionWithImage = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-  html: fields.body ? mapHtml(fields.body, sys.id + ':html') : null,
+  content: fields.body ? mapDocument(fields.body, sys.id + ':content') : [],
 })

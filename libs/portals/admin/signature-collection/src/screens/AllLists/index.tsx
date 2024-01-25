@@ -24,6 +24,8 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import header from '../../../assets/headerImage.svg'
 import { Filters, countryAreas, pageSize } from '../../lib/utils'
 import CompareLists from './components/compareLists'
+import { format as formatNationalId } from 'kennitala'
+import CreateCollection from './components/createCollection'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
@@ -34,36 +36,56 @@ const Lists = () => {
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState<Filters>({
     area: [],
+    candidate: [],
     input: '',
   })
+  const [candidates, setCandidates] = useState<
+    Array<{
+      label: string
+      value: string
+    }>
+  >([])
 
   useEffect(() => {
-    if (filters.area.length > 0 || filters.input.length > 0) {
-      let filteredList = []
+    let filteredList: SignatureCollectionList[] = allLists
 
-      //filter by area
-      filteredList = allLists.filter((list) => {
-        return filters.area.some((filter) => filter === list.area.name)
-      })
-
-      //filter by input
-      filteredList = (filteredList.length > 0 ? filteredList : allLists).filter(
-        (list) => {
-          return (
-            list.owner.name
-              .toLowerCase()
-              .includes(filters.input.toLowerCase()) ||
-            list.area.name.toLowerCase().includes(filters.input.toLowerCase())
-          )
-        },
+    filteredList = filteredList.filter((list) => {
+      return (
+        // Filter by area
+        (filters.area.length === 0 || filters.area.includes(list.area.name)) &&
+        // Filter by candidate
+        (filters.candidate.length === 0 ||
+          filters.candidate.includes(list.candidate.name)) &&
+        // Filter by input
+        (filters.input.length === 0 ||
+          list.candidate.name
+            .toLowerCase()
+            .includes(filters.input.toLowerCase()) ||
+          list.area.name.toLowerCase().includes(filters.input.toLowerCase()) ||
+          formatNationalId(list.candidate.nationalId).includes(filters.input))
       )
+    })
 
-      setPage(1)
-      setLists(filteredList)
-    } else {
-      setLists(allLists)
-    }
+    setPage(1)
+    setLists(filteredList)
   }, [filters])
+
+  useEffect(() => {
+    // set candidates on initial load of lists
+    if (lists.length > 0) {
+      const candidates = lists
+        .map((list) => list.candidate.name)
+        .filter((value, index, self) => self.indexOf(value) === index)
+        .map((candidate) => {
+          return {
+            label: candidate,
+            value: candidate,
+          }
+        })
+
+      setCandidates(candidates)
+    }
+  }, [])
 
   return (
     <GridContainer>
@@ -90,7 +112,7 @@ const Lists = () => {
             imgHiddenBelow="sm"
           />
           <GridRow marginBottom={5}>
-            <GridColumn span={['12/12', '12/12', '7/12']}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
                 name="input"
                 placeholder={formatMessage(m.searchInAllListsPlaceholder)}
@@ -99,36 +121,42 @@ const Lists = () => {
                 backgroundColor="white"
               />
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '5/12']}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box
                 display="flex"
                 justifyContent="spaceBetween"
-                marginTop={[2, 2, 0, 0]}
+                marginTop={[2, 2, 2, 0]}
               >
                 <Filter
                   labelClear=""
                   labelClose=""
                   labelResult=""
                   labelOpen={formatMessage(m.filter)}
-                  labelClearAll={formatMessage(m.clearFilters)}
+                  labelClearAll={formatMessage(m.clearAllFilters)}
                   resultCount={lists.length}
                   variant="popover"
-                  reverse
                   onFilterClear={() => {
                     setFilters({
                       area: [],
+                      candidate: [],
                       input: '',
                     })
                   }}
                 >
                   <FilterMultiChoice
-                    labelClear=""
+                    labelClear={formatMessage(m.clearFilter)}
                     categories={[
                       {
                         id: 'area',
                         label: formatMessage(m.countryArea),
                         selected: filters.area,
                         filters: countryAreas,
+                      },
+                      {
+                        id: 'candidate',
+                        label: formatMessage(m.candidate),
+                        selected: filters.candidate,
+                        filters: candidates,
                       },
                     ]}
                     onChange={(event) =>
@@ -145,66 +173,65 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-
-                <Box
-                  display="flex"
-                  justifyContent="flexEnd"
-                  alignItems="flexEnd"
-                  style={{ minWidth: '150px' }}
-                >
-                  {filters.input.length > 0 || filters.area.length > 0
-                    ? lists.length > 0 && (
-                        <Text variant="eyebrow" textAlign="right">
-                          {formatMessage(m.uploadResultsHeader)}: {lists.length}
-                        </Text>
-                      )
-                    : allLists.length > 0 && (
-                        <Text variant="eyebrow" textAlign="right">
-                          {formatMessage(m.totalListResults)}: {allLists.length}
-                        </Text>
-                      )}
-                </Box>
+                <CreateCollection />
               </Box>
             </GridColumn>
           </GridRow>
 
           {lists?.length > 0 ? (
-            <Stack space={5}>
-              {lists
-                .slice(pageSize * (page - 1), pageSize * page)
-                .map((list: SignatureCollectionList) => {
-                  return (
-                    <ActionCard
-                      key={list.id}
-                      eyebrow={
-                        formatMessage(m.listEndTime) +
-                        ': ' +
-                        format(new Date(list.endTime), 'dd.MM.yyyy')
-                      }
-                      heading={list.owner.name + ' - ' + list.area.name}
-                      text={formatMessage(m.collectionTitle)}
-                      progressMeter={{
-                        currentProgress: list.numberOfSignatures ?? 0,
-                        maxProgress: list.area.min,
-                        withLabel: true,
-                      }}
-                      cta={{
-                        label: formatMessage(m.viewList),
-                        variant: 'text',
-                        icon: 'arrowForward',
-                        onClick: () => {
-                          navigate(
-                            SignatureCollectionPaths.SignatureList.replace(
-                              ':id',
-                              list.id,
-                            ),
-                          )
-                        },
-                      }}
-                    />
-                  )
-                })}
-            </Stack>
+            <>
+              <Box marginBottom={2}>
+                {filters.input.length > 0 ||
+                filters.area.length > 0 ||
+                filters.candidate.length > 0
+                  ? lists.length > 0 && (
+                      <Text variant="eyebrow">
+                        {formatMessage(m.uploadResultsHeader)}: {lists.length}
+                      </Text>
+                    )
+                  : allLists.length > 0 && (
+                      <Text variant="eyebrow">
+                        {formatMessage(m.totalListResults)}: {allLists.length}
+                      </Text>
+                    )}
+              </Box>
+              <Stack space={5}>
+                {lists
+                  .slice(pageSize * (page - 1), pageSize * page)
+                  .map((list: SignatureCollectionList) => {
+                    return (
+                      <ActionCard
+                        key={list.id}
+                        eyebrow={
+                          formatMessage(m.listEndTime) +
+                          ': ' +
+                          format(new Date(list.endTime), 'dd.MM.yyyy')
+                        }
+                        heading={list.title}
+                        text={formatMessage(m.collectionTitle)}
+                        progressMeter={{
+                          currentProgress: list.numberOfSignatures ?? 0,
+                          maxProgress: list.area.min,
+                          withLabel: true,
+                        }}
+                        cta={{
+                          label: formatMessage(m.viewList),
+                          variant: 'text',
+                          icon: 'arrowForward',
+                          onClick: () => {
+                            navigate(
+                              SignatureCollectionPaths.SignatureList.replace(
+                                ':id',
+                                list.id,
+                              ),
+                            )
+                          },
+                        }}
+                      />
+                    )
+                  })}
+              </Stack>
+            </>
           ) : filters.input.length > 0 ? (
             <Box display="flex">
               <Text>{formatMessage(m.noListsFoundBySearch)}</Text>

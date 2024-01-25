@@ -1,0 +1,7 @@
+mutation LimitedAccessTransitionCase($input: TransitionCaseInput!) {
+  limitedAccessTransitionCase(input: $input) {
+    state
+    appealState
+    appealReceivedByCourtDate
+  }
+}

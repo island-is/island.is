@@ -117,7 +117,7 @@ const TryggingastofnunFooter = ({
   )
 
   return (
-    <footer className={styles.container} aria-labelledby="sak-footer">
+    <footer className={styles.container}>
       <GridContainer>
         <Box className={styles.firstRow}>
           <img

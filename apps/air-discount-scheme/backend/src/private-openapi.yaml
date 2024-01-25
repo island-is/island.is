@@ -102,7 +102,32 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Discount'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Discount'
+      tags:
+        - Admin
+      security:
+        - bearer: []
+  /api/private/users/createSuperExplicitDiscountCode:
+    post:
+      operationId: PrivateDiscountAdminController_createSuperExplicitDiscountCode
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSuperExplicitDiscountCodeParams'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Discount'
       tags:
         - Admin
       security:
@@ -544,6 +569,9 @@ components:
         - nationalId
         - expiresIn
     CreateExplicitDiscountCodeParams:
+      type: object
+      properties: {}
+    CreateSuperExplicitDiscountCodeParams:
       type: object
       properties: {}
     CheckFlightLegBody:

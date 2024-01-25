@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationName: {
     id: 'sls.application:applicationName',
-    defaultMessage: 'Mæla með lista',
+    defaultMessage: 'Mæla með framboði',
     description: '',
   },
   institution: {
@@ -26,7 +26,7 @@ export const m = defineMessages({
   introDescription: {
     id: 'sls.application:introDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut. Duis commodo, libero ac viverra vestibulum, turpis neque molestie sapien, a dapibus lacus lacus id nunc. Morbi venenatis lectus fringilla aliquet rhoncus. Ut cursus sollicitudin ligula. Vestibulum suscipit laoreet faucibus. Aliquam in odio leo. Donec et urna dignissim, placerat augue ac, pulvinar lorem.',
+      'Hér er hægt að mæla með þeim frambjóðendum sem hyggjast bjóða sig fram til forseta Íslands. ',
     description: '',
   },
 
@@ -71,11 +71,26 @@ export const m = defineMessages({
     defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
+  canSignProviderTitle: {
+    id: 'sls.application:canSignProviderTitle',
+    defaultMessage: 'Kjörskrá',
+    description: '',
+  },
+  canSignProviderSubtitle: {
+    id: 'sls.application:canSignProviderSubtitle',
+    defaultMessage: 'Skilyrði fyrir að mæla með lista',
+    description: '',
+  },
 
   /* Signee Information */
   information: {
     id: 'sls.application:information',
     defaultMessage: 'Upplýsingar',
+    description: '',
+  },
+  candidateInformationHeader: {
+    id: 'sls.application:candidateInformationHeader',
+    defaultMessage: 'Frambjóðandi',
     description: '',
   },
   signeeInformationHeader: {
@@ -85,13 +100,38 @@ export const m = defineMessages({
   },
   listName: {
     id: 'sls.application:listName',
-    defaultMessage: 'TBD: Nafn frambjóðanda',
+    defaultMessage: 'Mæla með frambjóðanda',
+    description: '',
+  },
+  selectCandidate: {
+    id: 'sls.application:selectCandidate',
+    defaultMessage: 'Veldu frambjóðanda',
+    description: '',
+  },
+  selectCandidateDescription: {
+    id: 'sls.application:selectCandidateDescription',
+    defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með',
+    description: '',
+  },
+  selectCandidateMaxReached: {
+    id: 'sls.application:selectCandidateMaxReached',
+    defaultMessage: 'Hámarki meðmæla náð',
+    description: '',
+  },
+  selectCandidateListExpired: {
+    id: 'sls.application:selectCandidateListExpired',
+    defaultMessage: 'Söfnuninni lokið',
+    description: '',
+  },
+  listDateTil: {
+    id: 'sls.application:listDateTil',
+    defaultMessage: 'Lokadagur',
     description: '',
   },
   listDescription: {
-    id: 'sls.application:listDescritpion',
+    id: 'sls.application:listDescription',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
+      'Með því að mæla með frambjóðanda lýsir þú yfir stuðningi við framboðið.',
     description: '',
   },
   name: {
@@ -109,22 +149,27 @@ export const m = defineMessages({
     defaultMessage: 'Landsfjórðungur',
     description: '',
   },
+  address: {
+    id: 'sls.application:address',
+    defaultMessage: 'Heimilisfang',
+    description: '',
+  },
   signList: {
     id: 'sls.application:signList',
-    defaultMessage: 'Mæla með lista',
+    defaultMessage: 'Mæla með framboði',
     description: '',
   },
 
   /* List Signed */
   listSigned: {
     id: 'sls.application:listSigned',
-    defaultMessage: 'Þú hefur mælt með lista',
+    defaultMessage: 'Þú hefur mælt með framboði',
     description: '',
   },
   listSignedDescription: {
-    id: 'sls.application:listSignedDescription',
+    id: 'sls.application:listSignedDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
+      'Þú hefur mælt með **{name}**. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
     description: '',
   },
   linkFieldButtonTitle: {
@@ -135,7 +180,7 @@ export const m = defineMessages({
   linkFieldMessage: {
     id: 'sls.application:linkFieldMessage',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus.',
+      'Á mínum síðum geturðu séð hvaða framboði þú hefur mælt með.',
     description: '',
   },
 

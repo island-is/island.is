@@ -1,6 +1,5 @@
-import { BankAccountType } from './constants'
 import { MessageDescriptor } from 'react-intl'
-
+import { BankAccountType } from './lib/constants'
 export interface BankInfo {
   bank?: string
   ledger?: string
@@ -38,4 +37,9 @@ export interface Attachments {
 export interface FileType {
   key: string
   name: string
+}
+
+export interface AdditionalInformation {
+  additionalDocuments?: FileType[]
+  additionalDocumentsRequired?: FileType[]
 }

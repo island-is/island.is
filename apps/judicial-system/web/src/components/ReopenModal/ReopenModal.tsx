@@ -8,7 +8,6 @@ import {
   RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  CaseTransition,
   isCourtOfAppealsUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -17,6 +16,7 @@ import {
   Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './ReopenModal.strings'

@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import { TextInput, Text, Spinner } from '@contentful/f36-components'
 import { EntryProps, SysLink } from 'contentful-management'
+import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { Spinner, Text, TextInput } from '@contentful/f36-components'
+import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
+import slugify from '@sindresorhus/slugify'
+
 import {
   CONTENTFUL_ENVIRONMENT,
   CONTENTFUL_SPACE,
@@ -31,6 +33,37 @@ const SubArticleUrlField = () => {
   const [loading, setLoading] = useState(true)
   const [firstRender, setFirstRender] = useState(true)
   const parentArticleIsPresent = useRef<boolean | null>(null)
+  const [hasEntryBeenPublished, setHasEntryBeenPublished] = useState(
+    Boolean(sdk.entry.getSys()?.firstPublishedAt),
+  )
+  const initialTitleChange = useRef(true)
+
+  useEffect(() => {
+    sdk.entry.onSysChanged((newSys) => {
+      setHasEntryBeenPublished(Boolean(newSys?.firstPublishedAt))
+    })
+  }, [sdk.entry])
+
+  // Update slug field if the title field changes
+  useEffect(() => {
+    return sdk.entry.fields.title
+      .getForLocale(sdk.field.locale)
+      .onValueChanged((newTitle) => {
+        if (hasEntryBeenPublished) {
+          return
+        }
+
+        // Callback gets called on initial render, so we  want to ignore that
+        if (initialTitleChange.current) {
+          initialTitleChange.current = false
+          return
+        }
+
+        if (newTitle) {
+          setValue(slugify(String(newTitle)))
+        }
+      })
+  }, [hasEntryBeenPublished, sdk.entry.fields.title, sdk.field.locale])
 
   const fetchParentArticle = useCallback(() => {
     const parentArticleId = sdk.entry.fields['parent']?.getValue()?.sys?.id
@@ -103,11 +136,7 @@ const SubArticleUrlField = () => {
     () => {
       if (firstRender) {
         setFirstRender(false)
-
-        // No need to change the value if the value is already up to date
-        if (sdk.field.getValue() === `${prefix}/${value}`) {
-          return
-        }
+        return
       }
       if (value.trim().length === 0) {
         sdk.field.setValue('')

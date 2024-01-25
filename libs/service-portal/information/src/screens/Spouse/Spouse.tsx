@@ -33,10 +33,6 @@ const dataInfoSpouse = defineMessage({
   defaultMessage: 'Hér fyrir neðan eru gögn um fjölskyldumeðlim.',
 })
 
-type UseParams = {
-  nationalId: string
-}
-
 const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
@@ -61,9 +57,7 @@ const FamilyMember = () => {
     }
   }, [data?.nationalRegistryPerson, formatMessage])
 
-  const { nationalId } = useParams() as UseParams
-
-  if (!nationalId || error || (!loading && !data?.nationalRegistryPerson))
+  if (error || (!loading && !data?.nationalRegistryPerson))
     return (
       <NotFound
         title={defineMessage({
@@ -104,7 +98,11 @@ const FamilyMember = () => {
         <Divider />
         <UserInfoLine
           label={defineMessage(m.natreg)}
-          content={formatNationalId(nationalId)}
+          content={
+            data?.nationalRegistryPerson?.spouse?.nationalId
+              ? formatNationalId(data.nationalRegistryPerson.spouse.nationalId)
+              : ''
+          }
           loading={loading}
         />
         <Divider />
