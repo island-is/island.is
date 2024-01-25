@@ -107,7 +107,7 @@ const SigneeView = () => {
                   new Date(signedList.endTime) < new Date()
                     ? {
                         label: formatMessage(m.collectionClosed),
-                        variant: 'purple',
+                        variant: 'red',
                         outlined: true,
                       }
                     : undefined
@@ -176,7 +176,7 @@ const SigneeView = () => {
                       new Date(list.endTime) < new Date()
                         ? {
                             label: formatMessage(m.collectionClosed),
-                            variant: 'purple',
+                            variant: 'red',
                             outlined: true,
                           }
                         : undefined

@@ -14,22 +14,24 @@ export const Comment = ({
   const { formatMessage } = useLocale()
 
   return (
-    <ReviewGroup
-      isLast
-      isEditable={editable}
-      editAction={() => goToScreen?.('comment')}
-    >
-      <GridRow>
-        <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>
-          <DataValue
-            label={formatMessage(
-              socialInsuranceAdministrationMessage.additionalInfo
-                .commentSection,
-            )}
-            value={comment}
-          />
-        </GridColumn>
-      </GridRow>
-    </ReviewGroup>
+    comment && (
+      <ReviewGroup
+        isLast
+        isEditable={editable}
+        editAction={() => goToScreen?.('comment')}
+      >
+        <GridRow>
+          <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>
+            <DataValue
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.additionalInfo
+                  .commentSection,
+              )}
+              value={comment}
+            />
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+    )
   )
 }

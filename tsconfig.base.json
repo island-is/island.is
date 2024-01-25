@@ -717,6 +717,9 @@
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"
       ],
+      "@island.is/clients/user-notification": [
+        "libs/clients/user-notification/src/index.ts"
+      ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],

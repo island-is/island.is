@@ -107,9 +107,7 @@ export class EventService {
           : ''
       } *${theCase.id}*`
       const prosecutionText = `${
-        theCase.creatingProsecutor?.institution
-          ? `${theCase.creatingProsecutor?.institution?.name} `
-          : ''
+        theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
       }*${theCase.policeCaseNumbers.join(', ')}*`
       const courtText = theCase.court
         ? `\n>${theCase.court.name} ${

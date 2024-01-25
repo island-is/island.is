@@ -91,6 +91,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         application.answers,
       ).additionalAttachmentsRequired
     }
+
     if (
       application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
     ) {
@@ -424,16 +425,18 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     if (application.typeId === ApplicationTypes.PENSION_SUPPLEMENT) {
       const attachments = await this.getPSAttachments(application)
-      const pensionSupplemenhtDTO = transformApplicationToPensionSupplementDTO(
+      const pensionSupplementDTO = transformApplicationToPensionSupplementDTO(
         application,
         attachments,
       )
 
       const response = await this.siaClientService.sendApplication(
         auth,
-        pensionSupplemenhtDTO,
+        pensionSupplementDTO,
         application.typeId.toLowerCase(),
       )
+
+      return response
     }
 
     if (

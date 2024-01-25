@@ -125,7 +125,12 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
-import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
+import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
+import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
+import {
+  HealthDirectorateClientConfig,
+  HealthDirectorateClientModule,
+} from '@island.is/clients/health-directorate'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
@@ -326,6 +331,7 @@ const environment = getConfig
         MachineDigitalLicenseClientConfig,
         DrivingDigitalLicenseClientConfig,
         IntellectualPropertiesClientConfig,
+        UserNotificationClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,

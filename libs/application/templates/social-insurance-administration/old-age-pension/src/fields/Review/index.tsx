@@ -55,9 +55,7 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const { applicationType, comment } = getApplicationAnswers(
-    application.answers,
-  )
+  const { applicationType } = getApplicationAnswers(application.answers)
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
@@ -201,7 +199,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </ReviewGroup>
       )}
       <OnePaymentPerYear {...childProps} />
-      {comment && <Comment {...childProps} />}
+      <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
   )

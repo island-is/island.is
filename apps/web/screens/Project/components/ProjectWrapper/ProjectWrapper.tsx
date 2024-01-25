@@ -1,4 +1,6 @@
 import React, { ReactElement, useMemo } from 'react'
+import { useRouter } from 'next/router'
+
 import {
   Box,
   BreadCrumbItem,
@@ -10,13 +12,13 @@ import {
   Icon,
   Link,
 } from '@island.is/island-ui/core'
+import { ProjectPage } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
+import { getSidebarNavigationComponent } from '../../utils'
 import { ProjectChatPanel } from '../ProjectChatPanel'
 import { ProjectHeader } from '../ProjectHeader'
-import { ProjectPage } from '@island.is/web/graphql/schema'
-import { getSidebarNavigationComponent } from '../../utils'
-import { useRouter } from 'next/router'
-
 import * as styles from './ProjectWrapper.css'
 
 interface ProjectWrapperProps {
@@ -39,6 +41,13 @@ export const ProjectWrapper: React.FC<
 }) => {
   const router = useRouter()
 
+  const { activeLocale } = useI18n()
+
+  const mobileNavigationButtonOpenLabel =
+    activeLocale === 'is' ? 'Opna' : 'Open'
+  const mobileNavigationButtonCloseLabel =
+    activeLocale === 'is' ? 'Loka' : 'Close'
+
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
   const projectPageSidebarNavigationComponent = useMemo(
     () =>
@@ -46,8 +55,16 @@ export const ProjectWrapper: React.FC<
         projectPage,
         baseRouterPath,
         sidebarNavigationTitle,
+        mobileNavigationButtonOpenLabel,
+        mobileNavigationButtonCloseLabel,
       ),
-    [projectPage, baseRouterPath, sidebarNavigationTitle],
+    [
+      projectPage,
+      baseRouterPath,
+      sidebarNavigationTitle,
+      mobileNavigationButtonOpenLabel,
+      mobileNavigationButtonCloseLabel,
+    ],
   )
 
   const showBackLink = projectPage.backLink?.url && projectPage.backLink?.text
