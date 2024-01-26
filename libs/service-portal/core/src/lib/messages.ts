@@ -45,6 +45,14 @@ export const m = defineMessages({
     id: 'service.portal:final-due-date',
     defaultMessage: 'Eindagi',
   },
+  year: {
+    id: 'service.portal:year',
+    defaultMessage: 'Ár',
+  },
+  theYear: {
+    id: 'service.portal:the-year',
+    defaultMessage: 'Árið',
+  },
   yearAndSeason: {
     id: 'service.portal:year-and-season',
     defaultMessage: 'Ár og tímabil',
@@ -1165,6 +1173,10 @@ export const m = defineMessages({
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
   },
+  socialInsuranceTooltip: {
+    id: 'service.portal:social-insurance-tooltip',
+    defaultMessage: 'Tryggingastofnun hefur umsjón með gögnum um framfærslu.',
+  },
   vehiclesTooltip: {
     id: 'service.portal:vehicles-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
@@ -1265,5 +1277,82 @@ export const m = defineMessages({
   unmuteAudio: {
     id: 'service.portal:unmute-audio',
     defaultMessage: 'Hljóð á',
+  },
+  socialInsuranceMaintenance: {
+    id: 'service.portal:social-insurance-maintenance',
+    defaultMessage: 'Framfærsla',
+  },
+  socialInsuranceMaintenanceDescription: {
+    id: 'service.portal:social-insurance-maintenance-description',
+    defaultMessage:
+      'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
+  },
+  paymentPlan: {
+    id: 'service.portal:payment-plan',
+    defaultMessage: 'Greiðsluáætlun',
+  },
+  paymentsReasoning: {
+    id: 'service.portal:payments-reasoning',
+    defaultMessage: 'Forsenda greiðslna',
+  },
+  january: {
+    id: 'service.portal:january',
+    defaultMessage: 'Janúar',
+    description: 'January',
+  },
+  february: {
+    id: 'service.portal:february',
+    defaultMessage: 'Febrúar',
+    description: 'February',
+  },
+  march: {
+    id: 'service.portal:march',
+    defaultMessage: 'Mars',
+    description: 'March',
+  },
+  april: {
+    id: 'service.portal:april',
+    defaultMessage: 'Apríl',
+    description: 'April',
+  },
+  may: {
+    id: 'service.portal:may',
+    defaultMessage: 'Maí',
+    description: 'May',
+  },
+  june: {
+    id: 'service.portal:june',
+    defaultMessage: 'Júní',
+    description: 'June',
+  },
+  july: {
+    id: 'service.portal:july',
+    defaultMessage: 'Júlí',
+    description: 'July',
+  },
+  august: {
+    id: 'service.portal:august',
+    defaultMessage: 'Ágúst',
+    description: 'August',
+  },
+  september: {
+    id: 'service.portal:september',
+    defaultMessage: 'September',
+    description: 'September',
+  },
+  october: {
+    id: 'service.portal:october',
+    defaultMessage: 'Október',
+    description: 'October',
+  },
+  november: {
+    id: 'service.portal:november',
+    defaultMessage: 'Nóvember',
+    description: 'November',
+  },
+  december: {
+    id: 'service.portal:december',
+    defaultMessage: 'Desember',
+    description: 'December',
   },
 })

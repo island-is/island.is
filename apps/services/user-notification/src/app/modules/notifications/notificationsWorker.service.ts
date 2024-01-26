@@ -19,6 +19,8 @@ import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Notification } from './notification.model'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
+const WORK_STARTING_HOUR = 8 // 8 AM
+const WORK_ENDING_HOUR = 23 // 11 PM
 
 type HandleNotification = {
   profile: UserProfileDto
@@ -234,7 +236,49 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
   }
 
+  async ensureOperationalHours() {
+    if (!this.isOperationalHours()) {
+      const sleepDuration = this.calculateSleepDuration()
+      const sleepHours = Math.floor(sleepDuration / (1000 * 60 * 60))
+      const sleepMinutes = Math.floor(
+        (sleepDuration % (1000 * 60 * 60)) / (1000 * 60),
+      )
+
+      this.logger.info(
+        `Outside of operational hours. Worker will sleep until 08:00 (approximately ${sleepHours} hours and ${sleepMinutes} minutes)`,
+      )
+      await new Promise((resolve) => setTimeout(resolve, sleepDuration))
+      this.logger.info('Operational hours. Worker waking up after sleep.')
+    }
+  }
+
+  isOperationalHours(): boolean {
+    const currentHour = new Date().getHours()
+    return currentHour >= WORK_STARTING_HOUR && currentHour < WORK_ENDING_HOUR
+  }
+
+  calculateSleepDuration(): number {
+    const now = new Date()
+    const currentHour = now.getHours()
+    const currentMinutes = now.getMinutes()
+    const currentSeconds = now.getSeconds()
+
+    let sleepHours
+    if (currentHour >= WORK_ENDING_HOUR || currentHour < WORK_STARTING_HOUR) {
+      // If it's past the end hour or before the start hour, sleep until the start hour.
+      sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24
+    } else {
+      // If it's during operational hours, no need to sleep.
+      sleepHours = 0
+    }
+
+    const sleepDuration =
+      (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000 // Convert to milliseconds
+    return sleepDuration > 0 ? sleepDuration : 0
+  }
+
   async run() {
+    await this.ensureOperationalHours()
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
