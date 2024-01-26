@@ -34,11 +34,11 @@ export const Done: Form = buildForm({
     /* ------------------------ */
     buildSection({
       id: 'doneScreen',
-      title: m.listSigned,
+      title: m.listSignedShort,
       children: [
         buildMultiField({
           id: 'doneScreen',
-          title: m.listSignedShort,
+          title: m.listSigned,
           description: (application: Application) => ({
             ...m.listSignedDescription,
             values: {
