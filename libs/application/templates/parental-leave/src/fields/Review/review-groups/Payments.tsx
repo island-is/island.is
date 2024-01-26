@@ -191,8 +191,8 @@ export const Payments = ({
               </Label>
               <Stack space={1}>
                 <RadioController
-                  id="useUnion"
-                  name="useUnion"
+                  id="payments.useUnion"
+                  name="payments.useUnion"
                   defaultValue={useUnion}
                   split="1/2"
                   options={[
@@ -249,8 +249,8 @@ export const Payments = ({
               </Label>
               <Stack space={1}>
                 <RadioController
-                  id="usePrivatePensionFund"
-                  name="usePrivatePensionFund"
+                  id="payments.usePrivatePensionFund"
+                  name="payments.usePrivatePensionFund"
                   defaultValue={usePrivatePensionFund}
                   split="1/2"
                   options={[
@@ -289,7 +289,7 @@ export const Payments = ({
                       }
                     })
                   }}
-                  error={hasError('usePrivatePensionFund')}
+                  error={hasError('payments.usePrivatePensionFund')}
                 />
 
                 {usePrivatePensionFund === YES && (
