@@ -56,6 +56,7 @@ export const getAppealDecision = (
     case CaseAppealRulingDecision.REPEAL:
       return formatMessage(appealRuling.decisionRepeal)
     case CaseAppealRulingDecision.CHANGED:
+    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
       return formatMessage(appealRuling.decisionChanged)
     case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
       return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)

@@ -22,6 +22,7 @@ import { DocumentModule } from '@island.is/api/domains/documents'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
+import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
 import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import {
   EmailSignupModule,
@@ -116,6 +117,7 @@ import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-o
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
+import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
@@ -152,6 +154,7 @@ import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 
 const environment = getConfig
@@ -254,6 +257,7 @@ const environment = getConfig
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
+    SocialInsuranceModule,
     HealthDirectorateClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
@@ -324,6 +328,7 @@ const environment = getConfig
         MachineDigitalLicenseClientConfig,
         DrivingDigitalLicenseClientConfig,
         IntellectualPropertiesClientConfig,
+        UserNotificationClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,
@@ -341,9 +346,9 @@ const environment = getConfig
         NationalRegistryClientConfig,
         SyslumennClientConfig,
         ElectronicRegistrationsClientConfig,
-        FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
+        SocialInsuranceAdministrationClientConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
         FinancialStatementsInaoClientConfig,

@@ -108,7 +108,11 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(1),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 600 * 1000 * 6, // 60 minutes
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -130,6 +134,11 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
         chargeItemCodes: getChargeItemCodes,
         submitTarget: States.COMPLETED,
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 600 * 1000 * 6, // 60 minutes
+        },
         onExit: [
           defineTemplateApi({
             action: ApiActions.submitApplication,

@@ -11,8 +11,6 @@ import { createTerms, extractStringsFromObject } from './utils'
 @Injectable()
 export class EventSyncService implements CmsSyncProvider<IEvent> {
   processSyncData(entries: processSyncDataInput<IEvent>) {
-    logger.info('Processing sync data for events')
-
     // only process events that we consider not to be empty
     return entries.filter(
       (entry: Entry<any>): entry is IEvent =>
@@ -25,7 +23,9 @@ export class EventSyncService implements CmsSyncProvider<IEvent> {
   }
 
   doMapping(entries: IEvent[]) {
-    logger.info('Mapping Event', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping Event', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {

@@ -1,9 +1,34 @@
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import { Query } from '@island.is/api/schema'
 
-export const GetSignatureLists = gql`
+export const GetCurrentCollection = gql`
+  query currentCollection {
+    signatureCollectionCurrent {
+      id
+      endTime
+      startTime
+      name
+      areas {
+        id
+        name
+        min
+        max
+      }
+      candidates {
+        id
+        nationalId
+        collectionId
+        name
+      }
+    }
+  }
+`
+export const GetOpenLists = gql`
   query allOpenLists {
     signatureCollectionAllOpenLists {
       id
@@ -16,7 +41,7 @@ export const GetSignatureLists = gql`
       }
       endTime
       startTime
-      owner {
+      candidate {
         nationalId
         name
         phone
@@ -25,20 +50,25 @@ export const GetSignatureLists = gql`
       collectors {
         nationalId
         name
-        phone
-        email
       }
       active
       collectionId
-      link
+      slug
     }
   }
 `
 
-export const useGetSignatureLists = () => {
-  const { data, loading } = useQuery<Query>(GetSignatureLists)
-  const lists =
-    data?.signatureCollectionAllOpenLists ?? ([] as SignatureCollectionList[])
+export const useGetCurrentCollection = () => {
+  const { data, loading } = useQuery<Query>(GetCurrentCollection)
+  const collection = data?.signatureCollectionCurrent as SignatureCollection
 
-  return { lists, loading }
+  return { collection, loading }
+}
+
+export const useGetOpenLists = () => {
+  const { data, loading } = useQuery<Query>(GetOpenLists)
+  const openLists =
+    data?.signatureCollectionAllOpenLists as SignatureCollectionList[]
+
+  return { openLists, loading }
 }

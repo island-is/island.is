@@ -25,6 +25,7 @@ import {
   SliceMachine,
   Webreader,
 } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   Query,
@@ -274,21 +275,23 @@ const SubPage: Screen<SubPageProps> = ({
           </GridRow>
         </Box>
       </GridContainer>
-      {renderSlices(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.slices,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceCustomRenderer,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceExtraText,
-        namespace,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationPage.slug,
-      )}
+      <Stack space={SLICE_SPACING}>
+        {renderSlices(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.slices,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceCustomRenderer,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceExtraText,
+          namespace,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationPage.slug,
+        )}
+      </Stack>
     </OrganizationWrapper>
   )
 }
@@ -305,10 +308,7 @@ const renderSlices = (
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
-        if (
-          slice.__typename === 'AnchorPageListSlice' ||
-          slice.__typename === 'LifeEventPageListSlice'
-        ) {
+        if (slice.__typename === 'AnchorPageListSlice') {
           return (
             <SliceMachine
               key={slice.id}

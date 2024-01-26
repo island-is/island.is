@@ -14,6 +14,7 @@ export type Icon =
   | 'calendar'
   | 'call'
   | 'car'
+  | 'cardWithCheckmark'
   | 'caretDown'
   | 'caretUp'
   | 'cellular'
@@ -44,6 +45,7 @@ export type Icon =
   | 'home'
   | 'informationCircle'
   | 'link'
+  | 'location'
   | 'lockClosed'
   | 'lockOpened'
   | 'logOut'
@@ -81,6 +83,7 @@ export type Icon =
   | 'signLanguage'
   | 'listView'
   | 'gridView'
+  | 'swapVertical'
 
 export default {
   filled: {
@@ -98,6 +101,7 @@ export default {
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
+    cardWithCheckmark: 'CardWithCheckmark',
     caretDown: 'CaretDown',
     caretUp: 'CaretUp',
     cellular: 'Cellular',
@@ -128,6 +132,7 @@ export default {
     home: 'Home',
     informationCircle: 'InformationCircle',
     link: 'Link',
+    location: 'Location',
     lockClosed: 'LockClosed',
     lockOpened: 'LockOpened',
     logOut: 'LogOut',
@@ -165,6 +170,7 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapVertical: 'SwapVertical',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -181,6 +187,7 @@ export default {
     calendar: 'CalendarOutline',
     call: 'CallOutline',
     car: 'CarOutline',
+    cardWithCheckmark: 'CardWithCheckmarkOutline',
     caretDown: 'CaretDownOutline',
     caretUp: 'CaretUpOutline',
     cellular: 'CellularOutline',
@@ -211,6 +218,7 @@ export default {
     home: 'HomeOutline',
     informationCircle: 'InformationCircleOutline',
     link: 'LinkOutline',
+    location: 'LocationOutline',
     lockClosed: 'LockClosedOutline',
     lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
@@ -248,5 +256,6 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapVertical: 'SwapVertical',
   },
 }

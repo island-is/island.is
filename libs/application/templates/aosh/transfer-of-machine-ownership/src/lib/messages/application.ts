@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'aosh.tmo.application:name',
-    defaultMessage: 'Tilkynning um eigendaskipti',
+    defaultMessage: 'Tilkynning um eigendaskipti að tæki {value}',
     description: `Application's name`,
   },
   institutionName: {
@@ -41,7 +41,7 @@ export const application = defineMessages({
     description: 'History log approved by reviewer',
   },
   actionCardPrerequisites: {
-    id: 'hlc.application:actionCardPrerequisites',
+    id: 'aosh.tmo.application:actionCardPrerequisites',
     defaultMessage: 'Gagnaöflun',
     description:
       'Description of application state/status when the application is in prerequisites',

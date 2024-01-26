@@ -3,10 +3,10 @@ import { CacheField } from '@island.is/nest/graphql'
 import { IFrontpage } from '../generated/contentfulTypes'
 import { Featured, mapFeatured } from './featured.model'
 import { FrontpageSlider, mapFrontpageSlider } from './frontpageSlider.model'
-import { AnchorPage, mapAnchorPage } from './anchorPage.model'
 import { LinkList, mapLinkList } from './linkList.model'
 import { mapNamespace, Namespace } from './namespace.model'
 import { Image, mapImage } from './image.model'
+import { LifeEventPage, mapLifeEventPage } from './lifeEventPage.model'
 
 @ObjectType()
 export class Frontpage {
@@ -43,8 +43,8 @@ export class Frontpage {
   @CacheField(() => Namespace, { nullable: true })
   namespace!: Namespace | null
 
-  @CacheField(() => [AnchorPage])
-  lifeEvents?: Array<AnchorPage>
+  @CacheField(() => [LifeEventPage])
+  lifeEvents?: Array<LifeEventPage>
 
   @CacheField(() => LinkList, { nullable: true })
   linkList?: LinkList | null
@@ -62,6 +62,6 @@ export const mapFrontpage = ({ fields, sys }: IFrontpage): Frontpage => ({
   featured: (fields.featured ?? []).map(mapFeatured),
   slides: (fields.slides ?? []).map(mapFrontpageSlider),
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
-  lifeEvents: (fields.lifeEvents ?? []).map(mapAnchorPage),
+  lifeEvents: (fields.lifeEvents ?? []).map(mapLifeEventPage),
   linkList: fields.linkList ? mapLinkList(fields.linkList) : null,
 })

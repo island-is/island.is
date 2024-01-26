@@ -3,7 +3,7 @@ import React from 'react'
 const Illustration: React.FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="774"
-    height="376"
+    height="auto"
     viewBox="0 0 774 376"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

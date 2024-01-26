@@ -33,6 +33,7 @@ interface Props {
   pageSize: number
   organizations: Organization[]
   shouldShowCardButtons?: boolean
+  numberOfItems?: number // Set this if using paginated data from api
 }
 
 export const ApplicationsTable = ({
@@ -42,13 +43,16 @@ export const ApplicationsTable = ({
   pageSize,
   organizations,
   shouldShowCardButtons = true,
+  numberOfItems,
 }: Props) => {
   const { formatMessage } = useLocale()
 
   const pagedDocuments = {
-    from: (page - 1) * pageSize,
-    to: pageSize * page,
-    totalPages: Math.ceil(applications.length / pageSize),
+    from: numberOfItems ? 0 : (page - 1) * pageSize,
+    to: numberOfItems ? numberOfItems : pageSize * page,
+    totalPages: numberOfItems
+      ? Math.ceil(numberOfItems / pageSize)
+      : Math.ceil(applications.length / pageSize),
   }
 
   const copyApplicationLink = (application: AdminApplication) => {
@@ -187,7 +191,7 @@ export const ApplicationsTable = ({
             })}
         </T.Body>
       </T.Table>
-      {applications.length > pageSize ? (
+      {numberOfItems || applications.length > pageSize ? (
         <Box marginTop={[4, 4, 4, 6]}>
           <Pagination
             page={page}

@@ -50,5 +50,5 @@ export async function verifyRequestCompletion(
       resp.request().postDataJSON().operationName === op,
   )
 
-  return response
+  return await response.json()
 }

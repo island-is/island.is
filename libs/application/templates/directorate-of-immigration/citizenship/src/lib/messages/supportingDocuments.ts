@@ -144,6 +144,11 @@ export const supportingDocuments = {
         defaultMessage: 'Staðfesting á íslenskuprófi eða gögn vegna undanþágu',
         description: 'Icelandic test title',
       },
+      criminalRecord: {
+        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.criminalRecord',
+        defaultMessage: 'Sakavottorð',
+        description: 'Criminal record title',
+      },
     }),
     otherDocumentsChildren: defineMessages({
       birthCertificate: {

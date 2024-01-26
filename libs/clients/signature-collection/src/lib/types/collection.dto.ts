@@ -4,6 +4,7 @@ import {
   MedmaelasofnunExtendedDTO,
 } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
+import { Candidate, mapCandidate } from './candidate.dto'
 
 export interface CollectionInfo {
   id: number
@@ -11,18 +12,26 @@ export interface CollectionInfo {
   endTime: Date
   isActive: boolean
   isPresidential: boolean
+  isSignatureCollection: boolean
 }
-export interface Collection {
+export interface Collection extends Omit<CollectionInfo, 'id'> {
   id: string
   name: string
   startTime: Date
   endTime: Date
   areas: Area[]
+  candidates: Candidate[]
 }
+
 export function mapCollectionInfo(
   collection: MedmaelasofnunDTO,
 ): CollectionInfo | null {
-  const { id: id, sofnunStart: startTime, sofnunEnd: endTime } = collection
+  const {
+    id: id,
+    sofnunStart: startTime,
+    sofnunEnd: endTime,
+    kosning,
+  } = collection
 
   if (id == null || startTime == null || endTime == null) {
     logger.warn(
@@ -33,28 +42,46 @@ export function mapCollectionInfo(
   }
   return {
     id,
-    startTime: startTime,
-    endTime: endTime,
+    startTime,
+    endTime,
     isActive: startTime < new Date() && endTime > new Date(),
     isPresidential: collection.kosningTegund == 'Forsetakosning',
+    isSignatureCollection: kosning?.erMedmaelakosning ?? false,
   }
 }
 
 export function mapCollection(
   collection: MedmaelasofnunExtendedDTO,
 ): Collection {
-  if (!collection.svaedi) {
+  const {
+    id: id,
+    sofnunStart: startTime,
+    sofnunEnd: endTime,
+    svaedi: areas,
+    frambodList: candidates,
+    kosning,
+  } = collection
+  if (id == null || startTime == null || endTime == null || areas == null) {
     logger.warn(
       'Received partial collection information from the national registry.',
       collection,
     )
-    throw new Error('List has no area')
+    throw new Error(
+      'Received partial collection information from the national registry.',
+    )
   }
+
   return {
-    id: collection.id?.toString() ?? '',
+    id: id?.toString(),
     name: collection.kosningNafn ?? '',
-    startTime: collection.sofnunStart ?? new Date(),
-    endTime: collection.sofnunEnd ?? new Date(),
-    areas: collection.svaedi?.map((area) => mapArea(area)),
+    startTime,
+    endTime,
+    isActive: startTime < new Date() && endTime > new Date(),
+    isPresidential: collection.kosningTegund == 'Forsetakosning',
+    isSignatureCollection: kosning?.erMedmaelakosning ?? false,
+    candidates: candidates
+      ? candidates.map((candidate) => mapCandidate(candidate))
+      : [],
+    areas: areas.map((area) => mapArea(area)),
   }
 }

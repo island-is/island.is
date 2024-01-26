@@ -23,6 +23,7 @@ import { SignatureCollectionAreaInput } from './dto/area.input'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { Audit } from '@island.is/nest/audit'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
+import { SignatureCollectionSlug } from './models/slug.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -38,24 +39,8 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.isOwner(user.nationalId)
   }
 
-  @Query(() => SignatureCollectionSuccess)
-  @Audit()
-  async signatureCollectionCanCreate(
-    @CurrentUser() user: User,
-  ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.canCreate(user.nationalId)
-  }
-
-  @Query(() => SignatureCollectionSuccess)
-  @Audit()
-  async signatureCollectionCanSign(
-    @CurrentUser() user: User,
-  ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.canSign(user.nationalId)
-  }
-
+  @BypassAuth()
   @Query(() => SignatureCollection)
-  @Audit()
   async signatureCollectionCurrent(): Promise<SignatureCollection> {
     return this.signatureCollectionService.current()
   }
@@ -119,12 +104,20 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.signee(user.nationalId)
   }
 
-  @Mutation(() => [SignatureCollectionList])
+  @Query(() => SignatureCollectionSignee)
+  @Audit()
+  async signatureCollectionSigneeLookup(
+    @Args('input') input: SignatureCollectionIdInput,
+  ): Promise<SignatureCollectionSignee> {
+    return this.signatureCollectionService.signee(input.id)
+  }
+
+  @Mutation(() => SignatureCollectionSlug)
   @Audit()
   async signatureCollectionCreate(
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListInput,
-  ): Promise<SignatureCollectionList[]> {
+  ): Promise<SignatureCollectionSlug> {
     return this.signatureCollectionService.create(user, input)
   }
 
@@ -182,11 +175,11 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.undelegateList(input)
   }
 
-  @Mutation(() => SignatureCollectionList)
+  @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionExtendDeadline(
     @Args('input') input: SignatureCollectionExtendDeadlineInput,
-  ): Promise<SignatureCollectionList> {
+  ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.extendDeadline(input)
   }
 
