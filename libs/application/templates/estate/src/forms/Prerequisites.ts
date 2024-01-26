@@ -5,11 +5,12 @@ import {
   buildSection,
   buildRadioField,
   buildSubmitField,
+  buildSelectField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
-import { deceasedInfoFields } from './Sections/deceasedInfoFields'
+import { EstateInfo } from '@island.is/clients/syslumenn'
 
 export const getForm = ({
   allowDivisionOfEstate = false,
@@ -31,7 +32,34 @@ export const getForm = ({
             id: 'estate',
             title: m.prerequisitesTitle,
             children: [
-              ...deceasedInfoFields,
+              buildSelectField({
+                id: 'estateInfoSelection',
+                title: m.chooseEstateSelectTitle,
+                defaultValue: (application: {
+                  externalData: {
+                    syslumennOnEntry: { data: { estates: EstateInfo[] } }
+                  }
+                }) => {
+                  return (
+                    application.externalData.syslumennOnEntry?.data as {
+                      estates: Array<EstateInfo>
+                    }
+                  ).estates[0].caseNumber
+                },
+                options: (application) => {
+                  return (
+                    application.externalData.syslumennOnEntry?.data as {
+                      estates: Array<EstateInfo>
+                    }
+                  ).estates.map((estate) => {
+                    return {
+                      value: estate.caseNumber,
+                      label: estate.nameOfDeceased,
+                    }
+                  })
+                },
+                required: true,
+              }),
               buildDescriptionField({
                 id: 'applicationInfo',
                 space: 'containerGutter',
@@ -42,6 +70,7 @@ export const getForm = ({
                 id: 'selectedEstate',
                 title: '',
                 width: 'full',
+                required: true,
                 options: [
                   ...(allowDivisionOfEstate
                     ? [
