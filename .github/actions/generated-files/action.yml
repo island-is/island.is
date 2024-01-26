@@ -1,13 +1,13 @@
-name: "Setup Node.js and Run Codegen"
-description: "Sets up Node.js, runs yarn codegen, and caches Node.js and generated files only on cache miss"
+name: 'Setup Node.js and Run Codegen'
+description: 'Sets up Node.js, runs yarn codegen, and caches Node.js and generated files only on cache miss'
 inputs:
   node-version:
-    description: "The Node.js version to use"
+    description: 'The Node.js version to use'
     required: true
-    default: "20"
+    default: '20'
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Cache Generated Files
       id: cache-gen-files
@@ -40,7 +40,7 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node-version }}
-        cache: "yarn"
+        cache: 'yarn'
 
     - name: Install dependencies
       if: steps.cache-gen-files.outputs.cache-hit != 'true'

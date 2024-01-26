@@ -3,11 +3,11 @@ name: Monorepo
 on:
   push:
     branches:
-      - "main"
-      - "release/**"
-      - "pre-release/**"
+      - 'main'
+      - 'release/**'
+      - 'pre-release/**'
     paths-ignore:
-      - "**/*.md"
+      - '**/*.md'
     tags:
       - docker-build-*
   workflow_dispatch:
@@ -151,7 +151,7 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
-      SERVERSIDE_FEATURES_ON: ""
+      SERVERSIDE_FEATURES_ON: ''
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
@@ -168,7 +168,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: "18.8.0"
+          node-version: '18.8.0'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -332,7 +332,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
-          image: "${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0"
+          image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -444,7 +444,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -476,7 +476,7 @@ jobs:
 
       - uses: ./.github/actions/unit-test
         with:
-          dd-api-key: "${{ secrets.DD_API_KEY }}"
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -511,12 +511,12 @@ jobs:
         continue-on-error: true
       - uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'
         if: steps.gather.outcome == 'success'
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn
@@ -587,7 +587,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
-          image: "${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0"
+          image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -597,13 +597,13 @@ jobs:
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: "--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}"
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: "--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}"
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
   helm-docker-build:
     needs:
@@ -643,8 +643,8 @@ jobs:
           docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         env:
-          PUBLISH: "true"
-          EXTRA_DOCKER_BUILD_ARGS: "--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}"
+          PUBLISH: 'true'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
       - name: Retag as latest
         if: env.GIT_BRANCH == 'main'
@@ -771,7 +771,7 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK
         run: echo "Build is successful"
       - name: Announce skipped
-        if: "!needs.pre-checks.outputs.PRE_CHECK"
+        if: '!needs.pre-checks.outputs.PRE_CHECK'
         run: echo "Build was skipped"
 
   failure-notification:
@@ -790,7 +790,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: failure
-          icon_emoji: ":broken_heart:"
+          icon_emoji: ':broken_heart:'
           fields: repo,message,commit,author,action,eventName,ref,workflow,took # selectable (default: repo,message)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
