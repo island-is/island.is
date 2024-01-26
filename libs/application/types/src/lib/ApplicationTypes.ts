@@ -276,7 +276,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
-    translation: 'doi.cs.application',
+    translation: ['doi.cs.application', 'uiForms.application'],
   },
   [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
     slug: 'felagslegur-vidbotarstudningur',

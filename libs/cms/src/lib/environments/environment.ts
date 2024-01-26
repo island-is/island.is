@@ -90,7 +90,6 @@ export default {
     'latestEventsSlice',
     'supportCategory',
     'supportSubCategory',
-    'lifeEventPageListSlice',
     'manualChapter',
     'chart',
     'chartComponent',
