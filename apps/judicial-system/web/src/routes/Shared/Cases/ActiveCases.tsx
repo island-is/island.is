@@ -311,7 +311,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   </Text>
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Box marginRight={1} marginBottom={1}>
+                  <Box
+                    marginRight={c.appealState ? 1 : 0}
+                    marginBottom={c.appealState ? 1 : 0}
+                  >
                     <TagCaseState
                       caseState={c.state}
                       caseType={c.type}
@@ -320,7 +323,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                       courtDate={c.courtDate}
                     />
                   </Box>
-
                   {c.appealState && (
                     <TagAppealState
                       appealState={c.appealState}
