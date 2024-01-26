@@ -15,8 +15,6 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' {projectRoot}/src/clientConfig.json) > {projectRoot}/src/clientConfig.json",
-          "prettier --write {projectRoot}/src/clientConfig.json",
           "yarn openapi-generator -o {projectRoot}/gen/fetch -i {projectRoot}/src/clientConfig.json"
         ]
       },

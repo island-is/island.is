@@ -10,8 +10,6 @@ export const ApiConfiguration = {
     config: ConfigType<typeof ArborgWorkpoinClientConfig>,
     xroadConfig: ConfigType<typeof XRoadConfig>,
   ) => {
-    console.log('xroad', xroadConfig)
-    console.log('norms ', config)
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-workpoint-arborg',
