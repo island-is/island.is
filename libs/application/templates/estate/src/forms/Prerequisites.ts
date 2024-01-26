@@ -41,7 +41,6 @@ export const getForm = ({
               buildDataProviderItem({
                 title: m.preDataCollectionTitle,
                 subTitle: m.preDataCollectionDescription,
-                pageTitle: m.preDataCollectionTitle,
                 id: 'syslumennOnEntry',
                 provider: EstateOnEntryApi,
               }),
