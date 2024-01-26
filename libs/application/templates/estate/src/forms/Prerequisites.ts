@@ -6,11 +6,14 @@ import {
   buildRadioField,
   buildSubmitField,
   buildSelectField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
 import { EstateInfo } from '@island.is/clients/syslumenn'
+import { EstateOnEntryApi } from '../dataProviders'
 
 export const getForm = ({
   allowDivisionOfEstate = false,
@@ -28,6 +31,22 @@ export const getForm = ({
         id: 'selectEstate',
         title: '',
         children: [
+          buildExternalDataProvider({
+            id: 'preApproveExternalData',
+            title: m.preDataCollectionHeading,
+            description: m.preDataCollectionInfo,
+            checkboxLabel: m.dataCollectionCheckbox,
+            subTitle: m.dataCollectionSubtitle,
+            dataProviders: [
+              buildDataProviderItem({
+                title: m.preDataCollectionTitle,
+                subTitle: m.preDataCollectionDescription,
+                pageTitle: m.preDataCollectionTitle,
+                id: 'syslumennOnEntry',
+                provider: EstateOnEntryApi,
+              }),
+            ],
+          }),
           buildMultiField({
             id: 'estate',
             title: m.prerequisitesTitle,
