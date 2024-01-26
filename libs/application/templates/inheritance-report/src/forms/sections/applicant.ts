@@ -1,5 +1,6 @@
 import {
   buildMultiField,
+  buildSelectField,
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
@@ -7,6 +8,7 @@ import { UserProfile, Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
+import { HEIR, LIQUIDATOR, POWER_OF_ATTORNEY } from '../../lib/constants'
 
 export const applicant = buildSection({
   id: 'applicantsInformation',
@@ -70,6 +72,26 @@ export const applicant = buildSection({
             const data = externalData.userProfile?.data as UserProfile
             return data?.email
           },
+        }),
+        buildSelectField({
+          id: 'applicant.relation',
+          title: m.applicantsRelation,
+          placeholder: m.applicantsRelationPlaceholder,
+          width: 'half',
+          options: [
+            {
+              value: HEIR,
+              label: m.applicantsRelationHeir,
+            },
+            {
+              value: POWER_OF_ATTORNEY,
+              label: m.applicantsRelationPowerOfAttorney,
+            },
+            {
+              value: LIQUIDATOR,
+              label: m.applicantsRelationLiquidator,
+            },
+          ],
         }),
       ],
     }),

@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from './constants'
+import { YES, LIQUIDATOR, POWER_OF_ATTORNEY, HEIR } from './constants'
 import { isValidString } from './utils/helpers'
 import { m } from './messages'
 
@@ -11,6 +11,7 @@ export const inheritanceReportSchema = z.object({
     email: z.string().email(),
     phone: z.string(),
     nationalId: z.string(),
+    relation: z.enum([LIQUIDATOR, POWER_OF_ATTORNEY, HEIR])
   }),
 
   /* assets */

@@ -169,6 +169,31 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
+  applicantsRelation: {
+    id: 'ir.application:applicantsRelation',
+    defaultMessage: 'Tengsl',
+    description: 'Relation label',
+  },
+  applicantsRelationPlaceholder: {
+    id: 'ir.application:applicantsRelationPlaceholder',
+    defaultMessage: 'Veldu tengsl',
+    description: 'Relation placeholder',
+  },
+  applicantsRelationHeir: {
+    id: 'ir.application:applicantsRelationHeir',
+    defaultMessage: 'Erfingi',
+    description: 'Relation option heir',
+  },
+  applicantsRelationPowerOfAttorney: {
+    id: 'ir.application:applicantsRelationPowerOfAttorney',
+    defaultMessage: 'Umboðsmaður',
+    description: 'Relation options power of attorney',
+  },
+  applicantsRelationLiquidator: {
+    id: 'ir.application:applicantsRelationLiquidator',
+    defaultMessage: 'Skiptastjóri',
+    description: 'Relation options liquidator',
+  },
 
   // Inheritance report submit
   irSubmitTitle: {

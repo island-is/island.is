@@ -2,6 +2,9 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const YES = 'Yes'
 export const NO = 'No'
+export const HEIR = 'heir'
+export const POWER_OF_ATTORNEY = 'power_of_attorney'
+export const LIQUIDATOR = 'liquidator'
 
 export const States = {
   prerequisites: 'prerequisites',
