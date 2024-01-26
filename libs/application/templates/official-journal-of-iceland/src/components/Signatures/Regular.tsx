@@ -22,95 +22,115 @@ type Props = Pick<OJOIFieldBaseProps, 'errors'> & {
   addSignature?: boolean
 }
 
-type EmptySignatureGroup = NonNullable<RegularSignatureState>[0]
+type Institution = NonNullable<RegularSignatureState>[0]
 
-type EmptySignature = NonNullable<EmptySignatureGroup['members']>[0]
+type InstitutionMember = NonNullable<Institution['members']>[0]
 
-type MemberKey = keyof EmptySignature
+type MemberKey = keyof InstitutionMember
 
-type InstitutionKey = keyof Omit<EmptySignatureGroup, 'members'>
+type InstitutionKey = keyof Omit<Institution, 'members'>
 
-const emptySignature: EmptySignature = {
+const emptyMember: InstitutionMember = {
   textAbove: '',
   name: '',
   textBelow: '',
   textAfter: '',
 }
 
-const emptySignatureGroup: EmptySignatureGroup = {
+const emptyInstitution: Institution = {
   institution: '',
   date: '',
-  members: [cloneDeep(emptySignature)],
+  members: [cloneDeep(emptyMember)],
 }
 
 export const RegularSignature = ({ state, setState, errors }: Props) => {
-  const { formatMessage: f, formatDateFns } = useLocale()
+  const { formatMessage: f } = useLocale()
 
-  const onChangeSignature = (
-    groupIndex: number,
-    signatureIndex: number,
+  const onChangeMember = (
+    institutionIndex: number,
+    memberIndex: number,
     key: MemberKey,
     value: string,
   ) => {
-    const newState = [...state]
-    const group = newState[groupIndex]
-    if (!group.members) return
-    const signature = group.members[signatureIndex]
-    if (!signature) return
-    signature[key] = value
-    group.members[signatureIndex] = signature
-    newState[groupIndex] = group
-    setState(newState)
+    const clonedState = cloneDeep(state)
+    const institution = clonedState.find(
+      (_, index) => index === institutionIndex,
+    )
+
+    if (!institution) return
+
+    const member = institution?.members?.find(
+      (_, index) => index === memberIndex,
+    )
+
+    if (!member) return
+
+    const updatedMember = { ...member, [key]: value }
+    institution.members?.splice(memberIndex, 1, updatedMember)
+    clonedState.splice(institutionIndex, 1, institution)
+    setState(clonedState)
   }
 
-  const onRemoveSignature = (groupIndex: number, signatureIndex: number) => {
-    // get the signature group
-    const newState = [...state]
-    const group = newState[groupIndex]
-    if (!group.members) return
-    group.members.splice(signatureIndex, 1)
-    newState[groupIndex] = group
-    setState(newState)
+  const onRemoveMember = (institutionIndex: number, memberIndex: number) => {
+    const clonedState = cloneDeep(state)
+    const institution = clonedState.find(
+      (_, index) => index === institutionIndex,
+    )
+
+    if (!institution) return
+
+    institution.members?.splice(memberIndex, 1)
+    clonedState.splice(institutionIndex, 1, institution)
+    setState(clonedState)
   }
 
-  const onAddSignature = (groupIndex: number) => {
-    const newState = [...state]
-    const group = newState[groupIndex]
-    if (!group.members) return
-    group.members.push(cloneDeep(emptySignature))
-    newState[groupIndex] = group
-    setState(newState)
+  const onAddMember = (institutionIndex: number) => {
+    const clonedState = cloneDeep(state)
+    const institution = clonedState.find(
+      (_, index) => index === institutionIndex,
+    )
+
+    if (!institution) return
+
+    institution.members?.push(cloneDeep(emptyMember))
+    clonedState.splice(institutionIndex, 1, institution)
+    setState(clonedState)
   }
 
-  const onChangeSignatureGroup = (
-    index: number,
+  const onChangeInstitution = (
+    institutionIndex: number,
     key: InstitutionKey,
     value: string,
   ) => {
-    const newState = [...state]
-    const group = newState[index]
-    if (!group) return
-    group[key] = value
-    newState[index] = group
-    setState(newState)
+    const clonedState = cloneDeep(state)
+    const institution = clonedState.find(
+      (_, index) => index === institutionIndex,
+    )
+
+    if (!institution) return
+
+    const updatedInstitution = { ...institution, [key]: value }
+    clonedState.splice(institutionIndex, 1, updatedInstitution)
+    setState(clonedState)
   }
 
-  const onRemoveSignatureGroup = (index: number) => {
-    const newState = [...state]
-    newState.splice(index, 1)
-    setState(newState)
+  const onRemoveInstitution = (institutionIndex: number) => {
+    const clonedState = cloneDeep(state)
+    clonedState.splice(institutionIndex, 1)
+    setState(clonedState)
   }
 
-  const onAddSignatureGroup = () => {
-    const newState = [...state, cloneDeep(emptySignatureGroup)]
-    setState(newState)
+  const onAddInstitution = () => {
+    const clonedState = cloneDeep(state)
+    clonedState.push(cloneDeep(emptyInstitution))
+    setState(clonedState)
   }
 
   return (
     <Box>
-      {state.map((signatureGroup, index) => (
-        <Box className={styles.signatureGroupWrapper} key={index}>
-          <Box className={styles.signatureGroup}>
+      {state.map((institution, index) => (
+        <Box className={styles.institutionWrapper} key={index}>
+          <Box className={styles.institution}>
             <InputController
               id={InputFields.case.signature.regular.institution.replace(
                 INSTITUTION_INDEX,
@@ -121,10 +141,10 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                 `${index}`,
               )}
               label={f(newCase.inputs.signature.institution.label)}
-              defaultValue={signatureGroup.institution}
+              defaultValue={institution.institution}
               backgroundColor="blue"
               onChange={(e) =>
-                onChangeSignatureGroup(index, 'institution', e.target.value)
+                onChangeInstitution(index, 'institution', e.target.value)
               }
               error={
                 errors &&
@@ -151,15 +171,15 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
               placeholder={f(newCase.inputs.signature.date.placeholder)}
               backgroundColor="blue"
               size="sm"
-              defaultValue={signatureGroup.date}
-              onChange={(date) => onChangeSignatureGroup(index, 'date', date)}
+              defaultValue={institution.date}
+              onChange={(date) => onChangeInstitution(index, 'date', date)}
             />
             {index > 0 && (
               <Box className={styles.removeInputGroup}>
                 <Button
                   variant="utility"
                   icon="trash"
-                  onClick={() => onRemoveSignatureGroup(index)}
+                  onClick={() => onRemoveInstitution(index)}
                 />
               </Box>
             )}
@@ -168,7 +188,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
             <Text variant="h5" marginBottom={2}>
               {f(newCase.general.signedBy)}
             </Text>
-            {signatureGroup.members?.map((signature, i) => (
+            {institution.members?.map((signature, i) => (
               <Box className={styles.inputGroup} key={`${index}-${i}`}>
                 <Box className={styles.inputWrapper}>
                   <InputController
@@ -192,7 +212,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     backgroundColor="blue"
                     size="sm"
                     onChange={(e) =>
-                      onChangeSignature(index, i, 'textAbove', e.target.value)
+                      onChangeMember(index, i, 'textAbove', e.target.value)
                     }
                   />
                   <InputController
@@ -216,7 +236,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     backgroundColor="blue"
                     size="sm"
                     onChange={(e) =>
-                      onChangeSignature(index, i, 'name', e.target.value)
+                      onChangeMember(index, i, 'name', e.target.value)
                     }
                   />
                 </Box>
@@ -239,7 +259,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     backgroundColor="blue"
                     size="sm"
                     onChange={(e) =>
-                      onChangeSignature(index, i, 'textAfter', e.target.value)
+                      onChangeMember(index, i, 'textAfter', e.target.value)
                     }
                   />
                   <InputController
@@ -260,7 +280,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     backgroundColor="blue"
                     size="sm"
                     onChange={(e) =>
-                      onChangeSignature(index, i, 'textBelow', e.target.value)
+                      onChangeMember(index, i, 'textBelow', e.target.value)
                     }
                   />
                   {i > 0 && (
@@ -268,7 +288,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                       <Button
                         variant="utility"
                         icon="trash"
-                        onClick={() => onRemoveSignature(index, i)}
+                        onClick={() => onRemoveMember(index, i)}
                       />
                     </Box>
                   )}
@@ -280,7 +300,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                 size="small"
                 icon="add"
                 variant="utility"
-                onClick={() => onAddSignature(index)}
+                onClick={() => onAddMember(index)}
               >
                 {f(newCase.buttons.addPerson.label)}
               </Button>
@@ -289,7 +309,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
         </Box>
       ))}
       <Box marginTop={2}>
-        <Button variant="utility" icon="add" onClick={onAddSignatureGroup}>
+        <Button variant="utility" icon="add" onClick={onAddInstitution}>
           {f(newCase.buttons.addInstitution.label)}
         </Button>
       </Box>

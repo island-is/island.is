@@ -13,6 +13,7 @@ import * as styles from './Signatures.css'
 import { RegularSignature } from './Regular'
 import { CommitteeSignature } from './Committee'
 import { useFormContext } from 'react-hook-form'
+import { useEffect } from 'react'
 
 type Props = Pick<OJOIFieldBaseProps, 'application' | 'errors'> & {
   selectedTab: SignatureType
@@ -35,6 +36,11 @@ export const Signatures = ({
 }: Props) => {
   const { f } = useFormatMessage(application)
   const { setValue } = useFormContext()
+
+  useEffect(() => {
+    setValue(InputFields.case.signatureType, selectedTab)
+  }, [selectedTab])
+
   const tabs = [
     {
       id: 'regular',
@@ -67,10 +73,7 @@ export const Signatures = ({
   return (
     <Tabs
       selected={selectedTab}
-      onChange={(id) => {
-        setValue(InputFields.case.signatureType, id)
-        setSelectedTab(id as SignatureType)
-      }}
+      onChange={(id) => setSelectedTab(id as SignatureType)}
       label="Hello"
       tabs={tabs}
     />

@@ -20,7 +20,10 @@ import { useFormatMessage } from '../../hooks'
 import { Signatures } from '../../components/Signatures/Signatures'
 import { AdditionalSignature } from '../../components/Signatures/Additional'
 import { useFormContext } from 'react-hook-form'
-type Props = Pick<OJOIFieldBaseProps, 'errors' | 'application'>
+type Props = Pick<
+  OJOIFieldBaseProps,
+  'application' | 'errors' | 'setBeforeSubmitCallback'
+>
 
 const emptyChairman = {
   textAbove: '',
@@ -40,7 +43,11 @@ const emptyRegularSignature = {
   members: [{ ...emptyChairman }],
 }
 
-export const SignatureSection = ({ application, errors }: Props) => {
+export const SignatureSection = ({
+  application,
+  errors,
+  setBeforeSubmitCallback,
+}: Props) => {
   const { f } = useFormatMessage(application)
   const { answers } = application
   const { setValue } = useFormContext()
@@ -66,14 +73,16 @@ export const SignatureSection = ({ application, errors }: Props) => {
     })
 
   useEffect(() => {
-    setValue('case.signature.committee', committeeSignatures)
-  }, [JSON.stringify(committeeSignatures)])
+    setValue('case.signature.regular', regularSignatures)
+  }, [regularSignatures, setValue])
 
   useEffect(() => {
-    setValue('case.signature.regular', regularSignatures)
-  }, [JSON.stringify(regularSignatures)])
+    setValue('case.signature.committee', committeeSignatures)
+  }, [committeeSignatures, setValue])
 
-  const [additonalSignature, setAdditionalSignature] = useState('')
+  const [additonalSignature, setAdditionalSignature] = useState(
+    answers?.case?.signature.additionalSignature ?? '',
+  )
 
   return (
     <FormGroup
@@ -113,7 +122,7 @@ export const SignatureSection = ({ application, errors }: Props) => {
                 })
           }
           config={signatureConfig}
-          readOnly
+          readOnly={true}
           name={InputFields.case.signatureContents}
           error={
             errors &&

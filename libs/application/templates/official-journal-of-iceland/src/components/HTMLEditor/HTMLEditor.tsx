@@ -9,6 +9,7 @@ type Props = {
   name: string
   value: HTMLText
   config?: React.ComponentProps<typeof Editor>['config']
+  hideWarnings?: boolean
   onChange?: (value: HTMLText) => void
   error?: string
   readOnly?: boolean
@@ -21,6 +22,7 @@ export const HTMLEditor = ({
   config,
   error,
   onChange,
+  hideWarnings,
   readOnly = false,
 }: Props) => {
   const valueRef = useRef(() => value)
@@ -57,6 +59,7 @@ export const HTMLEditor = ({
               })}
             >
               <Editor
+                hideWarnings={hideWarnings}
                 disabled={readOnly}
                 elmRef={editorRef}
                 config={config}

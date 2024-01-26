@@ -613,6 +613,26 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     textAlign: 'right',
   })
 
+  global('.document-content', {
+    marginBottom: '2ch',
+  })
+
+  global('.advertisement__title', {
+    marginBottom: '2ch',
+  })
+
+  global('.advertisement__title-main', {
+    fontSize: 20,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+  })
+
+  global('.advertisement__title-sub', {
+    fontSize: 18,
+    fontWeight: typography.semiBold,
+    textAlign: 'center',
+  })
+
   // END OF SIGNATURES
 
   global('.section__title', {

@@ -14,9 +14,9 @@ export const wrapper = style({
   borderRadius: theme.border.radius.large,
 })
 
-export const signatureGroupWrapper = style({})
+export const institutionWrapper = style({})
 
-export const signatureGroup = style({
+export const institution = style({
   display: 'flex',
   gap: spacing,
   flexWrap: 'wrap',
@@ -61,12 +61,12 @@ globalStyle(`${inputGroup} + ${inputGroup}::before`, {
   backgroundColor: theme.color.blue200,
 })
 
-globalStyle(`${signatureGroupWrapper} + ${signatureGroupWrapper}`, {
+globalStyle(`${institutionWrapper} + ${institutionWrapper}`, {
   position: 'relative',
   marginTop: spacing * 4,
 })
 
-globalStyle(`${signatureGroupWrapper} + ${signatureGroupWrapper}::before`, {
+globalStyle(`${institutionWrapper} + ${institutionWrapper}::before`, {
   content: '',
   position: 'absolute',
   top: -spacing * 2,

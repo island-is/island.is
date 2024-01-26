@@ -36,7 +36,7 @@ export const dataSchema = z.object({
       signatureType: z.string().refine((v) => v && v.length > 0, {
         params: error.emptyFieldError,
       }),
-      signatureContent: z.string().optional(),
+      signatureContents: z.string().optional(),
       signature: z.object({
         regular: z.array(
           z.object({
