@@ -38,7 +38,7 @@ export const Done: Form = buildForm({
       children: [
         buildMultiField({
           id: 'doneScreen',
-          title: m.listSigned,
+          title: m.listSignedShort,
           description: (application: Application) => ({
             ...m.listSignedDescription,
             values: {
