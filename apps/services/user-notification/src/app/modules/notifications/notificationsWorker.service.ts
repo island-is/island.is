@@ -277,9 +277,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   }
 
   async run() {
-    // only run 08:00 - 23:00
     await this.ensureOperationalHours();
-    // work
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
