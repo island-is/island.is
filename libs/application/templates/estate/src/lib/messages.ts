@@ -20,6 +20,22 @@ export const m = defineMessages({
   // Application end
 
   // Prereqs title
+  chooseEstate: {
+    id: 'es.application:chooseEstate',
+    defaultMessage: 'Valið dánarbú',
+    description: '',
+  },
+  chooseEstateDescription: {
+    id: 'es.application:chooseEstateDescription',
+    defaultMessage:
+      'Eftirfarandi dánarbú eru skráð fyrir þinni kennitölu hjá Sýslumanni. Vinsamlegast veldu það sem við á.',
+    description: '',
+  },
+  chooseEstateSelectTitle: {
+    id: 'es.application:chooseEstateSelectTitle',
+    defaultMessage: 'Dánarbú',
+    description: '',
+  },
   prerequisitesTitle: {
     id: 'es.application:prerequisitesTitle',
     defaultMessage: 'Ákvörðun um skipti dánarbús',

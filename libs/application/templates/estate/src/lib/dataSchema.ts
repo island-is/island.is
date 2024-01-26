@@ -83,6 +83,8 @@ export const estateSchema = z.object({
     EstateTypes.divisionOfEstateByHeirs,
   ]),
 
+  estateInfoSelection: z.string().min(1),
+
   // Eignir
   estate: z.object({
     estateMembers: z
