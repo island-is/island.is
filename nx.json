@@ -29,7 +29,6 @@
       }
     }
   },
-  "defaultProject": "web",
   "generators": {
     "@nrwl/nx-plugin": {
       "plugin": {
@@ -129,12 +128,6 @@
         "default",
         "^production",
         "{workspaceRoot}/jest.preset.js"
-      ]
-    },
-    "codegen": {
-      "dependsOn": [
-        "codegen/backend-client",
-        "codegen/frontend-client"
       ]
     },
     "codegen/backend-client": {
