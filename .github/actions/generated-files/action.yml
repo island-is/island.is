@@ -32,6 +32,8 @@ runs:
           **/schema.tsx
           **/fragmentTypes.json
           **/gen/fetch/**
+          # Debugging action
+          .github/**
 
     - name: Setup Node.js
       if: steps.cache-gen-files.outputs.cache-hit != 'true'
