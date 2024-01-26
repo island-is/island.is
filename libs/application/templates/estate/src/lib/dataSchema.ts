@@ -62,6 +62,7 @@ const fileSchema = z.object({
 
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  preApproveExternalData: z.boolean().refine((v) => v),
 
   // Applicant
   applicant: z.object({
