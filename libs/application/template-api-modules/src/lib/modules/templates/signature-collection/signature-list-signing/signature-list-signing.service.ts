@@ -25,7 +25,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
-      auth.nationalId,
+      auth,
     )
     if (signature) {
       return signature
@@ -35,9 +35,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
-    const signee = await this.signatureCollectionClientService.getSignee(
-      auth.nationalId,
-    )
+    const signee = await this.signatureCollectionClientService.getSignee(auth)
     const { canSign, canSignInfo } = signee
 
     if (canSign) {

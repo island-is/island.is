@@ -10,11 +10,17 @@ import { SignatureCollectionClientConfig } from './signature-collection.config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
-export class AdminProcessConfig extends Configuration {}
-export class AdminProcessListApi extends MedmaelalistarApi {}
-export class AdminProcessCollectionApi extends MedmaelasofnunApi {}
-export class AdminProcessSignatureApi extends MedmaeliApi {}
-export class AdminProcessCandidateApi extends FrambodApi {}
+export class AdminConfig extends Configuration {}
+export class AdminListApi extends MedmaelalistarApi {}
+export class AdminCollectionApi extends MedmaelasofnunApi {}
+export class AdminSignatureApi extends MedmaeliApi {}
+export class AdminCandidateApi extends FrambodApi {}
+
+export class ManagerConfig extends Configuration {}
+export class ManagerListApi extends MedmaelalistarApi {}
+export class ManagerCollectionApi extends MedmaelasofnunApi {}
+export class ManagerSignatureApi extends MedmaeliApi {}
+export class ManagerCandidateApi extends FrambodApi {}
 
 const configFactory = (
   config: ConfigType<typeof SignatureCollectionClientConfig>,
@@ -64,10 +70,10 @@ export const exportedApis = [
     }),
   ),
   ...[
-    AdminProcessListApi,
-    AdminProcessCollectionApi,
-    AdminProcessSignatureApi,
-    AdminProcessCandidateApi,
+    AdminListApi,
+    AdminCollectionApi,
+    AdminSignatureApi,
+    AdminCandidateApi,
   ].map((Api) => ({
     provide: Api,
     useFactory: (
@@ -76,12 +82,41 @@ export const exportedApis = [
       xroadConfig: ConfigType<typeof XRoadConfig>,
     ) => {
       return new Api(
-        new AdminProcessConfig(
+        new AdminConfig(
           configFactory(
             config,
             idsClientConfig,
             xroadConfig,
-            config.scopeAdminProcess,
+            config.scopeAdmin,
+          ),
+        ),
+      )
+    },
+    inject: [
+      SignatureCollectionClientConfig.KEY,
+      IdsClientConfig.KEY,
+      XRoadConfig.KEY,
+    ],
+  })),
+  ...[
+    ManagerListApi,
+    ManagerCollectionApi,
+    ManagerSignatureApi,
+    ManagerCandidateApi,
+  ].map((Api) => ({
+    provide: Api,
+    useFactory: (
+      config: ConfigType<typeof SignatureCollectionClientConfig>,
+      idsClientConfig: ConfigType<typeof IdsClientConfig>,
+      xroadConfig: ConfigType<typeof XRoadConfig>,
+    ) => {
+      return new Api(
+        new ManagerConfig(
+          configFactory(
+            config,
+            idsClientConfig,
+            xroadConfig,
+            config.scopeManager,
           ),
         ),
       )

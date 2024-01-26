@@ -1,13 +1,8 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
 import { getRequest } from '@island.is/auth-nest-tools'
-import { UserRole } from '@island.is/clients/signature-collection'
+import { OwnerAccess } from '../decorators/isOwner.decorator'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -15,20 +10,26 @@ export class RolesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const rolesRules = this.reflector.get<UserRole[]>(
-      'roles-rules',
+    const isOwner = this.reflector.get<OwnerAccess>(
+      'is-owner',
       context.getHandler(),
     )
-    if (!rolesRules) {
+    // IsOwner decorator not used
+    if (!isOwner) {
       return true
     }
 
     const request = getRequest(context)
-    const { role } = request.body
-    if (!rolesRules.includes(role)) {
-      throw new UnauthorizedException()
+    const { signee } = request.body
+    const user = request.user
+    const isDelegatedUser = !!user?.actor?.nationalId
+    if (signee.isOwner) {
+      if (isDelegatedUser) {
+        return isOwner === OwnerAccess.AllowActor ? true : false
+      }
+      return true
     }
 
-    return true
+    return false
   }
 }

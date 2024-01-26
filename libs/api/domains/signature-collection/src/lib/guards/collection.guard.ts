@@ -55,9 +55,7 @@ export class CollectionGuard implements CanActivate {
         const role = this.getRole(user)
         request.body = { ...request.body, collection, role }
       } else {
-        const signee = await this.signatureCollectionService.signee(
-          user.nationalId,
-        )
+        const signee = await this.signatureCollectionService.signee(user)
         const role = this.getRole(user, signee?.isOwner)
         request.body = { ...request.body, collection, role, signee }
       }

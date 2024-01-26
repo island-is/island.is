@@ -40,12 +40,13 @@ export class NationalRegistryClientService {
   ) {}
 
   async getIndividual(nationalId: string): Promise<IndividualDto | null> {
+    console.log('getIndividual', nationalId)
     const individual = await this.handleModernMissingData(
       this.individualApi.einstaklingarGetEinstaklingurRaw({
         id: nationalId,
       }),
     )
-
+    console.log(JSON.stringify(individual))
     return formatIndividualDto(individual)
   }
 

@@ -7,9 +7,7 @@ import {
 } from '@island.is/nest/config'
 
 import { Configuration } from '../../gen/fetch'
-import {
-  SignatureCollectionClientConfig,
-} from './signature-collection.config'
+import { SignatureCollectionClientConfig } from './signature-collection.config'
 
 export const ApiConfiguration = {
   provide: 'SignatureCollectionClientApiConfiguration',
@@ -45,4 +43,3 @@ export const ApiConfiguration = {
     XRoadConfig.KEY,
   ],
 }
-
