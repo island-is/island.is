@@ -204,6 +204,9 @@
       "@island.is/api/domains/signature-collection": [
         "libs/api/domains/signature-collection/src/index.ts"
       ],
+      "@island.is/api/domains/social-insurance": [
+        "libs/api/domains/social-insurance/src/index.ts"
+      ],
       "@island.is/api/domains/statistics": [
         "libs/api/domains/statistics/src/index.ts"
       ],
@@ -969,6 +972,9 @@
       ],
       "@island.is/service-portal/signature-collection": [
         "libs/service-portal/signature-collection/src/index.ts"
+      ],
+      "@island.is/service-portal/social-insurance-maintenance": [
+        "libs/service-portal/social-insurance-maintenance/src/index.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
