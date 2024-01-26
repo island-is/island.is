@@ -2,7 +2,7 @@ import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 export const Skeleton = () => {
   return (
-    <Box marginTop={10}>
+    <Box marginTop={[5, 10]}>
       <SkeletonLoader height={200} borderRadius="large" repeat={4} space={3} />
     </Box>
   )
