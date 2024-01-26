@@ -26,7 +26,7 @@ export const space = style({
   display: 'none',
   ...themeUtils.responsiveStyle({
     md: {
-      display: 'initial',
+      display: 'block',
     },
   }),
 })
@@ -48,7 +48,7 @@ globalStyle(`${pdfAction} + button`, {
   display: 'none',
   ...themeUtils.responsiveStyle({
     md: {
-      display: 'initial',
+      display: 'flex',
     },
   }),
 })
