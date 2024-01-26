@@ -52,7 +52,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   onApplicationBootstrap() {
     if (this.isRunningAsWorker) {
       this.run()
-      // this.startScheduledWorker();
     }
   }
 
