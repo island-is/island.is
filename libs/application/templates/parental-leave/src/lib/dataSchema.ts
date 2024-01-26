@@ -179,10 +179,23 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
-  isSelfEmployed: z.enum([YES, NO]),
-  isReceivingUnemploymentBenefits: z.enum([YES, NO]),
-  isRecivingUnemploymentBenefits: z.enum([YES, NO]),
-  unemploymentBenefits: z.string().min(1),
+  employment: z
+    .object({
+      isSelfEmployed: z.enum([YES, NO]),
+      isReceivingUnemploymentBenefits: z.enum([YES, NO]),
+      unemploymentBenefits: z.string().optional(),
+    })
+    .refine(
+      ({
+        isSelfEmployed,
+        isReceivingUnemploymentBenefits,
+        unemploymentBenefits,
+      }) =>
+        isSelfEmployed === NO && isReceivingUnemploymentBenefits === YES
+          ? !!unemploymentBenefits
+          : true,
+      { path: ['unemploymentBenefits'] },
+    ),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z

@@ -27,6 +27,4 @@ export { default as UploadAdditionalFilesInfoScreen } from './UploadAdditionalFi
 export { default as ImageField } from './ImangeField'
 export { PeriodEndDate } from './PeriodEndDate/PeriodEndDate'
 export { PeriodPercentage } from './PeriodPercentage/PeriodPercentage'
-export { SelfEmployed } from './SelfEmployed'
-export { UnEmploymentBenefits } from './UnEmploymentBenefits'
 export { default as EmployersOverview } from './EmployersOverview'
