@@ -116,6 +116,7 @@ export const GetListsForUser = gql`
       collectionId
       slug
       numberOfSignatures
+      maxReached
     }
   }
 `

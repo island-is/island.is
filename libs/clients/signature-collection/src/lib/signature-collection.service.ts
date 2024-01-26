@@ -438,7 +438,7 @@ export class SignatureCollectionClientService {
         })) ?? []),
         ...(signatures.undirAldri?.map((nationalId) => ({
           nationalId,
-          reason: 'Undir Aldri',
+          reason: 'Undir aldri',
         })) ?? []),
         ...(signatures.ekkiASvaedi?.map((nationalId) => ({
           nationalId,

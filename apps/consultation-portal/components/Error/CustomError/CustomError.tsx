@@ -7,13 +7,13 @@ import {
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 
-interface ErrorProps {
+interface CustomErrorProps {
   statusCode: number
   title: string
   children: ReactNode
 }
 
-export const ErrorScreen = ({ statusCode, title, children }: ErrorProps) => {
+const CustomError = ({ statusCode, title, children }: CustomErrorProps) => {
   return (
     <GridContainer>
       <GridRow>
@@ -42,3 +42,5 @@ export const ErrorScreen = ({ statusCode, title, children }: ErrorProps) => {
     </GridContainer>
   )
 }
+
+export default CustomError
