@@ -1,3 +1,5 @@
+// eslint-disable-next-line
+import { UserProfileScope } from '../../../../../libs/auth/scopes/src/lib/userProfile.scope'
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
@@ -30,6 +32,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
           'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
+      USER_PROFILE_CLIENT_SCOPE: json([UserProfileScope.read]),
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',

@@ -116,6 +116,7 @@ import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-o
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
+import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
@@ -324,6 +325,7 @@ const environment = getConfig
         MachineDigitalLicenseClientConfig,
         DrivingDigitalLicenseClientConfig,
         IntellectualPropertiesClientConfig,
+        UserNotificationClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,
@@ -341,7 +343,6 @@ const environment = getConfig
         NationalRegistryClientConfig,
         SyslumennClientConfig,
         ElectronicRegistrationsClientConfig,
-        FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,

@@ -42,7 +42,7 @@ export const List = () => {
                 imgHiddenBelow="sm"
               />
               <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
-              <Signees />
+              <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
               <PaperUpload listId={list.id} />
               <ActionReviewComplete />
             </>

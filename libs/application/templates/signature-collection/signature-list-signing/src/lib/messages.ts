@@ -113,6 +113,16 @@ export const m = defineMessages({
     defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með',
     description: '',
   },
+  selectCandidateMaxReached: {
+    id: 'sls.application:selectCandidateMaxReached',
+    defaultMessage: 'Hámarki meðmæla náð',
+    description: '',
+  },
+  selectCandidateListExpired: {
+    id: 'sls.application:selectCandidateListExpired',
+    defaultMessage: 'Söfnuninni lokið',
+    description: '',
+  },
   listDateTil: {
     id: 'sls.application:listDateTil',
     defaultMessage: 'Lokadagur',

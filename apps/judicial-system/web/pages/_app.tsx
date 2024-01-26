@@ -1,11 +1,13 @@
 import React from 'react'
 import App, { AppContext, AppProps } from 'next/app'
+import getConfig from 'next/config'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
 import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { ToastContainer } from '@island.is/island-ui/core'
 import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
+import { userMonitoring } from '@island.is/user-monitoring'
 
 import client from '../graphql/client'
 import {
@@ -16,6 +18,25 @@ import {
   UserProvider,
   ViewportProvider,
 } from '../src/components'
+
+const {
+  publicRuntimeConfig: {
+    ddRumApplicationId,
+    ddRumClientToken,
+    appVersion,
+    environment,
+  },
+} = getConfig()
+
+if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdRum({
+    service: 'judicial-system-web',
+    applicationId: ddRumApplicationId,
+    clientToken: ddRumClientToken,
+    env: environment,
+    version: appVersion,
+  })
+}
 
 const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {
@@ -92,6 +113,15 @@ class JudicialSystemApplication extends App<Props> {
                       <ToastContainer useKeyframeStyles />
                     </FormProvider>
                     <style jsx global>{`
+                      p,
+                      h1,
+                      h2,
+                      h3,
+                      h4,
+                      h5,
+                      h6 {
+                        word-break: break-word;
+                      }
                       @font-face {
                         font-family: 'IBM Plex Sans';
                         font-style: normal;

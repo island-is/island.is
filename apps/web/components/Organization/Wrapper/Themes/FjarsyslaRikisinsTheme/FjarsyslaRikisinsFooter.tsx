@@ -51,7 +51,7 @@ const FjarsyslaRikisinsFooter = ({
   }, [width >= theme.breakpoints.xl, n])
 
   return (
-    <footer className={styles.container} aria-labelledby="fjarsyslan-footer">
+    <footer className={styles.container}>
       <GridContainer>
         <Box className={styles.topRow}>
           <Box>

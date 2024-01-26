@@ -1,9 +1,0 @@
-{
-  "data": {
-    "requestRulingSignature": {
-      "controlCode": "5446",
-      "documentToken": "380952f4330578e6a0642e3812a0ff270516f423",
-      "__typename": "RequestSignatureResponse"
-    }
-  }
-}

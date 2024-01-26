@@ -56,7 +56,9 @@ export enum ApplicationTypes {
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
+  PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
 }
 
 export const ApplicationConfigurations = {
@@ -274,7 +276,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
-    translation: 'doi.cs.application',
+    translation: ['doi.cs.application', 'uiForms.application'],
   },
   [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
     slug: 'felagslegur-vidbotarstudningur',
@@ -292,8 +294,16 @@ export const ApplicationConfigurations = {
     slug: 'starfsleyfis-vottord',
     translation: 'hlc.application',
   },
+  [ApplicationTypes.PENSION_SUPPLEMENT]: {
+    slug: 'uppbot-a-lifeyri',
+    translation: ['ul.application', 'sia.application', 'uiForms.application'],
+  },
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'eigendaskipti-taekis',
     translation: 'aosh.tmo.application',
+  },
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
+    slug: 'umradaskipti-taekis',
+    translation: 'aosh.cms.application',
   },
 }

@@ -71,11 +71,37 @@ describe('Parental Leave Application Template', () => {
     it('should transition from draft to other parent if applicant is asking for shared rights', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
+          externalData: {
+            person: {
+              data: {
+                spouse: {
+                  nationalId: otherParentId,
+                  name: 'Tester Testerson',
+                },
+              },
+            },
+            children: {
+              data: {
+                children: [
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
+                    expectedDateOfBirth: '2022-10-31',
+                  },
+                ],
+                existingApplications: [],
+              },
+              date: new Date('2021-10-31'),
+              status: 'success',
+            },
+          },
           answers: {
             requestRights: {
               isRequestingRights: 'yes',
             },
             otherParentObj: {
+              chooseOtherParent: SPOUSE,
               otherParentId,
             },
             selectedChild: '0',
@@ -123,11 +149,37 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           state: 'draft',
+          externalData: {
+            person: {
+              data: {
+                spouse: {
+                  nationalId: otherParentId,
+                  name: 'Tester Testerson',
+                },
+              },
+            },
+            children: {
+              data: {
+                children: [
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
+                    expectedDateOfBirth: '2022-10-31',
+                  },
+                ],
+                existingApplications: [],
+              },
+              date: new Date('2021-10-31'),
+              status: 'success',
+            },
+          },
           answers: {
             requestRights: {
               isRequestingRights: 'yes',
             },
             otherParentObj: {
+              chooseOtherParent: SPOUSE,
               otherParentId,
             },
             isSelfEmployed: 'no',
@@ -165,11 +217,37 @@ describe('Parental Leave Application Template', () => {
 
       const helper = new ApplicationTemplateHelper(
         buildApplication({
+          externalData: {
+            person: {
+              data: {
+                spouse: {
+                  nationalId: otherParentId,
+                  name: 'Tester Testerson',
+                },
+              },
+            },
+            children: {
+              data: {
+                children: [
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
+                    expectedDateOfBirth: '2022-10-31',
+                  },
+                ],
+                existingApplications: [],
+              },
+              date: new Date('2021-10-31'),
+              status: 'success',
+            },
+          },
           answers: {
             requestRights: {
               isRequestingRights: 'yes',
             },
             otherParentObj: {
+              chooseOtherParent: SPOUSE,
               otherParentId,
             },
             isSelfEmployed: 'yes',

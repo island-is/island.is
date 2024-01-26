@@ -7,7 +7,10 @@ import { InjectModel } from '@nestjs/sequelize'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { UserProfileAdvania } from './userProfileAdvania.model'
 import { ProcessedStatus } from './types'
-import { hasMatchingContactInfo } from './worker.utils'
+import {
+  chooseEmailAndPhoneNumberFields,
+  hasMatchingContactInfo,
+} from './worker.utils'
 import { environment } from '../../environments'
 
 /**
@@ -39,7 +42,7 @@ export class UserProfileWorkerService {
     if (!existingUserProfile) {
       return this.userProfileModel.create({
         nationalId: advaniaProfile.ssn,
-        email: advaniaProfile.email,
+        email: advaniaProfile.email?.toLowerCase?.(),
         mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
         lastNudge: null,
         documentNotifications: advaniaProfile.canNudge === true,
@@ -54,10 +57,14 @@ export class UserProfileWorkerService {
     }
 
     if (existingUserProfile.modified <= advaniaProfile.exported) {
+      const emailAndPhoneFields = chooseEmailAndPhoneNumberFields(
+        advaniaProfile,
+        existingUserProfile,
+      )
+
       return this.userProfileModel.upsert({
         nationalId: advaniaProfile.ssn,
-        email: advaniaProfile.email,
-        mobilePhoneNumber: advaniaProfile.mobilePhoneNumber,
+        ...emailAndPhoneFields,
         documentNotifications: advaniaProfile.canNudge === true,
         lastNudge: null,
       })

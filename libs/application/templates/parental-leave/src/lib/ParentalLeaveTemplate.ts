@@ -36,6 +36,7 @@ import {
   TransferRightsOption,
   SINGLE,
   FileType,
+  NO_MULTIPLE_BIRTHS,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -163,6 +164,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'attemptToSetPrimaryParentAsOtherParent',
           'setRightsToOtherParent',
           'setAllowanceToOtherParent',
+          'setMultipleBirthsIfNo',
         ],
         meta: {
           name: States.PREREQUISITES,
@@ -1874,6 +1876,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(application.answers, 'personalAllowanceFromSpouse')
           unset(application.answers, 'otherParentRightOfAccess')
         }
+
+        if (otherParent !== MANUAL) {
+          unset(application.answers, 'otherParentObj.otherParentId')
+          unset(application.answers, 'otherParentObj.otherParentName')
+        }
         return context
       }),
       setOtherParentIdIfSelectedSpouse: assign((context) => {
@@ -2275,6 +2282,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
 
         set(answers, 'isResidenceGrant', YES)
+
+        return context
+      }),
+      setMultipleBirthsIfNo: assign((context) => {
+        const { application } = context
+        const { hasMultipleBirths } = getApplicationAnswers(application.answers)
+
+        if (hasMultipleBirths === NO) {
+          set(
+            application.answers,
+            'multipleBirths.multipleBirths',
+            NO_MULTIPLE_BIRTHS,
+          )
+        }
 
         return context
       }),

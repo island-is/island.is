@@ -14,6 +14,7 @@ import { UserProfileAdvania } from '../userProfileAdvania.model'
 import { UserProfile } from '../../user-profile/userProfile.model'
 
 import { ProcessedStatus } from '../types'
+import { stringsHaveMatchingValue } from '../worker.utils'
 
 describe('UserProfileWorker', () => {
   jest.setTimeout(30000)
@@ -72,7 +73,7 @@ describe('UserProfileWorker', () => {
         )
 
         return (
-          matchingProfile.email === p.email &&
+          stringsHaveMatchingValue(matchingProfile.email, p.email, true) &&
           matchingProfile.mobilePhoneNumber === p.mobilePhoneNumber
         )
       }),
@@ -161,7 +162,13 @@ describe('UserProfileWorker', () => {
           const profileBefore = userProfilesBeforeMigration[i]
           const profileAfter = userProfilesAfterMigration[i]
 
-          expect(profileBefore.email).not.toBe(profileAfter.email)
+          expect(
+            stringsHaveMatchingValue(
+              profileBefore.email,
+              profileAfter.email,
+              true,
+            ),
+          ).toBe(false)
           expect(profileBefore.mobilePhoneNumber).not.toBe(
             profileAfter.mobilePhoneNumber,
           )
@@ -207,7 +214,13 @@ describe('UserProfileWorker', () => {
             const profileBefore = userProfilesBeforeMigration[i]
             const profileAfter = userProfilesAfterMigration[i]
 
-            expect(profileBefore.email).toBe(profileAfter.email)
+            expect(
+              stringsHaveMatchingValue(
+                profileBefore.email,
+                profileAfter.email,
+                true,
+              ),
+            ).toBe(true)
             expect(profileBefore.mobilePhoneNumber).toBe(
               profileAfter.mobilePhoneNumber,
             )
@@ -266,7 +279,13 @@ describe('UserProfileWorker', () => {
               const profileBefore = userProfilesBeforeMigration[i]
               const profileAfter = userProfilesAfterMigration[i]
 
-              expect(profileBefore.email).toBe(profileAfter.email)
+              expect(
+                stringsHaveMatchingValue(
+                  profileBefore.email,
+                  profileAfter.email,
+                  true,
+                ),
+              ).toBe(true)
               expect(profileBefore.mobilePhoneNumber).toBe(
                 profileAfter.mobilePhoneNumber,
               )
@@ -274,6 +293,101 @@ describe('UserProfileWorker', () => {
             }
           },
         )
+      })
+
+      describe('existing user profile email or phone number edge cases', () => {
+        const exported = new Date(2023, 10, 1)
+        const modified = new Date(2023, 9, 1)
+
+        const advaniaProfiles = new Array(4).fill(null).map((_, index) => ({
+          ssn: `${index}`,
+          // Email and mobile phone number from advania is null
+          email: null,
+          mobilePhoneNumber: null,
+          exported,
+        }))
+
+        const pickFields = (p: Partial<UserProfile>) =>
+          pick(p, [
+            'email',
+            'emailVerified',
+            'emailStatus',
+            'mobilePhoneNumber',
+            'mobilePhoneNumberVerified',
+            'mobileStatus',
+          ])
+
+        it('should not replace an existing email with a null value during migration', async () => {
+          // Arrange
+          const existingProfiles: Partial<UserProfile>[] = advaniaProfiles.map(
+            (p, index) => ({
+              nationalId: p.ssn,
+              modified,
+              email: `test${index}@test.local`, // Existing profile has a defined email
+              emailVerified: true,
+              emailStatus: 'VERIFIED',
+              mobilePhoneNumber: null,
+              mobilePhoneNumberVerified: false,
+              mobileStatus: 'NOT_VERIFIED',
+            }),
+          )
+
+          // Act
+          await userProfileAdvaniaModel.bulkCreate(advaniaProfiles.slice())
+          await userProfileModel.bulkCreate(existingProfiles)
+
+          const userProfilesBeforeMigration = await userProfileModel.findAll()
+
+          await workerService.run()
+
+          const userProfilesAfterMigration = await userProfileModel.findAll()
+
+          const existingProfileFields = existingProfiles.map(pickFields)
+
+          // Assert
+          expect(userProfilesBeforeMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+          expect(userProfilesAfterMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+        })
+
+        it('should not replace an existing phone number with a null value during migration', async () => {
+          // Arrange
+          const existingProfiles: Partial<UserProfile>[] = advaniaProfiles.map(
+            (p, index) => ({
+              nationalId: p.ssn,
+              modified,
+              email: null,
+              emailVerified: false,
+              emailStatus: 'NOT_VERIFIED',
+              mobilePhoneNumber: `888111${index}`, // Existing profile has a defined phone number
+              mobilePhoneNumberVerified: true,
+              mobileStatus: 'VERIFIED',
+            }),
+          )
+
+          // Act
+          await userProfileAdvaniaModel.bulkCreate(advaniaProfiles.slice())
+          await userProfileModel.bulkCreate(existingProfiles)
+
+          const userProfilesBeforeMigration = await userProfileModel.findAll()
+
+          await workerService.run()
+
+          const userProfilesAfterMigration = await userProfileModel.findAll()
+
+          const existingProfileFields = existingProfiles.map(pickFields)
+
+          // Assert
+          expect(userProfilesBeforeMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+          expect(userProfilesAfterMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+        })
       })
     })
   })
@@ -311,7 +425,13 @@ describe('UserProfileWorker', () => {
       expect(existingUserProfileAfter.nationalId).toEqual(
         migratedUserProfile.ssn,
       )
-      expect(existingUserProfileAfter.email).toEqual(migratedUserProfile.email)
+      expect(
+        stringsHaveMatchingValue(
+          existingUserProfileAfter.email,
+          migratedUserProfile.email,
+          true,
+        ),
+      ).toBe(true)
       expect(existingUserProfileAfter.mobilePhoneNumber).toEqual(
         migratedUserProfile.mobilePhoneNumber,
       )
@@ -357,9 +477,13 @@ describe('UserProfileWorker', () => {
         expect(existingUserProfileAfter.nationalId).toEqual(
           migratedUserProfile.ssn,
         )
-        expect(existingUserProfileAfter.email).toEqual(
-          migratedUserProfile.email,
-        )
+        expect(
+          stringsHaveMatchingValue(
+            existingUserProfileAfter.email,
+            migratedUserProfile.email,
+            true,
+          ),
+        ).toBe(true)
         expect(existingUserProfileAfter.mobilePhoneNumber).toEqual(
           migratedUserProfile.mobilePhoneNumber,
         )
@@ -412,9 +536,13 @@ describe('UserProfileWorker', () => {
           expect(existingUserProfileBefore).not.toEqual(
             existingUserProfileAfter,
           )
-          expect(existingUserProfileBefore.email).not.toEqual(
-            migratedUserProfile.email,
-          )
+          expect(
+            stringsHaveMatchingValue(
+              existingUserProfileBefore.email,
+              migratedUserProfile.email,
+              true,
+            ),
+          ).toBe(false)
           expect(existingUserProfileBefore.mobilePhoneNumber).not.toEqual(
             migratedUserProfile.mobilePhoneNumber,
           )
@@ -422,9 +550,13 @@ describe('UserProfileWorker', () => {
             migratedUserProfile.ssn,
           )
           // Expect email and phone to match after migration
-          expect(existingUserProfileAfter.email).toEqual(
-            migratedUserProfile.email,
-          )
+          expect(
+            stringsHaveMatchingValue(
+              existingUserProfileAfter.email,
+              migratedUserProfile.email,
+              true,
+            ),
+          ).toBe(true)
           expect(existingUserProfileAfter.mobilePhoneNumber).toEqual(
             migratedUserProfile.mobilePhoneNumber,
           )
@@ -489,9 +621,13 @@ describe('UserProfileWorker', () => {
               })
 
               // Assert
-              expect(existingUserProfileAfter.email).not.toEqual(
-                migratedUserProfile.email,
-              )
+              expect(
+                stringsHaveMatchingValue(
+                  existingUserProfileAfter.email,
+                  migratedUserProfile.email,
+                  true,
+                ),
+              ).toBe(false)
               expect(existingUserProfileAfter.mobilePhoneNumber).not.toEqual(
                 migratedUserProfile.mobilePhoneNumber,
               )
@@ -546,9 +682,13 @@ describe('UserProfileWorker', () => {
             })
 
             // Assert
-            expect(existingUserProfileAfter.email).not.toEqual(
-              migratedUserProfile.email,
-            )
+            expect(
+              stringsHaveMatchingValue(
+                existingUserProfileAfter.email,
+                migratedUserProfile.email,
+                true,
+              ),
+            ).toBe(false)
             expect(existingUserProfileAfter.mobilePhoneNumber).not.toEqual(
               migratedUserProfile.mobilePhoneNumber,
             )
@@ -561,6 +701,51 @@ describe('UserProfileWorker', () => {
         })
       })
     })
+  })
+
+  it('should lower case emails coming from advania', async () => {
+    // Arrange
+    const advaniaProfiles = new Array(10).fill(null).map((_, index) => ({
+      ssn: `${index}`,
+      email: `Test${index}@test.Local`,
+      mobilePhoneNumber: `888111${index}`,
+      exported: new Date(2023, 10, 1),
+    }))
+
+    // Act
+    await userProfileAdvaniaModel.bulkCreate(advaniaProfiles)
+    const advaniaProfilesBeforeMigration =
+      await userProfileAdvaniaModel.findAll()
+    const userProfilesBeforeMigration = await userProfileModel.findAll()
+    await workerService.run()
+    const advaniaProfilesAfterMigration =
+      await userProfileAdvaniaModel.findAll()
+    const userProfilesAfterMigration = await userProfileModel.findAll()
+
+    // Assert
+    expect(
+      advaniaProfilesBeforeMigration.every(
+        (p) => p.status === ProcessedStatus.PENDING,
+      ),
+    ).toBe(true)
+    expect(userProfilesBeforeMigration.length).toBe(0)
+    expect(
+      advaniaProfilesAfterMigration.every(
+        (p) => p.status === ProcessedStatus.DONE,
+      ),
+    ).toBe(true)
+    expect(
+      userProfilesAfterMigration.every((p) => {
+        const matchingProfile = advaniaProfilesAfterMigration.find(
+          (ap) => ap.ssn === p.nationalId,
+        )
+
+        return (
+          stringsHaveMatchingValue(matchingProfile.email, p.email, true) &&
+          matchingProfile.mobilePhoneNumber === p.mobilePhoneNumber
+        )
+      }),
+    ).toBe(true)
   })
 
   afterEach(async () => {

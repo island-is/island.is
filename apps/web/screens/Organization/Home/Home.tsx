@@ -188,7 +188,14 @@ const OrganizationHomePage: Screen<HomeProps> = ({
         </Box>
       }
     >
-      <Stack space={SLICE_SPACING}>
+      <Stack
+        space={
+          organizationPage?.bottomSlices &&
+          organizationPage.bottomSlices.length > 0
+            ? SLICE_SPACING
+            : 0
+        }
+      >
         {organizationPage?.bottomSlices.map((slice) => (
           <SliceMachine
             key={slice.id}

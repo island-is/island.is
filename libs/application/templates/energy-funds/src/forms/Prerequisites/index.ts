@@ -9,7 +9,7 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
 import {
   CurrentVehiclesApi,
-  NationalRegistryUserApi,
+  IdentityApi,
   UserProfileApi,
 } from '../../dataProviders'
 import { confirmation } from '../../lib/messages/confirmation'
@@ -58,7 +58,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.transportAuthority.subTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: IdentityApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),
