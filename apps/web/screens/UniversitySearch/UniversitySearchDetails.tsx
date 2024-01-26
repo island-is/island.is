@@ -367,48 +367,56 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             dividerOnTop={false}
             dividerOnBottom={false}
           >
-            <AccordionItem
-              id="application-rules"
-              label={n('admissionRequirements', 'Inntökuskilyrði')}
-              labelUse="p"
-              labelVariant="h3"
-              iconVariant="default"
-              expanded={isOpen[0]}
-              onToggle={() => toggleIsOpen(0)}
-            >
-              <Text as="p">
-                {locale === 'en'
-                  ? ReactHtmlParser(
-                      data.admissionRequirementsEn
-                        ? data.admissionRequirementsEn
-                        : '',
-                    )
-                  : ReactHtmlParser(
-                      data.admissionRequirementsIs
-                        ? data.admissionRequirementsIs
-                        : '',
-                    )}
-              </Text>
-            </AccordionItem>
-            <AccordionItem
-              id="education-requirements"
-              label={n('educationRequirements', 'Námskröfur')}
-              labelUse="p"
-              labelVariant="h3"
-              iconVariant="default"
-              expanded={isOpen[1]}
-              onToggle={() => toggleIsOpen(1)}
-            >
-              <Text as="p">
-                {locale === 'en'
-                  ? ReactHtmlParser(
-                      data.studyRequirementsEn ? data.studyRequirementsEn : '',
-                    )
-                  : ReactHtmlParser(
-                      data.studyRequirementsIs ? data.studyRequirementsIs : '',
-                    )}
-              </Text>
-            </AccordionItem>
+            {(data.admissionRequirementsEn || data.admissionRequirementsIs) && (
+              <AccordionItem
+                id="application-rules"
+                label={n('admissionRequirements', 'Inntökuskilyrði')}
+                labelUse="p"
+                labelVariant="h3"
+                iconVariant="default"
+                expanded={isOpen[0]}
+                onToggle={() => toggleIsOpen(0)}
+              >
+                <Text as="p">
+                  {locale === 'en'
+                    ? ReactHtmlParser(
+                        data.admissionRequirementsEn
+                          ? data.admissionRequirementsEn
+                          : '',
+                      )
+                    : ReactHtmlParser(
+                        data.admissionRequirementsIs
+                          ? data.admissionRequirementsIs
+                          : '',
+                      )}
+                </Text>
+              </AccordionItem>
+            )}
+            {(data.studyRequirementsEn || data.studyRequirementsIs) && (
+              <AccordionItem
+                id="education-requirements"
+                label={n('educationRequirements', 'Námskröfur')}
+                labelUse="p"
+                labelVariant="h3"
+                iconVariant="default"
+                expanded={isOpen[1]}
+                onToggle={() => toggleIsOpen(1)}
+              >
+                <Text as="p">
+                  {locale === 'en'
+                    ? ReactHtmlParser(
+                        data.studyRequirementsEn
+                          ? data.studyRequirementsEn
+                          : '',
+                      )
+                    : ReactHtmlParser(
+                        data.studyRequirementsIs
+                          ? data.studyRequirementsIs
+                          : '',
+                      )}
+                </Text>
+              </AccordionItem>
+            )}
             <AccordionItem
               id="education-orginization"
               label={n('educationOrganization', 'Skipulag náms')}
@@ -418,99 +426,33 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               expanded={isOpen[2]}
               onToggle={() => toggleIsOpen(2)}
             >
-              <Tabs
-                tabs={createTabContent() || []}
-                label="PRUFA"
-                onlyRenderSelectedTab
-                contentBackground="white"
-              />
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="flexStart"
-                alignItems="center"
-                paddingTop={2}
-              >
-                <Box display="flex" paddingRight={1} alignItems="center">
-                  <Box
-                    marginRight={1}
-                    className={[
-                      styles.courseTypeIcon,
-                      styles.capitalizeText,
-                      'small',
-                      'red',
-                    ]}
-                  >
-                    <Text
-                      fontWeight="semiBold"
-                      color="red600"
-                      variant="eyebrow"
-                    >
-                      S
-                    </Text>
-                  </Box>
-                  <Box className={styles.capitalizeText}>
-                    <Text variant="eyebrow">
-                      {n(Requirement.MANDATORY, 'Skylda')}
-                    </Text>
-                  </Box>
-                </Box>
-
-                <Box display="flex" paddingRight={1} alignItems="center">
-                  <Box
-                    marginRight={1}
-                    className={[styles.courseTypeIcon, styles.capitalizeText]}
-                  >
-                    <Text
-                      fontWeight="semiBold"
-                      color="purple600"
-                      variant="eyebrow"
-                    >
-                      B
-                    </Text>
-                  </Box>
-                  <Box className={styles.capitalizeText}>
-                    <Text variant="eyebrow">
-                      {n(Requirement.FREE_ELECTIVE, 'Bundið val')}
-                    </Text>
-                  </Box>
-                </Box>
-                <Box display="flex" paddingRight={1} alignItems="center">
-                  <Box
-                    marginRight={1}
-                    className={[styles.courseTypeIcon, styles.capitalizeText]}
-                  >
-                    <Text
-                      fontWeight="semiBold"
-                      color="blue600"
-                      variant="eyebrow"
-                    >
-                      V
-                    </Text>
-                  </Box>
-                  <Box className={styles.capitalizeText}>
-                    <Text variant="eyebrow">
-                      {n(Requirement.RESTRICTED_ELECTIVE, 'Valfag')}
-                    </Text>
-                  </Box>
-                </Box>
-              </Box>
-            </AccordionItem>
-            <AccordionItem
-              id="annual-cost"
-              label={n('yearlyCost', 'Árlegt gjald')}
-              labelUse="p"
-              labelVariant="h3"
-              iconVariant="default"
-              expanded={isOpen[3]}
-              onToggle={() => toggleIsOpen(3)}
-            >
               <Text as="p">
-                {locale === 'en'
-                  ? data.costInformationEn
-                  : data.costInformationIs}
+                {/* {locale === 'en'
+                  ? ReactHtmlParser(
+                      data.studyRequirementsEn ? data.studyRequirementsEn : '',
+                    )
+                  : ReactHtmlParser(
+                      data.studyRequirementsIs ? data.studyRequirementsIs : '',
+                    )} */}
               </Text>
             </AccordionItem>
+            {(data.costInformationEn || data.costInformationIs) && (
+              <AccordionItem
+                id="annual-cost"
+                label={n('yearlyCost', 'Árlegt gjald')}
+                labelUse="p"
+                labelVariant="h3"
+                iconVariant="default"
+                expanded={isOpen[3]}
+                onToggle={() => toggleIsOpen(3)}
+              >
+                <Text as="p">
+                  {locale === 'en'
+                    ? data.costInformationEn
+                    : data.costInformationIs}
+                </Text>
+              </AccordionItem>
+            )}
           </Accordion>
         </Box>
       </Stack>

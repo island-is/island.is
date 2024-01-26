@@ -17,6 +17,7 @@ import {
   DegreeType,
   ModeOfDelivery,
   Season,
+  ProgramStatus,
 } from '@island.is/university-gateway'
 
 @Injectable()
@@ -141,6 +142,10 @@ export class UniversityGatewayApi {
   async getProgramFilters(): Promise<UniversityGatewayProgramFilter[]> {
     return [
       {
+        field: 'applicationStatus',
+        options: Object.values(ProgramStatus),
+      },
+      {
         field: 'degreeType',
         options: Object.values(DegreeType),
       },
@@ -157,10 +162,6 @@ export class UniversityGatewayApi {
         options: (
           await this.universityApi.universityControllerGetUniversities()
         ).data.map((item: University) => item.id),
-      },
-      {
-        field: 'durationInYears',
-        options: await this.programApi.programControllerGetDurationInYears(),
       },
     ]
   }
