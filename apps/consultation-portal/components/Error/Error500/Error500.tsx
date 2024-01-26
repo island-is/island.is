@@ -1,15 +1,15 @@
 import { Text } from '@island.is/island-ui/core'
-import { Layout } from '../../components'
-import { ErrorScreen } from '../../screens/Error/Error'
+import { Layout } from '../..'
+import { CustomError } from '../../../components'
 import localization from './Error500.json'
 
 export const Error500 = () => {
   const loc = localization.Error500
   return (
     <Layout seo={{ title: '500' }}>
-      <ErrorScreen statusCode={500} title={loc.title}>
+      <CustomError statusCode={500} title={loc.title}>
         <Text>{loc.text}</Text>
-      </ErrorScreen>
+      </CustomError>
     </Layout>
   )
 }
