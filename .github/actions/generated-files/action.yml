@@ -1,5 +1,5 @@
 name: "Setup Node.js and Run Codegen"
-description: "Sets up Node.js, runs yarn codegen, and caches Node.js and generated files"
+description: "Sets up Node.js, runs yarn codegen, and caches Node.js and generated files only on cache miss"
 inputs:
   node-version:
     description: "The Node.js version to use"
@@ -9,25 +9,43 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Cache Generated Files
+      id: cache-gen-files
+      uses: actions/cache@v3
+      with:
+        path: |
+          # Inputs
+          scripts/codegen.js
+          **/codegen.yml
+          **/codegen.yaml
+          **/codegen.json
+          **/clientConfig.yml
+          **/clientConfig.yaml
+          **/clientConfig.json
+          **/openapi.yml
+          **/openapi.yaml
+          **/openapi.json
+          **/*.graphql
+          # Outputs (from nx.json)
+          **/*.generated.ts
+          **/schema.ts
+          **/schema.tsx
+          **/fragmentTypes.json
+          **/gen/fetch/**
+
     - name: Setup Node.js
+      if: steps.cache-gen-files.outputs.cache-hit != 'true'
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node-version }}
         cache: "yarn"
 
     - name: Install dependencies
+      if: steps.cache-gen-files.outputs.cache-hit != 'true'
       run: yarn install
       shell: bash
 
     - name: Generate code
+      if: steps.cache-gen-files.outputs.cache-hit != 'true'
       run: yarn codegen
       shell: bash
-
-    - name: Cache Generated Files
-      uses: actions/cache@v3
-      with:
-        path: |
-          path-to-generated-files
-        key: ${{ runner.os }}-generated-files-${{ hashFiles('**/lock-files') }}
-        restore-keys: |
-          ${{ runner.os }}-generated-files-
