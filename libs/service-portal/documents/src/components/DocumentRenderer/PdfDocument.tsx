@@ -13,18 +13,19 @@ type PdfDocumentProps = {
   document: ActiveDocumentType
   expandCallback?: (value: boolean) => void
   initScale?: number
+  onClose?: () => void
 }
 
 export const PdfDocument: React.FC<PdfDocumentProps> = ({
   document,
   expandCallback,
   initScale = 1.0,
+  onClose,
 }) => {
   const [scalePDF, setScalePDF] = useState(initScale)
   const userInfo = useUserInfo()
   const ref = useRef<HTMLDivElement>(null)
   const { formatMessage } = useLocale()
-  const showExpand = !!expandCallback
 
   useEffect(() => {
     if (scalePDF > 1) {
@@ -38,13 +39,13 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
     <>
       <Box
         className={styles.pdfControls}
-        justifyContent={showExpand ? 'spaceBetween' : 'center'}
+        // justifyContent={'spaceBetween'}
         display="flex"
         flexDirection="row"
         paddingBottom={2}
       >
-        {showExpand && <Box className={styles.space} />}
-        <Box display="flex" flexDirection="row">
+        <Box className={styles.space} />
+        <Box className={styles.pdfAction} display="flex" flexDirection="row">
           <Button
             circle
             icon="remove"
@@ -74,7 +75,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             disabled={scalePDF > 3.5}
           />
         </Box>
-        {showExpand ? (
+        {expandCallback ? (
           <Button
             circle
             icon="expand"
@@ -82,12 +83,20 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             size="small"
             onClick={() => expandCallback(true)}
           />
-        ) : null}
+        ) : onClose ? (
+          <Button
+            circle
+            icon="close"
+            variant="ghost"
+            size="small"
+            onClick={onClose}
+          />
+        ) : undefined}
       </Box>
       <Box
         className={styles.pdfPage}
         height="full"
-        overflow="auto" //
+        overflow="auto"
         boxShadow="subtle"
         ref={ref}
       >
@@ -136,9 +145,15 @@ export const PdfDocWithModal = (
         onCloseModal={() => setModalIsOpen(false)}
         isVisible={modalIsOpen}
         initialVisibility={false}
-        id="moal"
+        id="pdf-doc-modal"
       >
-        <PdfDocument initScale={1.3} {...props} />
+        {modalIsOpen ? (
+          <PdfDocument
+            initScale={1.3}
+            onClose={() => setModalIsOpen(false)}
+            {...props}
+          />
+        ) : undefined}
       </Modal>
     </>
   )

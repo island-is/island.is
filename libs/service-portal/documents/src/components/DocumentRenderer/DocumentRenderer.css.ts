@@ -13,11 +13,24 @@ export const pdfControls = style({
   borderStyle: 'solid',
   borderColor: theme.color.blue200,
   borderRadius: `${theme.border.radius.standard} ${theme.border.radius.standard} 0 0`,
+  justifyContent: 'space-between',
+  '@media': {
+    [`(max-width: ${theme.breakpoints.md}px)`]: {
+      justifyContent: 'center',
+    },
+  },
 })
 
 export const space = style({
   width: 24,
+  '@media': {
+    [`(max-width: ${theme.breakpoints.md}px)`]: {
+      display: 'none',
+    },
+  },
 })
+
+export const pdfAction = style({})
 
 export const pdfPage = style({
   background: theme.color.blue100,
@@ -28,4 +41,12 @@ export const pdfPage = style({
 
 globalStyle(`${pdfControls} button`, {
   boxShadow: 'none',
+})
+
+globalStyle(`${pdfAction} + button`, {
+  '@media': {
+    [`(max-width: ${theme.breakpoints.md}px)`]: {
+      display: 'none',
+    },
+  },
 })
