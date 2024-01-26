@@ -502,17 +502,7 @@ jobs:
 
       - name: Cache for generated files
         id: generated-files-cache
-        continue-on-error: true
-        uses: actions/cache@v3
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+        uses: ./.github/actions/cache
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
