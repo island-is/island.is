@@ -14,6 +14,7 @@ export type Icon =
   | 'calendar'
   | 'call'
   | 'car'
+  | 'cardWithCheckmark'
   | 'caretDown'
   | 'caretUp'
   | 'cellular'
@@ -101,6 +102,7 @@ export default {
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
+    cardWithCheckmark: 'CardWithCheckmark',
     caretDown: 'CaretDown',
     caretUp: 'CaretUp',
     cellular: 'Cellular',
@@ -187,6 +189,7 @@ export default {
     calendar: 'CalendarOutline',
     call: 'CallOutline',
     car: 'CarOutline',
+    cardWithCheckmark: 'CardWithCheckmarkOutline',
     caretDown: 'CaretDownOutline',
     caretUp: 'CaretUpOutline',
     cellular: 'CellularOutline',
