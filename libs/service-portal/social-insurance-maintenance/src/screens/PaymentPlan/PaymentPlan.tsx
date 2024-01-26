@@ -45,6 +45,22 @@ const PaymentPlan = () => {
     })
   }, [selectedYear, getPaymentPlanQuery])
 
+  const totalPaymentsReceived =
+    data?.socialInsurancePaymentPlan?.paymentGroups
+      .filter((pg) => pg.type !== 'Frádráttur')
+      .reduce(
+        (total, current) => (total += current.totalYearCumulativeAmount),
+        0,
+      ) ?? 0
+
+  const totalAmountSubtracted =
+    data?.socialInsurancePaymentPlan?.paymentGroups
+      .filter((pg) => pg.type === 'Frádráttur')
+      .reduce(
+        (total, current) => (total += current.totalYearCumulativeAmount),
+        0,
+      ) ?? 0
+
   return (
     <Box>
       <IntroHeader
@@ -142,15 +158,7 @@ const PaymentPlan = () => {
                   </Table.Data>
                   <Table.Data align="right" colSpan={2}>
                     <Text fontWeight="semiBold">
-                      {amountFormat(
-                        data?.socialInsurancePaymentPlan?.paymentGroups
-                          .filter((pg) => pg.type !== 'Frádráttur')
-                          .reduce(
-                            (total, current) =>
-                              (total += current.totalYearCumulativeAmount),
-                            0,
-                          ) ?? 0,
-                      )}
+                      {amountFormat(totalPaymentsReceived)}
                     </Text>
                   </Table.Data>
                 </Table.Row>
@@ -172,13 +180,7 @@ const PaymentPlan = () => {
                   <Table.Data align="right">
                     <Text fontWeight="semiBold">
                       {amountFormat(
-                        data?.socialInsurancePaymentPlan?.paymentGroups
-                          .filter((pg) => pg.type === 'Frádráttur')
-                          .reduce(
-                            (total, current) =>
-                              (total += current.totalYearCumulativeAmount),
-                            0,
-                          ) ?? 0,
+                        totalPaymentsReceived - totalAmountSubtracted,
                       )}
                     </Text>
                   </Table.Data>
