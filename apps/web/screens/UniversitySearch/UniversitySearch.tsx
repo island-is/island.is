@@ -423,39 +423,40 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 universities.filter((x) => x.id === option)[0]
                                   .contentfulTitle || ''
                             }
-                            if (keyField !== 'OTHER') {
-                              return (
-                                <Checkbox
-                                  label={
-                                    <span
-                                      className={
-                                        filter.field !== 'durationInYears'
-                                          ? styles.capitalizeText
-                                          : ''
-                                      }
-                                    >
-                                      {n(keyField, keyField)}
-                                      {filter.field === 'durationInYears'
-                                        ? locale === 'en'
-                                          ? keyField === '1'
-                                            ? ' year'
-                                            : ' years'
-                                          : ' ár'
-                                        : ''}
-                                    </span>
-                                  }
-                                  id={keyField}
-                                  value={option}
-                                  checked={
-                                    filters[str].filter((x) => x === option)
-                                      .length > 0
-                                  }
-                                  onChange={(e) =>
-                                    checkboxEventHandler(e, filter.field)
-                                  }
-                                />
-                              )
-                            }
+
+                            if (keyField === 'OTHER') return null
+                            return (
+                              <Checkbox
+                                key={`${keyField}-${filter.field}`}
+                                label={
+                                  <span
+                                    className={
+                                      filter.field !== 'durationInYears'
+                                        ? styles.capitalizeText
+                                        : ''
+                                    }
+                                  >
+                                    {n(keyField, keyField)}
+                                    {filter.field === 'durationInYears'
+                                      ? locale === 'en'
+                                        ? keyField === '1'
+                                          ? ' year'
+                                          : ' years'
+                                        : ' ár'
+                                      : ''}
+                                  </span>
+                                }
+                                id={keyField}
+                                value={option}
+                                checked={
+                                  filters[str].filter((x) => x === option)
+                                    .length > 0
+                                }
+                                onChange={(e) =>
+                                  checkboxEventHandler(e, filter.field)
+                                }
+                              />
+                            )
                           })}
                         </Stack>
                         <Box
@@ -689,7 +690,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       return (
                         <Box marginBottom={3} key={index}>
                           <ActionCategoryCard
-                            key={index}
+                            key={`${index}-${dataItem.id}`}
                             href={
                               linkResolver('universitysearchdetails', [
                                 dataItem.id,

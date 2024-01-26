@@ -159,3 +159,26 @@ export const courseTypeIcon = style({
     },
   },
 })
+
+export const courseListContainer = style({
+  display: 'flex',
+  padding: '2rem 0rem',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  backgroundColor: '#F6F6FD',
+})
+
+export const courseListContentContainer = style({
+  display: 'flex',
+  padding: '0rem 2rem',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  gap: '1rem',
+})
+
+export const courseListItems = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1rem',
+})

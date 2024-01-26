@@ -2,15 +2,20 @@ import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
+  position: 'relative',
   ...themeUtils.responsiveStyle({
-    xs: {
-      marginTop: -100,
-      paddingTop: 100,
-    },
+    xs: {},
     md: {
-      marginTop: -110,
-      paddingTop: 110,
+      height: 340,
+      marginTop: 16,
+    },
+    lg: {
       height: 444,
+      marginTop: 16,
+    },
+    xl: {
+      marginTop: 24,
+      height: 480,
     },
   }),
 })

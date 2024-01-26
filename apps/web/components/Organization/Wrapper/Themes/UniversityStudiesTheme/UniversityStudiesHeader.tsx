@@ -1,32 +1,37 @@
 import React, { useMemo } from 'react'
 import { CSSProperties } from '@vanilla-extract/css'
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useNamespace } from '@island.is/web/hooks'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import { theme } from '@island.is/island-ui/theme'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+
 import * as styles from './UniversityStudies.css'
 
 const backgroundImageUrl =
   'https://images.ctfassets.net/8k0h54kbe6bj/1F4J4R4GxCkQezDQhHPjaT/71b4afc65e6184bb42341785bb2fc539/haskolanam.svg'
 
-const getDefaultStyle = (width: number): CSSProperties => {
+const getDefaultStyle = (
+  width: number,
+  url: string | undefined,
+): CSSProperties => {
   if (width >= theme.breakpoints.xl) {
     return {
-      backgroundImage: `url(${backgroundImageUrl})`,
+      backgroundImage: `url(${url || backgroundImageUrl})`,
       backgroundRepeat: 'no-repeat',
       backgroundSize: '1440px',
       backgroundPosition: 'center',
     }
   }
   return {
-    backgroundImage: `url(${backgroundImageUrl})`,
+    backgroundImage: `url(${url || backgroundImageUrl})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundPosition: 'center top',
   }
 }
 
@@ -51,11 +56,11 @@ const UniversityStudiesHeader: React.FC<
     <div
       style={n(
         `universityStudiesHeader-${screenWidth}`,
-        getDefaultStyle(width),
+        getDefaultStyle(width, organizationPage?.defaultHeaderImage?.url),
       )}
       className={styles.headerBg}
     >
-      <Hidden below="xl">
+      {/* <Hidden below="xl">
         <Box className={styles.desktopTitleContainer}>
           <Box className={styles.desktopTitle}>
             <Link
@@ -75,7 +80,7 @@ const UniversityStudiesHeader: React.FC<
             </Text>
           </Box>
         </Box>
-      </Hidden>
+      </Hidden> */}
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
@@ -118,7 +123,7 @@ const UniversityStudiesHeader: React.FC<
             </Box>
           </Hidden>
 
-          <Hidden above="lg">
+          {/* <Hidden above="lg">
             <Box
               marginTop={[2, 2, 15]}
               textAlign={['center', 'center', 'left']}
@@ -139,7 +144,7 @@ const UniversityStudiesHeader: React.FC<
                 )}
               </Text>
             </Box>
-          </Hidden>
+          </Hidden> */}
         </SidebarLayout>
       </div>
     </div>

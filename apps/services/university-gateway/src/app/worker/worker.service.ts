@@ -15,7 +15,7 @@ export class UniversityGatewayWorkerService {
   public async run() {
     logger.info(`Starting university gateway worker...`)
     await this.internalProgramService.updatePrograms()
-    await this.internalCourseService.updateCourses()
+    //await this.internalCourseService.updateCourses()
     await this.internalApplicationService.updateApplicationStatus()
     logger.info(`University gateway worker done.`)
   }

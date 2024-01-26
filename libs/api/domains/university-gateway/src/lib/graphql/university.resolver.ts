@@ -5,6 +5,7 @@ import { Loader } from '@island.is/nest/dataloader'
 import {
   OrganizationLogoByReferenceIdLoader,
   OrganizationTitleByReferenceIdLoader,
+  // OrganizationUrlByReferenceIdLoader,
 } from '@island.is/cms'
 import type {
   LogoUrl,

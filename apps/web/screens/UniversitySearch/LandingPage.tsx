@@ -2,7 +2,14 @@ import { useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
-import { Box, GridColumn, Icon, Input } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  Icon,
+  Input,
+  LinkV2,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   getThemeConfig,
   OrganizationWrapper,
@@ -10,9 +17,11 @@ import {
 } from '@island.is/web/components'
 import {
   ContentLanguage,
+  GetUniversityGatewayUniversitiesQuery,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  UniversityGatewayUniversity,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -25,16 +34,21 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../queries'
+import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
 import * as styles from './UniversitySearch.css'
+
 interface LandingPageProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
+  universities: Array<UniversityGatewayUniversity>
   namespace: Record<string, string>
   locale: string
 }
 const LandingPage: Screen<LandingPageProps> = ({
   organizationPage,
+  organization,
   namespace,
+  universities,
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
@@ -54,10 +68,12 @@ const LandingPage: Screen<LandingPageProps> = ({
         href: url,
       })),
     })) ?? []
-
   const routeToSearch = () => {
     router.push(`${linkResolver('universitysearch').href}?search=${searchTerm}`)
   }
+
+  console.log(organizationPage)
+  console.log(organization)
 
   return (
     <OrganizationWrapper
@@ -76,8 +92,39 @@ const LandingPage: Screen<LandingPageProps> = ({
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
+      sidebarContent={
+        <Box width="full" className={cn(styles.courseListContainer)}>
+          <Box className={cn(styles.courseListContentContainer)}>
+            <Text variant="eyebrow" color="blueberry600">
+              {' '}
+              {/* TODO Translations */}
+              Háskólar
+            </Text>
+            {universities.map((university) => {
+              return (
+                <Box
+                  className={cn(styles.courseListItems)}
+                  key={university.contentfulTitle}
+                >
+                  <Box style={{ width: '1.5rem', height: '1.5rem' }}>
+                    <img
+                      src={university.contentfulLogoUrl?.toString()}
+                      alt={`logo`}
+                    />
+                  </Box>
+                  <LinkV2 href="/">
+                    <Text color="blueberry600">
+                      {university.contentfulTitle}
+                    </Text>
+                  </LinkV2>
+                </Box>
+              )
+            })}
+          </Box>
+        </Box>
+      }
       mainContent={
-        <Box>
+        <Box paddingTop={0}>
           {organizationPage?.slices?.map((slice, index) => {
             return (
               <SliceMachine
@@ -160,12 +207,13 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       data: { getOrganization },
     },
     namespace,
+    universities,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },
@@ -174,7 +222,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },
@@ -194,6 +242,9 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+    }),
   ])
 
   if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
@@ -204,6 +255,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,
+    universities: universities.data.universityGatewayUniversities,
     locale,
     showSearchInHeader: false,
     ...getThemeConfig(
