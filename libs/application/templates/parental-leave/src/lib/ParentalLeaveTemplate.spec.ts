@@ -484,25 +484,25 @@ describe('Parental Leave Application Template', () => {
   })
 
   describe('setPrivatePensionValuesIfUsePrivatePensionFundIsNO', () => {
-      it('should set privatePensionFund and privatePensionFundPercentage to NO_PRIVATE_PENSION_FUND and 0 if use usePrivatePensionFund is NO', () => {
-        const helper = new ApplicationTemplateHelper(
-          buildApplication({
-            answers: {
-              payments: {
-                bank: '123454312300',
-                pensionFund: 'id-frjalsi',
-                union: NO_UNION,
-                privatePensionFund: '',
-                privatePensionFundPercentage: '',
-              },
-              usePrivatePensionFund: NO,
-              employment: {
-                isSelfEmployed: 'no',
-                isReceivingUnemploymentBenefits: 'no',
-              },
-              applicationType: {
-                option: PARENTAL_LEAVE,
-              },
+    it('should set privatePensionFund and privatePensionFundPercentage to NO_PRIVATE_PENSION_FUND and 0 if use usePrivatePensionFund is NO', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            payments: {
+              bank: '123454312300',
+              pensionFund: 'id-frjalsi',
+              union: NO_UNION,
+              privatePensionFund: '',
+              privatePensionFundPercentage: '',
+            },
+            usePrivatePensionFund: NO,
+            employment: {
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
+            },
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
         }),
         ParentalLeaveTemplate,
@@ -526,25 +526,25 @@ describe('Parental Leave Application Template', () => {
   })
 
   describe('setUnionValuesIfUseUnionIsNO', () => {
-      it('should set union to NO_UNION if useUnion is NO', () => {
-        const helper = new ApplicationTemplateHelper(
-          buildApplication({
-            answers: {
-              payments: {
-                bank: '123454312300',
-                pensionFund: 'id-frjalsi',
-                union: '',
-                privatePensionFund: NO_PRIVATE_PENSION_FUND,
-                privatePensionFundPercentage: '0',
-              },
-              useUnion: NO,
-              employment: {
-                isSelfEmployed: 'no',
-                isReceivingUnemploymentBenefits: 'no',
-              },
-              applicationType: {
-                option: PARENTAL_LEAVE,
-              },
+    it('should set union to NO_UNION if useUnion is NO', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            payments: {
+              bank: '123454312300',
+              pensionFund: 'id-frjalsi',
+              union: '',
+              privatePensionFund: NO_PRIVATE_PENSION_FUND,
+              privatePensionFundPercentage: '0',
+            },
+            useUnion: NO,
+            employment: {
+              isSelfEmployed: 'no',
+              isReceivingUnemploymentBenefits: 'no',
+            },
+            applicationType: {
+              option: PARENTAL_LEAVE,
+            },
           },
         }),
         ParentalLeaveTemplate,
