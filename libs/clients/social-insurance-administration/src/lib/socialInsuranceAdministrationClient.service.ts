@@ -1,85 +1,98 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  SendApplicationApi,
-  Response,
-  GetIsApplicantEligibleApi,
-  Eligible,
-  GetApplicantInfoApi,
-  Applicant,
-  GetCurrenciesApi,
-  SendAdditionalDocumentsApi,
-  Attachment,
-  ApplicationDTO,
+  ApplicationApi,
+  ApplicantApi,
+  GeneralApi,
+  PaymentPlanApi,
+  TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
+  TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
+  TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
 } from '../../gen/fetch'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
   constructor(
-    private readonly sendApplicationApi: SendApplicationApi,
-    private readonly getIsApplicantEligibleApi: GetIsApplicantEligibleApi,
-    private readonly getApplicantInfoApi: GetApplicantInfoApi,
-    private readonly getCurrenciesApi: GetCurrenciesApi,
-    private readonly sendAdditionalDocumentsApi: SendAdditionalDocumentsApi,
+    private readonly applicationApi: ApplicationApi,
+    private readonly applicantApi: ApplicantApi,
+    private readonly paymentPlanApi: PaymentPlanApi,
+    private readonly currencyApi: GeneralApi,
   ) {}
 
-  private sendAPIWithAuth = (user: User) =>
-    this.sendApplicationApi.withMiddleware(new AuthMiddleware(user as Auth))
-  private isEligibleAPIWithAuth = (user: User) =>
-    this.getIsApplicantEligibleApi.withMiddleware(
-      new AuthMiddleware(user as Auth),
-    )
-  private applicantAPIWithAuth = (user: User) =>
-    this.getApplicantInfoApi.withMiddleware(new AuthMiddleware(user as Auth))
-  private currenciesAPIWithAuth = (user: User) =>
-    this.getCurrenciesApi.withMiddleware(new AuthMiddleware(user as Auth))
-  private sendDocumentsAPIWithAuth = (user: User) =>
-    this.sendAdditionalDocumentsApi.withMiddleware(
-      new AuthMiddleware(user as Auth),
-    )
+  private applicationApiWithAuth = (user: User) =>
+    this.applicationApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private applicantApiWithAuth = (user: User) =>
+    this.applicantApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private currencyApiWithAuth = (user: User) =>
+    this.currencyApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private paymentPlanApiWithAuth = (user: User) =>
+    this.paymentPlanApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  getPaymentPlan(
+    user: User,
+    year?: number,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
+    return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
+      year: year ? year.toString() : undefined,
+    })
+  }
+
+  getPayments(
+    user: User,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments> {
+    return this.paymentPlanApiWithAuth(
+      user,
+    ).apiProtectedV1PaymentPlanLegitimatepaymentsGet()
+  }
 
   sendApplication(
     user: User,
-    applicationDTO: ApplicationDTO,
+    applicationDTO: object,
     applicationType: string,
-  ): Promise<Response> {
-    return this.sendAPIWithAuth(user).sendApplication({
-      applicationDTO,
+  ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
+    return this.applicationApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicationApplicationTypePost({
       applicationType,
+      body: applicationDTO,
     })
   }
 
   sendAdditionalDocuments(
     user: User,
     applicationId: string,
-    attachment: Array<Attachment>,
+    documents: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>,
   ): Promise<void> {
-    return this.sendDocumentsAPIWithAuth(user).sendDocuments({
-      applicationId,
-      attachment,
+    return this.applicationApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicationApplicationGuidDocumentsPost({
+      applicationGuid: applicationId,
+      trWebCommonsExternalPortalsApiModelsDocumentsDocument: documents,
     })
   }
 
-  async getApplicant(user: User): Promise<Applicant> {
-    const applicant = await this.applicantAPIWithAuth(
-      user,
-    ).applicationGetApplicant()
-    return applicant
+  async getApplicant(
+    user: User,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn> {
+    return this.applicantApiWithAuth(user).apiProtectedV1ApplicantGet()
   }
 
-  async getIsEligible(user: User, applicationType: string): Promise<Eligible> {
-    const isEligible = await this.isEligibleAPIWithAuth(
+  async getIsEligible(
+    user: User,
+    applicationType: string,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
+    return this.applicantApiWithAuth(
       user,
-    ).applicantGetIsEligible({
-      applicationType,
-    })
-    return isEligible
+    ).apiProtectedV1ApplicantApplicationTypeEligibleGet({ applicationType })
   }
 
   async getCurrencies(user: User): Promise<Array<string>> {
-    const currencies = await this.currenciesAPIWithAuth(
-      user,
-    ).generalGetCurrencies()
-    return currencies
+    return this.currencyApiWithAuth(user).apiProtectedV1GeneralCurrenciesGet()
   }
 }
