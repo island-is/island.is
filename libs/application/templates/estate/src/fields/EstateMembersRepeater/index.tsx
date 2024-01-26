@@ -27,6 +27,7 @@ import {
   relationWithApplicant,
 } from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
+import { getEstateDataFromApplication } from '../../lib/utils'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
@@ -99,8 +100,9 @@ export const EstateMembersRepeater: FC<
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
-    estate: EstateRegistrant
   }
+
+  const estateData = getEstateDataFromApplication(application)
 
   const relationsWithApplicant = relationWithApplicant.map((relation) => ({
     value: relation,
@@ -140,11 +142,11 @@ export const EstateMembersRepeater: FC<
   ])
 
   useEffect(() => {
-    if (fields.length === 0 && externalData.estate.estateMembers) {
+    if (fields.length === 0 && estateData?.estate?.estateMembers) {
       // ran into a problem with "append", as it appeared to be getting called multiple times
       // despite checking on the length of the fields
       // so now using "replace" instead, for the initial setup
-      replace(externalData.estate.estateMembers)
+      replace(estateData.estate.estateMembers)
     }
   }, [])
 
