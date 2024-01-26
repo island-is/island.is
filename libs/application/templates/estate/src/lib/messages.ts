@@ -342,6 +342,11 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl við hinn látna',
     description: 'Relation label',
   },
+  applicantAutonomous: {
+    id: 'es.application:applicantAutonomous',
+    defaultMessage: 'Er umsækjandi lögráða',
+    description: 'Autonomous label',
+  },
 
   // Estate members, assets, vehicles
   estateMembersTitle: {
