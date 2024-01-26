@@ -8,6 +8,7 @@ export const dataSchema = z.object({
     address: z.string(),
     area: z.string(),
   }),
+  listId: z.string().min(1),
 })
 
 export type SignatureListSchema = z.TypeOf<typeof dataSchema>

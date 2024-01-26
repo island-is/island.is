@@ -63,7 +63,11 @@ describe('CaseController - Extend', () => {
 
   describe('case extended', () => {
     const userId = uuid()
-    const user = { id: userId } as TUser
+    const prosecutorsOfficeId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: prosecutorsOfficeId },
+    } as TUser
     const caseId = uuid()
     const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
@@ -139,6 +143,7 @@ describe('CaseController - Extend', () => {
           prosecutorId: userId,
           parentCaseId: caseId,
           initialRulingDate: rulingDate,
+          prosecutorsOfficeId,
         },
         { transaction },
       )
@@ -147,7 +152,11 @@ describe('CaseController - Extend', () => {
 
   describe('extended case extended', () => {
     const userId = uuid()
-    const user = { id: userId } as TUser
+    const prosecutorsOfficeId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: prosecutorsOfficeId },
+    } as TUser
     const caseId = uuid()
     const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
@@ -223,6 +232,7 @@ describe('CaseController - Extend', () => {
           prosecutorId: userId,
           parentCaseId: caseId,
           initialRulingDate,
+          prosecutorsOfficeId,
         },
         { transaction },
       )
