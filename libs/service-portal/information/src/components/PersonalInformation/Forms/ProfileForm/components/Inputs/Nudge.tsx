@@ -70,22 +70,20 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
               control={control}
               defaultValue={refuseMail}
               render={({ field: { onChange, value } }) => (
-                <Box display="flex" flexDirection="column" width="full">
-                  <Checkbox
-                    name="refuseMail"
-                    onChange={(e) => {
-                      const value = e.target.checked
-                      onChange(value)
-                      setValue('refuseMail', value)
-                      setAllowSubmit(!allowSubmit)
-                    }}
-                    label={formatMessage({
-                      id: 'sp.settings:nudge-checkbox-label',
-                      defaultMessage: 'Afþakka tölvupóst',
-                    })}
-                    checked={value}
-                  />
-                </Box>
+                <Checkbox
+                  name="refuseMail"
+                  onChange={(e) => {
+                    const value = e.target.checked
+                    onChange(value)
+                    setValue('refuseMail', value)
+                    setAllowSubmit(!allowSubmit)
+                  }}
+                  label={formatMessage({
+                    id: 'sp.settings:nudge-checkbox-label',
+                    defaultMessage: 'Afþakka tölvupóst',
+                  })}
+                  checked={value}
+                />
               )}
             />
           </Box>
