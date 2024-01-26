@@ -17,8 +17,11 @@ import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { NotificationsService } from './notifications.service'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Notification } from './notification.model'
+import { sleep } from '@island.is/shared/utils'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
+const STARTING_WORK_HOUR = 8 // 8 AM
+const ENDING_WORK_HOUR = 23 // 11 PM
 
 type HandleNotification = {
   profile: UserProfileDto
@@ -50,8 +53,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   onApplicationBootstrap() {
     if (this.isRunningAsWorker) {
       this.run()
+      // this.startScheduledWorker();
     }
   }
+ 
+
 
   async handleDocumentNotification({
     profile,
@@ -234,7 +240,46 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
   }
 
+  async ensureOperationalHours() {
+    if (!this.isOperationalHours()) {
+      const sleepDuration = this.calculateSleepDuration();
+      const sleepHours = Math.floor(sleepDuration / (1000 * 60 * 60));
+      const sleepMinutes = Math.floor((sleepDuration % (1000 * 60 * 60)) / (1000 * 60));
+
+      this.logger.info(`Outside of operational hours. Worker will sleep until 08:00 (approximately ${sleepHours} hours and ${sleepMinutes} minutes)`);
+      await new Promise(resolve => setTimeout(resolve, sleepDuration));
+      this.logger.info('Operational hours. Worker waking up after sleep.');
+    }
+  }
+
+  isOperationalHours(): boolean {
+    const currentHour = new Date().getHours();
+    return currentHour >= STARTING_WORK_HOUR && currentHour < ENDING_WORK_HOUR;
+  }
+
+  calculateSleepDuration(): number {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+    const currentSeconds = now.getSeconds();
+
+    let sleepHours;
+    if (currentHour >= ENDING_WORK_HOUR || currentHour < STARTING_WORK_HOUR) {
+      // If it's past the end hour or before the start hour, sleep until the start hour.
+      sleepHours = (24 - currentHour + STARTING_WORK_HOUR) % 24;
+    } else {
+      // If it's during operational hours, no need to sleep.
+      sleepHours = 0;
+    }
+
+    const sleepDuration = (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000; // Convert to milliseconds
+    return sleepDuration > 0 ? sleepDuration : 0;
+  }
+
   async run() {
+    // only run 08:00 - 23:00
+    await this.ensureOperationalHours();
+    // work
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
@@ -299,4 +344,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       },
     )
   }
+
+  
 }
