@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { ConsoleLogger, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -55,6 +55,24 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
   async getCurrentVehiclesWithPlateOrderChecks({
     auth,
   }: TemplateApiModuleActionProps) {
+    const countResult =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+        })
+      ).totalRecords || 0
+    if (countResult && countResult > 20) {
+      return {
+        totalRecords: countResult,
+        vehicles: [],
+      }
+    }
     const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,
@@ -72,43 +90,74 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
         400,
       )
     }
+    console.log('result', result)
 
-    return await Promise.all(
-      result?.map(async (vehicle) => {
-        let validation: PlateOrderValidation | undefined
+    const vehicleInfo = await this.vehiclesApiWithAuth(
+      auth,
+    ).basicVehicleInformationGet({
+      clientPersidno: auth.nationalId,
+      permno: result[0].permno || '',
+      regno: undefined,
+      vin: undefined,
+    })
+    console.log('vehicleInfo', vehicleInfo)
+    try {
+      const vali = await this.vehiclePlateOrderingClient.validatePlateOrder(
+        auth,
+        result[0].permno || '',
+        vehicleInfo?.platetypefront || '',
+        vehicleInfo?.platetyperear || '',
+      )
+      console.log('vali', vali)
+    } catch (error) {
+      console.log('VALI error', error)
+    }
 
-        // Only validate if fewer than 5 items
-        if (result.length <= 5) {
-          // Get basic information about vehicle
-          const vehicleInfo = await this.vehiclesApiWithAuth(
-            auth,
-          ).basicVehicleInformationGet({
-            clientPersidno: auth.nationalId,
-            permno: vehicle.permno || '',
-            regno: undefined,
-            vin: undefined,
-          })
+    return {
+      totalRecords: countResult,
+      vehicles: await Promise.all(
+        result?.map(async (vehicle) => {
+          let validation: PlateOrderValidation | undefined
 
-          // Get validation
-          validation = await this.vehiclePlateOrderingClient.validatePlateOrder(
-            auth,
-            vehicle.permno || '',
-            vehicleInfo?.platetypefront || '',
-            vehicleInfo?.platetyperear || '',
-          )
-        }
+          // Only validate if fewer than 5 items
+          if (result.length <= 5) {
+            // Get basic information about vehicle
+            try {
+              const vehicleInfo = await this.vehiclesApiWithAuth(
+                auth,
+              ).basicVehicleInformationGet({
+                clientPersidno: auth.nationalId,
+                permno: vehicle.permno || '',
+                regno: undefined,
+                vin: undefined,
+              })
+              console.log('vehicleInfo', vehicleInfo)
+              // Get validation
+              validation =
+                await this.vehiclePlateOrderingClient.validatePlateOrder(
+                  auth,
+                  vehicle.permno || '',
+                  vehicleInfo?.platetypefront || '',
+                  vehicleInfo?.platetyperear || '',
+                )
+              console.log('validation', validation)
+            } catch (error) {
+              console.log('error', error)
+            }
+          }
 
-        return {
-          permno: vehicle.permno || undefined,
-          make: vehicle.make || undefined,
-          color: vehicle.color || undefined,
-          role: vehicle.role || undefined,
-          validationErrorMessages: validation?.hasError
-            ? validation.errorMessages
-            : null,
-        }
-      }),
-    )
+          return {
+            permno: vehicle.permno || undefined,
+            make: vehicle.make || undefined,
+            color: vehicle.color || undefined,
+            role: vehicle.role || undefined,
+            validationErrorMessages: validation?.hasError
+              ? validation.errorMessages
+              : null,
+          }
+        }),
+      ),
+    }
   }
 
   async getPlateTypeList() {

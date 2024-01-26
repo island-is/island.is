@@ -33,15 +33,11 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       [],
     ) as UserInformation[],
   )
-
-  const currentVehicleList = application.externalData?.currentVehicleList
-    ?.data as VehiclesCurrentVehicle[]
-  const vehicleValue = getValueViaPath(
+  const permno = getValueViaPath(
     application.answers,
-    'pickVehicle.vehicle',
+    'pickVehicle.plate',
     '',
   ) as string
-  const vehicle = currentVehicleList[parseInt(vehicleValue, 10)]
 
   const [getVehicleInformation, { loading, error }] = useLazyQuery(
     gql`
@@ -68,7 +64,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     getVehicleInformation({
       variables: {
         input: {
-          permno: vehicle.permno,
+          permno: permno,
           regno: '',
           vin: '',
         },

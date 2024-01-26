@@ -19,7 +19,7 @@ import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   VehiclesCurrentVehicle,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
+  VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '../../shared'
 
 interface VehicleSearchFieldProps {
@@ -46,7 +46,7 @@ export const VehicleFindField: FC<
   }
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedVehicle, setSelectedVehicle] =
-    useState<VehiclesCurrentVehicleWithOperatorChangeChecks | null>(
+    useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
       currentVehicle && currentVehicle.permno
         ? {
             permno: currentVehicle.permno,
@@ -74,50 +74,44 @@ export const VehicleFindField: FC<
           console.log('response', response)
           setSelectedVehicle({
             permno:
-              response.vehicleOperatorChangeChecksByPermno
-                ?.basicVehicleInformation?.permno || '',
+              response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+                ?.permno || '',
             make:
-              response.vehicleOperatorChangeChecksByPermno
-                ?.basicVehicleInformation?.make || '',
+              response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+                ?.make || '',
             color:
-              response.vehicleOperatorChangeChecksByPermno
-                ?.basicVehicleInformation?.color || '',
-            isDebtLess:
-              response?.vehicleOperatorChangeChecksByPermno?.isDebtLess,
+              response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+                ?.color || '',
+            isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
             validationErrorMessages:
-              response?.vehicleOperatorChangeChecksByPermno
+              response?.vehicleOwnerchangeChecksByPermno
                 ?.validationErrorMessages,
           })
 
           const disabled =
-            !response?.vehicleOperatorChangeChecksByPermno?.isDebtLess ||
-            !!response?.vehicleOperatorChangeChecksByPermno
+            !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
+            !!response?.vehicleOwnerchangeChecksByPermno
               ?.validationErrorMessages?.length
           const permno = disabled ? '' : plate || ''
 
           setPlate(permno)
           setValue(
             'pickVehicle.type',
-            response.vehicleOperatorChangeChecksByPermno
-              ?.basicVehicleInformation?.make,
+            response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+              ?.make,
           )
           setValue('pickVehicle.plate', permno)
           setValue(
             'pickVehicle.color',
-            response.vehicleOperatorChangeChecksByPermno
-              ?.basicVehicleInformation?.color || undefined,
-          )
-          setValue(
-            'pickVehicle.requireMilage',
-            response.vehicleOperatorChangeChecksByPermno
-              ?.basicVehicleInformation?.requireMileage || false,
+            response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+              ?.color || undefined,
           )
           if (permno) setValue('vehicleInfo.plate', permno)
           if (permno)
             setValue(
               'vehicleInfo.type',
-              response.vehicleOperatorChangeChecksByPermno
-                ?.basicVehicleInformation?.make,
+              response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
+                ?.make,
             )
           setVehicleNotFound(false)
           setIsLoading(false)
