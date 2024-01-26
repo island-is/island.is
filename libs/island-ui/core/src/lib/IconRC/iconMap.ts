@@ -43,6 +43,7 @@ export type Icon =
   | 'filter'
   | 'heart'
   | 'home'
+  | 'homeWithCar'
   | 'informationCircle'
   | 'link'
   | 'location'
@@ -130,6 +131,7 @@ export default {
     filter: 'Filter',
     heart: 'Heart',
     home: 'Home',
+    homeWithCar: 'HomeWithCar',
     informationCircle: 'InformationCircle',
     link: 'Link',
     location: 'Location',
@@ -216,6 +218,7 @@ export default {
     filter: 'FilterOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
+    homeWithCar: 'HomeWithCarOutline',
     informationCircle: 'InformationCircleOutline',
     link: 'LinkOutline',
     location: 'LocationOutline',
