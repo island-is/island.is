@@ -4,7 +4,11 @@ import { ZodTypeAny } from 'zod'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 import { EstateTypes } from './constants'
 import { m } from './messages'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -90,6 +94,32 @@ export const getEstateMembersDescriptionText = (
       m.estateMembersDescriptionUndividedEstate
     : /* EINKASKIPTI */
       m.estateMembersDescriptionDivisionOfEstateByHeirs
+}
+
+export const getEstateDataFromApplication = (
+  application: Application<FormValue>,
+): { estate?: EstateInfo } => {
+  const selectedEstate = application.answers.estateInfoSelection
+
+  let estateData = (
+    application.externalData.syslumennOnEntry?.data as {
+      estates?: Array<EstateInfo>
+    }
+  ).estates?.find((estate) => estate.caseNumber === selectedEstate)
+
+  // TODO: remove singular estate property when legacy applications
+  //       have cleared out of the system
+  if (!estateData) {
+    estateData = (
+      application.externalData.syslumennOnEntry?.data as {
+        estate: EstateInfo
+      }
+    ).estate
+  }
+
+  return {
+    estate: estateData,
+  }
 }
 
 export const customCurrencyFormat = (input: number | string): string => {
