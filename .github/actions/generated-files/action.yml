@@ -1,0 +1,33 @@
+name: "Setup Node.js and Run Codegen"
+description: "Sets up Node.js, runs yarn codegen, and caches Node.js and generated files"
+inputs:
+  node-version:
+    description: "The Node.js version to use"
+    required: true
+    default: "20"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: "yarn"
+
+    - name: Install dependencies
+      run: yarn install
+      shell: bash
+
+    - name: Generate code
+      run: yarn codegen
+      shell: bash
+
+    - name: Cache Generated Files
+      uses: actions/cache@v3
+      with:
+        path: |
+          path-to-generated-files
+        key: ${{ runner.os }}-generated-files-${{ hashFiles('**/lock-files') }}
+        restore-keys: |
+          ${{ runner.os }}-generated-files-
