@@ -1,14 +1,14 @@
 import { Bullet, BulletList, LinkV2, Text } from '@island.is/island-ui/core'
 import Link from 'next/link'
-import { Layout } from '../../components'
-import { ErrorScreen } from '../Error/Error'
+import { Layout } from '../..'
+import { CustomError } from '../../../components'
 import localization from './Error404.json'
 
 export const Error404 = () => {
   const loc = localization.Error404
   return (
     <Layout seo={{ title: '404' }}>
-      <ErrorScreen statusCode={404} title={loc.title}>
+      <CustomError statusCode={404} title={loc.title}>
         <Text variant="h5" paddingBottom={3}>
           {loc.notFoundText}
         </Text>
@@ -32,7 +32,7 @@ export const Error404 = () => {
             </LinkV2>
           </Text>
         </div>
-      </ErrorScreen>
+      </CustomError>
     </Layout>
   )
 }
