@@ -9,16 +9,12 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
 import { ReferenceTemplateService } from './reference-template.service'
-import { ArborgWorkpointModule } from '@island.is/clients/workpoint/arborg'
 
 export class ReferenceTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: ReferenceTemplateModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        ArborgWorkpointModule,
-      ],
+      imports: [SharedTemplateAPIModule.register(config)],
       providers: [ReferenceTemplateService],
       exports: [ReferenceTemplateService],
     }
