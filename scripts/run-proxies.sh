@@ -165,7 +165,7 @@ parse_cli() {
     fi
   done
   # Exit with error if there are unknown proxies
-  if [[ "${unknown_proxies[*]}" != "" ]]; then
+  if [[ "${unknown_proxies[*]-}" != "" ]]; then
     echo "Unknown proxies: '${unknown_proxies[*]}'"
     exit 1
   fi
@@ -265,7 +265,7 @@ main() {
     echo "Starting $proxy proxy"
     (
       for ((i = 1; i <= RESTART_MAX_RETRIES; i++)); do
-        run-"${proxy}"-proxy "${ARGS[@]}" || echo "Exit code for $proxy proxy: $?"
+        run-"${proxy}"-proxy "${ARGS[@]-}" || echo "Exit code for $proxy proxy: $?"
         if [ -n "${REMOVE_CONTAINERS_ON_FAIL:-}" ]; then
           echo "Removing container $container_name on fail..."
           containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
