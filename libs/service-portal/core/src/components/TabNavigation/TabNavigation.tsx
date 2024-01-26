@@ -38,7 +38,6 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
       navigate(id)
     }
   }
-
   const isMobile = width < theme.breakpoints.md
   return (
     <>
