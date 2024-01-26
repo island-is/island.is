@@ -1,14 +1,13 @@
 import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import DropdownMenu from './DropdownMenu'
+import ContextMenu from '../ContextMenu/ContextMenu'
 
-describe('DropdownMenu', () => {
-  it('Dropdown should open and contain a button and a link', () => {
+describe('ContextMenu', () => {
+  it('Context menu should open and contain a button and a link', () => {
     render(
-      <DropdownMenu
+      <ContextMenu
         title="Innskráning"
-        icon="person"
         menuLabel="innskráning"
         items={[{ title: 'Einstaklingur' }, { title: 'Fyrirtæki', href: '#' }]}
       />,
