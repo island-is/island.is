@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const pdfControls = style({
@@ -13,21 +13,22 @@ export const pdfControls = style({
   borderStyle: 'solid',
   borderColor: theme.color.blue200,
   borderRadius: `${theme.border.radius.standard} ${theme.border.radius.standard} 0 0`,
-  justifyContent: 'space-between',
-  '@media': {
-    [`(max-width: ${theme.breakpoints.md}px)`]: {
-      justifyContent: 'center',
+  justifyContent: 'center',
+  ...themeUtils.responsiveStyle({
+    md: {
+      justifyContent: 'space-between',
     },
-  },
+  }),
 })
 
 export const space = style({
   width: 24,
-  '@media': {
-    [`(max-width: ${theme.breakpoints.md}px)`]: {
-      display: 'none',
+  display: 'none',
+  ...themeUtils.responsiveStyle({
+    md: {
+      display: 'initial',
     },
-  },
+  }),
 })
 
 export const pdfAction = style({})
@@ -44,9 +45,10 @@ globalStyle(`${pdfControls} button`, {
 })
 
 globalStyle(`${pdfAction} + button`, {
-  '@media': {
-    [`(max-width: ${theme.breakpoints.md}px)`]: {
-      display: 'none',
+  display: 'none',
+  ...themeUtils.responsiveStyle({
+    md: {
+      display: 'initial',
     },
-  },
+  }),
 })

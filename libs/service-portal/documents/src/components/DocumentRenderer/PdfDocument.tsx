@@ -39,7 +39,6 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
     <>
       <Box
         className={styles.pdfControls}
-        // justifyContent={'spaceBetween'}
         display="flex"
         flexDirection="row"
         paddingBottom={2}
