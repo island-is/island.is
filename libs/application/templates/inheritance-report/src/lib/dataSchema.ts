@@ -11,7 +11,7 @@ export const inheritanceReportSchema = z.object({
     email: z.string().email(),
     phone: z.string(),
     nationalId: z.string(),
-    relation: z.enum([LIQUIDATOR, POWER_OF_ATTORNEY, HEIR])
+    relation: z.enum([LIQUIDATOR, POWER_OF_ATTORNEY, HEIR]),
   }),
 
   /* assets */
