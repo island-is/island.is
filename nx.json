@@ -131,6 +131,12 @@
         "{workspaceRoot}/jest.preset.js"
       ]
     },
+    "codegen": {
+      "dependsOn": [
+        "codegen/backend-client",
+        "codegen/frontend-client"
+      ]
+    },
     "codegen/backend-client": {
       "dependsOn": [
         "^codegen/backend-client",
