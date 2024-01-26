@@ -55,8 +55,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       // this.startScheduledWorker();
     }
   }
- 
-
 
   async handleDocumentNotification({
     profile,
@@ -241,42 +239,47 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
   async ensureOperationalHours() {
     if (!this.isOperationalHours()) {
-      const sleepDuration = this.calculateSleepDuration();
-      const sleepHours = Math.floor(sleepDuration / (1000 * 60 * 60));
-      const sleepMinutes = Math.floor((sleepDuration % (1000 * 60 * 60)) / (1000 * 60));
+      const sleepDuration = this.calculateSleepDuration()
+      const sleepHours = Math.floor(sleepDuration / (1000 * 60 * 60))
+      const sleepMinutes = Math.floor(
+        (sleepDuration % (1000 * 60 * 60)) / (1000 * 60),
+      )
 
-      this.logger.info(`Outside of operational hours. Worker will sleep until 08:00 (approximately ${sleepHours} hours and ${sleepMinutes} minutes)`);
-      await new Promise(resolve => setTimeout(resolve, sleepDuration));
-      this.logger.info('Operational hours. Worker waking up after sleep.');
+      this.logger.info(
+        `Outside of operational hours. Worker will sleep until 08:00 (approximately ${sleepHours} hours and ${sleepMinutes} minutes)`,
+      )
+      await new Promise((resolve) => setTimeout(resolve, sleepDuration))
+      this.logger.info('Operational hours. Worker waking up after sleep.')
     }
   }
 
   isOperationalHours(): boolean {
-    const currentHour = new Date().getHours();
-    return currentHour >= WORK_STARTING_HOUR && currentHour < WORK_ENDING_HOUR;
+    const currentHour = new Date().getHours()
+    return currentHour >= WORK_STARTING_HOUR && currentHour < WORK_ENDING_HOUR
   }
 
   calculateSleepDuration(): number {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinutes = now.getMinutes();
-    const currentSeconds = now.getSeconds();
+    const now = new Date()
+    const currentHour = now.getHours()
+    const currentMinutes = now.getMinutes()
+    const currentSeconds = now.getSeconds()
 
-    let sleepHours;
+    let sleepHours
     if (currentHour >= WORK_ENDING_HOUR || currentHour < WORK_STARTING_HOUR) {
       // If it's past the end hour or before the start hour, sleep until the start hour.
-      sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24;
+      sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24
     } else {
       // If it's during operational hours, no need to sleep.
-      sleepHours = 0;
+      sleepHours = 0
     }
 
-    const sleepDuration = (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000; // Convert to milliseconds
-    return sleepDuration > 0 ? sleepDuration : 0;
+    const sleepDuration =
+      (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000 // Convert to milliseconds
+    return sleepDuration > 0 ? sleepDuration : 0
   }
 
   async run() {
-    await this.ensureOperationalHours();
+    await this.ensureOperationalHours()
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
@@ -341,6 +344,4 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       },
     )
   }
-
-  
 }
