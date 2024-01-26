@@ -40,7 +40,7 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
   }
 
   return (
-    <Box marginTop={[5, 10]} display={'flex'} justifyContent={'center'}>
+    <Box marginTop={[5, 8]} display={'flex'} justifyContent={'center'}>
       <Modal
         id="cancelCollection"
         isVisible={modalIsOpen}
@@ -49,8 +49,9 @@ const CancelCollection = ({ collectionId }: { collectionId: string }) => {
         onCloseModal={() => setModalIsOpen(false)}
         disclosure={
           <Button
-            variant="ghost"
+            variant="text"
             size="small"
+            colorScheme="destructive"
             onClick={() => setModalIsOpen(true)}
           >
             {formatMessage(m.cancelCollectionButton)}
