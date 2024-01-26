@@ -166,6 +166,7 @@ export const courseListContainer = style({
   flexDirection: 'column',
   alignItems: 'flex-start',
   backgroundColor: '#F6F6FD',
+  marginBottom: '24px',
 })
 
 export const courseListContentContainer = style({

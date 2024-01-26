@@ -96,6 +96,7 @@ import {
   TryggingastofnunHeader,
 } from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
+import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
@@ -604,6 +605,11 @@ export const OrganizationFooter: React.FC<
           />
           <Divider />
         </>
+      )
+      break
+    case 'haskolanam':
+      OrganizationFooterComponent = (
+        <UniversityStudiesFooter organization={organization} />
       )
       break
     default: {

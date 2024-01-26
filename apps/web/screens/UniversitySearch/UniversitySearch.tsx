@@ -1306,4 +1306,4 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(UniversitySearch, { showFooter: false })
+export default withMainLayout(UniversitySearch, { showFooter: true })
