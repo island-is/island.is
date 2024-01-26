@@ -146,6 +146,7 @@ export const PdfDocWithModal = (
         isVisible={modalIsOpen}
         initialVisibility={false}
         id="pdf-doc-modal"
+        skeleton
       >
         {modalIsOpen ? (
           <PdfDocument
