@@ -17,6 +17,7 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
+  DefendantPlea,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -44,6 +45,7 @@ registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
 registerEnumType(RequestSharedWithDefender, {
   name: 'RequestSharedWithDefender',
 })
+registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
 
 @ObjectType()
 export class Case {
@@ -385,4 +387,7 @@ export class Case {
 
   @Field(() => Institution, { nullable: true })
   readonly prosecutorsOffice?: Institution
+
+  @Field(() => DefendantPlea, { nullable: true })
+  readonly defendantPlea?: DefendantPlea
 }

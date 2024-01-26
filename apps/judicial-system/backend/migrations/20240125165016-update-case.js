@@ -7,7 +7,7 @@ module.exports = {
         'case',
         'defendant_plea',
         {
-          type: Sequelize.ENUM('GUILITY', 'NOT_GUILTY', 'NO_PLEA'),
+          type: Sequelize.ENUM('GUILTY', 'NOT_GUILTY', 'NO_PLEA'),
           allowNull: true,
         },
         { transaction: t },
@@ -17,9 +17,16 @@ module.exports = {
 
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.removeColumn('case', 'defendant_plea', {
-        transaction: t,
-      }),
+      queryInterface
+        .removeColumn('case', 'defendant_plea', {
+          transaction: t,
+        })
+        .then(() => {
+          queryInterface.sequelize.query(
+            'DROP TYPE "enum_case_defendant_plea";',
+            { transaction: t },
+          )
+        }),
     )
   },
 }

@@ -218,5 +218,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
       name
     }
+    defendantPlea
   }
 }

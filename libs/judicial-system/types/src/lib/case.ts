@@ -181,6 +181,12 @@ export enum RequestSharedWithDefender {
   NOT_SHARED = 'NOT_SHARED',
 }
 
+export enum DefendantPlea {
+  GUILTY = 'GUILTY',
+  NOT_GUILTY = 'NOT_GUILTY',
+  NO_PLEA = 'NO_PLEA',
+}
+
 export interface Case {
   id: string
   created: string
@@ -294,6 +300,7 @@ export interface Case {
   appealIsolationToDate?: string
   requestAppealRulingNotToBePublished?: UserRole[]
   prosecutorsOffice?: Institution
+  defendantPlea?: DefendantPlea
 }
 
 export interface CaseListEntry

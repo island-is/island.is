@@ -240,5 +240,6 @@ query Case($input: CaseQueryInput!) {
       id
       name
     }
+    defendantPlea
   }
 }

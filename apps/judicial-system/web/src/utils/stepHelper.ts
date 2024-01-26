@@ -13,6 +13,7 @@ import {
   Gender,
   Notification,
   NotificationType,
+  DefendantPlea,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -144,4 +145,17 @@ export const isReopenedCOACase = (
     appealState !== CaseAppealState.COMPLETED &&
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
   )
+}
+
+export const getDefendantPleaText = (defendantPlea?: DefendantPlea) => {
+  switch (defendantPlea) {
+    case DefendantPlea.GUILTY:
+      return 'Játar sök'
+    case DefendantPlea.NOT_GUILTY:
+      return 'Neitar sök'
+    case DefendantPlea.NO_PLEA:
+      return 'Tjáir sig ekki / óljóst'
+    default:
+      return ''
+  }
 }

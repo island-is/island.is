@@ -24,6 +24,8 @@ import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-we
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 import SelectCourtOfficials from './SelectCourtOfficials/SelectCourtOfficials'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
+import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const ReceptionAndAssignment = () => {
   const router = useRouter()
@@ -77,8 +79,25 @@ const ReceptionAndAssignment = () => {
       />
       <FormContentContainer>
         {isIndictmentCase(workingCase.type) && workingCase.comments && (
-          <Box marginBottom={5}>
+          <Box marginBottom={workingCase.defendantPlea ? 2 : 5}>
             <AlertMessage message={workingCase.comments} type="warning" />
+          </Box>
+        )}
+        {workingCase.defendantPlea && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(strings.defendantPleaAlertTitle)}
+              message={formatMessage(strings.defendantPleaAlertMessage, {
+                defendantGender: workingCase.defendants
+                  ? workingCase.defendants[0].gender
+                  : Gender.MALE,
+                defendantPlea: getDefendantPleaText(workingCase.defendantPlea),
+                defendantName: workingCase.defendants
+                  ? workingCase.defendants[0].name
+                  : '',
+              })}
+              type="warning"
+            />
           </Box>
         )}
         <Box marginBottom={7}>

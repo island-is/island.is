@@ -1,9 +1,10 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { DefendantPlea } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -39,8 +40,8 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { districtCourts } = useInstitution()
   const router = useRouter()
-
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+  const [checkedRadio, setCheckedRadio] = useState<DefendantPlea>()
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -117,16 +118,76 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
               </Text>
               <div className={styles.grid}>
                 <RadioButton
+                  id="defendant-plea-decision-guilty"
+                  name="defendant-plea-decision"
+                  checked={
+                    checkedRadio === DefendantPlea.GUILTY ||
+                    (!checkedRadio &&
+                      workingCase.defendantPlea === DefendantPlea.GUILTY)
+                  }
+                  onChange={() => {
+                    setCheckedRadio(DefendantPlea.GUILTY)
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          defendantPlea: DefendantPlea.GUILTY,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
                   large
                   backgroundColor="white"
                   label={formatMessage(strings.pleaGuilty)}
                 />
                 <RadioButton
+                  id="defendant-plea-decision-not-guilty"
+                  name="defendant-plea-decision"
+                  checked={
+                    checkedRadio === DefendantPlea.NOT_GUILTY ||
+                    (!checkedRadio &&
+                      workingCase.defendantPlea === DefendantPlea.NOT_GUILTY)
+                  }
+                  onChange={() => {
+                    setCheckedRadio(DefendantPlea.NOT_GUILTY)
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          defendantPlea: DefendantPlea.NOT_GUILTY,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
                   large
                   backgroundColor="white"
                   label={formatMessage(strings.pleaNotGuilty)}
                 />
                 <RadioButton
+                  id="defendant-plea-decision-no-plea"
+                  name="defendant-plea-decision"
+                  checked={
+                    checkedRadio === DefendantPlea.NO_PLEA ||
+                    (!checkedRadio &&
+                      workingCase.defendantPlea === DefendantPlea.NO_PLEA)
+                  }
+                  onChange={() => {
+                    setCheckedRadio(DefendantPlea.NO_PLEA)
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          defendantPlea: DefendantPlea.NO_PLEA,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
                   large
                   backgroundColor="white"
                   label={formatMessage(strings.pleaNoPlea)}
