@@ -658,13 +658,14 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
-  const useUnion = getValueViaPath(answers, 'payments.useUnion') as YesOrNo
+  const useUnion = getValueViaPath(answers, 'payments.useUnion', NO) as YesOrNo
 
   const union = getValueViaPath(answers, 'payments.union') as string
 
   const usePrivatePensionFund = getValueViaPath(
     answers,
     'payments.usePrivatePensionFund',
+    NO,
   ) as YesOrNo
 
   const privatePensionFund = getValueViaPath(
