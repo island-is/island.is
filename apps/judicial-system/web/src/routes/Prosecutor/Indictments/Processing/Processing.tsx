@@ -2,13 +2,11 @@ import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  processing as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import {
+  BlueBox,
   CommentsInput,
   FormContentContainer,
   FormContext,
@@ -16,6 +14,7 @@ import {
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
@@ -30,6 +29,8 @@ import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
+import { strings } from './processing.strings'
+import * as styles from './Processing.css'
 
 const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -90,7 +91,7 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(m.heading)}
+            {formatMessage(strings.heading)}
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
@@ -102,6 +103,38 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
             onChange={handleCourtChange}
           />
         </Box>
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.defendantPlea)}
+              required
+            />
+            <BlueBox>
+              <Text variant="h4" marginBottom={3}>
+                {formatMessage(strings.defendantName, {
+                  name: workingCase.defendants[0].name,
+                })}
+              </Text>
+              <div className={styles.grid}>
+                <RadioButton
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.pleaGuilty)}
+                />
+                <RadioButton
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.pleaNotGuilty)}
+                />
+                <RadioButton
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.pleaNoPlea)}
+                />
+              </div>
+            </BlueBox>
+          </Box>
+        )}
         <Box component="section" marginBottom={10}>
           <CommentsInput
             workingCase={workingCase}
