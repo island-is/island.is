@@ -71,7 +71,6 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
         CarRecyclingClientConfig,
         ArborgWorkpoinClientConfig,
         SignatureCollectionClientConfig,
-
       ],
     }),
   ],
