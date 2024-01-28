@@ -25,6 +25,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  ContextMenu,
   TagAppealState,
   TagCaseState,
   UserContext,
@@ -51,6 +52,7 @@ import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHe
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 
 interface Props {
   cases: CaseListEntry[]
@@ -210,7 +212,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               isActive={sortConfig?.column === 'courtDate'}
             />
           </th>
-          <th></th>
+          <th className={styles.th}></th>
         </tr>
       </thead>
       <LayoutGroup>
@@ -223,7 +225,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 exit="deleted"
                 variants={variants}
                 custom={i}
-                className={cn(styles.tableRowContainer)}
+                className={styles.tableRowContainer}
                 layout
                 data-testid="custody-cases-table-row"
                 role="button"
@@ -348,7 +350,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     </>
                   )}
                 </td>
-                <td className={cn(styles.td, 'secondLast')}>
+                <td className={styles.td}>
                   <AnimatePresence exitBeforeEnter initial={false}>
                     {isOpeningCaseId === c.id && showLoading ? (
                       <div className={styles.deleteButtonWrapper}>
@@ -360,58 +362,68 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         c.state === CaseState.DRAFT ||
                         c.state === CaseState.SUBMITTED ||
                         c.state === CaseState.RECEIVED) && (
-                        <motion.button
-                          key={`${c.id}-delete`}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          data-testid="deleteCase"
-                          aria-label="Viltu afturkalla kröfu?"
-                          className={cn(
-                            styles.deleteButton,
-                            styles.deleteButtonWrapper,
-                          )}
-                          onClick={async (evt) => {
-                            evt.stopPropagation()
+                        <ContextMenu
+                          menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
+                          items={[
+                            {
+                              title: 'Opna mál',
+                              onClick: () => handleOpenCase(c.id, true),
+                              icon: 'open',
+                            },
+                            {
+                              title: 'Eyða mál',
+                              onClick: async () => {
+                                if (onDeleteCase) {
+                                  await onDeleteCase(cases[i])
 
-                            await new Promise((resolve) => {
-                              setRequestToRemoveIndex(
-                                requestToRemoveIndex === i ? undefined : i,
-                              )
+                                  controls.start('isNotDeleting').then(() => {
+                                    setRequestToRemoveIndex(undefined)
+                                  })
+                                }
+                              },
+                              icon: 'trash',
+                            },
+                          ]}
+                          disclosure={
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                              onClick={(evt) => {
+                                evt.stopPropagation()
+                              }}
+                            />
+                          }
+                        />
+                        // <motion.button
+                        //   key={`${c.id}-delete`}
+                        //   initial={{ opacity: 0 }}
+                        //   animate={{ opacity: 1 }}
+                        //   exit={{ opacity: 0 }}
+                        //   data-testid="deleteCase"
+                        //   aria-label="Viltu afturkalla kröfu?"
+                        //   className={cn(
+                        //     styles.deleteButton,
+                        //     styles.deleteButtonWrapper,
+                        //   )}
+                        //   onClick={async (evt) => {
+                        //     evt.stopPropagation()
 
-                              resolve(true)
-                            })
+                        //     await new Promise((resolve) => {
+                        //       setRequestToRemoveIndex(
+                        //         requestToRemoveIndex === i ? undefined : i,
+                        //       )
 
-                            await controls.start('isDeleting')
-                          }}
-                        >
-                          <Icon icon="close" color="blue400" />
-                        </motion.button>
+                        //       resolve(true)
+                        //     })
+
+                        //     await controls.start('isDeleting')
+                        //   }}
+                        // >
+                        //   <Icon icon="close" color="blue400" />
+                        // </motion.button>
                       )
                     )}
                   </AnimatePresence>
-                </td>
-                <td className={cn(styles.deleteButtonContainer, styles.td)}>
-                  <Button
-                    colorScheme="destructive"
-                    size="small"
-                    loading={isDeletingCase}
-                    onClick={async (evt) => {
-                      if (onDeleteCase) {
-                        evt.stopPropagation()
-
-                        await onDeleteCase(cases[i])
-
-                        controls.start('isNotDeleting').then(() => {
-                          setRequestToRemoveIndex(undefined)
-                        })
-                      }
-                    }}
-                  >
-                    <Box as="span" className={styles.deleteButtonText}>
-                      Afturkalla
-                    </Box>
-                  </Button>
                 </td>
               </motion.tr>
             ))}
