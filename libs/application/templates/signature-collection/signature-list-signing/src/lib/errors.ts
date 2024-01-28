@@ -88,12 +88,12 @@ export const errorMessages = {
   maxReached: defineMessages({
     title: {
       id: 'sls.application:error.maxReached.title',
-      defaultMessage: 'Listi hefur náð hámarki meðmæla',
+      defaultMessage: 'Framboð hefur náð hámarksfjölda meðmæla.',
       description: '',
     },
     summary: {
       id: 'sls.application:error.maxReached.summary',
-      defaultMessage: 'Ekki er hægt að mæla með lista.',
+      defaultMessage: 'Ekki er lengur hægt að mæla með þessu framboði.',
       description: '',
     },
   }),

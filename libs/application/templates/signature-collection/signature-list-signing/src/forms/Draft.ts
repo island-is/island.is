@@ -16,10 +16,10 @@ import { format as formatNationalId } from 'kennitala'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
-  title: m.applicationName,
+  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'screen1',
@@ -53,6 +53,7 @@ export const Draft: Form = buildForm({
               title: '',
               backgroundColor: 'white',
               defaultValue: '',
+              required: true,
               options: ({
                 externalData: {
                   getList: { data },
@@ -182,7 +183,7 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'done',
-      title: m.listSigned,
+      title: m.listSignedShort,
       children: [],
     }),
   ],
