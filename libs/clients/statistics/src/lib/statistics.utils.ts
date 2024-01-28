@@ -14,6 +14,7 @@ import {
   MONTH_NAMES,
 } from './statistics.constants'
 import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
+import type { Unwrap } from '@island.is/shared/types'
 
 export const _tryToGetDate = (value: string | null) => {
   if (!value) {
@@ -219,6 +220,28 @@ export const getStatistics = ({
   return dropWhile(dropRightWhile(mapped, dropRight), dropLeft)
 }
 
+export interface DataItem {
+  statisticsForDate: {
+    key: string
+    value: number | null
+  }[]
+  date: Date
+}
+
+/**
+ *
+ * @param result List of DataItem
+ * @param interval If > 1 then we will filter out everything but the n-th items in the list
+ * @returns Possibly filtered list of DataItem
+ */
+export const filterByInterval = (result: DataItem[], interval: number) =>
+  interval > 1
+    ? result
+        .reverse()
+        .filter((_, i) => i % interval === 0)
+        .reverse()
+    : result
+
 export const getMultipleStatistics = async (
   query: GetStatisticsQuery,
   sourceData: StatisticSourceData,
@@ -266,21 +289,30 @@ export const getMultipleStatistics = async (
     dropIncompleteEntries,
   )
 
-  const { dateFrom, dateTo, numberOfDataPoints } = query
+  const { dateFrom, dateTo, numberOfDataPoints, interval = 1 } = query
 
   const numberOfDataPointsToUse =
     numberOfDataPoints ?? DEFAULT_NUMBER_OF_DATA_POINTS
 
   if (!dateFrom && !dateTo) {
     // If we dont have date from or to, get X most recent data points
-    return trimmedResult.slice(numberOfDataPointsToUse * -1)
+    return filterByInterval(
+      trimmedResult.slice(numberOfDataPointsToUse * -1),
+      interval,
+    )
   } else if (dateFrom) {
     // If we have only date from, get the X number of data points from that date
-    return trimmedResult.slice(numberOfDataPointsToUse)
+    return filterByInterval(
+      trimmedResult.slice(numberOfDataPointsToUse),
+      interval,
+    )
   } else if (dateTo) {
     // If we only have date to, get X most recent data points
-    return trimmedResult.slice(numberOfDataPointsToUse * -1)
+    return filterByInterval(
+      trimmedResult.slice(numberOfDataPointsToUse * -1),
+      interval,
+    )
   }
 
-  return trimmedResult
+  return filterByInterval(trimmedResult, interval)
 }
