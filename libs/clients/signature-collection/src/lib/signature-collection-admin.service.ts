@@ -1,11 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { MedmaeliBulkItemDTO } from '../../gen/fetch'
 import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
   CanCreateInput,
-  CanSignInput,
 } from './signature-collection.types'
 import {
   Collection,
@@ -15,33 +14,22 @@ import {
 } from './types/collection.dto'
 import { List, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
-import { CandidateLookup, Signee } from './types/user.dto'
+import { CandidateLookup } from './types/user.dto'
 import { BulkUpload, mapBulkResponse } from './types/bulkUpload.dto'
-
 import { Success, mapReasons } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import {
-  AdminCandidateApi,
-  AdminCollectionApi,
-  AdminListApi,
-  AdminSignatureApi,
-} from './apis'
+import { AdminCollectionApi, AdminListApi, AdminSignatureApi } from './apis'
 
-type Api =
-  | AdminListApi
-  | AdminCollectionApi
-  | AdminSignatureApi
-  | AdminCandidateApi
+type Api = AdminListApi | AdminCollectionApi | AdminSignatureApi
 
 @Injectable()
-export class SignatureCollectionAdmminClientService {
+export class SignatureCollectionAdminClientService {
   constructor(
     private listsApi: AdminListApi,
     private collectionsApi: AdminCollectionApi,
     private signatureApi: AdminSignatureApi,
-    private candidateApi: AdminCandidateApi,
   ) {}
 
   private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
@@ -191,20 +179,6 @@ export class SignatureCollectionAdmminClientService {
     return { success: !!signature }
   }
 
-  async canSign({
-    requirementsMet = false,
-    canSignInfo,
-    isActive,
-    activeSignature,
-  }: CanSignInput): Promise<Success> {
-    const reasons = mapReasons({
-      ...canSignInfo,
-      active: isActive,
-      notSigned: activeSignature === undefined,
-    })
-    return { success: requirementsMet && isActive && !activeSignature, reasons }
-  }
-
   async canCreate({
     requirementsMet = false,
     canCreateInfo,
@@ -265,7 +239,6 @@ export class SignatureCollectionAdmminClientService {
     return {
       nationalId: user.kennitala ?? '',
       name: user.nafn ?? '',
-
       canCreate,
       canCreateInfo,
     }

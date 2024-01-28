@@ -2,18 +2,21 @@ import { Module } from '@nestjs/common'
 import { ApiConfiguration } from './apiConfiguration'
 import { exportedApis } from './apis'
 import { SignatureCollectionClientService } from './signature-collection.service'
-import { SignatureCollectionAdmminClientService } from './signature-collection-admin.service'
+import { SignatureCollectionAdminClientService } from './signature-collection-admin.service'
+import { SignatureCollectionManagerClientService } from './signature-collection-manager.service'
 
 @Module({
   providers: [
     ApiConfiguration,
     ...exportedApis,
     SignatureCollectionClientService,
-    SignatureCollectionAdmminClientService,
+    SignatureCollectionAdminClientService,
+    SignatureCollectionManagerClientService,
   ],
   exports: [
     SignatureCollectionClientService,
-    SignatureCollectionAdmminClientService,
+    SignatureCollectionAdminClientService,
+    SignatureCollectionManagerClientService,
   ],
 })
 export class SignatureCollectionClientModule {}

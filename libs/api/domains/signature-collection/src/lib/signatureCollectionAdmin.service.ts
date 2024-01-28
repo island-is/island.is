@@ -13,7 +13,7 @@ import {
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionCandidateLookUp } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
-import { SignatureCollectionAdmminClientService } from '@island.is/clients/signature-collection'
+import { SignatureCollectionAdminClientService } from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 import { Auth, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
@@ -22,7 +22,7 @@ import { SignatureCollectionSlug } from './models/slug.model'
 @Injectable()
 export class SignatureCollectionAdminService {
   constructor(
-    private signatureCollectionClientService: SignatureCollectionAdmminClientService,
+    private signatureCollectionClientService: SignatureCollectionAdminClientService,
   ) {}
 
   async test(user: Auth): Promise<SignatureCollectionSuccess> {

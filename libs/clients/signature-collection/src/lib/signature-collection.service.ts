@@ -21,7 +21,6 @@ import {
 import { List, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
-
 import { Success, mapReasons } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
@@ -337,11 +336,6 @@ export class SignatureCollectionClientService {
       isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
       candidate,
     }
-  }
-
-  async isOwner(auth: User): Promise<{ success: boolean }> {
-    const { isOwner } = await this.getSignee(auth)
-    return { success: isOwner }
   }
 
   async delegateList(listId: number, nationalId: string): Promise<List> {

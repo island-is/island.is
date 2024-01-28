@@ -4,7 +4,7 @@ import { m } from '../../lib/messages'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { IntroHeader } from '@island.is/service-portal/core'
 import CancelCollection from './CancelCollection'
-import { useGetListsForUser } from '../../hooks'
+import { useGetCurrentCollection, useGetListsForOwner } from '../../hooks'
 import format from 'date-fns/format'
 import { Skeleton } from '../skeletons'
 import { useNavigate } from 'react-router-dom'
@@ -16,17 +16,18 @@ const CandidateView = () => {
   const { userInfo: user } = useAuth()
 
   const { formatMessage } = useLocale()
-  const { listsForUser, loadingUserLists } = useGetListsForUser()
-  const collectionId = listsForUser[0]?.collectionId
+  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner()
+  const { currentCollection } = useGetCurrentCollection()
+  const collectionId = listsForOwner[0]?.collectionId
   return (
     <Box>
       <IntroHeader
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescription)}
       />
-      {!loadingUserLists ? (
+      {!loadingOwnerLists ? (
         <Box>
-          {listsForUser.length === 0 && (
+          {listsForOwner.length === 0 && (
             <Button
               icon="open"
               iconType="outline"
@@ -45,7 +46,7 @@ const CandidateView = () => {
               {formatMessage(m.myListsHeader)}
             </Text>
             <Stack space={[3, 5]}>
-              {listsForUser.map((list) => {
+              {listsForOwner.map((list) => {
                 return (
                   <ActionCard
                     key={list.id}
@@ -93,9 +94,11 @@ const CandidateView = () => {
               })}
             </Stack>
           </Box>
-          {listsForUser.length > 0 && !user?.profile.actor && (
-            <CancelCollection collectionId={collectionId} />
-          )}
+          {listsForOwner.length > 0 &&
+            !user?.profile.actor &&
+            currentCollection.isActive && (
+              <CancelCollection collectionId={collectionId} />
+            )}
         </Box>
       ) : (
         <Skeleton />
