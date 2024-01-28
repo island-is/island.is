@@ -33,8 +33,8 @@ export const listLoader: WrappedLoaderFn = ({ client }) => {
       },
     })
 
-    const list = data?.signatureCollectionList ?? {}
-    const allSignees = signeesData?.signatureCollectionSignatures ?? []
+    const list = data?.signatureCollectionAdminList ?? {}
+    const allSignees = signeesData?.signatureCollectionAdminSignatures ?? []
 
     return { list, allSignees }
   }
