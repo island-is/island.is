@@ -107,6 +107,8 @@ import { GetLifeEventsInput } from './dto/getLifeEvents.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import { CategoryPage } from './models/categoryPage.model'
 import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
+import { FeaturedEvents } from './models/featuredEvents.model'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -738,5 +740,36 @@ export class PowerBiSliceResolver {
   })
   async powerBiEmbedPropsFromServer(@Parent() powerBiSlice: PowerBiSlice) {
     return this.powerBiService.getEmbedProps(powerBiSlice)
+  }
+}
+
+@Resolver(() => FeaturedEvents)
+@CacheControl(defaultCache)
+export class FeaturedEventsResolver {
+  constructor(
+    private cmsElasticsearchService: CmsElasticsearchService,
+    private cmsContentfulService: CmsContentfulService,
+  ) {}
+
+  @ResolveField(() => EventList)
+  async resolvedEventList(
+    @Parent() { resolvedEventList: input }: FeaturedEvents,
+  ): Promise<EventList> {
+    if (input?.size === 0) {
+      return { total: 0, items: [] }
+    }
+
+    return this.cmsElasticsearchService.getEvents(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+  @ResolveField(() => GraphQLJSONObject)
+  async namespace(@Parent() { resolvedEventList: input }: FeaturedEvents) {
+    const respones = await this.cmsContentfulService.getNamespace(
+      'OrganizationPages',
+      input.lang,
+    )
+    return JSON.parse(respones?.fields || '{}')
   }
 }
