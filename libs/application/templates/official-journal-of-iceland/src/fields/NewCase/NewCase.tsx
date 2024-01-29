@@ -21,6 +21,7 @@ import { HTMLEditor } from '../../components/HTMLEditor/HTMLEditor'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { baseConfig } from '../../components/HTMLEditor/config/baseConfig'
 import { SignatureSection } from './SignatureSection'
+import { FormIntro } from '../../components/FormIntro/FormIntro'
 
 export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
@@ -78,7 +79,144 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
 
   return (
     <>
-      <FormWrap
+      <FormIntro
+        title={f(newCase.general.formTitle)}
+        intro={f(newCase.general.formIntro)}
+        button={
+          <Button
+            variant="utility"
+            iconType="outline"
+            icon="copy"
+            onClick={() => setModalToggle((prev) => !prev)}
+          >
+            {f(newCase.buttons.copyOldCase.label)}
+          </Button>
+        }
+      />
+      <FormGroup>
+        <Box width="half">
+          <SelectController
+            id={InputFields.case.department}
+            name={InputFields.case.department}
+            label={f(newCase.inputs.department.label)}
+            placeholder={f(newCase.inputs.department.placeholder)}
+            defaultValue={state.department}
+            options={options.departments}
+            onSelect={(opt) =>
+              setState({
+                ...state,
+                department: opt.value,
+              })
+            }
+            size="sm"
+            error={
+              errors && getErrorViaPath(errors, InputFields.case.department)
+            }
+          />
+        </Box>
+        <Box width="half">
+          <SelectController
+            id={InputFields.case.category}
+            name={InputFields.case.category}
+            label={f(newCase.inputs.category.label)}
+            placeholder={f(newCase.inputs.category.placeholder)}
+            defaultValue={state.category}
+            backgroundColor="blue"
+            options={options.categories}
+            onSelect={(opt) => {
+              const adverb =
+                opt.value === GJALDSKRA_ID || opt.value === SKIPULAGSSKRA_ID
+                  ? 'fyrir'
+                  : 'um'
+              const title = `${opt.label.toUpperCase()} ${adverb}`
+              if (state.title === '') {
+                setValue(InputFields.case.title, title, {
+                  shouldValidate: true,
+                })
+              }
+              setState({
+                ...state,
+                category: opt.value,
+                title: state.title ? state.title : title,
+              })
+            }}
+            size="sm"
+            error={errors && getErrorViaPath(errors, InputFields.case.category)}
+          />
+        </Box>
+        {state.category === REGLUGERDIR_ID && options.subCategories.length && (
+          <Box width="half">
+            <SelectController
+              id={InputFields.case.subCategory}
+              name={InputFields.case.subCategory}
+              label={f(newCase.inputs.subCategory.label)}
+              placeholder={f(newCase.inputs.subCategory.placeholder)}
+              defaultValue={state.subCategory}
+              backgroundColor="blue"
+              options={options.subCategories}
+              onSelect={(opt) => setState({ ...state, subCategory: opt.value })}
+              size="sm"
+              error={
+                errors && getErrorViaPath(errors, InputFields.case.subCategory)
+              }
+            />
+          </Box>
+        )}
+        <Box width="full">
+          <InputController
+            id={InputFields.case.title}
+            name={InputFields.case.title}
+            label={f(newCase.inputs.title.label)}
+            placeholder={f(newCase.inputs.title.placeholder)}
+            defaultValue={state.title}
+            backgroundColor="blue"
+            textarea
+            rows={4}
+            onChange={(e) => setState({ ...state, title: e.target.value })}
+            error={errors && getErrorViaPath(errors, InputFields.case.title)}
+          />
+        </Box>
+      </FormGroup>
+      <FormGroup title={f(newCase.materialForPublicationChapter.title)}>
+        <Box width="half">
+          <SelectController
+            id={InputFields.case.template}
+            name={InputFields.case.template}
+            label={f(newCase.inputs.template.label)}
+            placeholder={f(newCase.inputs.template.placeholder)}
+            defaultValue={state.template}
+            backgroundColor="blue"
+            options={options.templates}
+            onSelect={(opt) => setState({ ...state, template: opt.value })}
+            size="sm"
+            error={errors && getErrorViaPath(errors, InputFields.case.template)}
+          />
+        </Box>
+        <Box width="full">
+          <HTMLEditor
+            config={baseConfig}
+            value={state.documentContents as HTMLText}
+            name={InputFields.case.documentContents}
+            error={
+              errors &&
+              getErrorViaPath(errors, InputFields.case.documentContents)
+            }
+          />
+        </Box>
+      </FormGroup>
+      <SignatureSection application={application} errors={errors} />
+      <TemplateModal
+        visible={modalToggle}
+        onClose={() => setModalToggle(false)}
+        onSave={onSave}
+      />
+    </>
+  )
+}
+
+export default NewCase
+{
+  /* <FormWrap
         header={{
           children: (
             <Text variant="h2" as="h1">
@@ -96,135 +234,5 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
             </Button>
           ),
         }}
-      >
-        <Text marginBottom={4}>{f(newCase.general.formIntro)}</Text>
-        <FormGroup>
-          <Box width="half">
-            <SelectController
-              id={InputFields.case.department}
-              name={InputFields.case.department}
-              label={f(newCase.inputs.department.label)}
-              placeholder={f(newCase.inputs.department.placeholder)}
-              defaultValue={state.department}
-              options={options.departments}
-              onSelect={(opt) =>
-                setState({
-                  ...state,
-                  department: opt.value,
-                })
-              }
-              size="sm"
-              error={
-                errors && getErrorViaPath(errors, InputFields.case.department)
-              }
-            />
-          </Box>
-          <Box width="half">
-            <SelectController
-              id={InputFields.case.category}
-              name={InputFields.case.category}
-              label={f(newCase.inputs.category.label)}
-              placeholder={f(newCase.inputs.category.placeholder)}
-              defaultValue={state.category}
-              backgroundColor="blue"
-              options={options.categories}
-              onSelect={(opt) => {
-                const adverb =
-                  opt.value === GJALDSKRA_ID || opt.value === SKIPULAGSSKRA_ID
-                    ? 'fyrir'
-                    : 'um'
-                const title = `${opt.label.toUpperCase()} ${adverb}`
-                if (state.title === '') {
-                  setValue(InputFields.case.title, title, {
-                    shouldValidate: true,
-                  })
-                }
-                setState({
-                  ...state,
-                  category: opt.value,
-                  title: state.title ? state.title : title,
-                })
-              }}
-              size="sm"
-              error={
-                errors && getErrorViaPath(errors, InputFields.case.category)
-              }
-            />
-          </Box>
-          {state.category === REGLUGERDIR_ID && options.subCategories.length && (
-            <Box width="half">
-              <SelectController
-                id={InputFields.case.subCategory}
-                name={InputFields.case.subCategory}
-                label={f(newCase.inputs.subCategory.label)}
-                placeholder={f(newCase.inputs.subCategory.placeholder)}
-                defaultValue={state.subCategory}
-                backgroundColor="blue"
-                options={options.subCategories}
-                onSelect={(opt) =>
-                  setState({ ...state, subCategory: opt.value })
-                }
-                size="sm"
-                error={
-                  errors &&
-                  getErrorViaPath(errors, InputFields.case.subCategory)
-                }
-              />
-            </Box>
-          )}
-          <Box width="full">
-            <InputController
-              id={InputFields.case.title}
-              name={InputFields.case.title}
-              label={f(newCase.inputs.title.label)}
-              placeholder={f(newCase.inputs.title.placeholder)}
-              defaultValue={state.title}
-              backgroundColor="blue"
-              textarea
-              rows={4}
-              onChange={(e) => setState({ ...state, title: e.target.value })}
-              error={errors && getErrorViaPath(errors, InputFields.case.title)}
-            />
-          </Box>
-        </FormGroup>
-        <FormGroup title={f(newCase.materialForPublicationChapter.title)}>
-          <Box width="half">
-            <SelectController
-              id={InputFields.case.template}
-              name={InputFields.case.template}
-              label={f(newCase.inputs.template.label)}
-              placeholder={f(newCase.inputs.template.placeholder)}
-              defaultValue={state.template}
-              backgroundColor="blue"
-              options={options.templates}
-              onSelect={(opt) => setState({ ...state, template: opt.value })}
-              size="sm"
-              error={
-                errors && getErrorViaPath(errors, InputFields.case.template)
-              }
-            />
-          </Box>
-          <Box width="full">
-            <HTMLEditor
-              config={baseConfig}
-              value={state.documentContents as HTMLText}
-              name={InputFields.case.documentContents}
-              error={
-                errors &&
-                getErrorViaPath(errors, InputFields.case.documentContents)
-              }
-            />
-          </Box>
-        </FormGroup>
-      </FormWrap>
-      <SignatureSection application={application} errors={errors} />
-      <TemplateModal
-        visible={modalToggle}
-        onClose={() => setModalToggle(false)}
-        onSave={onSave}
-      />
-    </>
-  )
+      > */
 }
-
-export default NewCase

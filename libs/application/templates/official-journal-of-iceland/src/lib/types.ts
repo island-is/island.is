@@ -56,8 +56,6 @@ export const InputFields = {
   },
 }
 
-type PartialRequired<T, K extends keyof T> = Partial<T> & Required<Pick<T, K>>
-
 export type SignatureType = 'regular' | 'committee'
 export type RegularSignatureState =
   answerSchemas['case']['signature']['regular']
@@ -66,6 +64,8 @@ export type CommitteeSignatureState =
 
 export enum TemplateApiActions {
   getOptions = 'getOptions',
+  validateApplication = 'validateApplication',
+  cancelApplication = 'cancelApplication',
 }
 
 export type NestedType<T> = {
@@ -94,6 +94,12 @@ type Options = {
 
 export interface ExternalData {
   options: {
+    data: Options
+    date: string
+    status: StatusProvider
+  }
+
+  sendApplication: {
     data: Options
     date: string
     status: StatusProvider

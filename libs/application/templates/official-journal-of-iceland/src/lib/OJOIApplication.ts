@@ -18,10 +18,12 @@ import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { general } from './messages'
 import { TemplateApiActions } from './types'
+import { isApplicationValid } from './utils'
 
 export enum ApplicationStates {
   PREREQUISITS = 'prerequisites',
   DRAFT = 'draft',
+  IN_REVIEW = 'inReview',
   COMPLETE = 'complete',
 }
 
@@ -57,7 +59,6 @@ const OJOITemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn um stjórnartíðindi',
           status: 'draft',
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -84,12 +85,17 @@ const OJOITemplate: ApplicationTemplate<
         meta: {
           name: '',
           status: 'draft',
-          progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.getOptions,
             shouldPersistToExternalData: true,
             externalDataId: 'options',
+            throwOnError: false,
+          }),
+          onExit: defineTemplateApi({
+            action: TemplateApiActions.validateApplication,
+            shouldPersistToExternalData: true,
+            externalDataId: 'validateApplication',
             throwOnError: false,
           }),
           roles: [
@@ -114,21 +120,37 @@ const OJOITemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: ApplicationStates.COMPLETE,
+          SUBMIT: [
+            {
+              target: ApplicationStates.COMPLETE,
+              cond: isApplicationValid,
+            },
+            {
+              target: ApplicationStates.DRAFT,
+            },
+          ],
         },
       },
       [ApplicationStates.COMPLETE]: {
         meta: {
           name: '',
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          status: 'approved',
+          status: 'completed',
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
+          // onEntry: defineTemplateApi({
+          //   action: TemplateApiActions.validateApplication,
+          //   shouldPersistToExternalData: true,
+          //   externalDataId: 'sendApplication',
+          //   throwOnError: true,
+          // }),
           roles: [
             {
               id: Roles.APPLICANT,
-              delete: true,
               read: 'all',
               write: 'all',
+              delete: true,
               formLoader: () =>
                 import('../forms/Complete').then((val) =>
                   Promise.resolve(val.Complete),
@@ -136,7 +158,6 @@ const OJOITemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final',
       },
     },
   },
@@ -144,16 +165,18 @@ const OJOITemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.assignees.includes(nationalId)) {
-      return Roles.ASSIGNEE
-    }
-    if (application.applicant === nationalId) {
-      if (application.state === 'inReview') {
-        return Roles.ASSIGNEE
-      }
+    return Roles.APPLICANT
 
-      return Roles.APPLICANT
-    }
+    // if (application.assignees.includes(nationalId)) {
+    //   return Roles.ASSIGNEE
+    // }
+    // if (application.applicant === nationalId) {
+    //   if (application.state === 'inReview') {
+    //     return Roles.ASSIGNEE
+    //   }
+
+    //   return Roles.APPLICANT
+    // }
   },
 }
 

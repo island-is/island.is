@@ -5,8 +5,6 @@ import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { CaseSignatureType } from './models/caseSignature.type'
 import { SearchCaseTemplateInput } from './models/searchCaseTemplate.input'
-import { PaginatedSearchCaseTemplateResponse } from './models/searchCaseTemplate.response'
-import { Case } from './models/case.model'
 
 const MockTemplates = [
   {
@@ -23,12 +21,62 @@ const MockTemplates = [
   },
 ]
 
+type SendApplicationResponse =
+  | {
+      type: 'success'
+    }
+  | {
+      type: 'error'
+      reason: string
+    }
+
 @Injectable()
 export class MinistryOfJusticeService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  async validateApplication(auth: User): Promise<SendApplicationResponse> {
+    // this.logger.info('Sending application', { auth })
+
+    // return {
+    //   type: 'error',
+    //   reason: 'Validation error'
+    // }
+
+    console.log('yibbi')
+
+    return {
+      type: 'success',
+    }
+  }
+
+  async getOptions(auth: User) {
+    return {
+      data: {
+        departments: [
+          { value: '0', label: 'A-deild' },
+          { value: '1', label: 'B-deild' },
+          { value: '2', label: 'C-deild' },
+        ],
+        categories: [
+          { value: '0', label: 'Gjaldskrá' },
+          { value: '1', label: 'Auglýsing' },
+          { value: '2', label: 'Reglugerð' },
+          { value: '3', label: 'Skipulagsskrá' },
+          { value: '4', label: 'Fjallskilasamþykkt' },
+          { value: '5', label: 'Reglur' },
+          { value: '6', label: 'Samþykkt' },
+        ],
+        subCategories: [
+          { value: '0', label: 'Skipulagsreglugerð' },
+          { value: '1', label: 'Byggingarreglugerð' },
+          { value: '2', label: 'Hafnarreglugerð' },
+        ],
+      },
+    }
+  }
 
   async searchCaseTemplates(user: User, input: SearchCaseTemplateInput) {
     const { q } = input

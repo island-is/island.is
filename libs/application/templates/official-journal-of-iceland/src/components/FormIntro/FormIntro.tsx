@@ -3,21 +3,23 @@ import * as styles from './FormIntro.css'
 type Props = {
   title?: string
   intro?: string
+  button?: React.ReactNode
   children?: React.ReactNode
 }
 
-export const FormIntro = ({ title, intro, children }: Props) => {
+export const FormIntro = ({ title, intro, button, children }: Props) => {
   if (!title && !intro && !children) return null
 
   return (
-    <Box className={styles.wrapper}>
-      {title && (
-        <Text variant="h2" marginBottom={2}>
-          {title}
-        </Text>
-      )}
-      {intro && <Text>{intro}</Text>}
-      {children}
-    </Box>
+    <>
+      <Box className={styles.titleWrapper}>
+        {title && <Text variant="h2">{title}</Text>}
+        {button && button}
+      </Box>
+      <Box className={styles.wrapper}>
+        {intro && <Text>{intro}</Text>}
+        {children}
+      </Box>
+    </>
   )
 }

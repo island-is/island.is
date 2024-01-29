@@ -2,6 +2,9 @@ import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Ministries, emailRegex } from './constants'
+import { ExternalData } from './types'
+import { getValueViaPath } from '@island.is/application/core'
+import { ApplicationContext } from '@island.is/application/types'
 
 const isWeekday = (date: Date) => {
   const day = date.getDay()
@@ -82,6 +85,11 @@ export const mapIdToDepartment = (id?: string) => {
   }
 }
 
-// Move this logic to the API when possible?
-export const isValidMinsitry = (ministry?: string) =>
-  ministry && Ministries.find((m) => m.startsWith(ministry)) ? true : false
+export const isApplicationValid = (applicationContext: ApplicationContext) => {
+  const status = getValueViaPath(
+    applicationContext.application.externalData,
+    'validateApplication.data.type',
+  )
+
+  return status === 'success'
+}
