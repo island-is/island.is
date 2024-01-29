@@ -26,7 +26,7 @@ if (userMocked) {
       AdminPortalScope.regulationAdmin,
       AdminPortalScope.regulationAdminManage,
       AdminPortalScope.icelandicNamesRegistry,
-      AdminPortalScope.applicationSystem,
+      AdminPortalScope.applicationSystemAdmin,
       AdminPortalScope.applicationSystemInstitution,
       AdminPortalScope.documentProvider,
       AdminPortalScope.idsAdmin,

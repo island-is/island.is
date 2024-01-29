@@ -25,7 +25,7 @@ export class ApplicationAdminResolver {
   constructor(private applicationService: ApplicationService) {}
 
   @Query(() => [ApplicationAdmin], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystem)
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
   async applicationApplicationsAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
