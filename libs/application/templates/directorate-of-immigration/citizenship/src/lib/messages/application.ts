@@ -31,7 +31,7 @@ export const application = defineMessages({
   },
   actionCardDone: {
     id: 'doi.cs.application:actionCardDone',
-    defaultMessage: 'Móttekin',
+    defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is processed',
   },
