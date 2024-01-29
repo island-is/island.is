@@ -118,6 +118,49 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
+  const decisionOptions = [
+    {
+      id: 'case-decision-accepting',
+      decision: CaseAppealRulingDecision.ACCEPTING,
+      message: appealRuling.decisionAccept,
+    },
+    {
+      id: 'case-decision-repeal',
+      decision: CaseAppealRulingDecision.REPEAL,
+      message: appealRuling.decisionRepeal,
+    },
+    {
+      id: 'case-decision-changed',
+      decision: CaseAppealRulingDecision.CHANGED,
+      message: appealRuling.decisionChanged,
+    },
+    {
+      id: 'case-decision-changed-significantly',
+      decision: CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY,
+      message: appealRuling.decisionChangedSignificantly,
+    },
+    {
+      id: 'case-decision-dismissed-from-court-of-appeal',
+      decision: CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
+      message: appealRuling.decisionDismissedFromCourtOfAppeal,
+    },
+    {
+      id: 'case-decision-dismissed-from-court',
+      decision: CaseAppealRulingDecision.DISMISSED_FROM_COURT,
+      message: appealRuling.decisionDismissedFromCourt,
+    },
+    {
+      id: 'case-decision-unlabeling',
+      decision: CaseAppealRulingDecision.REMAND,
+      message: appealRuling.decisionRemand,
+    },
+    {
+      id: 'case-decision-withdrawn',
+      decision: CaseAppealRulingDecision.WITHDRAWN,
+      message: appealRuling.decisionWithdrawn,
+    },
+  ]
+
   const handleNavigationTo = (destination: string) => {
     return router.push(`${destination}/${workingCase.id}`)
   }
@@ -149,142 +192,22 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             </Box>
           </Box>
           <BlueBox>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-accepting"
-                label={formatMessage(appealRuling.decisionAccept)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.ACCEPTING
-                }
-                onChange={() => {
-                  handleRulingDecisionChange(CaseAppealRulingDecision.ACCEPTING)
-                }}
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-repeal"
-                label={formatMessage(appealRuling.decisionRepeal)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.REPEAL
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(CaseAppealRulingDecision.REPEAL)
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-changed"
-                label={formatMessage(appealRuling.decisionChanged)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.CHANGED
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(CaseAppealRulingDecision.CHANGED)
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-changed-significantly"
-                label={formatMessage(appealRuling.decisionChangedSignificantly)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(
-                    CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY,
-                  )
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-dismissed-from-court-of-appeal"
-                label={formatMessage(
-                  appealRuling.decisionDismissedFromCourtOfAppeal,
-                )}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(
-                    CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
-                  )
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-dismissed-from-court"
-                label={formatMessage(appealRuling.decisionDismissedFromCourt)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.DISMISSED_FROM_COURT
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(
-                    CaseAppealRulingDecision.DISMISSED_FROM_COURT,
-                  )
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-unlabeling"
-                label={formatMessage(appealRuling.decisionRemand)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.REMAND
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(CaseAppealRulingDecision.REMAND)
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
-            <Box>
-              <RadioButton
-                name="case-decision"
-                id="case-decision-withdrawn"
-                label={formatMessage(appealRuling.decisionWithdrawn)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.WITHDRAWN
-                }
-                onChange={() =>
-                  handleRulingDecisionChange(CaseAppealRulingDecision.WITHDRAWN)
-                }
-                backgroundColor="white"
-                large
-              />
-            </Box>
+            {decisionOptions.map((option, index) => (
+              <Box
+                marginBottom={index === decisionOptions.length - 1 ? 0 : 2}
+                key={option.id}
+              >
+                <RadioButton
+                  name="case-decision"
+                  id={option.id}
+                  label={formatMessage(option.message)}
+                  checked={workingCase.appealRulingDecision === option.decision}
+                  onChange={() => handleRulingDecisionChange(option.decision)}
+                  backgroundColor="white"
+                  large
+                />
+              </Box>
+            ))}
           </BlueBox>
         </Box>
         {isRestrictionCase(workingCase.type) &&
