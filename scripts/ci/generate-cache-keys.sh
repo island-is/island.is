@@ -90,12 +90,12 @@ cache_key_codegen() {
       **/fragments/**/*.tsx \
       **/mutations/**/*.tsx \
       **/queries/**/*.tsx \
-      air-discount-scheme/web/components/AppLayout/AppLayout.tsx \
-      air-discount-scheme/web/components/Header/Header.tsx \
-      air-discount-scheme/web/i18n/withLocale.tsx \
-      air-discount-scheme/web/screens/**.tsx \
-      application/types/src/lib/ApplicationTypes.ts \
-      cms/src/lib/generated/contentfulTypes.d.ts \
+      apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx \
+      apps/air-discount-scheme/web/components/Header/Header.tsx \
+      apps/air-discount-scheme/web/i18n/withLocale.tsx \
+      apps/air-discount-scheme/web/screens/**.tsx \
+      apps/application/types/src/lib/ApplicationTypes.ts \
+      apps/cms/src/lib/generated/contentfulTypes.d.ts \
       scripts/codegen.js
 
     # Original glob list for github's hashFiles
