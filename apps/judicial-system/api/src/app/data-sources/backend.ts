@@ -9,7 +9,6 @@ import type {
   CaseFile,
   CreateFile,
   CreatePresignedPost,
-  Defendant,
   DeleteFileResponse,
   Institution,
   PresignedPost,
@@ -28,7 +27,7 @@ import {
   SignatureConfirmationResponse,
 } from '../modules/case'
 import { CaseListEntry } from '../modules/case-list'
-import { DeleteDefendantResponse } from '../modules/defendant'
+import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
 import { UpdateFilesResponse } from '../modules/file'
 import {
   CreateIndictmentCountInput,
