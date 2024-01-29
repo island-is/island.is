@@ -8,6 +8,7 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
+  buildImageField,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -80,6 +81,7 @@ import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
+import ManWithStrollerIllustration from '../assets/Images/ManWithStrollerIllustration'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -1307,12 +1309,19 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'leavePeriods',
       title: getPeriodSectionTitle,
       children: [
-        buildCustomField({
+        buildMultiField({
           id: 'periodsImageScreen',
           title: getPeriodImageTitle,
-          component: 'PeriodsSectionImage',
-          doesNotRequireAnswer: true,
+          children: [
+            buildImageField({
+              id: 'leavePeriods.image',
+              title: '',
+              image: ManWithStrollerIllustration,
+              imageWidth: 'auto',
+            }),
+          ],
         }),
+
         buildSubSection({
           id: 'addPeriods',
           title: parentalLeaveFormMessages.leavePlan.subSection,
