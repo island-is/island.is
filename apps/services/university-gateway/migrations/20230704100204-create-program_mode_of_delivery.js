@@ -23,6 +23,8 @@ module.exports = {
           mode_of_delivery: {
             type: Sequelize.ENUM(
               'ON_SITE',
+              'REMOTE',
+              'MIXED',
               'ONLINE',
               'ONLINE_WITH_SESSION',
               'UNDEFINED',

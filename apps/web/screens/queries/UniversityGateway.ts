@@ -118,6 +118,8 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       studentAnswerDate
       studyRequirementsEn
       studyRequirementsIs
+      arrangementIs
+      arrangementEn
       universityContentfulKey
       universityId
     }

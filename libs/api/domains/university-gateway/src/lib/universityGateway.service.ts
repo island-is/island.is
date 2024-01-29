@@ -111,6 +111,8 @@ export class UniversityGatewayApi {
       studyRequirementsEn: item.studyRequirementsEn,
       costInformationIs: item.costInformationIs,
       costInformationEn: item.costInformationEn,
+      arrangementIs: item.arrangementIs,
+      arrangementEn: item.arrangementEn,
       allowException: item.allowException,
       allowThirdLevelQualification: item.allowThirdLevelQualification,
       courses: item.courses.map((c) => ({
