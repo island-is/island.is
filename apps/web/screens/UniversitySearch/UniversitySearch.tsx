@@ -60,6 +60,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 
+import UniversityStudiesFooter from '../../components/Organization/Wrapper/Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import {
   GET_NAMESPACE_QUERY,
@@ -75,7 +76,6 @@ import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
-import UniversityStudiesFooter from '../../components/Organization/Wrapper/Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
@@ -276,7 +276,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         activeFilters: activeFiltersFound,
       })
 
-      console.log('results', results)
       setFilteredResults(results)
     }
     localStorage.setItem('savedFilters', JSON.stringify(filters))
@@ -296,7 +295,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const createPrimaryCTA = (item: UniversityGatewayProgramWithStatus) => {
-    console.log('item.applicationStatus', item.applicationStatus)
     const CTA: CTAProps = {
       label: n('apply', 'Sækja um'),
       variant: 'primary',
@@ -404,7 +402,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text ?? '',
       href: primaryLink?.url,
-      active: false,
+      active: primaryLink?.url === router.pathname,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -428,7 +426,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 baseId="pageNav"
                 items={navList}
                 title={n('navigationTitle', 'Efnisyfirlit')}
-                //TODO GET THIS TO WORK
                 activeItemTitle="Námsleit"
                 renderLink={(link, item) => {
                   return item?.href ? (
@@ -482,7 +479,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   >
                     {filterOptions &&
                       filterOptions.map((filter, index) => {
-                        console.log('filter', filter.options)
                         return (
                           <AccordionItem
                             key={filter.field}
@@ -1420,10 +1416,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
     await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     })
-
-  console.log('organization', organizationPage.data.getOrganizationPage)
-
-  console.log('filters', filters)
 
   return {
     data,

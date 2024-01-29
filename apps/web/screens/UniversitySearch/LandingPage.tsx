@@ -67,7 +67,7 @@ const LandingPage: Screen<LandingPageProps> = ({
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
-      active: false,
+      active: router.asPath === primaryLink?.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -236,11 +236,14 @@ const LandingPage: Screen<LandingPageProps> = ({
           <GridColumn offset="1/9" span="7/9">
             <Box marginY={4}>
               <ActionCard
-                heading={'Veistu hvað þú vilt læra?'}
-                text="Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið."
+                heading={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
+                text={n(
+                  'straightToApplying',
+                  'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið.',
+                )}
                 cta={{
-                  label: 'Sækja um í háskóla',
-                  onClick: () => console.log('...'),
+                  label: n('applyToUniversity', 'Sækja um í háskóla'),
+                  onClick: routeToStudies, // TODO Route me!
                 }}
               />
             </Box>
