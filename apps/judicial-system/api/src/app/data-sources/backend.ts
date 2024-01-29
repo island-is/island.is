@@ -18,7 +18,6 @@ import type {
   DeleteFileResponse,
   Institution,
   Notification,
-  PoliceCaseFile,
   PresignedPost,
   RequestSignatureResponse,
   SendNotification,
@@ -30,8 +29,6 @@ import type {
   UpdateDefendant,
   UpdateFile,
   UploadFileToCourtResponse,
-  UploadPoliceCaseFile,
-  UploadPoliceCaseFileResponse,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -44,7 +41,11 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../modules/indictment-count'
-import { PoliceCaseInfo } from '../modules/police'
+import {
+  PoliceCaseFile,
+  PoliceCaseInfo,
+  UploadPoliceCaseFileResponse,
+} from '../modules/police'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -242,7 +243,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   uploadPoliceFile(
     caseId: string,
-    uploadPoliceCaseFile: UploadPoliceCaseFile,
+    uploadPoliceCaseFile: unknown,
   ): Promise<UploadPoliceCaseFileResponse> {
     return this.post(`case/${caseId}/policeFile`, uploadPoliceCaseFile)
   }

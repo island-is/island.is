@@ -96,12 +96,6 @@ export type {
   SignatureConfirmationResponse,
 } from './lib/case'
 
-export type {
-  PoliceCaseFile,
-  UploadPoliceCaseFile,
-  UploadPoliceCaseFileResponse,
-} from './lib/policeFile'
-
 export {
   IndictmentCountOffense,
   Substance,
