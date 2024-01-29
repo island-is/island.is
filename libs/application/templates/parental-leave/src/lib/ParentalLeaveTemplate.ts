@@ -37,6 +37,8 @@ import {
   SINGLE,
   FileType,
   NO_MULTIPLE_BIRTHS,
+  NO_UNEMPLOYED_BENEFITS,
+  UnEmployedBenefitTypes,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -223,6 +225,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setNavId',
           'correctTransferRights',
           'clearEmployers',
+          'setIfSelfEmployed',
+          'setIfIsReceivingUnemploymentBenefitsNo',
         ],
         meta: {
           name: States.DRAFT,
@@ -2295,6 +2299,52 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             'multipleBirths.multipleBirths',
             NO_MULTIPLE_BIRTHS,
           )
+        }
+
+        return context
+      }),
+      setIfSelfEmployed: assign((context) => {
+        const { application } = context
+        const { isSelfEmployed } = getApplicationAnswers(application.answers)
+
+        if (isSelfEmployed === YES) {
+          set(
+            application.answers,
+            'employment.isReceivingUnemploymentBenefits',
+            NO,
+          )
+          set(
+            application.answers,
+            'employment.unemploymentBenefits',
+            NO_UNEMPLOYED_BENEFITS,
+          )
+        }
+
+        if (isSelfEmployed === NO) {
+          unset(application.answers, 'fileUpload.selfEmployedFile')
+        }
+
+        return context
+      }),
+      setIfIsReceivingUnemploymentBenefitsNo: assign((context) => {
+        const { application } = context
+        const { isReceivingUnemploymentBenefits, unemploymentBenefits } =
+          getApplicationAnswers(application.answers)
+
+        if (isReceivingUnemploymentBenefits === NO) {
+          set(
+            application.answers,
+            'employment.unemploymentBenefits',
+            NO_UNEMPLOYED_BENEFITS,
+          )
+          unset(application.answers, 'fileUpload.benefitsFile')
+        }
+
+        if (
+          unemploymentBenefits !== UnEmployedBenefitTypes.union &&
+          unemploymentBenefits !== UnEmployedBenefitTypes.healthInsurance
+        ) {
+          unset(application.answers, 'fileUpload.benefitsFile')
         }
 
         return context
