@@ -25,7 +25,7 @@ export const VehicleFindField: FC<
 > = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
-
+  console.log('asdfasdfasdfas dfasd fasdf asdf asdf asdfsd fsdf ')
   const vehicleValue = getValueViaPath(
     application.answers,
     'pickVehicle.vehicle',
@@ -77,7 +77,7 @@ export const VehicleFindField: FC<
 
           setPlate(plate)
           setValue(
-            'pickVehicle.type',
+            'pickVehicle.make',
             response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
               ?.make,
           )
@@ -157,7 +157,7 @@ export const VehicleFindField: FC<
             {vehicleNotFound && (
               <AlertMessage
                 type="error"
-                title={'Errorinn'}
+                title={'Eitthvað fór úrskeiðis'}
                 message={formatMessage(
                   information.labels.pickVehicle.notFoundTitle,
                   { plate },

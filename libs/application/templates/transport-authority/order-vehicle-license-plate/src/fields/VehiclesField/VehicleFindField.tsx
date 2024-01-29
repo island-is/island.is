@@ -93,7 +93,7 @@ export const VehicleFindField: FC<
 
           setPlate(permno)
           setValue(
-            'pickVehicle.type',
+            'pickVehicle.make',
             response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation
               ?.make,
           )
