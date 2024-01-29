@@ -160,7 +160,7 @@ export class UniversityGatewayApi {
         options: Object.values([
           ModeOfDelivery.ON_SITE,
           ModeOfDelivery.REMOTE,
-          ModeOfDelivery.ONLINE_WITH_SESSION,
+          ModeOfDelivery.MIXED,
           ModeOfDelivery.ONLINE,
         ]),
       },
