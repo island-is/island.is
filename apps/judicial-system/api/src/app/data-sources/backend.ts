@@ -16,7 +16,6 @@ import type {
   Institution,
   PresignedPost,
   SignedUrl,
-  UpdateDefendant,
   UpdateFile,
   UploadFileToCourtResponse,
   User,
@@ -256,7 +255,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
   updateDefendant(
     caseId: string,
     defendantId: string,
-    updateDefendant: UpdateDefendant,
+    updateDefendant: unknown,
   ): Promise<Defendant> {
     return this.patch(
       `case/${caseId}/defendant/${defendantId}`,

@@ -4,7 +4,6 @@ export { Gender } from './lib/defendant'
 export type {
   Defendant,
   CreateDefendant,
-  UpdateDefendant,
   DeleteDefendantResponse,
 } from './lib/defendant'
 

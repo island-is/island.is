@@ -31,21 +31,6 @@ export interface CreateDefendant {
   citizenship?: string
 }
 
-export interface UpdateDefendant {
-  id?: string
-  noNationalId?: boolean
-  nationalId?: string
-  name?: string
-  gender?: Gender
-  address?: string
-  citizenship?: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  defendantWaivesRightToCounsel?: boolean
-}
-
 export interface DeleteDefendantResponse {
   deleted: boolean
 }
