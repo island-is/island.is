@@ -21,7 +21,6 @@ import type {
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   SignedUrl,
-  UpdateCase,
   UpdateDefendant,
   UpdateFile,
   UploadFileToCourtResponse,
@@ -140,7 +139,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.post('case', createCase)
   }
 
-  updateCase(id: string, updateCase: UpdateCase): Promise<Case> {
+  updateCase(id: string, updateCase: unknown): Promise<Case> {
     return this.patch(`case/${id}`, updateCase)
   }
 
@@ -301,7 +300,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`case/${id}/limitedAccess`)
   }
 
-  limitedAccessUpdateCase(id: string, updateCase: UpdateCase): Promise<Case> {
+  limitedAccessUpdateCase(id: string, updateCase: unknown): Promise<Case> {
     return this.patch(`case/${id}/limitedAccess`, updateCase)
   }
 

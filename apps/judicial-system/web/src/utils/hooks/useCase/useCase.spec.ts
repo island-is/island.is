@@ -1,9 +1,6 @@
-import {
-  TempCase as Case,
-  TempUpdateCase as UpdateCase,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { formatUpdates, update } from './'
+import { formatUpdates, update, UpdateCase } from './'
 
 describe('useCase', () => {
   describe('update', () => {
