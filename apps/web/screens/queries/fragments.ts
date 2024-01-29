@@ -672,6 +672,44 @@ export const slices = gql`
     }
   }
 
+  fragment FeaturedEventsFields on FeaturedEvents {
+    __typename
+    id
+    namespace
+    noEventsFoundText {
+      ...HtmlFields
+    }
+    resolvedEventList {
+      total
+      items {
+        id
+        title
+        slug
+        startDate
+        time {
+          startTime
+          endTime
+        }
+        location {
+          streetAddress
+          floor
+          postalCode
+          useFreeText
+          freeText
+        }
+        thumbnailImage {
+          url
+          title
+          width
+          height
+        }
+        organization {
+          slug
+        }
+      }
+    }
+  }
+
   fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
     __typename
     id
@@ -843,6 +881,7 @@ export const slices = gql`
     ...LatestEventsSliceFields
     ...ChartFields
     ...ChartNumberBoxFields
+    ...FeaturedEventsFields
   }
 
   fragment AllSlices on Slice {
