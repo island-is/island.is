@@ -330,21 +330,6 @@ export interface CaseListEntry
   parentCaseId?: string
 }
 
-export type CreateCase = Pick<
-  Case,
-  | 'type'
-  | 'indictmentSubtypes'
-  | 'description'
-  | 'policeCaseNumbers'
-  | 'defenderName'
-  | 'defenderNationalId'
-  | 'defenderEmail'
-  | 'defenderPhoneNumber'
-  | 'leadInvestigator'
-  | 'crimeScenes'
-  | 'requestSharedWithDefender'
->
-
 export interface RequestSignatureResponse {
   controlCode: string
   documentToken: string

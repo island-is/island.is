@@ -9,7 +9,6 @@ import type {
   Case,
   CaseFile,
   CaseListEntry,
-  CreateCase,
   CreateDefendant,
   CreateFile,
   CreatePresignedPost,
@@ -135,7 +134,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`case/${id}`)
   }
 
-  createCase(createCase: CreateCase): Promise<Case> {
+  createCase(createCase: unknown): Promise<Case> {
     return this.post('case', createCase)
   }
 
