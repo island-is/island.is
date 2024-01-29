@@ -14,13 +14,16 @@ const FeaturedEvents = ({ slice }: FeaturedEventsProps) => {
     <EventList
       eventList={slice.resolvedEventList.items}
       namespace={slice.namespace}
-      noEventsFoundText={slice.noEventsFoundText && webRichText(slice.noEventsFoundText, {
-        renderNode: {
-          [BLOCKS.PARAGRAPH]: (_node, children) => (
-            <Text variant="h4">{children}</Text>
-          ),
-        },
-      })}
+      noEventsFoundText={
+        slice.noEventsFoundText &&
+        webRichText(slice.noEventsFoundText, {
+          renderNode: {
+            [BLOCKS.PARAGRAPH]: (_node, children) => (
+              <Text variant="h4">{children}</Text>
+            ),
+          },
+        })
+      }
       parentPageSlug={
         slice.resolvedEventList.items.find(
           (eventItem) => eventItem.organization?.slug,
