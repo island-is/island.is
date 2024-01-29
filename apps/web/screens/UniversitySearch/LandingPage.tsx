@@ -123,7 +123,11 @@ const LandingPage: Screen<LandingPageProps> = ({
                                 alt={`logo`}
                               />
                             </Box>
-                            <LinkV2 href="/">
+                            <LinkV2
+                              href={
+                                university.contentfulLink?.toString() || '/'
+                              }
+                            >
                               <Text color="blueberry600">
                                 {university.contentfulTitle}
                               </Text>
@@ -160,7 +164,9 @@ const LandingPage: Screen<LandingPageProps> = ({
                           alt={`logo`}
                         />
                       </Box>
-                      <LinkV2 href="/">
+                      <LinkV2
+                        href={university.contentfulLink?.toString() || '/'}
+                      >
                         <Text color="blueberry600">
                           {university.contentfulTitle}
                         </Text>
