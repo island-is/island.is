@@ -1019,7 +1019,8 @@ export const m = defineMessages({
   },
   errorNotAutonmous: {
     id: 'es.application:error.errorNotAutonmous',
-    defaultMessage: 'Umsækjandi er ekki lögráða og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    defaultMessage:
+      'Umsækjandi er ekki lögráða og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'Applicant not autonomous',
   },
 
