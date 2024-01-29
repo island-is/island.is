@@ -1,11 +1,3 @@
-import type { CourtDocument } from './courtDocument'
-import type { Defendant } from './defendant'
-import { EventLog } from './eventLog'
-import { type CaseFile, CaseFileCategory } from './file'
-import type { Institution } from './institution'
-import type { Notification } from './notification'
-import { type User, UserRole } from './user'
-
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -241,27 +233,6 @@ export const completedCaseStates = [
 export function isCompletedCase(state?: CaseState | null): boolean {
   return Boolean(state && completedCaseStates.includes(state))
 }
-
-export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
-  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-  CaseFileCategory.APPEAL_RULING,
-]
-
-export const defenderCaseFileCategoriesForIndictmentCases = [
-  CaseFileCategory.COURT_RECORD,
-  CaseFileCategory.RULING,
-  CaseFileCategory.COVER_LETTER,
-  CaseFileCategory.INDICTMENT,
-  CaseFileCategory.CRIMINAL_RECORD,
-  CaseFileCategory.COST_BREAKDOWN,
-  CaseFileCategory.CASE_FILE,
-]
 
 export function getStatementDeadline(appealReceived: Date): string {
   return new Date(

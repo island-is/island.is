@@ -71,8 +71,6 @@ export {
   isCompletedCase,
   CaseAppealState,
   getStatementDeadline,
-  defenderCaseFileCategoriesForIndictmentCases,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from './lib/case'
 export type {
