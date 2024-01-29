@@ -12,7 +12,7 @@ export const listsLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
     })
 
-    const allLists = data?.signatureCollectionAllLists ?? []
+    const allLists = data?.signatureCollectionAdminLists ?? []
     return allLists
   }
 }

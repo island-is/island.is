@@ -1,10 +1,18 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
 import { List } from './types/list.dto'
 
+import { User } from '@island.is/auth-nest-tools'
+
+export enum ListState {
+  Open = 'open',
+  Closed = 'closed',
+}
 export interface GetListInput {
   areaId?: string
   nationalId?: string
   candidateId?: string
+  collectionId?: number
+  onlyActive?: boolean
 }
 
 export interface OwnerInput {
