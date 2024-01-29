@@ -229,18 +229,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 )
               }}
             />
-            <LinkV2 href={linkResolver('universitysearch').href} skipTab>
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                truncate
-              >
-                {n('goBack', 'Til baka í yfirlit')}
-              </Button>
-            </LinkV2>
             <IconTitleCard
               heading={
                 universities.filter((x) => x.id === data.universityId)[0]
