@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "ORDS generated API for API Namsferlaveita",
-    "version": "1.0.1"
+    "version": "1.0.0"
   },
   "servers": [
     {
