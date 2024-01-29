@@ -21,7 +21,7 @@ import { estateSchema } from './dataSchema'
 import { EstateEvent, EstateTypes, Roles, States } from './constants'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { EstateApi } from '../dataProviders'
+import { EstateApi, EstateOnEntryApi } from '../dataProviders'
 import {
   getApplicationFeatureFlags,
   EstateFeatureFlags,
@@ -49,11 +49,6 @@ const EstateTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0,
           lifecycle: EphemeralStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.syslumennOnEntry,
-            shouldPersistToExternalData: true,
-            throwOnError: false,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -87,6 +82,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
+              api: [EstateOnEntryApi],
             },
           ],
           actionCard: {
