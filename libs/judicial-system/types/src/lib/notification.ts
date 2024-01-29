@@ -28,11 +28,3 @@ export interface Notification {
   type: NotificationType
   recipients: Recipient[]
 }
-
-export interface SendNotification {
-  type: NotificationType
-}
-
-export interface SendNotificationResponse {
-  notificationSent: boolean
-}

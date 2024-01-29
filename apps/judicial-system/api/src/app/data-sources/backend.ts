@@ -17,11 +17,8 @@ import type {
   DeleteDefendantResponse,
   DeleteFileResponse,
   Institution,
-  Notification,
   PresignedPost,
   RequestSignatureResponse,
-  SendNotification,
-  SendNotificationResponse,
   SignatureConfirmationResponse,
   SignedUrl,
   TransitionCase,
@@ -33,6 +30,7 @@ import type {
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
+import { Notification, SendNotificationResponse } from '../modules/case'
 import { UpdateFilesResponse } from '../modules/file'
 import {
   CreateIndictmentCountInput,
@@ -179,7 +177,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   sendNotification(
     id: string,
-    sendNotification: SendNotification,
+    sendNotification: unknown,
   ): Promise<SendNotificationResponse> {
     return this.post(`case/${id}/notification`, sendNotification)
   }
