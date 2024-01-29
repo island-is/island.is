@@ -1,6 +1,12 @@
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
-import { NationalRegistryScope } from '@island.is/auth/scopes'
+
+export enum NationalRegistryScope {
+  signatureCollection = '@skra.is/signature-collection',
+  signatureCollectionProcess = '@skra.is/signature-collection:process',
+  signatureCollectionManage = '@skra.is/signature-collection:manage',
+}
+
 
 const schema = z.object({
   xRoadServicePath: z.string(),
