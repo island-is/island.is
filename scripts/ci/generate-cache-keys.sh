@@ -40,17 +40,23 @@ parse_cli() {
 hash_files() {
   if [[ "$1" == '--' ]]; then shift; fi
 
-  local -a files
-  for pattern in "${@}"; do
-    warn "Searching for files matching '$pattern'..."
-
-    # Use 'read -r' to read each line without interpreting backslashes
-    while IFS= read -r -d $'\0' file; do
-      files+=("$file")
-
-      # Ignore node_modules and .cache/
-    done < <(find "$GIT_ROOT" -not -path "*/node_modules/*" -not -path "*/.cache/*" -path "$GIT_ROOT/$pattern" -print0)
+  local -a patterns=()
+  for pattern in "$@"; do
+    patterns+=(-o -path "$pattern") # Add the OR condition for multiple patterns
   done
+
+  # Remove the first '-o' (OR operator) for the 'find' command to work correctly
+  patterns=("${patterns[@]:1}")
+
+  local -a files
+  while IFS= read -r -d $'\0' file; do
+    files+=("$file")
+  done < <(
+    set -x
+    find "$GIT_ROOT" \( "${patterns[@]}" \) -not -path '*/node_modules/*' -not -path '*/.cache/*' -print0
+  )
+
+  warn "Searching for files matching patterns..."
 
   # Check if files array is empty
   if [ ${#files[@]} -eq 0 ]; then
@@ -58,7 +64,9 @@ hash_files() {
     return 1
   fi
 
-  # Combine files and pipe the output to sha256sum
+  warn "Files found: ${files[*]}"
+
+  # Combine files and pipe the output to sha256sum or shasum
   # The tar command runs in the git root directory to ensure paths are relative to the git root
   (cd "$GIT_ROOT" && tar 2>/dev/null -cf - --sort=name "${files[@]}" | (sha256sum || shasum) 2>/dev/null)
 }
