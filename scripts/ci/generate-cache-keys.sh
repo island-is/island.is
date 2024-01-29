@@ -35,6 +35,11 @@ parse_cli() {
       ;;
     esac
   done
+  if [[ -z "${CACHE_KEY_NODE}${CACHE_KEY_CODEGEN}" ]]; then
+    log "Please specify at least one cache key type."
+    show_help
+    exit 1
+  fi
 }
 
 hash_files() {
