@@ -28,13 +28,6 @@ class InternalApplicationService {
 
   async updateApplicationStatus(): Promise<void> {
     Promise.allSettled([
-      await this.doUpdateApplicationStatusForUniversity(
-        UniversityNationalIds.REYKJAVIK_UNIVERSITY,
-        (applicationExternalId: string) =>
-          this.reykjavikUniversityClient.getApplicationStatus(
-            applicationExternalId,
-          ),
-      ),
       // TODO need to perform for all Uglu universities
       await this.doUpdateApplicationStatusForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
