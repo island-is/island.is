@@ -21,7 +21,3 @@ export interface Defendant {
   defenderPhoneNumber?: string
   defendantWaivesRightToCounsel: boolean
 }
-
-export interface DeleteDefendantResponse {
-  deleted: boolean
-}
