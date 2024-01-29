@@ -52,11 +52,15 @@ hash_files() {
   while IFS= read -r -d $'\0' file; do
     files+=("$file")
   done < <(
-    set -x
-    find "$GIT_ROOT" \( "${patterns[@]}" \) -not -path '*/node_modules/*' -not -path '*/.cache/*' -print0
+    find "$GIT_ROOT" \
+      -not -path '*/node_modules/*' \
+      -not -path '*/.cache/*' \
+      -not -path '*/cache/*' \
+      \( "${patterns[@]}" \) \
+      -print0
   )
 
-  warn "Searching for files matching patterns..."
+  warn "Searching for files matching patterns: ${*}"
 
   # Check if files array is empty
   if [ ${#files[@]} -eq 0 ]; then
@@ -64,7 +68,7 @@ hash_files() {
     return 1
   fi
 
-  warn "Files found: ${files[*]}"
+  warn "Found ${#files[@]} matching files."
 
   # Combine files and pipe the output to sha256sum or shasum
   # The tar command runs in the git root directory to ensure paths are relative to the git root
