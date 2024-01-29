@@ -164,5 +164,5 @@ main() {
   fi
 }
 
-if (return 0 2>/dev/null); then exit; fi
+if (return 1 2>/dev/null); then exit; fi
 main "$@"
