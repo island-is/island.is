@@ -101,6 +101,27 @@ export const GetListsForUser = gql`
       }
       endTime
       startTime
+      active
+      collectionId
+      slug
+      numberOfSignatures
+    }
+  }
+`
+
+export const GetListsForOwner = gql`
+  query listsForUser {
+    signatureCollectionListsForOwner {
+      id
+      title
+      area {
+        id
+        name
+        min
+        max
+      }
+      endTime
+      startTime
       candidate {
         id
         nationalId
@@ -117,6 +138,24 @@ export const GetListsForUser = gql`
       slug
       numberOfSignatures
       maxReached
+    }
+  }
+`
+
+export const GetCurrentCollection = gql`
+  query currentCollection {
+    signatureCollectionCurrent {
+      id
+      endTime
+      startTime
+      name
+      isActive
+      areas {
+        id
+        name
+        min
+        max
+      }
     }
   }
 `
