@@ -87,34 +87,36 @@ cache_key_node() {
 }
 
 cache_key_codegen() {
+  file_patterns=(
+    "scripts/codegen.js"
+    "**/*.controller.ts"
+    "**/*.dto.ts"
+    "**/*.enum.ts"
+    "**/*.graphql"
+    "**/*.graphql.ts"
+    "**/*.input.ts"
+    "**/*.model.ts"
+    "**/*.module.ts"
+    "**/*.resolver.ts"
+    "**/*.service.ts"
+    "**/*.union.ts"
+    "**/clientConfig.*"
+    "**/codegen.*"
+    "**/codegen.yml"
+    "**/fragments/**/*.tsx"
+    "**/mutations/**/*.tsx"
+    "**/queries/**/*.tsx"
+    "*/air-discount-scheme/web/components/AppLayout/AppLayout.tsx"
+    "*/air-discount-scheme/web/components/Header/Header.tsx"
+    "*/air-discount-scheme/web/i18n/withLocale.tsx"
+    "*/air-discount-scheme/web/screens/**.tsx"
+    "*/application/types/src/lib/ApplicationTypes.ts"
+    "*/cms/src/lib/generated/contentfulTypes.d.ts"
+  )
   hash="$(
-    hash_files -- \
-      "scripts/codegen.js" \
-      "**/*.controller.ts" \
-      "**/*.dto.ts" \
-      "**/*.enum.ts" \
-      "**/*.graphql" \
-      "**/*.graphql.ts" \
-      "**/*.input.ts" \
-      "**/*.model.ts" \
-      "**/*.module.ts" \
-      "**/*.resolver.ts" \
-      "**/*.service.ts" \
-      "**/*.union.ts" \
-      "**/clientConfig.*" \
-      "**/codegen.*" \
-      "**/codegen.yml" \
-      "**/fragments/**/*.tsx" \
-      "**/mutations/**/*.tsx" \
-      "**/queries/**/*.tsx" \
-      "*/air-discount-scheme/web/components/AppLayout/AppLayout.tsx" \
-      "*/air-discount-scheme/web/components/Header/Header.tsx" \
-      "*/air-discount-scheme/web/i18n/withLocale.tsx" \
-      "*/air-discount-scheme/web/screens/**.tsx" \
-      "*/application/types/src/lib/ApplicationTypes.ts" \
-      "*/cms/src/lib/generated/contentfulTypes.d.ts"
+    hash_files -- "${file_patterns[@]}"
   )"
-  # Original glob list for github's hashFiles
+  # Original glob list for github's hashFiles, kept here in for future reference.
   # apps/**/*.controller.ts \
   # apps/**/*.dto.ts \
   # apps/**/*.enum.ts \
