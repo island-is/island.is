@@ -243,8 +243,6 @@ export class TransportAuthorityApi {
   ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
-
-    // This may need to be replaced by single call to get vehicle info
     const myVehicles = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,

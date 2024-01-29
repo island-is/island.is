@@ -8,6 +8,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { VehicleFindField } from './VehicleFindField'
+import { VehicleSelectField } from './VehicleSelectField'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -43,18 +44,17 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   return (
     <Box paddingTop={2}>
       <Box paddingTop={2}>
-        {currentVehicleList.totalRecords > 5 ? (
+        {currentVehicleList.totalRecords > 20 ? (
           <VehicleFindField
             currentVehicleList={currentVehicleList.vehicles}
             {...props}
           />
+        ) : currentVehicleList.totalRecords > 5 ? (
+          <VehicleSelectField
+            currentVehicleList={currentVehicleList.vehicles}
+            {...props}
+          />
         ) : (
-          // currentVehicleList.totalRecords > 5 ? (
-          //   <VehicleSelectField
-          //     currentVehicleList={currentVehicleList.vehicles}
-          //     {...props}
-          //   />
-          // ) :
           <VehicleRadioField
             currentVehicleList={currentVehicleList?.vehicles}
             {...props}

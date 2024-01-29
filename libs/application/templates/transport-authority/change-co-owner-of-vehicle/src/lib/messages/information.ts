@@ -42,17 +42,17 @@ export const information = {
         description: 'Pick vehicle placeholder',
       },
       findPlatePlaceholder: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.findPlatePlaceholder',
+        id: 'ta.ccov.application:information.labels.pickVehicle.findPlatePlaceholder',
         defaultMessage: 'Sláðu inn plötunúmer',
         description: 'Pick vehicle find plate placeholder',
       },
       findButton: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.findButton',
+        id: 'ta.ccov.application:information.labels.pickVehicle.findButton',
         defaultMessage: 'Leita',
         description: 'Pick vehicle find button',
       },
       notFoundTitle: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.notFoundTitle',
+        id: 'ta.ccov.application:information.labels.pickVehicle.notFoundTitle',
         defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
         description: 'vehicle not found',
       },

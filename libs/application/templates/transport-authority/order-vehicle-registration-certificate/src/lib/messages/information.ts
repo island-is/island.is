@@ -51,7 +51,7 @@ export const information = {
         description: 'Pick vehicle find button',
       },
       notFoundTitle: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.notFoundTitle',
+        id: 'ta.ovrc.application:information.labels.pickVehicle.notFoundTitle',
         defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
         description: 'vehicle not found',
       },
