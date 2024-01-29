@@ -54,7 +54,7 @@ export const mapUglaPrograms = (
         allowThirdLevelQualification: false, //TODO missing in api
         modeOfDelivery:
           program.modeOfDelivery?.map((m) => {
-            return mapStringToEnum(m, ModeOfDelivery)
+            return mapStringToEnum(m, ModeOfDelivery, ModeOfDelivery.UNDEFINED)
           }) || [],
         extraApplicationFields: program.extraApplicationFields?.map(
           (field) => ({

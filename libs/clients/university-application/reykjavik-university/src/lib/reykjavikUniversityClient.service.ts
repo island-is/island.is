@@ -70,7 +70,7 @@ export class ReykjavikUniversityApplicationClient {
               if (!m) {
                 return ModeOfDelivery.UNDEFINED
               } else {
-                return mapStringToEnum(m, ModeOfDelivery)
+                return mapStringToEnum(m, ModeOfDelivery, ModeOfDelivery.UNDEFINED)
               }
             }) || [],
           extraApplicationFields: program.extraApplicationFields?.map(

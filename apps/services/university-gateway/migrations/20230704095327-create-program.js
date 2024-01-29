@@ -78,12 +78,9 @@ module.exports = {
           },
           degree_type: {
             type: Sequelize.ENUM(
-              'DIPLOMA',
               'UNDERGRADUATE',
               'POSTGRADUATE',
-              'POSTGRADUATE_DIPLOMA',
               'DOCTORAL',
-              'OTHER',
             ),
             allowNull: false,
           },
