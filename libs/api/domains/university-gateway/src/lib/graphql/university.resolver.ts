@@ -6,7 +6,6 @@ import {
   OrganizationLinkByReferenceIdLoader,
   OrganizationLogoByReferenceIdLoader,
   OrganizationTitleByReferenceIdLoader,
-  // OrganizationUrlByReferenceIdLoader,
 } from '@island.is/cms'
 import type {
   LogoUrl,
