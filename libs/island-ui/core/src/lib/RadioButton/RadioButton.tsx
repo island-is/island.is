@@ -9,6 +9,7 @@ import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
 import { Tag, TagVariant } from '../Tag/Tag'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { Hidden } from '../Hidden/Hidden'
 
 export interface RadioButtonProps {
   name?: string
@@ -139,14 +140,23 @@ export const RadioButton = ({
             <Tooltip text={tooltip} />
           </div>
         )}
+        <Hidden below="sm">
+          {tag && large && (
+            <Tag outlined={tag.outlined} variant={tag.variant} disabled>
+              {tag.label}
+            </Tag>
+          )}
+        </Hidden>
+      </label>
+      <Hidden above="xs">
         {tag && large && (
-          <Box display="flex" justifyContent="flexEnd" width="full">
+          <Box paddingLeft="gutter" paddingBottom="gutter">
             <Tag outlined={tag.outlined} variant={tag.variant} disabled>
               {tag.label}
             </Tag>
           </Box>
         )}
-      </label>
+      </Hidden>
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">
           {errorMessage}

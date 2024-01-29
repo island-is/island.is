@@ -1,5 +1,5 @@
 query Signatures($input: SignatureCollectionIdInput!) {
-  signatureCollectionSignatures(input: $input) {
+  signatureCollectionAdminSignatures(input: $input) {
     id
     listId
     signee {
@@ -8,6 +8,7 @@ query Signatures($input: SignatureCollectionIdInput!) {
       address
     }
     isDigital
+    pageNumber
     active
     created
   }

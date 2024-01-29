@@ -66,12 +66,28 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationApplicantApi,
+              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationInformationDescription,
+            }),
+            buildDataProviderItem({
+              id: 'sia.data',
               title:
-                additionalSupportForTheElderyFormMessage.pre
+                socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationTitle,
               subTitle:
-                additionalSupportForTheElderyFormMessage.pre
-                  .socialInsuranceAdministrationInformationDescription,
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDataDescription,
+            }),
+            buildDataProviderItem({
+              id: 'sia.privacy',
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
@@ -116,7 +132,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [],
     }),
     buildSection({

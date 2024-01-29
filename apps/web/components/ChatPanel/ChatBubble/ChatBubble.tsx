@@ -1,6 +1,8 @@
 import React from 'react'
 import cn from 'classnames'
-import { FocusableBox, Text } from '@island.is/island-ui/core'
+
+import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
+
 import * as styles from './ChatBubble.css'
 
 interface ChatBubbleProps {
@@ -8,6 +10,7 @@ interface ChatBubbleProps {
   pushUp?: boolean
   isVisible?: boolean
   onClick?: () => void
+  loading?: boolean
 }
 
 export const ChatBubble = ({
@@ -15,6 +18,7 @@ export const ChatBubble = ({
   isVisible = true,
   onClick,
   pushUp = false,
+  loading = false,
 }: ChatBubbleProps) => {
   return (
     <div className={cn(styles.root, { [styles.hidden]: !isVisible })}>
@@ -25,9 +29,20 @@ export const ChatBubble = ({
         className={cn(styles.message, pushUp && styles.messagePushUp)}
         onClick={onClick}
       >
-        <Text variant="h5" color="white">
-          {text}
-        </Text>
+        <Box position="relative">
+          <Box>
+            <Box style={{ visibility: loading ? 'hidden' : 'visible' }}>
+              <Text variant="h5" color="white">
+                {text}
+              </Text>
+            </Box>
+            {loading && (
+              <Box className={styles.loadingDots}>
+                <LoadingDots color="white" />
+              </Box>
+            )}
+          </Box>
+        </Box>
         <div className={styles.messageArrow} />
         <div className={styles.messageArrowBorder} />
       </FocusableBox>

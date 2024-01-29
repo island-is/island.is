@@ -42,7 +42,13 @@ export class SimpleGit {
   }
   raw = this.git
   add = this._curriedCommand('add')
-  init = this._curriedCommand('init', '.')
+  // init = this._curriedCommand('init', '.')
+  async init() {
+    await this.git('init', '.')
+    await this.git('config', 'user.name', 'Islandis')
+    await this.git('config', 'user.email', 'ci@island.is')
+    await this.git('config', 'user.gpgsign', 'false')
+  }
   async commit(message: string) {
     await this.git('commit', '-m', message)
     const lastMessage = await this.lastCommit()

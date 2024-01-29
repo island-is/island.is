@@ -5,7 +5,11 @@ import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { IManual, IManualFields } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 import { mapManual } from '../../models/manual.model'
 
 export const isManual = (entry: Entry<IManualFields>): entry is IManual =>
@@ -16,8 +20,6 @@ export const isManual = (entry: Entry<IManualFields>): entry is IManual =>
 @Injectable()
 export class ManualSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
-    logger.info('Processing sync data for manuals')
-
     // only process manuals that we consider not to be empty
     return entries.filter(isManual)
   }
@@ -37,7 +39,9 @@ export class ManualSyncService implements CmsSyncProvider<IManual> {
             return false
           }
 
-          const content = extractStringsFromObject(mapped.description ?? [])
+          const content = extractStringsFromObject(
+            (mapped.description ?? []).map(pruneNonSearchableSliceUnionFields),
+          )
 
           const tags = [
             {

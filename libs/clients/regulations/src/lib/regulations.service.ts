@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
-import { DataSourceConfig } from 'apollo-datasource'
 import { ConfigType } from '@nestjs/config'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+  EnhancedRequestInit,
+} from '@island.is/clients/middlewares'
 import {
   buildRegulationApiPath,
   ISODate,
@@ -21,7 +24,6 @@ import {
   RegulationOptionList,
 } from '@island.is/regulations'
 import {
-  RegulationListItem,
   RegulationOriginalDates,
   RegulationSearchResults,
   RegulationViewTypes,
@@ -37,26 +39,49 @@ import {
 import pickBy from 'lodash/pickBy'
 import identity from 'lodash/identity'
 import { RegulationsClientConfig } from './regulations.config'
+import { LazyDuringDevScope } from '@island.is/nest/config'
 const LOG_CATEGORY = 'clients-regulation'
 
-@Injectable()
-export class RegulationsService extends RESTDataSource {
+interface ParamDictionary<T> {
+  [Key: string]: T
+}
+
+@Injectable({ scope: LazyDuringDevScope })
+export class RegulationsService {
+  private fetch: EnhancedFetchAPI
+  private baseURL: string
+
   constructor(
     @Inject(RegulationsClientConfig.KEY)
     private readonly options: ConfigType<typeof RegulationsClientConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {
-    super()
     this.baseURL = `${this.options.url}`
-    this.initialize({} as DataSourceConfig<any>)
+    this.fetch = createEnhancedFetch({
+      name: 'RegulationsClient-Web',
+      organizationSlug: 'domsmalaraduneytid',
+    })
   }
 
-  willSendRequest(request: RequestOptions) {
-    // We need to clear the memoized cache for every request to make sure
-    // updates are live when editing and viewing
-    this.memoizedResults.clear()
-    request.headers.set('Content-Type', 'application/json')
+  async enhancedFetch<T>(
+    path: string,
+    init?: EnhancedRequestInit,
+    params?: Record<string, string>,
+  ) {
+    const url = new URL(`${this.baseURL}${path}`)
+    if (params) {
+      url.search = new URLSearchParams(params).toString()
+    }
+    const response = await this.fetch(url.toString(), {
+      body: init?.body,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(init?.headers && init?.headers),
+      },
+      method: init?.method || 'GET',
+    })
+    return (await response.json()) as T
   }
 
   async createPresignedPost(
@@ -68,13 +93,12 @@ export class RegulationsService extends RESTDataSource {
 
     let response: PresignedPost | null
     try {
-      response = await this.post<PresignedPost | null>(
-        `file-presigned?scope=${regId}`,
-        JSON.stringify(body),
+      response = await this.enhancedFetch<PresignedPost | null>(
+        `/file-presigned?scope=${regId}`,
         {
-          headers: {
-            'X-ApiKey': this.options.presignedKey ?? '',
-          },
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: { 'X-ApiKey': this.options.presignedKey ?? '' },
         },
       )
     } catch (e) {
@@ -120,7 +144,7 @@ export class RegulationsService extends RESTDataSource {
       isCustomDiff,
       earlierDate,
     })
-    const response = await this.get<
+    const response = await this.enhancedFetch<
       Regulation | RegulationDiff | RegulationRedirect | null
     >(url)
     return response
@@ -131,7 +155,7 @@ export class RegulationsService extends RESTDataSource {
     name: RegQueryName,
     date?: ISODate,
   ): Promise<Regulation | RegulationDiff | RegulationRedirect | null> {
-    const response = await this.get<
+    const response = await this.enhancedFetch<
       Regulation | RegulationDiff | RegulationRedirect | null
     >(
       `/regulation/${name}/${
@@ -146,8 +170,8 @@ export class RegulationsService extends RESTDataSource {
     page?: number,
   ): Promise<RegulationSearchResults | null> {
     page = page && page > 1 ? page : undefined
-    const response = await this.get<RegulationSearchResults | null>(
-      `regulations/${type}${page ? '?page=' + page : ''}`,
+    const response = await this.enhancedFetch<RegulationSearchResults | null>(
+      `/regulations/${type}${page ? '?page=' + page : ''}`,
     )
     return response
   }
@@ -156,8 +180,8 @@ export class RegulationsService extends RESTDataSource {
     names: Array<RegName>,
   ): Promise<RegulationOptionList> {
     const response =
-      (await this.get<RegulationOptionList>(
-        'regulations/optionsList?names=' + names.join(','),
+      (await this.enhancedFetch<RegulationOptionList>(
+        '/regulations/optionsList?names=' + names.join(','),
       )) ?? []
     return response
   }
@@ -201,25 +225,27 @@ export class RegulationsService extends RESTDataSource {
     iR?: boolean,
     page?: number,
   ): Promise<RegulationSearchResults | null> {
-    const response = await this.get<RegulationSearchResults | null>(
-      `search`,
+    const params = pickBy({ q, rn, year, yearTo, ch, iA, iR, page }, identity)
+    const response = await this.enhancedFetch<RegulationSearchResults | null>(
+      `/search`,
+      undefined,
       // Strip away empty params
       // Object.fromEntries(Object.entries({ q, rn, year, yearTo, ch, iA, iR, page }).filter((val) => val))
-      pickBy({ q, rn, year, yearTo, ch, iA, iR, page }, identity),
+      params as ParamDictionary<string>,
     )
     return response
   }
 
   async getRegulationsYears(): Promise<RegulationYears | null> {
-    const response = await this.get<RegulationYears | null>(`years`)
+    const response = await this.enhancedFetch<RegulationYears | null>(`/years`)
     return response
   }
 
   async getRegulationsMinistries(
     slugs?: Array<MinistrySlug>,
   ): Promise<MinistryList | null> {
-    const response = await this.get<MinistryList | null>(
-      `ministries${slugs ? '?slugs=' + slugs.join(',') : ''}`,
+    const response = await this.enhancedFetch<MinistryList | null>(
+      `/ministries${slugs ? '?slugs=' + slugs.join(',') : ''}`,
     )
     return response
   }
@@ -228,8 +254,10 @@ export class RegulationsService extends RESTDataSource {
     tree: boolean,
     slugs?: Array<LawChapterSlug>,
   ): Promise<LawChapterTree | LawChapter[] | null> {
-    const response = await this.get<LawChapterTree | LawChapter[] | null>(
-      `lawchapters${tree ? '/tree' : ''}${
+    const response = await this.enhancedFetch<
+      LawChapterTree | LawChapter[] | null
+    >(
+      `/lawchapters${tree ? '/tree' : ''}${
         slugs ? '?slugs=' + slugs.join(',') : ''
       }`,
     )
@@ -245,9 +273,12 @@ export class RegulationsService extends RESTDataSource {
     let response: RegulationPdfResponse | null
 
     try {
-      response = await this.post<RegulationPdfResponse>(
+      response = await this.enhancedFetch<RegulationPdfResponse>(
         '/regulation/generate-pdf?responseType=base64',
-        JSON.stringify(regulationBody),
+        {
+          body: JSON.stringify(regulationBody),
+          method: 'POST',
+        },
       )
     } catch (e) {
       const errorMessage = 'unable to download pdf'

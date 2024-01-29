@@ -159,6 +159,7 @@ export interface UpdateCase
 const eventTypes = Object.values(EventType)
 
 export const include: Includeable[] = [
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
   { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
@@ -246,6 +247,7 @@ export const order: OrderItem[] = [
 ]
 
 export const caseListInclude: Includeable[] = [
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Defendant, as: 'defendants' },
   {
     model: User,
@@ -918,6 +920,7 @@ export class CaseService {
             prosecutorId:
               user.role === UserRole.PROSECUTOR ? user.id : undefined,
             courtId: user.institution?.defaultCourtId,
+            prosecutorsOfficeId: user.institution?.id,
           } as CreateCaseDto,
           transaction,
         )
@@ -1210,6 +1213,7 @@ export class CaseService {
             initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
             creatingProsecutorId: user.id,
             prosecutorId: user.id,
+            prosecutorsOfficeId: user.institution?.id,
           } as CreateCaseDto,
           transaction,
         )
