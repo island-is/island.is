@@ -26,6 +26,7 @@ import {
   EmailSignup,
   KilometerFee,
   MasterList,
+  MultipleStatistics,
   OneColumnTextSlice,
   OverviewLinksSlice,
   PlateAvailableSearch,
@@ -38,6 +39,7 @@ import {
   ShipSearchBoxedInput,
   SidebarShipSearchInput,
   SliceDropdown,
+  SpecificHousingBenefitSupportCalculator,
   StraddlingStockCalculator,
   TableSlice,
   TemporaryEventLicencesList,
@@ -51,6 +53,7 @@ import {
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
+  MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
@@ -114,6 +117,8 @@ export const webRenderConnectedComponent = (
       )
     case 'KilometerFee':
       return <KilometerFee slice={slice} />
+    case 'SpecificHousingBenefitSupportCalculator':
+      return <SpecificHousingBenefitSupportCalculator slice={slice} />
     default:
       break
   }
@@ -165,6 +170,9 @@ const defaultRenderComponent = {
       image={slice.image ?? undefined}
       contain={true}
     />
+  ),
+  MultipleStatistics: (slice: MultipleStatisticsSchema) => (
+    <MultipleStatistics slice={slice} />
   ),
 }
 

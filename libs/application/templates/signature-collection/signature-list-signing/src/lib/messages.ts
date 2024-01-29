@@ -166,6 +166,11 @@ export const m = defineMessages({
     defaultMessage: 'Þú hefur mælt með framboði',
     description: '',
   },
+  listSignedShort: {
+    id: 'sls.application:listSignedShort',
+    defaultMessage: 'Mælt með framboði',
+    description: '',
+  },
   listSignedDescription: {
     id: 'sls.application:listSignedDescription#markdown',
     defaultMessage:

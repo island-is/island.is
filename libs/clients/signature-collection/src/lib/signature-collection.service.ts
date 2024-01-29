@@ -44,13 +44,14 @@ export class SignatureCollectionClientService {
     const res = await this.collectionsApi.medmaelasofnunGet({
       includeInactive: true,
     })
-    const current = (
-      res
-        .map(mapCollectionInfo)
-        .filter(
-          (collection) => collection?.isSignatureCollection,
-        ) as CollectionInfo[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
+    const current = (res.map(mapCollectionInfo) as CollectionInfo[])
+      .filter(
+        (collection) =>
+          collection?.isSignatureCollection &&
+          // Do not include collections not started
+          collection?.startTime < new Date(),
+      )
+      .sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
 
     if (!current) {
       throw new Error('No current collection')
@@ -437,7 +438,7 @@ export class SignatureCollectionClientService {
         })) ?? []),
         ...(signatures.undirAldri?.map((nationalId) => ({
           nationalId,
-          reason: 'Undir Aldri',
+          reason: 'Undir aldri',
         })) ?? []),
         ...(signatures.ekkiASvaedi?.map((nationalId) => ({
           nationalId,

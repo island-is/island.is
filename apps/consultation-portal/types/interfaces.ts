@@ -246,3 +246,7 @@ export interface CaseExpressions {
   isStakeholdersBoxVisible: boolean
   shouldDisplayHidden: boolean
 }
+
+export type ApolloExtraProps = {
+  __typename: string
+}
