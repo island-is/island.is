@@ -8,7 +8,7 @@ import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionClientService } from '@island.is/clients/signature-collection'
-import { Auth, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionIdInput } from './dto/id.input'
 
 @Injectable()
@@ -16,10 +16,6 @@ export class SignatureCollectionService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
-
-  async test(user: Auth): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.test(user)
-  }
 
   async currentCollectionInfo(): Promise<SignatureCollectionInfo> {
     return await this.signatureCollectionClientService.currentCollectionInfo()
