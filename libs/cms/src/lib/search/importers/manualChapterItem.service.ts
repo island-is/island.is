@@ -7,15 +7,17 @@ import {
   IOneColumnText,
 } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 import { isManual } from './manual.service'
 import { mapManualChapterItem } from '../../models/manualChapterItem.model'
 
 @Injectable()
 export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
-    logger.info('Processing sync data for manual chapter items')
-
     // only process manuals that contain chapter items
     return entries.filter((entry) => {
       return (
@@ -66,7 +68,9 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
             chapter,
           })
 
-          const content = extractStringsFromObject(mapped.content ?? [])
+          const content = extractStringsFromObject(
+            (mapped.content ?? []).map(pruneNonSearchableSliceUnionFields),
+          )
 
           return {
             _id: mapped.id,

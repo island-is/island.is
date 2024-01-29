@@ -21,7 +21,7 @@ export interface List {
 }
 
 export function getSlug(id: number | string): string {
-  return `/umsoknir/maela-med-lista/?candidate=${id}`
+  return `/umsoknir/maela-med-frambodi/?candidate=${id}`
 }
 
 export function mapListBase(
@@ -29,8 +29,8 @@ export function mapListBase(
   candidate: Candidate,
   collection: CollectionInfo,
 ): List {
-  const { id: id, svaedi: areas } = list
-  if (!id || !collection || !candidate || !candidate.id || !areas) {
+  const { id: id, svaedi: areas, dagsetningLokar: endTime } = list
+  if (!id || !collection || !candidate || !candidate.id || !areas || !endTime) {
     logger.warn(
       'Received partial collection information from the national registry.',
       list,
@@ -44,11 +44,10 @@ export function mapListBase(
     collectionId: collection.id.toString(),
     title: list.listiNafn ?? '',
     startTime: collection.startTime,
-    endTime: collection.endTime,
+    endTime,
     area,
     candidate,
-    // TODO: update active functionality
-    active: true,
+    active: collection.startTime < new Date() && endTime > new Date(),
     numberOfSignatures: list.fjoldiMedmaela ?? 0,
     slug: getSlug(candidate.id),
     maxReached: area.max <= numberOfSignatures,
@@ -61,8 +60,9 @@ export function mapList(list: MedmaelalistiDTO): List {
     medmaelasofnun: collection,
     frambod: candidate,
     svaedi: areas,
+    dagsetningLokar: endTime,
   } = list
-  if (!id || !collection || !candidate || !candidate.id || !areas) {
+  if (!id || !collection || !candidate || !candidate.id || !areas || !endTime) {
     logger.warn(
       'Received partial collection information from the national registry.',
       list,
@@ -76,14 +76,15 @@ export function mapList(list: MedmaelalistiDTO): List {
     collectionId: list.medmaelasofnun?.id?.toString() ?? '',
     title: list.listiNafn ?? '',
     startTime: list.medmaelasofnun?.sofnunStart ?? new Date(),
-    endTime: list.medmaelasofnun?.sofnunEnd ?? new Date(),
-
+    endTime: list.dagsetningLokar ?? new Date(),
+    collectors: list.umbodList?.map((collector) => ({
+      name: collector.nafn ?? '',
+      nationalId: collector.kennitala ?? '',
+    })),
     candidate: mapCandidate(candidate),
-    // TODO: update active functionality
     slug: getSlug(candidate.id),
     area,
-
-    active: true,
+    active: endTime > new Date(),
     numberOfSignatures,
     maxReached: area.max <= numberOfSignatures,
   }

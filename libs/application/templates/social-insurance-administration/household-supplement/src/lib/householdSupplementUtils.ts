@@ -4,7 +4,12 @@ import {
   AttachmentLabel,
   AttachmentTypes,
 } from './constants'
-import { Application, YesOrNo, YES } from '@island.is/application/types'
+import {
+  Application,
+  YesOrNo,
+  YES,
+  ExternalData,
+} from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
@@ -151,6 +156,26 @@ export function getApplicationExternalData(
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
 
+  const spouseName = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.name',
+  ) as string
+
+  const spouseNationalId = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.nationalId',
+  ) as string
+
+  const maritalStatus = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.maritalStatus',
+  ) as string
+
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
+
   return {
     cohabitants,
     applicantName,
@@ -159,6 +184,10 @@ export function getApplicationExternalData(
     email,
     currencies,
     isEligible,
+    spouseName,
+    spouseNationalId,
+    maritalStatus,
+    hasSpouse,
   }
 }
 
@@ -273,4 +302,10 @@ export function getAvailableMonths(selectedYear: string) {
   }
 
   return months
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
 }

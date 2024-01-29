@@ -110,11 +110,6 @@ import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
-// Since "icelandic-health-insurance" is now "iceland-health", these constants
-// are used to fallback to older slug to prevent "downtime" during 27.1.0 deployment and will be removed afterwards
-const ICELAND_HEALTH = 'iceland-health'
-const ICELANDIC_HEALTH_INSURANCE = 'icelandic-health-insurance'
-
 @Resolver()
 export class CmsResolver {
   constructor(
@@ -215,17 +210,10 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationInput,
   ): Promise<Organization | null> {
     const slug = input?.slug ?? ''
-    let response = await this.cmsContentfulService.getOrganization(
+    return this.cmsContentfulService.getOrganization(
       slug,
       input?.lang ?? 'is-IS',
     )
-    if (!response && slug === ICELAND_HEALTH) {
-      response = await this.cmsContentfulService.getOrganization(
-        ICELANDIC_HEALTH_INSURANCE,
-        input?.lang ?? 'is-IS',
-      )
-    }
-    return response
   }
 
   @CacheControl(defaultCache)
@@ -244,18 +232,10 @@ export class CmsResolver {
   async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    let response: OrganizationPage | null =
-      await this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-        getElasticsearchIndex(input.lang),
-        { type: 'webOrganizationPage', slug: input.slug },
-      )
-    if (!response && input.slug === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-        getElasticsearchIndex(input.lang),
-        { type: 'webOrganizationPage', slug: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-    return response
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webOrganizationPage', slug: input.slug },
+    )
   }
 
   @CacheControl(defaultCache)
@@ -263,21 +243,10 @@ export class CmsResolver {
   async getOrganizationSubpage(
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
-    let response =
-      await this.cmsElasticsearchService.getSingleOrganizationSubpage(
-        getElasticsearchIndex(input.lang),
-        { ...input },
-      )
-
-    if (!response && input.organizationSlug === ICELAND_HEALTH) {
-      response =
-        await this.cmsElasticsearchService.getSingleOrganizationSubpage(
-          getElasticsearchIndex(input.lang),
-          { ...input, organizationSlug: ICELANDIC_HEALTH_INSURANCE },
-        )
-    }
-
-    return response
+    return this.cmsElasticsearchService.getSingleOrganizationSubpage(
+      getElasticsearchIndex(input.lang),
+      { ...input },
+    )
   }
 
   @CacheControl(defaultCache)
@@ -285,18 +254,10 @@ export class CmsResolver {
   async getServiceWebPage(
     @Args('input') input: GetServiceWebPageInput,
   ): Promise<ServiceWebPage | null> {
-    let response: ServiceWebPage | null =
-      await this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-        getElasticsearchIndex(input.lang),
-        { type: 'webServiceWebPage', slug: input.slug },
-      )
-    if (!response && input.slug === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-        getElasticsearchIndex(input.lang),
-        { type: 'webServiceWebPage', slug: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-    return response
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webServiceWebPage', slug: input.slug },
+    )
   }
 
   @CacheControl(defaultCache)
@@ -466,17 +427,10 @@ export class CmsResolver {
   async getArticles(
     @Args('input') input: GetArticlesInput,
   ): Promise<Article[]> {
-    let response = await this.cmsElasticsearchService.getArticles(
+    return this.cmsElasticsearchService.getArticles(
       getElasticsearchIndex(input.lang),
       input,
     )
-    if (!response.length && input.organization === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getArticles(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-    return response
   }
 
   @CacheControl(defaultCache)
@@ -504,17 +458,10 @@ export class CmsResolver {
   @CacheControl(defaultCache)
   @Query(() => EventList)
   async getEvents(@Args('input') input: GetEventsInput): Promise<EventList> {
-    let response = await this.cmsElasticsearchService.getEvents(
+    return this.cmsElasticsearchService.getEvents(
       getElasticsearchIndex(input.lang),
       input,
     )
-    if (!response.items.length && input.organization === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getEvents(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-    return response
   }
 
   @CacheControl(defaultCache)
@@ -522,33 +469,19 @@ export class CmsResolver {
   async getNewsDates(
     @Args('input') input: GetNewsDatesInput,
   ): Promise<string[]> {
-    let response = await this.cmsElasticsearchService.getNewsDates(
+    return this.cmsElasticsearchService.getNewsDates(
       getElasticsearchIndex(input.lang),
       input,
     )
-    if (!response.length && input.organization === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getNewsDates(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-    return response
   }
 
   @CacheControl(defaultCache)
   @Query(() => NewsList)
   async getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
-    let response = await this.cmsElasticsearchService.getNews(
+    return this.cmsElasticsearchService.getNews(
       getElasticsearchIndex(input.lang),
       input,
     )
-    if (!response.items.length && input.organization === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getNews(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-    return response
   }
 
   @CacheControl(defaultCache)
@@ -595,17 +528,10 @@ export class CmsResolver {
   async getFeaturedSupportQNAs(
     @Args('input') input: GetFeaturedSupportQNAsInput,
   ): Promise<SupportQNA[]> {
-    let response = await this.cmsElasticsearchService.getFeaturedSupportQNAs(
+    return this.cmsElasticsearchService.getFeaturedSupportQNAs(
       getElasticsearchIndex(input.lang),
       input,
     )
-    if (!response.length && input.organization === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getFeaturedSupportQNAs(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-    return response
   }
 
   @CacheControl(defaultCache)
@@ -645,16 +571,7 @@ export class CmsResolver {
   async getSupportCategoriesInOrganization(
     @Args('input') input: GetSupportCategoriesInOrganizationInput,
   ): Promise<SupportCategory[]> {
-    let response =
-      await this.cmsContentfulService.getSupportCategoriesInOrganization(input)
-    if (!response.length && input.slug === ICELAND_HEALTH) {
-      response =
-        await this.cmsContentfulService.getSupportCategoriesInOrganization({
-          ...input,
-          slug: ICELANDIC_HEALTH_INSURANCE,
-        })
-    }
-    return response
+    return this.cmsContentfulService.getSupportCategoriesInOrganization(input)
   }
 
   @CacheControl(defaultCache)
@@ -662,17 +579,10 @@ export class CmsResolver {
   async getPublishedMaterial(
     @Args('input') input: GetPublishedMaterialInput,
   ): Promise<EnhancedAssetSearchResult> {
-    let response = await this.cmsElasticsearchService.getPublishedMaterial(
+    return this.cmsElasticsearchService.getPublishedMaterial(
       getElasticsearchIndex(input.lang),
       input,
     )
-    if (!response.items.length && input.organizationSlug === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getPublishedMaterial(
-        getElasticsearchIndex(input.lang),
-        { ...input, organizationSlug: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-    return response
   }
 
   @CacheControl(defaultCache)
@@ -707,19 +617,10 @@ export class CmsResolver {
   async getCategoryPages(
     @Args('input') input: GetCategoryPagesInput,
   ): Promise<typeof CategoryPage[] | null> {
-    let response = await this.cmsElasticsearchService.getCategoryPages(
+    return this.cmsElasticsearchService.getCategoryPages(
       getElasticsearchIndex(input.lang),
       input,
     )
-
-    if (!response.length && input.organization === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getCategoryPages(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-
-    return response
   }
 
   @CacheControl(defaultCache)
@@ -744,18 +645,10 @@ export class LatestNewsSliceResolver {
   @CacheControl(defaultCache)
   @ResolveField(() => [News])
   async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
-    let newsList = await this.cmsElasticsearchService.getNews(
+    const newsList = await this.cmsElasticsearchService.getNews(
       getElasticsearchIndex(input.lang),
       input,
     )
-
-    if (!newsList.items.length && input.organization === ICELAND_HEALTH) {
-      newsList = await this.cmsElasticsearchService.getNews(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-
     return newsList.items
   }
 }
@@ -770,17 +663,10 @@ export class LatestEventsSliceResolver {
   async events(
     @Parent() { events: input }: LatestEventsSlice,
   ): Promise<EventModel[]> {
-    let eventsList = await this.cmsElasticsearchService.getEvents(
+    const eventsList = await this.cmsElasticsearchService.getEvents(
       getElasticsearchIndex(input.lang),
       input,
     )
-
-    if (!eventsList.items.length && input.organization === ICELAND_HEALTH) {
-      eventsList = await this.cmsElasticsearchService.getEvents(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
 
     return eventsList.items
   }
@@ -817,19 +703,10 @@ export class FeaturedArticlesResolver {
     if (input.size === 0) {
       return []
     }
-    let response = await this.cmsElasticsearchService.getArticles(
+    return this.cmsElasticsearchService.getArticles(
       getElasticsearchIndex(input.lang),
       input,
     )
-
-    if (!response.length && input.organization === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getArticles(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-
-    return response
   }
 }
 
@@ -845,19 +722,10 @@ export class FeaturedSupportQNAsResolver {
     if (input.size === 0) {
       return []
     }
-    let response = await this.cmsElasticsearchService.getFeaturedSupportQNAs(
+    return this.cmsElasticsearchService.getFeaturedSupportQNAs(
       getElasticsearchIndex(input.lang),
       input,
     )
-
-    if (!response.length && input.organization === ICELAND_HEALTH) {
-      response = await this.cmsElasticsearchService.getFeaturedSupportQNAs(
-        getElasticsearchIndex(input.lang),
-        { ...input, organization: ICELANDIC_HEALTH_INSURANCE },
-      )
-    }
-
-    return response
   }
 }
 

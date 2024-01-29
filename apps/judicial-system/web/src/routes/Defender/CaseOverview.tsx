@@ -41,6 +41,7 @@ import { api } from '@island.is/judicial-system-web/src/services'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { NameAndEmail } from '../../components/InfoCard/InfoCard'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 
@@ -146,7 +147,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),
@@ -154,13 +155,19 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.prosecutorPerson),
-                  value: workingCase.prosecutor?.name,
+                  value: NameAndEmail(
+                    workingCase.prosecutor?.name,
+                    workingCase.prosecutor?.email,
+                  ),
                 },
                 ...(workingCase.judge
                   ? [
                       {
                         title: formatMessage(core.judge),
-                        value: workingCase.judge?.name,
+                        value: NameAndEmail(
+                          workingCase.judge?.name,
+                          workingCase.judge?.email,
+                        ),
                       },
                     ]
                   : []),
@@ -177,7 +184,10 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   ? [
                       {
                         title: formatMessage(core.registrar),
-                        value: workingCase.registrar?.name,
+                        value: NameAndEmail(
+                          workingCase.registrar?.name,
+                          workingCase.registrar?.email,
+                        ),
                       },
                     ]
                   : []),
@@ -259,7 +269,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               RequestSharedWithDefender.COURT_DATE ||
             isCompletedCase(workingCase.state)) && (
             <Box marginBottom={10}>
-              <Text as="h3" variant="h3" marginBottom={3}>
+              <Text as="h3" variant="h3" marginBottom={1}>
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
@@ -269,7 +279,6 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title={formatMessage(core.pdfButtonRequest)}
                   pdfType={'request'}
                 />
-
                 {isCompletedCase(workingCase.state) && (
                   <>
                     <PdfButton

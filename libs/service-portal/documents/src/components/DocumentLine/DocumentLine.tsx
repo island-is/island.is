@@ -62,7 +62,8 @@ export const DocumentLine: FC<Props> = ({
   archived,
   selected,
 }) => {
-  const [avatarCheckmark, setAvatarCheckmark] = useState(false)
+  const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
+  const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const date = format(new Date(documentLine.date), dateFormat.is)
@@ -75,12 +76,19 @@ export const DocumentLine: FC<Props> = ({
   } = useSubmitMailAction({ messageId: documentLine.id })
 
   const wrapperRef = useRef(null)
+  const avatarRef = useRef(null)
 
   const isFocused = useIsChildFocusedorHovered(wrapperRef)
 
+  const isAvatarFocused = useIsChildFocusedorHovered(avatarRef)
+
   useEffect(() => {
-    setAvatarCheckmark(isFocused)
+    setHasFocusOrHover(isFocused)
   }, [isFocused])
+
+  useEffect(() => {
+    setHasAvatarFocus(isAvatarFocused)
+  }, [isAvatarFocused])
 
   const displayPdf = (docContent?: DocumentDetails) => {
     if (onClick) {
@@ -165,7 +173,7 @@ export const DocumentLine: FC<Props> = ({
   const isArchived = archived || archiveSuccess
 
   return (
-    <Box className={styles.wrapper}>
+    <Box className={styles.wrapper} ref={wrapperRef}>
       <Box
         display="flex"
         position="relative"
@@ -179,7 +187,7 @@ export const DocumentLine: FC<Props> = ({
           [styles.unread]: unread,
         })}
       >
-        <div ref={wrapperRef}>
+        <div ref={avatarRef}>
           <AvatarImage
             img={img}
             onClick={(e) => {
@@ -189,7 +197,7 @@ export const DocumentLine: FC<Props> = ({
               }
             }}
             avatar={
-              (avatarCheckmark || selected) && !asFrame ? (
+              (hasAvatarFocus || selected) && !asFrame ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -203,7 +211,7 @@ export const DocumentLine: FC<Props> = ({
               ) : undefined
             }
             background={
-              avatarCheckmark
+              hasAvatarFocus
                 ? asFrame
                   ? 'white'
                   : 'blue200'
@@ -244,14 +252,14 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {(avatarCheckmark || isBookmarked || isArchived) &&
+            {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&
               !asFrame && (
                 <FavAndStash
                   bookmarked={isBookmarked}
                   archived={isArchived}
                   onFav={
-                    avatarCheckmark || isBookmarked
+                    isBookmarked || hasFocusOrHover
                       ? async (e) => {
                           e.stopPropagation()
                           await submitMailAction(
@@ -264,7 +272,7 @@ export const DocumentLine: FC<Props> = ({
                       : undefined
                   }
                   onStash={
-                    avatarCheckmark || isArchived
+                    isArchived || hasFocusOrHover
                       ? async (e) => {
                           e.stopPropagation()
                           await submitMailAction(
@@ -278,7 +286,7 @@ export const DocumentLine: FC<Props> = ({
                   }
                 />
               )}
-            {postLoading && (
+            {(postLoading || (asFrame && fileLoading)) && (
               <Box display="flex" alignItems="center">
                 <LoadingDots single />
               </Box>

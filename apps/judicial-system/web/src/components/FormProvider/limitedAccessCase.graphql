@@ -45,19 +45,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     prosecutor {
       id
       name
       title
-      institution {
-        id
-        name
-      }
+      email
     }
     courtCaseNumber
     courtEndTime
@@ -75,11 +68,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
       title
+      email
     }
     judge {
       id
       name
       title
+      email
     }
     courtRecordSignatory {
       id
@@ -131,6 +126,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       name
     }
     appealJudge3 {
+      id
+      name
+    }
+    prosecutorsOffice {
       id
       name
     }

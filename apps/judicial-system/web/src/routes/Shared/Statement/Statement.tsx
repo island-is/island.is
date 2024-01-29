@@ -148,8 +148,11 @@ const Statement = () => {
                 title={formatMessage(strings.uploadStatementCaseFilesTitle)}
                 marginBottom={1}
               />
-              <Text marginBottom={3}>
+              <Text marginBottom={3} whiteSpace="pre">
                 {formatMessage(strings.uploadStatementCaseFilesSubtitle)}
+                {'\n'}
+                {!isDefenceUser(user) &&
+                  `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
               </Text>
               <InputFileUpload
                 fileList={uploadFiles.filter(

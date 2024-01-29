@@ -5,6 +5,7 @@ import _uniq from 'lodash/uniq'
 
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseType,
   Gender,
@@ -170,6 +171,27 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
   WEPONS_VIOLATION: 'vopnalagabrot',
   THEFT: 'þjófnaður',
+}
+
+export const getAppealResultTextByValue = (
+  value?: CaseAppealRulingDecision | null,
+) => {
+  switch (value) {
+    case CaseAppealRulingDecision.ACCEPTING:
+      return 'Staðfest'
+    case CaseAppealRulingDecision.REPEAL:
+      return 'Fellt úr gildi'
+    case CaseAppealRulingDecision.CHANGED:
+    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+      return 'Breytt'
+    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+    case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+      return 'Frávísun'
+    case CaseAppealRulingDecision.REMAND:
+      return 'Heimvísun'
+    default:
+      return 'Niðurstaða'
+  }
 }
 
 export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {

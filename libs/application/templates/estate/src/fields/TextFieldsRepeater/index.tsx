@@ -52,7 +52,6 @@ export const TextFieldsRepeater: FC<
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
-
   const { setValue, getValues, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -147,7 +146,7 @@ export const TextFieldsRepeater: FC<
             marginTop={2}
             hidden={repeaterField.initial}
           >
-            {index > 0 && (
+            {fields.length > 1 && (
               <>
                 <Text variant="h4" marginBottom={2}>
                   {formatMessage(props.repeaterHeaderText)}

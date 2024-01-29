@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-
 import {
   Application,
   ApplicationTypes,
@@ -8,10 +7,8 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
-
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-
 import {
   ApplicationType,
   Employment,
@@ -22,11 +19,12 @@ import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
-  Attachment,
-  AttachmentTypeEnum,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
+  DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
@@ -34,6 +32,7 @@ import {
   getApplicationType,
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToOldAgePensionDTO,
+  transformApplicationToPensionSupplementDTO,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -56,7 +55,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   private async initAttachments(
     application: Application,
-    type: AttachmentTypeEnum,
+    type: DocumentTypeEnum,
     attachments: FileType[],
   ): Promise<Attachment[]> {
     const result: Attachment[] = []
@@ -67,7 +66,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       result.push({
         name: attachment.name,
-        type: type,
+        type,
         file: pdf,
       })
     }
@@ -86,15 +85,23 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         application.answers,
       ).additionalAttachmentsRequired
     }
+
     if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
       additionalAttachmentsRequired = getHSApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
+
     if (
       application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
     ) {
       additionalAttachmentsRequired = getASFTEApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+
+    if (application.typeId === ApplicationTypes.PENSION_SUPPLEMENT) {
+      additionalAttachmentsRequired = getPSApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
@@ -106,7 +113,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Other,
+          DocumentTypeEnum.OTHER,
           additionalAttachmentsRequired,
         )),
       )
@@ -134,7 +141,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Other,
+          DocumentTypeEnum.OTHER,
           additionalAttachments,
         )),
       )
@@ -144,7 +151,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Pension,
+          DocumentTypeEnum.PENSION,
           pensionAttachments,
         )),
       )
@@ -158,7 +165,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Sailor,
+          DocumentTypeEnum.SAILOR,
           fishermenAttachments,
         )),
       )
@@ -172,7 +179,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.SelfEmployed,
+          DocumentTypeEnum.SELF_EMPLOYED,
           selfEmployedAttachments,
         )),
       )
@@ -186,7 +193,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Retirement,
+          DocumentTypeEnum.RETIREMENT,
           earlyRetirementAttachments,
         )),
       )
@@ -212,7 +219,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Other,
+          DocumentTypeEnum.OTHER,
           additionalAttachments,
         )),
       )
@@ -226,7 +233,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.SchoolConfirmation,
+          DocumentTypeEnum.SCHOOL_CONFIRMATION,
           schoolConfirmationAttachments,
         )),
       )
@@ -240,8 +247,106 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.RentalAgreement,
+          DocumentTypeEnum.RENTAL_AGREEMENT,
           leaseAgreementAttachments,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
+  // Pension suppliment attachments
+  private async getPSAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const {
+      additionalAttachments,
+      assistedCareAtHomeAttachments,
+      houseRentAttachments,
+      houseRentAllowanceAttachments,
+      assistedLivingAttachments,
+      purchaseOfHearingAidsAttachments,
+      halfwayHouseAttachments,
+    } = getPSApplicationAnswers(application.answers)
+
+    const attachments: Attachment[] = []
+
+    if (additionalAttachments && additionalAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.OTHER,
+          additionalAttachments,
+        )),
+      )
+    }
+
+    if (
+      assistedCareAtHomeAttachments &&
+      assistedCareAtHomeAttachments.length > 0
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.ASSISTED_CARE_AT_HOME,
+          assistedCareAtHomeAttachments,
+        )),
+      )
+    }
+
+    if (houseRentAttachments && houseRentAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.HOUSE_RENT_AGREEMENT,
+          houseRentAttachments,
+        )),
+      )
+    }
+
+    if (
+      houseRentAllowanceAttachments &&
+      houseRentAllowanceAttachments.length > 0
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.HOUSE_RENT_ALLOWANCE,
+          houseRentAllowanceAttachments,
+        )),
+      )
+    }
+
+    if (assistedLivingAttachments && assistedLivingAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.ASSISTED_LIVING,
+          assistedLivingAttachments,
+        )),
+      )
+    }
+
+    if (
+      purchaseOfHearingAidsAttachments &&
+      purchaseOfHearingAidsAttachments.length > 0
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.PURCHASE_OF_HEARING_AIDS,
+          purchaseOfHearingAidsAttachments,
+        )),
+      )
+    }
+
+    if (halfwayHouseAttachments && halfwayHouseAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.HALFWAY_HOUSE,
+          halfwayHouseAttachments,
         )),
       )
     }
@@ -262,7 +367,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Other,
+          DocumentTypeEnum.OTHER,
           additionalAttachments,
         )),
       )
@@ -312,6 +417,22 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const response = await this.siaClientService.sendApplication(
         auth,
         householdSupplementDTO,
+        application.typeId.toLowerCase(),
+      )
+
+      return response
+    }
+
+    if (application.typeId === ApplicationTypes.PENSION_SUPPLEMENT) {
+      const attachments = await this.getPSAttachments(application)
+      const pensionSupplementDTO = transformApplicationToPensionSupplementDTO(
+        application,
+        attachments,
+      )
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        pensionSupplementDTO,
         application.typeId.toLowerCase(),
       )
 
