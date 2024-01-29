@@ -118,28 +118,18 @@ export const dataSchema = z.object({
       ),
       useUnion: z.enum([YES, NO]),
       usePrivatePensionFund: z.enum([YES, NO]),
-      pensionFund: z.string().optional(),
+      pensionFund: z.string(),
       privatePensionFund: z.string().optional(),
       privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
       union: z.string().optional(),
     })
-    .refine(({ pensionFund }) => (pensionFund === undefined ? false : true), {
-      path: ['pensionFund'],
+    .refine(({ useUnion, union }) => (useUnion === YES ? !!union : true), {
+      path: ['union'],
       params: coreErrorMessages.missingAnswer,
     })
     .refine(
-      ({ useUnion, union }) =>
-        useUnion === YES && union === undefined ? false : true,
-      {
-        path: ['union'],
-        params: coreErrorMessages.missingAnswer,
-      },
-    )
-    .refine(
       ({ usePrivatePensionFund, privatePensionFund }) =>
-        usePrivatePensionFund === YES && privatePensionFund === undefined
-          ? false
-          : true,
+        usePrivatePensionFund === YES ? !!privatePensionFund : true,
       {
         path: ['privatePensionFund'],
         params: coreErrorMessages.missingAnswer,
@@ -147,10 +137,7 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ usePrivatePensionFund, privatePensionFundPercentage }) =>
-        usePrivatePensionFund === YES &&
-        privatePensionFundPercentage === undefined
-          ? false
-          : true,
+        usePrivatePensionFund === YES ? !!privatePensionFundPercentage : true,
       {
         path: ['privatePensionFundPercentage'],
         params: coreErrorMessages.missingAnswer,

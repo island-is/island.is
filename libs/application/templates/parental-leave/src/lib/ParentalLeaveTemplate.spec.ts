@@ -481,89 +481,83 @@ describe('Parental Leave Application Template', () => {
         )
       })
     })
-  })
 
-  describe('setPrivatePensionValuesIfUsePrivatePensionFundIsNO', () => {
-    it('should set privatePensionFund and privatePensionFundPercentage to NO_PRIVATE_PENSION_FUND and 0 if use usePrivatePensionFund is NO', () => {
-      const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          answers: {
-            payments: {
-              bank: '123454312300',
-              pensionFund: 'id-frjalsi',
-              union: NO_UNION,
-              privatePensionFund: '',
-              privatePensionFundPercentage: '',
+    describe('privatePensionFund and privatePensionFundPercentage', () => {
+      it('should set privatePensionFund and privatePensionFundPercentage to NO_PRIVATE_PENSION_FUND and 0 if use usePrivatePensionFund is NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              payments: {
+                bank: '123454312300',
+                pensionFund: 'id-frjalsi',
+                union: NO_UNION,
+                privatePensionFund: '',
+                privatePensionFundPercentage: '',
+                usePrivatePensionFund: NO,
+              },
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
-            usePrivatePensionFund: NO,
-            employment: {
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
-            },
-            applicationType: {
-              option: PARENTAL_LEAVE,
-            },
-          },
-        }),
-        ParentalLeaveTemplate,
-      )
+          }),
+          ParentalLeaveTemplate,
+        )
 
-      const answer = {
-        bank: '123454312300',
-        pensionFund: 'id-frjalsi',
-        union: NO_UNION,
-        privatePensionFund: NO_PRIVATE_PENSION_FUND,
-        privatePensionFundPercentage: '0',
-      }
+        const answer = {
+          bank: '123454312300',
+          pensionFund: 'id-frjalsi',
+          union: NO_UNION,
+          privatePensionFund: NO_PRIVATE_PENSION_FUND,
+          privatePensionFundPercentage: '0',
+          usePrivatePensionFund: NO,
+        }
 
-      const [hasChanged, _, newApplication] = helper.changeState({
-        type: DefaultEvents.SUBMIT,
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers.payments).toEqual(answer)
       })
-
-      expect(hasChanged).toBe(true)
-      expect(newApplication.answers.payments).toEqual(answer)
     })
-  })
 
-  describe('setUnionValuesIfUseUnionIsNO', () => {
-    it('should set union to NO_UNION if useUnion is NO', () => {
-      const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          answers: {
-            payments: {
-              bank: '123454312300',
-              pensionFund: 'id-frjalsi',
-              union: '',
-              privatePensionFund: NO_PRIVATE_PENSION_FUND,
-              privatePensionFundPercentage: '0',
+    describe('union', () => {
+      it('should set union to NO_UNION if useUnion is NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              payments: {
+                bank: '123454312300',
+                pensionFund: 'id-frjalsi',
+                union: '',
+                privatePensionFund: NO_PRIVATE_PENSION_FUND,
+                privatePensionFundPercentage: '0',
+                useUnion: NO,
+              },
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
             },
-            useUnion: NO,
-            employment: {
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
-            },
-            applicationType: {
-              option: PARENTAL_LEAVE,
-            },
-          },
-        }),
-        ParentalLeaveTemplate,
-      )
+          }),
+          ParentalLeaveTemplate,
+        )
 
-      const answer = {
-        bank: '123454312300',
-        pensionFund: 'id-frjalsi',
-        union: NO_UNION,
-        privatePensionFund: NO_PRIVATE_PENSION_FUND,
-        privatePensionFundPercentage: '0',
-      }
+        const answer = {
+          bank: '123454312300',
+          pensionFund: 'id-frjalsi',
+          union: NO_UNION,
+          privatePensionFund: NO_PRIVATE_PENSION_FUND,
+          privatePensionFundPercentage: '0',
+          useUnion: NO,
+        }
 
-      const [hasChanged, _, newApplication] = helper.changeState({
-        type: DefaultEvents.SUBMIT,
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers.payments).toEqual(answer)
       })
-
-      expect(hasChanged).toBe(true)
-      expect(newApplication.answers.payments).toEqual(answer)
     })
 
     describe('isSelfEmployed', () => {
