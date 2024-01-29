@@ -296,40 +296,6 @@ export interface Case {
   prosecutorsOffice?: Institution
 }
 
-export interface CaseListEntry
-  extends Pick<
-    Case,
-    | 'id'
-    | 'created'
-    | 'policeCaseNumbers'
-    | 'state'
-    | 'type'
-    | 'defendants'
-    | 'courtCaseNumber'
-    | 'decision'
-    | 'validToDate'
-    | 'isValidToDateInThePast'
-    | 'courtDate'
-    | 'initialRulingDate'
-    | 'rulingDate'
-    | 'rulingSignatureDate'
-    | 'courtEndTime'
-    | 'prosecutorAppealDecision'
-    | 'accusedAppealDecision'
-    | 'prosecutorPostponedAppealDate'
-    | 'accusedPostponedAppealDate'
-    | 'judge'
-    | 'prosecutor'
-    | 'registrar'
-    | 'creatingProsecutor'
-    | 'appealState'
-    | 'appealedDate'
-    | 'appealCaseNumber'
-    | 'appealRulingDecision'
-  > {
-  parentCaseId?: string
-}
-
 export const indictmentCases = [CaseType.INDICTMENT]
 
 export function isIndictmentCase(type?: string | null): boolean {
