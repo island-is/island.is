@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Fuse from 'fuse.js'
 import getConfig from 'next/config'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
 import {
@@ -20,6 +21,8 @@ import {
   Inline,
   Input,
   LinkV2,
+  Navigation,
+  NavigationItem,
   Pagination,
   Stack,
   Tag,
@@ -29,17 +32,23 @@ import {
   VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import {
   ActionCategoryCard,
+  BackgroundImage,
   CTAProps,
   ListViewCard,
+  OrganizationHeader,
 } from '@island.is/web/components'
 import {
+  ContentLanguage,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetUniversityGatewayProgramFiltersQuery,
   GetUniversityGatewayProgramsQuery,
   GetUniversityGatewayUniversitiesQuery,
+  Query,
+  QueryGetOrganizationPageArgs,
   UniversityGatewayProgram,
   UniversityGatewayProgramFilter,
   UniversityGatewayUniversity,
@@ -51,7 +60,12 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 
-import { GET_NAMESPACE_QUERY } from '../queries'
+import SidebarLayout from '../Layouts/SidebarLayout'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_QUERY,
+} from '../queries'
 import {
   GET_UNIVERSITY_GATEWAY_FILTERS,
   GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
@@ -73,6 +87,8 @@ interface UniversitySearchProps {
   filterOptions: Array<UniversityGatewayProgramFilter>
   locale: string
   universities: Array<UniversityGatewayUniversity>
+  organizationPage?: Query['getOrganizationPage']
+  organization?: Query['getOrganization']
   searchQuery: string
 }
 
@@ -110,12 +126,30 @@ interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
   applicationStatus: string
 }
 
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items ?? []) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
+}
+
 const UniversitySearch: Screen<UniversitySearchProps> = ({
   data,
   filterOptions,
   namespace,
   searchQuery,
   locale,
+  organizationPage,
+  organization,
   universities,
 }) => {
   const router = useRouter()
@@ -364,21 +398,71 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       }?comparison=${JSON.stringify(selectedComparison.map((i) => i.id))}`,
     )
   }
+  const navList: NavigationItem[] =
+    organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
+      title: primaryLink?.text ?? '',
+      href: primaryLink?.url,
+      active: false,
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
+    })) ?? []
 
   return (
     <GridContainer>
-      <LinkV2 href={linkResolver('universitylandingpage').href} skipTab>
-        <Button
-          preTextIcon="arrowBack"
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="text"
-          truncate
-        >
-          {n('pageTitle', 'Háskólanám')}
-        </Button>
-      </LinkV2>
+      {organizationPage && (
+        <OrganizationHeader organizationPage={organizationPage} />
+      )}
+      <SidebarLayout
+        paddingTop={[2, 2, 9]}
+        paddingBottom={[4, 4, 4]}
+        isSticky={false}
+        fullWidthContent={false}
+        sidebarContent={
+          <Box>
+            <Navigation
+              baseId="pageNav"
+              items={navList}
+              title={n('navigationTitle', 'Efnisyfirlit')}
+              //TODO GET THIS TO WORK
+              activeItemTitle="Námsleit"
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href} legacyBehavior>
+                    {link}
+                  </NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
+          </Box>
+        }
+      >
+        {isMobileScreenWidth && (
+          <Box className={organizationStyles.menuStyle}>
+            <Box marginY={2}>
+              <Navigation
+                baseId="pageNavMobile"
+                isMenuDialog={true}
+                items={navList}
+                title={n('navigationTitle', 'Efnisyfirlit')}
+                activeItemTitle="Námsleit"
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item?.href} legacyBehavior>
+                      {link}
+                    </NextLink>
+                  ) : (
+                    link
+                  )
+                }}
+              />
+            </Box>
+          </Box>
+        )}
+      </SidebarLayout>
       <Box marginBottom={8} marginTop={5}>
         <Box
           display="flex"
@@ -1277,6 +1361,32 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Page not found')
   }
 
+  const organizationPage = await apolloClient.query<
+    Query,
+    QueryGetOrganizationPageArgs
+  >({
+    query: GET_ORGANIZATION_PAGE_QUERY,
+    variables: {
+      input: {
+        slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
+        lang: locale as ContentLanguage,
+      },
+    },
+  })
+
+  const organization = await apolloClient.query<
+    Query,
+    QueryGetOrganizationPageArgs
+  >({
+    query: GET_ORGANIZATION_QUERY,
+    variables: {
+      input: {
+        slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+        lang: locale as ContentLanguage,
+      },
+    },
+  })
+
   const newResponse =
     await apolloClient.query<GetUniversityGatewayProgramsQuery>({
       query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
@@ -1294,7 +1404,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     })
 
-  console.log('filters', filters)
+  console.log('organization', organizationPage.data.getOrganizationPage)
 
   return {
     data,
@@ -1302,8 +1412,10 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
     namespace,
+    organizationPage: organizationPage.data.getOrganizationPage,
+    organization: organization.data.getOrganization,
     universities: universities.data.universityGatewayUniversities,
   }
 }
 
-export default withMainLayout(UniversitySearch, { showFooter: false })
+export default withMainLayout(UniversitySearch)
