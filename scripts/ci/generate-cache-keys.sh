@@ -7,15 +7,15 @@ set -euo pipefail
 : "${CACHE_KEY_CODEGEN:=}"
 : "${GIT_ROOT:=$(git rev-parse --show-toplevel)}"
 
-warn() {
+log() {
   echo "$@" >&2
 }
 
 show_help() {
-  warn "Usage: $(basename "$0") [OPTIONS]"
-  warn "Options:"
-  warn " --node      Generate cache keys for node (modules)"
-  warn " --codegen    Generate cache keys for codegen"
+  log "Usage: $(basename "$0") [OPTIONS]"
+  log "Options:"
+  log " --node      Generate cache keys for node (modules)"
+  log " --codegen    Generate cache keys for codegen"
 }
 
 parse_cli() {
@@ -60,15 +60,15 @@ hash_files() {
       -print0
   )
 
-  warn "Searching for files matching patterns: ${*}"
+  log "Searching for files matching patterns: ${*}"
 
   # Check if files array is empty
   if [ ${#files[@]} -eq 0 ]; then
-    warn "No files match the specified patterns."
+    log "No files match the specified patterns."
     return 1
   fi
 
-  warn "Found ${#files[@]} matching files."
+  log "Found ${#files[@]} matching files."
 
   # Combine files and pipe the output to sha256sum or shasum
   # The tar command runs in the git root directory to ensure paths are relative to the git root
@@ -78,7 +78,7 @@ hash_files() {
 cache_key_node() {
   hash="$(hash_files -- **/node_modules **/yarn.lock **/package.json)"
   echo "node-modules-hash=$hash" >>"$GITHUB_OUTPUT"
-  warn "Got cache key: $hash"
+  log "Got cache key: $hash"
 }
 
 cache_key_codegen() {
@@ -150,17 +150,17 @@ cache_key_codegen() {
 
   )"
   echo "generated-files-cache-key=$hash" >>"$GITHUB_OUTPUT"
-  warn "Got cache key: $hash"
+  log "Got cache key: $hash"
 }
 
 main() {
   parse_cli "$@"
   if [ -n "$CACHE_KEY_NODE" ]; then
-    warn "Calculating node cache key..."
+    log "Calculating node cache key..."
     cache_key_node
   fi
   if [ -n "$CACHE_KEY_CODEGEN" ]; then
-    warn "Calculating codegen cache key..."
+    log "Calculating codegen cache key..."
     cache_key_codegen
   fi
 }
