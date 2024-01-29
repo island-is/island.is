@@ -81,7 +81,6 @@ import { mapTabSection, TabSection } from './models/tabSection.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
-import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -238,6 +237,35 @@ export class CmsContentfulService {
         const title = organization?.fields.title || organization?.fields.title
 
         return title ?? null
+      }
+    })
+  }
+
+  async getOrganizationLink(
+    organizationKeys: string[],
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: 'fields.link,fields.referenceIdentifier',
+      'fields.referenceIdentifier[in]': organizationKeys.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(null, params)
+      .catch(errorHandler('getOrganizationLink'))
+
+    return organizationKeys.map((key) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields.referenceIdentifier === key,
+        )
+
+        const link = organization?.fields.link || organization?.fields.link
+        console.log('link', link)
+
+        return link ?? null
       }
     })
   }
@@ -653,11 +681,27 @@ export class CmsContentfulService {
       'fields.slug': slug,
     }
 
-    const result = await this.contentfulRepository
+    let items = []
+
+    const { items: anchorPageItems } = await this.contentfulRepository
       .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
       .catch(errorHandler('getAnchorPage'))
 
-    return (result.items as types.IAnchorPage[]).map(mapAnchorPage)[0] ?? null
+    items = anchorPageItems as types.IAnchorPage[]
+
+    // Fallback to lifeEventPage
+    if (!items.length) {
+      const { items: lifeEventItems } = await this.contentfulRepository
+        .getLocalizedEntries<types.IAnchorPageFields>(lang, {
+          ...params,
+          ['content_type']: 'lifeEventPage',
+        })
+        .catch(errorHandler('getAnchorPage'))
+
+      items = lifeEventItems as types.ILifeEventPage[]
+    }
+
+    return items.map(mapAnchorPage)[0] ?? null
   }
 
   async getAnchorPages(lang: string): Promise<AnchorPage[]> {
@@ -666,59 +710,60 @@ export class CmsContentfulService {
       order: 'sys.createdAt',
     }
 
-    const result = await this.contentfulRepository
+    let items = []
+
+    const { items: anchorPageItems } = await this.contentfulRepository
       .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
       .catch(errorHandler('getAnchorPages'))
 
-    return (result.items as types.IAnchorPage[]).map(mapAnchorPage)
-  }
+    items = anchorPageItems as types.IAnchorPage[]
 
-  async getLifeEventPage(
-    slug: string,
-    lang: string,
-  ): Promise<LifeEventPage | null> {
-    const params = {
-      ['content_type']: 'lifeEventPage',
-      'fields.slug': slug,
+    // Fallback to lifeEventPage
+    if (!items.length) {
+      const { items: lifeEventItems } = await this.contentfulRepository
+        .getLocalizedEntries<types.IAnchorPageFields>(lang, {
+          ...params,
+          ['content_type']: 'lifeEventPage',
+        })
+        .catch(errorHandler('getAnchorPages'))
+
+      items = lifeEventItems as types.ILifeEventPage[]
     }
 
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
-      .catch(errorHandler('getLifeEventPage'))
-
-    return (
-      (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)[0] ?? null
-    )
+    return items.map(mapAnchorPage)
   }
 
-  async getLifeEvents(lang: string): Promise<LifeEventPage[]> {
-    const params = {
-      ['content_type']: 'lifeEventPage',
-      order: 'sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
-      .catch(errorHandler('getLifeEvents'))
-
-    return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
-  }
-
-  async getLifeEventsInCategory(
+  async getAnchorPagesInCategory(
     lang: string,
     slug: string,
-  ): Promise<LifeEventPage[]> {
+  ): Promise<AnchorPage[]> {
     const params = {
-      ['content_type']: 'lifeEventPage',
+      ['content_type']: 'anchorPage',
       'fields.category.sys.contentType.sys.id': 'articleCategory',
       'fields.category.fields.slug': slug,
     }
 
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
-      .catch(errorHandler('getLifeEventsInCategory'))
+    let items = []
 
-    return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
+    const { items: anchorPageItems } = await this.contentfulRepository
+      .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
+      .catch(errorHandler('getAnchorPagesInCategory'))
+
+    items = anchorPageItems as types.IAnchorPage[]
+
+    // Fallback to lifeEventPage
+    if (!items.length) {
+      const { items: lifeEventItems } = await this.contentfulRepository
+        .getLocalizedEntries<types.IAnchorPageFields>(lang, {
+          ...params,
+          ['content_type']: 'lifeEventPage',
+        })
+        .catch(errorHandler('getAnchorPagesInCategory'))
+
+      items = lifeEventItems as types.ILifeEventPage[]
+    }
+
+    return items.map(mapAnchorPage)
   }
 
   async getAlertBanner({

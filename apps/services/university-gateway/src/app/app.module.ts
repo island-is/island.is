@@ -14,8 +14,8 @@ import { IcelandUniversityOfTheArtsApplicationClientConfig } from '@island.is/cl
 import { AgriculturalUniversityOfIcelandApplicationClientConfig } from '@island.is/clients/university-application/agricultural-university-of-iceland'
 import { HolarUniversityApplicationClientConfig } from '@island.is/clients/university-application/holar-university'
 import { AuditModule } from '@island.is/nest/audit'
-import { AuthModule } from '@island.is/auth-nest-tools'
 import { environment } from '../environments'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 @Module({
   imports: [

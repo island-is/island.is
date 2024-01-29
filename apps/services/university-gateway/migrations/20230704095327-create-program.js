@@ -81,6 +81,7 @@ module.exports = {
               'DIPLOMA',
               'UNDERGRADUATE',
               'POSTGRADUATE',
+              'POSTGRADUATE_DIPLOMA',
               'DOCTORAL',
               'OTHER',
             ),
@@ -143,6 +144,14 @@ module.exports = {
             allowNull: true,
           },
           cost_information_en: {
+            type: Sequelize.TEXT,
+            allowNull: true,
+          },
+          arrangement_is: {
+            type: Sequelize.TEXT,
+            allowNull: true,
+          },
+          arrangement_en: {
             type: Sequelize.TEXT,
             allowNull: true,
           },

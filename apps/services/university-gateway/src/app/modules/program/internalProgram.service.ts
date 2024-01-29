@@ -38,33 +38,51 @@ export class InternalProgramService {
 
   async updatePrograms(): Promise<void> {
     Promise.allSettled([
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         () => this.reykjavikUniversityClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         () => this.universityOfIcelandClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_AKUREYRI,
         () => this.universityOfAkureyriClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.ICELAND_UNIVERSITY_OF_THE_ARTS,
         () => this.icelandUniversityOfTheArtsClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.AGRICULTURAL_UNIVERSITY_OF_ICELAND,
         () => this.agriculturalUniversityOfIcelandClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.HOLAR_UNIVERSITY,
         () => this.holarUniversityClient.getPrograms(),
       ),
-    ]).catch((e) => {
-      logger.error('Failed to update programs, reason:', e)
-    })
+    ])
+      .then((results) => {
+        const failedResults = results.filter(
+          (result) => result.status === 'rejected',
+        )
+
+        results.forEach((result) => {
+          if (result.status === 'rejected') logger.info('reason', result.reason)
+        })
+
+        // if (failedResults.length > 0) {
+        //   logger.error(
+        //     `2Failed to update programs for ${failedResults.length} universities`,
+        //   )
+        // } else {
+        //   logger.info('Finished updating programs')
+        // }
+      })
+      .catch((e) => {
+        logger.error('2Failed to update programs, reason:', e)
+      })
   }
 
   private async doUpdateProgramsForUniversity(
