@@ -62,6 +62,7 @@ const fileSchema = z.object({
 
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  preApproveExternalData: z.boolean().refine((v) => v),
 
   // Applicant
   applicant: z.object({
@@ -73,6 +74,7 @@ export const estateSchema = z.object({
     email: customZodError(z.string().email(), m.errorEmail),
     address: z.string(),
     relationToDeceased: z.string().optional(),
+    autonomous: z.enum([YES, NO]).optional(),
   }),
 
   selectedEstate: z.enum([
