@@ -32,7 +32,6 @@ import {
   IForm,
   IStepper,
   IGraphCard,
-  ILifeEventPageListSlice,
   IAnchorPageList,
   ISidebarCard,
   IPowerBiSlice,
@@ -134,9 +133,8 @@ import {
   ChartNumberBox,
   mapChartNumberBox,
 } from '../models/chartNumberBox.model'
-import { LifeEventPageListSlice } from '../models/lifeEventPageList.model'
 
-type SliceTypes =
+export type SliceTypes =
   | ITimeline
   | ISectionHeading
   | ICard
@@ -167,7 +165,6 @@ type SliceTypes =
   | IForm
   | IStepper
   | IGraphCard
-  | ILifeEventPageListSlice
   | IAnchorPageList
   | ISidebarCard
   | IPowerBiSlice
@@ -217,7 +214,6 @@ export const SliceUnion = createUnionType({
     Form,
     Stepper,
     GraphCard,
-    LifeEventPageListSlice,
     AnchorPageListSlice,
     SidebarCard,
     PowerBiSlice,
@@ -297,8 +293,6 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapStepper(slice as IStepper)
     case 'graphCard':
       return mapGraphCard(slice as IGraphCard)
-    case 'lifeEventPageListSlice':
-      return mapAnchorPageListSlice(slice as ILifeEventPageListSlice)
     case 'anchorPageList':
       return mapAnchorPageListSlice(slice as IAnchorPageList)
     case 'sidebarCard':

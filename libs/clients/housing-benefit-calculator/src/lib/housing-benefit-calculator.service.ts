@@ -12,6 +12,11 @@ interface CalculateInput {
   housingCostsPerMonth: number
 }
 
+interface CalculateSpecificSupportInput {
+  numberOfHouseholdMembers: number
+  housingCostsPerMonth: number
+}
+
 const round = (value: number | null | undefined) => {
   return typeof value === 'number' ? Math.round(value) : value
 }
@@ -70,6 +75,29 @@ export class HousingBenefitCalculatorClientService {
     }
   }
 
+  private async fetchSpecificSupportCalculation(
+    input: CalculateSpecificSupportInput,
+    fetchNewToken = false,
+  ) {
+    const authenticatedCalculationApi =
+      await this.getAuthenticatedCalculationApi(fetchNewToken)
+
+    const calculationData =
+      await authenticatedCalculationApi.apiV1ReiknivelReiknivelserstakarPost({
+        fjoldiHeimilismanna: input.numberOfHouseholdMembers,
+        husnaedisKostnadur: input.housingCostsPerMonth,
+      })
+    return {
+      maximumHousingBenefits: round(calculationData.manadarlegarHamarksBaetur),
+      reductionsDueToHousingCosts: round(
+        calculationData.manadarlegHusnaedisKostnadarSkerding,
+      ),
+      estimatedHousingBenefits: round(
+        calculationData.manadarlegarHusnaedisbaetur,
+      ),
+    }
+  }
+
   async calculate(input: CalculateInput) {
     try {
       return await this.fetchCalculation(input)
@@ -77,6 +105,18 @@ export class HousingBenefitCalculatorClientService {
       if (error instanceof FetchError && error.status === 401) {
         // Renew token if we are unauthorized (most likely due to token expiring)
         return this.fetchCalculation(input, true)
+      }
+      throw error
+    }
+  }
+
+  async calculateSpecificSupport(input: CalculateSpecificSupportInput) {
+    try {
+      return await this.fetchSpecificSupportCalculation(input)
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 401) {
+        // Renew token if we are unauthorized (most likely due to token expiring)
+        return this.fetchSpecificSupportCalculation(input, true)
       }
       throw error
     }
