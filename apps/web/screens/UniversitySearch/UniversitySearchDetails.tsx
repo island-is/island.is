@@ -16,7 +16,6 @@ import {
   Icon,
   LinkV2,
   Stack,
-  Tabs,
   TabType,
   Text,
 } from '@island.is/island-ui/core'
@@ -212,6 +211,14 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             }
             alt="University infomation"
           />
+          <Box width="full">
+            <Button onClick={() => console.log('Route me!')} fluid>
+              <Box display={'flex'} style={{ gap: '0.5rem' }}>
+                {n('applyToUniversityProgram', 'Sækja um háskólanám')}
+                <Icon icon="open" type="outline" />
+              </Box>
+            </Button>
+          </Box>
         </Stack>
       }
     >
@@ -233,7 +240,26 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
         <Text variant="h1" as="h1">
           {locale === 'en' ? data.nameEn : data.nameIs}
         </Text>
+        <Box
+          width="full"
+          display={'flex'}
+          flexDirection={'row'}
+          justifyContent={'spaceBetween'}
+          alignItems={'center'}
+          style={{ backgroundColor: '#F2F7FF' }}
+          padding={3}
+        >
+          <Text variant={'h3'} color={'blue600'}>
+            {n('applyForProgram', 'Umsókn í háskólanám')}
+          </Text>
 
+          <Button>
+            <Box display={'flex'} style={{ gap: '0.5rem' }}>
+              {n('apply', 'Sækja um')}
+              <Icon icon="open" type="outline" />
+            </Box>
+          </Button>
+        </Box>
         <Box marginTop={2}>
           {data.credits && data.credits > 0 ? (
             <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
@@ -276,7 +302,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     <Icon icon={'school'} type="outline" color="blue400" />
                   </Box>
                   <Text variant="medium">
-                    {n(data.degreeType, TranslationDefaults[data.degreeType])}
+                    {`${n(
+                      data.degreeType,
+                      TranslationDefaults[data.degreeType],
+                    )}, ${data.degreeAbbreviation}`}
                   </Text>
                 </Box>
               </GridColumn>
@@ -307,19 +336,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                         : 'years'
                       : 'ár'
                   }`}</Text>
-                </Box>
-              </GridColumn>
-              <GridColumn span="1/2">
-                <Box display="flex" flexDirection="row">
-                  <Box marginRight={1}>
-                    <Icon icon={'wallet'} type="outline" color="blue400" />
-                  </Box>
-                  <Text variant="medium">
-                    {`${n('yearlyCost', 'Árlegur kostnaður')}: ${
-                      data.costPerYear &&
-                      data.costPerYear.toLocaleString('de-DE')
-                    } kr.`}
-                  </Text>
                 </Box>
               </GridColumn>
               <GridColumn span="1/2">
