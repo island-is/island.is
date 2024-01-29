@@ -37,15 +37,6 @@ export class SignatureCollectionResolver {
   @Scopes(ApiScope.signatureCollection)
   @Query(() => SignatureCollectionSuccess)
   @Audit()
-  async signatureCollectionTest(
-    @CurrentUser() user: User,
-  ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.test(user)
-  }
-
-  @Scopes(ApiScope.signatureCollection)
-  @Query(() => SignatureCollectionSuccess)
-  @Audit()
   async signatureCollectionIsOwner(
     @CurrentSignee() signee: SignatureCollectionSignee,
   ): Promise<SignatureCollectionSuccess> {

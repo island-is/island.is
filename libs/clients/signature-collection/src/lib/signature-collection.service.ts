@@ -40,15 +40,6 @@ export class SignatureCollectionClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async test(auth: Auth): Promise<Success> {
-    const res = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarTokenGet()
-    console.log('TOKEN', res)
-    return { success: true }
-  }
-
   async currentCollectionInfo(): Promise<CollectionInfo> {
     // includeInactive: false will return collections as active until electionday for collection has passed
     const res = await this.collectionsApi.medmaelasofnunGet({

@@ -40,14 +40,6 @@ export class SignatureCollectionAdminResolver {
     private signatureCollectionService: SignatureCollectionAdminService,
   ) {}
 
-  @Query(() => SignatureCollectionSuccess)
-  @Audit()
-  async signatureCollectionAdminTest(
-    @CurrentUser() user: User,
-  ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.test(user)
-  }
-
   @Query(() => SignatureCollection)
   async signatureCollectionAdminCurrent(
     @CurrentCollection() collection: SignatureCollectionInfo,

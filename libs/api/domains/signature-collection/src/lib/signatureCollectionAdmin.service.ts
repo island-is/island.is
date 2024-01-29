@@ -25,10 +25,6 @@ export class SignatureCollectionAdminService {
     private signatureCollectionClientService: SignatureCollectionAdminClientService,
   ) {}
 
-  async test(user: Auth): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.test(user)
-  }
-
   async currentCollectionInfo(): Promise<SignatureCollectionInfo> {
     return await this.signatureCollectionClientService.currentCollectionInfo()
   }
