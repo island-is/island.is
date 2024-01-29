@@ -169,5 +169,6 @@ main() {
   fi
 }
 
-if (return 1 2>/dev/null); then exit; fi
+# Only run main if script is run directly
+if (return 0 2>/dev/null); then exit; fi
 main "$@"
