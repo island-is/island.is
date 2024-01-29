@@ -17,8 +17,6 @@ import type {
   DeleteFileResponse,
   Institution,
   PresignedPost,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
   SignedUrl,
   UpdateDefendant,
   UpdateFile,
@@ -27,7 +25,12 @@ import type {
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
-import { Notification, SendNotificationResponse } from '../modules/case'
+import {
+  Notification,
+  RequestSignatureResponse,
+  SendNotificationResponse,
+  SignatureConfirmationResponse,
+} from '../modules/case'
 import { UpdateFilesResponse } from '../modules/file'
 import {
   CreateIndictmentCountInput,

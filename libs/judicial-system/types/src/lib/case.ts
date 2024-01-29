@@ -330,17 +330,6 @@ export interface CaseListEntry
   parentCaseId?: string
 }
 
-export interface RequestSignatureResponse {
-  controlCode: string
-  documentToken: string
-}
-
-export interface SignatureConfirmationResponse {
-  documentSigned: boolean
-  code?: number
-  message?: string
-}
-
 export const indictmentCases = [CaseType.INDICTMENT]
 
 export const restrictionCases = [

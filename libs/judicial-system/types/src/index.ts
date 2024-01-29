@@ -83,8 +83,6 @@ export type {
   CrimeScene,
   CrimeSceneMap,
   IndictmentSubtypeMap,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
 } from './lib/case'
 
 export {
