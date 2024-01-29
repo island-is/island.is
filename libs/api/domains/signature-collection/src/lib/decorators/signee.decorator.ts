@@ -19,7 +19,6 @@ export const getCurrentSignee = (
     )
     throw new UnauthorizedException()
   }
-  // TODO: check if exists?
 
   return request.body.signee
 }
