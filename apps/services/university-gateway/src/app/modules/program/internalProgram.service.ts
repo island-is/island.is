@@ -62,26 +62,8 @@ export class InternalProgramService {
         UniversityNationalIds.HOLAR_UNIVERSITY,
         () => this.holarUniversityClient.getPrograms(),
       ),
-    ]).then((results) => {
-        const failedResults = results.filter(
-        (result) => result.status === 'rejected',
-      )
-
-      results.forEach((result) => {
-        if (result.status === 'rejected') logger.info("reason", result.reason);
-      })
-
-      // if (failedResults.length > 0) {
-      //   logger.error(
-      //     `2Failed to update programs for ${failedResults.length} universities`,
-      //   )
-      // } else {
-      //   logger.info('Finished updating programs')
-      // }
-
-    })
-      .catch((e) => {
-      logger.error('2Failed to update programs, reason:', e)
+    ]).catch((e) => {
+      logger.error('Failed to update programs, reason:', e)
     })
   }
 
