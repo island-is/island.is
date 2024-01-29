@@ -24,7 +24,6 @@ export { default as EditsInReviewSteps } from './InReviewSteps/EditsInReviewStep
 export { default as EditsRequireAction } from './EditsRequireAction'
 export { default as EmployerApprovalExtraInformation } from './EmployerApprovalExtraInformation'
 export { default as UploadAdditionalFilesInfoScreen } from './UploadAdditionalFilesInfoScreen'
-export { default as ImageField } from './ImangeField'
 export { UseUnion } from './UseUnion'
 export { UsePrivatePensionFund } from './UsePrivatePensionFund'
 export { PeriodEndDate } from './PeriodEndDate/PeriodEndDate'
