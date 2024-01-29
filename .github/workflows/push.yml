@@ -395,6 +395,7 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "BUILD_CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
           fi
+          echo "Got docker build chunks: $CHUNKS"
 
       - name: Gather unaffected docker images
         id: unaffected
