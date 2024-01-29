@@ -21,7 +21,6 @@ import localization from './Subscriptions.json'
 interface SubProps {
   allcases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
-  isNotAuthorized: boolean
 }
 
 export const UserSubscriptions = ({ allcases, types }: SubProps) => {
@@ -218,7 +217,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
       currentTab={currentTab}
       setCurrentTab={setCurrentTab}
       tabs={tabs}
-      getUserSubsLoading={getUserSubsLoading}
+      getUserSubsLoading={userLoading || getUserSubsLoading}
     >
       <ChosenSubscriptions
         subscriptionArray={subscriptionArray}
