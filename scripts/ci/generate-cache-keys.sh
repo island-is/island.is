@@ -40,21 +40,16 @@ parse_cli() {
 hash_files() {
   if [[ "$1" == '--' ]]; then shift; fi
 
-  # Define the list of files and directories
-  # local patterns="$@"
-  # local patterns=(
-  #   "scripts/codegen.js"
-  #   "**/*.controller.ts"
-  #   # ... (other patterns)
-  # )
-
   local -a files
   for pattern in "${@}"; do
     warn "Searching for files matching '$pattern'..."
+
     # Use 'read -r' to read each line without interpreting backslashes
     while IFS= read -r -d $'\0' file; do
       files+=("$file")
-    done < <(find "$GIT_ROOT" -path "$GIT_ROOT/$pattern" -print0)
+
+      # Ignore node_modules and .cache/
+    done < <(find "$GIT_ROOT" -not -path "*/node_modules/*" -not -path "*/.cache/*" -path "$GIT_ROOT/$pattern" -print0)
   done
 
   # Check if files array is empty
@@ -65,7 +60,7 @@ hash_files() {
 
   # Combine files and pipe the output to sha256sum
   # The tar command runs in the git root directory to ensure paths are relative to the git root
-  (cd "$GIT_ROOT" && tar 2>/dev/null -cf - --sort=name "${files[@]}" | sha256sum -)
+  (cd "$GIT_ROOT" && tar 2>/dev/null -cf - --sort=name "${files[@]}" | (sha256sum || shasum) 2>/dev/null)
 }
 
 cache_key_node() {
