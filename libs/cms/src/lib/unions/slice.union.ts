@@ -134,7 +134,7 @@ import {
   mapChartNumberBox,
 } from '../models/chartNumberBox.model'
 
-type SliceTypes =
+export type SliceTypes =
   | ITimeline
   | ISectionHeading
   | ICard

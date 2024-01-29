@@ -26,6 +26,7 @@ import {
   EmailSignup,
   KilometerFee,
   MasterList,
+  MultipleStatistics,
   OneColumnTextSlice,
   OverviewLinksSlice,
   PlateAvailableSearch,
@@ -52,6 +53,7 @@ import {
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
+  MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
@@ -168,6 +170,9 @@ const defaultRenderComponent = {
       image={slice.image ?? undefined}
       contain={true}
     />
+  ),
+  MultipleStatistics: (slice: MultipleStatisticsSchema) => (
+    <MultipleStatistics slice={slice} />
   ),
 }
 

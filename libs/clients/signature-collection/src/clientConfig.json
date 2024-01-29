@@ -509,6 +509,19 @@
         }
       }
     },
+    "/Medmaelalistar/Token": {
+      "get": {
+        "tags": ["Medmaelalistar"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Medmaelalistar/{ID}/AddUmbod": {
       "post": {
         "tags": ["Medmaelalistar"],
@@ -646,7 +659,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -893,7 +906,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
