@@ -52,11 +52,12 @@ const getDefaultStyle = (
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  logoAltText: string
 }
 
 const UniversityStudiesHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, logoAltText }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
@@ -88,7 +89,7 @@ const UniversityStudiesHeader: React.FC<
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="university-studies-logo"
+                  alt={logoAltText}
                 />
               </Link>
             )
@@ -111,7 +112,7 @@ const UniversityStudiesHeader: React.FC<
                 <img
                   src={organizationPage.organization?.logo?.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt={logoAltText}
                 />
               </Link>
             </Box>
