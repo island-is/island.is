@@ -29,3 +29,12 @@ export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationCurrencies',
   namespace: 'SocialInsuranceAdministration',
 })
+
+export const UserProfileApi = defineTemplateApi({
+  action: 'userProfile',
+  externalDataId: 'userProfile',
+  namespace: 'UserProfile',
+  params: {
+    validateEmail: true,
+  },
+})

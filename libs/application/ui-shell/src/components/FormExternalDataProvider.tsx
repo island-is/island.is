@@ -5,6 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import {
   AlertMessage,
   Box,
+  Button,
   Checkbox,
   Icon,
   Text,
@@ -35,6 +36,7 @@ import { verifyExternalData } from '../utils'
 
 import { handleServerError } from '@island.is/application/ui-components'
 import { ProviderErrorReason } from '@island.is/shared/problem'
+import { useAuth } from '@island.is/auth/react'
 
 const ItemHeader: React.FC<
   React.PropsWithChildren<{
@@ -102,6 +104,13 @@ const ProviderItem: FC<
 
   const errorCode = dataProviderResult?.statusCode ?? 500
   const errorType = errorCode < 500 ? 'warning' : 'error'
+  const { authority } = useAuth()
+
+  const getIDSLink = () => {
+    return `${authority}/app/user-profile/email?continue_onboarding=false&returnUrl=${encodeURIComponent(
+      window.location.toString(),
+    )}`
+  }
 
   useEffect(() => {
     if (dataProviderResult?.reason) {
@@ -129,6 +138,25 @@ const ProviderItem: FC<
                   </Markdown>
                 </Text>
               ) : null}
+            </Box>
+            <Box display="flex" flexWrap="wrap" marginTop={2}>
+              <Box component="span" marginRight={2}>
+                <a
+                  href={getIDSLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button
+                    variant="text"
+                    icon="open"
+                    iconType='outline'
+                    size="small"
+                    as="span"
+                  >
+                    {formatMessage('link.title')}
+                  </Button>
+                </a>
+              </Box>
             </Box>
           </Box>
         }

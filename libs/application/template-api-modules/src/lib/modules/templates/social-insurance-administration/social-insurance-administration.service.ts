@@ -489,16 +489,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       }
     }
 
-    if (!res.emailAddress) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.noEmailFound,
-          summary: errorMessages.noEmailFoundDescription,
-        },
-        500,
-      )
-    }
-
     return res
   }
 

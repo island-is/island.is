@@ -573,17 +573,6 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ógildur mánuður.',
     description: 'Invalid month.',
   },
-  noEmailFound: {
-    id: 'sia.application:error.no.email.found.title',
-    defaultMessage: 'Ekkert netfang skráð',
-    description: 'english translation',
-  },
-  noEmailFoundDescription: {
-    id: 'sia.application:error.no.email.found.description#markdown',
-    defaultMessage:
-      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um.',
-    description: 'english translation',
-  },
   iban: {
     id: 'sia.application:error.iban',
     defaultMessage: 'Ógilt IBAN',

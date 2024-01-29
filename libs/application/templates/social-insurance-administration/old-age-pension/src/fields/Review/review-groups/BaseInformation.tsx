@@ -17,7 +17,7 @@ export const BaseInformation = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const {
-    email,
+    userProfileEmail,
     applicantName,
     applicantNationalId,
     applicantAddress,
@@ -92,7 +92,7 @@ export const BaseInformation = ({
             label={formatMessage(
               socialInsuranceAdministrationMessage.info.applicantEmail,
             )}
-            value={email}
+            value={userProfileEmail}
           />
         </GridColumn>
 

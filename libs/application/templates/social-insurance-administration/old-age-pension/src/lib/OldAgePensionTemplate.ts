@@ -16,6 +16,7 @@ import {
   NationalRegistrySpouseApi,
   InstitutionNationalIds,
   defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -90,6 +91,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 NationalRegistryResidenceHistoryApi,
+                UserProfileApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,

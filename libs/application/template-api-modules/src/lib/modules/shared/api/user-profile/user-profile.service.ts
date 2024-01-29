@@ -29,7 +29,6 @@ export class UserProfileService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<UserProfileParameters>) {
     // Temporary solution while we still run the old user profile service.
-
     return this.islyklarApi
       .islyklarGet({ ssn: auth.nationalId })
 
@@ -44,6 +43,17 @@ export class UserProfileService extends BaseTemplateApiService {
             400,
           )
         }
+
+        if (params?.validateEmail && !results?.email) {
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.noEmailFound,
+              summary: coreErrorMessages.noEmailFoundDescription,
+            },
+            500,
+          )
+        }
+
         return {
           mobilePhoneNumber: results?.mobile,
           email: results?.email,
@@ -52,6 +62,21 @@ export class UserProfileService extends BaseTemplateApiService {
       })
       .catch((error) => {
         if (isRunningOnEnvironment('local')) {
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.noEmailFound,
+              summary: {
+                ...coreErrorMessages.noEmailFoundDescription,
+                defaultMessage:
+                  coreErrorMessages.noEmailFoundDescription.defaultMessage.replace(
+                    '{link}',
+                    'https://identity-server.dev01.devland.is/app/user-profile/email?continue_onboarding=false',
+                  ),
+              },
+            },
+            500,
+          )
+
           return {
             email: 'mockEmail@island.is',
             mobilePhoneNumber: '9999999',

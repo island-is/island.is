@@ -59,7 +59,7 @@ export const transformApplicationToOldAgePensionDTO = (
     employmentStatus,
     employers,
   } = getOAPApplicationAnswers(application.answers)
-  const { bankInfo, email } = getOAPApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getOAPApplicationExternalData(
     application.externalData,
   )
 
@@ -101,7 +101,7 @@ export const transformApplicationToOldAgePensionDTO = (
       taxLevel: +taxLevel,
     },
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     hasAbroadResidence: YES === residenceHistoryQuestion,

@@ -87,9 +87,10 @@ export const OldAgePensionForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry.fullName
+                    const { applicantName } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantName
                   },
                 }),
                 buildTextField({
@@ -111,9 +112,10 @@ export const OldAgePensionForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.streetAddress
+                    const { applicantAddress } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantAddress
                   },
                 }),
                 buildTextField({
@@ -124,9 +126,10 @@ export const OldAgePensionForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.postalCode
+                    const { applicantPostalCode } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return applicantPostalCode
                   },
                 }),
                 buildTextField({
@@ -138,9 +141,9 @@ export const OldAgePensionForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const nationalRegistry = application.externalData
-                      .nationalRegistry.data as NationalRegistryIndividual
-                    return nationalRegistry?.address?.locality
+                    const { applicantMunicipality } =
+                      getApplicationExternalData(application.externalData)
+                    return applicantMunicipality
                   },
                 }),
                 buildTextField({
@@ -152,10 +155,10 @@ export const OldAgePensionForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.emailAddress
+                    const { userProfileEmail } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return userProfileEmail
                   },
                 }),
                 buildPhoneField({
@@ -165,10 +168,9 @@ export const OldAgePensionForm: Form = buildForm({
                       .applicantPhonenumber,
                   width: 'half',
                   defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.phoneNumber
+                    const { userProfilePhoneNumber } =
+                      getApplicationExternalData(application.externalData)
+                    return userProfilePhoneNumber
                   },
                 }),
               ],

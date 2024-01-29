@@ -17,6 +17,7 @@ import {
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   NO,
+  UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { ApplicationType } from '../lib/constants'
@@ -110,16 +111,24 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryResidenceHistoryApi,
-                  title:
-                    socialInsuranceAdministrationMessage.pre.contactInfoTitle,
-                  subTitle:
-                    socialInsuranceAdministrationMessage.pre
-                      .socialInsuranceAdministrationInformationDescription,
+                  title: '',
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistrySpouseApi,
                   title: '',
                 }),
+                buildDataProviderItem({
+                  provider: UserProfileApi,
+                  title: 'Netfang og símanúmer',
+                  subTitle:
+                    'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður hjá Ísland.is.',
+                  // title:
+                  //   socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+                  // subTitle:
+                  //   socialInsuranceAdministrationMessage.pre
+                  //     .socialInsuranceAdministrationInformationDescription,
+                }),
+                // Bæta í þennan texta að bankareikningur er sóttur frá TR?
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationApplicantApi,
                   title:
