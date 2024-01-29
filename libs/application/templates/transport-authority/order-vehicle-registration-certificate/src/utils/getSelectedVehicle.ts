@@ -12,17 +12,26 @@ export const getSelectedVehicle = (
       'pickVehicle',
     ) as VehiclesCurrentVehicle
     vehicle.permno = getValueViaPath(answers, 'findVehicle.plate', '') as string
+    console.log('vehicle', vehicle)
     return vehicle
   }
-  const currentVehicleList =
-    (externalData?.currentVehicleList.data as CurrentVehiclesAndRecords) ||
-    undefined
+  if (
+    externalData &&
+    externalData.currentVehicleList &&
+    externalData.currentVehicleList.data &&
+    answers &&
+    answers['pickVehicle.vehicle']
+  ) {
+    const currentVehicleList = externalData.currentVehicleList
+      .data as CurrentVehiclesAndRecords
 
-  const vehicleIndex = getValueViaPath(
-    answers,
-    'pickVehicle.vehicle',
-    '',
-  ) as string
+    const vehicleIndex = getValueViaPath(
+      answers,
+      'pickVehicle.vehicle',
+      '',
+    ) as string
 
-  return currentVehicleList.vehicles[parseInt(vehicleIndex, 10)]
+    return currentVehicleList.vehicles[parseInt(vehicleIndex, 10)]
+  }
+  return {}
 }
