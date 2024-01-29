@@ -612,7 +612,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: '',
                   width: 'half',
                   required: true,
-                  defaultValue: NO,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -635,7 +634,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   titleVariant: 'h2',
                   condition: (answers) => {
                     const { isSelfEmployed } = getApplicationAnswers(answers)
-                    return isSelfEmployed !== YES
+                    return isSelfEmployed === NO
                   },
                 }),
                 buildAlertMessageField({
@@ -646,15 +645,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   alertType: 'info',
                   condition: (answers) => {
                     const { isSelfEmployed } = getApplicationAnswers(answers)
-                    return isSelfEmployed !== YES
+                    return isSelfEmployed === NO
                   },
                 }),
                 buildRadioField({
                   id: 'employment.isReceivingUnemploymentBenefits',
                   title: '',
                   width: 'half',
-                  required: true,
-                  defaultValue: NO,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -667,7 +664,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   ],
                   condition: (answers) => {
                     const { isSelfEmployed } = getApplicationAnswers(answers)
-                    return isSelfEmployed !== YES
+                    return isSelfEmployed === NO
                   },
                 }),
                 buildSelectField({
@@ -697,7 +694,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       getApplicationAnswers(answers)
 
                     return (
-                      isSelfEmployed !== YES &&
+                      isSelfEmployed === NO &&
                       isReceivingUnemploymentBenefits === YES
                     )
                   },
