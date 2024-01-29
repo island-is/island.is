@@ -27,6 +27,7 @@ const CandidateView = () => {
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner()
   const { currentCollection } = useGetCurrentCollection()
   const collectionId = currentCollection.id
+
   return (
     <Box>
       <IntroHeader
