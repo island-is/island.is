@@ -70,7 +70,7 @@ hash_files() {
 
 cache_key_node() {
   hash="$(hash_files -- **/node_modules **/yarn.lock **/package.json)"
-  echo "generated-files-cache-key=$hash" >>"$GITHUB_OUTPUT"
+  echo "node-modules-hash=$hash" >>"$GITHUB_OUTPUT"
   warn "Got cache key: $hash"
 }
 
