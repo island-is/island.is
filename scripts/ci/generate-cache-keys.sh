@@ -89,7 +89,8 @@ cache_key_codegen() {
       **/*.resolver.ts \
       **/*.service.ts \
       **/*.union.ts \
-      **/clientConfig.yaml \
+      **/clientConfig.* \
+      **/codegen.* \
       **/codegen.yml \
       **/fragments/**/*.tsx \
       **/mutations/**/*.tsx \
