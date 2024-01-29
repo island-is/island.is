@@ -26,12 +26,27 @@ const getDefaultStyle = (
       backgroundSize: '1440px',
       backgroundPosition: 'center',
     }
-  }
-  return {
-    backgroundImage: `url(${url || backgroundImageUrl})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center top',
+  } else if (width >= theme.breakpoints.lg) {
+    return {
+      backgroundImage: `url(${url || backgroundImageUrl})`,
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'unset',
+      backgroundPosition: 'center',
+    }
+  } else if (width >= theme.breakpoints.md) {
+    return {
+      backgroundImage: `url(${url || backgroundImageUrl})`,
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: '992px',
+      backgroundPosition: 'center',
+    }
+  } else if (width >= theme.breakpoints.xs) {
+    return {
+      background:
+        'radial-gradient(132.21% 118.28% at 100% 0%, #D7E6FF 0%, #E9F1FF 18%, #F9D9B8 61.5%, #FDBD4D 100%) center/cover',
+    }
+  } else {
+    return {}
   }
 }
 
@@ -60,27 +75,6 @@ const UniversityStudiesHeader: React.FC<
       )}
       className={styles.headerBg}
     >
-      {/* <Hidden below="xl">
-        <Box className={styles.desktopTitleContainer}>
-          <Box className={styles.desktopTitle}>
-            <Link
-              href={
-                linkResolver('organizationpage', [organizationPage.slug]).href
-              }
-            >
-              <Text color="white" variant="h1" fontWeight="semiBold">
-                {organizationPage.title}
-              </Text>
-            </Link>
-            <Text fontWeight="regular" color="white">
-              {n(
-                'allUniversityStudiesInIcelandAtTheSamePlace',
-                'Allt háskólanám á Íslandi á sama stað',
-              )}
-            </Text>
-          </Box>
-        </Box>
-      </Hidden> */}
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
@@ -122,29 +116,6 @@ const UniversityStudiesHeader: React.FC<
               </Link>
             </Box>
           </Hidden>
-
-          {/* <Hidden above="lg">
-            <Box
-              marginTop={[2, 2, 15]}
-              textAlign={['center', 'center', 'left']}
-            >
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-              >
-                <Text color="white" variant="h1" fontWeight="semiBold">
-                  {organizationPage.title}
-                </Text>
-              </Link>
-              <Text fontWeight="regular" color="white">
-                {n(
-                  'allUniversityStudiesInIcelandAtTheSamePlace',
-                  'Allt háskólanám á Íslandi á sama stað',
-                )}
-              </Text>
-            </Box>
-          </Hidden> */}
         </SidebarLayout>
       </div>
     </div>

@@ -32,12 +32,12 @@ import {
   VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import {
   ActionCategoryCard,
   BackgroundImage,
   CTAProps,
   ListViewCard,
+  OrganizationFooter,
   OrganizationHeader,
 } from '@island.is/web/components'
 import {
@@ -73,7 +73,9 @@ import {
 } from '../queries/UniversityGateway'
 import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
+import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
+import UniversityStudiesFooter from '../../components/Organization/Wrapper/Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
@@ -410,44 +412,23 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     })) ?? []
 
   return (
-    <GridContainer>
-      {organizationPage && (
-        <OrganizationHeader organizationPage={organizationPage} />
-      )}
-      <SidebarLayout
-        paddingTop={[2, 2, 9]}
-        paddingBottom={[4, 4, 4]}
-        isSticky={false}
-        fullWidthContent={false}
-        sidebarContent={
-          <Box>
-            <Navigation
-              baseId="pageNav"
-              items={navList}
-              title={n('navigationTitle', 'Efnisyfirlit')}
-              //TODO GET THIS TO WORK
-              activeItemTitle="Námsleit"
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href} legacyBehavior>
-                    {link}
-                  </NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-          </Box>
-        }
-      >
-        {isMobileScreenWidth && (
-          <Box className={organizationStyles.menuStyle}>
-            <Box marginY={2}>
+    <Box>
+      <GridContainer>
+        {organizationPage && (
+          <OrganizationHeader organizationPage={organizationPage} />
+        )}
+        <SidebarLayout
+          paddingTop={[2, 2, 9]}
+          paddingBottom={[4, 4, 4]}
+          isSticky={false}
+          fullWidthContent={false}
+          sidebarContent={
+            <Box>
               <Navigation
-                baseId="pageNavMobile"
-                isMenuDialog={true}
+                baseId="pageNav"
                 items={navList}
                 title={n('navigationTitle', 'Efnisyfirlit')}
+                //TODO GET THIS TO WORK
                 activeItemTitle="Námsleit"
                 renderLink={(link, item) => {
                   return item?.href ? (
@@ -459,163 +440,182 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   )
                 }}
               />
-            </Box>
-          </Box>
-        )}
-      </SidebarLayout>
-      <Box marginBottom={8} marginTop={5}>
-        <Box
-          display="flex"
-          flexDirection="row"
-          columnGap={15}
-          paddingBottom={8}
-        >
-          <Hidden below="md">
-            <Box
-              height="full"
-              className={styles.filterWrapper}
-              display="flex"
-              flexDirection="column"
-            >
-              <Box display="inline" marginBottom={3}>
-                <Text title="Sía niðurstöður" variant="h3" as="h2">
-                  {n('filterResults', 'Sía leitarniðurstöður')}
-                </Text>
-              </Box>
-              <Box
-                display="inline"
-                style={{ alignSelf: 'flex-end' }}
-                marginBottom={1}
-              >
-                <Button
-                  variant="text"
-                  icon="add"
-                  size="small"
-                  onClick={() =>
-                    isOpen.filter((x) => x === false).length > 0
-                      ? toggleOpenAll()
-                      : toggleCloseAll()
-                  }
+              <Hidden below="md">
+                <Box
+                  height="full"
+                  className={styles.filterWrapper}
+                  display="flex"
+                  flexDirection="column"
+                  paddingTop={4}
                 >
-                  {`${
-                    isOpen.filter((x) => x === false).length > 0
-                      ? n('openAllFilters', 'opna allar síur')
-                      : n('closeAllFilters', 'loka öllum síum')
-                  }`}
-                </Button>
-              </Box>
-              <Accordion
-                singleExpand={false}
-                dividerOnTop={false}
-                dividerOnBottom={false}
-              >
-                {filterOptions &&
-                  filterOptions.map((filter, index) => {
-                    console.log('filter', filter.options)
-                    return (
-                      <AccordionItem
-                        key={filter.field}
-                        id={filter.field}
-                        label={n(
-                          filter.field,
-                          TranslationDefaults[filter.field],
-                        )}
-                        labelUse="p"
-                        labelVariant="h5"
-                        iconVariant="small"
-                        expanded={isOpen[index]}
-                        onToggle={() => toggleIsOpen(index, !isOpen[index])}
-                      >
-                        <Stack space={[1, 1, 2]}>
-                          {filter.options.map((option) => {
-                            let keyField = option
-                            const str = filter.field as keyof typeof filters
-
-                            if (str === 'universityId') {
-                              keyField =
-                                universities.filter((x) => x.id === option)[0]
-                                  .contentfulTitle || ''
-                            }
-                            if (keyField !== 'OTHER') {
-                              return (
-                                <Checkbox
-                                  label={
-                                    <Box display="flex" flexDirection="column">
-                                      <span>
-                                        {filter.field === 'applicationStatus'
-                                          ? n(
-                                              'openForApplication',
-                                              'opið fyrir umsóknir',
-                                            )
-                                          : n(keyField, keyField)}
-                                      </span>
-                                      <span>
-                                        {filter.field === 'degreeType'
-                                          ? `${n(`${keyField}_EXTRA`, '')}`
-                                          : ''}
-                                      </span>
-                                    </Box>
-                                  }
-                                  id={keyField}
-                                  value={option}
-                                  checked={
-                                    filters[str].filter((x) => x === option)
-                                      .length > 0
-                                  }
-                                  onChange={(e) =>
-                                    checkboxEventHandler(e, filter.field)
-                                  }
-                                />
-                              )
-                            }
-                          })}
-                        </Stack>
-                        <Box
-                          display="flex"
-                          width="full"
-                          flexDirection="row"
-                          justifyContent="flexEnd"
-                          marginTop={1}
-                        >
-                          <Button
-                            variant="text"
-                            icon="reload"
-                            size="small"
-                            onClick={() =>
-                              setFilters({ ...filters, [filter.field]: [] })
-                            }
+                  <Box display="inline" marginBottom={3}>
+                    <Text title="Sía niðurstöður" variant="h3" as="h2">
+                      {n('filterResults', 'Sía leitarniðurstöður')}
+                    </Text>
+                  </Box>
+                  <Box
+                    display="inline"
+                    style={{ alignSelf: 'flex-end' }}
+                    marginBottom={1}
+                  >
+                    <Button
+                      variant="text"
+                      icon="add"
+                      size="small"
+                      onClick={() =>
+                        isOpen.filter((x) => x === false).length > 0
+                          ? toggleOpenAll()
+                          : toggleCloseAll()
+                      }
+                    >
+                      {`${
+                        isOpen.filter((x) => x === false).length > 0
+                          ? n('openAllFilters', 'opna allar síur')
+                          : n('closeAllFilters', 'loka öllum síum')
+                      }`}
+                    </Button>
+                  </Box>
+                  <Accordion
+                    singleExpand={false}
+                    dividerOnTop={false}
+                    dividerOnBottom={false}
+                  >
+                    {filterOptions &&
+                      filterOptions.map((filter, index) => {
+                        console.log('filter', filter.options)
+                        return (
+                          <AccordionItem
+                            key={filter.field}
+                            id={filter.field}
+                            label={n(
+                              filter.field,
+                              TranslationDefaults[filter.field],
+                            )}
+                            labelUse="p"
+                            labelVariant="h5"
+                            iconVariant="small"
+                            expanded={isOpen[index]}
+                            onToggle={() => toggleIsOpen(index, !isOpen[index])}
                           >
-                            {n('clearFilter', 'Hreinsa val')}
-                          </Button>
-                        </Box>
-                      </AccordionItem>
+                            <Stack space={[1, 1, 2]}>
+                              {filter.options.map((option) => {
+                                let keyField = option
+                                const str = filter.field as keyof typeof filters
+
+                                if (str === 'universityId') {
+                                  keyField =
+                                    universities.filter(
+                                      (x) => x.id === option,
+                                    )[0].contentfulTitle || ''
+                                }
+                                if (keyField !== 'OTHER') {
+                                  return (
+                                    <Checkbox
+                                      label={
+                                        <Box
+                                          display="flex"
+                                          flexDirection="column"
+                                        >
+                                          <span>
+                                            {filter.field ===
+                                            'applicationStatus'
+                                              ? n(
+                                                  'openForApplication',
+                                                  'opið fyrir umsóknir',
+                                                )
+                                              : n(keyField, keyField)}
+                                          </span>
+                                          <span>
+                                            {filter.field === 'degreeType'
+                                              ? `${n(`${keyField}_EXTRA`, '')}`
+                                              : ''}
+                                          </span>
+                                        </Box>
+                                      }
+                                      id={keyField}
+                                      value={option}
+                                      checked={
+                                        filters[str].filter((x) => x === option)
+                                          .length > 0
+                                      }
+                                      onChange={(e) =>
+                                        checkboxEventHandler(e, filter.field)
+                                      }
+                                    />
+                                  )
+                                }
+                              })}
+                            </Stack>
+                            <Box
+                              display="flex"
+                              width="full"
+                              flexDirection="row"
+                              justifyContent="flexEnd"
+                              marginTop={1}
+                            >
+                              <Button
+                                variant="text"
+                                icon="reload"
+                                size="small"
+                                onClick={() =>
+                                  setFilters({ ...filters, [filter.field]: [] })
+                                }
+                              >
+                                {n('clearFilter', 'Hreinsa val')}
+                              </Button>
+                            </Box>
+                          </AccordionItem>
+                        )
+                      })}
+                  </Accordion>
+                  <Box
+                    background="blue100"
+                    width="full"
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ height: 72 }}
+                  >
+                    <Button
+                      variant="text"
+                      icon="reload"
+                      size="small"
+                      onClick={() =>
+                        setFilters(JSON.parse(JSON.stringify(initialFilters)))
+                      }
+                    >
+                      {n('clearAllFilters', 'Hreinsa allar síur')}
+                    </Button>
+                  </Box>
+                </Box>
+              </Hidden>
+            </Box>
+          }
+        >
+          {isMobileScreenWidth && (
+            <Box className={organizationStyles.menuStyle}>
+              <Box marginY={2}>
+                <Navigation
+                  baseId="pageNavMobile"
+                  isMenuDialog={true}
+                  items={navList}
+                  title={n('navigationTitle', 'Efnisyfirlit')}
+                  activeItemTitle="Námsleit"
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
+                    ) : (
+                      link
                     )
-                  })}
-              </Accordion>
-              <Box
-                background="blue100"
-                width="full"
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="center"
-                style={{ height: 72 }}
-              >
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() =>
-                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
-                  }
-                >
-                  {n('clearAllFilters', 'Hreinsa allar síur')}
-                </Button>
+                  }}
+                />
               </Box>
             </Box>
-          </Hidden>
-
-          <Box width="full" minWidth={0}>
+          )}
+          <Box minWidth={0}>
             <Text
               marginTop={0}
               marginBottom={2}
@@ -1180,7 +1180,13 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               />
             </Box>
           </Box>
-        </Box>
+        </SidebarLayout>
+        <Box
+          display="flex"
+          flexDirection="row"
+          columnGap={15}
+          paddingBottom={8}
+        ></Box>
         {selectedComparison.length > 0 &&
           !isTabletScreenWidth &&
           !isMobileScreenWidth && (
@@ -1321,9 +1327,20 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Box>
           )}
+        {/* <Box marginBottom={8} marginTop={5}>
+        </Box> */}
+
+        <ToastContainer></ToastContainer>
+      </GridContainer>
+      <Box className="rs_read">
+        <OrganizationFooter
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizations={[organizationPage.organization]}
+          force={true}
+        />
       </Box>
-      <ToastContainer></ToastContainer>
-    </GridContainer>
+    </Box>
   )
 }
 
@@ -1418,4 +1435,4 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(UniversitySearch)
+export default withMainLayout(UniversitySearch, { showFooter: false })

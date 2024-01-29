@@ -3,8 +3,13 @@ import cn from 'classnames'
 import { useRouter } from 'next/router'
 
 import {
+  Accordion,
+  AccordionItem,
+  ActionCard,
+  AlertMessage,
   Box,
   GridColumn,
+  Hidden,
   Icon,
   Input,
   LinkV2,
@@ -72,8 +77,9 @@ const LandingPage: Screen<LandingPageProps> = ({
     router.push(`${linkResolver('universitysearch').href}?search=${searchTerm}`)
   }
 
-  console.log(organizationPage)
-  console.log(organization)
+  const routeToStudies = () => {
+    console.log('..')
+  }
 
   return (
     <OrganizationWrapper
@@ -93,35 +99,79 @@ const LandingPage: Screen<LandingPageProps> = ({
         items: navList,
       }}
       sidebarContent={
-        <Box width="full" className={cn(styles.courseListContainer)}>
-          <Box className={cn(styles.courseListContentContainer)}>
-            <Text variant="eyebrow" color="blueberry600">
-              {' '}
-              {/* TODO Translations */}
-              Háskólar
-            </Text>
-            {universities.map((university) => {
-              return (
-                <Box
-                  className={cn(styles.courseListItems)}
-                  key={university.contentfulTitle}
-                >
-                  <Box style={{ width: '1.5rem', height: '1.5rem' }}>
-                    <img
-                      src={university.contentfulLogoUrl?.toString()}
-                      alt={`logo`}
-                    />
+        <>
+          <Hidden above="sm">
+            <Box marginBottom={4}>
+              <Accordion>
+                <AccordionItem id="uni_dropdown" label="Háskólar">
+                  <Box width="full" className={cn(styles.courseListContainer)}>
+                    <Box className={cn(styles.courseListContentContainer)}>
+                      <Text variant="eyebrow" color="blueberry600">
+                        {' '}
+                        {/* TODO Translations */}
+                        Háskólar
+                      </Text>
+                      {universities.map((university) => {
+                        return (
+                          <Box
+                            className={cn(styles.courseListItems)}
+                            key={university.contentfulTitle}
+                          >
+                            <Box style={{ width: '1.5rem', height: '1.5rem' }}>
+                              <img
+                                src={university.contentfulLogoUrl?.toString()}
+                                alt={`logo`}
+                              />
+                            </Box>
+                            <LinkV2 href="/">
+                              <Text color="blueberry600">
+                                {university.contentfulTitle}
+                              </Text>
+                            </LinkV2>
+                          </Box>
+                        )
+                      })}
+                    </Box>
                   </Box>
-                  <LinkV2 href="/">
-                    <Text color="blueberry600">
-                      {university.contentfulTitle}
-                    </Text>
-                  </LinkV2>
-                </Box>
-              )
-            })}
-          </Box>
-        </Box>
+                </AccordionItem>
+              </Accordion>
+            </Box>
+          </Hidden>
+          <Hidden below="md">
+            <Box width="full" className={cn(styles.courseListContainer)}>
+              <Box
+                width="full"
+                className={cn(styles.courseListContentContainer)}
+              >
+                <Text variant="eyebrow" color="blueberry600">
+                  {' '}
+                  {/* TODO Translations */}
+                  Háskólar
+                </Text>
+                {universities.map((university) => {
+                  return (
+                    <Box
+                      className={cn(styles.courseListItems)}
+                      key={university.contentfulTitle}
+                    >
+                      <Box style={{ width: '1.5rem', height: '1.5rem' }}>
+                        <img
+                          src={university.contentfulLogoUrl?.toString()}
+                          alt={`logo`}
+                        />
+                      </Box>
+                      <LinkV2 href="/">
+                        <Text color="blueberry600">
+                          {university.contentfulTitle}
+                        </Text>
+                      </LinkV2>
+                    </Box>
+                  )
+                })}
+              </Box>
+            </Box>
+          </Hidden>
+        </>
       }
       mainContent={
         <Box paddingTop={0}>
@@ -144,6 +194,14 @@ const LandingPage: Screen<LandingPageProps> = ({
               />
             )
           })}
+          <GridColumn offset="1/9" span="7/9">
+            <Box marginY={4}>
+              <AlertMessage
+                type="warning"
+                message="ATH. Tímabundin BETA útgáfa"
+              />
+            </Box>
+          </GridColumn>
           <GridColumn offset="1/9" span="7/9">
             <Input
               placeholder={n('searchPrograms', 'Leit í háskólanámi')}
@@ -168,6 +226,18 @@ const LandingPage: Screen<LandingPageProps> = ({
             >
               <Icon size="large" icon="search" color="blue400" />
             </button>
+          </GridColumn>
+          <GridColumn offset="1/9" span="7/9">
+            <Box marginY={4}>
+              <ActionCard
+                heading={'Veistu hvað þú vilt læra?'}
+                text="Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið."
+                cta={{
+                  label: 'Sækja um í háskóla',
+                  onClick: () => console.log('...'),
+                }}
+              />
+            </Box>
           </GridColumn>
         </Box>
       }
@@ -265,4 +335,4 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(LandingPage)
+export default withMainLayout(LandingPage, { showFooter: false })
