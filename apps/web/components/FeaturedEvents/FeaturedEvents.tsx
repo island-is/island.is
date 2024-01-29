@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
 
 import { Text } from '@island.is/island-ui/core'
@@ -14,11 +15,11 @@ const FeaturedEvents = ({ slice }: FeaturedEventsProps) => {
     <EventList
       eventList={slice.resolvedEventList.items}
       namespace={slice.namespace}
-      noEventsFoundText={
+      noEventsFoundFallback={
         slice.noEventsFoundText &&
         webRichText(slice.noEventsFoundText, {
           renderNode: {
-            [BLOCKS.PARAGRAPH]: (_node, children) => (
+            [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
               <Text variant="h4">{children}</Text>
             ),
           },

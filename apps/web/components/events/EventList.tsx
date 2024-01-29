@@ -20,14 +20,14 @@ interface EventListProps {
   namespace: Record<string, string>
   eventList: GetEventsQuery['getEvents']['items']
   parentPageSlug: string
-  noEventsFoundText?: ReactNode
+  noEventsFoundFallback?: ReactNode
 }
 
 export const EventList = ({
   eventList,
   namespace,
   parentPageSlug,
-  noEventsFoundText,
+  noEventsFoundFallback,
 }: EventListProps) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -38,12 +38,13 @@ export const EventList = ({
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.sm)
   }, [width])
+
   return (
     <Box className="rs_read">
       {!eventList.length && (
         <Box>
-          {noEventsFoundText ? (
-            noEventsFoundText
+          {noEventsFoundFallback ? (
+            noEventsFoundFallback
           ) : (
             <Text variant="h4">
               {n(
