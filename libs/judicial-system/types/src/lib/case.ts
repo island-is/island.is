@@ -332,11 +332,19 @@ export interface CaseListEntry
 
 export const indictmentCases = [CaseType.INDICTMENT]
 
+export function isIndictmentCase(type?: string | null): boolean {
+  return Boolean(type) && indictmentCases.includes(type as CaseType)
+}
+
 export const restrictionCases = [
   CaseType.ADMISSION_TO_FACILITY,
   CaseType.CUSTODY,
   CaseType.TRAVEL_BAN,
 ]
+
+export function isRestrictionCase(type?: CaseType | null): boolean {
+  return Boolean(type && restrictionCases.includes(type))
+}
 
 export const investigationCases = [
   CaseType.AUTOPSY,
@@ -357,6 +365,31 @@ export const investigationCases = [
   CaseType.TRACKING_EQUIPMENT,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
+
+export function isInvestigationCase(type?: CaseType | null): boolean {
+  return Boolean(type && investigationCases.includes(type))
+}
+
+export const acceptedCaseDecisions = [
+  CaseDecision.ACCEPTING,
+  CaseDecision.ACCEPTING_PARTIALLY,
+]
+
+export function isAcceptingCaseDecision(
+  decision?: CaseDecision | null,
+): boolean {
+  return Boolean(decision && acceptedCaseDecisions.includes(decision))
+}
+
+export const completedCaseStates = [
+  CaseState.ACCEPTED,
+  CaseState.REJECTED,
+  CaseState.DISMISSED,
+]
+
+export function isCompletedCase(state?: CaseState | null): boolean {
+  return Boolean(state && completedCaseStates.includes(state))
+}
 
 export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
@@ -379,60 +412,10 @@ export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.CASE_FILE,
 ]
 
-export function isIndictmentCase(type?: string | null): boolean {
-  return Boolean(type) && indictmentCases.includes(type as CaseType)
-}
-
-export function isRestrictionCase(type?: CaseType | null): boolean {
-  return Boolean(type && restrictionCases.includes(type))
-}
-
-export function isInvestigationCase(type?: CaseType | null): boolean {
-  return Boolean(type && investigationCases.includes(type))
-}
-
-export function isAcceptingCaseDecision(
-  decision?: CaseDecision | null,
-): boolean {
-  return Boolean(decision && acceptedCaseDecisions.includes(decision))
-}
-
-export const completedCaseStates = [
-  CaseState.ACCEPTED,
-  CaseState.REJECTED,
-  CaseState.DISMISSED,
-]
-
-export function isCompletedCase(state?: CaseState | null): boolean {
-  return Boolean(state && completedCaseStates.includes(state))
-}
-
-export const acceptedCaseDecisions = [
-  CaseDecision.ACCEPTING,
-  CaseDecision.ACCEPTING_PARTIALLY,
-]
-
-export function hasCaseBeenAppealed(theCase: Case): boolean {
-  return (
-    completedCaseStates.includes(theCase.state) &&
-    (theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      Boolean(theCase.accusedPostponedAppealDate) ||
-      Boolean(theCase.prosecutorPostponedAppealDate))
-  )
-}
-
 export function getStatementDeadline(appealReceived: Date): string {
   return new Date(
     new Date(appealReceived).setDate(appealReceived.getDate() + 1),
   ).toISOString()
-}
-
-export function getAppealedDate(
-  prosecutorPostponedAppealDate?: string,
-  accusedPostponedAppealDate?: string,
-): string | undefined {
-  return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }
 
 export function prosecutorCanSelectDefenderForInvestigationCase(
