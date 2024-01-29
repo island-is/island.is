@@ -63,7 +63,7 @@ hash_files() {
   log "Searching for files matching patterns: ${*}"
 
   # Check if files array is empty
-  if [ ${#files[@]} -eq 0 ]; then
+  if [ -z "${files[*]}" ]; then
     log "No files match the specified patterns."
     return 1
   fi
@@ -76,7 +76,7 @@ hash_files() {
 }
 
 cache_key_node() {
-  hash="$(hash_files -- **/node_modules **/yarn.lock **/package.json)"
+  hash="$(hash_files -- '**/node_modules' '**/yarn.lock' '**/package.json')"
   echo "node-modules-hash=$hash" >>"$GITHUB_OUTPUT"
   log "Got cache key: $hash"
 }
