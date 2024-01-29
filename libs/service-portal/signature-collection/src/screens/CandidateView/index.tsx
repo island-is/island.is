@@ -26,7 +26,7 @@ const CandidateView = () => {
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner()
   const { currentCollection } = useGetCurrentCollection()
-  const collectionId = listsForOwner[0]?.collectionId
+  const collectionId = currentCollection.id
   return (
     <Box>
       <IntroHeader
