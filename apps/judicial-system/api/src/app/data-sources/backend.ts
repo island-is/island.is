@@ -6,7 +6,6 @@ import { Injectable } from '@nestjs/common'
 import { ProblemError } from '@island.is/nest/problem'
 
 import type {
-  Case,
   CaseFile,
   CreateDefendant,
   CreateFile,
@@ -25,6 +24,7 @@ import type {
 
 import { environment } from '../../environments'
 import {
+  Case,
   Notification,
   RequestSignatureResponse,
   SendNotificationResponse,

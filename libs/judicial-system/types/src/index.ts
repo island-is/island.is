@@ -76,7 +76,6 @@ export {
   prosecutorCanSelectDefenderForInvestigationCase,
 } from './lib/case'
 export type {
-  Case,
   CrimeScene,
   CrimeSceneMap,
   IndictmentSubtypeMap,
