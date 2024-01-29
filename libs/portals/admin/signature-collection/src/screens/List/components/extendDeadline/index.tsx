@@ -40,7 +40,7 @@ const ActionExtendDeadline = ({
           },
         },
       })
-      if (res.data?.signatureCollectionExtendDeadline.success) {
+      if (res.data?.signatureCollectionAdminExtendDeadline.success) {
         toast.success(formatMessage(m.updateListEndTimeSuccess))
         revalidate()
       } else {
