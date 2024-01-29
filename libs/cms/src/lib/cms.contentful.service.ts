@@ -264,7 +264,6 @@ export class CmsContentfulService {
         )
 
         const link = organization?.fields.link || organization?.fields.link
-        console.log('link', link)
 
         return link ?? null
       }
