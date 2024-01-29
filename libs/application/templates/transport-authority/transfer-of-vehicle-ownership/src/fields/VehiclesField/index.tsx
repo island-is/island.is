@@ -19,7 +19,6 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const currentVehicleList = application.externalData.currentVehicleList
     .data as CurrentVehiclesAndRecords
-  console.log('currentVehicleList', currentVehicleList)
   const updateData = useCallback(async () => {
     await updateApplication({
       variables: {

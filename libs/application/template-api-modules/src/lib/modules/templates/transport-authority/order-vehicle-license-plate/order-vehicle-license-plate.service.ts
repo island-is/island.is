@@ -1,4 +1,4 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -90,28 +90,6 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
         400,
       )
     }
-    console.log('result', result)
-
-    const vehicleInfo = await this.vehiclesApiWithAuth(
-      auth,
-    ).basicVehicleInformationGet({
-      clientPersidno: auth.nationalId,
-      permno: result[0].permno || '',
-      regno: undefined,
-      vin: undefined,
-    })
-    console.log('vehicleInfo', vehicleInfo)
-    try {
-      const vali = await this.vehiclePlateOrderingClient.validatePlateOrder(
-        auth,
-        result[0].permno || '',
-        vehicleInfo?.platetypefront || '',
-        vehicleInfo?.platetyperear || '',
-      )
-      console.log('vali', vali)
-    } catch (error) {
-      console.log('VALI error', error)
-    }
 
     return {
       totalRecords: countResult,
@@ -122,28 +100,22 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
           // Only validate if fewer than 5 items
           if (result.length <= 5) {
             // Get basic information about vehicle
-            try {
-              const vehicleInfo = await this.vehiclesApiWithAuth(
+            const vehicleInfo = await this.vehiclesApiWithAuth(
+              auth,
+            ).basicVehicleInformationGet({
+              clientPersidno: auth.nationalId,
+              permno: vehicle.permno || '',
+              regno: undefined,
+              vin: undefined,
+            })
+            // Get validation
+            validation =
+              await this.vehiclePlateOrderingClient.validatePlateOrder(
                 auth,
-              ).basicVehicleInformationGet({
-                clientPersidno: auth.nationalId,
-                permno: vehicle.permno || '',
-                regno: undefined,
-                vin: undefined,
-              })
-              console.log('vehicleInfo', vehicleInfo)
-              // Get validation
-              validation =
-                await this.vehiclePlateOrderingClient.validatePlateOrder(
-                  auth,
-                  vehicle.permno || '',
-                  vehicleInfo?.platetypefront || '',
-                  vehicleInfo?.platetyperear || '',
-                )
-              console.log('validation', validation)
-            } catch (error) {
-              console.log('error', error)
-            }
+                vehicle.permno || '',
+                vehicleInfo?.platetypefront || '',
+                vehicleInfo?.platetyperear || '',
+              )
           }
 
           return {

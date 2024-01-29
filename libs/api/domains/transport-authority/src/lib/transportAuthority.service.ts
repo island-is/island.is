@@ -64,7 +64,6 @@ export class TransportAuthorityApi {
       showCoowned: true,
       showOperated: false,
     })
-    console.log('permno', permno)
     const vehicle = await this.vehiclesApiWithAuth(
       auth,
     ).basicVehicleInformationGet({ permno: permno })
@@ -73,7 +72,6 @@ export class TransportAuthorityApi {
         'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
       )
     }
-    console.log('vehicle', vehicle)
     const isOwnerOrCoOwner = !!myVehicles?.find(
       (vehicle: VehicleMiniDto) => vehicle.permno === permno,
     )
