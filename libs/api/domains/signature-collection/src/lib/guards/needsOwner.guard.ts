@@ -25,7 +25,6 @@ export class NeedsOwnerGuard implements CanActivate {
     )
     // IsOwner decorator not used
     if (!isOwner) {
-      console.log('should be here')
       return true
     }
 
