@@ -766,10 +766,15 @@ export class FeaturedEventsResolver {
   }
   @ResolveField(() => GraphQLJSONObject)
   async namespace(@Parent() { resolvedEventList: input }: FeaturedEvents) {
-    const respones = await this.cmsContentfulService.getNamespace(
-      'OrganizationPages',
-      input.lang,
-    )
-    return JSON.parse(respones?.fields || '{}')
+    try {
+      const respones = await this.cmsContentfulService.getNamespace(
+        'OrganizationPages',
+        input.lang,
+      )
+      return JSON.parse(respones?.fields || '{}')
+    } catch {
+      // Fallback to empty object in case something goes wrong when fetching or parsing namespace
+      return {}
+    }
   }
 }
