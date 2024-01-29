@@ -7,7 +7,6 @@ export enum NationalRegistryScope {
   signatureCollectionManage = '@skra.is/signature-collection:manage',
 }
 
-
 const schema = z.object({
   xRoadServicePath: z.string(),
   scope: z.array(z.string()),
