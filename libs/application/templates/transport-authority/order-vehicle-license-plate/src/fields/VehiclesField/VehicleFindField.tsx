@@ -70,7 +70,6 @@ export const VehicleFindField: FC<
         permno: plate.toUpperCase(),
       })
         .then((response) => {
-          console.log('response', response)
           setSelectedVehicle({
             permno:
               response.vehiclePlateOrderChecksByPermno?.basicVehicleInformation

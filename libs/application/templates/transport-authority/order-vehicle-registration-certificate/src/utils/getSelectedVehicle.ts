@@ -12,7 +12,6 @@ export const getSelectedVehicle = (
       'pickVehicle',
     ) as VehiclesCurrentVehicle
     vehicle.permno = getValueViaPath(answers, 'findVehicle.plate', '') as string
-    console.log('vehicle', vehicle)
     return vehicle
   }
   if (

@@ -1,4 +1,4 @@
-import { FieldBaseProps, Option } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useState } from 'react'
 import {
@@ -25,7 +25,7 @@ export const VehicleFindField: FC<
 > = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
-  console.log('asdfasdfasdfas dfasd fasdf asdf asdf asdfsd fsdf ')
+
   const vehicleValue = getValueViaPath(
     application.answers,
     'pickVehicle.vehicle',
@@ -62,7 +62,6 @@ export const VehicleFindField: FC<
         permno: plate.toUpperCase(),
       })
         .then((response) => {
-          console.log('response', response)
           setSelectedVehicle({
             permno:
               response.vehicleOwnerchangeChecksByPermno?.basicVehicleInformation
