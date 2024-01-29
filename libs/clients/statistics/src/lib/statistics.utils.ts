@@ -14,7 +14,6 @@ import {
   MONTH_NAMES,
 } from './statistics.constants'
 import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
-import type { Unwrap } from '@island.is/shared/types'
 
 export const _tryToGetDate = (value: string | null) => {
   if (!value) {
