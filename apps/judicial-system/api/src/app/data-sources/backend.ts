@@ -7,7 +7,6 @@ import { ProblemError } from '@island.is/nest/problem'
 
 import type {
   CaseFile,
-  CreateDefendant,
   CreateFile,
   CreatePresignedPost,
   Defendant,
@@ -247,7 +246,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   createDefendant(
     caseId: string,
-    createDefendant: CreateDefendant,
+    createDefendant: unknown,
   ): Promise<Defendant> {
     return this.post(`case/${caseId}/defendant`, createDefendant)
   }

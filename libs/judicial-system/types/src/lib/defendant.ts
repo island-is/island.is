@@ -22,15 +22,6 @@ export interface Defendant {
   defendantWaivesRightToCounsel: boolean
 }
 
-export interface CreateDefendant {
-  noNationalId?: boolean
-  nationalId?: string
-  name?: string
-  gender?: Gender
-  address?: string
-  citizenship?: string
-}
-
 export interface DeleteDefendantResponse {
   deleted: boolean
 }
