@@ -21,7 +21,6 @@ import type {
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   SignedUrl,
-  TransitionCase,
   UpdateCase,
   UpdateDefendant,
   UpdateFile,
@@ -145,7 +144,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.patch(`case/${id}`, updateCase)
   }
 
-  transitionCase(id: string, transitionCase: TransitionCase): Promise<Case> {
+  transitionCase(id: string, transitionCase: unknown): Promise<Case> {
     return this.patch(`case/${id}/state`, transitionCase)
   }
 
@@ -308,7 +307,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   limitedAccessTransitionCase(
     id: string,
-    transitionCase: TransitionCase,
+    transitionCase: unknown,
   ): Promise<Case> {
     return this.patch(`case/${id}/limitedAccess/state`, transitionCase)
   }

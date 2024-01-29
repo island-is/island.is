@@ -85,7 +85,6 @@ export type {
   IndictmentSubtypeMap,
   CreateCase,
   UpdateCase,
-  TransitionCase,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
 } from './lib/case'

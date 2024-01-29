@@ -432,10 +432,6 @@ export interface UpdateCase
   appealJudge3Id?: string
 }
 
-export interface TransitionCase {
-  transition: CaseTransition
-}
-
 export interface RequestSignatureResponse {
   controlCode: string
   documentToken: string
