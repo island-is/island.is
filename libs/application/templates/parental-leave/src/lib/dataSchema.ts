@@ -17,6 +17,7 @@ import {
   ADOPTION,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  NO_UNEMPLOYED_BENEFITS,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
@@ -191,7 +192,8 @@ export const dataSchema = z.object({
         unemploymentBenefits,
       }) =>
         isSelfEmployed === NO && isReceivingUnemploymentBenefits === YES
-          ? !!unemploymentBenefits
+          ? !!unemploymentBenefits &&
+            unemploymentBenefits !== NO_UNEMPLOYED_BENEFITS
           : true,
       { path: ['unemploymentBenefits'] },
     ),
