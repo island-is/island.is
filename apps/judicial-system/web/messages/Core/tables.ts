@@ -41,6 +41,11 @@ export const tables = defineMessages({
     defaultMessage: 'Lokið',
     description: 'Notað sem merki þegar mál í stöðu "Lokið" í málalista',
   },
+  withdrawnTag: {
+    id: 'judicial.system.core:tables.withdrawn_tag',
+    defaultMessage: 'Afturkallað',
+    description: 'Notað sem merki þegar mál í stöðu "Afturkallað" í málalista',
+  },
   completedCasesTitle: {
     id: 'judicial.system.core:tables.completed_cases_title',
     defaultMessage: 'Afgreidd mál',

@@ -253,7 +253,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 large
               />
             </Box>
-            <Box>
+            <Box marginBottom={2}>
               <RadioButton
                 name="case-decision"
                 id="case-decision-unlabeling"
@@ -264,6 +264,22 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 }
                 onChange={() =>
                   handleRulingDecisionChange(CaseAppealRulingDecision.REMAND)
+                }
+                backgroundColor="white"
+                large
+              />
+            </Box>
+            <Box>
+              <RadioButton
+                name="case-decision"
+                id="case-decision-withdrawn"
+                label={formatMessage(appealRuling.decisionWithdrawn)}
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.WITHDRAWN
+                }
+                onChange={() =>
+                  handleRulingDecisionChange(CaseAppealRulingDecision.WITHDRAWN)
                 }
                 backgroundColor="white"
                 large

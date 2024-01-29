@@ -166,6 +166,7 @@ export enum CaseAppealRulingDecision {
   DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
   DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
   REMAND = 'REMAND',
+  WITHDRAWN = 'WITHDRAWN',
 }
 
 export enum SessionArrangements {
