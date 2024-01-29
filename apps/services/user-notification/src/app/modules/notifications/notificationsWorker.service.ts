@@ -51,7 +51,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
   onApplicationBootstrap() {
     if (this.isRunningAsWorker) {
-      console.log("onApplicationBootstrap..................")
       this.run()
     }
   }
