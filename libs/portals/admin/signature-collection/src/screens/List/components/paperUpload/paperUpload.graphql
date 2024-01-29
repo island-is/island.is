@@ -1,5 +1,5 @@
 mutation BulkUpload($input: SignatureCollectionListBulkUploadInput!) {
-  signatureCollectionBulkUploadSignatures(input: $input) {
+  signatureCollectionAdminBulkUploadSignatures(input: $input) {
     success {
       nationalId
     }

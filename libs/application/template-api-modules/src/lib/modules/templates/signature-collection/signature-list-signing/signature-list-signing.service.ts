@@ -25,7 +25,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
-      auth.nationalId,
+      auth,
     )
     if (signature) {
       return signature
@@ -35,9 +35,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
-    const signee = await this.signatureCollectionClientService.getSignee(
-      auth.nationalId,
-    )
+    const signee = await this.signatureCollectionClientService.getSignee(auth)
     const { canSign, canSignInfo } = signee
 
     if (canSign) {
@@ -70,11 +68,20 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
+
+    const areaId = (
+      application.externalData.canSign.data as { area: { id: string } }
+    ).area?.id
+    if (!areaId) {
+      throw new TemplateApiError(errorMessages.deniedByService, 400)
+    }
     const ownerId = application.answers.initialQuery as string
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
       nationalId: auth.nationalId,
       candidateId: ownerId,
+      areaId,
+      onlyActive: true,
     })
     // If candidateId existed or if there is only one list, check if maxReached
     if (lists.length === 1) {
