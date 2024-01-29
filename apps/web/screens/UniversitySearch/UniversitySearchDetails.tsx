@@ -63,7 +63,7 @@ interface UniversityDetailsProps {
   namespace: Record<string, string>
   locale: string
   universities: Array<UniversityGatewayUniversity>
-  organizationPage: OrganizationPage
+  organizationPage?: Query['getOrganizationPage']
 }
 
 const UniversityDetails: Screen<UniversityDetailsProps> = ({
