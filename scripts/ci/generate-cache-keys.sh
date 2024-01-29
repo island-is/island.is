@@ -113,46 +113,44 @@ cache_key_codegen() {
       "*/air-discount-scheme/web/screens/**.tsx" \
       "*/application/types/src/lib/ApplicationTypes.ts" \
       "*/cms/src/lib/generated/contentfulTypes.d.ts"
-
-    # Original glob list for github's hashFiles
-    # apps/**/*.controller.ts \
-    # apps/**/*.dto.ts \
-    # apps/**/*.enum.ts \
-    # apps/**/*.graphql.ts \
-    # apps/**/*.input.ts \
-    # apps/**/*.model.ts \
-    # apps/**/*.module.ts \
-    # apps/**/*.resolver.ts \
-    # apps/**/*.service.ts \
-    # apps/**/*.union.ts \
-    # apps/**/codegen.yml \
-    # apps/**/queries/**/*.tsx \
-    # apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx \
-    # apps/air-discount-scheme/web/components/Header/Header.tsx \
-    # apps/air-discount-scheme/web/i18n/withLocale.tsx \
-    # apps/air-discount-scheme/web/screens/**.tsx \
-    # apps/judicial-system/**/*.graphql \
-    # libs/**/*.controller.ts \
-    # libs/**/*.dto.ts \
-    # libs/**/*.enum.ts \
-    # libs/**/*.graphql \
-    # libs/**/*.graphql.ts \
-    # libs/**/*.input.ts \
-    # libs/**/*.model.ts \
-    # libs/**/*.module.ts \
-    # libs/**/*.resolver.ts \
-    # libs/**/*.service.ts \
-    # libs/**/*.union.ts \
-    # libs/**/clientConfig.yaml \
-    # libs/**/codegen.yml \
-    # libs/**/fragments/**/*.tsx \
-    # libs/**/mutations/**/*.tsx \
-    # libs/**/queries/**/*.tsx \
-    # libs/application/types/src/lib/ApplicationTypes.ts \
-    # libs/cms/src/lib/generated/contentfulTypes.d.ts \
-    # scripts/codegen.js
-
   )"
+  # Original glob list for github's hashFiles
+  # apps/**/*.controller.ts \
+  # apps/**/*.dto.ts \
+  # apps/**/*.enum.ts \
+  # apps/**/*.graphql.ts \
+  # apps/**/*.input.ts \
+  # apps/**/*.model.ts \
+  # apps/**/*.module.ts \
+  # apps/**/*.resolver.ts \
+  # apps/**/*.service.ts \
+  # apps/**/*.union.ts \
+  # apps/**/codegen.yml \
+  # apps/**/queries/**/*.tsx \
+  # apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx \
+  # apps/air-discount-scheme/web/components/Header/Header.tsx \
+  # apps/air-discount-scheme/web/i18n/withLocale.tsx \
+  # apps/air-discount-scheme/web/screens/**.tsx \
+  # apps/judicial-system/**/*.graphql \
+  # libs/**/*.controller.ts \
+  # libs/**/*.dto.ts \
+  # libs/**/*.enum.ts \
+  # libs/**/*.graphql \
+  # libs/**/*.graphql.ts \
+  # libs/**/*.input.ts \
+  # libs/**/*.model.ts \
+  # libs/**/*.module.ts \
+  # libs/**/*.resolver.ts \
+  # libs/**/*.service.ts \
+  # libs/**/*.union.ts \
+  # libs/**/clientConfig.yaml \
+  # libs/**/codegen.yml \
+  # libs/**/fragments/**/*.tsx \
+  # libs/**/mutations/**/*.tsx \
+  # libs/**/queries/**/*.tsx \
+  # libs/application/types/src/lib/ApplicationTypes.ts \
+  # libs/cms/src/lib/generated/contentfulTypes.d.ts \
+  # scripts/codegen.js
   echo "generated-files-cache-key=$hash" >>"$GITHUB_OUTPUT"
   log "Got cache key: $hash"
 }
