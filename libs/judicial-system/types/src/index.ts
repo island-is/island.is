@@ -51,7 +51,7 @@ export {
   isAdminUser,
   isCoreUser,
 } from './lib/user'
-export type { User, CreateUser, UpdateUser } from './lib/user'
+export type { User } from './lib/user'
 
 export {
   CaseOrigin,

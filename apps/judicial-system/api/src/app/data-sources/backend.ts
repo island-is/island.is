@@ -13,7 +13,6 @@ import type {
   CreateDefendant,
   CreateFile,
   CreatePresignedPost,
-  CreateUser,
   Defendant,
   DeleteDefendantResponse,
   DeleteFileResponse,
@@ -30,7 +29,6 @@ import type {
   UpdateCase,
   UpdateDefendant,
   UpdateFile,
-  UpdateUser,
   UploadFileToCourtResponse,
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
@@ -124,11 +122,11 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`user/${id}`)
   }
 
-  createUser(createUser: CreateUser): Promise<User> {
+  createUser(createUser: unknown): Promise<User> {
     return this.post('user', createUser)
   }
 
-  updateUser(id: string, updateUser: UpdateUser): Promise<User> {
+  updateUser(id: string, updateUser: unknown): Promise<User> {
     return this.put(`user/${id}`, updateUser)
   }
 
