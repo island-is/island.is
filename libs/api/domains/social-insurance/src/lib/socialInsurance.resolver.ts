@@ -17,6 +17,8 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { PensionCalculationInput } from './dtos/pensionCalculation.input'
+import { PensionCalculationResponse } from './models/pensionCalculation.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -36,5 +38,10 @@ export class SocialInsuranceResolver {
     @Args('input') input: PaymentPlanInput,
   ) {
     return this.service.getPaymentPlan(user, input.year)
+  }
+
+  @Query(() => PensionCalculationResponse)
+  async getPensionCalculation(input: PensionCalculationInput) {
+    return this.service.getPensionCalculation(input)
   }
 }

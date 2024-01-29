@@ -1385,6 +1385,141 @@
         }
       }
     },
+    "/api/protected/v1/PensionCalculator": {
+      "post": {
+        "tags": ["PensionCalculator"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorInput"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorInput"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorOutput"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorOutput"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorOutput"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/Test/hello": {
       "get": {
         "tags": ["Test"],
@@ -2006,6 +2141,54 @@
             },
             "nullable": true
           }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorInput": {
+        "type": "object",
+        "properties": {
+          "typeOfBasePension": { "type": "integer", "format": "int32" },
+          "hasSpouse": { "type": "boolean" },
+          "livingCondition": { "type": "integer", "format": "int32" },
+          "mobilityImpairment": { "type": "boolean" },
+          "start": { "type": "integer", "format": "int32" },
+          "yearOfBirth": { "type": "integer", "format": "int32" },
+          "startPension": { "type": "integer", "format": "int32" },
+          "childCount": { "type": "integer", "format": "int32" },
+          "childSupportCount": { "type": "integer", "format": "int32" },
+          "delayPension": { "type": "integer", "format": "int32" },
+          "hurryPension": { "type": "integer", "format": "int32" },
+          "ageOfFirst75DisabilityAssessment": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "livingConditionRatio": { "type": "integer", "format": "int32" },
+          "livingConditionAbroadInYears": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ageNow": { "type": "integer", "format": "int32" },
+          "taxCard": { "type": "integer", "format": "int32" },
+          "typeOfPeriodIncome": { "type": "integer", "format": "int32" },
+          "income": { "type": "integer", "format": "int32" },
+          "pensionPayments": { "type": "integer", "format": "int32" },
+          "privatePensionPayments": { "type": "integer", "format": "int32" },
+          "otherIncome": { "type": "integer", "format": "int32" },
+          "capitalIncome": { "type": "integer", "format": "int32" },
+          "benefitsFromMunicipality": { "type": "integer", "format": "int32" },
+          "premium": { "type": "integer", "format": "int32" },
+          "installmentClaims": { "type": "integer", "format": "int32" },
+          "foreignBasicPension": { "type": "integer", "format": "int32" },
+          "dateOfCalculations": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorOutput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "monthlyAmount": { "type": "number", "format": "double" },
+          "yearlyAmount": { "type": "number", "format": "double" }
         },
         "additionalProperties": false
       },

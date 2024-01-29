@@ -1,13 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  type ApiProtectedV1PensionCalculatorPostRequest,
+  SocialInsuranceAdministrationClientService,
+} from '@island.is/clients/social-insurance-administration'
 import { User } from '@island.is/auth-nest-tools'
 import { PaymentPlan } from './models/paymentPlan.model'
 import { handle404 } from '@island.is/clients/middlewares'
 import { PaymentGroup } from './models/paymentGroup'
 import { isDefined } from '@island.is/shared/utils'
 import addYears from 'date-fns/addYears'
+import { PensionCalculationResponse } from './models/pensionCalculation.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -98,5 +102,15 @@ export class SocialInsuranceService {
     }
 
     return data
+  }
+
+  async getPensionCalculation(
+    input: ApiProtectedV1PensionCalculatorPostRequest['trWebApiServicesDomainPensionModelsPensionCalculatorInput'],
+  ): Promise<PensionCalculationResponse> {
+    return {
+      items: await this.socialInsuranceApi.getPensionCalculation({
+        trWebApiServicesDomainPensionModelsPensionCalculatorInput: input,
+      }),
+    }
   }
 }
