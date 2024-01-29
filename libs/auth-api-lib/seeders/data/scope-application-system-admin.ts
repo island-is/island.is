@@ -14,7 +14,7 @@ export const up = compose(
     },
   }),
   createScope({
-    name: '@admin.island.is/application-system',
+    name: '@admin.island.is/application-system:admin',
     displayName: 'Umsóknarkerfi Ísland.is',
     description: 'Umsjón með umsóknir',
     accessControlled: true,

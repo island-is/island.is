@@ -6,7 +6,7 @@ export enum AdminPortalScope {
   regulationAdminManage = '@admin.island.is/regulations:manage',
   icelandicNamesRegistry = '@admin.island.is/icelandic-names-registry',
   documentProvider = '@admin.island.is/document-provider',
-  applicationSystem = '@admin.island.is/application-system',
+  applicationSystem = '@admin.island.is/application-system:admin',
   applicationSystemInstitution = '@admin.island.is/application-system:institution',
   idsAdmin = '@admin.island.is/auth',
   idsAdminSuperUser = '@admin.island.is/auth:admin',
