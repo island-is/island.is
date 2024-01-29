@@ -21,11 +21,7 @@ interface TypeResolverResponse {
   slug?: string[]
 }
 
-export type LinkType =
-  | keyof typeof routesTemplate
-  | 'linkurl'
-  | 'link'
-  | 'lifeeventpage'
+export type LinkType = keyof typeof routesTemplate | 'linkurl' | 'link'
 
 /*
 The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution
@@ -187,7 +183,7 @@ export const routesTemplate = {
     is: '/lifsvidburdir',
     en: '/en/life-events',
   },
-  anchorpage: {
+  lifeeventpage: {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
@@ -263,6 +259,10 @@ export const routesTemplate = {
     is: '/haskolanam-temp',
     en: '/en/university-studies',
   },
+  oskalistithjodarinnar: {
+    is: '/oskalisti-thjodarinnar',
+    en: '',
+  },
   homepage: {
     is: '/',
     en: '/en',
@@ -334,15 +334,10 @@ export const linkResolver = (
   The __typename fields seem to have case issues, that will be addressed at a later time
   We also guard against accidental passing of nully values. ??
   */
-  let type = linkType?.toLowerCase() as
+  const type = linkType?.toLowerCase() as
     | LinkResolverInput['linkType']
     | undefined
     | null
-
-  // Temporarily reassign life event pages to anchor pages
-  if (type === 'lifeeventpage') {
-    type = 'anchorpage'
-  }
 
   // special case for external url resolution
   if (type === 'linkurl') {
