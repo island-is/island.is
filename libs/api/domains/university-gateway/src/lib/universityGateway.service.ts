@@ -113,6 +113,8 @@ export class UniversityGatewayApi {
       costInformationEn: item.costInformationEn,
       allowException: item.allowException,
       allowThirdLevelQualification: item.allowThirdLevelQualification,
+      arrangementEn: item.arrangementEn,
+      arrangementIs: item.arrangementIs,
       courses: item.courses.map((c) => ({
         id: c.details.id,
         externalId: c.details.externalId,
@@ -155,7 +157,12 @@ export class UniversityGatewayApi {
       },
       {
         field: 'modeOfDelivery',
-        options: Object.values(ModeOfDelivery),
+        options: Object.values([
+          ModeOfDelivery.ON_SITE,
+          ModeOfDelivery.REMOTE,
+          ModeOfDelivery.ONLINE_WITH_SESSION,
+          ModeOfDelivery.ONLINE,
+        ]),
       },
       {
         field: 'universityId',

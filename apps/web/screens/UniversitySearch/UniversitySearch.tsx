@@ -1423,6 +1423,8 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
 
   console.log('organization', organizationPage.data.getOrganizationPage)
 
+  console.log('filters', filters)
+
   return {
     data,
     searchQuery: search as string,

@@ -427,13 +427,13 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               onToggle={() => toggleIsOpen(2)}
             >
               <Text as="p">
-                {/* {locale === 'en'
+                {locale === 'en'
                   ? ReactHtmlParser(
-                      data.studyRequirementsEn ? data.studyRequirementsEn : '',
+                      data.arrangementEn ? data.arrangementEn : '',
                     )
                   : ReactHtmlParser(
-                      data.studyRequirementsIs ? data.studyRequirementsIs : '',
-                    )} */}
+                      data.arrangementIs ? data.arrangementIs : '',
+                    )}
               </Text>
             </AccordionItem>
             {(data.costInformationEn || data.costInformationIs) && (

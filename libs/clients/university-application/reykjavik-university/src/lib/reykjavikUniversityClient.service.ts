@@ -65,6 +65,8 @@ export class ReykjavikUniversityApplicationClient {
           externalUrlEn: program.externalUrlEn,
           admissionRequirementsIs: program.admissionRequirementsIs,
           admissionRequirementsEn: program.admissionRequirementsEn,
+          arrangementIs: undefined, //TODO missing in api
+          arrangementEn: undefined, //TODO missing in api
           studyRequirementsIs: program.studyRequirementsIs,
           studyRequirementsEn: program.studyRequirementsEn,
           costInformationIs: program.costInformationIs,

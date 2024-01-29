@@ -48,17 +48,12 @@ export const mapUglaPrograms = (
         studyRequirementsEn: program.studyRequirementsEn,
         costInformationIs: program.costInformationIs,
         costInformationEn: program.costInformationEn,
+        arrangementIs: undefined, //TODO missing in api
+        arrangementEn: undefined, //TODO missing in api
         allowException: false, //TODO missing in api
         allowThirdLevelQualification: false, //TODO missing in api
         modeOfDelivery:
-          program.modeOfDelivery?.map((m) => {
-            // TODO handle when ráðuneyti has made decisions
-            if (m.toString() === 'MIXED') {
-              return ModeOfDelivery.UNDEFINED
-            } else {
-              return mapStringToEnum(m, ModeOfDelivery)
-            }
-          }) || [],
+          program.modeOfDelivery?.map((m) => {return mapStringToEnum(m, ModeOfDelivery)}) || [],
         extraApplicationFields: program.extraApplicationFields?.map(
           (field) => ({
             externalId: '', //TODO missing in api
