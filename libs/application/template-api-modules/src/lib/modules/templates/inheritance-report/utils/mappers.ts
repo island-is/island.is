@@ -96,13 +96,8 @@ export const expandAnswers = (
         value: answers.assets.money?.value ?? '',
       },
       otherAssets: {
-        data: (answers.assets.otherAssets?.data ?? []).map((asset) => {
-          return {
-            otherAssets: asset.otherAssets ?? '',
-            otherAssetsValue: asset.otherAssetsValue ?? '',
-          }
-        }),
-        total: answers.assets.otherAssets?.total ?? 0,
+        info: answers.assets.otherAssets?.info ?? '',
+        value: answers.assets.otherAssets?.value ?? '',
       },
       realEstate: {
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
@@ -150,6 +145,7 @@ export const expandAnswers = (
       businessDebts: {
         data: (answers.business.businessDebts?.data ?? []).map((debt) => {
           return {
+            loanIdentity: debt.loanIdentity ?? '',
             businessDebt: debt.businessDebt ?? '',
             debtValue: debt.debtValue ?? 0,
             nationalId: debt.nationalId ?? '',
@@ -166,6 +162,7 @@ export const expandAnswers = (
         data: (answers.debts.domesticAndForeignDebts?.data ?? []).map(
           (debt) => {
             return {
+              loanIdentity: debt.loanIdentity ?? '',
               balance: debt.balance ?? 0,
               creditorName: debt.creditorName ?? '',
               nationalId: debt.nationalId ?? '',

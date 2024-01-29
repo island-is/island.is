@@ -144,7 +144,6 @@ export interface IAnchorPageFields {
   pageType?:
     | 'Digital Iceland Service'
     | 'Digital Iceland Community Page'
-    | 'Life Event'
     | undefined
 
   /** featured image */
@@ -1864,13 +1863,6 @@ export interface ILifeEventPageFields {
 
   /** See More Text */
   seeMoreText?: string | undefined
-
-  /** Page Type */
-  pageType?:
-    | 'Life Event'
-    | 'Digital Iceland Service'
-    | 'Digital Iceland Community Page'
-    | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1883,32 +1875,6 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ILifeEventPageListSliceFields {
-  /** Title */
-  title?: string | undefined
-
-  /** List */
-  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
-}
-
-export interface ILifeEventPageListSlice
-  extends Entry<ILifeEventPageListSliceFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2741,7 +2707,6 @@ export interface IOrganizationPageFields {
   slices?:
     | (
         | IAccordionSlice
-        | ILifeEventPageListSlice
         | IBigBulletList
         | IDistricts
         | IEmailSignup
@@ -2759,6 +2724,7 @@ export interface IOrganizationPageFields {
         | ITwoColumnText
         | ISectionWithVideo
         | IAnchorPageList
+        | ISectionWithImage
       )[]
     | undefined
 
@@ -2884,7 +2850,6 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
-        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
@@ -3252,6 +3217,9 @@ export interface IProjectPageFields {
 
   /** Namespace */
   namespace?: IUiConfiguration | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -3461,6 +3429,9 @@ export interface IServiceWebPageFields {
 
   /** Slices */
   slices?: IFeaturedArticles[] | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -4781,7 +4752,6 @@ export type CONTENT_TYPE =
   | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
-  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'

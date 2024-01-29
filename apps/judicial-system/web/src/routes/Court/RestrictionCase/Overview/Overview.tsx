@@ -38,6 +38,7 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
@@ -139,7 +140,7 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
             data={[
               {
                 title: formatMessage(core.prosecutor),
-                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                value: `${workingCase.prosecutorsOffice?.name}`,
               },
               {
                 title: formatMessage(requestCourtDate.heading),
@@ -153,7 +154,10 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               },
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: workingCase.prosecutor?.name,
+                value: NameAndEmail(
+                  workingCase.prosecutor?.name,
+                  workingCase.prosecutor?.email,
+                ),
               },
               {
                 title: workingCase.parentCase

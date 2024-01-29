@@ -47,7 +47,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
   const { formatMessage, lang } = useLocale()
 
   const [showMoreQuestions, setShowMoreQuestions] = useState<boolean>(
-    repeaterField.hasFullCustody === 'no' ? true : false,
+    repeaterField.hasFullCustody === NO ? true : false,
   )
   const [nationalIdInput, setNationalIdInput] = useState(
     repeaterField.otherParentNationalId
@@ -136,11 +136,11 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
       <RadioController
         id={`selectedChildrenExtraData[${index}].hasFullCustody`}
         split="1/2"
-        onSelect={() => {
-          setShowMoreQuestions(!showMoreQuestions)
+        onSelect={(value) => {
+          setShowMoreQuestions(value === YES ? false : true)
         }}
         disabled={readOnlyFields}
-        defaultValue={repeaterField.hasFullCustody === 'yes' ? YES : ''}
+        defaultValue={repeaterField.hasFullCustody === NO ? NO : ''}
         options={[
           {
             value: YES,

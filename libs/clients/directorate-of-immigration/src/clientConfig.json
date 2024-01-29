@@ -1,9 +1,6 @@
 {
   "openapi": "3.0.1",
-  "info": {
-    "title": "ST2-api",
-    "version": "v1"
-  },
+  "info": { "title": "ST2-api", "version": "v1" },
   "paths": {
     "/api/Applicant/Get": {
       "get": {
@@ -13,19 +10,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApplicantViewModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ApplicantViewModel" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApplicantViewModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ApplicantViewModel" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApplicantViewModel"
-                }
+                "schema": { "$ref": "#/components/schemas/ApplicantViewModel" }
               }
             }
           }
@@ -39,21 +30,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -65,19 +44,13 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicantNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicantNewModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicantNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicantNewModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicantNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicantNewModel" }
             }
           }
         },
@@ -85,21 +58,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -109,19 +70,13 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicantEditModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicantEditModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicantEditModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicantEditModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicantEditModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicantEditModel" }
             }
           }
         },
@@ -129,21 +84,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -175,21 +118,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -248,21 +179,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -277,9 +196,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -305,21 +222,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -351,21 +256,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -397,21 +290,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -426,9 +307,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -473,30 +352,16 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
             }
           }
         }
@@ -508,19 +373,13 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationNewModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationNewModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationNewModel" }
             }
           }
         },
@@ -528,21 +387,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -587,16 +434,14 @@
     "/api/ApplicationAttachment/{applicationId}": {
       "post": {
         "tags": ["ApplicationAttachment"],
-        "summary": "Allowable mime types: image/jpeg, application/pdf",
+        "summary": "Allowable mime types: image/jpeg, application/pdf, image/jpg",
         "parameters": [
           {
             "name": "applicationId",
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -622,40 +467,22 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           },
           "403": {
             "description": "Forbidden",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -665,16 +492,14 @@
     "/api/ApplicationAttachment/NewItems/{applicationId}": {
       "post": {
         "tags": ["ApplicationAttachment"],
-        "summary": "Allowable mime types: image/jpeg, application/pdf",
+        "summary": "Allowable mime types: image/jpeg, application/pdf, image/jpg",
         "parameters": [
           {
             "name": "applicationId",
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -700,40 +525,22 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           },
           "403": {
             "description": "Forbidden",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -766,21 +573,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -848,21 +643,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -913,9 +696,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -925,25 +706,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EmployerViewModel"
-                  }
+                  "items": { "$ref": "#/components/schemas/EmployerViewModel" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EmployerViewModel"
-                  }
+                  "items": { "$ref": "#/components/schemas/EmployerViewModel" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EmployerViewModel"
-                  }
+                  "items": { "$ref": "#/components/schemas/EmployerViewModel" }
                 }
               }
             }
@@ -960,27 +735,19 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EmployerNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/EmployerNewModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EmployerNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/EmployerNewModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/EmployerNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/EmployerNewModel" }
             }
           }
         },
@@ -988,21 +755,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1017,9 +772,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "$ref": "#/components/schemas/LookupType"
-            }
+            "schema": { "$ref": "#/components/schemas/LookupType" }
           }
         ],
         "responses": {
@@ -1029,25 +782,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OptionSetItem"
-                  }
+                  "items": { "$ref": "#/components/schemas/OptionSetItem" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OptionSetItem"
-                  }
+                  "items": { "$ref": "#/components/schemas/OptionSetItem" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OptionSetItem"
-                  }
+                  "items": { "$ref": "#/components/schemas/OptionSetItem" }
                 }
               }
             }
@@ -1064,18 +811,14 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "$ref": "#/components/schemas/LookupType"
-            }
+            "schema": { "$ref": "#/components/schemas/LookupType" }
           },
           {
             "name": "id",
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1083,19 +826,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OptionSetItem"
-                }
+                "schema": { "$ref": "#/components/schemas/OptionSetItem" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OptionSetItem"
-                }
+                "schema": { "$ref": "#/components/schemas/OptionSetItem" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OptionSetItem"
-                }
+                "schema": { "$ref": "#/components/schemas/OptionSetItem" }
               }
             }
           }
@@ -1147,9 +884,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -1175,21 +910,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1204,9 +927,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1287,9 +1008,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1334,9 +1053,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1414,19 +1131,13 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StudyNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/StudyNewModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StudyNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/StudyNewModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/StudyNewModel"
-              }
+              "schema": { "$ref": "#/components/schemas/StudyNewModel" }
             }
           }
         },
@@ -1434,21 +1145,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1464,25 +1163,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StudyViewModel"
-                  }
+                  "items": { "$ref": "#/components/schemas/StudyViewModel" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StudyViewModel"
-                  }
+                  "items": { "$ref": "#/components/schemas/StudyViewModel" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StudyViewModel"
-                  }
+                  "items": { "$ref": "#/components/schemas/StudyViewModel" }
                 }
               }
             }
@@ -1535,9 +1228,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -1563,21 +1254,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1592,9 +1271,7 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1636,30 +1313,12 @@
       "ApplicantCompleteNewModel": {
         "type": "object",
         "properties": {
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "givenName": {
-            "type": "string",
-            "nullable": true
-          },
-          "surName": {
-            "type": "string",
-            "nullable": true
-          },
-          "emailAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "telephone": {
-            "type": "string",
-            "nullable": true
-          },
-          "addressCity": {
-            "type": "string",
-            "nullable": true
-          },
+          "icelandicIDNO": { "type": "string", "nullable": true },
+          "givenName": { "type": "string", "nullable": true },
+          "surName": { "type": "string", "nullable": true },
+          "emailAddress": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true },
+          "addressCity": { "type": "string", "nullable": true },
           "countryOfResidence": {
             "type": "array",
             "items": {
@@ -1673,88 +1332,45 @@
       "ApplicantEditModel": {
         "type": "object",
         "properties": {
-          "emailAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "telephone": {
-            "type": "string",
-            "nullable": true
-          }
+          "emailAddress": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ApplicantNewChildModel": {
         "type": "object",
         "properties": {
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "givenName": {
-            "type": "string",
-            "nullable": true
-          },
-          "surName": {
-            "type": "string",
-            "nullable": true
-          }
+          "icelandicIDNO": { "type": "string", "nullable": true },
+          "givenName": { "type": "string", "nullable": true },
+          "surName": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ApplicantNewModel": {
         "type": "object",
         "properties": {
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "givenName": {
-            "type": "string",
-            "nullable": true
-          },
-          "surName": {
-            "type": "string",
-            "nullable": true
-          },
-          "emailAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "telephone": {
-            "type": "string",
-            "nullable": true
-          },
-          "addressCity": {
-            "type": "string",
-            "nullable": true
-          }
+          "icelandicIDNO": { "type": "string", "nullable": true },
+          "givenName": { "type": "string", "nullable": true },
+          "surName": { "type": "string", "nullable": true },
+          "emailAddress": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true },
+          "addressCity": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ApplicantResidenceConditionViewModel": {
         "type": "object",
         "properties": {
-          "isAnyResConValid": {
-            "type": "boolean"
-          },
-          "isOnlyMarriedOrCohabitationWithISCitizen": {
-            "type": "boolean"
-          }
+          "isAnyResConValid": { "type": "boolean" },
+          "isOnlyMarriedOrCohabitationWithISCitizen": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "ApplicantViewModel": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicantNumber": {
-            "type": "string",
-            "nullable": true
-          },
+          "name": { "type": "string", "nullable": true },
+          "applicantNumber": { "type": "string", "nullable": true },
           "dateOfBirth": {
             "type": "string",
             "format": "date-time",
@@ -1765,18 +1381,9 @@
             "format": "int32",
             "nullable": true
           },
-          "emailAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "addressName": {
-            "type": "string",
-            "nullable": true
-          },
-          "addressCity": {
-            "type": "string",
-            "nullable": true
-          },
+          "emailAddress": { "type": "string", "nullable": true },
+          "addressName": { "type": "string", "nullable": true },
+          "addressCity": { "type": "string", "nullable": true },
           "dateOfDomicileRegistration": {
             "type": "string",
             "format": "date-time",
@@ -1787,43 +1394,24 @@
             "format": "int32",
             "nullable": true
           },
-          "residenceConditionName": {
-            "type": "string",
-            "nullable": true
-          },
+          "residenceConditionName": { "type": "string", "nullable": true },
           "maritalStatus": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "maritalStatusName": {
-            "type": "string",
-            "nullable": true
-          },
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "telephone": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicantId": {
-            "type": "string",
-            "nullable": true
-          },
+          "maritalStatusName": { "type": "string", "nullable": true },
+          "icelandicIDNO": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true },
+          "applicantId": { "type": "string", "nullable": true },
           "children": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicantViewModel"
-            },
+            "items": { "$ref": "#/components/schemas/ApplicantViewModel" },
             "nullable": true
           },
           "applications": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationViewModel"
-            },
+            "items": { "$ref": "#/components/schemas/ApplicationViewModel" },
             "nullable": true
           }
         },
@@ -1845,21 +1433,10 @@
       "ApplicationAttachmentNewModel": {
         "type": "object",
         "properties": {
-          "attachmentType": {
-            "$ref": "#/components/schemas/AttachmentType"
-          },
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "base64Contents": {
-            "type": "string",
-            "nullable": true
-          },
-          "countryCode": {
-            "type": "string",
-            "nullable": true
-          }
+          "attachmentType": { "$ref": "#/components/schemas/AttachmentType" },
+          "fileName": { "type": "string", "nullable": true },
+          "base64Contents": { "type": "string", "nullable": true },
+          "countryCode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1871,9 +1448,7 @@
           },
           "travelDocuments": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TravelDocumentNewModel"
-            },
+            "items": { "$ref": "#/components/schemas/TravelDocumentNewModel" },
             "nullable": true
           },
           "staticData": {
@@ -1890,16 +1465,12 @@
           },
           "residenceAbroads": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ResidenceAbroadNewModel"
-            },
+            "items": { "$ref": "#/components/schemas/ResidenceAbroadNewModel" },
             "nullable": true
           },
           "travelDocuments": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TravelDocumentNewModel"
-            },
+            "items": { "$ref": "#/components/schemas/TravelDocumentNewModel" },
             "nullable": true
           },
           "staticData": {
@@ -1911,36 +1482,18 @@
       "ApplicationCitizienshipNewModel": {
         "type": "object",
         "properties": {
-          "staticDataId": {
-            "type": "string",
-            "nullable": true
-          }
+          "staticDataId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ApplicationNewModel": {
         "type": "object",
         "properties": {
-          "staticDataId": {
-            "type": "string",
-            "nullable": true
-          },
-          "caseTypeId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "classificationId": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationTypeId": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationDetailId": {
-            "type": "string",
-            "nullable": true
-          }
+          "staticDataId": { "type": "string", "nullable": true },
+          "caseTypeId": { "type": "integer", "format": "int32" },
+          "classificationId": { "type": "string", "nullable": true },
+          "classificationTypeId": { "type": "string", "nullable": true },
+          "classificationDetailId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1952,46 +1505,16 @@
             "format": "int32",
             "nullable": true
           },
-          "caseTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationId": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationTypeId": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationDetailId": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationDetailName": {
-            "type": "string",
-            "nullable": true
-          },
-          "staticDataId": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationId": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdOn": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "caseTypeName": { "type": "string", "nullable": true },
+          "classificationId": { "type": "string", "nullable": true },
+          "classificationName": { "type": "string", "nullable": true },
+          "classificationTypeId": { "type": "string", "nullable": true },
+          "classificationTypeName": { "type": "string", "nullable": true },
+          "classificationDetailId": { "type": "string", "nullable": true },
+          "classificationDetailName": { "type": "string", "nullable": true },
+          "staticDataId": { "type": "string", "nullable": true },
+          "applicationId": { "type": "string", "nullable": true },
+          "createdOn": { "type": "string", "format": "date-time" },
           "permitValidTo": {
             "type": "string",
             "format": "date-time",
@@ -2019,68 +1542,50 @@
       "ClassificationDetailViewModel": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationDetailId": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "classificationDetailId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ClassificationTypeViewModel": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationTypeId": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "classificationTypeId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ClassificationViewModel": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "classificationId": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "classificationId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "CountryOfResidenceNewModel": {
         "type": "object",
         "properties": {
-          "countryId": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "countryId": { "type": "integer", "format": "int32" },
+          "dateFrom": { "type": "string", "format": "date-time" },
+          "dateTo": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "CountryOfResidenceViewModel": {
         "type": "object",
         "properties": {
-          "countryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "countryName": {
+          "countryId": { "type": "integer", "format": "int32" },
+          "countryName": { "type": "string", "nullable": true },
+          "countryOfResidenceId": { "type": "string", "nullable": true },
+          "dateFrom": {
             "type": "string",
+            "format": "date-time",
             "nullable": true
           },
-          "countryOfResidenceId": {
+          "dateTo": {
             "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
@@ -2089,67 +1594,30 @@
       "CriminalRecordNewModel": {
         "type": "object",
         "properties": {
-          "countryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "offence": {
-            "type": "string",
-            "nullable": true
-          },
-          "punishment": {
-            "type": "string",
-            "nullable": true
-          },
-          "when": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
+          "countryId": { "type": "integer", "format": "int32" },
+          "offence": { "type": "string", "nullable": true },
+          "punishment": { "type": "string", "nullable": true },
+          "when": { "type": "string", "format": "date-time", "nullable": true }
         },
         "additionalProperties": false
       },
       "CriminalRecordViewModel": {
         "type": "object",
         "properties": {
-          "accountid": {
-            "type": "string",
-            "nullable": true
-          },
-          "criminalRecordId": {
-            "type": "string",
-            "nullable": true
-          },
-          "countryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "countryName": {
-            "type": "string",
-            "nullable": true
-          },
-          "offence": {
-            "type": "string",
-            "nullable": true
-          },
-          "punishment": {
-            "type": "string",
-            "nullable": true
-          },
-          "when": {
-            "type": "string",
-            "nullable": true
-          }
+          "accountid": { "type": "string", "nullable": true },
+          "criminalRecordId": { "type": "string", "nullable": true },
+          "countryId": { "type": "integer", "format": "int32" },
+          "countryName": { "type": "string", "nullable": true },
+          "offence": { "type": "string", "nullable": true },
+          "punishment": { "type": "string", "nullable": true },
+          "when": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "EmployerNewModel": {
         "type": "object",
         "properties": {
-          "companyName": {
-            "type": "string",
-            "nullable": true
-          },
+          "companyName": { "type": "string", "nullable": true },
           "countryId": {
             "type": "integer",
             "format": "int32",
@@ -2165,20 +1633,14 @@
             "format": "date-time",
             "nullable": true
           },
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          }
+          "icelandicIDNO": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "EmployerViewModel": {
         "type": "object",
         "properties": {
-          "companyName": {
-            "type": "string",
-            "nullable": true
-          },
+          "companyName": { "type": "string", "nullable": true },
           "countryId": {
             "type": "integer",
             "format": "int32",
@@ -2194,14 +1656,8 @@
             "format": "date-time",
             "nullable": true
           },
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "employerid": {
-            "type": "string",
-            "nullable": true
-          }
+          "icelandicIDNO": { "type": "string", "nullable": true },
+          "employerid": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -2222,179 +1678,67 @@
       "OptionSetItem": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          }
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ResidenceAbroadNewModel": {
         "type": "object",
         "properties": {
-          "countryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "dateFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "dateTo": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "purposeOfStay": {
-            "type": "string",
-            "nullable": true
-          }
+          "countryId": { "type": "integer", "format": "int32" },
+          "dateFrom": { "type": "string", "format": "date-time" },
+          "dateTo": { "type": "string", "format": "date-time" },
+          "purposeOfStay": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ResidenceAbroadViewModel": {
         "type": "object",
         "properties": {
-          "countryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "countryName": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "dateTo": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "purposeOfStay": {
-            "type": "string",
-            "nullable": true
-          },
-          "residenceAbroadId": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationId": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicantId": {
-            "type": "string",
-            "nullable": true
-          }
+          "countryId": { "type": "integer", "format": "int32" },
+          "countryName": { "type": "string", "nullable": true },
+          "dateFrom": { "type": "string", "format": "date-time" },
+          "dateTo": { "type": "string", "format": "date-time" },
+          "purposeOfStay": { "type": "string", "nullable": true },
+          "residenceAbroadId": { "type": "string", "nullable": true },
+          "applicationId": { "type": "string", "nullable": true },
+          "applicantId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "StaticDataApplicantNewModel": {
         "type": "object",
         "properties": {
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationality": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateOfDomicileRegistration": {
-            "type": "string",
-            "nullable": true
-          },
-          "countryOfBirth": {
-            "type": "string",
-            "nullable": true
-          },
-          "maritalStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateOfMarriage": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseName": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseCountryOfBirth": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseCitizenship": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseAddressMismatchReason": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent1SSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent1Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent2SSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent2Name": {
-            "type": "string",
-            "nullable": true
-          },
+          "address": { "type": "string", "nullable": true },
+          "municipality": { "type": "string", "nullable": true },
+          "nationality": { "type": "string", "nullable": true },
+          "dateOfDomicileRegistration": { "type": "string", "nullable": true },
+          "countryOfBirth": { "type": "string", "nullable": true },
+          "maritalStatus": { "type": "string", "nullable": true },
+          "dateOfMarriage": { "type": "string", "nullable": true },
+          "spouseSSN": { "type": "string", "nullable": true },
+          "spouseName": { "type": "string", "nullable": true },
+          "spouseCountryOfBirth": { "type": "string", "nullable": true },
+          "spouseCitizenship": { "type": "string", "nullable": true },
+          "spouseAddress": { "type": "string", "nullable": true },
+          "spouseAddressMismatchReason": { "type": "string", "nullable": true },
+          "parent1SSN": { "type": "string", "nullable": true },
+          "parent1Name": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "parent2SSN": { "type": "string", "nullable": true },
+          "parent2Name": { "type": "string", "nullable": true },
           "applicantIsChildOfIcelandicCitizen": {
             "type": "boolean",
             "nullable": true
@@ -2409,18 +1753,9 @@
       "StaticDataChildNewModel": {
         "type": "object",
         "properties": {
-          "parent2SSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent2Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent2BirthDate": {
-            "type": "string",
-            "nullable": true
-          }
+          "parent2SSN": { "type": "string", "nullable": true },
+          "parent2Name": { "type": "string", "nullable": true },
+          "parent2BirthDate": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -2428,78 +1763,24 @@
         "required": ["name", "ssn"],
         "type": "object",
         "properties": {
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationality": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateOfDomicileRegistration": {
-            "type": "string",
-            "nullable": true
-          },
-          "countryOfBirth": {
-            "type": "string",
-            "nullable": true
-          },
-          "maritalStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateOfMarriage": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseSSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseName": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseCountryOfBirth": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseCitizenship": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "spouseAddressMismatchReason": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent1SSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent1Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent2SSN": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent2Name": {
-            "type": "string",
-            "nullable": true
-          },
+          "address": { "type": "string", "nullable": true },
+          "municipality": { "type": "string", "nullable": true },
+          "nationality": { "type": "string", "nullable": true },
+          "dateOfDomicileRegistration": { "type": "string", "nullable": true },
+          "countryOfBirth": { "type": "string", "nullable": true },
+          "maritalStatus": { "type": "string", "nullable": true },
+          "dateOfMarriage": { "type": "string", "nullable": true },
+          "spouseSSN": { "type": "string", "nullable": true },
+          "spouseName": { "type": "string", "nullable": true },
+          "spouseCountryOfBirth": { "type": "string", "nullable": true },
+          "spouseCitizenship": { "type": "string", "nullable": true },
+          "spouseAddress": { "type": "string", "nullable": true },
+          "spouseAddressMismatchReason": { "type": "string", "nullable": true },
+          "parent1SSN": { "type": "string", "nullable": true },
+          "parent1Name": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "parent2SSN": { "type": "string", "nullable": true },
+          "parent2Name": { "type": "string", "nullable": true },
           "applicantIsChildOfIcelandicCitizen": {
             "type": "boolean",
             "nullable": true
@@ -2508,62 +1789,29 @@
             "type": "boolean",
             "nullable": true
           },
-          "parent2BirthDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "staticDataId": {
-            "type": "string",
-            "nullable": true
-          },
-          "ssn": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "name": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          }
+          "parent2BirthDate": { "type": "string", "nullable": true },
+          "staticDataId": { "type": "string", "nullable": true },
+          "ssn": { "minLength": 1, "type": "string" },
+          "name": { "minLength": 1, "type": "string" },
+          "phone": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "StudyNewModel": {
         "type": "object",
         "properties": {
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "school": {
-            "type": "string",
-            "nullable": true
-          }
+          "icelandicIDNO": { "type": "string", "nullable": true },
+          "school": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "StudyViewModel": {
         "type": "object",
         "properties": {
-          "studyId": {
-            "type": "string",
-            "nullable": true
-          },
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "school": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdOn": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "studyId": { "type": "string", "nullable": true },
+          "icelandicIDNO": { "type": "string", "nullable": true },
+          "school": { "type": "string", "nullable": true },
+          "createdOn": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
@@ -2580,40 +1828,19 @@
             "format": "date-time",
             "nullable": true
           },
-          "issuingCountryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "travelDocumentNo": {
-            "type": "string",
-            "nullable": true
-          },
-          "travelDocumentTypeId": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "issuingCountryId": { "type": "integer", "format": "int32" },
+          "name": { "type": "string", "nullable": true },
+          "travelDocumentNo": { "type": "string", "nullable": true },
+          "travelDocumentTypeId": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TravelDocumentViewModel": {
         "type": "object",
         "properties": {
-          "travelDocumentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationId": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicantId": {
-            "type": "string",
-            "nullable": true
-          },
+          "travelDocumentId": { "type": "string", "nullable": true },
+          "applicationId": { "type": "string", "nullable": true },
+          "applicantId": { "type": "string", "nullable": true },
           "dateOfExpiry": {
             "type": "string",
             "format": "date-time",
@@ -2624,34 +1851,13 @@
             "format": "date-time",
             "nullable": true
           },
-          "issuingCountryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "issuingCountryName": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "travelDocumentNo": {
-            "type": "string",
-            "nullable": true
-          },
-          "travelDocumentTypeId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "travelDocumentTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdOn": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "issuingCountryId": { "type": "integer", "format": "int32" },
+          "issuingCountryName": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "travelDocumentNo": { "type": "string", "nullable": true },
+          "travelDocumentTypeId": { "type": "integer", "format": "int32" },
+          "travelDocumentTypeName": { "type": "string", "nullable": true },
+          "createdOn": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       }
@@ -2664,9 +1870,5 @@
       }
     }
   },
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ]
+  "security": [{ "bearerAuth": [] }]
 }

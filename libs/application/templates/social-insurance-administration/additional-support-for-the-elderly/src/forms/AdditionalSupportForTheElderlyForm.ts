@@ -361,7 +361,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.title,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [
         buildMultiField({
           id: 'periodField',

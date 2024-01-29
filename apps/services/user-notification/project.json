@@ -34,6 +34,11 @@
             "glob": "sequelize.config.js",
             "input": "apps/services/user-notification",
             "output": "./"
+          },
+          {
+            "glob": "*",
+            "input": "libs/email-service/src/tools/design",
+            "output": "./email-service-assets"
           }
         ]
       },
@@ -62,6 +67,13 @@
       "options": {
         "buildTarget": "services-user-notification:build",
         "args": ["--job", "worker"]
+      }
+    },
+    "cleanup": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-user-notification:build",
+        "args": ["--job", "cleanup"]
       }
     },
     "lint": {
