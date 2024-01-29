@@ -8,7 +8,6 @@ import { ProblemError } from '@island.is/nest/problem'
 import type {
   Case,
   CaseFile,
-  CaseListEntry,
   CreateDefendant,
   CreateFile,
   CreatePresignedPost,
@@ -31,6 +30,7 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../modules/case'
+import { CaseListEntry } from '../modules/case-list'
 import { UpdateFilesResponse } from '../modules/file'
 import {
   CreateIndictmentCountInput,
