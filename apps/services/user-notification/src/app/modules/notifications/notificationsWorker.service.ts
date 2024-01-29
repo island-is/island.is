@@ -51,7 +51,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
   onApplicationBootstrap() {
     if (this.isRunningAsWorker) {
-      console.log("onApplicationBootstrap..................")
+      console.log('onApplicationBootstrap..................')
       this.run()
     }
   }
@@ -237,9 +237,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
   }
 
-
-
-  async sleepOutsideWorkingHours(messageId:string): Promise<void> {
+  async sleepOutsideWorkingHours(messageId: string): Promise<void> {
     const now = new Date()
     const currentHour = now.getHours()
     const currentMinutes = now.getMinutes()
@@ -248,24 +246,28 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     if (currentHour >= WORK_ENDING_HOUR || currentHour < WORK_STARTING_HOUR) {
       // If it's past the end hour or before the start hour, sleep until the start hour.
       const sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24
-      const sleepDurationMilliSeconds = (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000
-      this.logger.info(`Worker will sleep until 8 AM. Sleep duration: ${ sleepDurationMilliSeconds } ms`, { messageId })
-      await new Promise((resolve) => setTimeout(resolve, sleepDurationMilliSeconds));
+      const sleepDurationMilliSeconds =
+        (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000
+      this.logger.info(
+        `Worker will sleep until 8 AM. Sleep duration: ${sleepDurationMilliSeconds} ms`,
+        { messageId },
+      )
+      await new Promise((resolve) =>
+        setTimeout(resolve, sleepDurationMilliSeconds),
+      )
       this.logger.info('Worker waking up after sleep.', { messageId })
-    } 
+    }
   }
 
   async run() {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
-
-
         const messageId = job.id
         this.logger.info('Message received by worker', { messageId })
-        
+
         // check if we are within operational hours or wait until we are
-        await this.sleepOutsideWorkingHours(messageId);
-      
+        await this.sleepOutsideWorkingHours(messageId)
+
         const notification = { messageId, ...message }
         const messageIdExists = await this.notificationModel.count({
           where: { messageId },
@@ -273,12 +275,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         if (messageIdExists > 0) {
           // messageId exists do nothing
-          this.logger.info(
-            'notification with messageId already exists in db',
-            {
-              messageId,
-            },
-          )
+          this.logger.info('notification with messageId already exists in db', {
+            messageId,
+          })
         } else {
           // messageId does not exist
           // write to db
