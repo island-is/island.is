@@ -116,6 +116,7 @@ export const announcerInfo = buildSection({
           id: 'applicant.autonomous',
           title: m.applicantAutonomous,
           width: 'half',
+          defaultValue: YES,
           condition: (answers) =>
             answers.selectedEstate === EstateTypes.permitForUndividedEstate,
           largeButtons: false,
