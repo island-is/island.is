@@ -15,6 +15,8 @@ import {
   PERMANENT_FOSTER_CARE,
   OTHER_NO_CHILDREN_FOUND,
   ADOPTION,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
@@ -123,13 +125,20 @@ export const dataSchema = z.object({
       privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
       union: z.string().optional(),
     })
-    .refine(({ useUnion, union }) => (useUnion === YES ? !!union : true), {
-      path: ['union'],
-      params: coreErrorMessages.missingAnswer,
-    })
+    .refine(
+      ({ useUnion, union }) =>
+        useUnion === YES ? !!union && union !== NO_UNION : true,
+      {
+        path: ['union'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
     .refine(
       ({ usePrivatePensionFund, privatePensionFund }) =>
-        usePrivatePensionFund === YES ? !!privatePensionFund : true,
+        usePrivatePensionFund === YES
+          ? !!privatePensionFund &&
+            privatePensionFund !== NO_PRIVATE_PENSION_FUND
+          : true,
       {
         path: ['privatePensionFund'],
         params: coreErrorMessages.missingAnswer,
@@ -137,7 +146,10 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ usePrivatePensionFund, privatePensionFundPercentage }) =>
-        usePrivatePensionFund === YES ? !!privatePensionFundPercentage : true,
+        usePrivatePensionFund === YES
+          ? !!privatePensionFundPercentage &&
+            privatePensionFundPercentage !== '0'
+          : true,
       {
         path: ['privatePensionFundPercentage'],
         params: coreErrorMessages.missingAnswer,
