@@ -2,14 +2,19 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { Box } from '@island.is/island-ui/core'
 import { useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
-import type { WatsonInstance } from './types'
+import type { WatsonInstance, WatsonInstanceEvent } from './types'
 import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
+
+const ChatFeedbackPanel = () => {
+  return <Box position="absolute">HELLO</Box>
+}
 
 declare global {
   interface Window {
@@ -25,6 +30,8 @@ declare global {
     }
   }
 }
+
+const chatLog: WatsonInstanceEvent[] = []
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -116,6 +123,21 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             if (Object.keys(languagePack).length > 0) {
               instance.updateLanguagePack(languagePack)
             }
+
+            // Keep the chat log in memory
+            instance.on({
+              type: 'receive',
+              handler: (event) => {
+                chatLog.push(event)
+              },
+            })
+            instance.on({
+              type: 'send',
+              handler: (event) => {
+                chatLog.push(event)
+              },
+            })
+
             if (
               // Askur - Útlendingastofnun
               props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
@@ -159,17 +181,23 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
   if (showLauncher) return null
 
+  // TODO: only display feedback panel when user clicks exit
+  // TODO: Add thumbs icons to icon set https://ionic.io/ionicons
+
   return (
-    <ChatBubble
-      text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-      isVisible={true}
-      onClick={() => {
-        watsonInstance.current?.openWindow()
-        setHasButtonBeenClicked(true)
-      }}
-      pushUp={pushUp}
-      loading={loading}
-    />
+    <>
+      <ChatFeedbackPanel />
+      <ChatBubble
+        text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
+        isVisible={true}
+        onClick={() => {
+          watsonInstance.current?.openWindow()
+          setHasButtonBeenClicked(true)
+        }}
+        pushUp={pushUp}
+        loading={loading}
+      />
+    </>
   )
 }
 
