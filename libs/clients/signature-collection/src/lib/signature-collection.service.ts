@@ -55,7 +55,9 @@ export class SignatureCollectionClientService {
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
     )
-
+    if (!list.active) {
+      throw new Error('List is not active')
+    }
     return list
   }
 
@@ -286,6 +288,20 @@ export class SignatureCollectionClientService {
       ownedLists,
       isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
       candidate,
+    }
+  }
+
+  async isCandidateId(candidateId: string, auth: User): Promise<boolean> {
+    try {
+      const candidate = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodIDGet({
+        iD: parseInt(candidateId),
+      })
+      return !!candidate
+    } catch (e) {
+      return false
     }
   }
 
