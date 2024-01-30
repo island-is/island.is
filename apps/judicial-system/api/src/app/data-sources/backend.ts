@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 
 import { ProblemError } from '@island.is/nest/problem'
 
-import type { Institution, User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import {
@@ -32,6 +32,7 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../modules/indictment-count'
+import { Institution } from '../modules/institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
