@@ -31,6 +31,17 @@ query getIntellectualPropertiesPatentById(
       statusText
       registrationNumber
       canRenew
+      pct {
+        number
+        date
+      }
+      priorities {
+        number
+        country {
+          name
+        }
+        applicationDate
+      }
       lifecycle {
         applicationDate
         registrationDate
@@ -163,7 +174,7 @@ query getIntellectualPropertiesPatentById(
         applicationDate
         applicationDatePublishedAsAvailable
         registrationDate
-        maxValidObjectionDate
+        maxValidDate
       }
       designers {
         addressFull

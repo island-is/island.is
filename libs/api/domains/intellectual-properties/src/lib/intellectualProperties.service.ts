@@ -183,6 +183,20 @@ export class IntellectualPropertiesService {
       medicineForChildren: res.medicineForChildren ?? undefined,
       message: res.message ?? undefined,
       status: res.status ?? undefined,
+      owners: res.owners?.map((o) => ({
+        id: o.id?.toString(),
+        name: o.name ?? undefined,
+        address: o.address ?? undefined,
+        addressFull: mapFullAddress(
+          o.address ?? undefined,
+          o.postalCode ?? undefined,
+          o.city ?? undefined,
+        ),
+        country: {
+          name: o.country?.name ?? undefined,
+          code: o.country?.code ?? undefined,
+        },
+      })),
       agent: {
         id: res.spcAgent?.id ?? undefined,
         nationalId: res.spcAgent?.ssn ?? undefined,
@@ -205,7 +219,7 @@ export class IntellectualPropertiesService {
       },
       grantPublishedInGazetteDate: parseIPDate(res.grantPublishedInGazetteDate),
       publishedInGazetteDate: parseIPDate(res.publishedInGazetteDate),
-      applicationLifecycle: {
+      lifecycle: {
         lastModified: parseIPDate(res.lastModified),
         applicationDate: parseIPDate(res.applicationDate),
         maxValidDate: parseIPDate(res.maxDuration),

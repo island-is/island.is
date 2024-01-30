@@ -5,13 +5,15 @@ import {
   m as coreMessages,
 } from '@island.is/service-portal/core'
 import { IntellectualPropertiesPatentIs } from '@island.is/api/schema'
-import { Stack, Text } from '@island.is/island-ui/core'
+import { Divider, Stack, Text } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { ipMessages } from '../../../lib/messages'
 import { useMemo } from 'react'
 import Timeline from '../../../components/Timeline/Timeline'
 import { orderTimelineData } from '../../../utils/timelineMapper'
 import { StackOrTableBlock } from '../../../components/StackOrTableBlock/StackOrTableBlock'
+import { StackWithBottomDivider } from '../../../components/StackWithBottomDivider/StackWithBottomDivider'
+import { AssetsPaths } from '../../../lib/paths'
 
 interface Props {
   data: IntellectualPropertiesPatentIs
@@ -56,7 +58,7 @@ const PatentIS = ({ data, loading }: Props) => {
 
   return (
     <>
-      <Stack space="p2" dividers>
+      <StackWithBottomDivider space="p2">
         <UserInfoLine
           title={formatMessage(ipMessages.baseInfo)}
           label={ipMessages.name}
@@ -104,9 +106,10 @@ const PatentIS = ({ data, loading }: Props) => {
             loading={loading}
           />
         )}
-      </Stack>
+      </StackWithBottomDivider>
       {!loading && (
         <Timeline
+          box={{ marginY: [2, 2, 6] }}
           title={formatMessage(ipMessages.timeline)}
           maxDate={orderedDates[orderedDates.length - 1].date}
           minDate={orderedDates[0].date}
@@ -119,20 +122,6 @@ const PatentIS = ({ data, loading }: Props) => {
           ))}
         </Timeline>
       )}
-      <Stack space="p2">
-        <UserInfoLine
-          title={formatMessage(ipMessages.owner)}
-          label={formatMessage(ipMessages.name)}
-          content={data.owners?.[0]?.name ?? ''}
-          loading={loading}
-        />
-
-        <UserInfoLine
-          label={formatMessage(ipMessages.address)}
-          content={data.owners?.[0]?.address ?? ''}
-          loading={loading}
-        />
-      </Stack>
       <StackOrTableBlock
         entries={data?.owners ?? []}
         title={{
@@ -151,6 +140,7 @@ const PatentIS = ({ data, loading }: Props) => {
         ]}
       />
       <StackOrTableBlock
+        box={{ marginY: [2, 2, 6] }}
         entries={data?.inventors ?? []}
         title={{
           singular: formatMessage(ipMessages.inventor),
@@ -169,7 +159,7 @@ const PatentIS = ({ data, loading }: Props) => {
       />
       <StackOrTableBlock
         entries={data?.agent ? [data.agent] : []}
-        title="agent"
+        title={formatMessage(ipMessages.agent)}
         columns={[
           {
             label: formatMessage(ipMessages.name),
@@ -181,11 +171,50 @@ const PatentIS = ({ data, loading }: Props) => {
           },
         ]}
       />
+      {data?.pct?.date && data?.pct?.number && (
+        <StackOrTableBlock
+          box={{ marginTop: [2, 2, 6] }}
+          entries={data?.pct ? [data.pct] : []}
+          title={formatMessage(ipMessages.internationalApplication)}
+          columns={[
+            {
+              label: formatMessage(ipMessages.pctNumber),
+              key: 'number',
+            },
+            {
+              label: formatMessage(ipMessages.pctDate),
+              isDate: true,
+              key: 'date',
+            },
+          ]}
+        />
+      )}
+      {data.spcNumbers?.[0] && (
+        <>
+          <UserInfoLine
+            paddingY={[2, 2, 6]}
+            title={formatMessage(ipMessages.supplementaryProtection)}
+            label={formatMessage(ipMessages.spcNumber)}
+            content={data.spcNumbers[0]}
+            editLink={{
+              external: true,
+              url: AssetsPaths.AssetsIntellectualPropertiesPatent.replace(
+                ':id',
+                data.spcNumbers[0],
+              ),
+              title: formatMessage(coreMessages.view),
+            }}
+          />
+          <Divider />
+        </>
+      )}
       <UserInfoLine
+        paddingY={[2, 2, 6]}
         title={formatMessage(ipMessages.classification)}
         label={formatMessage(ipMessages.category)}
-        content={data?.classifications?.map((c) => c.category).join(', ')}
+        content={data.classifications?.map((c) => c.category).join(', ')}
       />
+      <Divider />
     </>
   )
 }

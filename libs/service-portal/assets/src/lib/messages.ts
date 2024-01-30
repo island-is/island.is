@@ -1102,6 +1102,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:application-registration-date',
     defaultMessage: 'Dags. veitingar',
   },
+  applicationRegistration: {
+    id: 'sp.intellectual-property:application-registration',
+    defaultMessage: 'Veiting',
+  },
   titleInEnglish: {
     id: 'sp.intellectual-property:title-in-english',
     defaultMessage: 'Titill á ensku',
@@ -1138,13 +1142,21 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:priority',
     defaultMessage: 'Forgangsréttur',
   },
-  PCTNumber: {
+  pctNumber: {
     id: 'sp.intellectual-property:pct-number',
     defaultMessage: 'PCT númer',
   },
-  PCTDate: {
+  pctDate: {
     id: 'sp.intellectual-property:pct-date',
     defaultMessage: 'PCT dagsetning',
+  },
+  supplementaryProtection: {
+    id: 'sp.intellectual-property:supplementary-protection',
+    defaultMessage: 'Viðbótarvernd',
+  },
+  spcNumber: {
+    id: 'sp.intellectual-property:spc-number',
+    defaultMessage: 'SPC númer',
   },
 })
 

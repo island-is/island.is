@@ -5,13 +5,15 @@ import {
   m as coreMessages,
 } from '@island.is/service-portal/core'
 import { IntellectualPropertiesPatentEp } from '@island.is/api/schema'
-import { Stack, Text, Divider, Box } from '@island.is/island-ui/core'
+import { Stack, Text, Divider } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { ipMessages } from '../../../lib/messages'
 import { useMemo } from 'react'
 import Timeline from '../../../components/Timeline/Timeline'
 import { orderTimelineData } from '../../../utils/timelineMapper'
 import { StackOrTableBlock } from '../../../components/StackOrTableBlock/StackOrTableBlock'
+import { StackWithBottomDivider } from '../../../components/StackWithBottomDivider/StackWithBottomDivider'
+import { AssetsPaths } from '../../../lib/paths'
 
 interface Props {
   data: IntellectualPropertiesPatentEp
@@ -54,16 +56,11 @@ const PatentEP = ({ data, loading }: Props) => {
 
   return (
     <>
-      <Stack space="p2" dividers>
+      <StackWithBottomDivider space="p2">
         <UserInfoLine
           title={formatMessage(ipMessages.baseInfo)}
           label={ipMessages.name}
           content={data.name ?? ''}
-          loading={loading}
-        />
-        <UserInfoLine
-          label={ipMessages.epApplicationNumber}
-          content={data.epApplicationNumber ?? ''}
           loading={loading}
         />
         <UserInfoLine
@@ -131,7 +128,7 @@ const PatentEP = ({ data, loading }: Props) => {
           }
           loading={loading}
         />
-      </Stack>
+      </StackWithBottomDivider>
       <Divider />
       {!loading && orderedDates?.length && (
         <Timeline
@@ -165,68 +162,89 @@ const PatentEP = ({ data, loading }: Props) => {
           },
         ]}
       />
-      <Divider />
-      <Box marginTop={[2, 2, 6]}>
+      <StackOrTableBlock
+        box={{ marginTop: [2, 2, 6] }}
+        entries={data?.inventors ?? []}
+        title={{
+          singular: formatMessage(ipMessages.inventor),
+          plural: formatMessage(ipMessages.inventors),
+        }}
+        columns={[
+          {
+            label: formatMessage(ipMessages.name),
+            key: 'name',
+          },
+          {
+            label: formatMessage(ipMessages.address),
+            key: 'addressFull',
+          },
+        ]}
+      />
+      <StackOrTableBlock
+        box={{ marginTop: [2, 2, 6] }}
+        entries={
+          data?.priorities?.map((p) => {
+            return {
+              number: p.number ?? '',
+              date: p.applicationDate
+                ? formatDate(new Date(p.applicationDate))
+                : undefined,
+              country: p.country.name ?? '',
+            }
+          }) ?? []
+        }
+        title={formatMessage(ipMessages.priority)}
+        columns={[
+          {
+            label: formatMessage(coreMessages.number),
+            key: 'number',
+          },
+          {
+            label: formatMessage(coreMessages.date),
+            key: 'date',
+          },
+          {
+            label: formatMessage(ipMessages.country),
+            key: 'country',
+          },
+        ]}
+      />
+      {data?.pct?.date && data?.pct?.number && (
         <StackOrTableBlock
-          entries={data?.inventors ?? []}
-          title={{
-            singular: formatMessage(ipMessages.inventor),
-            plural: formatMessage(ipMessages.inventors),
-          }}
+          box={{ marginTop: [2, 2, 6] }}
+          entries={data?.pct ? [data.pct] : []}
+          title={formatMessage(ipMessages.internationalApplication)}
           columns={[
             {
-              label: formatMessage(ipMessages.name),
-              key: 'name',
-            },
-            {
-              label: formatMessage(ipMessages.address),
-              key: 'addressFull',
-            },
-          ]}
-        />
-      </Box>
-      <Box marginY={[2, 2, 6]}>
-        <StackOrTableBlock
-          entries={
-            data?.priorities?.map((p) => {
-              return {
-                number: p.number ?? '',
-                date: p.applicationDate
-                  ? formatDate(new Date(p.applicationDate))
-                  : undefined,
-                country: p.country.name ?? '',
-              }
-            }) ?? []
-          }
-          title={formatMessage(ipMessages.priority)}
-          columns={[
-            {
-              label: formatMessage(coreMessages.number),
+              label: formatMessage(ipMessages.pctNumber),
               key: 'number',
             },
             {
-              label: formatMessage(coreMessages.date),
+              label: formatMessage(ipMessages.pctDate),
               key: 'date',
-            },
-            {
-              label: formatMessage(ipMessages.country),
-              key: 'country',
             },
           ]}
         />
-      </Box>
-      <Stack space="p2" dividers>
-        <UserInfoLine
-          title={formatMessage(ipMessages.internationalApplication)}
-          label={formatMessage(ipMessages.PCTNumber)}
-          content={data.pct?.number ?? ''}
-        />
-        <UserInfoLine
-          label={formatMessage(ipMessages.PCTDate)}
-          content={formatDate(data.pct?.date) ?? ''}
-        />
-      </Stack>
-      <Divider />
+      )}
+      {data.spcNumbers?.[0] && (
+        <>
+          <UserInfoLine
+            paddingY={[2, 2, 6]}
+            title={formatMessage(ipMessages.supplementaryProtection)}
+            label={formatMessage(ipMessages.spcNumber)}
+            content={data.spcNumbers[0]}
+            editLink={{
+              external: true,
+              url: AssetsPaths.AssetsIntellectualPropertiesPatent.replace(
+                ':id',
+                data.spcNumbers[0],
+              ),
+              title: formatMessage(coreMessages.view),
+            }}
+          />
+          <Divider />
+        </>
+      )}
       <UserInfoLine
         paddingY={[2, 2, 6]}
         title={formatMessage(ipMessages.classification)}

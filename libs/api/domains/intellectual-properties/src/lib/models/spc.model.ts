@@ -40,6 +40,9 @@ export class SPC implements Patent, IntellectualProperty {
   @Field(() => MarketingAuthorization, { nullable: true })
   marketingAuthorization?: MarketingAuthorization
 
+  @Field(() => [Person], { nullable: true })
+  owners?: Array<Person>
+
   @Field(() => Person, { nullable: true })
   agent?: Person
 
@@ -50,5 +53,5 @@ export class SPC implements Patent, IntellectualProperty {
   publishedInGazetteDate?: Date
 
   @Field(() => ApplicationLifecycle, { nullable: true })
-  applicationLifecycle?: ApplicationLifecycle
+  lifecycle?: ApplicationLifecycle
 }

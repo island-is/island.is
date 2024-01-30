@@ -1,12 +1,9 @@
-import {
-  Box,
-  Text,
-  Table,
-  Divider,
-  Stack,
-  UseBoxStylesProps,
-} from '@island.is/island-ui/core'
-import { UserInfoLine } from '@island.is/service-portal/core'
+import { Box, Text, Table, UseBoxStylesProps } from '@island.is/island-ui/core'
+import { UserInfoLine, formatDate } from '@island.is/service-portal/core'
+import { StackWithBottomDivider } from '../StackWithBottomDivider/StackWithBottomDivider'
+import parseISO from 'date-fns/parseISO'
+import isValid from 'date-fns/isValid'
+import { isDefined } from '@island.is/shared/utils'
 
 interface Props<T> {
   entries: Array<T>
@@ -19,6 +16,7 @@ interface Props<T> {
   columns: Array<{
     label: string
     key: keyof T
+    isDate?: boolean
   }>
   box?: Omit<UseBoxStylesProps, 'component'>
 }
@@ -64,19 +62,34 @@ export const StackOrTableBlock = <T,>({
       </Box>
     )
   }
-  const person = entries[0]
+  const entry = entries[0]
 
   return (
-    <>
-      <Stack space="p2" dividers>
-        {columns.map((c, idx) => {
+    <StackWithBottomDivider box={box} space="p2">
+      {columns
+        .map((c, idx) => {
+          let entryVal: string | undefined
+          if (c.isDate) {
+            const dateString = parseISO(entry[c.key]?.toString() ?? '')
+            if (!isValid(dateString)) {
+              return null
+            }
+            entryVal = formatDate(dateString)
+          } else {
+            entryVal = entry[c.key]?.toString()
+          }
+
+          if (!entryVal) {
+            return null
+          }
+
           if (idx === 0) {
             return (
               <UserInfoLine
                 key={`stack-lines-row-${idx}`}
                 title={typeof title === 'string' ? title : title.singular}
                 label={c.label}
-                content={person[c.key]?.toString() ?? ''}
+                content={entryVal?.toString() ?? ''}
               />
             )
           }
@@ -84,12 +97,11 @@ export const StackOrTableBlock = <T,>({
             <UserInfoLine
               key={`stack-lines-row-${idx}`}
               label={c.label}
-              content={person[c.key]?.toString() ?? ''}
+              content={entryVal?.toString() ?? ''}
             />
           )
-        })}
-      </Stack>
-      <Divider />
-    </>
+        })
+        .filter(isDefined)}
+    </StackWithBottomDivider>
   )
 }

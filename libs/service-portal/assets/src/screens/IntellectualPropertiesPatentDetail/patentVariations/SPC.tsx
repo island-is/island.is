@@ -2,12 +2,14 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { UserInfoLine, formatDate } from '@island.is/service-portal/core'
 import { ipMessages } from '../../../lib/messages'
 import { m as coreMessages } from '@island.is/service-portal/core'
-import { Stack, Text } from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useMemo } from 'react'
 import { IntellectualPropertiesSpc } from '@island.is/api/schema'
 import { orderTimelineData } from '../../../utils/timelineMapper'
 import Timeline from '../../../components/Timeline/Timeline'
 import { StackOrTableBlock } from '../../../components/StackOrTableBlock/StackOrTableBlock'
+import { AssetsPaths } from '../../../lib/paths'
+import { StackWithBottomDivider } from '../../../components/StackWithBottomDivider/StackWithBottomDivider'
 
 interface Props {
   data: IntellectualPropertiesSpc
@@ -28,27 +30,30 @@ const PatentSPC = ({ data, loading }: Props) => {
         message: formatMessage(ipMessages.application),
       },
       {
-        date: data.lifecycle.registrationDate ?? undefined,
-        message: formatMessage(ipMessages.registration),
-      },
-      {
-        date: data.lifecycle.applicationDatePublishedAsAvailable ?? undefined,
+        date: data.publishedInGazetteDate ?? undefined,
         message: formatMessage(ipMessages.publish),
       },
       {
-        date: data.lifecycle.expiryDate ?? undefined,
-        message: formatMessage(coreMessages.validTo),
+        date: data.grantPublishedInGazetteDate ?? undefined,
+        message: formatMessage(ipMessages.applicationRegistration),
       },
       {
-        date: data.lifecycle.maxValidObjectionDate ?? undefined,
-        message: formatMessage(ipMessages.maxValidObjectionDate),
+        date: data.lifecycle.maxValidDate ?? undefined,
+        message: formatMessage(coreMessages.validTo),
       },
     ])
-  }, [formatMessage, data.lifecycle])
+  }, [
+    data.lifecycle,
+    data.publishedInGazetteDate,
+    data.grantPublishedInGazetteDate,
+    formatMessage,
+  ])
+
+  console.log(orderedDates)
 
   return (
     <>
-      <Stack space="p2" dividers>
+      <StackWithBottomDivider space="p2">
         <UserInfoLine
           title={formatMessage(ipMessages.baseInfo)}
           label={ipMessages.name}
@@ -57,17 +62,27 @@ const PatentSPC = ({ data, loading }: Props) => {
         />
         <UserInfoLine
           label={ipMessages.applicationDate}
-          content={data.lifecycle?.applicationDate ?? ''}
+          content={formatDate(data.lifecycle?.applicationDate) ?? ''}
           loading={loading}
         />
         <UserInfoLine
           label={ipMessages.applicationDatePublishedAsAvailable}
-          content={data.lifecycle?.applicationDatePublishedAsAvailable ?? ''}
+          content={formatDate(data.publishedInGazetteDate) ?? ''}
+          loading={loading}
+        />
+        <UserInfoLine
+          label={ipMessages.applicationRegistration}
+          content={formatDate(data.grantPublishedInGazetteDate) ?? ''}
+          loading={loading}
+        />
+        <UserInfoLine
+          label={ipMessages.maxValidDate}
+          content={formatDate(data.lifecycle?.maxValidDate) ?? ''}
           loading={loading}
         />
         <UserInfoLine
           label={coreMessages.status}
-          content={data.statusText ?? ''}
+          content={data.status ?? ''}
           loading={loading}
         />
         <UserInfoLine
@@ -86,12 +101,13 @@ const PatentSPC = ({ data, loading }: Props) => {
           }
           loading={loading}
         />
-      </Stack>
-      {!loading && (
+      </StackWithBottomDivider>
+      {!loading && !!orderedDates?.length && (
         <Timeline
+          box={{ marginY: [2, 2, 6] }}
           title={formatMessage(ipMessages.timeline)}
-          maxDate={orderedDates[orderedDates.length - 1].date}
-          minDate={orderedDates[0].date}
+          maxDate={orderedDates?.[orderedDates.length - 1].date}
+          minDate={orderedDates[0]?.date}
         >
           {orderedDates.map((datapoint) => (
             <Stack key="list-item-application-date" space="smallGutter">
@@ -101,7 +117,7 @@ const PatentSPC = ({ data, loading }: Props) => {
           ))}
         </Timeline>
       )}
-      <Stack space="p2" dividers>
+      <StackWithBottomDivider box={{ marginTop: [2, 2, 6] }} space="p2">
         <UserInfoLine
           title={formatMessage(ipMessages.marketingAuthorization)}
           label={formatMessage(ipMessages.marketingAuthorizationNumber)}
@@ -118,8 +134,9 @@ const PatentSPC = ({ data, loading }: Props) => {
           }
           loading={loading}
         />
-      </Stack>
+      </StackWithBottomDivider>
       <StackOrTableBlock
+        box={{ paddingTop: [2, 2, 6] }}
         entries={data?.owners ?? []}
         title={{
           singular: formatMessage(ipMessages.owner),
@@ -137,8 +154,9 @@ const PatentSPC = ({ data, loading }: Props) => {
         ]}
       />
       <StackOrTableBlock
+        box={{ paddingTop: [2, 2, 6] }}
         entries={data?.agent ? [data.agent] : []}
-        title="agent"
+        title={formatMessage(ipMessages.agent)}
         columns={[
           {
             label: formatMessage(ipMessages.name),
@@ -151,17 +169,24 @@ const PatentSPC = ({ data, loading }: Props) => {
         ]}
       />
       {data.applicationNumber && (
-        <UserInfoLine
-          label={formatMessage(coreMessages.number)}
-          title={formatMessage(ipMessages.basePatent)}
-          content={data?.applicationNumber ?? ''}
-          editLink={{
-            external: true,
-            url: `https://www.hugverk.is/leit/patent/${data.applicationNumber}`,
-            title: formatMessage(coreMessages.view),
-          }}
-          loading={loading}
-        />
+        <Box>
+          <UserInfoLine
+            paddingY={[2, 2, 6]}
+            label={formatMessage(coreMessages.number)}
+            title={formatMessage(ipMessages.basePatent)}
+            content={data?.applicationNumber ?? ''}
+            editLink={{
+              external: true,
+              url: AssetsPaths.AssetsIntellectualPropertiesPatent.replace(
+                ':id',
+                data.applicationNumber,
+              ),
+              title: formatMessage(coreMessages.view),
+            }}
+            loading={loading}
+          />
+          <Divider />
+        </Box>
       )}
     </>
   )
