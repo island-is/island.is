@@ -91,6 +91,6 @@ export class SignatureListCreationService extends BaseTemplateApiService {
   }
 
   async currentCollection() {
-    return await this.signatureCollectionClientService.getCurrentCollection()
+    return await this.signatureCollectionClientService.currentCollection()
   }
 }

@@ -68,7 +68,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
-
+    console.log('here?')
     const areaId = (
       application.externalData.canSign.data as { area: { id: string } }
     ).area?.id
