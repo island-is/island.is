@@ -76,7 +76,7 @@ export const AuthProvider = ({
       })
 
       try {
-        return userManager.signinRedirect({
+        return await userManager.signinRedirect({
           state: getReturnUrl({
             returnUrl: getCurrentUrl(basePath),
             redirectPath: authSettings.redirectPath,
@@ -274,7 +274,10 @@ export const AuthProvider = ({
         prompt: prompt ?? undefined,
         login_hint: loginHint ?? undefined,
       }
-      userManager.signinRedirect(args)
+      userManager.signinRedirect(args).catch((e) => {
+        console.log(e)
+        setError(e)
+      })
     } else {
       checkLogin()
     }
