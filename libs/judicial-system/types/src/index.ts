@@ -9,12 +9,7 @@ export { EventType } from './lib/eventLog'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
-export type {
-  UploadFileToCourtResponse,
-  CaseFile,
-  UpdateFile,
-  CreateFile,
-} from './lib/file'
+export type { CaseFile, UpdateFile, CreateFile } from './lib/file'
 
 export {
   UserRole,

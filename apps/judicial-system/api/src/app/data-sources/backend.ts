@@ -10,7 +10,6 @@ import type {
   CreateFile,
   Institution,
   UpdateFile,
-  UploadFileToCourtResponse,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -29,6 +28,7 @@ import {
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
+  UploadFileToCourtResponse,
 } from '../modules/file'
 import {
   CreateIndictmentCountInput,
