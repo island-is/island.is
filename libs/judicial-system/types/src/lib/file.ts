@@ -43,15 +43,3 @@ export interface CaseFile {
   displayDate?: string
   policeFileId?: string
 }
-
-export interface CreateFile {
-  type: string
-  category?: CaseFileCategory
-  key: string
-  size: number
-  policeCaseNumber?: string
-  chapter?: number
-  orderWithinChapter?: number
-  displayDate?: string
-  policeFileId?: string
-}

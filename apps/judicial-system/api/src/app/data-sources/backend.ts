@@ -7,7 +7,6 @@ import { ProblemError } from '@island.is/nest/problem'
 
 import type {
   CaseFile,
-  CreateFile,
   Institution,
   User,
 } from '@island.is/judicial-system/types'
@@ -198,7 +197,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 
-  createCaseFile(id: string, createFile: CreateFile): Promise<CaseFile> {
+  createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {
     return this.post(`case/${id}/file`, createFile)
   }
 
@@ -318,7 +317,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   limitedAccessCreateCaseFile(
     id: string,
-    createFile: CreateFile,
+    createFile: unknown,
   ): Promise<CaseFile> {
     return this.post(`case/${id}/limitedAccess/file`, createFile)
   }
