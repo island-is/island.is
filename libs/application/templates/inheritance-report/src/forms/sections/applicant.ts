@@ -1,12 +1,14 @@
 import {
   buildMultiField,
   buildSection,
+  buildSelectField,
   buildTextField,
 } from '@island.is/application/core'
 import { UserProfile, Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
+import { RelationEnum } from '../../types'
 
 export const applicant = buildSection({
   id: 'applicantsInformation',
@@ -70,6 +72,16 @@ export const applicant = buildSection({
             const data = externalData.userProfile?.data as UserProfile
             return data?.email
           },
+        }),
+        buildSelectField({
+          id: 'applicant.relation',
+          title: m.relation,
+          width: 'half',
+          options: [
+            { label: m.heir, value: RelationEnum.HEIR },
+            { label: m.representative, value: RelationEnum.REPRESENTATIVE },
+            { label: m.exchangeManager, value: RelationEnum.EXCHANGEMANAGER },
+          ],
         }),
       ],
     }),

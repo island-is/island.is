@@ -364,7 +364,7 @@ export const ReportFieldsRepeater: FC<
                 value={
                   props.sumField === 'heirsPercentage'
                     ? String(total) + ' / 100%'
-                    : formatCurrency(String(total))
+                    : formatCurrency(isNaN(total) ? String(0) : String(total))
                 }
                 label={
                   props.sumField === 'heirsPercentage'

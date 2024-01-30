@@ -169,6 +169,11 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
+  relation: {
+    id: 'ir.application:relation',
+    defaultMessage: 'Tengsl umsækjanda við dánarbú',
+    description: '',
+  },
 
   // Inheritance report submit
   irSubmitTitle: {
@@ -954,6 +959,16 @@ export const m = defineMessages({
   heir: {
     id: 'ir.application:heir',
     defaultMessage: 'Erfingi',
+    description: '',
+  },
+  representative: {
+    id: 'ir.application:representative',
+    defaultMessage: 'Umboðsmaður',
+    description: '',
+  },
+  exchangeManager: {
+    id: 'ir.application:exchangeManager',
+    defaultMessage: 'Skiptastjóri',
     description: '',
   },
   heirs: {
