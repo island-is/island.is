@@ -93,6 +93,7 @@ export default {
     'manualChapter',
     'chart',
     'chartComponent',
+    'featuredEvents',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],
