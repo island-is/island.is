@@ -43,7 +43,7 @@ const PaperUpload = ({ listId }: { listId: string }) => {
       })
 
       if (res.data) {
-        setUploadResults(res.data?.signatureCollectionBulkUploadSignatures)
+        setUploadResults(res.data?.signatureCollectionAdminBulkUploadSignatures)
         revalidate()
       }
     } catch (e) {

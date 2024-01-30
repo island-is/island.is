@@ -3,7 +3,7 @@ import get from 'lodash/get'
 import has from 'lodash/has'
 
 import { Application, RecordObject, Field } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 
 import { getSelectedChild } from '../../lib/parentalLeaveUtils'
@@ -31,7 +31,6 @@ import { PersonalAllowance } from './review-groups/PersonalAllowance'
 import { SpousePersonalAllowance } from './review-groups/SpousePersonalAllowance'
 import { Employment } from './review-groups/Employment'
 import { Periods } from './review-groups/Periods'
-import { PrintButton } from '../PrintButton'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
@@ -80,19 +79,30 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   return (
     <>
       {state === `${States.DRAFT}` && (
-        <Box>
-          <PrintButton />
-          <Box marginBottom={2}>
-            <Text variant="h2">
-              {formatMessage(parentalLeaveFormMessages.confirmation.title)}
-            </Text>
+        <Box display="flex" justifyContent="spaceBetween">
+          <Box>
+            <Box marginBottom={2}>
+              <Text variant="h2">
+                {formatMessage(parentalLeaveFormMessages.confirmation.title)}
+              </Text>
+            </Box>
+            <Box marginBottom={10}>
+              <Text variant="default">
+                {formatMessage(
+                  parentalLeaveFormMessages.confirmation.description,
+                )}
+              </Text>
+            </Box>
           </Box>
-          <Box marginBottom={10}>
-            <Text variant="default">
-              {formatMessage(
-                parentalLeaveFormMessages.confirmation.description,
-              )}
-            </Text>
+          <Box>
+            <Button
+              variant="utility"
+              icon="print"
+              onClick={(e) => {
+                e.preventDefault()
+                window.print()
+              }}
+            />
           </Box>
         </Box>
       )}
