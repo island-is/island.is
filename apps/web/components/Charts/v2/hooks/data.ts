@@ -6,6 +6,7 @@ import {
   Chart,
   GetMultipleStatisticsQuery,
   GetMultipleStatisticsQueryVariables,
+  Maybe,
 } from '@island.is/web/graphql/schema'
 import { GET_MULTIPLE_STATISTICS } from '@island.is/web/screens/queries/Statistics'
 
@@ -21,6 +22,7 @@ interface UseGetChartDataProps {
   numberOfDataPoints?: Chart['numberOfDataPoints']
   components: {
     sourceDataKey: string
+    interval?: Maybe<number>
   }[]
   chartType: ChartType | null
 }
@@ -36,6 +38,20 @@ export const useGetChartData = ({
     variables: {
       input: {
         sourceDataKeys: components.map((c) => c.sourceDataKey),
+        // TODO: move interval out of chart components and
+        // into chart settings, one interval to control all components.
+        // Meanwhile, let the smallest defined (if any) interval control the rest
+        interval: components.reduce((interval, component) => {
+          if (typeof component.interval !== 'number') {
+            return interval
+          }
+
+          if (typeof interval !== 'number') {
+            return component.interval
+          }
+
+          return component.interval < interval ? component.interval : interval
+        }, undefined as undefined | number),
         dateFrom: dateFrom ?? undefined,
         dateTo: dateTo ?? undefined,
         numberOfDataPoints: numberOfDataPoints ?? undefined,

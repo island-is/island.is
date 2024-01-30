@@ -243,4 +243,8 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
   },
+  [ApplicationTypes.HOME_SUPPORT]: {
+    nationalId: InstitutionNationalIds.SAMBAND_SVEITARFELAGA,
+    slug: InstitutionTypes.SAMBAND_SVEITARFELAGA,
+  },
 }
