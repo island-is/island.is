@@ -1,4 +1,4 @@
-name: Pull request
+name: Monorepo pipeline - pull request
 
 on:
   pull_request: {}
@@ -15,6 +15,7 @@ concurrency:
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
 
 jobs:
@@ -86,7 +87,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
@@ -117,7 +118,7 @@ jobs:
       - name: Cache for cypress
         id: cypress
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: /github/home/.cache/Cypress
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
@@ -137,7 +138,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
@@ -229,7 +230,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -240,7 +241,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -290,7 +291,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -301,7 +302,7 @@ jobs:
       - name: Cache for cypress
         id: cypress
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: /github/home/.cache/Cypress
           key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
@@ -312,7 +313,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -338,7 +339,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -394,7 +395,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -434,7 +435,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -445,7 +446,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -483,7 +484,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -494,7 +495,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
