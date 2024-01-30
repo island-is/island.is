@@ -1,8 +1,3 @@
-export interface PresignedPost {
-  url: string
-  fields: { [key: string]: string }
-}
-
 export interface CreatePresignedPost {
   fileName: string
   type: string

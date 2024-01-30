@@ -11,7 +11,6 @@ import type {
   CreatePresignedPost,
   DeleteFileResponse,
   Institution,
-  PresignedPost,
   SignedUrl,
   UpdateFile,
   UploadFileToCourtResponse,
@@ -28,7 +27,7 @@ import {
 } from '../modules/case'
 import { CaseListEntry } from '../modules/case-list'
 import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
-import { UpdateFilesResponse } from '../modules/file'
+import { PresignedPost, UpdateFilesResponse } from '../modules/file'
 import {
   CreateIndictmentCountInput,
   DeleteIndictmentCountInput,
