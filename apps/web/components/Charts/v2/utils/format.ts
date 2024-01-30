@@ -31,16 +31,18 @@ export const formatValueForPresentation = (
 
       let divider = 1
       let postfix = ''
+      let precision = 0
 
       if (reduceAndRoundValue && value >= 1e6) {
         divider = 1e6
         postfix = messages[activeLocale].millionPostfix
+        precision = 1
       } else if (reduceAndRoundValue && value >= 1e4) {
         divider = 1e3
         postfix = messages[activeLocale].thousandPostfix
       }
 
-      const v = round(value / divider, 2)
+      const v = round(value / divider, precision)
 
       return `${v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}${postfix}`
     }
@@ -49,4 +51,11 @@ export const formatValueForPresentation = (
   }
 
   return possiblyRawValue?.toString()
+}
+
+export const formatPercentageForPresentation = (
+  percentage: number,
+  precision: number | undefined = undefined,
+) => {
+  return `${round(percentage * 100, precision ?? percentage < 0.1 ? 1 : 0)}%`
 }

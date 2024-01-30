@@ -18,7 +18,7 @@ import {
   useGetChartData,
 } from '../hooks'
 import { messages } from '../messages'
-import { ChartType } from '../types'
+import { ChartType, DataItem } from '../types'
 import {
   calculateChartSkeletonLoaderHeight,
   decideChartBase,
@@ -67,7 +67,11 @@ export const Chart = ({ slice }: ChartProps) => {
     )
   }
 
-  if (!queryResult.data || queryResult.data.length === 0) {
+  const data = slice.sourceData
+    ? JSON.parse(slice.sourceData)
+    : queryResult.data ?? []
+
+  if (!data || data.length === 0) {
     return messages[activeLocale].noDataForChart
   }
 
@@ -100,15 +104,11 @@ export const Chart = ({ slice }: ChartProps) => {
       >
         <Box width="full" height="full" marginTop={2}>
           <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-            <BaseChartComponent
-              data={queryResult.data}
-              width={400}
-              height={400}
-            >
+            <BaseChartComponent data={data} width={400} height={400}>
               {cartesianGridComponents}
               {renderLegend({
                 componentsWithAddedProps,
-                data: queryResult.data,
+                data: data,
               })}
               {renderTooltip({
                 componentsWithAddedProps,
@@ -121,7 +121,7 @@ export const Chart = ({ slice }: ChartProps) => {
               {renderChartComponents({
                 componentsWithAddedProps,
                 chartType,
-                data: queryResult.data,
+                data: data,
                 activeLocale,
               })}
             </BaseChartComponent>

@@ -62,7 +62,12 @@ export const value = style({
   alignItems: 'center',
   color: theme.color.blue400,
   display: 'flex',
-  fontSize: '42px',
+  fontSize: '34px',
   fontWeight: theme.typography.semiBold,
   gap: theme.spacing[1],
+  ...themeUtils.responsiveStyle({
+    lg: {
+      fontSize: '42px',
+    },
+  }),
 })
