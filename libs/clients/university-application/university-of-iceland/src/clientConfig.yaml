@@ -69,6 +69,8 @@ paths:
                           format: 'date-time'
                         degreeType:
                           type: 'string'
+                        degreeSubType:
+                          type: 'string'
                         degreeAbbreviation:
                           type: 'string'
                         credits:
@@ -171,6 +173,15 @@ paths:
                               heiti:
                                 type: 'string'
                               heiti_en:
+                                type: 'string'
+                        simenntunarstodvar:
+                          type: 'array'
+                          items:
+                            type: 'object'
+                            properties:
+                              id:
+                                type: 'integer'
+                              heiti:
                                 type: 'string'
       tags:
         - 'Programs'

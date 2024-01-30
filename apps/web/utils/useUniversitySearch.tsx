@@ -38,7 +38,6 @@ export const SearchProducts = ({
     })
     queryMaker.$and.push({ $or: orFilters })
   })
-
   const result = fuseInstance.search(queryMaker)
 
   return result
