@@ -9,7 +9,12 @@ export interface UserBase {
   name: string
 }
 
-export interface Signee extends UserBase {
+export interface CandidateLookup extends UserBase {
+  canCreate: boolean
+  canCreateInfo?: ReasonKey[]
+}
+
+export interface Signee extends CandidateLookup {
   electionName: string
   canSign: boolean
   canSignInfo?: ReasonKey[]
