@@ -1,8 +1,3 @@
-export interface UploadFileToCourt {
-  id: string
-  caseId: string
-}
-
 export interface UploadFileToCourtResponse {
   success: boolean
 }

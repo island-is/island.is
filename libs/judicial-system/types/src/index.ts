@@ -10,7 +10,6 @@ export { EventType } from './lib/eventLog'
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
 export type {
-  UploadFileToCourt,
   UploadFileToCourtResponse,
   CaseFile,
   UpdateFile,
