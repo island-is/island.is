@@ -40,6 +40,7 @@ jobs:
           ENVS=("dev" "staging" "prod")
           ENVS_JSON=$(printf '%s\n' "${ENVS[@]}" | jq -R . | jq -s . | tr -d '[:space:]')
           echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
+          echo "ENVS={\"env\":$ENVS_JSON}" >> "$GITHUB_OUTPUT"
 
   helm-values-validation:
     runs-on: ec2-runners

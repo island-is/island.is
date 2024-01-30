@@ -58,6 +58,7 @@ export enum ApplicationTypes {
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
   PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
 }
 
@@ -301,6 +302,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'eigendaskipti-taekis',
     translation: 'aosh.tmo.application',
+  },
+  [ApplicationTypes.HOME_SUPPORT]: {
+    slug: 'heimastudningur',
+    translation: 'hst.application',
   },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     slug: 'umradaskipti-taekis',

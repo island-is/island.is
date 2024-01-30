@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
+import cn from 'classnames'
+import { Button } from 'reakit'
 
 import { Box, Icon, IconMapIcon } from '@island.is/island-ui/core'
 
@@ -6,27 +8,43 @@ import * as styles from './IconButton.css'
 
 interface Props {
   icon: IconMapIcon
-  colorScheme: 'blue' | 'red'
-  onClick: () => void
+  colorScheme: 'blue' | 'red' | 'transparent'
+  onClick?: (evt: React.MouseEvent) => void
+  disabled?: boolean
 }
 
-const IconButton: React.FC<Props> = (props) => {
-  const { icon, colorScheme, onClick } = props
+const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
+  const { icon, colorScheme, onClick, disabled } = props
 
   return (
     <Box
-      component="button"
-      className={styles.iconButtonContainer}
-      background={colorScheme === 'blue' ? 'blue200' : 'red200'}
-      onClick={() => onClick()}
+      component={Button}
+      ref={ref}
+      className={cn(styles.iconButtonContainer, {
+        [styles.buttonDisabled]: disabled,
+        [styles.transparent]: colorScheme === 'transparent',
+      })}
+      background={
+        colorScheme === 'blue'
+          ? 'blue200'
+          : colorScheme === 'red'
+          ? 'red200'
+          : 'transparent'
+      }
+      onClick={(evt) => onClick && onClick(evt)}
+      disabled={disabled}
     >
       <Icon
         icon={icon}
-        color={colorScheme === 'blue' ? 'blue400' : 'red400'}
+        color={
+          colorScheme === 'blue' || colorScheme === 'transparent'
+            ? 'blue400'
+            : 'red400'
+        }
         size="small"
       />
     </Box>
   )
-}
+})
 
 export default IconButton
