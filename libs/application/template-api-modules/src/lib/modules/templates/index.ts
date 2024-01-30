@@ -111,6 +111,8 @@ import { SignatureListCreationModule } from './signature-collection/signature-li
 import { SignatureListCreationService } from './signature-collection/signature-list-creation/signature-list-creation.service'
 import { SignatureListSigningModule } from './signature-collection/signature-list-signing/signature-list-signing.module'
 import { SignatureListSigningService } from './signature-collection/signature-list-signing/signature-list-signing.service'
+import { HomeSupportModule } from './home-support/home-support.module'
+import { HomeSupportService } from './home-support/home-support.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -169,6 +171,7 @@ export const modules = [
   SignatureListCreationModule,
   SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
+  HomeSupportModule,
   ChangeMachineSupervisorTemplateModule,
 ]
 
@@ -229,5 +232,6 @@ export const services = [
   SignatureListCreationService,
   SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
+  HomeSupportService,
   ChangeMachineSupervisorTemplateService,
 ]
