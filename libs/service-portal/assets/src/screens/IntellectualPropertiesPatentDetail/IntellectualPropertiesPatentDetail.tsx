@@ -30,8 +30,6 @@ const IntellectualPropertiesPatentDetail = () => {
     },
   })
 
-  console.log(data)
-
   const patent = useMemo(() => {
     if (!loading && !error)
       switch (data?.intellectualPropertiesPatent?.__typename) {
