@@ -1,8 +1,3 @@
-export interface GetSignedUrl {
-  id: string
-  caseId: string
-}
-
 export interface SignedUrl {
   url: string
 }
