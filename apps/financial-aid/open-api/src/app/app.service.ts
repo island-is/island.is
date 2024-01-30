@@ -60,4 +60,8 @@ export class AppService {
         })
       })
   }
+
+  async create(caseToCreate: CreateCaseDto): Promise<Case> {
+    return this.createCase(caseToCreate)
+  }
 }
