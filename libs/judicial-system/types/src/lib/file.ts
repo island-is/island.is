@@ -1,8 +1,3 @@
-export interface DeleteFile {
-  id: string
-  caseId: string
-}
-
 export interface DeleteFileResponse {
   success: boolean
 }
