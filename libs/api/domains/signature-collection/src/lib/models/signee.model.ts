@@ -17,18 +17,21 @@ export class SignatureCollectionSigneeBase {
 }
 
 @ObjectType()
-export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
-  @Field()
-  canSign!: boolean
-
-  @Field(() => [String], { nullable: true })
-  canSignInfo?: string[]
-
+export class SignatureCollectionCandidateLookUp extends SignatureCollectionSigneeBase {
   @Field()
   canCreate!: boolean
 
   @Field(() => [String], { nullable: true })
   canCreateInfo?: string[]
+}
+
+@ObjectType()
+export class SignatureCollectionSignee extends SignatureCollectionCandidateLookUp {
+  @Field({ nullable: true })
+  canSign!: boolean
+
+  @Field(() => [String], { nullable: true })
+  canSignInfo?: string[]
 
   @Field(() => SignatureCollectionAreaBase, { nullable: true })
   area?: SignatureCollectionAreaBase

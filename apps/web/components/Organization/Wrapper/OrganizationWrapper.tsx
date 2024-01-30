@@ -102,6 +102,7 @@ import {
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import { liveChatIncConfig, watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
+import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 
 interface NavigationData {
   title: string
@@ -668,6 +669,11 @@ export const OrganizationFooter: React.FC<
           footerItems={organization.footerItems}
           namespace={namespace}
         />
+      )
+      break
+    case 'haskolanam':
+      OrganizationFooterComponent = (
+        <UniversityStudiesFooter organization={organization} />
       )
       break
     case 'gev':
