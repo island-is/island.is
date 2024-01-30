@@ -140,6 +140,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
 /libs/api/domains/regulations-admin/                                                                     @island-is/hugsmidjan
 /libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
+/libs/api/domains/social-insurance                                                                       @island-is/hugsmidjan
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
@@ -158,6 +159,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/vehicles-mileage/                                                                          @island-is/hugsmidjan
+/libs/clients/user-notification/                                                                         @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan

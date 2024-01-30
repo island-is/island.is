@@ -32,6 +32,7 @@ import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { AlthingiOmbudsmanClientConfig } from '@island.is/clients/althingi-ombudsman'
 import { DirectorateOfImmigrationClientConfig } from '@island.is/clients/directorate-of-immigration'
 import { CarRecyclingClientConfig } from '@island.is/clients/car-recycling'
+import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 
 @Module({
@@ -68,6 +69,7 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
         AlthingiOmbudsmanClientConfig,
         DirectorateOfImmigrationClientConfig,
         CarRecyclingClientConfig,
+        SocialInsuranceAdministrationClientConfig,
         SignatureCollectionClientConfig,
       ],
     }),

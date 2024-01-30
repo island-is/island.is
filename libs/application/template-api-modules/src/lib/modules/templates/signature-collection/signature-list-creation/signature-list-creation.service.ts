@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -16,10 +16,13 @@ import {
 } from '@island.is/application/templates/signature-collection/signature-list-creation'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { SignatureCollection } from './types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SignatureListCreationService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {
@@ -42,18 +45,25 @@ export class SignatureListCreationService extends BaseTemplateApiService {
       owner,
     })
 
-    // Use the shared service to send an email using a custom email generator
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationSubmittedEmail,
-      application,
-    )
+    try {
+      // Use the shared service to send an email using a custom email generator
+      await this.sharedTemplateAPIService.sendEmail(
+        generateApplicationSubmittedEmail,
+        application,
+      )
+    } catch (e) {
+      this.logger.warn(
+        'Could not send submit email to admins for application: ',
+        application.id,
+      )
+    }
 
     return slug
   }
 
   async ownerRequirements({ auth }: TemplateApiModuleActionProps) {
     const { canCreate, canCreateInfo } =
-      await this.signatureCollectionClientService.getSignee(auth.nationalId)
+      await this.signatureCollectionClientService.getSignee(auth)
     if (canCreate) {
       return true
     }

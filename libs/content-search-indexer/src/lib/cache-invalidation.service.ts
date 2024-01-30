@@ -106,49 +106,37 @@ const MAX_REQUEST_COUNT = 10
 @Injectable()
 export class CacheInvalidationService {
   private getBaseUrl() {
-    let baseUrl = 'https://island.is'
-
-    switch (environment.runtimeEnvironment) {
-      case 'prod':
-        baseUrl = 'https://island.is'
-        break
-      case 'staging':
-        baseUrl = 'https://beta.staging01.devland.is'
-        break
-      case 'dev':
-        baseUrl = 'https://beta.dev01.devland.is'
-        break
-      case 'local':
-        baseUrl = 'http://localhost:4200'
-        break
-      default:
-        return ''
+    let baseUrl = 'http://web.islandis.svc.cluster.local'
+    if (environment.runtimeEnvironment === 'local') {
+      baseUrl = 'http://localhost:4200'
     }
-
     return baseUrl
   }
 
   async invalidateCache(items: MappedData[], locale: ElasticsearchIndexLocale) {
     const baseUrl = this.getBaseUrl()
 
-    if (!baseUrl) {
-      logger.warn('Could not get cache invalidation base url')
-      return
-    }
-
     const bypassSecret = environment.bypassCacheSecret
 
-    const promises: Promise<unknown>[] = []
+    const promises: { url: string; promise: Promise<unknown> }[] = []
     let successfulCacheInvalidationCount = 0
-    const failedCacheInvalidationReasons = []
+    const failedCacheInvalidationReasons: { url: string; reason: unknown }[] =
+      []
 
     const handleRequests = async () => {
-      const responses = await Promise.allSettled(promises)
-      for (const response of responses) {
+      const responses = await Promise.allSettled(
+        promises.map(({ promise }) => promise),
+      )
+      for (let i = 0; i < responses.length; i += 1) {
+        const response = responses[i]
+        const url = promises[i].url
         if (response.status === 'fulfilled') {
           successfulCacheInvalidationCount += 1
         } else {
-          failedCacheInvalidationReasons.push(response.reason)
+          failedCacheInvalidationReasons.push({
+            url,
+            reason: response.reason,
+          })
         }
       }
       promises.length = 0
@@ -176,12 +164,22 @@ export class CacheInvalidationService {
       try {
         urls = generateInvalidationUrls(baseUrl, JSON.parse(item.response))
       } catch {
-        logger.warn(`Generating invalidation url failed for: ${item._id}`)
+        logger.warn(
+          `Generating invalidation url failed for document with id: ${item._id}`,
+        )
         continue
       }
 
-      for (const url of urls) {
-        promises.push(fetch(`${url}?bypass-cache=${bypassSecret}`))
+      for (const urlWithoutPostfix of urls) {
+        const url = `${urlWithoutPostfix}?bypass-cache=${bypassSecret}`
+        promises.push({
+          url: urlWithoutPostfix,
+          promise: fetch(url, {
+            headers: {
+              'Cache-Control': 'no-cache',
+            },
+          }),
+        })
         if (promises.length > MAX_REQUEST_COUNT) {
           await handleRequests()
         }

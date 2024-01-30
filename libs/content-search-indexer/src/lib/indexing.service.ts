@@ -76,22 +76,25 @@ export class IndexingService {
           return true
         }
 
+        const isIncrementalUpdate = syncType === 'fromLast'
+
         const {
           nextPageToken: importerResponseNextPageToken,
           postSyncOptions: importerResponsePostSyncOptions,
           ...elasticData
         } = importerResponse
-        await this.elasticService.bulk(elasticIndex, elasticData)
+        await this.elasticService.bulk(
+          elasticIndex,
+          elasticData,
+          isIncrementalUpdate,
+        )
 
         // Invalidate cached pages in the background if we are performing an incremental update
-        if (syncType === 'fromLast') {
-          // Wait for some time to make sure data is properly indexed
-          setTimeout(() => {
-            this.cacheInvalidationService.invalidateCache(
-              elasticData.add,
-              options.locale,
-            )
-          }, 2000)
+        if (isIncrementalUpdate) {
+          this.cacheInvalidationService.invalidateCache(
+            elasticData.add,
+            options.locale,
+          )
         }
 
         nextPageToken = importerResponseNextPageToken

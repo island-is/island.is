@@ -43,7 +43,7 @@ const PaperUpload = ({ listId }: { listId: string }) => {
       })
 
       if (res.data) {
-        setUploadResults(res.data?.signatureCollectionBulkUploadSignatures)
+        setUploadResults(res.data?.signatureCollectionAdminBulkUploadSignatures)
         revalidate()
       }
     } catch (e) {
@@ -133,7 +133,7 @@ const PaperUpload = ({ listId }: { listId: string }) => {
                       {uploadResults.success.map((res: any, index: number) => {
                         return (
                           <Text key={index} marginBottom={1}>
-                            {formatNationalId(res.signee.nationalId)}
+                            {formatNationalId(res.nationalId)}
                           </Text>
                         )
                       })}

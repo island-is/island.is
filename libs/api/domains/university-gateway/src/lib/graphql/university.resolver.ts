@@ -3,11 +3,14 @@ import { UniversityGatewayApi } from '../universityGateway.service'
 import { UniversityGatewayUniversity } from './models'
 import { Loader } from '@island.is/nest/dataloader'
 import {
+  OrganizationLinkByReferenceIdLoader,
   OrganizationLogoByReferenceIdLoader,
   OrganizationTitleByReferenceIdLoader,
 } from '@island.is/cms'
 import type {
   LogoUrl,
+  OrganizationLink,
+  OrganizationLinkByReferenceIdDataLoader,
   OrganizationLogoByReferenceIdDataLoader,
   OrganizationTitleByReferenceIdDataLoader,
   ShortTitle,
@@ -38,5 +41,14 @@ export class UniversityResolver {
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<ShortTitle> {
     return organizationTitleLoader.load(university.contentfulKey)
+  }
+
+  @ResolveField('contentfulLink', () => String, { nullable: true })
+  async resolveContentfulLink(
+    @Loader(OrganizationLinkByReferenceIdLoader)
+    organizationLinkLoader: OrganizationLinkByReferenceIdDataLoader,
+    @Parent() university: UniversityGatewayUniversity,
+  ): Promise<OrganizationLink> {
+    return organizationLinkLoader.load(university.contentfulKey)
   }
 }

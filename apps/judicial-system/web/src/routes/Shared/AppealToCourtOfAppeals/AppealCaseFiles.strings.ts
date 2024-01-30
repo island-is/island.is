@@ -17,10 +17,16 @@ export const strings = defineMessages({
       'Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að neðan.',
     description: 'Undirtitill á Gögn ákæru síðu',
   },
+  appealCaseFilesCOASubtitle: {
+    id: 'judicial.system.core:appeal_case_files.appeal_case_files_coa_subtitle',
+    defaultMessage:
+      'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.',
+    description: 'Undirtitill á Gögn ákæru síðu',
+  },
   nextButtonText: {
-    id: 'judicial.system.core:appeal_case_files.next_button_text',
-    defaultMessage: 'Staðfesta',
-    description: 'Texti á Staðfesta takka á Gögn ákæru síðu',
+    id: 'judicial.system.core:appeal_case_files.next_button_text_v2',
+    defaultMessage: 'Senda gögn',
+    description: 'Texti á Senda gögn takka á Gögn ákæru síðu',
   },
   appealCaseFilesUpdatedModalTitle: {
     id: 'judicial.system.core:appeal_case_files.appeal_sent_modal_title',
@@ -44,5 +50,10 @@ export const strings = defineMessages({
     defaultMessage:
       '{appealedByProsecutor, select, true {Sækjandi} other {Varnaraðili}} kærði í þinghaldi',
     description: 'Texti sem sýnir hver kærði í þinghaldi á gagnaskjá kærumála',
+  },
+  uploadFailedNextButtonText: {
+    id: 'judicial.system.core:appeal_case_files.upload_failed_next_button_text',
+    defaultMessage: 'Reyna aftur',
+    description: 'Texti á reyna aftur takka á Gögn ákæru síðu',
   },
 })

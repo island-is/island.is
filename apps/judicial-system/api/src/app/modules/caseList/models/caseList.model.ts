@@ -10,6 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { Institution } from '../../institution'
 import { User } from '../../user'
 
 @ObjectType()
@@ -97,4 +98,7 @@ export class CaseListEntry {
 
   @Field(() => CaseAppealRulingDecision, { nullable: true })
   readonly appealRulingDecision?: CaseAppealRulingDecision
+
+  @Field(() => Institution, { nullable: true })
+  readonly prosecutorsOffice?: Institution
 }

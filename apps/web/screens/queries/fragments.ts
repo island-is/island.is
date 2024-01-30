@@ -607,26 +607,6 @@ export const slices = gql`
     }
   }
 
-  fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
-    id
-    title
-    lifeEventPageList {
-      id
-      title
-      shortTitle
-      slug
-      tinyThumbnail {
-        url
-        title
-      }
-      thumbnail {
-        url
-        title
-      }
-      intro
-    }
-  }
-
   fragment SidebarCardFields on SidebarCard {
     id
     title
@@ -689,6 +669,44 @@ export const slices = gql`
     dropdownLabel
     slices {
       ...OneColumnTextFields
+    }
+  }
+
+  fragment FeaturedEventsFields on FeaturedEvents {
+    __typename
+    id
+    namespace
+    noEventsFoundText {
+      ...HtmlFields
+    }
+    resolvedEventList {
+      total
+      items {
+        id
+        title
+        slug
+        startDate
+        time {
+          startTime
+          endTime
+        }
+        location {
+          streetAddress
+          floor
+          postalCode
+          useFreeText
+          freeText
+        }
+        thumbnailImage {
+          url
+          title
+          width
+          height
+        }
+        organization {
+          slug
+        }
+      }
     }
   }
 
@@ -854,7 +872,6 @@ export const slices = gql`
     ...StepperFields
     ...GraphCardFields
     ...AnchorPageListSliceFields
-    ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
     ...TableSliceFields
@@ -864,6 +881,7 @@ export const slices = gql`
     ...LatestEventsSliceFields
     ...ChartFields
     ...ChartNumberBoxFields
+    ...FeaturedEventsFields
   }
 
   fragment AllSlices on Slice {

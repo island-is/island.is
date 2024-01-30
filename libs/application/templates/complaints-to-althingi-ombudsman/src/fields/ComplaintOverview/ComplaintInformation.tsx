@@ -7,11 +7,13 @@ import {
 } from '../../lib/messages'
 import { ComplaineeTypes } from '../../shared'
 import { ValueLine } from './ValueLine'
+import { formatDate } from '../../utils'
 
 type Props = {
   type: ComplaineeTypes
   name: string
   description: string
+  decisionDate?: string
   isEditable?: boolean
   onEdit: (id: string) => void
 }
@@ -20,6 +22,7 @@ export const ComplaintInformation: FC<React.PropsWithChildren<Props>> = ({
   type,
   name,
   description,
+  decisionDate,
   isEditable,
   onEdit,
 }) => {
@@ -47,12 +50,20 @@ export const ComplaintInformation: FC<React.PropsWithChildren<Props>> = ({
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span="9/12">
+        <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
           <ValueLine
             label={complaintOverview.labels.complaintDescription}
             value={description}
           />
         </GridColumn>
+        {decisionDate && (
+          <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
+            <ValueLine
+              label={complaintOverview.labels.decisionDate}
+              value={formatDate(new Date(decisionDate))}
+            />
+          </GridColumn>
+        )}
       </GridRow>
     </ReviewGroup>
   )
