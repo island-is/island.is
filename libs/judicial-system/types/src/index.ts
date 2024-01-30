@@ -10,7 +10,6 @@ export { EventType } from './lib/eventLog'
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
 export type {
-  CreatePresignedPost,
   DeleteFile,
   DeleteFileResponse,
   GetSignedUrl,

@@ -1,8 +1,3 @@
-export interface CreatePresignedPost {
-  fileName: string
-  type: string
-}
-
 export interface DeleteFile {
   id: string
   caseId: string

@@ -8,7 +8,6 @@ import { ProblemError } from '@island.is/nest/problem'
 import type {
   CaseFile,
   CreateFile,
-  CreatePresignedPost,
   DeleteFileResponse,
   Institution,
   SignedUrl,
@@ -192,7 +191,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   createCasePresignedPost(
     id: string,
-    createPresignedPost: CreatePresignedPost,
+    createPresignedPost: unknown,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
@@ -311,7 +310,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   limitedAccessCreateCasePresignedPost(
     id: string,
-    createPresignedPost: CreatePresignedPost,
+    createPresignedPost: unknown,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/limitedAccess/file/url`, createPresignedPost)
   }
