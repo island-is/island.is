@@ -9,7 +9,10 @@ import { useI18n } from '@island.is/web/i18n'
 import { useGetChartData } from '../../hooks'
 import { messages } from '../../messages'
 import { ChartType } from '../../types'
-import { formatValueForPresentation } from '../../utils'
+import {
+  formatPercentageForPresentation,
+  formatValueForPresentation,
+} from '../../utils'
 import * as styles from './ChartNumberBox.css'
 
 type ChartNumberBoxRendererProps = {
@@ -91,16 +94,14 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     >
       {boxData.map((data, index) => {
         // We assume that the data that key that is provided is a valid number
-        const value = queryResult.data?.[data.sourceDataIndex]?.[
+        const comparisonValue = queryResult.data?.[data.sourceDataIndex]?.[
           data.sourceDataKey
         ] as number
         const mostRecentValue = queryResult.data[queryResult.data.length - 1][
           data.sourceDataKey
         ] as number
 
-        const divider = index === 0 ? 1 : mostRecentValue
-
-        const result = index === 0 ? value : round(1 - value / divider, 2)
+        const change = index === 0 ? 1 : mostRecentValue / comparisonValue
 
         return (
           <div
@@ -111,19 +112,26 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
           >
             <div className={styles.titleWrapper}>
               <h3 className={styles.title}>{data.title}</h3>
-              {index === 0 && <Tooltip text={slice.numberBoxDescription} />}
+              {index === 0 && (
+                <Tooltip
+                  text={slice.numberBoxDescription}
+                  placement={boxData.length === 1 ? 'left' : undefined}
+                />
+              )}
             </div>
             <p className={styles.value}>
-              {index > 0 && result !== 0 && (
+              {index > 0 && change !== 0 && (
                 <Icon
                   type="outline"
-                  icon={result > 0 ? 'arrowUp' : 'arrowDown'}
+                  icon={change > 1 ? 'arrowUp' : 'arrowDown'}
                 />
               )}
               <span>
                 {data.valueType === 'number'
-                  ? formatValueForPresentation(activeLocale, result)
-                  : `${Math.abs(result) * 100}%`}
+                  ? formatValueForPresentation(activeLocale, mostRecentValue)
+                  : formatPercentageForPresentation(
+                      index === 0 ? mostRecentValue : change - 1,
+                    )}
               </span>
             </p>
           </div>
