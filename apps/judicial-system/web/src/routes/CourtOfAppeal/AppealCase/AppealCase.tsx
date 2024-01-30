@@ -45,7 +45,6 @@ const AppealCase = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const {
     updateCase,
-    setAndSendCaseToServer,
     sendNotification,
     sendNotificationError,
     isSendingNotification,
