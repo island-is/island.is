@@ -9,7 +9,7 @@ export default defineConfig({
         'BACKEND_ACCESS_TOKEN',
         'secret-backend-api-token',
       ),
-      url: env.required('BACKEND_URL', 'http://localhost:3344'),
+      url: 'http://localhost:3344',
     },
   }),
 })

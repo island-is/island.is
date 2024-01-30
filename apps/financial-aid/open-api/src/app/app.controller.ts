@@ -1,4 +1,11 @@
-import { Body, Controller, Inject, Post, UseInterceptors } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -26,6 +33,17 @@ export class AppController {
       this.logger.info(`Case ${createdCase.id} created`)
 
       return createdCase
+    })
+  }
+
+  @Get('applications')
+  @ApiCreatedResponse({ description: 'Gets application' })
+  async getApplication() {
+    this.logger.debug('Gets application')
+
+    return this.appService.getApplications().then((applications) => {
+      this.logger.info(`Application fetched`)
+      return applications
     })
   }
 }

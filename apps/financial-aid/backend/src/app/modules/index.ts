@@ -8,3 +8,4 @@ export { DeductionFactorsModule } from './deductionFactors/deductionFactors.modu
 export { AmountModule } from './amount/amount.module'
 export { PersonalTaxReturnModule } from './personalTaxReturn/personalTaxReturn.module'
 export { DirectTaxPaymentModule } from './directTaxPayment/directTaxPayment.module'
+export { OpenApiApplicationModule } from './openApiApplications/openApiApplication.module'
