@@ -61,4 +61,14 @@ export const error = defineMessages({
     defaultMessage: 'Ráðuneyti er óþekkt',
     description: 'Error message when ministry is invalid',
   },
+  submitApplicationFailedTitle: {
+    id: 'ojoi.application:error.submitApplicationFailedTitle',
+    defaultMessage: 'Athugið',
+    description: 'Error message when submit application fails',
+  },
+  submitApplicationFailedMessage: {
+    id: 'ojoi.application:error.submitApplicationFailedMessage',
+    defaultMessage: 'Ekki tókst að senda umsókn',
+    description: 'Error message when submit application fails',
+  },
 })

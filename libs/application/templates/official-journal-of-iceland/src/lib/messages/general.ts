@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const general = defineMessages({
+  warningTitle: {
+    id: 'ojoi.application:general.warningTitle',
+    defaultMessage: 'Athugið',
+  },
   applicationName: {
     id: 'ojoi.application:general.applicationName',
     defaultMessage: 'Stjórnartíðindi',

@@ -20,10 +20,9 @@ export class Case {
   subCategory?: CaseSubCategoryType
 
   @Field(() => String, { nullable: true })
-  title?: string
-
-  @Field(() => CaseTemplateType, { nullable: true })
-  template?: CaseTemplateType
+  subject?: string
+  @Field(() => String)
+  status?: string
 
   @Field(() => String, { nullable: true })
   documentContents?: string

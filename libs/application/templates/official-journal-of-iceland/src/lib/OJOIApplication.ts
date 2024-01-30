@@ -139,12 +139,12 @@ const OJOITemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
-          // onEntry: defineTemplateApi({
-          //   action: TemplateApiActions.validateApplication,
-          //   shouldPersistToExternalData: true,
-          //   externalDataId: 'sendApplication',
-          //   throwOnError: true,
-          // }),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.submitApplication,
+            shouldPersistToExternalData: true,
+            externalDataId: 'submitApplication',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

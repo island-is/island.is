@@ -23,4 +23,8 @@ export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
   async validateApplication(auth: User) {
     return await this.ministryOfJusticeService.validateApplication(auth)
   }
+
+  async submitApplication(auth: User) {
+    return await this.ministryOfJusticeService.submitApplication(auth)
+  }
 }

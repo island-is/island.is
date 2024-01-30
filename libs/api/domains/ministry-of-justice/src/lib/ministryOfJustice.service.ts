@@ -38,17 +38,19 @@ export class MinistryOfJusticeService {
   ) {}
 
   async validateApplication(auth: User): Promise<SendApplicationResponse> {
-    // this.logger.info('Sending application', { auth })
-
-    // return {
-    //   type: 'error',
-    //   reason: 'Validation error'
-    // }
-
-    console.log('yibbi')
-
     return {
       type: 'success',
+    }
+  }
+
+  async submitApplication(auth: User): Promise<SendApplicationResponse> {
+    // return {
+    //   type: 'success',
+    // }
+
+    return {
+      type: 'error',
+      reason: 'Failed to submit application',
     }
   }
 

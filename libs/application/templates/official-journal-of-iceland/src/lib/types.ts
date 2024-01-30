@@ -64,6 +64,7 @@ export type CommitteeSignatureState =
 
 export enum TemplateApiActions {
   getOptions = 'getOptions',
+  submitApplication = 'submitApplication',
   validateApplication = 'validateApplication',
   cancelApplication = 'cancelApplication',
 }
@@ -83,6 +84,10 @@ export enum AnswerOption {
   NO = 'no',
 }
 
+type MinistryStatusRespnose =
+  | { type: 'success' }
+  | { type: 'error'; reason: string }
+
 export type ErrorSchema = NestedType<answerSchemas>
 
 type Options = {
@@ -99,8 +104,14 @@ export interface ExternalData {
     status: StatusProvider
   }
 
-  sendApplication: {
-    data: Options
+  validateApplication: {
+    data: MinistryStatusRespnose
+    date: string
+    status: StatusProvider
+  }
+
+  submitApplication: {
+    data: MinistryStatusRespnose
     date: string
     status: StatusProvider
   }
