@@ -35,11 +35,20 @@ export class Manual {
   @CacheField(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory | null
 
+  @CacheField(() => [ArticleCategory], { nullable: true })
+  otherCategories?: Array<ArticleCategory>
+
   @CacheField(() => ArticleGroup, { nullable: true })
   group?: ArticleGroup | null
 
+  @CacheField(() => [ArticleGroup], { nullable: true })
+  otherGroups?: Array<ArticleGroup>
+
   @CacheField(() => ArticleSubgroup, { nullable: true })
   subgroup?: ArticleSubgroup | null
+
+  @CacheField(() => [ArticleSubgroup], { nullable: true })
+  otherSubgroups?: Array<ArticleSubgroup>
 
   @Field({ nullable: true })
   importance?: number
@@ -68,5 +77,8 @@ export const mapManual = (manual: IManual): SystemMetadata<Manual> => {
     group: fields.group ? mapArticleGroup(fields.group) : null,
     subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
     importance: fields.importance ?? 0,
+    otherCategories: [],
+    otherGroups: [],
+    otherSubgroups: [],
   }
 }

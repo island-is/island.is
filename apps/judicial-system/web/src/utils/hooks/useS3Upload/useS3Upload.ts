@@ -3,9 +3,12 @@ import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
-import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFile,
+  CaseFileCategory,
+  PresignedPost,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   CreateFileMutation,
@@ -37,20 +40,20 @@ import { strings } from './useS3Upload.strings'
 // - rewrite upload from police
 // - more granual retry
 export interface TUploadFile extends UploadFile {
-  category?: CaseFileCategory
-  policeCaseNumber?: string
-  chapter?: number
-  orderWithinChapter?: number
-  displayDate?: string
-  policeFileId?: string
+  category?: CaseFileCategory | null
+  policeCaseNumber?: string | null
+  chapter?: number | null
+  orderWithinChapter?: number | null
+  displayDate?: string | null
+  policeFileId?: string | null
 }
 
 const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   id: file.id,
-  name: file.name,
-  type: file.type,
-  size: file.size,
-  key: file.key,
+  name: file.name ?? '',
+  type: file.type ?? undefined,
+  size: file.size ?? undefined,
+  key: file.key ?? undefined,
   percent: 100,
   status: 'done',
   category: file.category,
@@ -61,7 +64,7 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   policeFileId: file.policeFileId,
 })
 
-export const useUploadFiles = (files?: CaseFile[]) => {
+export const useUploadFiles = (files?: CaseFile[] | null) => {
   const [uploadFiles, setUploadFiles] = useState<TUploadFile[]>(
     files?.map(mapCaseFileToUploadFile) ?? [],
   )
@@ -81,20 +84,26 @@ export const useUploadFiles = (files?: CaseFile[]) => {
     files: File[],
     category?: CaseFileCategory,
     policeCaseNumber?: string,
+    /**
+     * Use this to overwrite default file attributes, f.x.
+     * if you want to set a custom status or percent.
+     **/
+    overwriteDefaultFileAttributes?: Partial<TUploadFile>,
   ) => {
     // We generate an id for each file so that we find the file again when
     // updating the file's progress and onRetry.
     // Also we cannot spread File since it contains read-only properties.
     const uploadFiles: TUploadFile[] = files.map((file) => ({
-      id: `${file.name}-${uuid()}`,
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      percent: 1,
-      status: 'uploading',
-      category,
-      policeCaseNumber,
-      originalFileObj: file,
+      id: overwriteDefaultFileAttributes?.id ?? `${file.name}-${uuid()}`,
+      name: overwriteDefaultFileAttributes?.name ?? file.name,
+      type: overwriteDefaultFileAttributes?.type ?? file.type,
+      size: overwriteDefaultFileAttributes?.size ?? file.size,
+      percent: overwriteDefaultFileAttributes?.percent ?? 1,
+      status: overwriteDefaultFileAttributes?.status ?? 'uploading',
+      category: overwriteDefaultFileAttributes?.category ?? category,
+      policeCaseNumber:
+        overwriteDefaultFileAttributes?.policeCaseNumber ?? policeCaseNumber,
+      originalFileObj: overwriteDefaultFileAttributes?.originalFileObj ?? file,
     }))
 
     setUploadFiles((previous) => [...uploadFiles, ...previous])
@@ -226,11 +235,12 @@ const useS3Upload = (caseId: string) => {
   const handleUpload = useCallback(
     async (
       files: TUploadFile[],
-      callback: (file: TUploadFile, newId?: string) => void,
+      updateFile: (file: TUploadFile, newId?: string) => void,
     ) => {
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPost
         : createPresignedPost
+      const filesUploaded = []
 
       const getPresignedPost = async (file: TUploadFile) => {
         const { data } = await mutation({
@@ -255,12 +265,12 @@ const useS3Upload = (caseId: string) => {
         return presignedPost
       }
 
-      files.forEach(async (file) => {
+      for (const file of files) {
         try {
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            callback({ ...file, percent })
+            updateFile({ ...file, percent })
           })
 
           const newFileId = await addFileToCaseState({
@@ -268,7 +278,7 @@ const useS3Upload = (caseId: string) => {
             key: presignedPost.fields.key,
           })
 
-          callback(
+          updateFile(
             {
               ...file,
               key: presignedPost.fields.key,
@@ -278,11 +288,15 @@ const useS3Upload = (caseId: string) => {
             // We need to set the id so we are able to delete the file later
             newFileId,
           )
+
+          filesUploaded.push(file)
         } catch (e) {
           toast.error(formatMessage(strings.uploadFailed))
-          callback({ ...file, status: 'error' })
+          updateFile({ ...file, status: 'error' })
         }
-      })
+      }
+
+      return filesUploaded.length === files.length
     },
     [
       limitedAccess,

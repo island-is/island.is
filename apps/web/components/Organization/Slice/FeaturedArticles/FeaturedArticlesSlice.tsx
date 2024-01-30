@@ -2,7 +2,6 @@ import React from 'react'
 
 import {
   Box,
-  BoxProps,
   Button,
   FocusableBox,
   Link,
@@ -10,8 +9,8 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
-
-import { FeaturedArticles, Article } from '@island.is/web/graphql/schema'
+import { BorderAbove } from '@island.is/web/components'
+import { Article, FeaturedArticles } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { hasProcessEntries } from '@island.is/web/utils/article'
@@ -45,19 +44,11 @@ export const FeaturedArticlesSlice: React.FC<
         })
       : slice.resolvedArticles
 
-  const borderProps: BoxProps = slice.hasBorderAbove
-    ? {
-        borderTopWidth: 'standard',
-        borderColor: 'standard',
-        paddingTop: [8, 6, 8],
-        paddingBottom: [8, 6, 6],
-      }
-    : {}
-
   return (
     (!!slice.articles.length || !!slice.resolvedArticles.length) && (
       <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
-        <Box {...borderProps}>
+        {slice.hasBorderAbove && <BorderAbove />}
+        <Box>
           <Text as="h2" variant="h3" paddingBottom={3} id={labelId}>
             {slice.title}
           </Text>

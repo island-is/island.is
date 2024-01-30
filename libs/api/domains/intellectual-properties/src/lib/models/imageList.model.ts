@@ -7,5 +7,5 @@ export class ImageList {
   count!: number
 
   @Field(() => [Image])
-  images!: Array<Image> | null
+  images!: Array<Image>
 }

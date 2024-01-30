@@ -35,7 +35,6 @@ import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
-import { isPaymentRequired } from '../utils/isPaymentRequired'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {

@@ -7,8 +7,12 @@ import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseState,
-  InstitutionType,
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
@@ -16,9 +20,10 @@ import {
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
+import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
-  useCaseLazyQuery,
-  useLimitedAccessCaseLazyQuery,
+  CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -69,14 +74,20 @@ const useCaseList = () => {
     let routeTo = null
     const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
-    if (
+    if (isDefenceUser(user)) {
+      if (isIndictmentCase(caseToOpen.type)) {
+        routeTo = DEFENDER_INDICTMENT_ROUTE
+      } else {
+        routeTo = DEFENDER_ROUTE
+      }
+    } else if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      } else if (user?.institution?.type === InstitutionType.COURT_OF_APPEALS) {
+      } else if (isCourtOfAppealsUser(user)) {
         if (
           findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen) ===
           constants.courtOfAppealRoutes[1]
@@ -133,13 +144,15 @@ const useCaseList = () => {
     (id: string) => {
       Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
 
-      setClickedCase([id, false])
+      if (clickedCase[0] !== id) {
+        setClickedCase([id, false])
 
-      timeouts.push(
-        setTimeout(() => {
-          setClickedCase([id, true])
-        }, 2000),
-      )
+        timeouts.push(
+          setTimeout(() => {
+            setClickedCase([id, true])
+          }, 2000),
+        )
+      }
 
       const getCaseToOpen = (id: string) => {
         limitedAccess
@@ -151,7 +164,7 @@ const useCaseList = () => {
         isTransitioningCase ||
         isSendingNotification ||
         clickedCase[0] === id ||
-        !user?.role
+        limitedAccess === undefined
       ) {
         return
       }
@@ -166,7 +179,6 @@ const useCaseList = () => {
       isTransitioningCase,
       limitedAccess,
       timeouts,
-      user?.role,
     ],
   )
 

@@ -1,0 +1,6 @@
+mutation UnsignAdmin($input: SignatureCollectionIdInput!) {
+  signatureCollectionAdminUnsign(input: $input) {
+    success
+    reasons
+  }
+}

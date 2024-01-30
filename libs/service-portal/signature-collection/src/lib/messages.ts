@@ -2,24 +2,25 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   pageTitle: {
-    id: 'sp.signatureCollection.information:title',
+    id: 'sp.signatureCollection:title',
     defaultMessage: 'Meðmælalistar',
     description: '',
   },
   pageDescription: {
-    id: 'sp.signatureCollection:description#markdown',
+    id: 'sp.signatureCollection:description',
     defaultMessage:
       'Upplýsingar um það hvernig umboð er veitt - hvernig aðgangsstýringarnar virka. Linkur á aðgangsstýringu.',
     description: '',
   },
-  createListButton: {
-    id: 'sp.signatureCollection:createListButton',
-    defaultMessage: 'Stofna meðmælalista',
+  pageDescriptionSignee: {
+    id: 'sp.signatureCollection:pageDescriptionSignee',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
     description: '',
   },
-  myListsHeader: {
-    id: 'sp.signatureCollection:myListsHeader',
-    defaultMessage: 'Listar stofnaðir af mér',
+  createListButton: {
+    id: 'sp.signatureCollection:createListButton',
+    defaultMessage: 'Stofna söfnun',
     description: '',
   },
   collectionTitle: {
@@ -27,41 +28,91 @@ export const m = defineMessages({
     defaultMessage: 'Forsetakosningar 2024',
     description: '',
   },
+  myListsDescription: {
+    id: 'sp.signatureCollection:myListsDescription',
+    defaultMessage: 'Yfirlit safnanna sem þú hefur stofnað:',
+    description: '',
+  },
+  copyLinkButton: {
+    id: 'sp.signatureCollection:copyLinkButton',
+    defaultMessage: 'Afrita hlekk',
+    description: '',
+  },
+  copyLinkDescription: {
+    id: 'sp.signatureCollection:copyLinkDescription',
+    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila.',
+    description: '',
+  },
+  copyLinkSuccess: {
+    id: 'sp.signatureCollection:copyLinkSuccess',
+    defaultMessage: 'Hlekkur afritaður',
+    description: '',
+  },
+  copyLinkError: {
+    id: 'sp.signatureCollection:copyLinkError',
+    defaultMessage: 'Ekki tókst að afrita hlekk',
+    description: '',
+  },
+  endTime: {
+    id: 'sp.signatureCollection:endTime',
+    defaultMessage: 'Lokadagur:',
+    description: '',
+  },
   viewList: {
     id: 'sp.signatureCollection:viewList',
     defaultMessage: 'Skoða nánar',
+    description: '',
+  },
+  collectionClosed: {
+    id: 'sp.signatureCollection:collectionClosed',
+    defaultMessage: 'Söfnuninni lokið',
+    description: '',
+  },
+  collectionMaxReached: {
+    id: 'sp.signatureCollection:collectionMaxReached',
+    defaultMessage: 'Hámarki meðmæla náð',
     description: '',
   },
 
   /* Signee View */
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
-    defaultMessage: 'Listar sem ég hef mælt með',
+    defaultMessage: 'Frambjóðandi sem þú hefur mælt með',
     description: '',
   },
   mySigneeListsByAreaHeader: {
     id: 'sp.signatureCollection:mySigneeListsByAreaHeader',
-    defaultMessage: 'Listar á mínu svæði sem hægt er að mæla með',
+    defaultMessage: 'Frambjóðandur á þínu svæði sem hægt er að mæla með',
     description: '',
   },
   signList: {
     id: 'sp.signatureCollection:signList',
-    defaultMessage: 'Mæla með lista',
+    defaultMessage: 'Mæla með frambjóðanda',
     description: '',
   },
   unSignList: {
     id: 'sp.signatureCollection:unSignList',
-    defaultMessage: 'Draga meðmæli mitt til baka',
+    defaultMessage: 'Draga meðmæli til baka',
     description: '',
   },
   unSignModalMessage: {
-    id: 'sp.signatureCollection:modalMessage',
-    defaultMessage: 'Þú ert að fara að draga meðmæli þitt til baka. Ertu viss?',
+    id: 'sp.signatureCollection:unSignModalMessage',
+    defaultMessage: 'Þú ert að fara að draga meðmælin þín til baka. Ertu viss?',
     description: '',
   },
   unSignModalConfirmButton: {
     id: 'sp.signatureCollection:unSignModalButton',
     defaultMessage: 'Já, draga meðmæli tilbaka',
+    description: '',
+  },
+  unSignSuccess: {
+    id: 'sp.signatureCollection:unSignSuccess',
+    defaultMessage: 'Tókst að draga meðmæli til baka',
+    description: '',
+  },
+  unSignError: {
+    id: 'sp.signatureCollection:unSignError',
+    defaultMessage: 'Tókst ekki að draga meðmæli til baka',
     description: '',
   },
 
@@ -72,7 +123,7 @@ export const m = defineMessages({
     description: '',
   },
   cancelCollectionModalMessage: {
-    id: 'sp.signatureCollection:modalMessage',
+    id: 'sp.signatureCollection:cancelCollectionModalMessage',
     defaultMessage: 'Þú ert að fara að hætta við söfnun meðmæla. Ertu viss?',
     description: '',
   },
@@ -84,6 +135,11 @@ export const m = defineMessages({
   cancelCollectionModalToastError: {
     id: 'sp.signatureCollection:modalToastError',
     defaultMessage: 'Ekki tókst að hætta við söfnun meðmæla',
+    description: '',
+  },
+  cancelCollectionModalToastSuccess: {
+    id: 'sp.signatureCollection:cancelCollectionModalToastSuccess',
+    defaultMessage: 'Tókst að hætta við söfnun meðmæla',
     description: '',
   },
 
@@ -151,54 +207,6 @@ export const m = defineMessages({
   signeeAddress: {
     id: 'sp.signatureCollection:signeeAddress',
     defaultMessage: 'Heimilisfang',
-    description: '',
-  },
-
-  /* File Upload */
-  uploadFile: {
-    id: 'sp.signatureCollection:uploadFile',
-    defaultMessage: 'Skila einning meðmælum á blaði',
-    description: '',
-  },
-  uploadFileDescription: {
-    id: 'sp.signatureCollection:uploadFileDescription#markdown',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non felis augue. Integer erat sapien, auctor ac porttitor ut, lacinia quis erat. Vivamus quis sollicitudin turpis. Aliquam erat volutpat. Donec ut ante malesuada, varius erat ut, scelerisque sapien. Sed in eros at purus sollicitudin feugiat non non arcu. Nullam at sapien eu nisi tempor pulvinar ut sed nibh. Sed ex libero, vestibulum vitae eros sit amet, sagittis cursus lacus.',
-    description: '',
-  },
-  uploadHeader: {
-    id: 'sp.signatureCollection:uploadHeader',
-    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
-    description: '',
-  },
-  uploadText: {
-    id: 'sp.signatureCollection:uploadText',
-    defaultMessage: 'Tekið er við skjölum með endingu: .xlsx, .xls',
-    description: '',
-  },
-  uploadButton: {
-    id: 'sp.signatureCollection:uploadButton',
-    defaultMessage: 'Velja skjöl',
-    description: '',
-  },
-  uploadResultsHeader: {
-    id: 'sp.signatureCollection:uploadResultsHeader',
-    defaultMessage: 'Niðurstöður',
-    description: '',
-  },
-  nationalIdsSuccess: {
-    id: 'sp.signatureCollection:nationalIdsSuccess',
-    defaultMessage: 'Kennitölur sem tókst að hlaða upp',
-    description: '',
-  },
-  nationalIdsError: {
-    id: 'sp.signatureCollection:nationalIdsError',
-    defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
-    description: '',
-  },
-  tempMessage: {
-    id: 'sp.signatureCollection:tempMessage',
-    defaultMessage: 'Tempus facilisis',
     description: '',
   },
 })

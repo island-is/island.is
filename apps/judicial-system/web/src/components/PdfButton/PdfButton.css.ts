@@ -10,7 +10,7 @@ export const pdfRow = style({
   width: '100%',
   minHeight: `${theme.spacing[10]}px`,
   boxShadow: `inset 0 -1px 0 0 ${theme.color.blue200}`,
-  padding: `0 ${theme.spacing[2]}px`,
+  padding: theme.spacing[2],
 })
 
 export const cursor = style({ cursor: 'pointer' })
@@ -22,8 +22,9 @@ export const disabled = style({
 })
 
 export const fileNameContainer = style({
-  flexBasis: '50%',
   marginRight: theme.spacing[2],
+  wordBreak: 'break-all',
+
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       flexBasis: '70%',

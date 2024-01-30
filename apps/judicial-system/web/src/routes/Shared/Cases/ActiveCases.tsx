@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useLocalStorage } from 'react-use'
 import cn from 'classnames'
 import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
@@ -25,11 +26,13 @@ import {
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
+  TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
-import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import {
+  ColumnCaseType,
+  SortButton,
+} from '@island.is/judicial-system-web/src/components/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -39,8 +42,10 @@ import {
   sortableTableColumn,
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
-import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
-import useCaseList from '@island.is/judicial-system-web/src/utils/hooks/useCaseList'
+import {
+  useCaseList,
+  useViewport,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
@@ -68,13 +73,15 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { width } = useViewport()
+  const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(
+    'sortConfig',
+    {
+      column: 'courtDate',
+      direction: 'descending',
+    },
+  )
   const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
     useCaseList()
-
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'createdAt',
-    direction: 'descending',
-  })
 
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
@@ -166,7 +173,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('defendant')}
               sortAsc={getClassNamesFor('defendant') === 'ascending'}
               sortDes={getClassNamesFor('defendant') === 'descending'}
-              isActive={sortConfig.column === 'defendant'}
+              isActive={sortConfig?.column === 'defendant'}
               dataTestid="accusedNameSortButton"
             />
           </th>
@@ -181,7 +188,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('createdAt')}
               sortAsc={getClassNamesFor('createdAt') === 'ascending'}
               sortDes={getClassNamesFor('createdAt') === 'descending'}
-              isActive={sortConfig.column === 'createdAt'}
+              isActive={sortConfig?.column === 'createdAt'}
               dataTestid="createdAtSortButton"
             />
           </th>
@@ -200,7 +207,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('courtDate')}
               sortAsc={getClassNamesFor('courtDate') === 'ascending'}
               sortDes={getClassNamesFor('courtDate') === 'descending'}
-              isActive={sortConfig.column === 'courtDate'}
+              isActive={sortConfig?.column === 'courtDate'}
             />
           </th>
           <th></th>
@@ -248,13 +255,13 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         as="span"
                         variant="small"
                         color="dark400"
-                        title={c.policeCaseNumbers.join(', ')}
+                        title={c.policeCaseNumbers?.join(', ')}
                       >
                         {displayFirstPlusRemaining(c.policeCaseNumbers)}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span" title={c.policeCaseNumbers.join(', ')}>
+                    <Text as="span" title={c.policeCaseNumbers?.join(', ')}>
                       {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
                     </Text>
                   )}
@@ -298,13 +305,16 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 </td>
                 <td className={styles.td}>
                   <Text as="span">
-                    {format(parseISO(c.created), 'd.M.y', {
+                    {format(parseISO(c.created ?? ''), 'd.M.y', {
                       locale: localeIS,
                     })}
                   </Text>
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Box marginRight={1} marginBottom={1}>
+                  <Box
+                    marginRight={c.appealState ? 1 : 0}
+                    marginBottom={c.appealState ? 1 : 0}
+                  >
                     <TagCaseState
                       caseState={c.state}
                       caseType={c.type}
@@ -313,7 +323,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                       courtDate={c.courtDate}
                     />
                   </Box>
-
                   {c.appealState && (
                     <TagAppealState
                       appealState={c.appealState}

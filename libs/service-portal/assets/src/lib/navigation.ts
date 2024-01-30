@@ -6,7 +6,7 @@ export const assetsNavigation: PortalNavigationItem = {
   name: m.assets,
   path: AssetsPaths.AssetsRoot,
   icon: {
-    icon: 'home',
+    icon: 'homeWithCar',
   },
   children: [
     {
@@ -57,7 +57,6 @@ export const assetsNavigation: PortalNavigationItem = {
     {
       name: m.intellectualProperties,
       path: AssetsPaths.AssetsIntellectualProperties,
-      navHide: true,
       children: [
         {
           name: 'id',

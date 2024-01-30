@@ -227,8 +227,9 @@ export const slices = gql`
     image {
       ...ImageFields
     }
-    html {
+    content {
       ...HtmlFields
+      ...FaqListFields
     }
   }
 
@@ -606,27 +607,6 @@ export const slices = gql`
     }
   }
 
-  fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
-    id
-    title
-    lifeEventPageList {
-      id
-      title
-      shortTitle
-      slug
-      pageType
-      tinyThumbnail {
-        url
-        title
-      }
-      thumbnail {
-        url
-        title
-      }
-      intro
-    }
-  }
-
   fragment SidebarCardFields on SidebarCard {
     id
     title
@@ -836,7 +816,6 @@ export const slices = gql`
     ...ImageFields
     ...AssetFields
     ...EmbeddedVideoFields
-    ...SectionWithImageFields
     ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
@@ -855,7 +834,6 @@ export const slices = gql`
     ...StepperFields
     ...GraphCardFields
     ...AnchorPageListSliceFields
-    ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
     ...TableSliceFields
@@ -870,6 +848,7 @@ export const slices = gql`
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+    ...SectionWithImageFields
     ...FeaturedSupportQNAsFields
   }
   ${processEntryFields}

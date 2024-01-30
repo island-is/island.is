@@ -39,7 +39,7 @@ const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
   const canCaseFilesBeOpened = () => {
     const canProsecutorOpen =
       isProsecutionUser(user) &&
-      user.institution?.id === workingCase.creatingProsecutor?.institution?.id
+      user.institution?.id === workingCase.prosecutorsOffice?.id
 
     return (
       canProsecutorOpen ||
@@ -102,7 +102,7 @@ const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
         caseId={workingCase.id}
         files={caseFiles}
         canOpenFiles={canCaseFilesBeOpened()}
-        hideIcons={isProsecutionUser(user)}
+        hideIcons={!isDistrictCourtUser(user)}
         handleRetryClick={(id: string) =>
           uploadFilesToCourt([
             caseFiles[caseFiles.findIndex((file) => file.id === id)],

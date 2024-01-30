@@ -1,4 +1,5 @@
 import { PortalModule } from '@island.is/portals/core'
+import { restrictionsModule } from '@island.is/service-portal/restrictions'
 import { sessionsModule } from '@island.is/service-portal/sessions'
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { assetsModule } from '@island.is/service-portal/assets'
@@ -17,29 +18,33 @@ import { indexModule } from '../screens/Dashboard/module'
 import { consentModule } from '@island.is/service-portal/consent'
 import { occupationalLicensesModule } from '@island.is/service-portal/occupational-licenses'
 import { signatureCollectionModule } from '@island.is/service-portal/signature-collection'
+import { socialInsuranceMaintenanceModule } from '@island.is/service-portal/social-insurance-maintenance'
+
 /**
  * NOTE:
  * Modules should only be here if they are production ready
  * or if they are ready for beta testing. Modules that are ready
- * for beta testing should be feature flagged.
+ * for beta testing should be featured flagged.
  */
 export const modules: PortalModule[] = [
+  airDiscountModule,
   applicationsModule,
   assetsModule,
-  documentsModule,
-  educationModule,
-  educationCareerModule,
-  occupationalLicensesModule,
-  educationStudentAssessmentModule,
+  consentModule,
   delegationsModule,
+  documentsModule,
+  educationCareerModule,
+  educationModule,
+  educationStudentAssessmentModule,
   financeModule,
-  informationModule,
-  petitionsModule,
-  signatureCollectionModule,
-  airDiscountModule,
-  licensesModule,
-  sessionsModule,
   healthModule,
   indexModule,
-  consentModule,
+  informationModule,
+  licensesModule,
+  occupationalLicensesModule,
+  petitionsModule,
+  restrictionsModule,
+  sessionsModule,
+  socialInsuranceMaintenanceModule,
+  signatureCollectionModule,
 ]

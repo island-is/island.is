@@ -1,6 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
+import { SmsService } from '@island.is/nova-sms'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -27,21 +28,25 @@ describe('InternalNotificationController - Send appeal received by court notific
   const caseId = uuid()
   const prosecutorName = uuid()
   const prosecutorEmail = uuid()
+  const prosecutorMobileNumber = uuid()
   const defenderName = uuid()
   const defenderEmail = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
 
   let mockEmailService: EmailService
+  let mockSmsService: SmsService
+
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppealsEmail}"}`
 
-    const { emailService, internalNotificationController } =
+    const { emailService, smsService, internalNotificationController } =
       await createTestingNotificationModule()
 
     mockEmailService = emailService
+    mockSmsService = smsService
 
     givenWhenThen = async (defenderNationalId?: string) => {
       const then = {} as Then
@@ -51,7 +56,11 @@ describe('InternalNotificationController - Send appeal received by court notific
           caseId,
           {
             id: caseId,
-            prosecutor: { name: prosecutorName, email: prosecutorEmail },
+            prosecutor: {
+              name: prosecutorName,
+              email: prosecutorEmail,
+              mobileNumber: prosecutorMobileNumber,
+            },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
             defenderName: defenderName,
@@ -70,7 +79,7 @@ describe('InternalNotificationController - Send appeal received by court notific
     }
   })
 
-  describe('notification sent', () => {
+  describe('appeal is marked as received by court', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -114,6 +123,16 @@ describe('InternalNotificationController - Send appeal received by court notific
         }),
       )
       expect(then.result).toEqual({ delivered: true })
+    })
+
+    it('should send sms notification to prosecutor', () => {
+      expect(mockSmsService.sendSms).toHaveBeenCalledWith(
+        [prosecutorMobileNumber],
+        `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
+          getStatementDeadline(receivedDate),
+          'PPPp',
+        )}. Sjá nánar á rettarvorslugatt.island.is`,
+      )
     })
   })
 

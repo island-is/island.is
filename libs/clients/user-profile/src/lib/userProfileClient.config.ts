@@ -8,6 +8,7 @@ const schema = z.object({
     nodes: z.array(z.string()),
     ssl: z.boolean(),
   }),
+  scope: z.array(z.string()),
 })
 
 export const UserProfileClientConfig = defineConfig({
@@ -26,6 +27,7 @@ export const UserProfileClientConfig = defineConfig({
         nodes: env.optionalJSON('USER_PROFILE_CLIENT_REDIS_NODES') ?? [],
         ssl: env.optionalJSON('USER_PROFILE_CLIENT_REDIS_SSL', false) ?? true,
       },
+      scope: env.optionalJSON<string[]>('USER_PROFILE_CLIENT_SCOPE') ?? [],
     }
   },
 })

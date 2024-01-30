@@ -230,17 +230,8 @@ const Search: Screen<CategoryProps> = ({
     switch (item.__typename) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      case 'AnchorPage':
-        if (item.pageType === AnchorPageType.LIFE_EVENT) {
-          labels.push(n('lifeEvent'))
-        }
-        break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       case 'LifeEventPage':
-        if (item.pageType === AnchorPageType.LIFE_EVENT) {
-          labels.push(n('lifeEvent'))
-        }
+        labels.push(n('lifeEvent'))
         break
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
@@ -342,8 +333,7 @@ const Search: Screen<CategoryProps> = ({
 
   const getItemLink = (item: SearchEntryType) => {
     if (
-      (item.__typename === 'AnchorPage' ||
-        item.__typename === 'LifeEventPage') &&
+      item.__typename === 'AnchorPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
@@ -364,8 +354,7 @@ const Search: Screen<CategoryProps> = ({
 
   const getItemImages = (item: SearchEntryType) => {
     if (
-      (item.__typename === 'AnchorPage' ||
-        item.__typename === 'LifeEventPage') &&
+      item.__typename === 'AnchorPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return {

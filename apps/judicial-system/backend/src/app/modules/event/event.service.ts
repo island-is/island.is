@@ -8,7 +8,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
@@ -98,7 +98,7 @@ export class EventService {
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
           : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
-      const typeText = `${capitalize(caseTypes[theCase.type])}${
+      const typeText = `${capitalize(formatCaseType(theCase.type))}${
         isIndictmentCase(theCase.type)
           ? `:(${readableIndictmentSubtypes(
               theCase.policeCaseNumbers,
@@ -107,9 +107,7 @@ export class EventService {
           : ''
       } *${theCase.id}*`
       const prosecutionText = `${
-        theCase.creatingProsecutor?.institution
-          ? `${theCase.creatingProsecutor?.institution?.name} `
-          : ''
+        theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
       }*${theCase.policeCaseNumbers.join(', ')}*`
       const courtText = theCase.court
         ? `\n>${theCase.court.name} ${

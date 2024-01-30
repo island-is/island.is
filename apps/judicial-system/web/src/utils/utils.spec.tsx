@@ -4,11 +4,11 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
+  Gender,
   Notification,
   NotificationType,
-} from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { Gender } from '../graphql/schema'
 import * as formatters from './formatters'
 import {
   getAppealEndDate,

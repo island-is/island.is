@@ -7,6 +7,7 @@ import {
   MachineCategoryApi,
   MachineHateoasDto,
   MachineOwnerChangeApi,
+  MachineSupervisorChangeApi,
   MachinesApi,
   MachinesDocumentApi,
   MachinesFriendlyHateaosDto,
@@ -15,9 +16,11 @@ import {
   MachineDto,
   ChangeMachineOwner,
   ConfirmOwnerChange,
+  SupervisorChange,
 } from './workMachines.types'
 import {
   apiChangeMachineOwnerToApiRequest,
+  apiChangeSupervisorToApiRequest,
   confirmChangeToApiRequest,
 } from './workMachines.utils'
 import { CustomMachineApi } from './providers'
@@ -30,6 +33,7 @@ export class WorkMachinesClientService {
     private readonly docApi: MachinesDocumentApi,
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
     private readonly machineCategoryApi: MachineCategoryApi,
+    private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -44,6 +48,12 @@ export class WorkMachinesClientService {
 
   private machineCategoryApiWithAuth(auth: Auth) {
     return this.machineCategoryApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineSupervisorChangeApiWithAuth(auth: Auth) {
+    return this.machineSupervisorChangeApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
   }
 
   getWorkMachines = (
@@ -125,5 +135,15 @@ export class WorkMachinesClientService {
     await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePut(
       input,
     )
+  }
+
+  async changeMachineSupervisor(
+    auth: Auth,
+    supervisorChange: SupervisorChange,
+  ) {
+    const input = apiChangeSupervisorToApiRequest(supervisorChange)
+    await this.machineSupervisorChangeApiWithAuth(
+      auth,
+    ).apiMachineSupervisorChangePost(input)
   }
 }

@@ -28,6 +28,7 @@ import {
 import { generateApplicationRejectedEmail } from './emailGenerators/applicationRejectedEmail'
 import { generateApplicationRejectedSms } from './smsGenerators/applicationRejectedSms'
 import {
+  ChangeMachineOwner,
   MachineDto,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
@@ -220,6 +221,47 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           answers,
           isPaymentRequired,
         )
+    //// on prod below
+    // 1. Validate payment
+
+    // 1a. Make sure a paymentUrl was created
+    const { paymentUrl, id: paymentId } = application.externalData.createCharge
+      .data as {
+      paymentUrl: string
+      id: string
+    }
+
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 1b. Make sure payment is fulfilled (has been paid)
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    const answers = application.answers as TransferOfMachineOwnershipAnswers
+    const machineId = answers.machine.id || answers.pickMachine.id
+    if (!machineId) {
+      throw new Error('Ekki er búið að velja vél')
+    }
+    const ownerChange: ChangeMachineOwner = {
+      applicationId: application.id,
+      machineId: machineId,
+      buyerNationalId: answers.buyer.nationalId,
+      sellerNationalId: answers.seller.nationalId,
+      delegateNationalId: auth.nationalId || answers.seller.nationalId,
+      dateOfOwnerChange: new Date(),
+      paymentId: paymentId,
+      phoneNumber: answers.buyer.phone?.replace(/\+\d{3}/, ''),
+      email: answers.buyer.email,
+    }
     await this.workMachineClientService.initiateOwnerChangeProcess(
       auth,
       ownerChange,
@@ -258,7 +300,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
     return recipientList
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
   async rejectApplication({
     application,
     auth,

@@ -13,10 +13,11 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
-  CaseTransition,
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
+import {
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonSystemUser,
@@ -34,8 +35,10 @@ import {
   AppealCaseFilesOverview,
   CaseDates,
   CaseFilesAccordionItem,
+  CaseTitleInfoAndTags,
   CommentsAccordionItem,
   Conclusion,
+  conclusion,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormContext,
@@ -52,12 +55,13 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
-import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import {
   CaseAppealDecision,
   CaseAppealState,
   CaseDecision,
+  CaseState,
+  CaseTransition,
   InstitutionType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
@@ -66,9 +70,9 @@ import {
 import {
   ReactSelectOption,
   TempCase as Case,
-  TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 import {
+  UpdateCase,
   useAppealAlertBanner,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -515,7 +519,7 @@ export const SignedVerdictOverview: React.FC = () => {
               data={[
                 {
                   title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers.map((n) => (
+                  value: workingCase.policeCaseNumbers?.map((n) => (
                     <Text key={n}>{n}</Text>
                   )),
                 },
@@ -525,7 +529,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),
@@ -533,18 +537,24 @@ export const SignedVerdictOverview: React.FC = () => {
                 },
                 {
                   title: formatMessage(core.prosecutorPerson),
-                  value: workingCase.prosecutor?.name,
+                  value: NameAndEmail(
+                    workingCase.prosecutor?.name,
+                    workingCase.prosecutor?.email,
+                  ),
                 },
                 {
                   title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
+                  value: NameAndEmail(
+                    workingCase.judge?.name,
+                    workingCase.judge?.email,
+                  ),
                 },
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
                   ? [
                       {
                         title: formatMessage(core.caseType),
-                        value: capitalize(caseTypes[workingCase.type]),
+                        value: capitalize(formatCaseType(workingCase.type)),
                       },
                     ]
                   : []),
@@ -552,7 +562,10 @@ export const SignedVerdictOverview: React.FC = () => {
                   ? [
                       {
                         title: formatMessage(core.registrar),
-                        value: workingCase.registrar?.name,
+                        value: NameAndEmail(
+                          workingCase.registrar?.name,
+                          workingCase.registrar?.email,
+                        ),
                       },
                     ]
                   : []),
@@ -657,8 +670,7 @@ export const SignedVerdictOverview: React.FC = () => {
           />
 
           {isProsecutionUser(user) &&
-            user?.institution?.id ===
-              workingCase.creatingProsecutor?.institution?.id &&
+            user?.institution?.id === workingCase.prosecutorsOffice?.id &&
             isRestrictionCase(workingCase.type) && (
               <ShareCase
                 selectedSharingInstitutionId={selectedSharingInstitutionId}

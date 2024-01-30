@@ -2,6 +2,131 @@
   "openapi": "3.0.1",
   "info": { "title": "MedmaeliRestAPI", "version": "1.0" },
   "paths": {
+    "/Frambod": {
+      "get": {
+        "tags": ["Frambod"],
+        "parameters": [
+          {
+            "name": "sofnunID",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FrambodBaseDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Frambod/{ID}": {
+      "get": {
+        "tags": ["Frambod"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FrambodBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Frambod/{ID}/Medmaelalistar": {
+      "get": {
+        "tags": ["Frambod"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Frambod/{ID}/RemoveFrambodUser": {
+      "post": {
+        "tags": ["Frambod"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FrambodBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Kosning": {
       "get": {
         "tags": ["Kosning"],
@@ -75,7 +200,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+                  "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
                 }
               }
             }
@@ -137,16 +262,16 @@
         "tags": ["Medmaelalistar"],
         "parameters": [
           {
-            "name": "sofnunID",
+            "name": "frambodID",
             "in": "query",
             "style": "form",
             "schema": { "type": "integer", "format": "int32" }
           },
           {
-            "name": "frambodKennitala",
+            "name": "sofnunID",
             "in": "query",
             "style": "form",
-            "schema": { "type": "string" }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "svaediID",
@@ -177,6 +302,39 @@
       }
     },
     "/Medmaelalistar/AddListar": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedmaelalistiRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/AddListarAdmin": {
       "post": {
         "tags": ["Medmaelalistar"],
         "requestBody": {
@@ -259,7 +417,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -344,6 +502,19 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/Token": {
+      "get": {
+        "tags": ["Medmaelalistar"],
+        "responses": {
+          "200": {
+            "description": "Success",
             "content": {
               "application/json": { "schema": { "type": "string" } }
             }
@@ -488,7 +659,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -553,7 +724,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
+                  }
                 }
               }
             }
@@ -653,9 +826,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
                 }
               }
             }
@@ -709,45 +880,6 @@
         }
       }
     },
-    "/Medmaelasofnun/{ID}/RemoveFrambod/{Kennitala}": {
-      "post": {
-        "tags": ["Medmaelasofnun"],
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": { "type": "integer", "format": "int32" }
-          },
-          {
-            "name": "Kennitala",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EinstaklingurBaseDTO"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
     "/Medmaelasofnun/{ID}/Compare": {
       "post": {
         "tags": ["Medmaelasofnun"],
@@ -774,7 +906,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -829,7 +961,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
               }
             }
@@ -933,6 +1065,7 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
           },
+          "frambod": { "$ref": "#/components/schemas/FrambodBaseDTO" },
           "medmaelalistar": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaelalistiBaseDTO" }
@@ -955,6 +1088,18 @@
           "aldur": { "type": "boolean" },
           "rikisfang": { "type": "boolean" },
           "buseta": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "FrambodBaseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "nafn": { "type": "string" },
+          "kennitala": { "type": "string" },
+          "simi": { "type": "string", "nullable": true },
+          "netfang": { "type": "string", "nullable": true },
+          "medmaelasofnunID": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
@@ -1032,7 +1177,7 @@
           "listaLokad": { "type": "boolean" },
           "fjoldiMedmaela": { "type": "integer", "format": "int32" },
           "svaedi": { "$ref": "#/components/schemas/SvaediDTO" },
-          "frambod": { "$ref": "#/components/schemas/EinstaklingurBaseDTO" },
+          "frambod": { "$ref": "#/components/schemas/FrambodBaseDTO" },
           "umbodList": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/EinstaklingurBaseDTO" }
@@ -1108,7 +1253,7 @@
           "kosning": { "$ref": "#/components/schemas/KosningBaseDTO" },
           "frambodList": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/EinstaklingurBaseDTO" }
+            "items": { "$ref": "#/components/schemas/FrambodBaseDTO" }
           },
           "svaedi": {
             "type": "array",
@@ -1161,6 +1306,11 @@
             "type": "array",
             "items": { "type": "string" }
           },
+          "medMedmaeliAnnarListi": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "medmaeliKenn": { "type": "array", "items": { "type": "string" } },
           "medmaeli": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
@@ -1191,14 +1341,19 @@
           "nafn": { "type": "string" },
           "svaediTegund": { "type": "integer", "format": "int32" },
           "svaediTegundLysing": { "type": "string" },
-          "fjoldi": { "type": "integer", "format": "int32" }
+          "fjoldi": { "type": "integer", "format": "int32" },
+          "fjoldiMax": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       }
     },
     "securitySchemes": {
-      "Bearer": { "type": "http", "scheme": "Bearer", "bearerFormat": "Bearer" }
+      "IslandIs": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Bearer"
+      }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [{ "IslandIs": [] }]
 }

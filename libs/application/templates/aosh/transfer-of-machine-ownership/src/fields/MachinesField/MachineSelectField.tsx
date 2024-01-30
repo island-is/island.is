@@ -9,6 +9,9 @@ import {
   CategoryCard,
   SkeletonLoader,
   InputError,
+  SkeletonLoader,
+  InputError,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { information, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -34,7 +37,6 @@ export const MachineSelectField: FC<
 
   const [isSelected, setSelected] = useState<boolean>(false)
   const currentMachine = currentMachineList[parseInt(machineValue, 10)]
-  console.log('currentMachineList', currentMachineList)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedMachine, setSelectedMachine] = useState<MachineDto | null>(
     currentMachine && currentMachine.regNumber ? currentMachine : null,
@@ -55,12 +57,12 @@ export const MachineSelectField: FC<
   )
 
   const onChange = (option: Option) => {
+    const currentMachine = currentMachineList[parseInt(option.value, 10)]
     setIsLoading(true)
     setSelected(true)
-    if (option.value) {
-      getMachineDetailsCallback(option.value)
+    if (currentMachine.id) {
+      getMachineDetailsCallback(currentMachine.id)
         .then((response) => {
-          console.log('response', response)
           setSelectedMachine(response.getWorkerMachineDetails)
           setValue(
             'machine.regNumber',
@@ -90,7 +92,7 @@ export const MachineSelectField: FC<
             'pickMachine.isValid',
             response.getWorkerMachineDetails.disabled ? undefined : true,
           )
-          setMachineId(response.getWorkerMachineDetails.id || '')
+          setMachineId(currentMachine?.id || '')
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -108,9 +110,9 @@ export const MachineSelectField: FC<
         id="pickMachine.id"
         name="pickMachine.id"
         onSelect={(option) => onChange(option as Option)}
-        options={currentMachineList.map((machine: MachineDto, index) => {
+        options={currentMachineList.map((machine, index) => {
           return {
-            value: machine.id,
+            value: index.toString(),
             label: `${machine.type}` || '',
           }
         })}
@@ -123,10 +125,11 @@ export const MachineSelectField: FC<
         ) : (
           <Box>
             {selectedMachine && (
-              <CategoryCard
-                colorScheme={selectedMachine.disabled ? 'red' : 'blue'}
+              <ActionCard
+                backgroundColor={selectedMachine.disabled ? 'red' : 'blue'}
                 heading={selectedMachine.regNumber || ''}
                 text={`${selectedMachine.type} ${selectedMachine.subType}`}
+                focused={true}
               />
             )}
             {selectedMachine && selectedMachine.disabled && (

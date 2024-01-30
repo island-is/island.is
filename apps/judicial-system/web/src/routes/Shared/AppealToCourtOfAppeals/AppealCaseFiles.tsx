@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -9,6 +9,7 @@ import {
   CaseAppealDecision,
   CaseFileCategory,
   isDefenceUser,
+  isProsecutionUser,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -23,6 +24,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   useCase,
@@ -32,6 +34,11 @@ import {
 
 import { strings } from './AppealCaseFiles.strings'
 
+interface UploadState {
+  isUploading: boolean
+  error: boolean
+}
+
 const AppealFiles = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -39,13 +46,16 @@ const AppealFiles = () => {
   const router = useRouter()
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
-  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
-    useUploadFiles(workingCase.caseFiles)
-
-  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
-    workingCase.id,
+  const { uploadFiles, addUploadFiles, removeUploadFile } = useUploadFiles(
+    workingCase.caseFiles,
   )
+
+  const { handleUpload } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
+  const [uploadState, setUploadState] = useState<UploadState>({
+    isUploading: false,
+    error: false,
+  })
 
   const appealCaseFilesType = isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
@@ -68,6 +78,34 @@ const AppealFiles = () => {
       ? constants.DEFENDER_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
+
+  const newFiles = uploadFiles.filter((file) => {
+    return (
+      workingCase.caseFiles?.find((caseFile) => caseFile.id === file.id) ===
+      undefined
+    )
+  })
+
+  const handleNextButtonClick = useCallback(async () => {
+    setUploadState({ isUploading: true, error: false })
+
+    const uploadSuccess = await handleUpload(newFiles, () => {
+      // Do nothing
+    })
+
+    if (!uploadSuccess) {
+      setUploadState({ isUploading: false, error: true })
+      return
+    }
+
+    await sendNotification(
+      workingCase.id,
+      NotificationType.APPEAL_CASE_FILES_UPDATED,
+    )
+
+    setVisibleModal(true)
+    setUploadState({ isUploading: false, error: false })
+  }, [handleUpload, newFiles, sendNotification, workingCase.id])
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -109,20 +147,28 @@ const AppealFiles = () => {
             </Text>
           )}
         </Box>
-
-        <Box component="section" marginBottom={10}>
+        <Box
+          component="section"
+          marginBottom={isProsecutionUser(user) ? 5 : 10}
+        >
           <SectionHeading
             title={formatMessage(strings.appealCaseFilesTitle)}
             marginBottom={1}
           />
-          <Text marginBottom={3}>
+          <Text marginBottom={3} whiteSpace="pre">
             {formatMessage(strings.appealCaseFilesSubtitle)}
+            {'\n'}
+            {!isDefenceUser(user) &&
+              `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
             fileList={uploadFiles.filter(
               (file) =>
                 file.category &&
-                caseFilesTypesToDisplay.includes(file.category),
+                caseFilesTypesToDisplay.includes(file.category) &&
+                workingCase.caseFiles?.find(
+                  (caseFile) => caseFile.id === file.id,
+                ) === undefined,
             )}
             accept={'application/pdf'}
             header={formatMessage(core.uploadBoxTitle)}
@@ -130,30 +176,39 @@ const AppealFiles = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) =>
-              handleUpload(
-                addUploadFiles(files, appealCaseFilesType),
-                updateUploadFile,
-              )
-            }
-            onRemove={(file) => handleRemove(file, removeUploadFile)}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
+            onChange={(files) => {
+              setUploadState({ isUploading: false, error: false })
+              addUploadFiles(files, appealCaseFilesType, undefined, {
+                status: 'done',
+                percent: 100,
+              })
+            }}
+            onRemove={(file) => removeUploadFile(file)}
           />
         </Box>
+        {isProsecutionUser(user) && (
+          <Box component="section" marginBottom={10}>
+            <RequestAppealRulingNotToBePublishedCheckbox />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={async () => {
-            sendNotification(
-              workingCase.id,
-              NotificationType.APPEAL_CASE_FILES_UPDATED,
-            )
-
-            setVisibleModal(true)
-          }}
-          nextButtonText={formatMessage(strings.nextButtonText)}
+          onNextButtonClick={handleNextButtonClick}
+          nextButtonText={formatMessage(
+            uploadState.error
+              ? strings.uploadFailedNextButtonText
+              : strings.nextButtonText,
+          )}
           nextButtonIcon={undefined}
+          nextIsLoading={uploadState.isUploading}
+          nextIsDisabled={newFiles.length === 0}
+          nextButtonColorScheme={
+            uploadState.error && !uploadState.isUploading && newFiles.length > 0
+              ? 'destructive'
+              : 'default'
+          }
         />
       </FormContentContainer>
       {visibleModal === true && (

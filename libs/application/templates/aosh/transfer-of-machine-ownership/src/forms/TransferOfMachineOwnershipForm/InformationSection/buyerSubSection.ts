@@ -3,11 +3,9 @@ import {
   buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
-  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { conclusion, information } from '../../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
+import { information } from '../../../lib/messages'
 
 export const buyerSubSection = buildSubSection({
   id: 'buyer',
@@ -36,6 +34,7 @@ export const buyerSubSection = buildSubSection({
           width: 'half',
           required: true,
         }),
+        // for skip payment
         buildSubmitField({
           id: 'submit',
           placement: 'footer',

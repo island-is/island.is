@@ -13,13 +13,9 @@ import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import {
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -44,7 +40,12 @@ import {
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import {
+  CaseState,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
@@ -156,7 +157,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },
@@ -174,13 +175,16 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                value: `${workingCase.prosecutorsOffice?.name}`,
               },
               ...(workingCase.judge
                 ? [
                     {
                       title: formatMessage(core.judge),
-                      value: workingCase.judge.name,
+                      value: NameAndEmail(
+                        workingCase.judge?.name,
+                        workingCase.judge?.email,
+                      ),
                     },
                   ]
                 : []),
@@ -198,17 +202,23 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 ? [
                     {
                       title: formatMessage(core.registrar),
-                      value: workingCase.registrar.name,
+                      value: NameAndEmail(
+                        workingCase.registrar?.name,
+                        workingCase.registrar?.email,
+                      ),
                     },
                   ]
                 : []),
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: workingCase.prosecutor?.name,
+                value: NameAndEmail(
+                  workingCase.prosecutor?.name,
+                  workingCase.prosecutor?.email,
+                ),
               },
               {
                 title: formatMessage(core.caseType),
-                value: capitalize(caseTypes[workingCase.type]),
+                value: capitalize(formatCaseType(workingCase.type)),
               },
               ...(workingCase.courtDate
                 ? [

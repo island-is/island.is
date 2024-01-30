@@ -1,8 +1,4 @@
-import {
-  buildSection,
-  buildSubSection,
-  buildSubmitField,
-} from '@island.is/application/core'
+import { buildSection } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { sellerSubSection } from './sellerSubSection'
 import { buyerSubSection } from './buyerSubSection'

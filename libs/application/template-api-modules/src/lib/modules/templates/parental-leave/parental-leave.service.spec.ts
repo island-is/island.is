@@ -474,9 +474,9 @@ describe('ParentalLeaveService', () => {
   describe('sendApplication', () => {
     it('should send an email if applicant is employed by an employer and is not reciving benefits', async () => {
       const application = createApplication()
-      set(application.answers, 'isSelfEmployed', NO)
+      set(application.answers, 'employment.isSelfEmployed', NO)
       set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
-      set(application.answers, 'isReceivingUnemploymentBenefits', NO)
+      set(application.answers, 'employment.isReceivingUnemploymentBenefits', NO)
       const mockedSendEmail = jest.fn()
 
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
@@ -500,9 +500,13 @@ describe('ParentalLeaveService', () => {
 
     it('should not send an email if applicant is reciving benefits', async () => {
       const application = createApplication()
-      set(application.answers, 'isSelfEmployed', NO)
+      set(application.answers, 'employment.isSelfEmployed', NO)
       set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
-      set(application.answers, 'isReceivingUnemploymentBenefits', YES)
+      set(
+        application.answers,
+        'employment.isReceivingUnemploymentBenefits',
+        YES,
+      )
       const mockedSendEmail = jest.fn()
 
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
@@ -526,7 +530,7 @@ describe('ParentalLeaveService', () => {
 
     it('should not send an email if applicant is self employed', async () => {
       const application = createApplication()
-      set(application.answers, 'isSelfEmployed', YES)
+      set(application.answers, 'employment.isSelfEmployed', YES)
 
       const mockedSendEmail = jest.fn()
 

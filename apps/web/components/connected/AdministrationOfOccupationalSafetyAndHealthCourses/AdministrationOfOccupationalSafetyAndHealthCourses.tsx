@@ -9,9 +9,11 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { BorderAbove } from '@island.is/web/components'
 import { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { extractHeadingLevels } from '@island.is/web/utils/navigation'
 
 import { GET_ADMINISTRATION_OF_SAFETY_AND_HEALTH_COURSES_QUERY } from './queries'
 import { getCurrencyString, parseDateString } from './utils'
@@ -31,6 +33,10 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
 }: AdministrationOfOccupationalSafetyAndHealthCoursesProps) => {
   const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
+
+  const title = slice.json?.title ?? null
+  const hasBorderAbove = slice.configJson?.hasBorderAbove ?? false
+  const { titleHeading } = extractHeadingLevels(slice.configJson ?? {})
 
   const [listState, setListState] = useState<ListState>('loading')
   const [courses, setCourses] = useState<
@@ -74,7 +80,13 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
   })
 
   return (
-    <Box>
+    <Box id={slice.id}>
+      {hasBorderAbove && <BorderAbove />}
+      {title && (
+        <Text variant="h2" as={titleHeading}>
+          {title}
+        </Text>
+      )}
       {listState === 'loading' && (
         <Box
           display="flex"

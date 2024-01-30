@@ -11,7 +11,6 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  CurrentVehiclesApi,
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -25,8 +24,7 @@ import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 
 import { Features } from '@island.is/feature-flags'
-import unset from 'lodash/unset'
-import { assign } from 'xstate'
+import { VehicleSearchApi } from '../dataProviders'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -88,17 +86,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                UserProfileApi,
-                NationalRegistryUserApi,
-                CurrentVehiclesApi.configure({
-                  params: {
-                    showOwned: true,
-                    showCoOwned: true,
-                    showOperated: true,
-                  },
-                }),
-              ],
+              api: [UserProfileApi, NationalRegistryUserApi, VehicleSearchApi],
             },
           ],
         },
@@ -107,16 +95,10 @@ const CarRecyclingTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['clearCanceledVehicles'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
-          onEntry: defineTemplateApi({
-            action: Actions.CREATE_OWNER,
-            shouldPersistToExternalData: false,
-            throwOnError: true,
-          }),
           onExit: defineTemplateApi({
             action: Actions.SEND_APPLICATION,
             throwOnError: true,
@@ -179,15 +161,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearCanceledVehicles: assign((context) => {
-        const { application } = context
-        unset(application.answers, 'vehicles.canceledVehicles')
-        return context
-      }),
-    },
-  },
+
   mapUserToRole(
     id: string,
     application: Application,
