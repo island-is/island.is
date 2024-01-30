@@ -86,7 +86,7 @@ const CreateCaseButton: React.FC<
   }, [formatMessage, user?.role])
 
   return (
-    <Box>
+    <Box marginTop={[2, 2, 0]}>
       <ContextMenu
         dataTestId="createCaseDropdown"
         menuLabel="Tegund kröfu"
@@ -171,7 +171,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
           <CreateCaseButton user={user} />
         ) : null}
       </div>
-      <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
+      <Box marginBottom={[2, 2, 5]} className={styles.filterContainer}>
         <Select
           name="filter-cases"
           options={filterOptions}
