@@ -44,7 +44,7 @@ jobs:
       - name: Cache validator
         id: cache-validator
         if: env.CHECK == 'true'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/codeowners-validator
           key: ${{ runner.os }}-codeowners-validator

@@ -283,7 +283,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
@@ -334,7 +334,7 @@ jobs:
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: cache
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps-1
@@ -345,7 +345,7 @@ jobs:
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps-base
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: cache_output
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base-1
@@ -363,7 +363,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
@@ -448,7 +448,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -459,7 +459,7 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -525,7 +525,7 @@ jobs:
         id: generated-files-cache
         if: steps.gather.outcome == 'success'
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -541,7 +541,7 @@ jobs:
         if: steps.gather.outcome == 'success'
         id: cache-deps-base
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: cache_output
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
@@ -553,7 +553,7 @@ jobs:
         id: cache-deps
         if: steps.gather.outcome == 'success'
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
@@ -565,7 +565,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn

@@ -67,7 +67,7 @@ jobs:
       - name: Cache for NodeJS dependencies
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: infra/node_modules
           key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
@@ -112,7 +112,7 @@ jobs:
       - name: Cache for NodeJS dependencies
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: infra/node_modules
           key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
