@@ -8,7 +8,6 @@ import { ProblemError } from '@island.is/nest/problem'
 import type {
   CaseFile,
   CreateFile,
-  DeleteFileResponse,
   Institution,
   SignedUrl,
   UpdateFile,
@@ -26,7 +25,11 @@ import {
 } from '../modules/case'
 import { CaseListEntry } from '../modules/case-list'
 import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
-import { PresignedPost, UpdateFilesResponse } from '../modules/file'
+import {
+  DeleteFileResponse,
+  PresignedPost,
+  UpdateFilesResponse,
+} from '../modules/file'
 import {
   CreateIndictmentCountInput,
   DeleteIndictmentCountInput,

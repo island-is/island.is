@@ -1,7 +1,3 @@
-export interface DeleteFileResponse {
-  success: boolean
-}
-
 export interface GetSignedUrl {
   id: string
   caseId: string
