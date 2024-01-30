@@ -9,7 +9,6 @@ import type {
   CaseFile,
   CreateFile,
   Institution,
-  SignedUrl,
   UpdateFile,
   UploadFileToCourtResponse,
   User,
@@ -28,6 +27,7 @@ import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
 import {
   DeleteFileResponse,
   PresignedPost,
+  SignedUrl,
   UpdateFilesResponse,
 } from '../modules/file'
 import {

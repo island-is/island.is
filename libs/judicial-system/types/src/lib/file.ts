@@ -1,7 +1,3 @@
-export interface SignedUrl {
-  url: string
-}
-
 export interface UploadFileToCourt {
   id: string
   caseId: string
