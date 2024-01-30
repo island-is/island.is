@@ -4,6 +4,7 @@ import {
   GeneralApi,
   Configuration,
   PaymentPlanApi,
+  PensionCalculatorApi,
 } from '../../gen/fetch'
 import { ApiConfiguration } from './apiConfiguration'
 
@@ -12,6 +13,7 @@ export const exportedApis = [
   ApplicationApi,
   GeneralApi,
   PaymentPlanApi,
+  PensionCalculatorApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {
