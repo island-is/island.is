@@ -70,7 +70,7 @@ export const AuthProvider = ({
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
 
   const signinRedirect = useCallback(
-    async function signinRedirect(args: SigninRedirectArgs) {
+    function signinRedirect(args: SigninRedirectArgs) {
       return userManager.signinRedirect(args).catch((e) => {
         console.log(e)
         setError(e)
