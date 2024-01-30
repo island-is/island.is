@@ -139,25 +139,22 @@ const ProviderItem: FC<
                 </Text>
               ) : null}
             </Box>
-            <Box display="flex" flexWrap="wrap" marginTop={2}>
+            {/* <Box display="flex" flexWrap="wrap" marginTop={2}> */}
               <Box component="span" marginRight={2}>
                 <a
                   href={getIDSLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
                 >
                   <Button
                     variant="text"
-                    icon="open"
+                    icon="arrowForward"
                     iconType='outline'
                     size="small"
-                    as="span"
                   >
-                    {formatMessage('link.title')}
+                    {formatMessage('Skrá netfang')}
                   </Button>
                 </a>
               </Box>
-            </Box>
+            {/* </Box> */}
           </Box>
         }
       />

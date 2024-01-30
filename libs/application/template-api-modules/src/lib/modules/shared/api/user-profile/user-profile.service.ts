@@ -65,14 +65,7 @@ export class UserProfileService extends BaseTemplateApiService {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.noEmailFound,
-              summary: {
-                ...coreErrorMessages.noEmailFoundDescription,
-                defaultMessage:
-                  coreErrorMessages.noEmailFoundDescription.defaultMessage.replace(
-                    '{link}',
-                    'https://identity-server.dev01.devland.is/app/user-profile/email?continue_onboarding=false',
-                  ),
-              },
+              summary: coreErrorMessages.noEmailFoundDescription,
             },
             500,
           )
