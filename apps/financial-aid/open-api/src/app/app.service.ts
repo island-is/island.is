@@ -64,4 +64,21 @@ export class AppService {
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
     return this.createCase(caseToCreate)
   }
+
+  async getApplication(id: string): Promise<Case> {
+    // return this.get(`application/id/ccafba8f-fcdf-48cd-90f1-fe5ff3db334c`)
+
+    return fetch(
+      `${this.config.backend.url}/api/internal/application/id/ccafba8f-fcdf-48cd-90f1-fe5ff3db334c`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // authorization: `Bearer ${this.config.backend.accessToken}`,
+        },
+      },
+    ).then(async (res) => {
+      return res.json()
+    })
+  }
 }
