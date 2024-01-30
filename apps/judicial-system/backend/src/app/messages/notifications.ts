@@ -713,6 +713,19 @@ export const notifications = {
         'Texti í pósti til aðila máls þegar leiðréttur úrskurður er sendur',
     },
   }),
+  caseAppealWithdrawn: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_appeal_withdrawn.subject',
+      defaultMessage: 'Kæra í máli {courtCaseNumber} afturkölluð',
+      description: 'Fyrirsögn í pósti til aðila máls þegar kæra er afturkölluð',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_appeal_withdrawn.body',
+      defaultMessage: 'Kæra í máli {courtCaseNumber} hefur verið afturkölluð.',
+      description: 'Texti í pósti til aðila máls þegar kæra er afturkölluð',
+    },
+  }),
+
   emailNames: defineMessages({
     prison: {
       id: 'judicial.system.backend:notifications.email_names.prison',

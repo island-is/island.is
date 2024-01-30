@@ -359,6 +359,11 @@ export class CaseController {
           }
         }
         break
+      case CaseTransition.WITHDRAW_APPEAL:
+        if (!theCase.appealRulingDecision) {
+          theCase.appealRulingDecision = CaseAppealRulingDecision.WITHDRAWN
+        }
+        break
     }
 
     const updatedCase = await this.caseService.update(

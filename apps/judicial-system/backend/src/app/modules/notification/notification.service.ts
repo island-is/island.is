@@ -343,7 +343,7 @@ export class NotificationService {
     }
   }
 
-  /* HEADS_UP notifications */
+  //#region HEADS_UP notifications */
 
   private sendHeadsUpSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
     const smsText = formatCourtHeadsUpSmsNotification(
@@ -366,8 +366,8 @@ export class NotificationService {
       recipient,
     ])
   }
-
-  /* READY_FOR_COURT notifications */
+  //#endregion
+  //#region READY_FOR_COURT notifications */
 
   private sendReadyForCourtSmsNotificationToCourt(
     theCase: Case,
@@ -542,8 +542,8 @@ export class NotificationService {
       recipients,
     )
   }
-
-  /* RECEIVED_BY_COURT notifications */
+  //#endregion
+  //#region RECEIVED_BY_COURT notifications */
 
   private sendReceivedByCourtSmsNotificationToProsecutor(
     theCase: Case,
@@ -571,8 +571,8 @@ export class NotificationService {
       [recipient],
     )
   }
-
-  /* COURT_DATE notifications */
+  //#endregion
+  //#region COURT_DATE notifications */
 
   private async uploadCourtDateInvitationEmailToCourt(
     theCase: Case,
@@ -813,8 +813,8 @@ export class NotificationService {
 
     return result
   }
-
-  /* RULING notifications */
+  //#endregion
+  //#region RULING notifications
 
   private sendRulingEmailNotificationToProsecutor(
     theCase: Case,
@@ -1060,8 +1060,8 @@ export class NotificationService {
       recipients,
     )
   }
-
-  /* MODIFIED notifications */
+  //#endregion
+  //#region MODIFIED notifications
 
   private async sendModifiedNotifications(
     theCase: Case,
@@ -1158,8 +1158,8 @@ export class NotificationService {
       recipients,
     )
   }
-
-  /* REVOKED notifications */
+  //#endregion
+  //#region REVOKED notifications */
 
   private async existsRevokableNotification(
     caseId: string,
@@ -1327,8 +1327,8 @@ export class NotificationService {
       recipients,
     )
   }
-
-  /* DEFENDER_ASSIGNED notifications */
+  //#endregion
+  //#region DEFENDER_ASSIGNED notifications */
 
   private async shouldSendDefenderAssignedNotification(
     theCase: Case,
@@ -1458,8 +1458,8 @@ export class NotificationService {
       recipients,
     )
   }
-
-  /* COURT_OF_APPEAL_JUDGE_ASSIGNED notifications */
+  //#endregion
+  //#region COURT_OF_APPEAL_JUDGE_ASSIGNED notifications
 
   private async sendCourtOfAppealJudgeAssignedNotification(
     theCase: Case,
@@ -1503,8 +1503,8 @@ export class NotificationService {
     return { notificationSent: true }
   }
 
-  /* DEFENDANTS_NOT_UPDATED_AT_COURT notifications */
-
+  //#endregion
+  //#region DEFENDANTS_NOT_UPDATED_AT_COURT notifications
   private async sendDefendantsNotUpdatedAtCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -1546,8 +1546,9 @@ export class NotificationService {
       [recipient],
     )
   }
-
-  /* Appeals notifications */
+  //#endregion
+  //#region Appeal notifications
+  //#region APPEAL_TO_COURT_OF_APPEALS notifications
 
   private async sendAppealToCourtOfAppealsNotifications(
     theCase: Case,
@@ -1651,7 +1652,8 @@ export class NotificationService {
       recipients,
     )
   }
-
+  //#endregion
+  //#region APPEAL_RECEIVED_BY_COURT notifications
   private async sendAppealReceivedByCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -1751,7 +1753,8 @@ export class NotificationService {
       recipients,
     )
   }
-
+  //#endregion
+  //#region APPEAL_RULING_ACCEPTED notifications
   private async sendAppealStatementNotifications(
     theCase: Case,
     user: User,
@@ -1886,7 +1889,8 @@ export class NotificationService {
       recipients,
     )
   }
-
+  //#endregion
+  //#region APPEAL_CASE_FILES_UPDATED notifications
   private async sendAppealCaseFilesUpdatedNotifications(
     theCase: Case,
     user: User,
@@ -1967,7 +1971,8 @@ export class NotificationService {
       recipients,
     )
   }
-
+  //#endregion
+  //#region APPEAL_COMPLETED notifications
   private async sendAppealCompletedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -2089,8 +2094,52 @@ export class NotificationService {
     )
   }
 
-  /* Messages */
+  //#endregion
+  //#region APPEAL_WITHDRAWN notifications
 
+  private async sendAppealCaseWithdrawnNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(
+      notifications.caseAppealWithdrawn.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    const html = this.formatMessage(notifications.caseAppealWithdrawn.body, {
+      // userHasAccessToRVG: true,
+      courtCaseNumber: theCase.courtCaseNumber,
+      // appealCaseNumber: theCase.appealCaseNumber,
+      // appealRulingDecision: getAppealResultTextByValue(
+      //   theCase.appealRulingDecision,
+      // ),
+      // linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+      // linkEnd: '</a>',
+    })
+
+    const promises = [
+      this.sendEmail(
+        subject,
+        html,
+        this.formatMessage(notifications.emailNames.courtOfAppeals),
+        this.getCourtEmail(this.config.courtOfAppealsId),
+      ),
+    ]
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.APPEAL_WITHDRAWN,
+      recipients,
+    )
+  }
+
+  //#endregion
+
+  //#endregion
+  //#region Messages
   private getNotificationMessage(
     type: MessageType,
     user: User,
@@ -2123,8 +2172,8 @@ export class NotificationService {
 
     return messages
   }
-
-  /* API */
+  //#endregion
+  //#region API
 
   async getAllCaseNotifications(theCase: Case): Promise<Notification[]> {
     return this.notificationModel.findAll({
@@ -2171,6 +2220,8 @@ export class NotificationService {
         return this.sendCourtOfAppealJudgeAssignedNotification(theCase)
       case NotificationType.APPEAL_CASE_FILES_UPDATED:
         return this.sendAppealCaseFilesUpdatedNotifications(theCase, user)
+      case NotificationType.APPEAL_WITHDRAWN:
+        return this.sendAppealCaseWithdrawnNotifications(theCase)
     }
   }
 
@@ -2280,4 +2331,5 @@ export class NotificationService {
       return { notificationSent: false }
     }
   }
+  //#endregion
 }

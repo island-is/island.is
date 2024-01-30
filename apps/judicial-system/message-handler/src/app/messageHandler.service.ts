@@ -252,6 +252,14 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_CASE_FILES_UPDATED },
         )
         break
+      case MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.APPEAL_WITHDRAWN },
+        )
+        break
       default:
         this.logger.error('Unknown message type', { msg: message })
     }
