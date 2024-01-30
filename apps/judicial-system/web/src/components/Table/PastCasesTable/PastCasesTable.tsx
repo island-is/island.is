@@ -9,6 +9,7 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  ContextMenu,
   TagAppealState,
   TagCaseState,
   UserContext,
@@ -24,13 +25,19 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseAppealState,
+  CaseListEntry,
+  CaseTransition,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useCase,
   useCaseList,
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import IconButton from '../../IconButton/IconButton'
 import MobilePastCase from './MobilePastCase'
 import * as styles from '../Table.css'
 
@@ -49,6 +56,8 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
+
+  const { transitionCase, isTransitioningCase } = useCase()
 
   const pastCasesData = useMemo(
     () =>
@@ -172,11 +181,50 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
               </Text>
             </td>
             <td className={styles.loadingContainer}>
-              <AnimatePresence>
-                {isOpeningCaseId === column.id && showLoading && (
-                  <LoadingIndicator />
-                )}
-              </AnimatePresence>
+              {showLoading ? (
+                <AnimatePresence>
+                  {isOpeningCaseId === column.id && showLoading && (
+                    <LoadingIndicator />
+                  )}
+                </AnimatePresence>
+              ) : (
+                <Box>
+                  <ContextMenu
+                    items={[
+                      {
+                        title: 'Afturkalla kæru',
+                        onClick: async () => {
+                          const res = await transitionCase(
+                            column.id,
+                            CaseTransition.WITHDRAW_APPEAL,
+                          )
+                          if (res === true) {
+                            const transitionedCase = cases.find(
+                              (c) => c.id === column.id,
+                            )
+                            if (transitionedCase) {
+                              transitionedCase.appealState =
+                                CaseAppealState.WITHDRAWN
+                            }
+                          }
+                        },
+                        icon: 'trash',
+                      },
+                    ]}
+                    menuLabel="Opna valmöguleika á máli"
+                    disclosure={
+                      <IconButton
+                        icon="ellipsisVertical"
+                        colorScheme="transparent"
+                        onClick={(evt) => {
+                          evt.stopPropagation()
+                        }}
+                        disabled={false}
+                      />
+                    }
+                  />
+                </Box>
+              )}
             </td>
           </tr>
         )

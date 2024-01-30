@@ -104,6 +104,7 @@ export enum CaseAppealState {
   APPEALED = 'APPEALED',
   RECEIVED = 'RECEIVED',
   COMPLETED = 'COMPLETED',
+  WITHDRAWN = 'WITHDRAWN',
 }
 
 export enum CaseTransition {
@@ -119,6 +120,7 @@ export enum CaseTransition {
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */

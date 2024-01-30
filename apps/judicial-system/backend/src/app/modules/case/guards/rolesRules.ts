@@ -177,6 +177,7 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
+    CaseTransition.WITHDRAW_APPEAL,
   ],
   canActivate: (request) => {
     const theCase = request.case

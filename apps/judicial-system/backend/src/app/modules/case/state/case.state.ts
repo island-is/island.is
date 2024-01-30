@@ -129,7 +129,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     CaseTransition.COMPLETE_APPEAL,
     {
       fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
-      fromAppealStates: [CaseAppealState.RECEIVED],
+      fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
       to: { appealState: CaseAppealState.COMPLETED },
     },
   ],
@@ -139,6 +139,14 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
       fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
       fromAppealStates: [CaseAppealState.COMPLETED],
       to: { appealState: CaseAppealState.RECEIVED },
+    },
+  ],
+  [
+    CaseTransition.WITHDRAW_APPEAL,
+    {
+      fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+      fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+      to: { appealState: CaseAppealState.WITHDRAWN },
     },
   ],
 ])
