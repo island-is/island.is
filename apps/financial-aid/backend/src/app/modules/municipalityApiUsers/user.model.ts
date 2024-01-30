@@ -1,4 +1,11 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -6,7 +13,7 @@ import { MunicipalityApiUser } from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'municipality_api_users',
-  timestamps: false,
+  timestamps: true,
 })
 export class ApiUserModel extends Model<MunicipalityApiUser> {
   @Column({
@@ -18,12 +25,20 @@ export class ApiUserModel extends Model<MunicipalityApiUser> {
   @ApiProperty()
   id: string
 
+  @CreatedAt
+  @ApiProperty()
+  created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  modified: Date
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  municipality_id: string
+  municipalityCode: string
 
   @Column({
     type: DataType.STRING,
@@ -37,5 +52,5 @@ export class ApiUserModel extends Model<MunicipalityApiUser> {
     allowNull: false,
   })
   @ApiProperty()
-  password: string
+  apiKey: string
 }

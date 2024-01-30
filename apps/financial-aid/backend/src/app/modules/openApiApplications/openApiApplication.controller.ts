@@ -21,7 +21,6 @@ export class OpenApiApplicationController {
     description: 'Gets all existing applications',
   })
   async getAll(@CurrentMunicipalityCode() municipalityCode: string) {
-    console.log('helooo')
     return this.applicationService.getAll(municipalityCode)
   }
 }

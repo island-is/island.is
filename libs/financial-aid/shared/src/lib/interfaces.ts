@@ -36,8 +36,10 @@ export interface CreateFilesResponse {
 export interface MunicipalityApiUser {
   id: string
   name: string
-  municipalityIds: string
-  password: string
+  municipalityCode: string
+  apiKey: string
+  created: string
+  modified: string
 }
 export interface Staff {
   id: string

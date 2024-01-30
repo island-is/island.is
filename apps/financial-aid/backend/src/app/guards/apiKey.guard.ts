@@ -13,7 +13,7 @@ export class ApiKeyGuard implements CanActivate {
       return false
     }
 
-    request.municipalityCode = user.municipality_id
+    request.municipalityCode = user.municipalityCode
 
     return true
   }
