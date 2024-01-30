@@ -28,7 +28,6 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
-  DefendantPlea,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -1199,15 +1198,4 @@ export class Case extends Model {
   @BelongsTo(() => Institution, 'prosecutorsOfficeId')
   @ApiPropertyOptional({ type: () => Institution })
   prosecutorsOffice?: Institution
-
-  /**********
-   * Indicates how the defendant pleas to the charges
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(DefendantPlea),
-  })
-  @ApiProperty({ enum: DefendantPlea })
-  defendantPlea?: DefendantPlea
 }

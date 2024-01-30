@@ -15,7 +15,6 @@ import {
   CaseDecision,
   CaseLegalProvisions,
   CaseType,
-  DefendantPlea,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -342,8 +341,4 @@ export class UpdateCaseInput {
   @Allow()
   @Field(() => [UserRole], { nullable: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
-
-  @Allow()
-  @Field(() => DefendantPlea, { nullable: true })
-  readonly defendantPlea?: DefendantPlea
 }

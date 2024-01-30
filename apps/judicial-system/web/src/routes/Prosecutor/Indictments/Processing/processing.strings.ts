@@ -7,8 +7,9 @@ export const strings = {
     description: 'Notaður sem titill á málsmeðferð skrefi í ákærum.',
   }),
   defendantPlea: defineMessage({
-    id: 'judicial.system.indictments:processing.defendant_plea',
-    defaultMessage: 'Afstaða sakbornings til sakarefnis',
+    id: 'judicial.system.indictments:processing.defendant_plea_v1',
+    defaultMessage:
+      'Afstaða {defendantCount, plural, one {sakbornings} other {sakborninga}} til sakarefnis',
     description:
       'Notaður sem titill á "Afstaða sakbornings til sakarefnis" hlutann á Málsmeðferðarskjánum.',
   }),

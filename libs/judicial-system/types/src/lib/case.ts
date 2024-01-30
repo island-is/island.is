@@ -300,7 +300,6 @@ export interface Case {
   appealIsolationToDate?: string
   requestAppealRulingNotToBePublished?: UserRole[]
   prosecutorsOffice?: Institution
-  defendantPlea?: DefendantPlea
 }
 
 export interface CaseListEntry
