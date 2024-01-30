@@ -18,7 +18,6 @@ export class AppService {
 
   async getApplications(apiKey: string) {
     console.log('kemst hingad')
-    // return this.get(`application/id/ccafba8f-fcdf-48cd-90f1-fe5ff3db334c`)
 
     return fetch(
       `${this.config.backend.url}/api/financial-aid/open-api-applications/getAll`,

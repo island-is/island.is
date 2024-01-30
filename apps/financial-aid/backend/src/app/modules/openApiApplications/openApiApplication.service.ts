@@ -11,8 +11,11 @@ export class OpenApiApplicationService {
     private readonly applicationModel: typeof ApplicationModel,
   ) {}
 
-  async getAll(): Promise<ApplicationModel[]> {
+  async getAll(municipalityCodes: string): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
+      where: {
+        municipalityCode: municipalityCodes,
+      },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })

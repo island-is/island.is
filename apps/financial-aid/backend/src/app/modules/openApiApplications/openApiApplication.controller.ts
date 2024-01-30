@@ -6,6 +6,7 @@ import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../application/models'
 import { OpenApiApplicationService } from './openApiApplication.service'
 import { ApiKeyGuard } from '../../guards/apiKey.guard'
+import { CurrentMunicipalityCode } from '../../decorators/apiKey.decorator'
 
 @Controller(`${apiBasePath}/open-api-applications`)
 @UseGuards(ApiKeyGuard)
@@ -19,8 +20,8 @@ export class OpenApiApplicationController {
     isArray: true,
     description: 'Gets all existing applications',
   })
-  async getAll() {
+  async getAll(@CurrentMunicipalityCode() municipalityCode: string) {
     console.log('helooo')
-    return this.applicationService.getAll()
+    return this.applicationService.getAll(municipalityCode)
   }
 }
