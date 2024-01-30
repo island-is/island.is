@@ -125,6 +125,10 @@ export const renderLegend = ({
   componentsWithAddedProps,
   data,
 }: LegendRendererProps) => {
+  if (componentsWithAddedProps.length <= 1) {
+    return null
+  }
+
   return (
     <Legend
       aria-hidden="true"
