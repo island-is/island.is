@@ -94,7 +94,9 @@ const IntellectualPropertiesOverview = () => {
                   ),
                   ip.status,
                 )
-              case 'IntellectualPropertiesPatent':
+              case 'IntellectualPropertiesPatentIS':
+              case 'IntellectualPropertiesPatentEP':
+              case 'IntellectualPropertiesSPC':
                 return generateActionCard(
                   index,
                   ip.name,

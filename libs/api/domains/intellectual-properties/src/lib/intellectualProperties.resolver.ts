@@ -26,9 +26,6 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Patent } from './models/patent.model'
-import { PatentIS } from './models/patentIS.model'
-import { PatentEP } from './models/patentEP.model'
-import { SPC } from './models/spc.model'
 
 @Resolver()
 @FeatureFlag(Features.isIntellectualPropertyModuleEnabled)

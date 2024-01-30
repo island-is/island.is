@@ -130,7 +130,7 @@ export class IntellectualPropertiesService {
         lastModified: parseIPDate(trademark.dateModified),
         publishDate: parseIPDate(trademark.datePublished),
         maxValidObjectionDate: objectionDate
-          ? addMonths(objectionDate, 2)
+          ? parseIPDate(addMonths(objectionDate, 2))
           : undefined,
       },
       imageCategories: trademark.imageCategories ?? '',
@@ -182,7 +182,6 @@ export class IntellectualPropertiesService {
       medicine: res.medicineName ?? undefined,
       medicineForChildren: res.medicineForChildren ?? undefined,
       message: res.message ?? undefined,
-      maxDuration: res.maxDuration ?? undefined,
       status: res.status ?? undefined,
       agent: {
         id: res.spcAgent?.id ?? undefined,
@@ -209,6 +208,7 @@ export class IntellectualPropertiesService {
       applicationLifecycle: {
         lastModified: parseIPDate(res.lastModified),
         applicationDate: parseIPDate(res.applicationDate),
+        maxValidDate: parseIPDate(res.maxDuration),
       },
       marketingAuthorization: {
         icelandicAuthorizationDate: parseIPDate(
@@ -286,7 +286,7 @@ export class IntellectualPropertiesService {
         publicationDate: parseIPDate(ic.datePublised),
         type: ic.type ?? '',
       })),
-      priorites: patent.priorities?.map((p) => ({
+      priorities: patent.priorities?.map((p) => ({
         applicationDate: parseIPDate(p.dateApplication),
         country: {
           code: p.country?.code ?? '',
@@ -359,10 +359,7 @@ export class IntellectualPropertiesService {
       },
     }
 
-    if (patent.applicationNumber) {
-      if (!patent.epApplicationNumber) {
-        return null
-      }
+    if (patent.epApplicationNumber) {
       const patentEP: PatentEP = {
         ...patentIS,
         epApplicationNumber: patent.epApplicationNumber,
@@ -371,11 +368,14 @@ export class IntellectualPropertiesService {
         epoStatus: patent.epoStatus ?? undefined,
         language: patent.language ?? undefined,
         epLifecycle: {
-          provisionDatePublishedInGazette:
+          provisionDatePublishedInGazette: parseIPDate(
             patent.epDateProvisionPublishedInGazette,
-          publishDate: patent.epDatePublication,
-          applicationDate: patent.epApplicationDate,
-          translationSubmissionDate: patent.epDateTranslationSubmitted,
+          ),
+          publishDate: parseIPDate(patent.epDatePublication),
+          applicationDate: parseIPDate(patent.epApplicationDate),
+          translationSubmissionDate: parseIPDate(
+            patent.epDateTranslationSubmitted,
+          ),
         },
       }
       return patentEP

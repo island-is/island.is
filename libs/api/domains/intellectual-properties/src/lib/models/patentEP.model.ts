@@ -5,11 +5,11 @@ import { Patent } from './patent.model'
 import { IntellectualProperty } from './intellectualProperty.model'
 
 @ObjectType('IntellectualPropertiesPatentEP', {
-  implements: () => [Patent],
+  implements: () => [Patent, IntellectualProperty],
 })
-export class PatentEP extends PatentIS implements Patent {
-  @Field()
-  epApplicationNumber!: string
+export class PatentEP extends PatentIS implements Patent, IntellectualProperty {
+  @Field({ nullable: true })
+  epApplicationNumber?: string
 
   @Field({ nullable: true })
   nameInIcelandic?: string

@@ -2,27 +2,197 @@ query getIntellectualPropertiesPatentById(
   $input: IntellectualPropertiesInput!
 ) {
   intellectualPropertiesPatent(input: $input) {
-    applicationNumber
-    name
-    status
-    statusText
-    canRenew
-    lifecycle {
-      applicationDate
-      applicationDatePublishedAsAvailable
-      registrationDate
-      maxValidObjectionDate
-    }
-    owner {
+    ... on IntellectualPropertiesPatentIS {
+      __typename
+      applicationNumber
+      id
+      annualFeesInfo {
+        history {
+          amount
+          id
+          paymentDate
+          paymentDueDate
+          payor
+          surcharge
+        }
+        nextPaymentDate
+      }
+      classifications {
+        category
+        creationDate
+        publicationDate
+        sequence
+        type
+      }
       name
-      address
+      nameInOrgLanguage
+      status
+      statusDate
+      statusText
+      registrationNumber
+      canRenew
+      lifecycle {
+        applicationDate
+        registrationDate
+        maxValidObjectionDate
+        expiryDate
+        maxValidDate
+      }
+      designers {
+        addressFull
+        name
+      }
+      owners {
+        name
+        addressFull
+      }
+      inventors {
+        name
+        addressFull
+      }
+      agent {
+        name
+        addressFull
+      }
     }
-    inventors {
+    ... on IntellectualPropertiesPatentEP {
+      __typename
+      applicationNumber
+      id
+      annualFeesInfo {
+        history {
+          amount
+          id
+          paymentDate
+          paymentDueDate
+          payor
+          surcharge
+        }
+        nextPaymentDate
+      }
+      classifications {
+        category
+        creationDate
+        publicationDate
+        sequence
+        type
+      }
       name
+      nameInOrgLanguage
+      status
+      statusDate
+      statusText
+      canRenew
+      pct {
+        number
+        date
+      }
+      priorities {
+        number
+        country {
+          name
+        }
+        applicationDate
+      }
+      lifecycle {
+        applicationDate
+        applicationDatePublishedAsAvailable
+        registrationDate
+        maxValidObjectionDate
+        maxValidDate
+        expiryDate
+      }
+      designers {
+        addressFull
+        name
+      }
+      owners {
+        name
+        addressFull
+      }
+      inventors {
+        name
+        addressFull
+      }
+      agent {
+        name
+        addressFull
+      }
+      epApplicationNumber
+      nameInIcelandic
+      spcNumbers
+      epLifecycle {
+        publishDate
+        applicationDate
+        provisionDatePublishedInGazette
+        translationSubmissionDate
+      }
+      epoStatus
+      classificationType
+      language
     }
-    agent {
+    ... on IntellectualPropertiesSPC {
+      __typename
+      applicationNumber
+      id
+      annualFeesInfo {
+        history {
+          amount
+          id
+          paymentDate
+          paymentDueDate
+          payor
+          surcharge
+        }
+        nextPaymentDate
+      }
+      classifications {
+        category
+        creationDate
+        publicationDate
+        sequence
+        type
+      }
       name
-      address
+      nameInOrgLanguage
+      status
+      statusDate
+      statusText
+      canRenew
+      lifecycle {
+        applicationDate
+        applicationDatePublishedAsAvailable
+        registrationDate
+        maxValidObjectionDate
+      }
+      designers {
+        addressFull
+        name
+      }
+      owners {
+        name
+        addressFull
+      }
+      inventors {
+        name
+        addressFull
+      }
+      agent {
+        name
+        addressFull
+      }
+      number
+      medicine
+      medicineForChildren
+      message
+      marketingAuthorization {
+        icelandicAuthorizationNumber
+        icelandicAuthorizationDate
+        foreignAuthorizationNumber
+        foreignAuthorizationDate
+      }
+      grantPublishedInGazetteDate
+      publishedInGazetteDate
     }
   }
 }

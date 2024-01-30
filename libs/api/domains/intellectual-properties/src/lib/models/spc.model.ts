@@ -4,16 +4,17 @@ import { Person } from './person.model'
 import { Patent } from './patent.model'
 import { AnnualFeesInfo } from './annualFeeInfo.model'
 import { MarketingAuthorization } from './marketingAuthorization.model'
+import { IntellectualProperty } from './intellectualProperty.model'
 
 @ObjectType('IntellectualPropertiesSPC', {
-  implements: () => [Patent],
+  implements: () => [Patent, IntellectualProperty],
 })
-export class SPC implements Patent {
+export class SPC implements Patent, IntellectualProperty {
   @Field()
   name!: string
 
-  @Field({ description: 'Parent patent number' })
-  applicationNumber!: string
+  @Field({ nullable: true, description: 'Parent patent number' })
+  applicationNumber?: string
 
   @Field()
   id!: string
@@ -29,9 +30,6 @@ export class SPC implements Patent {
 
   @Field({ nullable: true })
   message?: string
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  maxDuration?: Date
 
   @Field({ nullable: true })
   status?: string

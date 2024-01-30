@@ -6,16 +6,17 @@ import { Classification } from './classification.model'
 import { Priority } from './priority.model'
 import { Patent } from './patent.model'
 import { AnnualFeesInfo } from './annualFeeInfo.model'
+import { IntellectualProperty } from './intellectualProperty.model'
 
 @ObjectType('IntellectualPropertiesPatentIS', {
-  implements: () => [Patent],
+  implements: () => [Patent, IntellectualProperty],
 })
-export class PatentIS implements Patent {
+export class PatentIS implements Patent, IntellectualProperty {
   @Field()
   id!: string
 
-  @Field()
-  applicationNumber!: string
+  @Field({ nullable: true })
+  applicationNumber?: string
 
   @Field({ nullable: true })
   registrationNumber?: string
@@ -44,8 +45,8 @@ export class PatentIS implements Patent {
   @Field(() => Boolean, { nullable: true })
   alive?: boolean
 
-  @Field(() => Array<Person>, { nullable: true })
-  owners?: [Person]
+  @Field(() => [Person], { nullable: true })
+  owners?: Array<Person>
 
   @Field(() => Person, { nullable: true })
   agent?: Person
@@ -54,7 +55,7 @@ export class PatentIS implements Patent {
   inventors?: Array<Person>
 
   @Field(() => [Priority], { nullable: true })
-  priorites?: Array<Priority>
+  priorities?: Array<Priority>
 
   @Field(() => [Classification], { nullable: true })
   classifications?: Array<Classification>

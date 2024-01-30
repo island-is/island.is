@@ -25,7 +25,7 @@ export abstract class IntellectualProperty {
   specification?: Specification
 
   @Field(() => [Classification], { nullable: true })
-  classification?: Array<Classification>
+  classifications?: Array<Classification>
 
   @Field(() => [Person], { nullable: true })
   owners?: Array<Person>

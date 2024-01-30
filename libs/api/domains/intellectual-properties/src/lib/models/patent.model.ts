@@ -28,14 +28,14 @@ export abstract class Patent implements IntellectualProperty {
   @Field()
   name!: string
 
-  @Field()
-  applicationNumber!: string
+  @Field({ nullable: true })
+  applicationNumber?: string
 
   @Field({ nullable: true })
   nameInOrgLanguage?: string
 
-  @Field(() => Array<Person>, { nullable: true })
-  owners?: [Person]
+  @Field(() => [Person], { nullable: true })
+  owners?: Array<Person>
 
   @Field(() => Person, { nullable: true })
   agent?: Person
@@ -47,7 +47,7 @@ export abstract class Patent implements IntellectualProperty {
   inventors?: Array<Person>
 
   @Field(() => [Priority], { nullable: true })
-  priorites?: Array<Priority>
+  priorities?: Array<Priority>
 
   @Field(() => [Classification], { nullable: true })
   classifications?: Array<Classification>
