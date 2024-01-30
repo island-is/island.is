@@ -119,6 +119,39 @@ const AppealCase = () => {
     }
   }
 
+  const handleChange = async (coaJudgeId: string, coaJudgeProperty: string) => {
+    if (workingCase) {
+      const updatedCase = await updateCase(workingCase.id, {
+        [coaJudgeProperty]: coaJudgeId,
+      })
+
+      const coaJudge =
+        coaJudgeProperty === 'appealJudge1Id'
+          ? { appealJudge1: updatedCase?.appealJudge1 }
+          : coaJudgeProperty === 'appealJudge2Id'
+          ? { appealJudge2: updatedCase?.appealJudge2 }
+          : { appealJudge3: updatedCase?.appealJudge3 }
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        ...coaJudge,
+      }))
+    }
+  }
+
+  const handleAssistantChange = async (appealAssistantId: string) => {
+    if (workingCase) {
+      const updatedCase = await updateCase(workingCase.id, {
+        appealAssistantId,
+      })
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        appealAssistantId: updatedCase?.appealAssistant,
+      }))
+    }
+  }
+
   return (
     <>
       <PageLayout
@@ -176,18 +209,9 @@ const AppealCase = () => {
               placeholder={formatMessage(strings.assistantPlaceholder)}
               value={defaultAssistant}
               options={assistants}
-              onChange={(so) => {
-                const assistantUpdate = (so as AssistantSelectOption).assistant
-
-                setAndSendCaseToServer(
-                  [
-                    {
-                      appealAssistantId: assistantUpdate.id ?? null,
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
+              onChange={(selectedOption) => {
+                handleAssistantChange(
+                  (selectedOption as AssistantSelectOption).assistant.id,
                 )
               }}
               required
@@ -217,20 +241,13 @@ const AppealCase = () => {
                           : undefined
                       }
                       options={judges}
-                      onChange={(so) => {
-                        const judgeUpdate = (so as JudgeSelectOption).judge
+                      onChange={(selectedOption) => {
+                        const judgeUpdate = (
+                          selectedOption as JudgeSelectOption
+                        ).judge.id
                         const judgeProperty = `appealJudge${index + 1}Id`
 
-                        setAndSendCaseToServer(
-                          [
-                            {
-                              [judgeProperty]: judgeUpdate.id ?? null,
-                              force: true,
-                            },
-                          ],
-                          workingCase,
-                          setWorkingCase,
-                        )
+                        handleChange(judgeUpdate, judgeProperty)
                       }}
                       required
                     />
