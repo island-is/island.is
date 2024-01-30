@@ -24,6 +24,13 @@ export interface ApplicantInformationInterface {
         }
       }
     }
+    // user profile
+    userProfile?: {
+      data?: {
+        email?: string
+        mobilePhoneNumber?: string
+      }
+    }
   }
 }
 
