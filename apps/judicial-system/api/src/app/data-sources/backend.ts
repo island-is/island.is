@@ -5,11 +5,7 @@ import { Injectable } from '@nestjs/common'
 
 import { ProblemError } from '@island.is/nest/problem'
 
-import type {
-  CaseFile,
-  Institution,
-  User,
-} from '@island.is/judicial-system/types'
+import type { Institution, User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import {
@@ -22,6 +18,7 @@ import {
 import { CaseListEntry } from '../modules/case-list'
 import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
 import {
+  CaseFile,
   DeleteFileResponse,
   PresignedPost,
   SignedUrl,

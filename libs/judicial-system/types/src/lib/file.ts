@@ -24,22 +24,3 @@ export enum CaseFileCategory {
   PROSECUTOR_APPEAL_CASE_FILE = 'PROSECUTOR_APPEAL_CASE_FILE',
   DEFENDANT_APPEAL_CASE_FILE = 'DEFENDANT_APPEAL_CASE_FILE',
 }
-
-export interface CaseFile {
-  id: string
-  created: string
-  modified: string
-  caseId: string
-  name: string
-  type: string
-  state: CaseFileState
-  key?: string
-  size: number
-  category?: CaseFileCategory
-  policeCaseNumber?: string
-  userGeneratedFilename?: string
-  chapter?: number
-  orderWithinChapter?: number
-  displayDate?: string
-  policeFileId?: string
-}

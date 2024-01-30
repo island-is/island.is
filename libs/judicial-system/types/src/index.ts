@@ -9,8 +9,6 @@ export { EventType } from './lib/eventLog'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
-export type { CaseFile } from './lib/file'
-
 export {
   UserRole,
   prosecutionRoles,
