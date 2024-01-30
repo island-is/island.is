@@ -145,7 +145,7 @@ export const classes: EditorClasses = {
     caretColor: theme.color.blue400,
     padding: spacing[3],
     paddingTop: spacing[2],
-
+    overflowY: 'auto',
     ':focus': {
       outline: 'none',
     },
@@ -618,7 +618,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
   })
 
   global('.advertisement__title', {
-    marginBottom: '2ch',
+    marginBottom: '3ch',
   })
 
   global('.advertisement__title-main', {
@@ -632,6 +632,32 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     fontWeight: typography.semiBold,
     textAlign: 'center',
   })
+
+  globalStyle(`.advertisement.readonly *::before`, {
+    content: 'none',
+  })
+
+  global(
+    `
+  .advertisement.readonly .section__title,
+  .advertisement.readonly .section__title,
+  .advertisement.readonly .chapter__title,
+  .advertisement.readonly .chapter__title,
+  .advertisement.readonly .subchapter__title,
+  .advertisement.readonly .subchapter__title,
+  .advertisement.readonly .article__title,
+  .advertisement.readonly .article__title
+  `,
+    {
+      backgroundColor: 'transparent',
+      margin: 0,
+      padding: 0,
+      fontSize: typography.baseFontSize,
+      lineHeight: typography.baseLineHeight,
+      fontStyle: 'italic',
+      fontWeight: typography.regular,
+    },
+  )
 
   // END OF SIGNATURES
 
@@ -892,3 +918,5 @@ globalStyle(`${classes.editor} [data-highighted]`, {
 })
 
 diffStyling(classes.result)
+
+// OVERRIDES FOR READONLY MODE

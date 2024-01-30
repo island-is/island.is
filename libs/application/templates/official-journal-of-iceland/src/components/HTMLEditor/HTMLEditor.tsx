@@ -59,6 +59,7 @@ export const HTMLEditor = ({
               })}
             >
               <Editor
+                readOnly={readOnly}
                 hideWarnings={hideWarnings}
                 disabled={readOnly}
                 elmRef={editorRef}

@@ -19,25 +19,13 @@ export enum Routes {
 }
 
 // this will be replaced with correct values once the api is ready
-export const REGLUGERDIR_ID = '2'
-export const GJALDSKRA_ID = '0'
-export const SKIPULAGSSKRA_ID = '3'
-export const UNDIRSKRIFT_RADHERRA_ID = '2'
 
-export const Ministries = [
-  'forsætisráðuneytið',
-  'dómsmálaráðuneytið',
-  'félags- og vinnumarksráðuneytið',
-  'fjármála- og efnahagsráðuneytið',
-  'háskóla-, iðnaðar- og nýsköpunarráðuneytið',
-  'heilbrigðisráðuneytið',
-  'innviðaráðuneytið',
-  'matvælaráðuneytið',
-  'menningar- og viðskiptaráðuneytið',
-  'mennta- og barnamálaráðuneytið',
-  'umhverfis-, orku- og loftslagsráðuneytið',
-  'utanríkisráðuneytið',
-]
+export enum CategoryIds {
+  GJALDSKRA = '0',
+  AUGLYSING = '1',
+  REGLUGERDIR = '2',
+  SKIPULAGSSKRA = '3',
+}
 
 export const MEMBER_INDEX = '{memberIndex}'
 export const INSTITUTION_INDEX = '{institutionIndex}'

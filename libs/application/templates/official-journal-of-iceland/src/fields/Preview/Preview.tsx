@@ -10,7 +10,7 @@ import {
   committeeSignatureTemplate,
   regularSignatureTemplate,
 } from '../../components/HTMLEditor/templates/signatures'
-import { mapDepartmentToId, mapIdToDepartment } from '../../lib/utils'
+import { mapIdToCategory, mapIdToDepartment } from '../../lib/utils'
 
 export const Preview = ({ application }: OJOIFieldBaseProps) => {
   const { f } = useFormatMessage(application)
@@ -25,7 +25,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
 
   const { answers } = application
 
-  const { documentContents, title, department, signatureType } = answers.case
+  const { documentContents, title, category, signatureType } = answers.case
 
   return (
     <Box>
@@ -65,7 +65,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
           readOnly={true}
           hideWarnings={true}
           value={advertisementTemplate({
-            department: mapIdToDepartment(department),
+            category: mapIdToCategory(category),
             content: documentContents,
             title: title,
             signature:
@@ -80,6 +80,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
                     additionalSignature:
                       answers.case.signature.additionalSignature,
                   }),
+            readonly: true,
           })}
         />
       </Box>

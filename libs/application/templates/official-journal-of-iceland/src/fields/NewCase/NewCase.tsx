@@ -1,20 +1,14 @@
 import { getErrorViaPath } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import { useState } from 'react'
-import { FormWrap } from '../../components/FormWrap/FormWrap'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { newCase } from '../../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../../lib/types'
-import {
-  GJALDSKRA_ID,
-  REGLUGERDIR_ID,
-  SKIPULAGSSKRA_ID,
-} from '../../lib/constants'
 import { useFormContext } from 'react-hook-form'
 import { TemplateModal } from './TemplateModal'
 import { HTMLEditor } from '../../components/HTMLEditor/HTMLEditor'
@@ -22,6 +16,7 @@ import { HTMLText } from '@island.is/regulations-tools/types'
 import { baseConfig } from '../../components/HTMLEditor/config/baseConfig'
 import { SignatureSection } from './SignatureSection'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
+import { CategoryIds } from '../../lib/constants'
 
 export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
@@ -125,7 +120,8 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
             options={options.categories}
             onSelect={(opt) => {
               const adverb =
-                opt.value === GJALDSKRA_ID || opt.value === SKIPULAGSSKRA_ID
+                opt.value === CategoryIds.GJALDSKRA ||
+                opt.value === CategoryIds.GJALDSKRA
                   ? 'fyrir'
                   : 'um'
               const title = `${opt.label.toUpperCase()} ${adverb}`
@@ -144,24 +140,28 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
             error={errors && getErrorViaPath(errors, InputFields.case.category)}
           />
         </Box>
-        {state.category === REGLUGERDIR_ID && options.subCategories.length && (
-          <Box width="half">
-            <SelectController
-              id={InputFields.case.subCategory}
-              name={InputFields.case.subCategory}
-              label={f(newCase.inputs.subCategory.label)}
-              placeholder={f(newCase.inputs.subCategory.placeholder)}
-              defaultValue={state.subCategory}
-              backgroundColor="blue"
-              options={options.subCategories}
-              onSelect={(opt) => setState({ ...state, subCategory: opt.value })}
-              size="sm"
-              error={
-                errors && getErrorViaPath(errors, InputFields.case.subCategory)
-              }
-            />
-          </Box>
-        )}
+        {state.category === CategoryIds.REGLUGERDIR &&
+          options.subCategories.length && (
+            <Box width="half">
+              <SelectController
+                id={InputFields.case.subCategory}
+                name={InputFields.case.subCategory}
+                label={f(newCase.inputs.subCategory.label)}
+                placeholder={f(newCase.inputs.subCategory.placeholder)}
+                defaultValue={state.subCategory}
+                backgroundColor="blue"
+                options={options.subCategories}
+                onSelect={(opt) =>
+                  setState({ ...state, subCategory: opt.value })
+                }
+                size="sm"
+                error={
+                  errors &&
+                  getErrorViaPath(errors, InputFields.case.subCategory)
+                }
+              />
+            </Box>
+          )}
         <Box width="full">
           <InputController
             id={InputFields.case.title}
@@ -215,24 +215,3 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
 }
 
 export default NewCase
-{
-  /* <FormWrap
-        header={{
-          children: (
-            <Text variant="h2" as="h1">
-              {f(newCase.general.formTitle)}
-            </Text>
-          ),
-          button: (
-            <Button
-              variant="utility"
-              iconType="outline"
-              icon="copy"
-              onClick={() => setModalToggle((prev) => !prev)}
-            >
-              {f(newCase.buttons.copyOldCase.label)}
-            </Button>
-          ),
-        }}
-      > */
-}

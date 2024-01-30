@@ -1,8 +1,7 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { Ministries, emailRegex } from './constants'
-import { ExternalData } from './types'
+import { CategoryIds, emailRegex } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationContext } from '@island.is/application/types'
 
@@ -92,4 +91,20 @@ export const isApplicationValid = (applicationContext: ApplicationContext) => {
   )
 
   return status === 'success'
+}
+
+export const mapIdToCategory = (id?: CategoryIds | string) => {
+  if (!id) return ''
+  switch (id) {
+    case CategoryIds.AUGLYSING:
+      return 'Auglýsing'
+    case CategoryIds.GJALDSKRA:
+      return 'Gjaldskrá'
+    case CategoryIds.REGLUGERDIR:
+      return 'Reglugerðir'
+    case CategoryIds.SKIPULAGSSKRA:
+      return 'Skipulagsskrá'
+    default:
+      return ''
+  }
 }

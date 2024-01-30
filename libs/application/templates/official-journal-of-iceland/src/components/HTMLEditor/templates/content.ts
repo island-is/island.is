@@ -3,10 +3,11 @@ import { HTMLText } from '@island.is/regulations-tools/types'
 type Params = {
   caseId?: string
   date?: string
-  department?: string
+  category?: string
   title?: string
   content?: string
   signature?: string
+  readonly?: boolean
 }
 
 // will be useful later when case is published
@@ -21,15 +22,13 @@ const documentHeader = (caseId?: string, date?: string) => {
   `
 }
 
-const documentTitle = (title?: string, department?: string) => {
-  if (!title && !department) return ''
+const documentTitle = (title?: string, category?: string) => {
+  if (!title && !category) return ''
 
   return `
     <div class="advertisement__title">
     ${
-      department
-        ? `<div class="advertisement__title-main">${department}</div>`
-        : ''
+      category ? `<div class="advertisement__title-main">${category}</div>` : ''
     }
       ${title ? `<div class="advertisement__title-sub">${title}</div>` : ''}
     </div>
@@ -39,15 +38,16 @@ const documentTitle = (title?: string, department?: string) => {
 export const advertisementTemplate = ({
   caseId,
   date,
-  department,
+  category,
   title,
   content,
   signature,
+  readonly = false,
 }: Params) => {
   return `
-    <div class="advertisement">
+    <div class="advertisement ${readonly ? 'readonly' : ''}">
       ${documentHeader(caseId, date)}
-      ${documentTitle(title, department)}
+      ${documentTitle(title, category)}
       <div class="document-content">
         ${content}
       </div>

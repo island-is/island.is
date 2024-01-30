@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { error } from './messages'
 import { AnswerOption, InputFields } from './types'
-import { INSTITUTION_INDEX, MEMBER_INDEX, REGLUGERDIR_ID } from './constants'
+import { CategoryIds, INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -155,7 +155,7 @@ export const dataSchema = z.object({
         })
       }
 
-      if (caseSchema.category === REGLUGERDIR_ID) {
+      if (caseSchema.category === CategoryIds.REGLUGERDIR) {
         if (!caseSchema.subCategory) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
