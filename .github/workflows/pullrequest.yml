@@ -16,6 +16,7 @@ concurrency:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  ACTIONS_CACHE_URL: ${{ vars.ACTIONS_CACHE_URL }}
 
 jobs:
   prepare:
