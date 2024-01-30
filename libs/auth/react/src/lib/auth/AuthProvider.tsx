@@ -6,7 +6,7 @@ import React, {
   ReactNode,
   useState,
 } from 'react'
-import type { User } from 'oidc-client-ts'
+import type { SigninRedirectArgs, User } from 'oidc-client-ts'
 
 import { useEffectOnce } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
@@ -69,26 +69,31 @@ export const AuthProvider = ({
   const authSettings = getAuthSettings()
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
 
+  const signinRedirect = useCallback(
+    async function signinRedirect(args: SigninRedirectArgs) {
+      return userManager.signinRedirect(args).catch((e) => {
+        console.log(e)
+        setError(e)
+      })
+      // Nothing more happens here since browser will redirect to IDS.
+    },
+    [userManager, setError],
+  )
+
   const signIn = useCallback(
     async function signIn() {
       dispatch({
         type: ActionType.SIGNIN_START,
       })
 
-      try {
-        return await userManager.signinRedirect({
-          state: getReturnUrl({
-            returnUrl: getCurrentUrl(basePath),
-            redirectPath: authSettings.redirectPath,
-          }),
-        })
-      } catch (e) {
-        console.error('Error in signinRedirect', e)
-        setError(e)
-      }
-      // Nothing more happens here since browser will redirect to IDS.
+      return signinRedirect({
+        state: getReturnUrl({
+          returnUrl: getCurrentUrl(basePath),
+          redirectPath: authSettings.redirectPath,
+        }),
+      })
     },
-    [dispatch, userManager, authSettings, basePath],
+    [dispatch, authSettings, basePath],
   )
 
   const signInSilent = useCallback(
@@ -132,7 +137,7 @@ export const AuthProvider = ({
         type: ActionType.SWITCH_USER,
       })
 
-      return userManager.signinRedirect({
+      return signinRedirect({
         state:
           authSettings.switchUserRedirectUrl ??
           getReturnUrl({
@@ -242,7 +247,7 @@ export const AuthProvider = ({
         if (e.error === 'login_required') {
           // If trying to switch delegations and the IDS session is expired, we'll
           // see this error. So we'll try a proper signin.
-          return userManager.signinRedirect({ state: e.state })
+          return signinRedirect({ state: e.state })
         }
         console.error('Error in oidc callback', e)
         setError(e)
@@ -274,10 +279,7 @@ export const AuthProvider = ({
         prompt: prompt ?? undefined,
         login_hint: loginHint ?? undefined,
       }
-      userManager.signinRedirect(args).catch((e) => {
-        console.log(e)
-        setError(e)
-      })
+      return signinRedirect(args)
     } else {
       checkLogin()
     }
