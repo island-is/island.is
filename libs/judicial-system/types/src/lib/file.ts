@@ -55,11 +55,3 @@ export interface CreateFile {
   displayDate?: string
   policeFileId?: string
 }
-
-export interface UpdateFile {
-  id: string
-  userGeneratedFilename?: string
-  chapter?: number
-  orderWithinChapter?: number
-  displayDate?: string
-}

@@ -9,7 +9,6 @@ import type {
   CaseFile,
   CreateFile,
   Institution,
-  UpdateFile,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -220,12 +219,11 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   async updateFiles(
     caseId: string,
-    updates: UpdateFile[],
+    updates: unknown[],
   ): Promise<UpdateFilesResponse> {
-    const caseFiles: CaseFile[] = await this.patch<
-      { files: UpdateFile[] },
-      CaseFile[]
-    >(`case/${caseId}/files`, { files: updates })
+    const caseFiles: CaseFile[] = await this.patch(`case/${caseId}/files`, {
+      files: updates,
+    })
     return { caseFiles }
   }
 
