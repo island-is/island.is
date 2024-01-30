@@ -33,6 +33,12 @@ export interface CreateFilesResponse {
   files?: ApplicationFile[]
 }
 
+export interface MunicipalityApiUser {
+  id: string
+  name: string
+  municipalityIds: string
+  password: string
+}
 export interface Staff {
   id: string
   nationalId: string

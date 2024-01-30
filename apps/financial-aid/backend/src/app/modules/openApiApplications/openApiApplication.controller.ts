@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationModel } from '../application/models'
 import { OpenApiApplicationService } from './openApiApplication.service'
+import { ApiKeyGuard } from '../../guards/apiKey.guard'
 
 @Controller(`${apiBasePath}/open-api-applications`)
+@UseGuards(ApiKeyGuard)
 @ApiTags('application')
 export class OpenApiApplicationController {
   constructor(private readonly applicationService: OpenApiApplicationService) {}

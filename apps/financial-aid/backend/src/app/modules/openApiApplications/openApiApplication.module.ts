@@ -12,11 +12,13 @@ import {
   StaffModule,
   ApplicationEventModule,
   DirectTaxPaymentModule,
+  ApiUserModule,
 } from '../index'
 import { ApplicationModel } from '../application/models'
 
 @Module({
   imports: [
+    forwardRef(() => ApiUserModule),
     forwardRef(() => StaffModule),
     forwardRef(() => FileModule),
     EmailModule.register(environment.emailOptions),
