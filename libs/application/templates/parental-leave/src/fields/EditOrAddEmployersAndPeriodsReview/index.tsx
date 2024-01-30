@@ -5,12 +5,12 @@ import {
   Text,
   AlertMessage,
   ContentBlock,
+  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Periods from './Periods'
 import Employers from './Employers'
-import { PrintButton } from '../PrintButton'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import {
   PARENTAL_GRANT,
@@ -53,17 +53,30 @@ const EditOrAddEmployersAndPeriodsReview: FC<
 
   return (
     <>
-      <Box>
-        <PrintButton />
-        <Box marginBottom={2}>
-          <Text variant="h2">
-            {formatMessage(parentalLeaveFormMessages.confirmation.title)}
-          </Text>
+      <Box display="flex" justifyContent="spaceBetween">
+        <Box>
+          <Box marginBottom={2}>
+            <Text variant="h2">
+              {formatMessage(parentalLeaveFormMessages.confirmation.title)}
+            </Text>
+          </Box>
+          <Box marginBottom={10}>
+            <Text variant="default">
+              {formatMessage(
+                parentalLeaveFormMessages.confirmation.description,
+              )}
+            </Text>
+          </Box>
         </Box>
-        <Box marginBottom={10}>
-          <Text variant="default">
-            {formatMessage(parentalLeaveFormMessages.confirmation.description)}
-          </Text>
+        <Box>
+          <Button
+            variant="utility"
+            icon="print"
+            onClick={(e) => {
+              e.preventDefault()
+              window.print()
+            }}
+          />
         </Box>
       </Box>
       {addEmployer !== YES && addPeriods !== YES && (
