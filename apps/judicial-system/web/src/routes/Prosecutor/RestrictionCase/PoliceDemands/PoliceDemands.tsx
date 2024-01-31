@@ -239,6 +239,7 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 }}
                 required
                 blueBox={false}
+                defaultTime="16:00"
               />
             </Box>
             {workingCase.type !== CaseType.TRAVEL_BAN && (

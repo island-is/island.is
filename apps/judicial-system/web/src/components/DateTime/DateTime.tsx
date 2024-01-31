@@ -26,6 +26,7 @@ interface Props {
   backgroundColor?: 'blue' | 'white'
   size?: 'sm' | 'md'
   dateOnly?: boolean
+  defaultTime?: string
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
@@ -45,6 +46,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
     backgroundColor = 'white',
     size = 'md',
     dateOnly = false,
+    defaultTime = '',
     onChange,
   } = props
   const { formatMessage } = useIntl()
@@ -90,7 +92,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
     return (
       (required && date !== undefined && timeIsValid) ||
-      (required === false && date === undefined) ||
+      (!required && date === undefined) ||
       (date !== undefined && timeIsValid)
     )
   }
@@ -100,33 +102,33 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
       return
     }
 
-    const correctTime = date === null ? undefined : date
+    const newDate = date === null ? undefined : date
 
-    setCurrentDate(correctTime)
+    setCurrentDate(newDate)
 
-    if (required && correctTime === undefined) {
+    if (required && newDate === undefined) {
       setDatepickerErrorMessage('Reitur má ekki vera tómur')
     } else {
       setDatepickerErrorMessage(undefined)
     }
 
-    sendToParent(correctTime, currentTime)
+    sendToParent(newDate, !currentDate ? defaultTime : currentTime)
   }
 
   const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const time = event.target.value
+    const newTime = event.target.value
 
-    setCurrentTime(time)
+    setCurrentTime(newTime)
 
     const validations: Validation[] = ['empty', 'time-format']
 
-    const timeValidation = validate([[time, validations]])
+    const timeValidation = validate([[newTime, validations]])
 
     if (timeValidation.isValid) {
       setTimeErrorMessage(undefined)
     }
 
-    sendToParent(currentDate, time)
+    sendToParent(currentDate, newTime)
   }
 
   const onTimeBlur = (event: React.FocusEvent<HTMLInputElement>) => {

@@ -376,6 +376,9 @@
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/home-support": [
+        "libs/application/templates/home-support/src/index.ts"
+      ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
       ],
@@ -730,6 +733,9 @@
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/work-machines": [
         "libs/clients/work-machines/src/index.ts"
+      ],
+      "@island.is/clients/workpoint/arborg": [
+        "libs/clients/workpoint/arborg/src/index.ts"
       ],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
