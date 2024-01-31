@@ -5,40 +5,26 @@ import { Injectable } from '@nestjs/common'
 
 import { ProblemError } from '@island.is/nest/problem'
 
-import type {
-  Case,
-  CaseFile,
-  CaseListEntry,
-  CreateCase,
-  CreateDefendant,
-  CreateFile,
-  CreatePresignedPost,
-  CreateUser,
-  Defendant,
-  DeleteDefendantResponse,
-  DeleteFileResponse,
-  Institution,
-  Notification,
-  PoliceCaseFile,
-  PresignedPost,
-  RequestSignatureResponse,
-  SendNotification,
-  SendNotificationResponse,
-  SignatureConfirmationResponse,
-  SignedUrl,
-  TransitionCase,
-  UpdateCase,
-  UpdateDefendant,
-  UpdateFile,
-  UpdateUser,
-  UploadFileToCourtResponse,
-  UploadPoliceCaseFile,
-  UploadPoliceCaseFileResponse,
-  User,
-} from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
-import { UpdateFilesResponse } from '../modules/file'
+import {
+  Case,
+  Notification,
+  RequestSignatureResponse,
+  SendNotificationResponse,
+  SignatureConfirmationResponse,
+} from '../modules/case'
+import { CaseListEntry } from '../modules/case-list'
+import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
+import {
+  CaseFile,
+  DeleteFileResponse,
+  PresignedPost,
+  SignedUrl,
+  UpdateFilesResponse,
+  UploadFileToCourtResponse,
+} from '../modules/file'
 import {
   CreateIndictmentCountInput,
   DeleteIndictmentCountInput,
@@ -46,7 +32,12 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../modules/indictment-count'
-import { PoliceCaseInfo } from '../modules/police'
+import { Institution } from '../modules/institution'
+import {
+  PoliceCaseFile,
+  PoliceCaseInfo,
+  UploadPoliceCaseFileResponse,
+} from '../modules/police'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -124,11 +115,11 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`user/${id}`)
   }
 
-  createUser(createUser: CreateUser): Promise<User> {
+  createUser(createUser: unknown): Promise<User> {
     return this.post('user', createUser)
   }
 
-  updateUser(id: string, updateUser: UpdateUser): Promise<User> {
+  updateUser(id: string, updateUser: unknown): Promise<User> {
     return this.put(`user/${id}`, updateUser)
   }
 
@@ -140,15 +131,15 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`case/${id}`)
   }
 
-  createCase(createCase: CreateCase): Promise<Case> {
+  createCase(createCase: unknown): Promise<Case> {
     return this.post('case', createCase)
   }
 
-  updateCase(id: string, updateCase: UpdateCase): Promise<Case> {
+  updateCase(id: string, updateCase: unknown): Promise<Case> {
     return this.patch(`case/${id}`, updateCase)
   }
 
-  transitionCase(id: string, transitionCase: TransitionCase): Promise<Case> {
+  transitionCase(id: string, transitionCase: unknown): Promise<Case> {
     return this.patch(`case/${id}/state`, transitionCase)
   }
 
@@ -180,7 +171,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   sendNotification(
     id: string,
-    sendNotification: SendNotification,
+    sendNotification: unknown,
   ): Promise<SendNotificationResponse> {
     return this.post(`case/${id}/notification`, sendNotification)
   }
@@ -199,12 +190,12 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   createCasePresignedPost(
     id: string,
-    createPresignedPost: CreatePresignedPost,
+    createPresignedPost: unknown,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 
-  createCaseFile(id: string, createFile: CreateFile): Promise<CaseFile> {
+  createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {
     return this.post(`case/${id}/file`, createFile)
   }
 
@@ -225,12 +216,11 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   async updateFiles(
     caseId: string,
-    updates: UpdateFile[],
+    updates: unknown[],
   ): Promise<UpdateFilesResponse> {
-    const caseFiles: CaseFile[] = await this.patch<
-      { files: UpdateFile[] },
-      CaseFile[]
-    >(`case/${caseId}/files`, { files: updates })
+    const caseFiles: CaseFile[] = await this.patch(`case/${caseId}/files`, {
+      files: updates,
+    })
     return { caseFiles }
   }
 
@@ -244,14 +234,14 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   uploadPoliceFile(
     caseId: string,
-    uploadPoliceCaseFile: UploadPoliceCaseFile,
+    uploadPoliceCaseFile: unknown,
   ): Promise<UploadPoliceCaseFileResponse> {
     return this.post(`case/${caseId}/policeFile`, uploadPoliceCaseFile)
   }
 
   createDefendant(
     caseId: string,
-    createDefendant: CreateDefendant,
+    createDefendant: unknown,
   ): Promise<Defendant> {
     return this.post(`case/${caseId}/defendant`, createDefendant)
   }
@@ -259,7 +249,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
   updateDefendant(
     caseId: string,
     defendantId: string,
-    updateDefendant: UpdateDefendant,
+    updateDefendant: unknown,
   ): Promise<Defendant> {
     return this.patch(
       `case/${caseId}/defendant/${defendantId}`,
@@ -305,27 +295,27 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`case/${id}/limitedAccess`)
   }
 
-  limitedAccessUpdateCase(id: string, updateCase: UpdateCase): Promise<Case> {
+  limitedAccessUpdateCase(id: string, updateCase: unknown): Promise<Case> {
     return this.patch(`case/${id}/limitedAccess`, updateCase)
   }
 
   limitedAccessTransitionCase(
     id: string,
-    transitionCase: TransitionCase,
+    transitionCase: unknown,
   ): Promise<Case> {
     return this.patch(`case/${id}/limitedAccess/state`, transitionCase)
   }
 
   limitedAccessCreateCasePresignedPost(
     id: string,
-    createPresignedPost: CreatePresignedPost,
+    createPresignedPost: unknown,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/limitedAccess/file/url`, createPresignedPost)
   }
 
   limitedAccessCreateCaseFile(
     id: string,
-    createFile: CreateFile,
+    createFile: unknown,
   ): Promise<CaseFile> {
     return this.post(`case/${id}/limitedAccess/file`, createFile)
   }
