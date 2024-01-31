@@ -87,7 +87,7 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          CACHE_FILES=$(./scripts/ci/prepare-file-cache.sh)
+          CACHE_FILES=$(./scripts/ci/prepare-files-cache.sh)
           HASH=$(hashFiles($CACHE_FILES))
           GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"

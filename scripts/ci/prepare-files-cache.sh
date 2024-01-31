@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-GIT_DIR=$(git rev-parse --show-toplevel)
-cat "${GIT_DIR}/.cache-generating-files" | xargs printf "'%s'," | sed 's/,$//'
+GIT_ROOT=$(git rev-parse --show-toplevel)
+cat "${GIT_ROOT}/.cache-generating-files" | xargs printf "'%s'," | sed 's/,$//'
