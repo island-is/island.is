@@ -1,19 +1,20 @@
 import React from 'react'
 import type { GetServerSidePropsContext, NextPageContext } from 'next'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+
 import {
   ErrorPageQuery,
   ErrorPageQueryVariables,
   GetUrlQuery,
   GetUrlQueryVariables,
 } from '../graphql/schema'
+import withApollo from '../graphql/withApollo'
+import { linkResolver, LinkType } from '../hooks'
+import { getLocaleFromPath } from '../i18n'
+import I18n from '../i18n/I18n'
 import Layout, { LayoutProps } from '../layouts/main'
 import { ErrorScreen } from '../screens/Error'
-import { getLocaleFromPath } from '../i18n'
 import { GET_ERROR_PAGE, GET_URL_QUERY } from '../screens/queries'
-import { LinkType, linkResolver } from '../hooks'
-import withApollo from '../graphql/withApollo'
-import I18n from '../i18n/I18n'
 
 type ErrorPageProps = {
   statusCode: number
@@ -70,6 +71,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         .replace(/\/\/+/g, '/')
         .replace(/\/+$/, '')
         .toLowerCase()
+        .split('?')[0]
 
       const redirectProps = await props.apolloClient.query<
         GetUrlQuery,
