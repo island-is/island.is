@@ -19,7 +19,6 @@ import {
 } from './education.type'
 import { S3Service } from './s3.service'
 import { getYearInterval } from './education.utils'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -62,34 +61,43 @@ export class EducationService {
   }
 
   async getFamily(nationalId: string): Promise<Array<Student>> {
-    const family = await this.nationalRegistryApi.getFamily(nationalId)
+    const userData = await this.nationalRegistryApi.getAllDataIndividual(
+      nationalId,
+    )
 
-    // Note: we are explicitly sorting by name & national id, since we will
+    // Note: we are explicitly sorting by name & national id, since we wil
     // use the index within the family to link to and select the correct
     // family memember, so that indexes are consistant no matter how they
     // are displayed or fetched.
     // They also don't need to be absolute indexes, only indexes that are
     // unique from the point of view of each viewer.
 
-    if (!family?.born) {
+    if (!userData?.nafn || !userData?.kennitala) {
       return []
     }
 
-    const sortedFamily = family?.born?.sort((a, b) => {
-      const nameDiff = a.barnNafn?.localeCompare(b.barnNafn ?? '') ?? 0
+    const familyArray: Array<Student> = [
+      {
+        name: userData?.nafn,
+        nationalId: userData?.kennitala,
+      },
+    ]
 
-      return nameDiff === 0
-        ? a.barnKennitala?.localeCompare(b.barnKennitala ?? '') ?? 0
-        : nameDiff
-    })
-    const familyArray: Array<Student> = []
-    sortedFamily.forEach((s) => {
+    userData?.logforeldrar?.born?.forEach((s) => {
       if (!s.barnKennitala || !s.barnNafn) {
         return
       }
       familyArray.push({ name: s.barnNafn, nationalId: s.barnKennitala })
     })
-    return familyArray
+    const sortedFamily = familyArray?.sort((a, b) => {
+      const nameDiff = a.name.localeCompare(b.name ?? '') ?? 0
+
+      return nameDiff === 0
+        ? a.nationalId?.localeCompare(b.nationalId ?? '') ?? 0
+        : nameDiff
+    })
+
+    return sortedFamily
   }
 
   async getExamFamilyOverviews(
