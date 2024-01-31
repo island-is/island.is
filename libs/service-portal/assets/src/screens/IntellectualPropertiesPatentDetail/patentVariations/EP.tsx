@@ -123,8 +123,8 @@ const PatentEP = ({ data, loading }: Props) => {
           label={ipMessages.originalPatentLanguage}
           content={
             data.language === 'en'
-              ? formatMessage(ipMessages.english)
-              : formatMessage(ipMessages.icelandic)
+              ? formatMessage(coreMessages.english)
+              : formatMessage(coreMessages.icelandic)
           }
           loading={loading}
         />

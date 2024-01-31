@@ -882,14 +882,6 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:base-info',
     defaultMessage: 'Grunnupplýsingar',
   },
-  english: {
-    id: 'sp.intellectual-property:english',
-    defaultMessage: 'Enska',
-  },
-  icelandic: {
-    id: 'sp.intellectual-property:icelandic',
-    defaultMessage: 'Íslenska',
-  },
   text: {
     id: 'sp.intellectual-property:text',
     defaultMessage: 'Texti',

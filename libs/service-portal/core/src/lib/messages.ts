@@ -1359,4 +1359,12 @@ export const m = defineMessages({
     defaultMessage: 'Desember',
     description: 'December',
   },
+  english: {
+    id: 'service.portal:english',
+    defaultMessage: 'Enska',
+  },
+  icelandic: {
+    id: 'service.portal:icelandic',
+    defaultMessage: 'Íslenska',
+  },
 })
