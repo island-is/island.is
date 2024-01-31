@@ -2,27 +2,107 @@ query getIntellectualPropertiesPatentById(
   $input: IntellectualPropertiesInput!
 ) {
   intellectualPropertiesPatent(input: $input) {
-    applicationNumber
-    name
-    status
-    statusText
-    canRenew
-    lifecycle {
-      applicationDate
-      applicationDatePublishedAsAvailable
-      registrationDate
-      maxValidObjectionDate
-    }
-    owner {
+    ... on IntellectualPropertiesPatentIS {
+      __typename
+      id
+      classifications {
+        category
+      }
       name
-      address
+      statusText
+      registrationNumber
+      pct {
+        number
+        date
+      }
+      lifecycle {
+        applicationDate
+        registrationDate
+        applicationDatePublishedAsAvailable
+        maxValidObjectionDate
+        expiryDate
+        maxValidDate
+      }
+      owners {
+        ...PersonFragment
+      }
+      inventors {
+        ...PersonFragment
+      }
+      agent {
+        ...PersonFragment
+      }
     }
-    inventors {
+    ... on IntellectualPropertiesPatentEP {
+      __typename
+      applicationNumber
+      id
+      classifications {
+        category
+      }
       name
+      nameInOrgLanguage
+      statusText
+      pct {
+        number
+        date
+      }
+      priorities {
+        number
+        country {
+          name
+        }
+        applicationDate
+      }
+      lifecycle {
+        applicationDate
+        expiryDate
+      }
+      owners {
+        ...PersonFragment
+      }
+      inventors {
+        ...PersonFragment
+      }
+      epApplicationNumber
+      spcNumbers
+      epLifecycle {
+        publishDate
+        applicationDate
+      }
+      language
     }
-    agent {
+    ... on IntellectualPropertiesSPC {
+      __typename
+      applicationNumber
+      number
+      id
       name
-      address
+      status
+      lifecycle {
+        applicationDate
+        maxValidDate
+      }
+      owners {
+        ...PersonFragment
+      }
+      agent {
+        ...PersonFragment
+      }
+      medicine
+      medicineForChildren
+      marketingAuthorization {
+        foreignAuthorizationNumber
+        foreignAuthorizationDate
+      }
+      grantPublishedInGazetteDate
+      publishedInGazetteDate
     }
   }
+}
+
+fragment PersonFragment on IntellectualPropertiesPerson {
+  __typename
+  name
+  addressFull
 }
