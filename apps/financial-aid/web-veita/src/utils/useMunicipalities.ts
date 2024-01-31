@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import {
+  ApiKeysForMunicipality,
   Municipality,
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
@@ -38,6 +39,12 @@ const MunicipalityQuery = gql`
         unknown
         type
       }
+    }
+    apiKeysForMunicipality {
+      id
+      name
+      apiKey
+      municipalityCode
     }
   }
 `

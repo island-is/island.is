@@ -165,6 +165,13 @@ export interface UpdateAdmin {
   municipalityIds: string[]
 }
 
+export interface ApiKeysForMunicipality {
+  name: string
+  apiKey: string
+  municipalityCode: string
+  id: string
+}
+
 export interface Municipality {
   id: string
   name: string

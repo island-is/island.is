@@ -335,10 +335,39 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
 
   return (
     <Box marginTop={[5, 10, 15]} marginBottom={[5, 10, 15]}>
-      <Box className={`contentUp`}>
-        <Text as="h1" variant="h1" marginBottom={[2, 2, 7]}>
+      <Box
+        className={`contentUp`}
+        marginBottom={[2, 2, 7]}
+        display="flex"
+        justifyContent="spaceBetween"
+      >
+        <Text as="h1" variant="h1">
           Sveitarfélagsstillingar
         </Text>
+        <Button loading={loading} onClick={submit} icon="checkmark">
+          Vista stillingar
+        </Button>
+      </Box>
+
+      <Box marginBottom={[2, 2, 20]} marginTop={[2, 2, 20]}>
+        <Input
+          label="Kerfi"
+          name="systemName"
+          value={''}
+          backgroundColor="blue"
+          disabled={!state.usingNav}
+          autoComplete="off"
+          onChange={(event) => console.log(event.currentTarget.value)}
+        />
+        <Input
+          label="Lykill"
+          name="apiKey"
+          value={''}
+          backgroundColor="blue"
+          disabled={!state.usingNav}
+          autoComplete="off"
+          onChange={(event) => console.log(event.currentTarget.value)}
+        />
       </Box>
 
       <Box className={`contentUp delay-25`}>

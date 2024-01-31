@@ -19,6 +19,7 @@ import type { Logger } from '@island.is/logging'
 import { StaffService } from '../staff'
 import { CreateStaffDto } from '../staff/dto'
 import { environment } from '../../../environments'
+import { ApiUserService } from '../municipalityApiUsers/user.service'
 
 @Injectable()
 export class MunicipalityService {
@@ -27,6 +28,8 @@ export class MunicipalityService {
     private readonly municipalityModel: typeof MunicipalityModel,
     private readonly aidService: AidService,
     private readonly staffService: StaffService,
+    private readonly apiUserModel: ApiUserService,
+
     private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,

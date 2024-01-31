@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApiUserModel } from './user.model'
+import { Op } from 'sequelize'
 
 @Injectable()
-export class UserService {
+export class ApiUserService {
   constructor(
     @InjectModel(ApiUserModel)
     private readonly apiUserModel: typeof ApiUserModel,
@@ -14,6 +15,18 @@ export class UserService {
     return await this.apiUserModel.findOne({
       where: {
         apiKey,
+      },
+    })
+  }
+
+  async findByMunicipalityCode(
+    municipalityCodes: string[],
+  ): Promise<ApiUserModel[]> {
+    return await this.apiUserModel.findAll({
+      where: {
+        municipalityCode: {
+          [Op.in]: municipalityCodes,
+        },
       },
     })
   }
