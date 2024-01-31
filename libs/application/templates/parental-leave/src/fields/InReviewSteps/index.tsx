@@ -31,7 +31,6 @@ import {
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 import { showResidenceGrant } from '../../lib/answerValidationSections/utils'
-import { PrintButton } from '../PrintButton'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -275,19 +274,32 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   }, [])
   return (
     <Box marginBottom={10}>
-      {screenState === 'viewApplication' && <PrintButton />}
-      <Box marginBottom={2}>
-        <Text variant="h2">
-          {formatMessage(
-            application.state === States.VINNUMALASTOFNUN_APPROVAL ||
-              application.state ===
-                States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE
-              ? parentalLeaveFormMessages.reviewScreen.titleReceived
-              : application.state === States.APPROVED
-              ? parentalLeaveFormMessages.reviewScreen.titleApproved
-              : parentalLeaveFormMessages.reviewScreen.titleInReview,
-          )}
-        </Text>
+      <Box display="flex" justifyContent="spaceBetween">
+        <Box marginBottom={2}>
+          <Text variant="h2">
+            {formatMessage(
+              application.state === States.VINNUMALASTOFNUN_APPROVAL ||
+                application.state ===
+                  States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE
+                ? parentalLeaveFormMessages.reviewScreen.titleReceived
+                : application.state === States.APPROVED
+                ? parentalLeaveFormMessages.reviewScreen.titleApproved
+                : parentalLeaveFormMessages.reviewScreen.titleInReview,
+            )}
+          </Text>
+        </Box>
+        {screenState === 'viewApplication' && (
+          <Box>
+            <Button
+              variant="utility"
+              icon="print"
+              onClick={(e) => {
+                e.preventDefault()
+                window.print()
+              }}
+            />
+          </Box>
+        )}
       </Box>
       <Box
         display={['block', 'block', 'block', 'flex']}
