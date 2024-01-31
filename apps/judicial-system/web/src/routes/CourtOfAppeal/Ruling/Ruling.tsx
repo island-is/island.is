@@ -210,127 +210,156 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             ))}
           </BlueBox>
         </Box>
-        {isRestrictionCase(workingCase.type) &&
-          workingCase.state === CaseState.ACCEPTED &&
-          (workingCase.decision === CaseDecision.ACCEPTING ||
-            workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-          workingCase.appealRulingDecision ===
-            CaseAppealRulingDecision.CHANGED && (
-            <RestrictionLength
-              workingCase={workingCase}
-              handleIsolationChange={(
-                event: React.ChangeEvent<HTMLInputElement>,
-              ): void => {
-                setAndSendCaseToServer(
-                  [
-                    {
-                      isAppealCustodyIsolation: event.target.checked,
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
+        {workingCase.appealRulingDecision ===
+        CaseAppealRulingDecision.WITHDRAWN ? (
+          <Box marginBottom={10}>
+            <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) =>
+                  file.category === CaseFileCategory.APPEAL_COURT_RECORD,
+              )}
+              accept="application/pdf"
+              header={formatMessage(strings.inputFieldLabel)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              buttonLabel={formatMessage(strings.uploadButtonText)}
+              onChange={(files) => {
+                handleUpload(
+                  addUploadFiles(files, CaseFileCategory.APPEAL_COURT_RECORD),
+                  updateUploadFile,
                 )
               }}
-              handleIsolationDateChange={(
-                date: Date | undefined,
-                valid: boolean,
-              ): void => {
-                if (date && valid) {
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        appealIsolationToDate: formatDateForServer(date),
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-              }}
-              handleValidToDateChange={(
-                date: Date | undefined,
-                valid: boolean,
-              ): void => {
-                if (date && valid) {
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        appealValidToDate: formatDateForServer(date),
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-              }}
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
             />
-          )}
-        <Box marginBottom={5}>
-          <Text as="h3" variant="h3" marginBottom={3}>
-            {formatMessage(strings.conclusionHeading)}
-          </Text>
-          <Input
-            label={formatMessage(strings.conclusionHeading)}
-            name="rulingConclusion"
-            value={workingCase.appealConclusion || ''}
-            placeholder={formatMessage(strings.conclusionPlaceholder)}
-            onChange={(event) => {
-              removeTabsValidateAndSet(
-                'appealConclusion',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                setWorkingCase,
-                appealConclusionErrorMessage,
-                setAppealConclusionErrorMessage,
-              )
-            }}
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'appealConclusion',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setAppealConclusionErrorMessage,
-              )
-            }
-            textarea
-            rows={7}
-            required
-            autoExpand={{ on: true, maxHeight: 300 }}
-            hasError={appealConclusionErrorMessage !== ''}
-            errorMessage={appealConclusionErrorMessage}
-          />
-        </Box>
-        <Box marginBottom={10}>
-          <SectionHeading
-            title={formatMessage(strings.courtConclusionHeading)}
-            required
-          />
-          <InputFileUpload
-            fileList={uploadFiles.filter(
-              (file) => file.category === CaseFileCategory.APPEAL_RULING,
-            )}
-            accept="application/pdf"
-            header={formatMessage(strings.inputFieldLabel)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(strings.uploadButtonText)}
-            onChange={(files) => {
-              handleUpload(
-                addUploadFiles(files, CaseFileCategory.APPEAL_RULING),
-                updateUploadFile,
-              )
-            }}
-            onRemove={(file) => handleRemove(file, removeUploadFile)}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
-          />
-        </Box>
+          </Box>
+        ) : (
+          <>
+            {isRestrictionCase(workingCase.type) &&
+              workingCase.state === CaseState.ACCEPTED &&
+              (workingCase.decision === CaseDecision.ACCEPTING ||
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
+              workingCase.appealRulingDecision ===
+                CaseAppealRulingDecision.CHANGED && (
+                <RestrictionLength
+                  workingCase={workingCase}
+                  handleIsolationChange={(
+                    event: React.ChangeEvent<HTMLInputElement>,
+                  ): void => {
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          isAppealCustodyIsolation: event.target.checked,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }}
+                  handleIsolationDateChange={(
+                    date: Date | undefined,
+                    valid: boolean,
+                  ): void => {
+                    if (date && valid) {
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            appealIsolationToDate: formatDateForServer(date),
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
+                  }}
+                  handleValidToDateChange={(
+                    date: Date | undefined,
+                    valid: boolean,
+                  ): void => {
+                    if (date && valid) {
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            appealValidToDate: formatDateForServer(date),
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
+                  }}
+                />
+              )}
+            <Box marginBottom={5}>
+              <Text as="h3" variant="h3" marginBottom={3}>
+                {formatMessage(strings.conclusionHeading)}
+              </Text>
+              <Input
+                label={formatMessage(strings.conclusionHeading)}
+                name="rulingConclusion"
+                value={workingCase.appealConclusion || ''}
+                placeholder={formatMessage(strings.conclusionPlaceholder)}
+                onChange={(event) => {
+                  removeTabsValidateAndSet(
+                    'appealConclusion',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    appealConclusionErrorMessage,
+                    setAppealConclusionErrorMessage,
+                  )
+                }}
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'appealConclusion',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setAppealConclusionErrorMessage,
+                  )
+                }
+                textarea
+                rows={7}
+                required
+                autoExpand={{ on: true, maxHeight: 300 }}
+                hasError={appealConclusionErrorMessage !== ''}
+                errorMessage={appealConclusionErrorMessage}
+              />
+            </Box>
+            <Box marginBottom={10}>
+              <SectionHeading
+                title={formatMessage(strings.courtConclusionHeading)}
+                required
+              />
+              <InputFileUpload
+                fileList={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.APPEAL_RULING,
+                )}
+                accept="application/pdf"
+                header={formatMessage(strings.inputFieldLabel)}
+                description={formatMessage(core.uploadBoxDescription, {
+                  fileEndings: '.pdf',
+                })}
+                buttonLabel={formatMessage(strings.uploadButtonText)}
+                onChange={(files) => {
+                  handleUpload(
+                    addUploadFiles(files, CaseFileCategory.APPEAL_RULING),
+                    updateUploadFile,
+                  )
+                }}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+              />
+            </Box>
+          </>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
