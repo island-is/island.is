@@ -7,6 +7,7 @@ export const TranslationDefaults: { [key: string]: string } = {
   UNDERGRAD: 'Grunnnám',
   ONLINE_WITH_SESSION: 'Dreifnám',
   ON_SITE: 'Staðnám',
-  ONLINE: 'Fjarnám',
+  ONLINE: 'Netnám',
+  REMOTE: 'Fjarnám',
   MIXED: 'Blandað nám',
 }
