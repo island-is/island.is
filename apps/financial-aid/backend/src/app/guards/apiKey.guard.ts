@@ -6,7 +6,7 @@ export class ApiKeyGuard implements CanActivate {
   constructor(private userService: UserService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
-    const user = await this.userService.findById(request.headers['api-key'])
+    const user = await this.userService.findByApiKey(request.headers['api-key'])
 
     if (!user) {
       return false

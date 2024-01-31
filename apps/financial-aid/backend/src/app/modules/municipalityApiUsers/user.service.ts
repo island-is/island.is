@@ -10,11 +10,11 @@ export class UserService {
     private readonly apiUserModel: typeof ApiUserModel,
   ) {}
 
-  async findById(id: string): Promise<ApiUserModel> {
+  async findByApiKey(apiKey: string): Promise<ApiUserModel> {
     console.log('LION KING')
     return await this.apiUserModel.findOne({
       where: {
-        id,
+        apiKey,
       },
     })
   }
