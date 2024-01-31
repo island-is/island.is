@@ -281,11 +281,18 @@ jobs:
           echo "node_modules hash: $HASH"
           echo "node-modules-hash=$HASH" >> $GITHUB_OUTPUT
 
+      - name: Prepare hash files
+        id: prepare_hash_files
+        run: |
+          GENERATED_FILES_LIST=$(./scripts/ci/prepare-files-cache.sh)
+          echo "prepared-hash-files-list=$GENERATED_FILES_LIST >> $GITHUB_OUTPUT
+
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          CACHE_FILES=$(./scripts/ci/prepare-files-cache.sh)
-          HASH=$(hashFiles($CACHE_FILES))
+          FILES_HASH=$(./scripts/ci/prepare-files-cache.sh)
+          echo "Prepared hashfiles list: ${{ steps.prepare_hash_files.outputs.prepared-hash-files-list }}"
+          HASH=$(hashFiles(${{ steps.prepare_hash_files.outputs.prepared-hash-files-list }}))
           GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
