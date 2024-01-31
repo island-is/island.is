@@ -17,10 +17,10 @@ export const CalculateTotalDebts: FC<
   const [total] = useState(
     (getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total') ||
       0) +
-      (parseInt(
-        getValueViaPath<string>(answers, 'debts.publicCharges') ?? '0',
+      parseInt(
+        getValueViaPath<string>(answers, 'debts.publicCharges') || '0',
         10,
-      ) || 0),
+      ),
   )
 
   useEffect(() => {
