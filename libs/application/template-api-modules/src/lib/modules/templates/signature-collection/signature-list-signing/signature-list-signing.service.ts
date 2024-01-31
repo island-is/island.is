@@ -95,7 +95,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
       }
     }
     if (lists.length === 0) {
-      throw new TemplateApiError(errorMessages.active, 405)
+      throw new TemplateApiError(errorMessages.active, 404)
     }
 
     return lists

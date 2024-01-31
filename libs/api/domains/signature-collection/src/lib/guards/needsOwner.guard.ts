@@ -21,12 +21,12 @@ export class NeedsOwnerGuard implements CanActivate {
     if (bypassAuth) {
       return true
     }
-    const ownerRestirction = this.reflector.get<OwnerAccess>(
+    const ownerRestriction = this.reflector.get<OwnerAccess>(
       'is-owner',
       context.getHandler(),
     )
     // IsOwner decorator not used
-    if (!ownerRestirction) {
+    if (!ownerRestriction) {
       return true
     }
 
@@ -39,7 +39,7 @@ export class NeedsOwnerGuard implements CanActivate {
 
     if (signee.isOwner && candidate) {
       // Check if user is an actor for owner and if so check if registered collector, if not actor will be added as collector
-      if (isDelegatedUser && ownerRestirction === OwnerAccess.AllowActor) {
+      if (isDelegatedUser && ownerRestriction === OwnerAccess.AllowActor) {
         const isCollector = await this.signatureCollectionService.isCollector(
           candidate.id,
           user,

@@ -1,7 +1,5 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
-import { List, ListBase } from './types/list.dto'
-
-import { User } from '@island.is/auth-nest-tools'
+import { ListBase } from './types/list.dto'
 
 export enum ListState {
   Open = 'open',
