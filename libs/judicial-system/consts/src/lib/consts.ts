@@ -178,6 +178,7 @@ export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
 export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
 export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
 export const COURT_OF_APPEAL_SUMMARY_ROUTE = '/landsrettur/samantekt'
+export const COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE = '/landsrettur/nidurfelling'
 
 /* COURT OF APPEALS ROUTES END */
 
