@@ -105,8 +105,6 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
 
       if (defendantId) {
         setAndSendDefendantToServer(
-          workingCase.id,
-          defendantId,
           { ...updatedLawyer, caseId: workingCase.id, defendantId },
           setWorkingCase,
         )
