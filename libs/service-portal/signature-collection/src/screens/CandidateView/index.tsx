@@ -25,8 +25,9 @@ const CandidateView = () => {
 
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner()
-  const { currentCollection } = useGetCurrentCollection()
-  const collectionId = currentCollection.id
+  const { currentCollection, loadingCurrentCollection } =
+    useGetCurrentCollection()
+  const collectionId = currentCollection?.id
 
   return (
     <Box>
@@ -34,7 +35,7 @@ const CandidateView = () => {
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescription)}
       />
-      {!loadingOwnerLists ? (
+      {!loadingOwnerLists && !loadingCurrentCollection ? (
         <Box>
           {listsForOwner.length === 0 && (
             <Button
