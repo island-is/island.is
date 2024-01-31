@@ -1,5 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { IdsUserGuard, CurrentUser, User } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { Inject, NotFoundException, UseGuards } from '@nestjs/common'
 import { NotificationsService } from './notifications.service'
 import {
@@ -8,7 +9,7 @@ import {
   NotificationsInput,
   NotificationsResponse,
 } from './notifications.model'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const LOG_CATEGORY = 'notifications-resolver'
