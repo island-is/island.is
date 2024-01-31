@@ -565,6 +565,7 @@
       "@island.is/clients/disability-license": [
         "libs/clients/disability-license/src/index.ts"
       ],
+      "@island.is/clients/dmr": ["libs/clients/dmr/src/index.ts"],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],
