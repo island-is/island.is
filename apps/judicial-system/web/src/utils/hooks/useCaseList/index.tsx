@@ -138,10 +138,9 @@ const useCaseList = () => {
       }
     }
 
-    console.log('routeTo', openCaseInNewTab)
-
     if (openCaseInNewTab) {
       window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
+      setOpenCaseInNewTab(false)
     } else if (routeTo) {
       router.push(`${routeTo}/${caseToOpen.id}`)
     }
