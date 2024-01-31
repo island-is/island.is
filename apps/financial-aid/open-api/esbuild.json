@@ -18,7 +18,8 @@
     "winston",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "@nestjs/websockets/socket-module"
   ],
   "keepNames": true
 }
