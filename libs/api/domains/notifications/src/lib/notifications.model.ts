@@ -14,7 +14,6 @@ registerEnumType(RenderedNotificationDtoStatusEnum, {
   name: 'NotificationStatus',
 })
 
-@ObjectType('NotificationMetadata')
 export class NotificationMetadata {
   @Field(() => GraphQLISODateTime)
   sent!: Date
@@ -32,7 +31,6 @@ export class NotificationMetadata {
   status!: RenderedNotificationDtoStatusEnum
 }
 
-@ObjectType('NotificationSender')
 export class NotificationSender {
   @Field()
   name!: string
@@ -41,19 +39,16 @@ export class NotificationSender {
   logo?: string
 }
 
-@ObjectType('NoticiationRecipient')
 export class NotificationRecipient {
   @Field({ nullable: true })
   nationalId?: string
 }
 
-@ObjectType('NotificationLink')
 export class NotificationLink {
   @Field({ nullable: true })
   uri?: string
 }
 
-@ObjectType('NotificationMessage')
 export class NotificationMessage {
   @Field()
   title!: string
@@ -65,7 +60,6 @@ export class NotificationMessage {
   link!: NotificationLink
 }
 
-@ObjectType('Notification')
 export class Notification {
   @Field(() => Int)
   id!: number
@@ -86,7 +80,6 @@ export class Notification {
   message!: NotificationMessage
 }
 
-@ObjectType('NotificationMessageCounts')
 export class NotificationMessageCounts {
   @Field(() => Int, { nullable: true })
   totalCount?: number
@@ -95,7 +88,6 @@ export class NotificationMessageCounts {
   unreadCount?: number
 }
 
-@InputType('NotificationsInput')
 export class NotificationsInput {
   @Field(() => Int, { nullable: true })
   first?: number
@@ -124,19 +116,16 @@ export class NotificationsResponse {
   pageInfo!: PageInfoDto
 }
 
-@ObjectType('NotificationResponse')
 export class NotificationResponse {
   @Field(() => Notification)
   data!: Notification
 }
 
-@InputType('MarkNotificationReadInput')
 export class MarkNotificationReadInput {
   @Field()
   notificationId!: string
 }
 
-@ObjectType('MarkNotificationReadResponse')
 export class MarkNotificationReadResponse {
   @Field(() => Notification)
   data!: Notification
