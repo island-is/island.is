@@ -90,8 +90,6 @@ const ChatFeedbackPanel = ({
     },
   })
 
-  // TODO: can a user tab into the modal?
-
   return (
     <Box
       className={cn(styles.feedbackPanelContainer, { [styles.pushUp]: pushUp })}
@@ -127,6 +125,13 @@ const ChatFeedbackPanel = ({
         <Box display="flex" justifyContent="center">
           <Inline space={2} alignY="center">
             <Box
+              tabIndex={0}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                  updateThumbStatus(ThumbStatus.Up)
+                  ev.preventDefault()
+                }
+              }}
               onClick={() => {
                 updateThumbStatus(ThumbStatus.Up)
               }}
@@ -143,6 +148,13 @@ const ChatFeedbackPanel = ({
               />
             </Box>
             <Box
+              tabIndex={0}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                  updateThumbStatus(ThumbStatus.Down)
+                  ev.preventDefault()
+                }
+              }}
               onClick={() => {
                 updateThumbStatus(ThumbStatus.Down)
               }}
@@ -176,6 +188,9 @@ const ChatFeedbackPanel = ({
 
         <Box display="flex" justifyContent="flexEnd">
           <Button
+            disabled={
+              !(feedbackText.length > 0 || thumbStatus !== ThumbStatus.NoChoice)
+            }
             size="small"
             loading={loading}
             onClick={() => {
@@ -326,9 +341,16 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             instance.on({
               type: 'view:change',
               handler: (event) => {
+                const atLeastOneMessageReceived = chatLog.some(
+                  (log) => log.type === 'receive',
+                )
+                const atLeastOneMessageSent = chatLog.some(
+                  (log) => log.type === 'send',
+                )
                 if (
                   event.reason === 'mainWindowClosedAndRestarted' &&
-                  chatLog.length > 0
+                  atLeastOneMessageReceived &&
+                  atLeastOneMessageSent
                 ) {
                   setShouldDisplayFeedbackPanel(true)
                 }
