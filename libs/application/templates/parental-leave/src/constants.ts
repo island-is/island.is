@@ -1,4 +1,4 @@
-import { DefaultEvents } from "@island.is/application/types"
+import { DefaultEvents } from '@island.is/application/types'
 
 export const YES = 'yes'
 export const NO = 'no'
@@ -36,7 +36,7 @@ export type Events =
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
   | { type: 'CLOSED' } // Ex: Close application
   | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
- 
+
 export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',

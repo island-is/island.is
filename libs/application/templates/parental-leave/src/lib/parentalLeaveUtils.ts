@@ -1812,7 +1812,9 @@ export const setTestBirthAndExpectedDate = (
   }
 }
 
-export const determineNameFromApplicationAnswers = (application: Application) => {
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
   if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.nameGrant
   }
