@@ -78,11 +78,20 @@ jobs:
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
-        run: ./scripts/ci/generate-cache-keys.sh --node
+        run: |
+          PACKAGE_JSON_HASH=$(./scripts/ci/prepare-node-cache.sh)
+          HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
+          echo "node_modules hash: $HASH"
+          echo "node-modules-hash=$HASH" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
-        run: ./scripts/ci/generate-cache-keys.sh --codegen
+        run: |
+          CACHE_FILES=$(./scripts/ci/prepare-file-cache.sh)
+          HASH=$(hashFiles($CACHE_FILES))
+          GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
+          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
+          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
