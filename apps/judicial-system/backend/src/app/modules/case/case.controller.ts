@@ -361,7 +361,7 @@ export class CaseController {
         break
       case CaseTransition.WITHDRAW_APPEAL:
         if (!theCase.appealRulingDecision) {
-          theCase.appealRulingDecision = CaseAppealRulingDecision.WITHDRAWN
+          update.appealRulingDecision = CaseAppealRulingDecision.WITHDRAWN
         }
         break
     }
