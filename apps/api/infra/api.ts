@@ -353,6 +353,8 @@ export const serviceSetup = (services: {
       CHART_STATISTIC_SOURCE_DATA_PATHS:
         '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS',
       CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_URL:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL',
     })
     .xroad(
       AdrAndMachine,

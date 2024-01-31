@@ -74,7 +74,7 @@ const ChatFeedbackPanel = ({
     setThumbStatus(ThumbStatus.NoChoice)
   }
 
-  const [submitFeedback] = useMutation<
+  const [submitFeedback, { loading }] = useMutation<
     Mutation,
     MutationWatsonAssistantChatSubmitFeedbackArgs
   >(SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK, {
@@ -177,6 +177,7 @@ const ChatFeedbackPanel = ({
         <Box display="flex" justifyContent="flexEnd">
           <Button
             size="small"
+            loading={loading}
             onClick={() => {
               const chatLogCopy = [...chatLog]
               console.log({
