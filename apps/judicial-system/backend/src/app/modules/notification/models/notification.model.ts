@@ -9,9 +9,14 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { NotificationType, Recipient } from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
+
+export interface Recipient {
+  success: boolean
+  address?: string
+}
 
 @Table({
   tableName: 'notification',
