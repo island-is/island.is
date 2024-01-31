@@ -7,6 +7,12 @@ export const receptionAndAssignment = defineMessages({
     description:
       'Notaður sem titill á Móttaka og úthlutun skrefi í öllum málategundum.',
   },
+  commentsTitle: {
+    id: 'judicial.system.core:reception_and_assignment.comments_title',
+    defaultMessage: 'Athugasemdir vegna málsmeðferðar',
+    description:
+      'Notaður sem titill fyrir Athugasemdir vegna málsmeðferðar í Móttaka og úthlutun skrefi í öllum málategundum.',
+  },
   defendantPleaAlertTitle: {
     id: 'judicial.system.core:reception_and_assignment.defendant_plea_alert_title',
     defaultMessage:

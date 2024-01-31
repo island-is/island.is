@@ -108,7 +108,11 @@ const ReceptionAndAssignment = () => {
           <Box
             marginBottom={defendantPleas && defendantPleas.length > 0 ? 2 : 5}
           >
-            <AlertMessage message={workingCase.comments} type="warning" />
+            <AlertMessage
+              title={formatMessage(strings.commentsTitle)}
+              message={workingCase.comments}
+              type="warning"
+            />
           </Box>
         )}
         {defendantPleas && (
