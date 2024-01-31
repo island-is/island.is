@@ -6,12 +6,7 @@ import {
   BulkUploadInput,
   CanCreateInput,
 } from './signature-collection.types'
-import {
-  Collection,
-  mapCollectionInfo,
-  CollectionInfo,
-  mapCollection,
-} from './types/collection.dto'
+import { Collection } from './types/collection.dto'
 import { List, mapList, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
@@ -20,9 +15,19 @@ import { Success, mapReasons } from './types/success.dto'
 import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { AdminCollectionApi, AdminListApi, AdminSignatureApi } from './apis'
+import {
+  AdminCandidateApi,
+  AdminCollectionApi,
+  AdminListApi,
+  AdminSignatureApi,
+} from './apis'
+import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 
-type Api = AdminListApi | AdminCollectionApi | AdminSignatureApi
+type Api =
+  | AdminListApi
+  | AdminCollectionApi
+  | AdminSignatureApi
+  | AdminCandidateApi
 
 @Injectable()
 export class SignatureCollectionAdminClientService {
@@ -30,69 +35,31 @@ export class SignatureCollectionAdminClientService {
     private listsApi: AdminListApi,
     private collectionsApi: AdminCollectionApi,
     private signatureApi: AdminSignatureApi,
+    private sharedService: SignatureCollectionSharedClientService,
+    private candidateApi: AdminCandidateApi,
   ) {}
 
   private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollectionInfo(): Promise<CollectionInfo> {
-    // includeInactive: false will return collections as active until electionday for collection has passed
-    const res = await this.collectionsApi.medmaelasofnunGet({
-      includeInactive: true,
-    })
-    const current = (
-      res
-        .map(mapCollectionInfo)
-        .filter(
-          (collection) => collection?.isSignatureCollection,
-        ) as CollectionInfo[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
-
-    if (!current) {
-      throw new Error('No current collection')
-    }
-    return current
+  async currentCollection(): Promise<Collection> {
+    return await this.sharedService.currentCollection(this.collectionsApi)
   }
 
-  async getCurrentCollection(collectionId?: number): Promise<Collection> {
-    if (!collectionId) {
-      const { id } = await this.currentCollectionInfo()
-
-      collectionId = id
-    }
-
-    const currentCollection = await this.collectionsApi.medmaelasofnunIDGet({
-      iD: collectionId,
-    })
-    return mapCollection(currentCollection)
-  }
-
-  async getLists(
-    { collectionId, areaId, candidateId, onlyActive }: GetListInput,
-    auth: Auth,
-  ): Promise<List[]> {
-    const lists = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarGet({
-      sofnunID: collectionId,
-      svaediID: areaId ? parseInt(areaId) : undefined,
-      frambodID: candidateId ? parseInt(candidateId) : undefined,
-    })
-
-    const listsMapped = lists.map((list) => mapList(list))
-    return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
+  async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
+    return await this.sharedService.getLists(
+      input,
+      this.getApiWithAuth(this.listsApi, auth),
+    )
   }
 
   async getList(listId: string, auth: Auth): Promise<List> {
-    const list = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarIDGet({
-      iD: parseInt(listId),
-    })
-    return mapList(list)
+    return await this.sharedService.getList(
+      listId,
+      this.getApiWithAuth(this.listsApi, auth),
+      this.getApiWithAuth(this.candidateApi, auth),
+    )
   }
 
   async getSignatures(listId: string, auth: Auth): Promise<Signature[]> {
@@ -107,13 +74,13 @@ export class SignatureCollectionAdminClientService {
       .filter((s) => s.active)
   }
 
-  async getAreas(collectionId?: number) {
+  async getAreas(collectionId?: string) {
     if (!collectionId) {
-      const { id } = await this.currentCollectionInfo()
+      const { id } = await this.currentCollection()
       collectionId = id
     }
     const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
-      iD: collectionId,
+      iD: parseInt(collectionId),
     })
     return areas.map((area) => ({
       id: area.id ?? 0,
@@ -125,9 +92,9 @@ export class SignatureCollectionAdminClientService {
     { collectionId, owner, areas }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const { id, isActive } = await this.currentCollectionInfo()
+    const { id, isActive } = await this.currentCollection()
     // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
+    if (collectionId !== id || !isActive) {
       throw new Error('Collection is not open')
     }
 
@@ -143,7 +110,7 @@ export class SignatureCollectionAdminClientService {
       auth,
     ).medmaelalistarAddListarAdminPost({
       medmaelalistiRequestDTO: {
-        sofnunID: id,
+        sofnunID: parseInt(id),
         kennitala: owner.nationalId,
         simi: owner.phone,
         netfang: owner.email,
@@ -174,7 +141,6 @@ export class SignatureCollectionAdminClientService {
     requirementsMet = false,
     canCreateInfo,
     isPresidential,
-    isActive,
     ownedLists,
   }: CanCreateInput): Promise<Success> {
     // can create if requirements met and collection is active
@@ -185,11 +151,10 @@ export class SignatureCollectionAdminClientService {
           (areas) => areas.length === ownedLists.length,
         )
 
-    const canCreate = requirementsMet && isActive && !alreadyOwnsAllLists
+    const canCreate = requirementsMet && !alreadyOwnsAllLists
     const reasons =
       mapReasons({
         ...canCreateInfo,
-        active: isActive,
         notOwner: !alreadyOwnsAllLists,
       }) ?? []
     return { success: canCreate, reasons }
@@ -199,22 +164,20 @@ export class SignatureCollectionAdminClientService {
     nationalId: string,
     auth: Auth,
   ): Promise<CandidateLookup> {
-    const collection = await this.currentCollectionInfo()
-    const { id, isPresidential, isActive } = collection
+    const collection = await this.currentCollection()
+    const { id, isPresidential } = collection
     const user = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
     ).medmaelasofnunIDEinsInfoKennitalaGet({
       kennitala: nationalId,
-      iD: id,
+      iD: parseInt(id),
     })
     const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
 
     const ownedLists =
       user.medmaelalistar && candidate
-        ? user.medmaelalistar?.map((list) =>
-            mapListBase(list, candidate, collection),
-          )
+        ? user.medmaelalistar?.map((list) => mapListBase(list))
         : []
 
     const { success: canCreate, reasons: canCreateInfo } = await this.canCreate(
@@ -223,7 +186,6 @@ export class SignatureCollectionAdminClientService {
         canCreateInfo: user.maFrambodInfo,
         ownedLists,
         isPresidential,
-        isActive,
       },
     )
 
@@ -256,10 +218,10 @@ export class SignatureCollectionAdminClientService {
     auth: Auth,
   ): Promise<Signature[]> {
     // Takes a list of nationalIds and returns signatures found on any list in current collection
-    const { id } = await this.currentCollectionInfo()
+    const { id } = await this.currentCollection()
     const signaturesFound =
       await this.collectionsApi.medmaelasofnunIDComparePost({
-        iD: id,
+        iD: parseInt(id),
         requestBody: nationalIds,
       })
     // Get listTitle for signatures
