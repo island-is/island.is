@@ -34,6 +34,7 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
+import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 
 const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -123,15 +124,15 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
               title={formatMessage(strings.defendantPlea, {
                 defendantCount: workingCase.defendants.length,
               })}
-              required
             />
             {workingCase.defendants.map((defendant) => (
               <Box marginBottom={2}>
                 <BlueBox>
                   <Text variant="h4" marginBottom={3}>
-                    {formatMessage(strings.defendantName, {
+                    {`${formatMessage(strings.defendantName, {
                       name: defendant.name,
-                    })}
+                    })} `}
+                    <RequiredStar />
                   </Text>
                   <div className={styles.grid}>
                     <RadioButton
