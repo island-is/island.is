@@ -43,7 +43,7 @@ const WithdrawnAppealCase = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
+      <PageHeader title={formatMessage(titles.shared.withdrawAppeal)} />
       <FormContentContainer>
         <Box marginBottom={2}>
           <Text as="h1" variant="h1">
