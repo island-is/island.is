@@ -21,7 +21,6 @@ export class AppController {
     @Query() filters: FilterApplicationsDto,
   ) {
     this.logger.info('Gets all application')
-    console.log(filters)
     return this.appService
       .getApplications(apiKey, filters)
       .then((applications) => {
