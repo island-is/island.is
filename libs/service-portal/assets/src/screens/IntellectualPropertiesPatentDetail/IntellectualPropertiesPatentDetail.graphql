@@ -4,96 +4,45 @@ query getIntellectualPropertiesPatentById(
   intellectualPropertiesPatent(input: $input) {
     ... on IntellectualPropertiesPatentIS {
       __typename
-      applicationNumber
       id
-      annualFeesInfo {
-        history {
-          amount
-          id
-          paymentDate
-          paymentDueDate
-          payor
-          surcharge
-        }
-        nextPaymentDate
-      }
       classifications {
         category
-        creationDate
-        publicationDate
-        sequence
-        type
       }
       name
-      nameInOrgLanguage
-      status
-      statusDate
       statusText
       registrationNumber
-      canRenew
       pct {
         number
         date
       }
-      priorities {
-        number
-        country {
-          name
-        }
-        applicationDate
-      }
       lifecycle {
         applicationDate
         registrationDate
+        applicationDatePublishedAsAvailable
         maxValidObjectionDate
         expiryDate
         maxValidDate
       }
-      designers {
-        addressFull
-        name
-      }
       owners {
-        name
-        addressFull
+        ...PersonFragment
       }
       inventors {
-        name
-        addressFull
+        ...PersonFragment
       }
       agent {
-        name
-        addressFull
+        ...PersonFragment
       }
     }
     ... on IntellectualPropertiesPatentEP {
       __typename
       applicationNumber
       id
-      annualFeesInfo {
-        history {
-          amount
-          id
-          paymentDate
-          paymentDueDate
-          payor
-          surcharge
-        }
-        nextPaymentDate
-      }
       classifications {
         category
-        creationDate
-        publicationDate
-        sequence
-        type
       }
       name
       nameInOrgLanguage
-      status
-      statusDate
       statusText
-      canRenew
       pct {
         number
         date
@@ -107,98 +56,42 @@ query getIntellectualPropertiesPatentById(
       }
       lifecycle {
         applicationDate
-        applicationDatePublishedAsAvailable
-        registrationDate
-        maxValidObjectionDate
-        maxValidDate
         expiryDate
       }
-      designers {
-        addressFull
-        name
-      }
       owners {
-        name
-        addressFull
+        ...PersonFragment
       }
       inventors {
-        name
-        addressFull
-      }
-      agent {
-        name
-        addressFull
+        ...PersonFragment
       }
       epApplicationNumber
-      nameInIcelandic
       spcNumbers
       epLifecycle {
         publishDate
         applicationDate
-        provisionDatePublishedInGazette
-        translationSubmissionDate
       }
-      epoStatus
-      classificationType
       language
     }
     ... on IntellectualPropertiesSPC {
       __typename
       applicationNumber
+      number
       id
-      annualFeesInfo {
-        history {
-          amount
-          id
-          paymentDate
-          paymentDueDate
-          payor
-          surcharge
-        }
-        nextPaymentDate
-      }
-      classifications {
-        category
-        creationDate
-        publicationDate
-        sequence
-        type
-      }
       name
-      nameInOrgLanguage
       status
-      statusDate
-      statusText
-      canRenew
       lifecycle {
         applicationDate
-        applicationDatePublishedAsAvailable
-        registrationDate
         maxValidDate
       }
-      designers {
-        addressFull
-        name
-      }
       owners {
-        name
-        addressFull
-      }
-      inventors {
-        name
-        addressFull
+        ...PersonFragment
       }
       agent {
-        name
-        addressFull
+        ...PersonFragment
       }
-      number
       medicine
       medicineForChildren
-      message
       marketingAuthorization {
-        icelandicAuthorizationNumber
-        icelandicAuthorizationDate
         foreignAuthorizationNumber
         foreignAuthorizationDate
       }
@@ -206,4 +99,10 @@ query getIntellectualPropertiesPatentById(
       publishedInGazetteDate
     }
   }
+}
+
+fragment PersonFragment on IntellectualPropertiesPerson {
+  __typename
+  name
+  addressFull
 }

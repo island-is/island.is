@@ -49,8 +49,6 @@ const PatentSPC = ({ data, loading }: Props) => {
     formatMessage,
   ])
 
-  console.log(orderedDates)
-
   return (
     <>
       <StackWithBottomDivider space="p2">
