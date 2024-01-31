@@ -76,13 +76,22 @@ jobs:
           path: event.json
           retention-days: 60
 
-      - name: Calculate cache key for node_modules
+      - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
-        run: ./scripts/ci/generate-cache-keys.sh --node
+        run: |
+          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
+          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
+          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
+          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
+          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
-        run: ./scripts/ci/generate-cache-keys.sh --codegen
+        run: |
+          export HASH=${{ hashFiles('scripts/codegen.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'libs/application/types/src/lib/ApplicationTypes.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'libs/**/mutations/**/*.tsx?', 'libs/**/fragments/**/*.tsx?' , 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'apps/judicial-system/**/*.graphql', 'libs/**/*.graphql.ts', 'libs/**/*.graphql', 'libs/**/clientConfig.yaml') }}
+          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
+          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
+          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -92,7 +101,7 @@ jobs:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -123,7 +132,7 @@ jobs:
           path: /github/home/.cache/Cypress
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
 
-      - name: Check cache success
+      - name: Check cypress cache success
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Verify cypress
@@ -143,7 +152,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Run codegen
@@ -235,7 +244,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -246,7 +255,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated-files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -296,7 +305,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for cypress
@@ -307,7 +316,7 @@ jobs:
           path: /github/home/.cache/Cypress
           key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
 
-      - name: Check cache success
+      - name: Check cypress cache success
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -318,7 +327,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated-files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -350,7 +359,7 @@ jobs:
 
       - name: Setup yarn
         run: npm install -g yarn
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -392,6 +401,7 @@ jobs:
           node-version: '18'
       - name: Setup yarn
         run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -399,11 +409,14 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-      - name: Check cache success
+
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
+
       - name: NX format:write
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -440,7 +453,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -451,7 +464,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated-files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -489,7 +502,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -500,7 +513,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated-files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
