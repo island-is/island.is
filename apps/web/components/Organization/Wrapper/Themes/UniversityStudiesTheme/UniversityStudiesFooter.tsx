@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
-import { Box, LinkV2, Text } from '@island.is/island-ui/core'
+import { Box, Icon, LinkV2, Text } from '@island.is/island-ui/core'
 import { Organization } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './UniversityStudies.css'
 type FooterProps = {
@@ -11,6 +12,11 @@ type FooterProps = {
 const UniversityStudiesFooter: React.FC<
   React.PropsWithChildren<FooterProps>
 > = ({ organization }) => {
+  const organizationNamespace = useMemo(() => {
+    return JSON.parse(organization?.namespace?.fields || '{}')
+  }, [organization?.namespace?.fields])
+  const n = useNamespace(organizationNamespace)
+
   return (
     <Box
       width="full"
@@ -37,7 +43,7 @@ const UniversityStudiesFooter: React.FC<
           <img
             src={organization?.logo?.url}
             className={styles.footerLogo}
-            alt=""
+            alt="haskolanam logo"
           />
         </Box>
         <Box
@@ -45,49 +51,48 @@ const UniversityStudiesFooter: React.FC<
           className={styles.footerLinksContainer}
           width="full"
         >
-          <Box display={'flex'} className={styles.footerLinkContainer}>
-            <LinkV2 href="/leit">
-              <Text color="blue600" fontWeight="semiBold">
-                <span style={{ textDecoration: 'underline' }}>Námsleiðir</span>
+          <Box display={'flex'} className={styles.footerFirstColumnContainer}>
+            <LinkV2 href="https://www.stjornarradid.is/default.aspx?PageID=a496498d-6ce4-40b2-b339-fd61987a9918">
+              <Text color="blue600" variant="medium">
+                <span style={{ textDecoration: 'underline' }}>
+                  {n('footerPersonalInfo', 'Meðferð persónuupplýsinga')}
+                </span>
               </Text>
             </LinkV2>
-            <LinkV2 href="/leit">
-              <Text color="blue600" fontWeight="semiBold">
+            <LinkV2 href="https://www.stjornarradid.is/raduneyti/haskola-idnadar-og-nyskopunarraduneytid/">
+              <Text color="blue600" variant="medium">
                 <span style={{ textDecoration: 'underline' }}>
-                  Stuðningsnet stúdenta
+                  {n(
+                    'footerEmbassy',
+                    'Háskóla-, iðnaðar- og nýsköpunarráðuneytið',
+                  )}
                 </span>
               </Text>
             </LinkV2>
           </Box>
-          <Box display={'flex'} className={styles.footerLinkContainer}>
-            <Text color="blue600" fontWeight="semiBold" variant="h3" as="p">
-              Háskólanám
+          <Box display={'flex'} className={styles.footerSecondColumnContainer}>
+            <Text color="blue600" variant="medium" fontWeight="semiBold">
+              Aðstoð
             </Text>
-            <Text color="blue600" fontWeight="semiBold">
-              458-2300
-            </Text>
-            <Text color="blue600" fontWeight="semiBold">
-              Símsvörun: 10:00 - 15:00
-            </Text>
-          </Box>
-          <Box display={'flex'} className={styles.footerLinkContainer}>
-            <Text color="blue600" fontWeight="semiBold" variant="h3" as="p">
-              Getum við aðstoðað?
-            </Text>
-            <LinkV2 href="/leit">
-              <Text color="blue600" fontWeight="semiBold">
-                <span style={{ textDecoration: 'underline' }}>
-                  Spurningar og svör
-                </span>
+            <Box display={'flex'} style={{ gap: '0.5rem' }}>
+              <Text color="blue600" variant="medium">
+                {n('email', 'netfang')}:{' '}
+                {n('haskolanamEmail', 'haskolanam@island.is')}
               </Text>
-            </LinkV2>
-            <LinkV2 href="/leit">
-              <Text color="blue600" fontWeight="semiBold">
-                <span style={{ textDecoration: 'underline' }}>
-                  Hafðu samband
-                </span>
-              </Text>
-            </LinkV2>
+            </Box>
+            <Box display={'flex'} style={{ gap: '0.5rem' }}>
+              <Box display={'flex'} flexDirection={'column'}>
+                <Text color="blue600" variant="medium">
+                  {n('footerPhoneNumberText', 'Sími: 458 2300')}
+                </Text>
+                <Text color="blue600" variant="medium">
+                  {n(
+                    'footerPhoneServiceHours',
+                    'Símsvörun milli kl. 10 og 15 virka daga',
+                  )}
+                </Text>
+              </Box>
+            </Box>
           </Box>
         </Box>
       </Box>
