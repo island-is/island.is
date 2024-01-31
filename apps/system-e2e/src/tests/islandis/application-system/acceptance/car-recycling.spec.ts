@@ -80,10 +80,8 @@ applicationTest.describe('Car recycling', () => {
           name: label(carRecyclingMessages.cars.mileage),
         })
 
-        if (mileage) {
-          await mileage.selectText()
-          await mileage.type('12345')
-        }
+        await mileage.selectText()
+        await mileage.type('12345')
 
         await proceed()
       })
