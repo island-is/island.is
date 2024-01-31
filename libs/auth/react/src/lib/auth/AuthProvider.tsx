@@ -70,12 +70,15 @@ export const AuthProvider = ({
   const monitorUserSession = !authSettings.scope?.includes('offline_access')
 
   const signinRedirect = useCallback(
-    function signinRedirect(args: SigninRedirectArgs) {
-      return userManager.signinRedirect(args).catch((e) => {
-        console.log(e)
-        setError(e)
-      })
-      // Nothing more happens here since browser will redirect to IDS.
+    async (args: SigninRedirectArgs) => {
+      try {
+        await userManager.signinRedirect(args)
+        // On success Nothing more happens here since browser will redirect to IDS.
+      } catch (error) {
+        // On error we set the error state to show the error screen which provides the users with a retry button.
+        console.error(error)
+        setError(error)
+      }
     },
     [userManager, setError],
   )
