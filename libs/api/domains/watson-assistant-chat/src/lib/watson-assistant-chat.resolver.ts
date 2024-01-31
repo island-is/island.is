@@ -1,25 +1,21 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { WatsonAssistantChatIdentityTokenInput } from './dto/watsonAssistantChatIdentityToken.input'
-import { WatsonAssistantChatIdentityTokenResponse } from './models/watsonAssistantChatIdentityTokenResponse'
+import { IdentityTokenInput } from './dto/identityToken.input'
+import { IdentityTokenResponse } from './models/identityTokenResponse'
 import { WatsonAssistantChatService } from './watson-assistant-chat.service'
-import { WatsonAssistantChatSubmitFeedbackInput } from './dto/watsonAssistantChatSubmitFeedback.input'
-import { WatsonAssistantChatSubmitFeedbackResponse } from './models/watsonAssistantChatSubmitFeedbackResponse'
+import { SubmitFeedbackInput } from './dto/submitFeedback.input'
+import { SubmitFeedbackResponse } from './models/submitFeedbackResponse'
 
 @Resolver()
 export class WatsonAssistantChatResolver {
   constructor(private watsonAssistantChatService: WatsonAssistantChatService) {}
 
-  @Query(() => WatsonAssistantChatIdentityTokenResponse)
-  watsonAssistantChatIdentityToken(
-    @Args('input') input: WatsonAssistantChatIdentityTokenInput,
-  ) {
+  @Query(() => IdentityTokenResponse)
+  watsonAssistantChatIdentityToken(@Args('input') input: IdentityTokenInput) {
     return this.watsonAssistantChatService.createIdentityToken(input)
   }
 
-  @Mutation(() => WatsonAssistantChatSubmitFeedbackResponse)
-  watsonAssistantChatSubmitFeedback(
-    @Args('input') input: WatsonAssistantChatSubmitFeedbackInput,
-  ) {
+  @Mutation(() => SubmitFeedbackResponse)
+  watsonAssistantChatSubmitFeedback(@Args('input') input: SubmitFeedbackInput) {
     return this.watsonAssistantChatService.submitFeedback(input)
   }
 }

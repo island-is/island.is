@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
-export class WatsonAssistantChatSubmitFeedbackResponse {
+@ObjectType('WatsonAssistantChatSubmitFeedbackResponse')
+export class SubmitFeedbackResponse {
   @Field(() => Boolean)
   success!: boolean
 }

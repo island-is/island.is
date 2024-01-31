@@ -5,12 +5,9 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { WatsonAssistantChatIdentityTokenInput } from './dto/watsonAssistantChatIdentityToken.input'
+import { IdentityTokenInput } from './dto/identityToken.input'
 import { WatsonAssistantChatConfig } from './watson-assistant-chat.config'
-import {
-  ThumbStatus,
-  WatsonAssistantChatSubmitFeedbackInput,
-} from './dto/watsonAssistantChatSubmitFeedback.input'
+import { ThumbStatus, SubmitFeedbackInput } from './dto/submitFeedback.input'
 
 const thumbStatusToNumberMap: Record<ThumbStatus, number> = {
   [ThumbStatus.Down]: -1,
@@ -25,7 +22,7 @@ export class WatsonAssistantChatService {
     this.fetch = createEnhancedFetch({ name: 'WatsonAssistantChatService' })
   }
 
-  async createIdentityToken(input: WatsonAssistantChatIdentityTokenInput) {
+  async createIdentityToken(input: IdentityTokenInput) {
     const encryptedUserPayload = publicEncrypt(
       {
         key: this.config.directorateOfImmigrationPublicIBMKey,
@@ -56,7 +53,7 @@ export class WatsonAssistantChatService {
     }
   }
 
-  async submitFeedback(input: WatsonAssistantChatSubmitFeedbackInput) {
+  async submitFeedback(input: SubmitFeedbackInput) {
     const response = await this.fetch(this.config.chatFeedbackUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

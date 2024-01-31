@@ -11,8 +11,8 @@ registerEnumType(ThumbStatus, {
   name: 'WatsonAssistantChatSubmitFeedbackThumbStatus',
 })
 
-@InputType()
-export class WatsonAssistantChatSubmitFeedbackInput {
+@InputType('WatsonAssistantChatSubmitFeedbackInput')
+export class SubmitFeedbackInput {
   @Field(() => ThumbStatus)
   thumbStatus!: ThumbStatus
 
