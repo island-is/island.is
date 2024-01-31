@@ -12,9 +12,6 @@ export class Design implements IntellectualProperty {
   @Field()
   id!: string
 
-  /*@Field()
-  hId!: string
-*/
   @Field({ nullable: true })
   applicationNumber?: string
 

@@ -31,9 +31,6 @@ export class Trademark implements IntellectualProperty {
   @Field()
   id!: string
 
-  /*@Field()
-  vmId!: string
-*/
   @Field(() => String, { nullable: true })
   text?: string
 
