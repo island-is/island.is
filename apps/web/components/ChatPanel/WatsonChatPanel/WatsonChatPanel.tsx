@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import cn from 'classnames'
 import { useMutation, useQuery } from '@apollo/client'
 
 import {
@@ -40,6 +41,7 @@ interface ChatFeedbackPanelProps {
   successText: string
   errorText: string
   inputPlaceholder?: string
+  pushUp?: boolean
 }
 
 const ChatFeedbackPanel = ({
@@ -49,6 +51,7 @@ const ChatFeedbackPanel = ({
   successText,
   errorText,
   inputPlaceholder = '',
+  pushUp = false,
 }: ChatFeedbackPanelProps) => {
   const { activeLocale } = useI18n()
 
@@ -91,7 +94,7 @@ const ChatFeedbackPanel = ({
 
   return (
     <Box
-      className={styles.feedbackPanelContainer}
+      className={cn(styles.feedbackPanelContainer, { [styles.pushUp]: pushUp })}
       borderRadius="large"
       padding="gutter"
       background="white"
@@ -380,6 +383,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     <>
       {shouldDisplayFeedbackPanel && (
         <ChatFeedbackPanel
+          pushUp={pushUp}
           onClose={() => {
             setShouldDisplayFeedbackPanel(false)
           }}
