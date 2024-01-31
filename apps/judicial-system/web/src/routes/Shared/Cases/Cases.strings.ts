@@ -62,6 +62,20 @@ export const cases = {
         'Notaður sem label á filter sem notandi getur notað til að sía mál',
     },
   }),
+  contextMenu: defineMessages({
+    openCase: {
+      id: 'judicial.system.core:cases.context_menu.open_case',
+      defaultMessage: 'Opna mál í nýjum flipa',
+      description:
+        'Notaður sem texti í valmynd fyrir mál til að opna mál í nýjum glugga',
+    },
+    deleteCase: {
+      id: 'judicial.system.core:cases.context_menu.delete_case',
+      defaultMessage: 'Afturkalla',
+      description:
+        'Notaður sem texti í valmynd fyrir mál til að afturkalla mál',
+    },
+  }),
   activeRequests: {
     table: {
       headers: defineMessages({

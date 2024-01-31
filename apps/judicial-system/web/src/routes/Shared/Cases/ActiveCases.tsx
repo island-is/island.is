@@ -1,18 +1,13 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import cn from 'classnames'
 import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
-import {
-  AnimatePresence,
-  LayoutGroup,
-  motion,
-  useAnimation,
-} from 'framer-motion'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   capitalize,
@@ -30,6 +25,7 @@ import {
   TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
   SortButton,
@@ -52,7 +48,6 @@ import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHe
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 
 interface Props {
   cases: CaseListEntry[]
@@ -62,15 +57,6 @@ interface Props {
 
 const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, isDeletingCase, onDeleteCase } = props
-
-  const controls = useAnimation()
-
-  const variants = {
-    isDeleting: (custom: number) =>
-      custom === requestToRemoveIndex ? { x: '-150px' } : { x: '0px' },
-    isNotDeleting: { x: 0 },
-    deleted: { opacity: 0, scale: 0.8 },
-  }
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -82,11 +68,13 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
       direction: 'descending',
     },
   )
+  const [displayCases, setDisplayCases] = useState<CaseListEntry[]>([])
   const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
     useCaseList()
 
-  // The index of requset that's about to be removed
-  const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
+  useEffect(() => {
+    setDisplayCases(cases)
+  }, [cases])
 
   useMemo(() => {
     if (cases && sortConfig) {
@@ -138,7 +126,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   return width < theme.breakpoints.md ? (
     <>
-      {cases.map((theCase: CaseListEntry) => (
+      {displayCases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
             onClick={() => handleOpenCase(theCase.id)}
@@ -221,10 +209,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             {cases.map((c, i) => (
               <motion.tr
                 key={c.id}
-                animate={controls}
-                exit="deleted"
-                variants={variants}
-                custom={i}
                 className={styles.tableRowContainer}
                 layout
                 data-testid="custody-cases-table-row"
@@ -366,19 +350,18 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                           menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
                           items={[
                             {
-                              title: 'Opna mál',
+                              title: formatMessage(m.contextMenu.openCase),
                               onClick: () => handleOpenCase(c.id, true),
                               icon: 'open',
                             },
                             {
-                              title: 'Eyða mál',
+                              title: formatMessage(m.contextMenu.deleteCase),
                               onClick: async () => {
                                 if (onDeleteCase) {
                                   await onDeleteCase(cases[i])
-
-                                  controls.start('isNotDeleting').then(() => {
-                                    setRequestToRemoveIndex(undefined)
-                                  })
+                                  setDisplayCases((prev) =>
+                                    prev.filter((c) => c.id !== cases[i].id),
+                                  )
                                 }
                               },
                               icon: 'trash',
@@ -394,33 +377,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                             />
                           }
                         />
-                        // <motion.button
-                        //   key={`${c.id}-delete`}
-                        //   initial={{ opacity: 0 }}
-                        //   animate={{ opacity: 1 }}
-                        //   exit={{ opacity: 0 }}
-                        //   data-testid="deleteCase"
-                        //   aria-label="Viltu afturkalla kröfu?"
-                        //   className={cn(
-                        //     styles.deleteButton,
-                        //     styles.deleteButtonWrapper,
-                        //   )}
-                        //   onClick={async (evt) => {
-                        //     evt.stopPropagation()
-
-                        //     await new Promise((resolve) => {
-                        //       setRequestToRemoveIndex(
-                        //         requestToRemoveIndex === i ? undefined : i,
-                        //       )
-
-                        //       resolve(true)
-                        //     })
-
-                        //     await controls.start('isDeleting')
-                        //   }}
-                        // >
-                        //   <Icon icon="close" color="blue400" />
-                        // </motion.button>
                       )
                     )}
                   </AnimatePresence>
