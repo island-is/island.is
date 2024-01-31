@@ -73,7 +73,7 @@ const WithdrawnAppealCase = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(strings.uploadBoxButtonLabel)}
-            onChange={(files) =>
+            onChange={(files) => 
               handleUpload(
                 addUploadFiles(files, CaseFileCategory.APPEAL_COURT_RECORD),
                 updateUploadFile,
@@ -88,7 +88,9 @@ const WithdrawnAppealCase = () => {
         <FormFooter
           previousUrl={previousUrl}
           onNextButtonClick={async () => {
-            router.push(previousUrl)
+            router.push(
+              `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+            )
           }}
           nextButtonText={formatMessage(strings.continueButton)}
           nextIsDisabled={!isStepValid}

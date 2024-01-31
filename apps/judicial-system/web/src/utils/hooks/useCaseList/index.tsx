@@ -23,6 +23,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
 import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
+  CaseAppealState,
   CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -89,6 +90,11 @@ const useCaseList = () => {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
         if (
+          caseToOpen.appealState === CaseAppealState.WITHDRAWN &&
+          !caseToOpen.appealCaseNumber
+        ) {
+          routeTo = constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
+        } else if (
           findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen) ===
           constants.courtOfAppealRoutes[1]
         ) {
