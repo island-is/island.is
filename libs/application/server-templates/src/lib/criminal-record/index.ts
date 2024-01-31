@@ -20,11 +20,11 @@ export const criminalRecord = buildCertificateTemplate({
     title: 'Information from the criminal record database',
     subTitle: 'Skjal sem inniheldur sakavottorðið þitt.',
   },
-  getPdfApi: pdfApi,
   pdfKey: 'getCriminalRecord.data.contentBase64',
   templateId: ApplicationTypes.CRIMINAL_RECORD,
   title: 'Sakavottorð',
   organizationId: InstitutionNationalIds.SYSLUMENN,
   institutionId: InstitutionTypes.SYSLUMENN,
   chargeItemCodes: [ChargeItemCode.CRIMINAL_RECORD],
+  getPdfApi: pdfApi,
 })

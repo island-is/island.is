@@ -103,7 +103,7 @@ export function buildCertificateTemplate(data: {
     draft.setForm(draftForm).addTransition(DefaultEvents.SUBMIT, payment.name)
   }
 
-  const conslusionForm = startForm({
+  const conclusionForm = startForm({
     title,
     formMode: FormModes.COMPLETED,
     renderLastScreenBackButton: false,
@@ -111,7 +111,7 @@ export function buildCertificateTemplate(data: {
   })
     .startSection({ title: 'Umsókn tókst' })
     .page({
-      title: 'Hér er bara einn hlutur maður',
+      title: 'Sakavottorð',
       children: fields()
         .pdfPreviewField({
           id: 'uiForms.conclusionPdfPreview',
@@ -143,7 +143,6 @@ export function buildCertificateTemplate(data: {
       prerequisitesState({
         name,
         providers,
-        templateApis: providers.map((provider) => provider.provider),
         targetState: draftForm ? draft.name : payment.name,
       }).addHistoryLog({
         logMessage: coreHistoryMessages.paymentStarted,
@@ -159,7 +158,7 @@ export function buildCertificateTemplate(data: {
           displayStatus: 'success',
         })
         .lifecycle(pruneAfterDays(90))
-        .setForm(conslusionForm)
+        .setForm(conclusionForm)
         .addOnEntry(getPdfApi)
         .addOnEntry(VerifyPaymentApi.configure({ order: 0 })),
     )
@@ -197,7 +196,7 @@ export function buildCertificateTemplateNoPayment(data: {
 
   const completed = state('completed', 'completed')
 
-  const conslusionForm = startForm({
+  const conclusionForm = startForm({
     title,
     formMode: FormModes.COMPLETED,
     renderLastScreenBackButton: false,
@@ -237,7 +236,6 @@ export function buildCertificateTemplateNoPayment(data: {
       prerequisitesState({
         name: name,
         providers,
-        templateApis: providers.map((provider) => provider.provider),
         targetState: completed.name,
       }).addHistoryLog({
         logMessage: coreHistoryMessages.applicationSent,
@@ -252,7 +250,7 @@ export function buildCertificateTemplateNoPayment(data: {
           displayStatus: 'success',
         })
         .lifecycle(pruneAfterDays(90))
-        .setForm(conslusionForm),
+        .setForm(conclusionForm),
     )
 
   return application.build()

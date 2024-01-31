@@ -9,12 +9,13 @@ import { StaticText } from 'static-text'
 
 export function prerequisitesState(data: {
   name: StaticText
-  providers: DataProviderBuilderItem[]
-  templateApis: TemplateApi[]
+  providers: { provider: TemplateApi; title: string; subTitle?: string }[]
   targetState: string
 }) {
-  const { name, providers, targetState, templateApis } = data
+  const { name, providers, targetState } = data
   const form = prerequisitesForm(name, providers)
+
+  const templateApis = providers.map((provider) => provider.provider)
 
   return state('prerequisites', 'draft')
     .apis(...templateApis)
