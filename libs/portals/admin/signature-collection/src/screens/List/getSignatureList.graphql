@@ -1,5 +1,5 @@
 query listbyid($input: SignatureCollectionIdInput!) {
-  signatureCollectionList(input: $input) {
+  signatureCollectionAdminList(input: $input) {
     id
     title
     area {

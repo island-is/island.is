@@ -29,57 +29,31 @@ export function allEmployersHaveApproved(context: ApplicationContext) {
 }
 
 export function hasEmployer(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application.answers as {
-    isReceivingUnemploymentBenefits: typeof YES | typeof NO
-    applicationType: {
-      option:
-        | typeof PARENTAL_LEAVE
-        | typeof PARENTAL_GRANT
-        | typeof PARENTAL_GRANT_STUDENTS
-    }
-    isSelfEmployed: typeof YES | typeof NO
-    employers: [
-      {
-        stillEmployed: typeof YES | typeof NO
-      },
-    ]
-  }
-  const oldApplicationAnswers = context.application.answers as {
-    isRecivingUnemploymentBenefits: typeof YES | typeof NO
-    employer: {
-      isSelfEmployed: typeof YES | typeof NO
-    }
-  }
+  const { application } = context
+  const { isReceivingUnemploymentBenefits, isSelfEmployed, employers } =
+    getApplicationAnswers(application.answers)
 
-  const isUndefinedReceivingUnemploymentBenefits =
-    currentApplicationAnswers.isReceivingUnemploymentBenefits !== undefined ||
-    oldApplicationAnswers.isRecivingUnemploymentBenefits !== undefined
-  const receivingUnemploymentBenefits =
-    currentApplicationAnswers.isReceivingUnemploymentBenefits === NO ||
-    oldApplicationAnswers.isRecivingUnemploymentBenefits === NO
-  const selfEmployed =
-    currentApplicationAnswers.isSelfEmployed === NO ||
-    oldApplicationAnswers.employer?.isSelfEmployed === NO
+  const applicationType = (
+    application.answers as {
+      applicationType: { option: string }
+    }
+  )?.applicationType
 
   // Added this check for applications that is in the db already so they can go through to next state
-  if (currentApplicationAnswers.applicationType === undefined) {
-    if (isUndefinedReceivingUnemploymentBenefits) {
-      return selfEmployed && receivingUnemploymentBenefits
+  if (applicationType === undefined) {
+    if (isReceivingUnemploymentBenefits !== undefined) {
+      return isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO
     }
-
-    return selfEmployed
+    return isSelfEmployed === NO
   } else {
-    if (currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE) {
-      return selfEmployed && receivingUnemploymentBenefits
+    if (applicationType.option === PARENTAL_LEAVE) {
+      return isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO
     } else if (
-      (currentApplicationAnswers.applicationType.option === PARENTAL_GRANT ||
-        currentApplicationAnswers.applicationType.option ===
-          PARENTAL_GRANT_STUDENTS) &&
-      currentApplicationAnswers.employers !== undefined
+      (applicationType.option === PARENTAL_GRANT ||
+        applicationType.option === PARENTAL_GRANT_STUDENTS) &&
+      employers !== undefined
     ) {
-      return currentApplicationAnswers.employers.some(
-        (employer) => employer.stillEmployed === YES,
-      )
+      return employers.some((employer) => employer.stillEmployed === YES)
     } else {
       return false
     }

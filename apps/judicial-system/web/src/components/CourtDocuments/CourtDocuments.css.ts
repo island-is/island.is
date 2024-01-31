@@ -36,7 +36,7 @@ export const nameContainer = style({
   alignItems: 'center',
   flex: 1,
   minHeight: '34px',
-
+  wordBreak: 'break-all',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       minHeight: 'auto',
