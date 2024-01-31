@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'

@@ -27,7 +27,6 @@ interface Props {
 }
 const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [state, setState] = useState(currentMunicipality)
-
   const [hasNavError, setHasNavError] = useState(false)
   const [hasAidError, setHasAidError] = useState(false)
   const [updateMunicipalityMutation, { loading }] = useMutation(
@@ -136,7 +135,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       ),
     },
     {
-      headline: 'Tenging við ytri kerfi',
+      headline: 'Tenging við Navision',
       component: (
         <>
           <Box marginBottom={3} id="navSettings">
@@ -348,26 +347,36 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           Vista stillingar
         </Button>
       </Box>
+      <Box marginBottom={[2, 2, 7]}>
+        <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+          Tenging við ytri kerfi
+        </Text>
 
-      <Box marginBottom={[2, 2, 20]} marginTop={[2, 2, 20]}>
         <Input
           label="Kerfi"
           name="systemName"
-          value={''}
+          value={state.apiKeyInfo?.name ?? ''}
           backgroundColor="blue"
-          disabled={!state.usingNav}
+          disabled={!state.apiKeyInfo}
           autoComplete="off"
           onChange={(event) => console.log(event.currentTarget.value)}
         />
+        <Text marginTop={1} marginBottom={3} variant="small">
+          útskýring
+        </Text>
+
         <Input
           label="Lykill"
           name="apiKey"
-          value={''}
+          value={state.apiKeyInfo?.apiKey ?? ''}
           backgroundColor="blue"
-          disabled={!state.usingNav}
+          disabled={!state.apiKeyInfo}
           autoComplete="off"
           onChange={(event) => console.log(event.currentTarget.value)}
         />
+        <Text marginTop={1} marginBottom={3} variant="small">
+          útskýring
+        </Text>
       </Box>
 
       <Box className={`contentUp delay-25`}>

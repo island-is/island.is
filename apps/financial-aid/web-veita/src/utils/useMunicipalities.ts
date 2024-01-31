@@ -57,6 +57,7 @@ export const useMunicipalities = () => {
 
   const getMunicipality = useAsyncLazyQuery<{
     municipalityByIds: Municipality[]
+    apiKeysForMunicipality: ApiKeysForMunicipality[]
   }>(MunicipalityQuery)
 
   useEffect(() => {
@@ -68,7 +69,19 @@ export const useMunicipalities = () => {
       setError(undefined)
       setLoading(true)
       return await getMunicipality({}).then((res) => {
-        setMunicipality(res.data?.municipalityByIds ?? [])
+        const apiKeys = res.data?.apiKeysForMunicipality ?? []
+        const municipality = res.data?.municipalityByIds ?? []
+
+        const allMuni = municipality.map((muni) => {
+          const matchedItem = apiKeys.find(
+            (item) => item.municipalityCode === muni.municipalityId,
+          )
+          return matchedItem
+            ? { ...muni, apiKeyInfo: matchedItem }
+            : { ...muni }
+        })
+
+        setMunicipality(allMuni)
         setLoading(false)
         return res.data?.municipalityByIds ?? []
       })

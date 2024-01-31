@@ -189,6 +189,7 @@ export interface Municipality {
   navUrl?: string
   navUsername?: string
   navPassword?: string
+  apiKeyInfo?: ApiKeysForMunicipality
 }
 
 export interface UpdateMunicipalityActivity {
