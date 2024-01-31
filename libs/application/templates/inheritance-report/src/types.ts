@@ -213,13 +213,8 @@ export interface AllDebts {
 }
 
 export interface ApplicationDebts {
-  publicCharges: PublicCharges
+  publicCharges: string
   domesticAndForeignDebts: DomesticAndForeignDebts
-}
-
-export interface PublicChargesData {
-  taxFreeInheritance: number
-  publicChargesAmount: string
 }
 
 interface DomesticAndForeignDebtsData {
@@ -229,13 +224,9 @@ interface DomesticAndForeignDebtsData {
   creditorName: string
   taxFreeInheritance: number
 }
+
 interface DomesticAndForeignDebts {
   data: DomesticAndForeignDebtsData[]
-  total: number
-}
-
-export interface PublicCharges {
-  data: PublicChargesData[]
   total: number
 }
 
