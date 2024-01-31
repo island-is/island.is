@@ -57,16 +57,6 @@ export const tableRowContainer = style({
   margin: `0 ${theme.spacing[2]}px`,
 })
 
-export const largeColumn = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
-      // The width needed to make sure a 33 character name doesn't wrap
-      maxWidth: 334,
-      whiteSpace: 'nowrap',
-    },
-  },
-})
-
 export const blockColumn = style({
   display: 'block',
   overflow: 'hidden',

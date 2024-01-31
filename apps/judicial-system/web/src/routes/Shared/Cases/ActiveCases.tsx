@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
-import cn from 'classnames'
 import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
@@ -157,7 +156,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
               {formatMessage(tables.caseNumber)}
             </Text>
           </th>
-          <th className={cn(styles.th, styles.largeColumn)}>
+          <th className={styles.th}>
             <SortButton
               title={capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
               onClick={() => requestSort('defendant')}
@@ -252,7 +251,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     </Text>
                   )}
                 </td>
-                <td className={cn(styles.td, styles.largeColumn)}>
+                <td className={styles.td}>
                   {c.defendants && c.defendants.length > 0 ? (
                     <>
                       <Text>
