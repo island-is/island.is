@@ -2,6 +2,7 @@ export type WatsonInstanceEvent = {
   type: string
   data: { message: { user_defined: Record<string, string> } }
   identityToken: string
+  reason?: string
 }
 
 export interface WatsonInstance {

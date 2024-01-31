@@ -85,6 +85,8 @@ export type Icon =
   | 'listView'
   | 'gridView'
   | 'swapVertical'
+  | 'thumbsUp'
+  | 'thumbsDown'
 
 export default {
   filled: {
@@ -173,6 +175,8 @@ export default {
     listView: 'ListView',
     gridView: 'GridView',
     swapVertical: 'SwapVertical',
+    thumbsUp: 'ThumbsUp',
+    thumbsDown: 'ThumbsDown',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -260,5 +264,7 @@ export default {
     listView: 'ListView',
     gridView: 'GridView',
     swapVertical: 'SwapVertical',
+    thumbsUp: 'ThumbsUpOutline',
+    thumbsDown: 'ThumbsDownOutline',
   },
 }

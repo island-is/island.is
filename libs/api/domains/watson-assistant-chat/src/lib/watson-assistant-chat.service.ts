@@ -7,7 +7,16 @@ import {
 } from '@island.is/clients/middlewares'
 import { WatsonAssistantChatIdentityTokenInput } from './dto/watsonAssistantChatIdentityToken.input'
 import { WatsonAssistantChatConfig } from './watson-assistant-chat.config'
-import { WatsonAssistantChatSubmitFeedbackInput } from './dto/watsonAssistantChatSubmitFeedback.input'
+import {
+  ThumbStatus,
+  WatsonAssistantChatSubmitFeedbackInput,
+} from './dto/watsonAssistantChatSubmitFeedback.input'
+
+const thumbStatusToNumberMap: Record<ThumbStatus, number> = {
+  [ThumbStatus.Down]: -1,
+  [ThumbStatus.NoChoice]: 0,
+  [ThumbStatus.Up]: 1,
+}
 
 export class WatsonAssistantChatService {
   private fetch: EnhancedFetchAPI
@@ -51,7 +60,10 @@ export class WatsonAssistantChatService {
     const response = await this.fetch(this.config.chatFeedbackUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
+      body: JSON.stringify({
+        ...input,
+        thumbStatus: thumbStatusToNumberMap[input.thumbStatus],
+      }),
     })
     return {
       success: response.ok,

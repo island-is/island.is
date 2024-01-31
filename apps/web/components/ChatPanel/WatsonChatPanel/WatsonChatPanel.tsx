@@ -1,19 +1,205 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
-import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
-import { Box } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Inline,
+  Input,
+  Stack,
+  Text,
+  toast,
+  ToastContainer,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
+import {
+  Mutation,
+  MutationWatsonAssistantChatSubmitFeedbackArgs,
+  Query,
+  QueryGetNamespaceArgs,
+  WatsonAssistantChatSubmitFeedbackThumbStatus as ThumbStatus,
+} from '@island.is/web/graphql/schema'
 import { useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import { SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK } from '@island.is/web/screens/queries/WatsonAssistantChat'
 
 import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
 import type { WatsonInstance, WatsonInstanceEvent } from './types'
 import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
+import * as styles from './WatsonChatPanel.css'
 
-const ChatFeedbackPanel = () => {
-  return <Box position="absolute">HELLO</Box>
+const chatLog: WatsonInstanceEvent[] = []
+
+interface ChatFeedbackPanelProps {
+  onClose: () => void
+  submitText: string
+  heading: string
+  successText: string
+  errorText: string
+  inputPlaceholder?: string
+}
+
+const ChatFeedbackPanel = ({
+  onClose,
+  submitText,
+  heading,
+  successText,
+  errorText,
+  inputPlaceholder = '',
+}: ChatFeedbackPanelProps) => {
+  const { activeLocale } = useI18n()
+
+  const [thumbStatus, setThumbStatus] = useState<ThumbStatus>(
+    ThumbStatus.NoChoice,
+  )
+  const [feedbackText, setFeedbackText] = useState('')
+
+  const updateThumbStatus = (newThumbStatus: ThumbStatus) => {
+    setThumbStatus((previousThumbStatus) => {
+      if (previousThumbStatus === newThumbStatus) {
+        return ThumbStatus.NoChoice
+      }
+      return newThumbStatus
+    })
+  }
+
+  const resetState = () => {
+    setFeedbackText('')
+    setThumbStatus(ThumbStatus.NoChoice)
+  }
+
+  const [submitFeedback] = useMutation<
+    Mutation,
+    MutationWatsonAssistantChatSubmitFeedbackArgs
+  >(SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK, {
+    onCompleted() {
+      toast.success(successText)
+      resetState()
+      onClose()
+    },
+    onError() {
+      toast.error(errorText)
+      resetState()
+      onClose()
+    },
+  })
+
+  // TODO: can a user tab into the modal?
+
+  return (
+    <Box
+      className={styles.feedbackPanelContainer}
+      borderRadius="large"
+      padding="gutter"
+      background="white"
+    >
+      <Stack space={2}>
+        <Box display="flex" justifyContent="flexEnd">
+          <Box
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter' || ev.key === ' ') {
+                onClose()
+                ev.preventDefault()
+              }
+            }}
+            onClick={onClose}
+            cursor="pointer"
+            tabIndex={0}
+            userSelect="none"
+          >
+            <VisuallyHidden>
+              {activeLocale === 'is' ? 'Loka' : 'Close'}
+            </VisuallyHidden>
+            <Icon icon="close" />
+          </Box>
+        </Box>
+
+        <Box display="flex" justifyContent="center">
+          <Text fontWeight="regular">{heading}</Text>
+        </Box>
+
+        <Box display="flex" justifyContent="center">
+          <Inline space={2} alignY="center">
+            <Box
+              onClick={() => {
+                updateThumbStatus(ThumbStatus.Up)
+              }}
+              cursor="pointer"
+              userSelect="none"
+            >
+              <VisuallyHidden>
+                {activeLocale === 'is' ? 'Þumall upp' : 'Thumbs up'}
+              </VisuallyHidden>
+              <Icon
+                color="blue400"
+                icon="thumbsUp"
+                type={thumbStatus === ThumbStatus.Up ? 'filled' : 'outline'}
+              />
+            </Box>
+            <Box
+              onClick={() => {
+                updateThumbStatus(ThumbStatus.Down)
+              }}
+              cursor="pointer"
+              userSelect="none"
+            >
+              <VisuallyHidden>
+                {activeLocale === 'is' ? 'Þumall niður' : 'Thumbs down'}
+              </VisuallyHidden>
+              <Icon
+                color="blue400"
+                icon="thumbsDown"
+                type={thumbStatus === ThumbStatus.Down ? 'filled' : 'outline'}
+              />
+            </Box>
+          </Inline>
+        </Box>
+
+        <Input
+          autoExpand={{ on: true, maxHeight: 300 }}
+          textarea
+          rows={3}
+          size="xs"
+          name="webchat-feedback-input"
+          value={feedbackText}
+          placeholder={inputPlaceholder}
+          onChange={(ev) => {
+            setFeedbackText(ev.target.value)
+          }}
+        />
+
+        <Box display="flex" justifyContent="flexEnd">
+          <Button
+            size="small"
+            onClick={() => {
+              const chatLogCopy = [...chatLog]
+              console.log({
+                assistantChatLog: chatLogCopy,
+                thumbStatus,
+                feedback: feedbackText,
+              })
+              submitFeedback({
+                variables: {
+                  input: {
+                    assistantChatLog: chatLogCopy,
+                    thumbStatus,
+                    feedback: feedbackText,
+                  },
+                },
+              })
+              // Clear the chat log when submitting feedback
+              chatLog.length = 0
+            }}
+          >
+            {submitText}
+          </Button>
+        </Box>
+      </Stack>
+    </Box>
+  )
 }
 
 declare global {
@@ -30,8 +216,6 @@ declare global {
     }
   }
 }
-
-const chatLog: WatsonInstanceEvent[] = []
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -54,6 +238,8 @@ const loadScript = (
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const { activeLocale } = useI18n()
   const [loading, setLoading] = useState(false)
+  const [shouldDisplayFeedbackPanel, setShouldDisplayFeedbackPanel] =
+    useState(false)
 
   const {
     version = 'latest',
@@ -73,7 +259,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   })
 
   const namespace = useMemo(
-    () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
+    () => JSON.parse(data?.getNamespace?.fields || '{}'),
     [data?.getNamespace?.fields],
   )
 
@@ -138,6 +324,15 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
               },
             })
 
+            instance.on({
+              type: 'view:change',
+              handler: (event) => {
+                if (event.reason === 'mainWindowClosedAndRestarted') {
+                  setShouldDisplayFeedbackPanel(true)
+                }
+              },
+            })
+
             if (
               // Askur - Útlendingastofnun
               props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
@@ -181,22 +376,50 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
   if (showLauncher) return null
 
-  // TODO: only display feedback panel when user clicks exit
-  // TODO: Add thumbs icons to icon set https://ionic.io/ionicons
-
   return (
     <>
-      <ChatFeedbackPanel />
-      <ChatBubble
-        text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-        isVisible={true}
-        onClick={() => {
-          watsonInstance.current?.openWindow()
-          setHasButtonBeenClicked(true)
-        }}
-        pushUp={pushUp}
-        loading={loading}
-      />
+      {shouldDisplayFeedbackPanel && (
+        <ChatFeedbackPanel
+          onClose={() => {
+            setShouldDisplayFeedbackPanel(false)
+          }}
+          submitText={n(
+            'chatFeedbackSubmitText',
+            activeLocale === 'is' ? 'Senda' : 'Submit',
+          )}
+          heading={n(
+            'chatFeedbackHeadingText',
+            activeLocale === 'is'
+              ? 'Hvernig fannst þér samtalið ganga?'
+              : 'How did the conversation go?',
+          )}
+          inputPlaceholder={n(
+            'chatFeedbackInputPlaceholderText',
+            activeLocale === 'is' ? 'Athugasemd...' : 'Comment...',
+          )}
+          successText={n(
+            'chatFeedbackSubmitSuccessText',
+            activeLocale === 'is' ? 'Sending tókst' : 'Submission succeeded',
+          )}
+          errorText={n(
+            'chatFeedbackSubmitErrorText',
+            activeLocale === 'is' ? 'Ekki tókst að senda' : 'Submission failed',
+          )}
+        />
+      )}
+      {!shouldDisplayFeedbackPanel && (
+        <ChatBubble
+          text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
+          isVisible={true}
+          onClick={() => {
+            watsonInstance.current?.openWindow()
+            setHasButtonBeenClicked(true)
+          }}
+          pushUp={pushUp}
+          loading={loading}
+        />
+      )}
+      <ToastContainer />
     </>
   )
 }
