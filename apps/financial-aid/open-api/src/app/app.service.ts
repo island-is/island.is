@@ -1,3 +1,4 @@
+import formatISO from 'date-fns/formatISO'
 import fetch from 'isomorphic-fetch'
 
 import { Inject, Injectable } from '@nestjs/common'
@@ -18,18 +19,27 @@ export class AppService {
   ) {}
 
   async getApplications(apiKey: string, filters: FilterApplicationsDto) {
-    this.logger.info(`trying to fetching all applications`)
+    this.logger.info(`trying to fetching all applications`, filters)
 
-    return fetch(
+    const url = new URL(
       `${this.config.backend.url}/api/financial-aid/open-api-applications/getAll`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'API-Key': apiKey,
-        },
+    )
+    url.searchParams.append('startDate', filters.startDate)
+    url.searchParams.append(
+      'endDate',
+      filters.endDate ??
+        formatISO(new Date(), {
+          representation: 'date',
+        }),
+    )
+
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'API-Key': apiKey,
       },
-    ).then(async (res) => {
+    }).then(async (res) => {
       console.log('res', res)
       return res.json()
     })

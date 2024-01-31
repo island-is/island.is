@@ -1,4 +1,11 @@
-import { Controller, Get, Inject, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
@@ -25,8 +32,14 @@ export class OpenApiApplicationController {
     isArray: true,
     description: 'Gets all existing applications',
   })
-  async getAll(@CurrentMunicipalityCode() municipalityCode: string) {
-    this.logger.info(`${municipalityCode} fetched all applications`)
-    return this.applicationService.getAll(municipalityCode)
+  async getAll(
+    @CurrentMunicipalityCode() municipalityCode: string,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    this.logger.info(
+      `${municipalityCode} fetched all applications from ${startDate} to ${endDate}`,
+    )
+    return this.applicationService.getAll(municipalityCode, startDate, endDate)
   }
 }
