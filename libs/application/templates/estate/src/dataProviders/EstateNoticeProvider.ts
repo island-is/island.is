@@ -9,3 +9,8 @@ export const EstateApi = defineTemplateApi({
   action: 'estateProvider',
   shouldPersistToExternalData: false,
 })
+
+export const EstateOnEntryApi = defineTemplateApi({
+  action: 'syslumennOnEntry',
+  shouldPersistToExternalData: true,
+})
