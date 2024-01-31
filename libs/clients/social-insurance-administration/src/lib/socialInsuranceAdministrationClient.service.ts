@@ -100,10 +100,11 @@ export class SocialInsuranceAdministrationClientService {
   }
 
   async getPensionCalculation(
-    parameters: ApiProtectedV1PensionCalculatorPostRequest,
+    parameters: ApiProtectedV1PensionCalculatorPostRequest['trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput'],
   ) {
-    return this.pensionCalculatorApi.apiProtectedV1PensionCalculatorPost(
-      parameters,
-    )
+    return this.pensionCalculatorApi.apiProtectedV1PensionCalculatorPost({
+      trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput:
+        parameters,
+    })
   }
 }

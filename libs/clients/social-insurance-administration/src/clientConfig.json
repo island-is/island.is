@@ -5,10 +5,12 @@
     "/api/protected/v1/Applicant/{applicationType}/eligible": {
       "get": {
         "tags": ["Applicant"],
+        "summary": "Returns whether the logged-in user is eligible for application of the requested type",
         "parameters": [
           {
             "name": "applicationType",
             "in": "path",
+            "description": "The type of application (e.g. old age pension) to check for eligibility",
             "required": true,
             "style": "simple",
             "schema": { "type": "string" }
@@ -121,6 +123,7 @@
     "/api/protected/v1/Applicant": {
       "get": {
         "tags": ["Applicant"],
+        "summary": "Returns the currently logged-in user's personal and bank info",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -354,6 +357,7 @@
     "/api/protected/v1/Applicant/onetimepayment/upload": {
       "post": {
         "tags": ["Applicant"],
+        "summary": "This endpoint is only used temporarily to imitate one time payment uploads. This and the endpoint associated\r\nwith uploading documents for withdrawal and one time payment will be combined to a single, generic endpoint",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -587,6 +591,7 @@
     "/api/protected/v1/Application/withdrawal/upload": {
       "post": {
         "tags": ["Application"],
+        "summary": "This endpoint is only used temporarily to imitate withdrawal uploads. This and the endpoint associated\r\nwith uploading documents for withdrawal and one time payment will be combined to a single, generic endpoint",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -694,16 +699,19 @@
     "/api/protected/v1/Application/{applicationType}": {
       "post": {
         "tags": ["Application"],
+        "summary": "Creates applications of various types, depending on the input.applicationType parameter",
         "parameters": [
           {
             "name": "applicationType",
             "in": "path",
+            "description": "The application type, e.g. \"oldagepension\"",
             "required": true,
             "style": "simple",
             "schema": { "type": "string" }
           }
         ],
         "requestBody": {
+          "description": "Input for application, varies by type",
           "content": {
             "application/json": { "schema": { "type": "object" } },
             "text/json": { "schema": { "type": "object" } },
@@ -817,16 +825,19 @@
     "/api/protected/v1/Application/{applicationGuid}/documents": {
       "post": {
         "tags": ["Application"],
+        "summary": "Adds a list of documents to an application in Island.is",
         "parameters": [
           {
             "name": "applicationGuid",
             "in": "path",
+            "description": "The application GUID for the application in Island.is",
             "required": true,
             "style": "simple",
             "schema": { "type": "string" }
           }
         ],
         "requestBody": {
+          "description": "A list of incoming documents that needs to be attached to the application",
           "content": {
             "application/json": {
               "schema": {
@@ -1065,6 +1076,7 @@
     "/api/protected/v1/General/currencies": {
       "get": {
         "tags": ["General"],
+        "summary": "Returns a list of valid currencies (for registering a foreign bank account)",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -1166,10 +1178,12 @@
     "/api/protected/v1/PaymentPlan": {
       "get": {
         "tags": ["PaymentPlan"],
+        "summary": "Endpoint to get paymentplan for a given nationalId",
         "parameters": [
           {
             "name": "year",
             "in": "query",
+            "description": "",
             "style": "form",
             "schema": { "type": "string" }
           }
@@ -1281,6 +1295,7 @@
     "/api/protected/v1/PaymentPlan/legitimatepayments": {
       "get": {
         "tags": ["PaymentPlan"],
+        "summary": "Endpoint to get the next/previous payments for a given nationalId",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -1388,21 +1403,23 @@
     "/api/protected/v1/PensionCalculator": {
       "post": {
         "tags": ["PensionCalculator"],
+        "summary": "Returns general pension calculations for input data",
         "requestBody": {
+          "description": "Data for general pension calculations",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorInput"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PensionCalculator.PensionCalculatorInput"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorInput"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PensionCalculator.PensionCalculatorInput"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorInput"
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PensionCalculator.PensionCalculatorInput"
               }
             }
           }
@@ -1495,7 +1512,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorOutput"
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PensionCalculator.PensionCalculatorOutput"
                   }
                 }
               },
@@ -1503,7 +1520,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorOutput"
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PensionCalculator.PensionCalculatorOutput"
                   }
                 }
               },
@@ -1511,7 +1528,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorOutput"
+                    "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PensionCalculator.PensionCalculatorOutput"
                   }
                 }
               }
@@ -1523,6 +1540,7 @@
     "/api/protected/v1/Test/hello": {
       "get": {
         "tags": ["Test"],
+        "summary": "Dummy service for testing X-Road connectivity",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -1618,6 +1636,7 @@
     "/api/protected/v1/Test": {
       "get": {
         "tags": ["Test"],
+        "summary": "This is an unauthorized ping endpoint. It is only used for organization to organization\r\ntesting of communications.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2144,65 +2163,25 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorInput": {
-        "type": "object",
-        "properties": {
-          "typeOfBasePension": { "type": "integer", "format": "int32" },
-          "hasSpouse": { "type": "boolean" },
-          "livingCondition": { "type": "integer", "format": "int32" },
-          "mobilityImpairment": { "type": "boolean" },
-          "start": { "type": "integer", "format": "int32" },
-          "yearOfBirth": { "type": "integer", "format": "int32" },
-          "startPension": { "type": "integer", "format": "int32" },
-          "childCount": { "type": "integer", "format": "int32" },
-          "childSupportCount": { "type": "integer", "format": "int32" },
-          "delayPension": { "type": "integer", "format": "int32" },
-          "hurryPension": { "type": "integer", "format": "int32" },
-          "ageOfFirst75DisabilityAssessment": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "livingConditionRatio": { "type": "integer", "format": "int32" },
-          "livingConditionAbroadInYears": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ageNow": { "type": "integer", "format": "int32" },
-          "taxCard": { "type": "integer", "format": "int32" },
-          "typeOfPeriodIncome": { "type": "integer", "format": "int32" },
-          "income": { "type": "integer", "format": "int32" },
-          "pensionPayments": { "type": "integer", "format": "int32" },
-          "privatePensionPayments": { "type": "integer", "format": "int32" },
-          "otherIncome": { "type": "integer", "format": "int32" },
-          "capitalIncome": { "type": "integer", "format": "int32" },
-          "benefitsFromMunicipality": { "type": "integer", "format": "int32" },
-          "premium": { "type": "integer", "format": "int32" },
-          "installmentClaims": { "type": "integer", "format": "int32" },
-          "foreignBasicPension": { "type": "integer", "format": "int32" },
-          "dateOfCalculations": { "type": "string", "format": "date-time" }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.Pension.Models.PensionCalculatorOutput": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "nullable": true },
-          "monthlyAmount": { "type": "number", "format": "double" },
-          "yearlyAmount": { "type": "number", "format": "double" }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.Applications.ExternalPortals.Error": {
         "required": ["message"],
         "type": "object",
         "properties": {
-          "code": { "type": "integer", "format": "int32" },
-          "message": { "type": "string" },
+          "code": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message describing the error"
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.ErrorDetails"
             },
+            "description": "Detailed information of errors",
             "nullable": true
           }
         },
@@ -2211,19 +2190,48 @@
       "TrWeb.Applications.ExternalPortals.ErrorDetails": {
         "type": "object",
         "properties": {
-          "code": { "type": "integer", "format": "int32" },
-          "message": { "type": "string", "nullable": true },
-          "help": { "type": "string", "nullable": true },
-          "trackingId": { "type": "string", "nullable": true },
-          "param": { "type": "string", "nullable": true }
+          "code": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message describing the error",
+            "nullable": true
+          },
+          "help": {
+            "type": "string",
+            "description": "URL to a page explaining the error and possible solutions",
+            "nullable": true
+          },
+          "trackingId": {
+            "type": "string",
+            "description": "Identifier for mapping failures to service internal codes",
+            "nullable": true
+          },
+          "param": {
+            "type": "string",
+            "description": "Name of the parameter which was incorrect",
+            "nullable": true
+          }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Detailed error message"
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.Applicant.ApplicantInfoReturn": {
         "type": "object",
         "properties": {
-          "emailAddress": { "type": "string", "nullable": true },
-          "phoneNumber": { "type": "string", "nullable": true },
+          "emailAddress": {
+            "type": "string",
+            "description": "The email address of the applicant",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "The phone number of the applicant",
+            "nullable": true
+          },
           "bankAccount": {
             "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBankInformationReturn"
           }
@@ -2233,33 +2241,69 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.Applications.IsEligibleForApplicationReturn": {
         "type": "object",
         "properties": {
-          "isEligible": { "type": "boolean" },
-          "reason": { "type": "string", "nullable": true }
+          "isEligible": {
+            "type": "boolean",
+            "description": "A boolean to determine whether the applicant is eligible to apply for this type of application"
+          },
+          "reason": {
+            "type": "string",
+            "description": "If the applicant is not eligible, a reason why he is not eligible is included",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.Documents.Document": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "nullable": true },
-          "type": { "type": "string", "nullable": true },
-          "file": { "type": "string", "nullable": true }
+          "name": {
+            "type": "string",
+            "description": "The name of the document",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the document",
+            "nullable": true
+          },
+          "file": {
+            "type": "string",
+            "description": "The actual file (base64 encoded) of the document",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application": {
         "type": "object",
         "properties": {
-          "language": { "type": "string", "nullable": true },
-          "portalApplicationID": { "type": "string", "nullable": true },
-          "applicationType": { "type": "string", "nullable": true },
+          "language": {
+            "type": "string",
+            "description": "Value for the language, currently we support IS and EN",
+            "nullable": true
+          },
+          "portalApplicationID": {
+            "type": "string",
+            "description": "ID of the application in portal",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "description": "Identity for application type",
+            "nullable": true
+          },
           "applicationName": { "type": "string", "nullable": true },
-          "Dagssetning": { "type": "string", "format": "date-time" },
+          "Dagssetning": {
+            "type": "string",
+            "description": "Date when application was last changed",
+            "format": "date-time"
+          },
           "Adilar": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser"
             },
+            "description": "List of persons that have a role in the application",
             "nullable": true
           },
           "Notandagogn": {
@@ -2267,6 +2311,7 @@
             "items": {
               "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData"
             },
+            "description": "Information extracted from the application that the ruleset can use.",
             "nullable": true
           },
           "Greidsla": {
@@ -2277,6 +2322,7 @@
             "items": {
               "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.File"
             },
+            "description": "Files that are in the application if any.",
             "nullable": true
           },
           "status": {
@@ -2298,7 +2344,8 @@
           "netfang": { "type": "string", "nullable": true },
           "simi": { "type": "string", "nullable": true }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "The associated user (Adilar)"
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ApplicationFileTypes": {
         "enum": [1, 2, 3, 4, 5],
@@ -2321,11 +2368,31 @@
           "flokkur": {
             "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ApplicationFileTypes"
           },
-          "heiti": { "type": "string", "nullable": true },
-          "dags": { "type": "string", "format": "date-time" },
-          "tegund": { "type": "string", "nullable": true },
-          "FileID": { "type": "string", "nullable": true },
-          "ending": { "type": "string", "nullable": true }
+          "heiti": {
+            "type": "string",
+            "description": "Name of the file",
+            "nullable": true
+          },
+          "dags": {
+            "type": "string",
+            "description": "Date when the file was uploaded into the application",
+            "format": "date-time"
+          },
+          "tegund": {
+            "type": "string",
+            "description": "Mimetype of file if known",
+            "nullable": true
+          },
+          "FileID": {
+            "type": "string",
+            "description": "The file id that can be used to fetch the file in LVG",
+            "nullable": true
+          },
+          "ending": {
+            "type": "string",
+            "description": "extension if the file if available else empty",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -2333,25 +2400,72 @@
         "type": "object",
         "properties": {
           "guid": { "type": "string", "nullable": true },
-          "flokkur": { "type": "string", "nullable": true },
-          "heiti": { "type": "string", "nullable": true },
-          "tegund": { "type": "string", "nullable": true },
-          "gildi": { "type": "string", "nullable": true },
-          "countryCode": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true }
+          "flokkur": {
+            "type": "string",
+            "description": "Group name",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name of the variable",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "description": "Type of variable",
+            "nullable": true
+          },
+          "gildi": {
+            "type": "string",
+            "description": "Value for inspection",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "if tegund is \"landalisti\" then the countryCode is included.\r\nThis is a two letter countryCode, i.e. \"DK\" for Denmark",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "description": "If tegund is \"kennitala\" then the name of the payer is included",
+            "nullable": true
+          }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Data entered by the applicant (Notandagogn)"
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Payment": {
         "type": "object",
         "properties": {
-          "upphaed": { "type": "string", "nullable": true },
-          "dags": { "type": "string", "format": "date-time", "nullable": true },
-          "korthafi": { "type": "string", "nullable": true },
-          "kortanumer": { "type": "string", "nullable": true },
-          "tegundKorts": { "type": "string", "nullable": true }
+          "upphaed": {
+            "type": "string",
+            "description": "The amount",
+            "nullable": true
+          },
+          "dags": {
+            "type": "string",
+            "description": "Date when payment was made",
+            "format": "date-time",
+            "nullable": true
+          },
+          "korthafi": {
+            "type": "string",
+            "description": "The card holder",
+            "nullable": true
+          },
+          "kortanumer": {
+            "type": "string",
+            "description": "The card number",
+            "nullable": true
+          },
+          "tegundKorts": {
+            "type": "string",
+            "description": "The type of card",
+            "nullable": true
+          }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Payment coming from the user (Greidsla)"
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet": {
         "type": "object",
@@ -2359,7 +2473,11 @@
           "status": {
             "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ExternalResultStatus"
           },
-          "message": { "type": "string", "nullable": true }
+          "message": {
+            "type": "string",
+            "description": "Message to be displayed to the user if the application is not valid.",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -2397,6 +2515,159 @@
         "properties": {
           "paymentPlan": {
             "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlan"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.PensionCalculator.PensionCalculatorInput": {
+        "type": "object",
+        "properties": {
+          "typeOfBasePension": {
+            "type": "integer",
+            "description": "Ellilífeyrir 1\r\nEllilífeyrir sjómanna 2\r\nÖrorkulífeyrir 3\r\nEndurhæfingarlífeyrir 4\r\nHálfur ellilífeyrir 5",
+            "format": "int32"
+          },
+          "hasSpouse": { "type": "boolean", "description": "Hjúskaparstaða" },
+          "livingCondition": {
+            "type": "integer",
+            "description": "Heimilisaðstæður, býr ein(n) ?\r\nBýr ein(n) = 1\r\nBýr ekki ein(n) = 2",
+            "format": "int32"
+          },
+          "mobilityImpairment": {
+            "type": "boolean",
+            "description": "Með hreyfihömlunarmat"
+          },
+          "start": {
+            "type": "integer",
+            "description": "Byrjar á ellilífeyri frá TR:\r\n 2017 eða fyrr = 1 \r\n 2018 eða seinna = 2",
+            "format": "int32"
+          },
+          "yearOfBirth": {
+            "type": "integer",
+            "description": "Fæðingarár\r\n1 -> 1951 eða fyrr \r\n2 -> 1952 eða seinna",
+            "format": "int32"
+          },
+          "startPension": {
+            "type": "integer",
+            "description": "Byrjar á ellilífeyri frá TR:\r\n 2017 eða fyrr = 1\r\n 2018 eða seinna = 2\r\n Sjálfvalið gildi er 2018 eða seinna",
+            "format": "int32"
+          },
+          "childCount": {
+            "type": "integer",
+            "description": "Barnafjöldi,\r\nBörn yngri en 18ára",
+            "format": "int32"
+          },
+          "childSupportCount": {
+            "type": "integer",
+            "description": "Fær meðlag greitt með hvað mörgum börnum",
+            "format": "int32"
+          },
+          "delayPension": {
+            "type": "integer",
+            "description": "Frestun ellilífeyris (fj. mánaða, 0-156)",
+            "format": "int32"
+          },
+          "hurryPension": {
+            "type": "integer",
+            "description": "Flýting ellilífeyris (fj. mánaða, 0-24)",
+            "format": "int32"
+          },
+          "ageOfFirst75DisabilityAssessment": {
+            "type": "integer",
+            "description": "Aldur fyrsta 75% örorkumats\r\nSjálfvalið 20",
+            "format": "int32"
+          },
+          "livingConditionRatio": {
+            "type": "integer",
+            "description": "100% búseta er sjálfgefið",
+            "format": "int32"
+          },
+          "livingConditionAbroadInYears": {
+            "type": "integer",
+            "description": "Hefur búið í hve mörg ár erlendis",
+            "format": "int32"
+          },
+          "ageNow": {
+            "type": "integer",
+            "description": "Núverandi aldur",
+            "format": "int32"
+          },
+          "taxCard": {
+            "type": "integer",
+            "description": "Skattkort, hlutfall",
+            "format": "int32"
+          },
+          "typeOfPeriodIncome": {
+            "type": "integer",
+            "description": "Mánaðar- eða árstekjur\r\nSjálfgefið er mánaðrtekjur\r\nMánaðartekjur = 2",
+            "format": "int32"
+          },
+          "income": {
+            "type": "integer",
+            "description": "Tekjur, árs- eða mánaðartekjur",
+            "format": "int32"
+          },
+          "pensionPayments": {
+            "type": "integer",
+            "description": "Lífeyrisgreiðslur",
+            "format": "int32"
+          },
+          "privatePensionPayments": {
+            "type": "integer",
+            "description": "Séreignarlífeyrisgreiðslur",
+            "format": "int32"
+          },
+          "otherIncome": { "type": "integer", "format": "int32" },
+          "capitalIncome": {
+            "type": "integer",
+            "description": "Fjármagnstekjur",
+            "format": "int32"
+          },
+          "benefitsFromMunicipality": {
+            "type": "integer",
+            "description": "Bætur frá sveitarfélagi",
+            "format": "int32"
+          },
+          "premium": {
+            "type": "integer",
+            "description": "Iðgjöld",
+            "format": "int32"
+          },
+          "installmentClaims": {
+            "type": "integer",
+            "description": "Afborganir krafna",
+            "format": "int32"
+          },
+          "foreignBasicPension": {
+            "type": "integer",
+            "description": "Erlendur grunnlífeyrir",
+            "format": "int32"
+          },
+          "dateOfCalculations": {
+            "type": "string",
+            "description": "Dagsetning útreiknings",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.PensionCalculator.PensionCalculatorOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Heiti á tekjulið",
+            "nullable": true
+          },
+          "monthlyAmount": {
+            "type": "number",
+            "description": "Upphæð á mánuði",
+            "format": "double"
+          },
+          "yearlyAmount": {
+            "type": "number",
+            "description": "Upphæð á ári",
+            "format": "double"
           }
         },
         "additionalProperties": false

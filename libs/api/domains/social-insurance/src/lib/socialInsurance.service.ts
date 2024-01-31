@@ -105,12 +105,10 @@ export class SocialInsuranceService {
   }
 
   async getPensionCalculation(
-    input: ApiProtectedV1PensionCalculatorPostRequest['trWebApiServicesDomainPensionModelsPensionCalculatorInput'],
+    input: Parameters<typeof this.socialInsuranceApi.getPensionCalculation>[0],
   ): Promise<PensionCalculationResponse> {
     return {
-      items: await this.socialInsuranceApi.getPensionCalculation({
-        trWebApiServicesDomainPensionModelsPensionCalculatorInput: input,
-      }),
+      items: await this.socialInsuranceApi.getPensionCalculation(input),
     }
   }
 }
