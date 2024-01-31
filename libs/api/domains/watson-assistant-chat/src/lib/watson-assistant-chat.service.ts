@@ -60,6 +60,7 @@ export class WatsonAssistantChatService {
       body: JSON.stringify({
         ...input,
         thumbStatus: thumbStatusToNumberMap[input.thumbStatus],
+        timestamp: Date.now(),
       }),
     })
     return {

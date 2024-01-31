@@ -180,11 +180,6 @@ const ChatFeedbackPanel = ({
             loading={loading}
             onClick={() => {
               const chatLogCopy = [...chatLog]
-              console.log({
-                assistantChatLog: chatLogCopy,
-                thumbStatus,
-                feedback: feedbackText,
-              })
               submitFeedback({
                 variables: {
                   input: {
@@ -331,7 +326,10 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             instance.on({
               type: 'view:change',
               handler: (event) => {
-                if (event.reason === 'mainWindowClosedAndRestarted') {
+                if (
+                  event.reason === 'mainWindowClosedAndRestarted' &&
+                  chatLog.length > 0
+                ) {
                   setShouldDisplayFeedbackPanel(true)
                 }
               },
