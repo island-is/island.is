@@ -1,3 +1,5 @@
+import { DefaultEvents } from "@island.is/application/types"
+
 export const YES = 'yes'
 export const NO = 'no'
 export const MANUAL = 'manual'
@@ -17,6 +19,29 @@ export const NO_PRIVATE_PENSION_FUND = 'X000'
 export const NO_UNEMPLOYED_BENEFITS = 'B000'
 export const NO_MULTIPLE_BIRTHS = '1'
 export const MINIMUM_PERIOD_LENGTH = 14
+
+export enum PLEvents {
+  MODIFY = 'MODIFY',
+  CLOSED = 'CLOSED',
+  ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
+}
+
+export type Events =
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.EDIT }
+  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
+  | { type: 'CLOSED' } // Ex: Close application
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
+ 
+export enum Roles {
+  APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
+  ORGINISATION_REVIEWER = 'vmst',
+}
 
 export enum UnEmployedBenefitTypes {
   vmst = 'Vinnumálastofnun (atvinnuleysisbætur)',

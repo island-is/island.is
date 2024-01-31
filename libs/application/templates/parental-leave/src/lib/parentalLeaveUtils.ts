@@ -16,6 +16,7 @@ import {
   Field,
   FormValue,
   Option,
+  PendingAction,
   RepeaterProps,
 } from '@island.is/application/types'
 
@@ -29,6 +30,7 @@ import {
   PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
+  Roles,
   SINGLE,
   SPOUSE,
   StartDateOptions,
@@ -38,7 +40,7 @@ import {
 } from '../constants'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
-import { parentalLeaveFormMessages } from '../lib/messages'
+import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
 
 import { FormatMessage } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
@@ -1807,6 +1809,65 @@ export const setTestBirthAndExpectedDate = (
   return {
     birthDate: `${year}${month}${day}`,
     expBirthDate: `${expBirthDateYear}-${expBirthDateMonth}-${expBirthDateDate}`,
+  }
+}
+
+export const determineNameFromApplicationAnswers = (application: Application) => {
+  if (isParentalGrant(application)) {
+    return parentalLeaveFormMessages.shared.nameGrant
+  }
+
+  return parentalLeaveFormMessages.shared.name
+}
+
+export const otherParentApprovalStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.otherParentRequestApprovalTitle,
+      content: statesMessages.otherParentRequestApprovalDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    const applicationAnswers = getApplicationAnswers(application.answers)
+
+    const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+      applicationAnswers
+
+    const description =
+      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+        : isRequestingRights === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+        : parentalLeaveFormMessages.reviewScreen
+            .otherParentDescRequestingPersonalDiscount
+
+    return {
+      title: statesMessages.otherParentApprovalDescription,
+      content: description,
+      displayStatus: 'info',
+    }
+  }
+}
+
+export const employerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.employerApprovalPendingActionTitle,
+      content: statesMessages.employerApprovalPendingActionDescription,
+      displayStatus: 'info',
+    }
+  } else {
+    return {
+      title: statesMessages.employerWaitingToAssignDescription,
+      content: parentalLeaveFormMessages.reviewScreen.employerDesc,
+      displayStatus: 'info',
+    }
   }
 }
 

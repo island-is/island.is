@@ -20,7 +20,6 @@ import {
   DefaultEvents,
   defineTemplateApi,
   UserProfileApi,
-  PendingAction,
 } from '@island.is/application/types'
 
 import {
@@ -39,6 +38,9 @@ import {
   NO_MULTIPLE_BIRTHS,
   NO_UNEMPLOYED_BENEFITS,
   UnEmployedBenefitTypes,
+  PLEvents,
+  Roles,
+  Events,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -59,91 +61,12 @@ import {
   getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
-  isParentalGrant,
+  determineNameFromApplicationAnswers,
   isParentWithoutBirthParent,
+  otherParentApprovalStatePendingAction,
+  employerApprovalStatePendingAction,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
-
-export enum PLEvents {
-  MODIFY = 'MODIFY',
-  CLOSED = 'CLOSED',
-  ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
-}
-
-type Events =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ABORT }
-  | { type: DefaultEvents.EDIT }
-  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
-  | { type: 'CLOSED' } // Ex: Close application
-  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
-
-enum Roles {
-  APPLICANT = 'applicant',
-  ASSIGNEE = 'assignee',
-  ORGINISATION_REVIEWER = 'vmst',
-}
-const determineNameFromApplicationAnswers = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.nameGrant
-  }
-
-  return parentalLeaveFormMessages.shared.name
-}
-
-const otherParentApprovalStatePendingAction = (
-  application: Application,
-  role: string,
-): PendingAction => {
-  if (role === Roles.ASSIGNEE) {
-    return {
-      title: statesMessages.otherParentRequestApprovalTitle,
-      content: statesMessages.otherParentRequestApprovalDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    const applicationAnswers = getApplicationAnswers(application.answers)
-
-    const { isRequestingRights, usePersonalAllowanceFromSpouse } =
-      applicationAnswers
-
-    const description =
-      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
-        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
-        : isRequestingRights === YES
-        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
-        : parentalLeaveFormMessages.reviewScreen
-            .otherParentDescRequestingPersonalDiscount
-
-    return {
-      title: statesMessages.otherParentApprovalDescription,
-      content: description,
-      displayStatus: 'info',
-    }
-  }
-}
-
-const employerApprovalStatePendingAction = (
-  _: Application,
-  role: string,
-): PendingAction => {
-  if (role === Roles.ASSIGNEE) {
-    return {
-      title: statesMessages.employerApprovalPendingActionTitle,
-      content: statesMessages.employerApprovalPendingActionDescription,
-      displayStatus: 'info',
-    }
-  } else {
-    return {
-      title: statesMessages.employerWaitingToAssignDescription,
-      content: parentalLeaveFormMessages.reviewScreen.employerDesc,
-      displayStatus: 'info',
-    }
-  }
-}
 
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
