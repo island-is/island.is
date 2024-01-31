@@ -7,6 +7,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import appModuleConfig from './app.config'
+import { FilterApplicationsDto } from './app.dto'
 
 @Injectable()
 export class AppService {
@@ -16,8 +17,8 @@ export class AppService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async getApplications(apiKey: string) {
-    console.log('kemst hingad')
+  async getApplications(apiKey: string, filters: FilterApplicationsDto) {
+    this.logger.info(`trying to fetching all applications`)
 
     return fetch(
       `${this.config.backend.url}/api/financial-aid/open-api-applications/getAll`,
@@ -25,7 +26,7 @@ export class AppService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'api-key': apiKey,
+          'API-Key': apiKey,
         },
       },
     ).then(async (res) => {

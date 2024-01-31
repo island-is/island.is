@@ -11,7 +11,6 @@ export class UserService {
   ) {}
 
   async findByApiKey(apiKey: string): Promise<ApiUserModel> {
-    console.log('LION KING')
     return await this.apiUserModel.findOne({
       where: {
         apiKey,

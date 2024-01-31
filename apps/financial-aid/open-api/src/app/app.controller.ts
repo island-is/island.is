@@ -1,9 +1,10 @@
-import { Controller, Get, Headers, Inject } from '@nestjs/common'
+import { Controller, Get, Headers, Inject, Query } from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { FilterApplicationsDto } from './app.dto'
 import { AppService } from './app.service'
 
 @Controller('api/v1')
@@ -14,13 +15,18 @@ export class AppController {
   ) {}
 
   @Get('applications')
-  @ApiCreatedResponse({ description: 'Gets application' })
-  async getApplication(@Headers('api-key') apiKey: string) {
-    this.logger.debug('Gets application')
-
-    return this.appService.getApplications(apiKey).then((applications) => {
-      this.logger.info(`Application fetched`)
-      return applications
-    })
+  @ApiCreatedResponse({ description: 'Gets application for municipality' })
+  async getApplication(
+    @Headers('API-Key') apiKey: string,
+    @Query() filters: FilterApplicationsDto,
+  ) {
+    this.logger.info('Gets all application')
+    console.log(filters)
+    return this.appService
+      .getApplications(apiKey, filters)
+      .then((applications) => {
+        this.logger.info(`Application fetched`)
+        return applications
+      })
   }
 }
