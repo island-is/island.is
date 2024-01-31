@@ -2317,6 +2317,15 @@ export class NotificationService {
             ),
           ]
           break
+        case NotificationType.APPEAL_WITHDRAWN:
+          messages = [
+            this.getNotificationMessage(
+              MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+              user,
+              theCase,
+            ),
+          ]
+          break
 
         default:
           throw new InternalServerErrorException(

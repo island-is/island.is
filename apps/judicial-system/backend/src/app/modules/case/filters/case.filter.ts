@@ -130,9 +130,11 @@ function canAppealsCourtUserAccessCase(theCase: Case): boolean {
   // Check appeal state access
   if (
     !theCase.appealState ||
-    ![CaseAppealState.RECEIVED, CaseAppealState.COMPLETED].includes(
-      theCase.appealState,
-    )
+    ![
+      CaseAppealState.RECEIVED,
+      CaseAppealState.COMPLETED,
+      CaseAppealState.WITHDRAWN,
+    ].includes(theCase.appealState)
   ) {
     return false
   }
