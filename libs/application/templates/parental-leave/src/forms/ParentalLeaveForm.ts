@@ -75,7 +75,6 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-import { YesOrNo } from '../types'
 import {
   formatPhoneNumber,
   removeCountryCode,
