@@ -285,7 +285,7 @@ jobs:
         id: prepare_hash_files
         run: |
           GENERATED_FILES_LIST=$(./scripts/ci/prepare-files-cache.sh)
-          echo "prepared-hash-files-list=$GENERATED_FILES_LIST >> $GITHUB_OUTPUT
+          echo "prepared-hash-files-list=$GENERATED_FILES_LIST" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
