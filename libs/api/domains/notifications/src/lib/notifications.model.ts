@@ -5,6 +5,7 @@ import {
   ObjectType,
   registerEnumType,
   Int,
+  InputType,
 } from '@nestjs/graphql'
 import {
   PageInfoDto,
@@ -17,6 +18,7 @@ registerEnumType(RenderedNotificationDtoStatusEnum, {
   name: 'NotificationStatus',
 })
 
+@ObjectType()
 export class NotificationMetadata {
   @Field(() => GraphQLISODateTime)
   sent!: Date
@@ -34,6 +36,7 @@ export class NotificationMetadata {
   status!: RenderedNotificationDtoStatusEnum
 }
 
+@ObjectType()
 export class NotificationSender {
   @Field()
   name!: string
@@ -42,16 +45,19 @@ export class NotificationSender {
   logo?: string
 }
 
+@ObjectType()
 export class NotificationRecipient {
   @Field({ nullable: true })
   nationalId?: string
 }
 
+@ObjectType()
 export class NotificationLink {
   @Field({ nullable: true })
   uri?: string
 }
 
+@ObjectType()
 export class NotificationMessage {
   @Field()
   title!: string
@@ -63,6 +69,7 @@ export class NotificationMessage {
   link!: NotificationLink
 }
 
+@ObjectType()
 export class Notification {
   @Field(() => Int)
   id!: number
@@ -83,6 +90,7 @@ export class Notification {
   message!: NotificationMessage
 }
 
+@InputType()
 export class NotificationsInput extends PaginationInput() {}
 
 @ObjectType('Notifications')
@@ -97,16 +105,19 @@ export class NotificationsResponse extends PaginatedResponse(Notification) {
   pageInfo!: PageInfoDto
 }
 
+@ObjectType()
 export class NotificationResponse {
   @Field(() => Notification)
   data!: Notification
 }
 
+@InputType()
 export class MarkNotificationReadInput {
   @Field()
   notificationId!: string
 }
 
+@ObjectType()
 export class MarkNotificationReadResponse {
   @Field(() => Notification)
   data!: Notification
