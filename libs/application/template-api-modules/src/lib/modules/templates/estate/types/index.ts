@@ -16,6 +16,7 @@ type Notifier = {
   phoneNumber: string
   email: string
   relation: string
+  autonomous: string
 }
 
 type Advocate = {

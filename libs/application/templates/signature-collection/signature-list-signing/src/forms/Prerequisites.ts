@@ -20,7 +20,7 @@ import { CanSignApi, GetListApi } from '../dataProviders/index'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
-  title: m.applicationName,
+  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -96,7 +96,7 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'screen4',
-      title: m.listSigned,
+      title: m.listSignedShort,
       children: [],
     }),
   ],

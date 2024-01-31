@@ -14,6 +14,7 @@ export type Icon =
   | 'calendar'
   | 'call'
   | 'car'
+  | 'cardWithCheckmark'
   | 'caretDown'
   | 'caretUp'
   | 'cellular'
@@ -42,8 +43,10 @@ export type Icon =
   | 'filter'
   | 'heart'
   | 'home'
+  | 'homeWithCar'
   | 'informationCircle'
   | 'link'
+  | 'location'
   | 'lockClosed'
   | 'lockOpened'
   | 'logOut'
@@ -99,6 +102,7 @@ export default {
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
+    cardWithCheckmark: 'CardWithCheckmark',
     caretDown: 'CaretDown',
     caretUp: 'CaretUp',
     cellular: 'Cellular',
@@ -127,8 +131,10 @@ export default {
     filter: 'Filter',
     heart: 'Heart',
     home: 'Home',
+    homeWithCar: 'HomeWithCar',
     informationCircle: 'InformationCircle',
     link: 'Link',
+    location: 'Location',
     lockClosed: 'LockClosed',
     lockOpened: 'LockOpened',
     logOut: 'LogOut',
@@ -183,6 +189,7 @@ export default {
     calendar: 'CalendarOutline',
     call: 'CallOutline',
     car: 'CarOutline',
+    cardWithCheckmark: 'CardWithCheckmarkOutline',
     caretDown: 'CaretDownOutline',
     caretUp: 'CaretUpOutline',
     cellular: 'CellularOutline',
@@ -211,8 +218,10 @@ export default {
     filter: 'FilterOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
+    homeWithCar: 'HomeWithCarOutline',
     informationCircle: 'InformationCircleOutline',
     link: 'LinkOutline',
+    location: 'LocationOutline',
     lockClosed: 'LockClosedOutline',
     lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',

@@ -39,7 +39,7 @@ const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
   const canCaseFilesBeOpened = () => {
     const canProsecutorOpen =
       isProsecutionUser(user) &&
-      user.institution?.id === workingCase.creatingProsecutor?.institution?.id
+      user.institution?.id === workingCase.prosecutorsOffice?.id
 
     return (
       canProsecutorOpen ||

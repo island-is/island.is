@@ -26,6 +26,7 @@ import {
   EmailSignup,
   KilometerFee,
   MasterList,
+  MultipleStatistics,
   OneColumnTextSlice,
   OverviewLinksSlice,
   PlateAvailableSearch,
@@ -38,6 +39,7 @@ import {
   ShipSearchBoxedInput,
   SidebarShipSearchInput,
   SliceDropdown,
+  SpecificHousingBenefitSupportCalculator,
   StraddlingStockCalculator,
   TableSlice,
   TemporaryEventLicencesList,
@@ -50,7 +52,9 @@ import {
   ConnectedComponent,
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
+  FeaturedEvents as FeaturedEventsSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
+  MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
@@ -65,6 +69,7 @@ import {
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 
@@ -114,6 +119,8 @@ export const webRenderConnectedComponent = (
       )
     case 'KilometerFee':
       return <KilometerFee slice={slice} />
+    case 'SpecificHousingBenefitSupportCalculator':
+      return <SpecificHousingBenefitSupportCalculator slice={slice} />
     default:
       break
   }
@@ -165,6 +172,12 @@ const defaultRenderComponent = {
       image={slice.image ?? undefined}
       contain={true}
     />
+  ),
+  MultipleStatistics: (slice: MultipleStatisticsSchema) => (
+    <MultipleStatistics slice={slice} />
+  ),
+  FeaturedEvents: (slice: FeaturedEventsSchema) => (
+    <FeaturedEvents slice={slice} />
   ),
 }
 
