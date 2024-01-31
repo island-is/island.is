@@ -60,7 +60,10 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
     const notDuplicateAnswers = selectedCountries.filter(
       (x) =>
         preRegisteredCountries.findIndex(
-          (y) => y.countryId === parseInt(x.countryId),
+          (y) =>
+            y.countryId === parseInt(x.countryId) &&
+            y.dateFrom === x.dateFrom &&
+            y.dateTo === x.dateTo,
         ) === -1,
     )
 

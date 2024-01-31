@@ -121,12 +121,11 @@ export const useGetCurrentCollection = () => {
     loading: loadingCurrentCollection,
     refetch: refetchCurrentCollection,
   } = useQuery<{
-    signatureCollectionCurrentCollection?: SignatureCollection
+    signatureCollectionCurrent?: SignatureCollection
   }>(GetCurrentCollection)
-
   const currentCollection =
-    (getCurrentCollection?.signatureCollectionCurrentCollection as SignatureCollection) ??
-    false
+    (getCurrentCollection?.signatureCollectionCurrent as SignatureCollection) ??
+    null
   return {
     currentCollection,
     loadingCurrentCollection,

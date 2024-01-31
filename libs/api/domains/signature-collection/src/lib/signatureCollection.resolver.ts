@@ -10,10 +10,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import {
-  SignatureCollection,
-  SignatureCollectionInfo,
-} from './models/collection.model'
+import { SignatureCollection } from './models/collection.model'
 import {
   SignatureCollectionList,
   SignatureCollectionListBase,
@@ -46,15 +43,15 @@ export class SignatureCollectionResolver {
   @BypassAuth()
   @Query(() => SignatureCollection)
   async signatureCollectionCurrent(
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollection> {
-    return this.signatureCollectionService.current(collection.id)
+    return collection
   }
 
   @BypassAuth()
   @Query(() => [SignatureCollectionListBase])
   async signatureCollectionAllOpenLists(
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollectionListBase[]> {
     return this.signatureCollectionService.allOpenLists(collection)
   }
@@ -65,7 +62,7 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionListsForOwner(
     @CurrentSignee() signee: SignatureCollectionSignee,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.listsForOwner(
@@ -80,7 +77,7 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionListsForUser(
     @CurrentSignee() signee: SignatureCollectionSignee,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionListBase[]> {
     return this.signatureCollectionService.listsForUser(
