@@ -41,25 +41,15 @@ jobs:
             cat .github/CODEOWNERS | grep -v '^#' | awk NF
             exit 1
           fi
-      - name: Cache validator
-        id: cache-validator
+      - name: Codeowners validation
         if: env.CHECK == 'true'
-        uses: actions/cache@v3
-        with:
-          path: ~/codeowners-validator
-          key: ${{ runner.os }}-codeowners-validator
-      - name: Install codeowners-validator
-        if: env.CHECK == 'true' || steps.cache-validator.outputs.cache-hit != 'true'
         run: |
-          curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b "$HOME" v0.7.4
-          echo "CODEOWNERS_VALIDATOR=$HOME/codeowners-validator" >> $GITHUB_ENV
-      - name: Validate CODEOWNERS
-        if: env.CHECK == 'true'
-        env:
-          REPOSITORY_PATH: '.'
-          GITHUB_ACCESS_TOKEN: ${{secrets.OWNERS_VALIDATOR_GITHUB_SECRET}}
-          EXPERIMENTAL_CHECKS: 'notowned'
-          CHECKS: 'files,owners,duppatterns'
-          OWNER_CHECKER_REPOSITORY: 'island-is/island.is'
-        run: |
+          curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b $HOME v0.7.4
+          REPOSITORY_PATH="." \
+          GITHUB_ACCESS_TOKEN="$GH_TOKEN" \
+          EXPERIMENTAL_CHECKS="notowned" \
+          CHECKS="files,owners,duppatterns" \
+          OWNER_CHECKER_REPOSITORY="island-is/island.is" \
           ~/codeowners-validator
+        env:
+          GH_TOKEN: ${{secrets.OWNERS_VALIDATOR_GITHUB_SECRET}}
