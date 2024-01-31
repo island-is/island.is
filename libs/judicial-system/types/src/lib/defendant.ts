@@ -1,3 +1,5 @@
+import { DefendantPlea } from './case'
+
 export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
@@ -20,6 +22,7 @@ export interface Defendant {
   defenderEmail?: string
   defenderPhoneNumber?: string
   defendantWaivesRightToCounsel: boolean
+  defendantPlea?: DefendantPlea
 }
 
 export interface CreateDefendant {

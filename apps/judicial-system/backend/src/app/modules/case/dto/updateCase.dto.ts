@@ -23,7 +23,6 @@ import {
   CaseLegalProvisions,
   CaseType,
   CourtDocument,
-  DefendantPlea,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -426,9 +425,4 @@ export class UpdateCaseDto {
   @IsEnum(UserRole, { each: true })
   @ApiPropertyOptional({ enum: UserRole, isArray: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
-
-  @IsOptional()
-  @IsEnum(DefendantPlea)
-  @ApiPropertyOptional({ enum: DefendantPlea })
-  readonly defendantPlea?: DefendantPlea
 }

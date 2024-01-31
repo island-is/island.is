@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.addColumn(
-        'case',
+        'defendant',
         'defendant_plea',
         {
           type: Sequelize.ENUM('GUILTY', 'NOT_GUILTY', 'NO_PLEA'),
@@ -18,7 +18,7 @@ module.exports = {
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface
-        .removeColumn('case', 'defendant_plea', {
+        .removeColumn('defendant', 'defendant_plea', {
           transaction: t,
         })
         .then(() => {

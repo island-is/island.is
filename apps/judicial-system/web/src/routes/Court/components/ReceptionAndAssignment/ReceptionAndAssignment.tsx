@@ -17,15 +17,15 @@ import {
   PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 import SelectCourtOfficials from './SelectCourtOfficials/SelectCourtOfficials'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
-import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const ReceptionAndAssignment = () => {
   const router = useRouter()
@@ -65,6 +65,32 @@ const ReceptionAndAssignment = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+  const defendantPleas = workingCase.defendants?.map((defendant, index) => {
+    if (
+      defendant.defendantPlea !== null &&
+      defendant.defendantPlea !== undefined
+    ) {
+      return (
+        <Box
+          component="span"
+          display="block"
+          marginBottom={index === workingCase.defendants?.length ? 0 : 1}
+        >
+          {formatMessage(strings.defendantPleaAlertMessage, {
+            defendantGender: workingCase.defendants
+              ? defendant.gender
+              : Gender.MALE,
+            nameAndPlea: getDefendantPleaText(
+              defendant.name,
+              defendant.defendantPlea,
+            ),
+          })}
+        </Box>
+      )
+    } else {
+      return null
+    }
+  })
 
   return (
     <PageLayout
@@ -79,23 +105,19 @@ const ReceptionAndAssignment = () => {
       />
       <FormContentContainer>
         {isIndictmentCase(workingCase.type) && workingCase.comments && (
-          <Box marginBottom={workingCase.defendantPlea ? 2 : 5}>
+          <Box
+            marginBottom={defendantPleas && defendantPleas.length > 0 ? 2 : 5}
+          >
             <AlertMessage message={workingCase.comments} type="warning" />
           </Box>
         )}
-        {workingCase.defendantPlea && (
-          <Box marginBottom={5}>
+        {defendantPleas && (
+          <Box marginBottom={3}>
             <AlertMessage
-              title={formatMessage(strings.defendantPleaAlertTitle)}
-              message={formatMessage(strings.defendantPleaAlertMessage, {
-                defendantGender: workingCase.defendants
-                  ? workingCase.defendants[0].gender
-                  : Gender.MALE,
-                defendantPlea: getDefendantPleaText(workingCase.defendantPlea),
-                defendantName: workingCase.defendants
-                  ? workingCase.defendants[0].name
-                  : '',
+              title={formatMessage(strings.defendantPleaAlertTitle, {
+                defendantCount: workingCase.defendants?.length,
               })}
+              message={defendantPleas}
               type="warning"
             />
           </Box>

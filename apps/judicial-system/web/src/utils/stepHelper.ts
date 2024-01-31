@@ -10,10 +10,10 @@ import {
   CaseCustodyRestrictions,
   CaseFileCategory,
   CaseType,
+  DefendantPlea,
   Gender,
   Notification,
   NotificationType,
-  DefendantPlea,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -147,14 +147,17 @@ export const isReopenedCOACase = (
   )
 }
 
-export const getDefendantPleaText = (defendantPlea?: DefendantPlea) => {
+export const getDefendantPleaText = (
+  defendantName?: string | null,
+  defendantPlea?: DefendantPlea,
+) => {
   switch (defendantPlea) {
     case DefendantPlea.GUILTY:
-      return 'Játar sök'
+      return `${defendantName} - Játar sök`
     case DefendantPlea.NOT_GUILTY:
-      return 'Neitar sök'
+      return `${defendantName} - Neitar sök`
     case DefendantPlea.NO_PLEA:
-      return 'Tjáir sig ekki / óljóst'
+      return `${defendantName} - Tjáir sig ekki / óljóst`
     default:
       return ''
   }

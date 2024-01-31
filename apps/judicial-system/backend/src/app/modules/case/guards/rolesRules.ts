@@ -47,7 +47,6 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'requestDriversLicenseSuspension',
   'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
-  'defendantPlea',
 ]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
