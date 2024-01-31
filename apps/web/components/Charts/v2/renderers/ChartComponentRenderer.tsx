@@ -84,7 +84,7 @@ const renderCustomizedLabel = ({
   percent,
   activeLocale,
 }: CustomLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 1.7
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.8
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
@@ -92,7 +92,7 @@ const renderCustomizedLabel = ({
 
   return (
     <g>
-      <text x={x} y={y} fill="#00003C" textAnchor="middle" fontSize="12px">
+      <text x={x} y={y} fill="#00003C" textAnchor="middle" fontSize="14px">
         <tspan x={x} dy="0" fontWeight={500}>{`${
           percent
             ? formatPercentageForPresentation(percent)
@@ -127,7 +127,7 @@ export const renderPieChartComponents = (
       cx="50%"
       cy="50%"
       innerRadius="30%"
-      outerRadius="65%"
+      outerRadius="60%"
       label={(props) =>
         renderCustomizedLabel({
           ...props,
