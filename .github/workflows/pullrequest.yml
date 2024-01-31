@@ -1,4 +1,4 @@
-name: Pull request
+name: Monorepo pipeline - pull request
 
 on:
   pull_request: {}
@@ -15,6 +15,7 @@ concurrency:
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
 
 jobs:
@@ -75,7 +76,7 @@ jobs:
           path: event.json
           retention-days: 60
 
-      - name: Calculate cache key for node_modules
+      - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
         run: |
           PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
@@ -95,12 +96,12 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -126,12 +127,12 @@ jobs:
       - name: Cache for cypress
         id: cypress
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: /github/home/.cache/Cypress
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
 
-      - name: Check cache success
+      - name: Check cypress cache success
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Verify cypress
@@ -146,12 +147,12 @@ jobs:
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Run codegen
@@ -238,23 +239,23 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated-files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -299,34 +300,34 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for cypress
         id: cypress
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: /github/home/.cache/Cypress
           key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
 
-      - name: Check cache success
+      - name: Check cypress cache success
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated-files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -347,7 +348,7 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
@@ -358,7 +359,7 @@ jobs:
 
       - name: Setup yarn
         run: npm install -g yarn
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -400,18 +401,22 @@ jobs:
           node-version: '18'
       - name: Setup yarn
         run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-      - name: Check cache success
+
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
+
       - name: NX format:write
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -443,23 +448,23 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated-files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -492,23 +497,23 @@ jobs:
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
         id: generated-files-cache
         continue-on-error: true
-        uses: actions/cache@v3
+        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check generated-files cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
