@@ -165,62 +165,62 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
-    console.log('INIT REVIEW !!!!!!!!!!!!!!!!!!!!!!!!')
-    console.log('application', application)
-    const answers = application.answers as TransferOfMachineOwnershipAnswers
+    // console.log('INIT REVIEW !!!!!!!!!!!!!!!!!!!!!!!!')
+    // console.log('application', application)
+    // const answers = application.answers as TransferOfMachineOwnershipAnswers
 
-    const isPaymentRequired =
-      answers.machine.regNumber === 'JL3027'
-        ? false
-        : isPaymentRequiredForOwnerChange(
-            application,
-            answers.machine.id || answers.pickMachine.id,
-          )
-    if (application.state === 'draft' && isPaymentRequired) return []
+    // const isPaymentRequired =
+    //   answers.machine.regNumber === 'JL3027'
+    //     ? false
+    //     : isPaymentRequiredForOwnerChange(
+    //         application,
+    //         answers.machine.id || answers.pickMachine.id,
+    //       )
+    // if (application.state === 'draft' && isPaymentRequired) return []
 
-    const ownerChange = !(application.state === 'draft' && !isPaymentRequired)
-      ? await (async () => {
-          // 1. Validate payment
-          // 1a. Make sure a paymentUrl was created
-          const paymentData = application.externalData?.createCharge?.data as
-            | {
-                paymentUrl: string
-                id: string
-              }
-            | undefined
-          if (paymentData) {
-            if (!paymentData?.paymentUrl) {
-              throw new Error(
-                'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-              )
-            }
+    // const ownerChange = !(application.state === 'draft' && !isPaymentRequired)
+    //   ? await (async () => {
+    //       // 1. Validate payment
+    //       // 1a. Make sure a paymentUrl was created
+    //       const paymentData = application.externalData?.createCharge?.data as
+    //         | {
+    //             paymentUrl: string
+    //             id: string
+    //           }
+    //         | undefined
+    //       if (paymentData) {
+    //         if (!paymentData?.paymentUrl) {
+    //           throw new Error(
+    //             'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+    //           )
+    //         }
 
-            // 1b. Make sure payment is fulfilled (has been paid)
-            const payment: { fulfilled: boolean } | undefined =
-              await this.sharedTemplateAPIService.getPaymentStatus(
-                auth,
-                application.id,
-              )
-            if (!payment?.fulfilled) {
-              throw new Error(
-                'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-              )
-            }
-          }
-          return createOwnerChangeObject(
-            application,
-            auth.nationalId || '',
-            answers,
-            isPaymentRequired,
-            paymentData,
-          )
-        })()
-      : createOwnerChangeObject(
-          application,
-          auth.nationalId || '',
-          answers,
-          isPaymentRequired,
-        )
+    //         // 1b. Make sure payment is fulfilled (has been paid)
+    //         const payment: { fulfilled: boolean } | undefined =
+    //           await this.sharedTemplateAPIService.getPaymentStatus(
+    //             auth,
+    //             application.id,
+    //           )
+    //         if (!payment?.fulfilled) {
+    //           throw new Error(
+    //             'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+    //           )
+    //         }
+    //       }
+    //       return createOwnerChangeObject(
+    //         application,
+    //         auth.nationalId || '',
+    //         answers,
+    //         isPaymentRequired,
+    //         paymentData,
+    //       )
+    //     })()
+    //   : createOwnerChangeObject(
+    //       application,
+    //       auth.nationalId || '',
+    //       answers,
+    //       isPaymentRequired,
+    //     )
     //// on prod below
     // 1. Validate payment
 
@@ -300,10 +300,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
     return recipientList
   }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
   async rejectApplication({
     application,
     auth,

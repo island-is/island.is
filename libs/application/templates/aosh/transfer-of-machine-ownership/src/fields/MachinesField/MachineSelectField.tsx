@@ -6,12 +6,9 @@ import {
   Box,
   Bullet,
   BulletList,
-  CategoryCard,
-  SkeletonLoader,
-  InputError,
-  SkeletonLoader,
-  InputError,
   ActionCard,
+  InputError,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { information, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'

@@ -1079,6 +1079,9 @@
             "type": "string",
             "nullable": true
           },
+          "paymentRequiredForOwnerChange": {
+            "type": "boolean"
+          },
           "_links": {
             "type": "array",
             "items": {
@@ -1232,11 +1235,9 @@
         },
         "additionalProperties": false
       },
-      "MachineStatus": {
-        "enum": [3, 4],
-        "type": "integer",
-        "description": "Hvaða stöður eru leyfilegar í MachineStatusChange endapunktinum.",
-        "format": "int32"
+      "MachineStatusEnum": {
+        "enum": ["Temporary", "Permanent"],
+        "type": "string"
       },
       "MachineStatusUpdateDto": {
         "type": "object",
@@ -1262,7 +1263,7 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/MachineStatus"
+            "$ref": "#/components/schemas/MachineStatusEnum"
           }
         },
         "additionalProperties": false
@@ -1404,9 +1405,8 @@
         "additionalProperties": false
       },
       "PlateSize": {
-        "enum": [65, 66, 68],
-        "type": "integer",
-        "format": "int32"
+        "enum": ["A", "B", "D"],
+        "type": "string"
       },
       "ProblemDetails": {
         "type": "object",

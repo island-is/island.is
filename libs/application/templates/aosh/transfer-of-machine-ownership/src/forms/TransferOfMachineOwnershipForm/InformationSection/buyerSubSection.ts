@@ -3,9 +3,11 @@ import {
   buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const buyerSubSection = buildSubSection({
   id: 'buyer',
