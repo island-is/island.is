@@ -26,7 +26,7 @@ export function mapCollection(
     frambodList: candidates,
     kosning,
   } = collection
-  if (!id || !startTime || !endTime|| !areas) {
+  if (!id || !startTime || !endTime || !areas) {
     logger.warn(
       'Received partial collection information from the national registry.',
       collection,
