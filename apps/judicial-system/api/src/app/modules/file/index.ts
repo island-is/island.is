@@ -1,2 +1,6 @@
 export { CaseFile } from './models/file.model'
 export { UpdateFilesResponse } from './models/updateFiles.response'
+export { PresignedPost } from './models/presignedPost.model'
+export { DeleteFileResponse } from './models/deleteFile.response'
+export { SignedUrl } from './models/signedUrl.model'
+export { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
