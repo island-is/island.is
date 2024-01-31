@@ -32,7 +32,7 @@ export class NotificationsResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ): Promise<NotificationsResponse | null> {
-    let notifications
+    let notifications: NotificationsResponse | null
 
     try {
       notifications = await this.service.getNotifications(locale, user, input)

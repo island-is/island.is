@@ -98,7 +98,10 @@ export function mockNotificationsResponse(
       notification.metadata.status === RenderedNotificationDtoStatusEnum.Unread,
   ).length
 
-  const after = paging?.after ? decodeBase64(String(paging.after)) : undefined
+  const afterInt = paging?.after ? parseInt(paging?.after) : undefined
+  const beforeInt = paging?.before ? parseInt(paging?.before) : undefined
+
+  const after = afterInt ? decodeBase64(String(afterInt)) : undefined
 
   const indexOfAfterItem = after
     ? notifications.findIndex(
@@ -106,7 +109,7 @@ export function mockNotificationsResponse(
       ) + 1
     : 0
 
-  const pageSize = paging?.first ?? PAGE_SIZE
+  const pageSize = beforeInt ?? PAGE_SIZE
 
   const paginated = notifications.slice(
     indexOfAfterItem,
@@ -124,10 +127,8 @@ export function mockNotificationsResponse(
 
   return {
     data: paginated,
-    messageCounts: {
-      totalCount,
-      unreadCount,
-    },
+    totalCount,
+    unreadCount,
     pageInfo: {
       hasNextPage,
       hasPreviousPage,

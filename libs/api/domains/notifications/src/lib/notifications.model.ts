@@ -2,12 +2,15 @@ import {
   Field,
   GraphQLISODateTime,
   ID,
-  InputType,
   ObjectType,
   registerEnumType,
   Int,
 } from '@nestjs/graphql'
-import { PageInfoDto } from '@island.is/nest/pagination'
+import {
+  PageInfoDto,
+  PaginatedResponse,
+  PaginationInput,
+} from '@island.is/nest/pagination'
 import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
 
 registerEnumType(RenderedNotificationDtoStatusEnum, {
@@ -80,37 +83,15 @@ export class Notification {
   message!: NotificationMessage
 }
 
-export class NotificationMessageCounts {
-  @Field(() => Int, { nullable: true })
-  totalCount?: number
-
-  @Field(() => Int, { nullable: true })
-  unreadCount?: number
-}
-
-export class NotificationsInput {
-  @Field(() => Int, { nullable: true })
-  first?: number
-
-  @Field(() => Int, {
-    nullable: true,
-  })
-  after?: number
-
-  @Field(() => Int, {
-    nullable: true,
-    defaultValue: 10,
-  })
-  limit?: number
-}
+export class NotificationsInput extends PaginationInput() {}
 
 @ObjectType('Notifications')
-export class NotificationsResponse {
+export class NotificationsResponse extends PaginatedResponse(Notification) {
   @Field(() => [Notification])
   data!: Notification[]
 
-  @Field(() => NotificationMessageCounts)
-  messageCounts!: NotificationMessageCounts
+  @Field(() => Int, { nullable: true })
+  unreadCount?: number
 
   @Field(() => PageInfoDto)
   pageInfo!: PageInfoDto

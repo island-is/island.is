@@ -38,8 +38,8 @@ export class NotificationsService {
     ).meNotificationsControllerFindMany({
       locale,
       limit: input?.limit,
-      before: input?.first ? String(input?.first) : undefined,
-      after: input?.after ? String(input?.after) : undefined,
+      before: input?.before,
+      after: input?.after,
     })
 
     if (!notifications.data) {
@@ -49,10 +49,8 @@ export class NotificationsService {
 
     return {
       data: notifications.data.map((item) => notificationMapper(item)),
-      messageCounts: {
-        totalCount: notifications.totalCount,
-        unreadCount: undefined, // TODO: Add when service supports unreadCount
-      },
+      totalCount: notifications.totalCount,
+      unreadCount: undefined, // TODO: Add when service supports unreadCount
       pageInfo: notifications.pageInfo,
     }
   }
