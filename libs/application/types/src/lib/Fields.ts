@@ -121,6 +121,7 @@ export enum FieldTypes {
   IMAGE = 'IMAGE',
   PDF_LINK_BUTTON = 'PDF_LINK_BUTTON',
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
+  HIDDEN_INPUT = 'HIDDEN_INPUT',
 }
 
 export enum FieldComponents {
@@ -147,6 +148,7 @@ export enum FieldComponents {
   IMAGE = 'ImageFormField',
   PDF_LINK_BUTTON = 'PdfLinkButtonFormField',
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
+  HIDDEN_INPUT = 'HiddenInputFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -181,6 +183,13 @@ export interface DescriptionField extends BaseField {
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
   titleVariant?: TitleVariants
+}
+
+export interface HiddenInputField extends BaseField {
+  readonly type: FieldTypes.HIDDEN_INPUT
+  component: FieldComponents.HIDDEN_INPUT
+  value?: MaybeWithApplicationAndField<unknown>
+  required?: boolean
 }
 
 export interface RadioField extends BaseField {
@@ -402,6 +411,13 @@ export interface NationalIdWithNameField extends BaseField {
   minAgePerson?: number
 }
 
+export interface HiddenInputField extends Omit<BaseField, 'title'> {
+  readonly type: FieldTypes.HIDDEN_INPUT
+  component: FieldComponents.HIDDEN_INPUT
+  value?: MaybeWithApplicationAndField<unknown>
+  required?: boolean
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -427,3 +443,4 @@ export type Field =
   | ImageField
   | PdfLinkButtonField
   | NationalIdWithNameField
+  | HiddenInputField

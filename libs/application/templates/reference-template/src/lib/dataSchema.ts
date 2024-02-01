@@ -15,6 +15,7 @@ const careerHistoryCompaniesValidation = (data: any) => {
 }
 export const ExampleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  someHiddenFieldRequired: z.string().refine((x) => x.length > 0),
   person: z.object({
     name: z.string().min(1).max(256),
     age: z.string().refine((x) => {
@@ -24,6 +25,7 @@ export const ExampleSchema = z.object({
       }
       return asNumber > 15
     }),
+    someHiddenFieldThatsNotRequired: z.string().optional(),
     nationalId: z
       .string()
       /**

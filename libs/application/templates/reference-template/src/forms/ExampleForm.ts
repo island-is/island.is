@@ -12,6 +12,7 @@ import {
   buildRedirectToServicePortalField,
   buildSelectField,
   buildPhoneField,
+  buildHiddenInputField,
 } from '@island.is/application/core'
 import {
   Comparators,
@@ -53,6 +54,29 @@ export const ExampleForm: Form = buildForm({
             buildTextField({
               id: 'person.name',
               title: m.name,
+            }),
+            buildHiddenInputField({
+              id: 'someHiddenFieldRequired',
+              value: (application: any, field: any) => {
+                return application.answers.name.toUpper()
+              },
+            }),
+            buildHiddenInputField({
+              id: 'someHiddenFieldThatsNotRequired',
+              required: false,
+            }),
+            buildHiddenInputField({
+              id: 'someHiddenFieldWithDefaultValue',
+              defaultValue: 'This is a default value',
+            }),
+            buildHiddenInputField({
+              id: 'someHiddenFieldThatAssignsAValueToADifferentId',
+            }),
+            buildHiddenInputField({
+              id: 'someHiddenFieldThatAssignsAValueWithAFunction',
+            }),
+            buildHiddenInputField({
+              id: 'someHiddenFieldThatAssignsAValueWithAFunctionThatReturnsAValue',
             }),
             buildTextField({
               id: 'person.nationalId',

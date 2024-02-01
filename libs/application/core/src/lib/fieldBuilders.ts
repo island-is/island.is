@@ -36,6 +36,7 @@ import {
   TextField,
   ImageField,
   NationalIdWithNameField,
+  HiddenInputField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -604,6 +605,20 @@ export function buildPdfLinkButtonField(
     children: undefined,
     type: FieldTypes.PDF_LINK_BUTTON,
     component: FieldComponents.PDF_LINK_BUTTON,
+  }
+}
+
+export function buildHiddenInputField(
+  data: Omit<HiddenInputField, 'type' | 'component' | 'children' | 'title'>,
+): HiddenInputField {
+  return {
+    id: data.id,
+    title: '',
+    children: undefined,
+    type: FieldTypes.HIDDEN_INPUT,
+    component: FieldComponents.HIDDEN_INPUT,
+    value: data.value ?? undefined,
+    required: data.required ?? false,
   }
 }
 
