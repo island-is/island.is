@@ -72,7 +72,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
       const isValidSSN = nationalId.isPerson(personNationalId)
       if (isValidSSN) {
         if (props?.useDeceasedRegistry) {
-          getIdentity({
+          getDeceased({
             variables: {
               input: {
                 nationalId: personNationalId,
@@ -80,7 +80,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
             },
           })
         } else {
-          getDeceased({
+          getIdentity({
             variables: {
               input: {
                 nationalId: personNationalId,

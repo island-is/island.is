@@ -12,7 +12,6 @@ export const DECEASED_IDENITY_QUERY = gql`
   query DeceasedIdentityQuery($input: GetRegistryPersonInput!) {
     syslumennGetRegistryPerson(input: $input) {
       name
-      nationalId
     }
   }
 `
