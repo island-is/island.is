@@ -65,7 +65,7 @@ export class ReykjavikUniversityApplicationClient {
           allowException: false, //TODO missing in api
           allowThirdLevelQualification: false, //TODO missing in api
           modeOfDelivery:
-            program.modeOfDelivery?.map((m) => {
+            program.modesOfDelivery?.map((m) => {
               // TODO why is this value empty
               if (!m) {
                 return ModeOfDelivery.UNDEFINED

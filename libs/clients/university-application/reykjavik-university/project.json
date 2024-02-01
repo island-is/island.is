@@ -23,6 +23,17 @@
         "passWithNoTests": true
       }
     },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://devproxy.ru.is/test/api/custom/v1/docs > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/university-application/reykjavik-university"
+      }
+    },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
