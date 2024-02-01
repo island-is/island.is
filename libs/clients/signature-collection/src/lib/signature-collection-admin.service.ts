@@ -219,11 +219,13 @@ export class SignatureCollectionAdminClientService {
   ): Promise<Signature[]> {
     // Takes a list of nationalIds and returns signatures found on any list in current collection
     const { id } = await this.currentCollection()
-    const signaturesFound =
-      await this.collectionsApi.medmaelasofnunIDComparePost({
-        iD: parseInt(id),
-        requestBody: nationalIds,
-      })
+    const signaturesFound = await this.getApiWithAuth(
+      this.collectionsApi,
+      auth,
+    ).medmaelasofnunIDComparePost({
+      iD: parseInt(id),
+      requestBody: nationalIds,
+    })
     // Get listTitle for signatures
     const allLists = await this.getLists({ collectionId: id }, auth)
     const listNameIndexer: Record<string, string> = allLists.reduce(
