@@ -262,6 +262,11 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
+      - name: Setup docker (missing on MacOS)
+        run: |
+          brew install docker
+          colima start
+
       - uses: ./.github/actions/unit-test
         with:
           dd-api-key: '${{ secrets.DD_API_KEY }}'
