@@ -292,11 +292,10 @@ jobs:
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
-        continue-on-error: true
         uses: ./.github/actions/cache
         with:
           path: node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn-invalid
 
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
