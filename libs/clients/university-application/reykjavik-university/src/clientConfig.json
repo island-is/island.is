@@ -15,7 +15,7 @@
   "basePath": "/custom",
   "schemes": ["https"],
   "paths": {
-    "/v{version}/hvin/active-programs": {
+    "/active-programs": {
       "get": {
         "tags": ["Hvin"],
         "summary": "Returns all active programs in RU",
