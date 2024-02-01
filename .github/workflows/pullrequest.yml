@@ -265,7 +265,6 @@ jobs:
       - name: Setup docker (missing on MacOS)
         run: |
           brew install docker
-          colima start
 
       - uses: ./.github/actions/unit-test
         with:
