@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -46,16 +46,9 @@ const AppealToCourtOfAppeals = () => {
     error: false,
   })
 
-  const {
-    uploadFiles,
-    allFilesUploaded,
-    addUploadFiles,
-    updateUploadFile,
-    removeUploadFile,
-  } = useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
-    workingCase.id,
-  )
+  const { uploadFiles, allFilesUploaded, addUploadFiles, removeUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
+  const { handleUpload } = useS3Upload(workingCase.id)
   const { transitionCase } = useCase()
 
   const appealBriefType = !isDefenceUser(user)
@@ -74,6 +67,37 @@ const AppealToCourtOfAppeals = () => {
     uploadFiles.some(
       (file) => file.category === appealBriefType && file.status === 'done',
     ) && allFilesUploaded
+
+  const newFiles = uploadFiles.filter((file) => {
+    return (
+      workingCase.caseFiles?.find((caseFile) => caseFile.id === file.id) ===
+      undefined
+    )
+  })
+
+  const handleNextButtonClick = useCallback(async () => {
+    setUploadState({ isUploading: true, error: false })
+
+    const uploadSuccess = await handleUpload(newFiles, () => {
+      // Do nothing
+    })
+
+    if (!uploadSuccess) {
+      setUploadState({ isUploading: false, error: true })
+      return
+    }
+
+    const caseTransitioned = await transitionCase(
+      workingCase.id,
+      CaseTransition.APPEAL,
+    )
+
+    if (caseTransitioned) {
+      setVisibleModal('APPEAL_SENT')
+    }
+
+    setUploadState({ isUploading: false, error: false })
+  }, [handleUpload, newFiles, workingCase.id])
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -166,19 +190,20 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={async () => {
-            const caseTransitioned = await transitionCase(
-              workingCase.id,
-              CaseTransition.APPEAL,
-            )
-
-            if (caseTransitioned) {
-              setVisibleModal('APPEAL_SENT')
-            }
-          }}
-          nextButtonText={formatMessage(strings.nextButtonText)}
+          onNextButtonClick={handleNextButtonClick}
+          nextButtonText={formatMessage(
+            uploadState.error
+              ? strings.uploadFailedNextButtonText
+              : strings.nextButtonText,
+          )}
           nextIsDisabled={!isStepValid}
+          nextIsLoading={uploadState.isUploading}
           nextButtonIcon={undefined}
+          nextButtonColorScheme={
+            uploadState.error && !uploadState.isUploading && newFiles.length > 0
+              ? 'destructive'
+              : 'default'
+          }
         />
       </FormContentContainer>
       {visibleModal === 'APPEAL_SENT' && (

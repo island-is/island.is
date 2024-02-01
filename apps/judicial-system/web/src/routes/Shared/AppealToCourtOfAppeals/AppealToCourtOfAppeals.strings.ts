@@ -51,4 +51,9 @@ export const appealToCourtOfAppeals = defineMessages({
     description:
       'Texti í svæði sem segir til um hvort óskað sé eftir að birtingu úrskurðar á vef Landsréttar verði frestað',
   },
+  uploadFailedNextButtonText: {
+    id: 'judicial.system.core:appeal_to_court_of_appeals.upload_failed_next_button_text',
+    defaultMessage: 'Reyna aftur',
+    description: 'Texti á reyna aftur takka á Kæra til Landsréttar síðu',
+  },
 })
