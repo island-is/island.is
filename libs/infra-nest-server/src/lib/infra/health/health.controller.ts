@@ -1,7 +1,14 @@
-import { Controller, Get, Inject, Res } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  Res,
+  ServiceUnavailableException,
+} from '@nestjs/common'
 import {
   HealthCheck,
   HealthCheckService,
+  HealthCheckResult,
   SequelizeHealthIndicator,
 } from '@nestjs/terminus'
 import { Response } from 'express'
@@ -21,7 +28,7 @@ export class HealthController {
   // route: /health/check
   @Get('check')
   @HealthCheck()
-  async check(@Res() res: Response) {
+  async check(): Promise<HealthCheckResult> {
     const { timeout, database } = this.healthCheckOptions
     const healthChecks = []
 
@@ -34,9 +41,9 @@ export class HealthController {
     const healthCheck = await this.health.check(healthChecks)
 
     if (healthCheck.status !== 'ok') {
-      res.status(503).send(healthCheck)
+      throw new ServiceUnavailableException(healthCheck)
     }
 
-    res.status(200).send(healthCheck)
+    return healthCheck
   }
 }

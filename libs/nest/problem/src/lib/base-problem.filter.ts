@@ -16,7 +16,7 @@ import { PROBLEM_OPTIONS } from './problem.options'
 import type { ProblemOptions } from './problem.options'
 
 // Add a URL to this array to bypass the error filter and the ProblemJSON transformation
-const bypassErrorFilterUrls = ['/health/check']
+export const BYPASS_ERROR_FILTER_URLS = ['/health/check']
 
 export abstract class BaseProblemFilter implements ExceptionFilter {
   private readonly logger: Logger
@@ -41,7 +41,7 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     if ((host.getType() as string) === 'graphql') {
       this.catchGraphQLError(error, problem)
     } else {
-      this.catchRestError(host, problem, error)
+      this.catchRestError(host, error, problem)
     }
   }
 
@@ -54,18 +54,22 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     }
   }
 
-  catchRestError(host: ArgumentsHost, problem: Problem, error: Error) {
+  catchRestError(host: ArgumentsHost, error: Error, problem: Problem) {
     const ctx = host.switchToHttp()
     const request = ctx.getRequest<Request>()
     const response = ctx.getResponse<Response>()
 
-    // Check if url is whitelisted to bypass the error filter
-    if (bypassErrorFilterUrls.some((url) => request.url.includes(url))) {
-      response.send((error as HttpException).getResponse())
+    response.status(problem.status || 500)
+
+    // Only bypass ProblemJSON for whitelisted urls that throws a HttpException
+    if (
+      BYPASS_ERROR_FILTER_URLS.some((url) => request.url.includes(url)) &&
+      error instanceof HttpException
+    ) {
+      response.json(error.getResponse())
       return
     }
 
-    response.status(problem.status || 500)
     response.statusMessage = problem.title
 
     if (problem.type === ProblemType.HTTP_NO_CONTENT) {
