@@ -70,11 +70,10 @@ export const healthModule: PortalModule = {
         ApiScope.healthDentists,
         ApiScope.healthRightsStatus,
       ].some((scope) => userInfo.scopes.includes(scope)),
-      key: 'HealthOverview',
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
     },
     {
-      name: 'YFIRLIT!!',
+      name: hm.overviewTitle,
       path: HealthPaths.HealthOverview,
       enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
       key: 'HealthOverview',

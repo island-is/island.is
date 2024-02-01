@@ -13,11 +13,10 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: m.health,
       navHide: true,
-      breadcrumbHide: true,
       path: HealthPaths.HealthRoot,
     },
     {
-      name: m.overview,
+      name: messages.overviewTitle,
       path: HealthPaths.HealthOverview,
     },
     {
