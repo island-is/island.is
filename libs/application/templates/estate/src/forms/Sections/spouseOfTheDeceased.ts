@@ -58,7 +58,7 @@ export const spouseOfTheDeceased = buildSection({
               ) === YES,
           },
           {
-            fallbackToDeceasedRegistry: true,
+            useDeceasedRegistry: true,
           },
         ),
       ],
