@@ -409,6 +409,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       })),
     })) ?? []
 
+  console.log('ORG', organization)
+
   return (
     <Box>
       {organizationPage && (
@@ -1291,7 +1293,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         <OrganizationFooter
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
-          organizations={[organizationPage.organization]}
+          organizations={[organizationPage?.organization]}
           force={true}
         />
       </Box>

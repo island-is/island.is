@@ -292,7 +292,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },
