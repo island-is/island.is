@@ -322,7 +322,7 @@ jobs:
             export PR_REF="not used"
           fi
           export WORKFLOW_ID=push
-          export SHELL=/usr/bin/bash
+          # export SHELL=/usr/bin/bash
           source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV

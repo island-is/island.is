@@ -22,7 +22,9 @@ jobs:
   prepare:
     runs-on: macos-14
     timeout-minutes: 35
-
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       CHUNK_SIZE: 7
@@ -212,9 +214,10 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: macos-14
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -271,9 +274,10 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: macos-14
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -337,9 +341,10 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: macos-14
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -380,9 +385,10 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: macos-14
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -424,9 +430,10 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: macos-14
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -474,9 +481,10 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: macos-14
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
