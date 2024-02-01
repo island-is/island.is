@@ -43,13 +43,6 @@ export const thead = style({
   textAlign: 'left',
 })
 
-export const deleteButtonContainer = style({
-  maxWidth: '0',
-  height: '100%',
-  padding: 0,
-  transform: 'translate3d(2px, 0px, 0px)',
-})
-
 export const thButton = style({
   outline: 'none',
 
@@ -61,16 +54,7 @@ export const thButton = style({
 export const tableRowContainer = style({
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
-})
-
-export const largeColumn = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
-      // The width needed to make sure a 33 character name doesn't wrap
-      maxWidth: 334,
-      whiteSpace: 'nowrap',
-    },
-  },
+  margin: `0 ${theme.spacing[2]}px`,
 })
 
 export const blockColumn = style({
@@ -80,18 +64,20 @@ export const blockColumn = style({
 })
 
 export const th = style({
-  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+  padding: `${theme.spacing[2]}px 0`,
+
+  selectors: {
+    '&:first-child': {
+      paddingLeft: theme.spacing[2],
+    },
+  },
 })
 
 export const td = style({
+  padding: `${theme.spacing[2]}px 0`,
   selectors: {
-    [`&:not(${deleteButtonContainer})`]: {
-      padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
-    },
-    '&.secondLast': {
-      marginLeft: 'auto',
-      height: '100%',
-      padding: 0,
+    '&:first-child': {
+      paddingLeft: theme.spacing[2],
     },
   },
 })
@@ -101,33 +87,6 @@ export const deleteButtonWrapper = style({
   padding: 10,
   width: 44,
   height: 44,
-})
-
-export const deleteButton = style({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: theme.border.radius.circle,
-  outline: 'none',
-  transition: 'all .4s ease-out',
-
-  selectors: {
-    '&:focus': {
-      boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
-    },
-    '&:hover': {
-      boxShadow: `inset 0 0 0 2px ${theme.color.blueberry400}`,
-      color: theme.color.blueberry400,
-    },
-    '&:focus:active': {
-      backgroundColor: theme.color.mint400,
-      boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
-    },
-  },
-})
-
-export const deleteButtonText = style({
-  whiteSpace: 'nowrap',
 })
 
 export const sortIcon = style({
