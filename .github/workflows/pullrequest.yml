@@ -156,7 +156,7 @@ jobs:
         if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
         run: |
           node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
+          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs -I {} sh -c 'echo "$(pwd)/{}"')
 
       # - name: Security audit Node modules
       #   run: ./scripts/ci/20_security-audit.sh
