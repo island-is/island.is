@@ -182,9 +182,14 @@ export const dataSchema = z.object({
   employment: z
     .object({
       isSelfEmployed: z.enum([YES, NO]),
-      isReceivingUnemploymentBenefits: z.enum([YES, NO]),
+      isReceivingUnemploymentBenefits: z.enum([YES, NO]).optional(),
       unemploymentBenefits: z.string().optional(),
     })
+    .refine(
+      ({ isSelfEmployed, isReceivingUnemploymentBenefits }) =>
+        isSelfEmployed === NO ? !!isReceivingUnemploymentBenefits : true,
+      { path: ['isReceivingUnemploymentBenefits'] },
+    )
     .refine(
       ({
         isSelfEmployed,
