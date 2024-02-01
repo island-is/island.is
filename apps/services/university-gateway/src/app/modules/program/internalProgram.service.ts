@@ -38,27 +38,27 @@ export class InternalProgramService {
 
   async updatePrograms(): Promise<void> {
     Promise.allSettled([
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         () => this.reykjavikUniversityClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         () => this.universityOfIcelandClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_AKUREYRI,
         () => this.universityOfAkureyriClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.ICELAND_UNIVERSITY_OF_THE_ARTS,
         () => this.icelandUniversityOfTheArtsClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.AGRICULTURAL_UNIVERSITY_OF_ICELAND,
         () => this.agriculturalUniversityOfIcelandClient.getPrograms(),
       ),
-      this.doUpdateProgramsForUniversity(
+      await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.HOLAR_UNIVERSITY,
         () => this.holarUniversityClient.getPrograms(),
       ),

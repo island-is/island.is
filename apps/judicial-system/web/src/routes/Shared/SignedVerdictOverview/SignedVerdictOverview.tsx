@@ -529,7 +529,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),
@@ -670,8 +670,7 @@ export const SignedVerdictOverview: React.FC = () => {
           />
 
           {isProsecutionUser(user) &&
-            user?.institution?.id ===
-              workingCase.creatingProsecutor?.institution?.id &&
+            user?.institution?.id === workingCase.prosecutorsOffice?.id &&
             isRestrictionCase(workingCase.type) && (
               <ShareCase
                 selectedSharingInstitutionId={selectedSharingInstitutionId}

@@ -7,17 +7,23 @@ export class SignatureCollection {
   @Field(() => ID)
   id!: string
 
-  @Field()
-  name!: string
-
-  @Field(() => [SignatureCollectionArea])
-  areas!: SignatureCollectionArea[]
-
   @Field(() => Date)
   endTime!: Date
 
   @Field(() => Date)
   startTime!: Date
+
+  @Field()
+  isActive!: boolean
+
+  @Field()
+  isPresidential!: boolean
+
+  @Field()
+  name!: string
+
+  @Field(() => [SignatureCollectionArea])
+  areas!: SignatureCollectionArea[]
 
   @Field(() => [SignatureCollectionCandidate])
   candidates!: SignatureCollectionCandidate[]

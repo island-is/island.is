@@ -63,7 +63,7 @@ export class SignatureListCreationService extends BaseTemplateApiService {
 
   async ownerRequirements({ auth }: TemplateApiModuleActionProps) {
     const { canCreate, canCreateInfo } =
-      await this.signatureCollectionClientService.getSignee(auth.nationalId)
+      await this.signatureCollectionClientService.getSignee(auth)
     if (canCreate) {
       return true
     }
@@ -91,6 +91,6 @@ export class SignatureListCreationService extends BaseTemplateApiService {
   }
 
   async currentCollection() {
-    return await this.signatureCollectionClientService.getCurrentCollection()
+    return await this.signatureCollectionClientService.currentCollection()
   }
 }
