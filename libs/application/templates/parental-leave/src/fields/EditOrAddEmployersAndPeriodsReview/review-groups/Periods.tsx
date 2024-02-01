@@ -1,15 +1,13 @@
 import React, { FC } from 'react'
-
 import { Application } from '@island.is/application/types'
 import { Box, GridRow, Text, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-
-import { Timeline } from '../components/Timeline/Timeline'
+import { Timeline } from '../../components/Timeline/Timeline'
 import {
   formatPeriods,
   getExpectedDateOfBirthOrAdoptionDate,
-} from '../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../lib/messages'
+} from '../../../lib/parentalLeaveUtils'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { ReviewGroup, Label } from '@island.is/application/ui-components'
 
 interface ReviewScreenProps {
