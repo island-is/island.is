@@ -120,8 +120,7 @@ const AppealToCourtOfAppeals = () => {
                 percent: 100,
               })
             }}
-            onRemove={(file) => handleRemove(file, removeUploadFile)}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
+            onRemove={(file) => removeUploadFile(file)}
           />
         </Box>
         <Box
@@ -155,8 +154,7 @@ const AppealToCourtOfAppeals = () => {
                 percent: 100,
               })
             }}
-            onRemove={(file) => handleRemove(file, removeUploadFile)}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
+            onRemove={(file) => removeUploadFile(file)}
           />
         </Box>
         {isProsecutionUser(user) && (
