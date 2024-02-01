@@ -46,8 +46,13 @@ const AppealToCourtOfAppeals = () => {
     error: false,
   })
 
-  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
-    useUploadFiles(workingCase.caseFiles)
+  const {
+    uploadFiles,
+    addUploadFiles,
+    removeUploadFile,
+    updateUploadFile,
+    allFilesUploaded,
+  } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload } = useS3Upload(workingCase.id)
   const { transitionCase } = useCase()
 
@@ -63,7 +68,8 @@ const AppealToCourtOfAppeals = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const isStepValid = uploadFiles.length > 0
+  const isStepValid =
+    uploadFiles.length > 0 && (allFilesUploaded || uploadState.error)
 
   const newFiles = uploadFiles.filter((file) => {
     return (
@@ -73,7 +79,12 @@ const AppealToCourtOfAppeals = () => {
   })
 
   const handleNextButtonClick = useCallback(
-    async (isRetry: boolean) => {
+    async (isRetry: boolean, allUploaded: boolean) => {
+      if (allUploaded) {
+        setVisibleModal('APPEAL_SENT')
+        return
+      }
+
       setUploadState({ isUploading: true, error: false })
 
       const handleError = (id?: string) => {
@@ -158,7 +169,10 @@ const AppealToCourtOfAppeals = () => {
                 percent: 100,
               })
             }}
-            onRemove={(file) => removeUploadFile(file)}
+            onRemove={(file) => {
+              removeUploadFile(file)
+              setUploadState({ isUploading: false, error: false })
+            }}
           />
         </Box>
         <Box
@@ -192,7 +206,10 @@ const AppealToCourtOfAppeals = () => {
                 percent: 100,
               })
             }}
-            onRemove={(file) => removeUploadFile(file)}
+            onRemove={(file) => {
+              removeUploadFile(file)
+              setUploadState({ isUploading: false, error: false })
+            }}
           />
         </Box>
         {isProsecutionUser(user) && (
@@ -204,7 +221,12 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={() => handleNextButtonClick(uploadState.error)}
+          onNextButtonClick={() =>
+            handleNextButtonClick(
+              uploadState.error,
+              uploadFiles.length > 0 && allFilesUploaded,
+            )
+          }
           nextButtonText={formatMessage(
             uploadState.error
               ? strings.uploadFailedNextButtonText
@@ -213,11 +235,7 @@ const AppealToCourtOfAppeals = () => {
           nextIsDisabled={!isStepValid}
           nextIsLoading={uploadState.isUploading}
           nextButtonIcon={undefined}
-          nextButtonColorScheme={
-            uploadState.error && !uploadState.isUploading && newFiles.length > 0
-              ? 'destructive'
-              : 'default'
-          }
+          nextButtonColorScheme={uploadState.error ? 'destructive' : 'default'}
         />
       </FormContentContainer>
       {visibleModal === 'APPEAL_SENT' && (
