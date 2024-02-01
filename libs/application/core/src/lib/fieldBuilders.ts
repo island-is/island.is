@@ -608,9 +608,10 @@ export function buildPdfLinkButtonField(
   }
 }
 
-export function buildHiddenInputField(
-  data: Omit<HiddenInputField, 'type' | 'component' | 'children' | 'title'>,
-): HiddenInputField {
+export function buildHiddenInputField(data: {
+  id: string
+  value?: MaybeWithApplicationAndField<unknown>
+}): HiddenInputField {
   return {
     id: data.id,
     title: '',
@@ -618,7 +619,6 @@ export function buildHiddenInputField(
     type: FieldTypes.HIDDEN_INPUT,
     component: FieldComponents.HIDDEN_INPUT,
     value: data.value ?? undefined,
-    required: data.required ?? false,
   }
 }
 

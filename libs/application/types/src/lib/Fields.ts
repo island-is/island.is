@@ -189,7 +189,6 @@ export interface HiddenInputField extends BaseField {
   readonly type: FieldTypes.HIDDEN_INPUT
   component: FieldComponents.HIDDEN_INPUT
   value?: MaybeWithApplicationAndField<unknown>
-  required?: boolean
 }
 
 export interface RadioField extends BaseField {
@@ -415,7 +414,6 @@ export interface HiddenInputField extends Omit<BaseField, 'title'> {
   readonly type: FieldTypes.HIDDEN_INPUT
   component: FieldComponents.HIDDEN_INPUT
   value?: MaybeWithApplicationAndField<unknown>
-  required?: boolean
 }
 
 export type Field =

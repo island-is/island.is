@@ -15,6 +15,7 @@ import {
   buildHiddenInputField,
 } from '@island.is/application/core'
 import {
+  Application,
   Comparators,
   Form,
   FormModes,
@@ -57,26 +58,9 @@ export const ExampleForm: Form = buildForm({
             }),
             buildHiddenInputField({
               id: 'someHiddenFieldRequired',
-              value: (application: any, field: any) => {
-                return application.answers.name.toUpper()
+              value: (application: Application) => {
+                return application.answers.name.toString().toUpperCase()
               },
-            }),
-            buildHiddenInputField({
-              id: 'someHiddenFieldThatsNotRequired',
-              required: false,
-            }),
-            buildHiddenInputField({
-              id: 'someHiddenFieldWithDefaultValue',
-              defaultValue: 'This is a default value',
-            }),
-            buildHiddenInputField({
-              id: 'someHiddenFieldThatAssignsAValueToADifferentId',
-            }),
-            buildHiddenInputField({
-              id: 'someHiddenFieldThatAssignsAValueWithAFunction',
-            }),
-            buildHiddenInputField({
-              id: 'someHiddenFieldThatAssignsAValueWithAFunctionThatReturnsAValue',
             }),
             buildTextField({
               id: 'person.nationalId',
