@@ -3,7 +3,12 @@ import React from 'react'
 // TODO later move the illustrations from the web project and into a reusable library
 function ManWithStrollerIllustration() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 546 563">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="342"
+      height="355"
+      viewBox="0 0 546 563"
+    >
       <defs>
         <linearGradient
           id="linear-gradient"
