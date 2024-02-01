@@ -16,9 +16,6 @@ import {
   States as ApplicationStates,
   States,
   YES,
-  NO_PRIVATE_PENSION_FUND,
-  NO_UNION,
-  NO_UNEMPLOYED_BENEFITS,
   PARENTAL_GRANT,
 } from '../constants'
 
@@ -117,7 +114,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('otherParentApproval')
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_APPROVAL)
       expect(newApplication.assignees).toEqual([otherParentId])
     })
 
@@ -146,7 +143,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('employerWaitingToAssign')
+      expect(newState).toBe(ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN)
       // There should be no one assigned until employer accepts to be assigned
       expect(newApplication.assignees).toEqual([])
     })
@@ -206,7 +203,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('otherParentApproval')
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_APPROVAL)
       expect(newApplication.assignees).toEqual([otherParentId])
 
       const finalHelper = new ApplicationTemplateHelper(
@@ -278,7 +275,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('otherParentApproval')
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_APPROVAL)
       expect(newApplication.assignees).toEqual([otherParentId])
 
       const finalHelper = new ApplicationTemplateHelper(
@@ -293,7 +290,7 @@ describe('Parental Leave Application Template', () => {
         })
 
       expect(hasChangedAgain).toBe(true)
-      expect(finalState).toBe('vinnumalastofnunApproval')
+      expect(finalState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
       expect(finalApplication.assignees).toEqual([VMST_ID])
     })
 
@@ -344,7 +341,7 @@ describe('Parental Leave Application Template', () => {
           )?.otherParentObj?.otherParentId
 
           expect(hasChanged).toBe(true)
-          expect(newState).toBe('vinnumalastofnunApproval')
+          expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
           expect(newApplicationOtherParentId).toEqual(otherParentId)
         })
       })
@@ -729,7 +726,6 @@ describe('Parental Leave Application Template', () => {
               ],
               employment: {
                 isSelfEmployed: YES,
-                unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
                 isReceivingUnemploymentBenefits: NO,
               },
               fileUpload: {
@@ -746,7 +742,6 @@ describe('Parental Leave Application Template', () => {
         const answer = {
           employment: {
             isSelfEmployed: YES,
-            unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
             isReceivingUnemploymentBenefits: NO,
           },
           fileUpload: {
