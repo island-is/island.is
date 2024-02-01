@@ -82,8 +82,6 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
                     id: 'sp.settings:nudge-checkbox-label',
                     defaultMessage: 'Afþakka tölvupóst',
                   })}
-                  hasError={!!submitError}
-                  errorMessage={submitError}
                   checked={value}
                 />
               )}
@@ -115,6 +113,11 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
           </Box>
         </Column>
       </Columns>
+      {!!submitError && (
+        <div className={styles.errorMessage} aria-live="assertive">
+          {submitError}
+        </div>
+      )}
     </form>
   )
 }

@@ -101,6 +101,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
+      isSubpage={false}
       mainContent={
         <Box>
           {organizationPage?.theme === 'landing_page' && (

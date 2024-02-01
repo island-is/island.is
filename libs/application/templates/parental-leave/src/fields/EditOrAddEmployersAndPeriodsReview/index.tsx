@@ -5,14 +5,19 @@ import {
   Text,
   AlertMessage,
   ContentBlock,
+  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Periods from './Periods'
 import Employers from './Employers'
-import { PrintButton } from '../PrintButton'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
-import { YES } from '../../constants'
+import {
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  YES,
+} from '../../constants'
 
 interface ReviewScreenProps {
   application: Application
@@ -23,28 +28,55 @@ const EditOrAddEmployersAndPeriodsReview: FC<
   React.PropsWithChildren<ReviewScreenProps>
 > = ({ application, goToScreen }) => {
   const { formatMessage } = useLocale()
-  const { employers, addEmployer, addPeriods } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    employers,
+    addEmployer,
+    addPeriods,
+    applicationType,
+    isReceivingUnemploymentBenefits,
+    isSelfEmployed,
+    employerLastSixMonths,
+  } = getApplicationAnswers(application.answers)
 
   const childProps = {
     application,
     goToScreen,
   }
 
+  const hasEmployer =
+    (applicationType === PARENTAL_LEAVE &&
+      isReceivingUnemploymentBenefits !== YES &&
+      isSelfEmployed !== YES) ||
+    ((applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+      employerLastSixMonths === YES)
+
   return (
     <>
-      <Box>
-        <PrintButton />
-        <Box marginBottom={2}>
-          <Text variant="h2">
-            {formatMessage(parentalLeaveFormMessages.confirmation.title)}
-          </Text>
+      <Box display="flex" justifyContent="spaceBetween">
+        <Box>
+          <Box marginBottom={2}>
+            <Text variant="h2">
+              {formatMessage(parentalLeaveFormMessages.confirmation.title)}
+            </Text>
+          </Box>
+          <Box marginBottom={10}>
+            <Text variant="default">
+              {formatMessage(
+                parentalLeaveFormMessages.confirmation.description,
+              )}
+            </Text>
+          </Box>
         </Box>
-        <Box marginBottom={10}>
-          <Text variant="default">
-            {formatMessage(parentalLeaveFormMessages.confirmation.description)}
-          </Text>
+        <Box>
+          <Button
+            variant="utility"
+            icon="print"
+            onClick={(e) => {
+              e.preventDefault()
+              window.print()
+            }}
+          />
         </Box>
       </Box>
       {addEmployer !== YES && addPeriods !== YES && (
@@ -62,7 +94,7 @@ const EditOrAddEmployersAndPeriodsReview: FC<
           </ContentBlock>
         </Box>
       )}
-      {employers.length !== 0 && <Employers {...childProps} />}
+      {hasEmployer && employers.length !== 0 && <Employers {...childProps} />}
       <Periods {...childProps} />
     </>
   )
