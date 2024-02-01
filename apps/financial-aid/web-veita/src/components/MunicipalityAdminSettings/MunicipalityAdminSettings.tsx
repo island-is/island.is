@@ -24,10 +24,19 @@ import omit from 'lodash/omit'
 import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import copyToClipboard from 'copy-to-clipboard'
 
 interface Props {
   currentMunicipality: Municipality
 }
+
+interface ApiKeyStateProps {
+  isActive: boolean
+  name?: string
+  apiKey?: string
+  hasError: boolean
+}
+
 const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [state, setState] = useState(currentMunicipality)
   const [hasNavError, setHasNavError] = useState(false)
@@ -35,6 +44,13 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
   )
+
+  const [apiKeyState, setApiKeyState] = useState({
+    isActive: currentMunicipality?.apiKeyInfo ? true : false,
+    name: currentMunicipality?.apiKeyInfo?.name ?? undefined,
+    apiKey: currentMunicipality?.apiKeyInfo?.apiKey ?? undefined,
+    hasError: false,
+  })
 
   const [createApiKey] = useMutation(ApiKeyForMunicipalityMutation)
 
@@ -95,6 +111,13 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     update()
   }
 
+  const updateApiKeyStateWithNoError = (newState: ApiKeyStateProps) => {
+    return {
+      ...newState,
+      hasError: false,
+    }
+  }
+
   const updateMunicipality = async () => {
     await updateMunicipalityMutation({
       variables: {
@@ -128,12 +151,20 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   }
 
   const createApiKeyForMunicipality = async () => {
+    if (!apiKeyState.isActive || !apiKeyState.name || !apiKeyState.apiKey) {
+      setApiKeyState({
+        ...apiKeyState,
+        hasError: true,
+      })
+      return
+    }
+
     await createApiKey({
       variables: {
         input: {
-          name: state?.apiKeyInfo?.name,
+          name: apiKeyState.name,
           municipalityCode: state.municipalityId,
-          apiKey: state?.apiKeyInfo?.apiKey,
+          apiKey: apiKeyState.apiKey,
         },
       },
     })
@@ -358,6 +389,20 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     },
   ]
 
+  const copyApiKeyToClipboard = (apiKey?: string) => {
+    if (apiKey) {
+      const copied = copyToClipboard(apiKey)
+
+      if (copied) {
+        toast.success('Lykill hefur verið afritaður')
+      } else {
+        toast.error('Ekki tókst að afrita lykil')
+      }
+    } else {
+      toast.error('Vantar lykill')
+    }
+  }
+
   return (
     <Box marginTop={[5, 10, 15]} marginBottom={[5, 10, 15]}>
       <Box
@@ -374,13 +419,27 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           onClick={createApiKeyForMunicipality}
           icon="checkmark"
         >
-          Vista stillingar
+          Búa til lykill
         </Button>
       </Box>
       <Box marginBottom={[2, 2, 7]}>
         <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
           Tenging við ytri kerfi
         </Text>
+
+        <Box marginBottom={3} id="apiKeySettings">
+          <Checkbox
+            name="isApiKeyActive"
+            label="Virkja tengingu við ytri kerfi"
+            checked={apiKeyState.isActive}
+            onChange={(event) =>
+              updateApiKeyStateWithNoError({
+                ...apiKeyState,
+                isActive: event.target.checked,
+              })
+            }
+          />
+        </Box>
 
         <Input
           label="Kerfi"
@@ -389,12 +448,9 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           backgroundColor="blue"
           autoComplete="off"
           onChange={(event) => {
-            setState({
-              ...state,
-              apiKeyInfo: {
-                ...state?.apiKeyInfo,
-                name: event.currentTarget.value,
-              },
+            updateApiKeyStateWithNoError({
+              ...apiKeyState,
+              name: event.target.value,
             })
           }}
         />
@@ -402,22 +458,28 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           útskýring
         </Text>
 
-        <Input
-          label="Lykill"
-          name="apiKey"
-          value={state.apiKeyInfo?.apiKey ?? ''}
-          backgroundColor="blue"
-          autoComplete="off"
-          onChange={(event) => {
-            setState({
-              ...state,
-              apiKeyInfo: {
-                ...state?.apiKeyInfo,
-                apiKey: event.currentTarget.value,
-              },
-            })
-          }}
-        />
+        <Box display="flex">
+          <Box flexGrow={1} marginRight={1}>
+            <Input
+              label="Lykill"
+              name="apiKey"
+              value={state.apiKeyInfo?.apiKey ?? ''}
+              backgroundColor="blue"
+              autoComplete="off"
+              readOnly
+            />
+          </Box>
+
+          <Button
+            loading={loading}
+            onClick={() => copyApiKeyToClipboard(apiKeyState?.apiKey)}
+            icon="copy"
+            size="small"
+          >
+            Taka afrit af lykli
+          </Button>
+        </Box>
+
         <Text marginTop={1} marginBottom={3} variant="small">
           útskýring
         </Text>

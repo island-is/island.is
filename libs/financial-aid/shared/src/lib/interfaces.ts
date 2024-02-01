@@ -171,10 +171,10 @@ export interface UpdateAdmin {
 }
 
 export interface ApiKeysForMunicipality {
-  name?: string
-  apiKey?: string
-  municipalityCode?: string
-  id?: string
+  name: string
+  apiKey: string
+  municipalityCode: string
+  id: string
 }
 
 export interface Municipality {
