@@ -10,3 +10,4 @@ bootstrap({
   swaggerPath: 'api/swagger',
   openApi,
 })
+// trigger affected

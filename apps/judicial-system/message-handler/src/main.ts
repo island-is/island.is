@@ -31,3 +31,4 @@ async function bootstrap() {
 }
 
 bootstrap()
+// trigger affected
