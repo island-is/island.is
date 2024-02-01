@@ -2,11 +2,15 @@ import { useCallback, useEffect, useState } from 'react'
 import {
   Box,
   Button,
+  Checkbox,
+  Filter,
+  FilterMultiChoice,
   GridColumn,
   GridRow,
   Input,
   Pagination,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -20,6 +24,7 @@ import {
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
+import isEqual from 'lodash/isEqual'
 
 import { VehicleCard } from '../../components/VehicleCard'
 import {
@@ -37,9 +42,11 @@ import { VehiclesDetail } from '@island.is/api/schema'
 
 const defaultFilterValues = {
   searchQuery: '',
+  onlyMileageRequiredVehicles: undefined,
 }
 type FilterValues = {
   searchQuery: string
+  onlyMileageRequiredVehicles?: boolean
 }
 
 const VehiclesOverview = () => {
@@ -78,15 +85,8 @@ const VehiclesOverview = () => {
       fetchMore: searchFetchMore,
       ...usersSearchVehicleQuery
     },
-  ] = useGetUsersVehiclesV2LazyQuery({
-    variables: {
-      input: {
-        pageSize: 10,
-        page: searchPage,
-        permno: filterValue.searchQuery,
-      },
-    },
-  })
+  ] = useGetUsersVehiclesV2LazyQuery()
+
   const [
     GetExcelVehiclesLazyQuery,
     { loading: excelLoading, error: excelError, ...usersExcelVehicleQuery },
@@ -98,12 +98,23 @@ const VehiclesOverview = () => {
 
   useDebounce(
     () => {
-      if (isSearching) {
-        GetUsersSearchVehiclesLazyQuery()
+      const hasActiveFilters = !isEqual(filterValue, defaultFilterValues)
+      if (hasActiveFilters) {
+        GetUsersSearchVehiclesLazyQuery({
+          variables: {
+            input: {
+              pageSize: 10,
+              page: searchPage,
+              permno: filterValue.searchQuery,
+              onlyMileageRequiredVehicles:
+                filterValue.onlyMileageRequiredVehicles,
+            },
+          },
+        })
       }
     },
-    500,
-    [isSearching],
+    600,
+    [filterValue.onlyMileageRequiredVehicles, filterValue.searchQuery],
   )
 
   useEffect(() => {
@@ -134,10 +145,6 @@ const VehiclesOverview = () => {
   const ownershipPdf =
     usersVehicleQuery.data?.vehiclesListV2?.downloadServiceURL
   const filteredVehicles = vehicles?.vehicleList ?? []
-
-  const handleSearchChange = useCallback((value: string) => {
-    setFilterValue({ ...defaultFilterValues, searchQuery: value })
-  }, [])
 
   if (error && !loading) {
     return (
@@ -230,9 +237,17 @@ const VehiclesOverview = () => {
       )}
       <Stack space={2}>
         {!loading && !error && (
-          <GridRow>
-            <GridColumn span={['9/9', '9/9', '5/9', '4/9', '3/9']}>
-              <Box marginBottom={1}>
+          <Box marginBottom={1}>
+            <Filter
+              labelClear={formatMessage(m.clearFilter)}
+              labelClearAll={formatMessage(m.clearAllFilters)}
+              labelOpen={formatMessage(m.openFilter)}
+              labelClose={formatMessage(m.closeFilter)}
+              variant="popover"
+              onFilterClear={() => setFilterValue(defaultFilterValues)}
+              align="left"
+              reverse
+              filterInput={
                 <Input
                   icon={{ name: 'search' }}
                   backgroundColor="blue"
@@ -243,20 +258,54 @@ const VehiclesOverview = () => {
                       setPage(1)
                       setIsSearching(true)
                     } else {
-                      if (ev.target.value === '') {
+                      if (
+                        ev.target.value === '' &&
+                        !filterValue.onlyMileageRequiredVehicles
+                      ) {
                         setIsSearching(false)
                         setPage(1)
                       }
                     }
-                    handleSearchChange(ev.target.value)
+                    setFilterValue({
+                      ...filterValue,
+                      searchQuery: ev.target.value,
+                    })
                   }}
                   name="okutaeki-leit"
                   label={formatMessage(m.searchLabel)}
                   placeholder={formatMessage(vehicleMessage.searchForPlate)}
                 />
+              }
+            >
+              <Box padding={4}>
+                <Text variant="eyebrow" as="p" paddingBottom={2}>
+                  {formatMessage(m.filterBy)}
+                </Text>
+                <Checkbox
+                  name="onlyMileageRequiredVehicles"
+                  label={formatMessage(
+                    vehicleMessage.vehiclesRequireMileageRegistration,
+                  )}
+                  value="onlyMileageRequiredVehicles"
+                  checked={Boolean(filterValue.onlyMileageRequiredVehicles)}
+                  onChange={(e) => {
+                    const checked = e.target.checked
+                    if (filterValue.searchQuery === '' && !checked) {
+                      setIsSearching(false)
+                      setPage(1)
+                    } else if (checked && !isSearching) {
+                      setPage(1)
+                      setIsSearching(true)
+                    }
+                    setFilterValue({
+                      ...filterValue,
+                      onlyMileageRequiredVehicles: e.target.checked,
+                    })
+                  }}
+                />
               </Box>
-            </GridColumn>
-          </GridRow>
+            </Filter>
+          </Box>
         )}
 
         {(loading || searchLoading) && <CardLoader />}

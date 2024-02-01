@@ -55,5 +55,8 @@ export class GetVehiclesListV2Input {
   showOperated?: boolean
 
   @Field({ nullable: true })
+  onlyMileageRequiredVehicles?: boolean
+
+  @Field({ nullable: true })
   permno?: string
 }
