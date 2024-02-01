@@ -30,6 +30,10 @@ export default withApollo(CaseDetails)
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
+  const id = parseInt(await ctx.query.slug)
+
+  if (!id) console.error('id is not a number', id)
+
   try {
     const [
       {
@@ -40,7 +44,7 @@ export const getServerSideProps = async (ctx) => {
         query: CASE_GET_CASE_BY_ID,
         variables: {
           input: {
-            caseId: parseInt(ctx.query['slug']),
+            caseId: id,
           },
         },
       }),
@@ -49,7 +53,7 @@ export const getServerSideProps = async (ctx) => {
     return {
       props: {
         case: consultationPortalCaseById,
-        caseId: parseInt(ctx.query['slug']),
+        caseId: id,
         is500: false,
       },
     }

@@ -1,86 +1,48 @@
 import { Injectable } from '@nestjs/common'
 import { GetListInput } from './signature-collection.types'
-import {
-  Collection,
-  mapCollectionInfo,
-  CollectionInfo,
-  mapCollection,
-} from './types/collection.dto'
-import { List, mapList } from './types/list.dto'
+import { Collection } from './types/collection.dto'
+import { List } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { ManagerCollectionApi, ManagerListApi } from './apis'
+import {
+  ManagerCandidateApi,
+  ManagerCollectionApi,
+  ManagerListApi,
+} from './apis'
+import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 
-type Api = ManagerListApi | ManagerCollectionApi
+type Api = ManagerListApi | ManagerCollectionApi | ManagerCandidateApi
 
 @Injectable()
 export class SignatureCollectionManagerClientService {
   constructor(
     private listsApi: ManagerListApi,
     private collectionsApi: ManagerCollectionApi,
+    private sharedService: SignatureCollectionSharedClientService,
+    private candidateApi: ManagerCandidateApi,
   ) {}
 
   private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollectionInfo(): Promise<CollectionInfo> {
-    // includeInactive: false will return collections as active until electionday for collection has passed
-    const res = await this.collectionsApi.medmaelasofnunGet({
-      includeInactive: true,
-    })
-    const current = (
-      res
-        .map(mapCollectionInfo)
-        .filter(
-          (collection) => collection?.isSignatureCollection,
-        ) as CollectionInfo[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
-
-    if (!current) {
-      throw new Error('No current collection')
-    }
-    return current
+  async currentCollection(): Promise<Collection> {
+    return await this.sharedService.currentCollection(this.collectionsApi)
   }
 
-  async getCurrentCollection(collectionId?: number): Promise<Collection> {
-    if (!collectionId) {
-      const { id } = await this.currentCollectionInfo()
-
-      collectionId = id
-    }
-
-    const currentCollection = await this.collectionsApi.medmaelasofnunIDGet({
-      iD: collectionId,
-    })
-    return mapCollection(currentCollection)
-  }
-
-  async getLists(
-    { collectionId, areaId, candidateId, onlyActive }: GetListInput,
-    auth: Auth,
-  ): Promise<List[]> {
-    const lists = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarGet({
-      sofnunID: collectionId,
-      svaediID: areaId ? parseInt(areaId) : undefined,
-      frambodID: candidateId ? parseInt(candidateId) : undefined,
-    })
-
-    const listsMapped = lists.map((list) => mapList(list))
-    return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
+  async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
+    return await this.sharedService.getLists(
+      input,
+      this.getApiWithAuth(this.listsApi, auth),
+    )
   }
 
   async getList(listId: string, auth: Auth): Promise<List> {
-    const list = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarIDGet({
-      iD: parseInt(listId),
-    })
-    return mapList(list)
+    return await this.sharedService.getList(
+      listId,
+      this.getApiWithAuth(this.listsApi, auth),
+      this.getApiWithAuth(this.candidateApi, auth),
+    )
   }
 
   async getSignatures(listId: string, auth: Auth): Promise<Signature[]> {
