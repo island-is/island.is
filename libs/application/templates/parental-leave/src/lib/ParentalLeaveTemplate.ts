@@ -39,6 +39,9 @@ import {
   NO_MULTIPLE_BIRTHS,
   NO_UNEMPLOYED_BENEFITS,
   UnEmployedBenefitTypes,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -226,7 +229,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'correctTransferRights',
           'clearEmployers',
           'setIfSelfEmployed',
-          'setIfIsReceivingUnemploymentBenefitsNo',
+          'setIfIsReceivingUnemploymentBenefits',
         ],
         meta: {
           name: States.DRAFT,
@@ -1799,8 +1802,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       clearEmployers: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { employers, isSelfEmployed, employerLastSixMonths } =
-          getApplicationAnswers(answers)
+        const {
+          employers,
+          isSelfEmployed,
+          applicationType,
+          employerLastSixMonths,
+          isReceivingUnemploymentBenefits,
+        } = getApplicationAnswers(answers)
 
         if (isSelfEmployed === NO) {
           employers?.forEach((val, i) => {
@@ -1840,6 +1848,22 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
             set(answers, `employers[${i}].companyNationalRegistryId`, '')
           })
+        }
+
+        const hasEmployer =
+          (applicationType === PARENTAL_LEAVE &&
+            isReceivingUnemploymentBenefits !== YES &&
+            isSelfEmployed !== YES) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES)
+
+        if (!hasEmployer) {
+          unset(application.answers, 'employers')
+          unset(
+            application.answers,
+            'fileUpload.employmentTerminationCertificateFile',
+          )
         }
 
         return context
@@ -2326,7 +2350,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setIfIsReceivingUnemploymentBenefitsNo: assign((context) => {
+      setIfIsReceivingUnemploymentBenefits: assign((context) => {
         const { application } = context
         const { isReceivingUnemploymentBenefits, unemploymentBenefits } =
           getApplicationAnswers(application.answers)

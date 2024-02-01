@@ -12,7 +12,12 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import Periods from './Periods'
 import Employers from './Employers'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
-import { YES } from '../../constants'
+import {
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  YES,
+} from '../../constants'
 
 interface ReviewScreenProps {
   application: Application
@@ -23,14 +28,28 @@ const EditOrAddEmployersAndPeriodsReview: FC<
   React.PropsWithChildren<ReviewScreenProps>
 > = ({ application, goToScreen }) => {
   const { formatMessage } = useLocale()
-  const { employers, addEmployer, addPeriods } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    employers,
+    addEmployer,
+    addPeriods,
+    applicationType,
+    isReceivingUnemploymentBenefits,
+    isSelfEmployed,
+    employerLastSixMonths,
+  } = getApplicationAnswers(application.answers)
 
   const childProps = {
     application,
     goToScreen,
   }
+
+  const hasEmployer =
+    (applicationType === PARENTAL_LEAVE &&
+      isReceivingUnemploymentBenefits !== YES &&
+      isSelfEmployed !== YES) ||
+    ((applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+      employerLastSixMonths === YES)
 
   return (
     <>
@@ -75,7 +94,7 @@ const EditOrAddEmployersAndPeriodsReview: FC<
           </ContentBlock>
         </Box>
       )}
-      {employers.length !== 0 && <Employers {...childProps} />}
+      {hasEmployer && employers.length !== 0 && <Employers {...childProps} />}
       <Periods {...childProps} />
     </>
   )
