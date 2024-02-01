@@ -17,6 +17,7 @@ import {
   DegreeType,
   ModeOfDelivery,
   Season,
+  ProgramStatus,
 } from '@island.is/university-gateway'
 
 @Injectable()
@@ -112,6 +113,8 @@ export class UniversityGatewayApi {
       costInformationEn: item.costInformationEn,
       allowException: item.allowException,
       allowThirdLevelQualification: item.allowThirdLevelQualification,
+      arrangementEn: item.arrangementEn,
+      arrangementIs: item.arrangementIs,
       courses: item.courses.map((c) => ({
         id: c.details.id,
         externalId: c.details.externalId,
@@ -141,6 +144,10 @@ export class UniversityGatewayApi {
   async getProgramFilters(): Promise<UniversityGatewayProgramFilter[]> {
     return [
       {
+        field: 'applicationStatus',
+        options: Object.values(ProgramStatus),
+      },
+      {
         field: 'degreeType',
         options: Object.values(DegreeType),
       },
@@ -150,17 +157,18 @@ export class UniversityGatewayApi {
       },
       {
         field: 'modeOfDelivery',
-        options: Object.values(ModeOfDelivery),
+        options: Object.values([
+          ModeOfDelivery.ON_SITE,
+          ModeOfDelivery.REMOTE,
+          ModeOfDelivery.MIXED,
+          ModeOfDelivery.ONLINE,
+        ]),
       },
       {
         field: 'universityId',
         options: (
           await this.universityApi.universityControllerGetUniversities()
         ).data.map((item: University) => item.id),
-      },
-      {
-        field: 'durationInYears',
-        options: await this.programApi.programControllerGetDurationInYears(),
       },
     ]
   }

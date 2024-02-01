@@ -20,45 +20,21 @@ import {
 import {
   CaseState,
   CaseTransition,
-  Institution,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
-  useInstitution,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
 
-const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Processing: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { setAndSendCaseToServer, transitionCase } = useCase()
+  const { transitionCase } = useCase()
   const { formatMessage } = useIntl()
-  const { districtCourts } = useInstitution()
   const router = useRouter()
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
-
-  const handleCourtChange = (court: Institution) => {
-    if (workingCase) {
-      setAndSendCaseToServer(
-        [
-          {
-            courtId: court.id,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      return true
-    }
-
-    return false
-  }
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -96,11 +72,7 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
         <ProsecutorSection />
         <Box component="section" marginBottom={5}>
-          <SelectCourt
-            workingCase={workingCase}
-            courts={districtCourts}
-            onChange={handleCourtChange}
-          />
+          <SelectCourt />
         </Box>
         <Box component="section" marginBottom={10}>
           <CommentsInput
