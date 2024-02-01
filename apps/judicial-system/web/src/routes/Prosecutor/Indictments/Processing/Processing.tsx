@@ -16,6 +16,7 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
   CaseState,
   CaseTransition,
@@ -25,7 +26,6 @@ import {
 import {
   useCase,
   useDefendants,
-  useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
@@ -33,14 +33,12 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
-import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 
 const Processing: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { transitionCase } = useCase()
   const { formatMessage } = useIntl()
-  const { districtCourts } = useInstitution()
   const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
