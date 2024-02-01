@@ -233,7 +233,7 @@ export const serviceSetup = (services: {
       XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
         staging: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
-        prod: 'IS/GOV/5501692829/UA-Protected/kvortun-v1',
+        prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
