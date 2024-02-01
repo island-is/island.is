@@ -10,9 +10,9 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
+import { type Lawyer } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
-  Lawyer,
   ReactSelectOption,
   TempCase as Case,
 } from '@island.is/judicial-system-web/src/types'

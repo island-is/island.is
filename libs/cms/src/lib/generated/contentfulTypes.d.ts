@@ -3590,6 +3590,9 @@ export interface ISliceDropdownFields {
   /** Dropdown Label */
   dropdownLabel?: string | undefined
 
+  /** Alphabetically ordered */
+  alphabeticallyOrdered?: boolean | undefined
+
   /** Slices */
   slices?: IOneColumnText[] | undefined
 }
