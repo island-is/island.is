@@ -45,7 +45,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   const personNationalId: string = watch(`${id}.nationalId`)
   const personName: string = watch(`${id}.name`)
 
-  const [getDeceased, { loading: deceasedLoading }] = useLazyQuery<
+  const [getDeceased, { loading: deceasedQueryLoading }] = useLazyQuery<
     Query,
     { input: GetRegistryPersonInput }
   >(DECEASED_IDENITY_QUERY, {
@@ -56,7 +56,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
     fetchPolicy: 'network-only',
   })
 
-  const [getIdentity, { loading: queryLoading }] = useLazyQuery<
+  const [getIdentity, { loading: identityQueryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
   >(IDENTITY_QUERY, {
@@ -116,7 +116,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
             label={formatMessage(m.nationalId)}
             format="######-####"
             backgroundColor="blue"
-            loading={queryLoading}
+            loading={identityQueryLoading || deceasedQueryLoading}
             size={nested ? 'sm' : 'md'}
             required={props?.requiredNationalId ?? true}
             error={error?.nationalId || error?.name}
