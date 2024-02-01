@@ -1,19 +1,14 @@
-import React, { FC, useEffect } from 'react'
-import { Box } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useQuery } from '@apollo/client'
+import { FieldBaseProps, RepeaterProps } from '@island.is/application/types'
+import { Box } from '@island.is/island-ui/core'
+import React, { FC, useEffect } from 'react'
+import { States } from '../../constants'
 import { GetApplicationInformation } from '../../graphql/queries'
 import {
   getApplicationAnswers,
   getAvailableRightsInDays,
   synchronizeVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
-import { FieldBaseProps, RepeaterProps } from '@island.is/application/types'
-import { States } from '../../constants'
-import PeriodsSectionImage from '../PeriodsSectionImage/PeriodsSectionImage'
-import WomanWithLaptopIllustration from '../PeriodsSectionImage/WomanWithLaptopIllustration'
 
 type FieldProps = FieldBaseProps & {
   field?: {
@@ -26,8 +21,7 @@ type ScreenProps = RepeaterProps & FieldProps
 
 const UploadAdditionalFilesInfoScreen: FC<
   React.PropsWithChildren<ScreenProps>
-> = ({ field, application, setRepeaterItems, setFieldLoadingState }) => {
-  const { formatMessage } = useLocale()
+> = ({ application, setRepeaterItems, setFieldLoadingState }) => {
   const rights = getAvailableRightsInDays(application)
   const { periods } = getApplicationAnswers(application.answers)
   const shouldCall =
@@ -53,22 +47,7 @@ const UploadAdditionalFilesInfoScreen: FC<
       setFieldLoadingState,
     )
   }, [loading])
-  return (
-    <Box>
-      <FieldDescription
-        description={formatMessage(
-          parentalLeaveFormMessages.attachmentScreen.additionalDocumentRequired,
-        )}
-      />
-      <PeriodsSectionImage
-        field={field}
-        application={application}
-        alignItems={'center'}
-      >
-        <WomanWithLaptopIllustration />
-      </PeriodsSectionImage>
-    </Box>
-  )
+  return <Box></Box>
 }
 
 export default UploadAdditionalFilesInfoScreen

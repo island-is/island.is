@@ -3,6 +3,7 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
+  buildImageField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -15,6 +16,7 @@ import {
   inReviewFormMessages,
   parentalLeaveFormMessages,
 } from '../lib/messages'
+import WomanWithLaptopIllustration from '../assets/Images/WomanWithLaptopIllustration'
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'ParentalLeaveInReviewUpload',
   title: inReviewFormMessages.formTitle,
@@ -25,11 +27,27 @@ export const AdditionalDocumentsRequired: Form = buildForm({
       id: 'reviewUpload',
       title: parentalLeaveFormMessages.attachmentScreen.title,
       children: [
-        buildCustomField({
+        buildMultiField({
           id: 'uploadAdditionalFilesInfoScreen',
           title: parentalLeaveFormMessages.attachmentScreen.title,
-          component: 'UploadAdditionalFilesInfoScreen',
+          description:
+            parentalLeaveFormMessages.attachmentScreen
+              .additionalDocumentRequired,
+          children: [
+            buildImageField({
+              id: 'additionalDocumentsScreen.image',
+              title: '',
+              image: WomanWithLaptopIllustration,
+              imageWidth: 'auto',
+            }),
+            buildCustomField({
+              id: 'uploadAdditionalFilesInfoScreen',
+              title: parentalLeaveFormMessages.attachmentScreen.title,
+              component: 'UploadAdditionalFilesInfoScreen',
+            }),
+          ],
         }),
+
         buildMultiField({
           id: 'additionalDocumentsScreen',
           title: parentalLeaveFormMessages.attachmentScreen.title,
