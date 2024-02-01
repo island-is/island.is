@@ -43,7 +43,6 @@ import {
   isInvestigationCase,
   isRestrictionCase,
   NotificationType,
-  Recipient,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -77,7 +76,7 @@ import { CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
-import { Notification } from './models/notification.model'
+import { Notification, Recipient } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { notificationModuleConfig } from './notification.config'
 
