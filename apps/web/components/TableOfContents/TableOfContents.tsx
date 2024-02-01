@@ -1,7 +1,7 @@
+import { FC, useMemo } from 'react'
+
 import { Slice } from '@island.is/api/schema'
 import { TableOfContents } from '@island.is/island-ui/core'
-import { FC, useMemo } from 'react'
-import { Box } from '@island.is/island-ui/core'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 
 export const TOC: FC<
@@ -14,7 +14,7 @@ export const TOC: FC<
           id: slice.id,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
-          text: slice['title'] ?? slice['leftTitle'] ?? '',
+          text: slice.json?.title ?? slice.title ?? slice.leftTitle ?? '',
         }))
         .filter((item) => !!item.text),
     [slices],
@@ -23,15 +23,13 @@ export const TOC: FC<
     return null
   }
   return (
-    <Box marginY={6}>
-      <TableOfContents
-        tableOfContentsTitle={title}
-        headings={navigation.map(({ id, text }) => ({
-          headingTitle: text,
-          headingId: id,
-        }))}
-        onClick={(id) => scrollTo(id, { smooth: true })}
-      />
-    </Box>
+    <TableOfContents
+      tableOfContentsTitle={title}
+      headings={navigation.map(({ id, text }) => ({
+        headingTitle: text,
+        headingId: id,
+      }))}
+      onClick={(id) => scrollTo(id, { smooth: true })}
+    />
   )
 }
