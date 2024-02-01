@@ -148,12 +148,13 @@ export class SyslumennResolver {
     return this.syslumennService.getVehicle(input.vehicleId)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => RegistryPerson)
+  @BypassAuth()
   syslumennGetRegistryPerson(
     @Args('input') input: GetRegistryPersonInput,
   ): Promise<RegistryPerson> {
     const person = this.syslumennService.getRegistryPerson(input.nationalId)
-    console.log('GOT PERSON', person)
     return person
   }
 

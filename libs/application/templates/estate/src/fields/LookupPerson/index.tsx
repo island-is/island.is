@@ -24,7 +24,7 @@ type LookupProps = {
     props?: {
       requiredNationalId?: boolean
       alertWhenUnder18?: boolean
-      fallbackToDeceasedRegistry?: boolean
+      useDeceasedRegistry?: boolean
     }
   }
   nested?: boolean
@@ -61,18 +61,8 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
     { input: IdentityInput }
   >(IDENTITY_QUERY, {
     onCompleted: (data) => {
-      if (!data.identity?.name) {
-        getDeceased({
-          variables: {
-            input: {
-              nationalId: personNationalId,
-            },
-          },
-        })
-      } else {
-        setValue(`${id}.name`, data.identity?.name)
-        clearErrors(`${id}.name`)
-      }
+      setValue(`${id}.name`, data.identity?.name ?? '')
+      clearErrors(`${id}.name`)
     },
     fetchPolicy: 'network-only',
   })
@@ -81,13 +71,23 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
     if (personNationalId?.length === 10) {
       const isValidSSN = nationalId.isPerson(personNationalId)
       if (isValidSSN) {
-        getIdentity({
-          variables: {
-            input: {
-              nationalId: personNationalId,
+        if (props?.useDeceasedRegistry) {
+          getIdentity({
+            variables: {
+              input: {
+                nationalId: personNationalId,
+              },
             },
-          },
-        })
+          })
+        } else {
+          getDeceased({
+            variables: {
+              input: {
+                nationalId: personNationalId,
+              },
+            },
+          })
+        }
       }
     } else if (personNationalId?.length === 0) {
       clearErrors(`${id}.name`)

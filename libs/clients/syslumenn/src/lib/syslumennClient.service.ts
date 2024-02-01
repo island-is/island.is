@@ -470,8 +470,6 @@ export class SyslumennService {
       },
     })
 
-    console.log('GOT RESPONSE', JSON.stringify(res, null, 2))
-
     return mapDepartedToRegistryPerson(res)
   }
 
