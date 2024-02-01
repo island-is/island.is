@@ -15,6 +15,7 @@ import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
+import { isValidRealEstate } from '../../lib/utils'
 
 export const AdditionalRealEstate = ({
   field,
@@ -42,7 +43,7 @@ export const AdditionalRealEstate = ({
   const marketValueField = `${fieldIndex}.marketValue`
   const shareField = `${fieldIndex}.share`
 
-  const { control, setValue, clearErrors } = useFormContext()
+  const { control, setValue, clearErrors, setError } = useFormContext()
   const { formatMessage } = useLocale()
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: SearchForPropertyInput }>(
@@ -62,18 +63,26 @@ export const AdditionalRealEstate = ({
   useEffect(() => {
     // According to Skra.is:
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
-    // The property number is a seven digit informationless sequence.
-    // Has the prefix F.
-    if (/^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(propertyNumberInput.trim())) {
+    // The property number is a seven digit informationless sequence with prefix F
+    // The lot number is a six digit informationless sequence with prefix L
+    const propertyNumber = propertyNumberInput.trim().toUpperCase()
+    setValue(addressField, '')
+    if (isValidRealEstate(propertyNumber)) {
+      clearErrors(propertyNumberField)
       getProperty({
         variables: {
           input: {
-            propertyNumber: propertyNumberInput.trim().toUpperCase(),
+            propertyNumber,
           },
         },
       })
+    } else {
+      setError(propertyNumberField, {
+        message: formatMessage(m.errorPropertyNumber),
+        type: 'validate',
+      })
     }
-  }, [getProperty, address, addressField, propertyNumberInput, setValue])
+  }, [getProperty, propertyNumberInput, setValue, setError])
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
@@ -107,7 +116,11 @@ export const AdditionalRealEstate = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.assetNumber}
-            error={error?.assetNumber}
+            error={
+              error?.assetNumber
+                ? formatMessage(m.errorPropertyNumber)
+                : undefined
+            }
             placeholder="F1234567"
             required
           />

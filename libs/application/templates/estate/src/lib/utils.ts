@@ -4,11 +4,7 @@ import { ZodTypeAny } from 'zod'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 import { EstateTypes } from './constants'
 import { m } from './messages'
-import {
-  Application,
-  ExternalData,
-  FormValue,
-} from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -156,4 +152,11 @@ const getDecimal = (input: string): false | string => {
   }
 
   return false
+}
+
+export const isValidRealEstate = (value: string) => {
+  const lotRegex = /^[Ll]\d{6}$/
+  const houseRegex = /^[Ff]\d{7}$/
+
+  return lotRegex.test(value) || houseRegex.test(value)
 }
