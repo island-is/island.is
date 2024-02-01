@@ -121,11 +121,20 @@ const SigneeView = () => {
                 onCloseModal={() => setModalIsOpen(false)}
               >
                 <Text variant="h2" marginTop={[5, 0]}>
+                  {formatMessage(m.unSignList)}
+                </Text>
+                <Text variant="default" marginTop={2}>
                   {formatMessage(m.unSignModalMessage)}
                 </Text>
-                <Box marginTop={[5, 10]} display="flex" justifyContent="center">
+                <Box
+                  marginTop={[7, 10]}
+                  marginBottom={5}
+                  display="flex"
+                  justifyContent="center"
+                >
                   <Button
                     loading={loading}
+                    colorScheme="destructive"
                     onClick={() => {
                       onUnSignList()
                     }}
