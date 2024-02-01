@@ -2643,6 +2643,7 @@ export const Countries = [
     capital: 'Bangkok',
     altSpellings: [
       'TH',
+      'ไทย',
       'Prathet Thai',
       'ประเทศไทย',
       'Kingdom of Thailand',
