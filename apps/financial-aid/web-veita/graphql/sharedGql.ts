@@ -417,6 +417,18 @@ export const ApiKeyForMunicipalityMutation = gql`
     createApiKey(input: $input) {
       id
       name
+      apiKey
+      municipalityCode
+    }
+  }
+`
+export const UpdateApiKeyForMunicipalityMutation = gql`
+  mutation UpdateApiKeyForMunicipalityMutation($input: UpdateApiKeyInput!) {
+    updateApiKey(input: $input) {
+      id
+      name
+      apiKey
+      municipalityCode
     }
   }
 `
