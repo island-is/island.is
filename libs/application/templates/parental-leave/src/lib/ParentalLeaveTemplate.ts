@@ -31,13 +31,10 @@ import {
   NO,
   MANUAL,
   SPOUSE,
-  NO_PRIVATE_PENSION_FUND,
-  NO_UNION,
   TransferRightsOption,
   SINGLE,
   FileType,
   NO_MULTIPLE_BIRTHS,
-  NO_UNEMPLOYED_BENEFITS,
   UnEmployedBenefitTypes,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -2016,22 +2013,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (
-          answers.usePrivatePensionFund === NO &&
-          answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND
-        ) {
-          set(
-            application.answers,
-            'payments.privatePensionFund',
-            NO_PRIVATE_PENSION_FUND,
-          )
+        if (answers.usePrivatePensionFund === NO) {
+          unset(application.answers, 'payments.privatePensionFund')
         }
 
-        if (
-          answers.usePrivatePensionFund === NO &&
-          answers.privatePensionFundPercentage !== '0'
-        ) {
-          set(application.answers, 'payments.privatePensionFundPercentage', '0')
+        if (answers.usePrivatePensionFund === NO) {
+          unset(application.answers, 'payments.privatePensionFundPercentage')
         }
 
         return context
@@ -2041,8 +2028,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (answers.useUnion === NO && answers.union !== NO_UNION) {
-          set(application.answers, 'payments.union', NO_UNION)
+        if (answers.useUnion === NO) {
+          unset(application.answers, 'payments.union')
         }
 
         return context
@@ -2337,11 +2324,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             'employment.isReceivingUnemploymentBenefits',
             NO,
           )
-          set(
-            application.answers,
-            'employment.unemploymentBenefits',
-            NO_UNEMPLOYED_BENEFITS,
-          )
+          unset(application.answers, 'employment.unemploymentBenefits')
         }
 
         if (isSelfEmployed === NO) {
@@ -2356,11 +2339,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           getApplicationAnswers(application.answers)
 
         if (isReceivingUnemploymentBenefits === NO) {
-          set(
-            application.answers,
-            'employment.unemploymentBenefits',
-            NO_UNEMPLOYED_BENEFITS,
-          )
+          unset(application.answers, 'employment.unemploymentBenefits')
           unset(application.answers, 'fileUpload.benefitsFile')
         }
 

@@ -23,8 +23,6 @@ export { default as EditsInReviewSteps } from './InReviewSteps/EditsInReviewStep
 export { default as EditsRequireAction } from './EditsRequireAction'
 export { default as EmployerApprovalExtraInformation } from './EmployerApprovalExtraInformation'
 export { default as UploadAdditionalFilesInfoScreen } from './UploadAdditionalFilesInfoScreen'
-export { UseUnion } from './UseUnion'
-export { UsePrivatePensionFund } from './UsePrivatePensionFund'
 export { PeriodEndDate } from './PeriodEndDate/PeriodEndDate'
 export { PeriodPercentage } from './PeriodPercentage/PeriodPercentage'
 export { default as EmployersOverview } from './EmployersOverview'
