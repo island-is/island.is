@@ -87,11 +87,10 @@ export class SignatureCollectionClientService {
     }))
   }
 
-  async createLists({
-    collectionId,
-    owner,
-    areas,
-  }: CreateListInput): Promise<Slug> {
+  async createLists(
+    { collectionId, owner, areas }: CreateListInput,
+    auth: User,
+  ): Promise<Slug> {
     const { id, isActive } = await this.currentCollection()
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
@@ -105,7 +104,10 @@ export class SignatureCollectionClientService {
         )
       : collectionAreas
 
-    const lists = await this.listsApi.medmaelalistarAddListarPost({
+    const lists = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarAddListarPost({
       medmaelalistiRequestDTO: {
         sofnunID: parseInt(id),
         kennitala: owner.nationalId,
@@ -140,10 +142,12 @@ export class SignatureCollectionClientService {
     if (!signature || signature.listId !== listId || !signature.id) {
       return { success: false, reasons: [ReasonKey.SignatureNotFound] }
     }
-    const signatureRemoved =
-      await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
-        iD: parseInt(signature.id),
-      })
+    const signatureRemoved = await this.getApiWithAuth(
+      this.signatureApi,
+      auth,
+    ).medmaeliIDRemoveMedmaeliUserPost({
+      iD: parseInt(signature.id),
+    })
     return { success: !!signatureRemoved }
   }
 
@@ -164,7 +168,10 @@ export class SignatureCollectionClientService {
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
     if (isPresidential) {
-      await this.candidateApi.frambodIDRemoveFrambodUserPost({
+      await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodIDRemoveFrambodUserPost({
         iD: parseInt(candidate.id),
       })
       return { success: true }
@@ -250,7 +257,6 @@ export class SignatureCollectionClientService {
       iD: parseInt(id),
     })
     const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
-
     const activeSignature = user.medmaeli?.find((signature) => signature.valid)
     const ownedLists =
       user.medmaelalistar && candidate
