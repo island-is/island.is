@@ -76,8 +76,7 @@ const UniversityStudiesFooter: React.FC<
             </Text>
             <Box display={'flex'} style={{ gap: '0.5rem' }}>
               <Text color="blue600" variant="medium">
-                {n('email', 'netfang')}:{' '}
-                {n('haskolanamEmail', 'haskolanam@island.is')}
+                {n('email', 'netfang')}: haskolanam@island.is
               </Text>
             </Box>
             <Box display={'flex'} style={{ gap: '0.5rem' }}>
