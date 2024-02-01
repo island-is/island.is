@@ -16,6 +16,13 @@ export type {
 export type { ResponsiveProp } from './src/utils/responsiveProp'
 export type { GridColumns } from './src/lib/Grid/GridColumn/GridColumn.css'
 export type { SpanType } from './src/lib/Grid/GridColumn/GridColumn.css'
+export type { ActionCardProps } from './src/lib/ActionCard/types'
+export type { TagProps, TagVariant } from './src/lib/Tag/types'
+export type {
+  ButtonProps,
+  ButtonSizes,
+  ButtonTypes,
+} from './src/lib/Button/types'
 export * from './src/lib/IconRC/types'
 export const fileExtensionWhitelist = {
   '.pdf': 'application/pdf',

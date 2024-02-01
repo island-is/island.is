@@ -8,7 +8,8 @@ import {
   useMenuState,
 } from 'reakit/Menu'
 import { useBoxStyles } from '../Box/useBoxStyles'
-import { Button, ButtonProps } from '../Button/Button'
+import { Button } from '../Button/Button'
+import { ButtonProps } from '../Button/types'
 import { getTextStyles } from '../Text/Text'
 
 import * as styles from './DropdownMenu.css'
