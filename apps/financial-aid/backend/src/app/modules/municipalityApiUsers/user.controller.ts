@@ -1,10 +1,10 @@
-import { Controller, Get, Inject, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common'
 
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { apiBasePath } from '@island.is/financial-aid/shared/lib'
+import { StaffRole, apiBasePath } from '@island.is/financial-aid/shared/lib'
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,6 +12,9 @@ import { ApiUserService } from './user.service'
 import { ApiUserModel } from './user.model'
 import { CurrentStaff } from '../../decorators/staff.decorator'
 import { StaffGuard } from '../../guards/staff.guard'
+import { StaffRolesRules } from '../../decorators/staffRole.decorator'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
+import { CreateApiKeyDto } from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, StaffGuard)
 @Controller(`${apiBasePath}/apiKeys`)
@@ -32,5 +35,17 @@ export class ApiUserController {
     @CurrentStaff() staff: Staff,
   ): Promise<ApiUserModel[]> {
     return this.apiUserService.findByMunicipalityCode(staff.municipalityIds)
+  }
+
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.ADMIN)
+  @Scopes(MunicipalitiesFinancialAidScope.employee)
+  @Post('')
+  @ApiCreatedResponse({
+    type: ApiUserModel,
+    description: 'Creates a new api key',
+  })
+  create(@Body() input: CreateApiKeyDto): Promise<ApiUserModel> {
+    return this.apiUserService.create(input)
   }
 }

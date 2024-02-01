@@ -16,7 +16,10 @@ import {
   scrollToId,
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
-import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
+import {
+  ApiKeyForMunicipalityMutation,
+  UpdateMunicipalityMutation,
+} from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
 import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
@@ -32,6 +35,9 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
   )
+
+  const [createApiKey] = useMutation(ApiKeyForMunicipalityMutation)
+
   const { setMunicipality } = useContext(AdminContext)
 
   const INDIVIDUAL = 'individual'
@@ -117,6 +123,26 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       .catch(() => {
         toast.error(
           'Ekki tókst að uppfæra sveitarfélagið, vinsamlega reynið aftur síðar',
+        )
+      })
+  }
+
+  const createApiKeyForMunicipality = async () => {
+    await createApiKey({
+      variables: {
+        input: {
+          name: state?.apiKeyInfo?.name,
+          municipalityCode: state.municipalityId,
+          apiKey: state?.apiKeyInfo?.apiKey,
+        },
+      },
+    })
+      .then((res) => {
+        console.log(res.data)
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að búa til api lykil, vinsamlega reynið aftur síðar',
         )
       })
   }
@@ -343,7 +369,11 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         <Text as="h1" variant="h1">
           Sveitarfélagsstillingar
         </Text>
-        <Button loading={loading} onClick={submit} icon="checkmark">
+        <Button
+          loading={loading}
+          onClick={createApiKeyForMunicipality}
+          icon="checkmark"
+        >
           Vista stillingar
         </Button>
       </Box>
@@ -354,12 +384,19 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
 
         <Input
           label="Kerfi"
-          name="systemName"
-          value={state.apiKeyInfo?.name ?? ''}
+          name="name"
+          value={state?.apiKeyInfo?.name ?? ''}
           backgroundColor="blue"
-          disabled={!state.apiKeyInfo}
           autoComplete="off"
-          onChange={(event) => console.log(event.currentTarget.value)}
+          onChange={(event) => {
+            setState({
+              ...state,
+              apiKeyInfo: {
+                ...state?.apiKeyInfo,
+                name: event.currentTarget.value,
+              },
+            })
+          }}
         />
         <Text marginTop={1} marginBottom={3} variant="small">
           útskýring
@@ -370,9 +407,16 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           name="apiKey"
           value={state.apiKeyInfo?.apiKey ?? ''}
           backgroundColor="blue"
-          disabled={!state.apiKeyInfo}
           autoComplete="off"
-          onChange={(event) => console.log(event.currentTarget.value)}
+          onChange={(event) => {
+            setState({
+              ...state,
+              apiKeyInfo: {
+                ...state?.apiKeyInfo,
+                apiKey: event.currentTarget.value,
+              },
+            })
+          }}
         />
         <Text marginTop={1} marginBottom={3} variant="small">
           útskýring

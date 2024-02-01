@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { ApiUserModel } from './user.model'
 import { Op } from 'sequelize'
+import { CreateApiKeyDto } from './dto'
 
 @Injectable()
 export class ApiUserService {
@@ -29,5 +30,9 @@ export class ApiUserService {
         },
       },
     })
+  }
+
+  async create(input: CreateApiKeyDto): Promise<ApiUserModel> {
+    return await this.apiUserModel.create(input)
   }
 }

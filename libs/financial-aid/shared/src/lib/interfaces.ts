@@ -33,6 +33,11 @@ export interface CreateFilesResponse {
   files?: ApplicationFile[]
 }
 
+export interface CreateMunicipalityApiUser {
+  name: string
+  municipalityCode: string
+  apiKey: string
+}
 export interface MunicipalityApiUser {
   id: string
   name: string
@@ -166,10 +171,10 @@ export interface UpdateAdmin {
 }
 
 export interface ApiKeysForMunicipality {
-  name: string
-  apiKey: string
-  municipalityCode: string
-  id: string
+  name?: string
+  apiKey?: string
+  municipalityCode?: string
+  id?: string
 }
 
 export interface Municipality {
