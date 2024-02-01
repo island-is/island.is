@@ -15,6 +15,7 @@ import {
   DeductionFactorsModule,
   PersonalTaxReturnModule,
   DirectTaxPaymentModule,
+  OpenApiApplicationModule,
 } from './modules'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -30,6 +31,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     DirectTaxPaymentModule,
     StaffModule,
     ApplicationModule,
+    OpenApiApplicationModule,
     MunicipalityModule,
     FileModule,
     ApplicationEventModule,
