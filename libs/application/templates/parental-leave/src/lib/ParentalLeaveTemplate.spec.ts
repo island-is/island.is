@@ -19,6 +19,7 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   NO_UNEMPLOYED_BENEFITS,
+  PARENTAL_GRANT,
 } from '../constants'
 
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -702,6 +703,140 @@ describe('Parental Leave Application Template', () => {
           fileUpload: {},
           applicationType: {
             option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+    })
+
+    describe('employers', () => {
+      it('should unset employers if isSelfEmployed is YES', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employers: [
+                {
+                  email: 'testEmail@test.is',
+                  ratio: '100',
+                  phoneNumber: '',
+                },
+              ],
+              employment: {
+                isSelfEmployed: YES,
+                unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+                isReceivingUnemploymentBenefits: NO,
+              },
+              fileUpload: {
+                selfEmployedFile: [],
+              },
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employment: {
+            isSelfEmployed: YES,
+            unemploymentBenefits: NO_UNEMPLOYED_BENEFITS,
+            isReceivingUnemploymentBenefits: NO,
+          },
+          fileUpload: {
+            selfEmployedFile: [],
+          },
+          applicationType: {
+            option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+      it('should unset employers if isReceivingUnemploymentBenefits is YES', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employers: [
+                {
+                  email: 'testEmail@test.is',
+                  ratio: '100',
+                  phoneNumber: '',
+                },
+              ],
+              employment: {
+                isSelfEmployed: NO,
+                unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+                isReceivingUnemploymentBenefits: YES,
+              },
+              fileUpload: {},
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employment: {
+            isSelfEmployed: NO,
+            unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+            isReceivingUnemploymentBenefits: YES,
+          },
+          fileUpload: {},
+          applicationType: {
+            option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+      it('should unset employers and employmentTerminationCertificateFile if employerLastSixMonths is NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employerLastSixMonths: NO,
+              employers: [
+                {
+                  email: 'testEmail@test.is',
+                  ratio: '100',
+                  phoneNumber: '',
+                  stillEmployed: NO,
+                },
+              ],
+              fileUpload: {
+                employmentTerminationCertificateFile: [],
+              },
+              applicationType: {
+                option: PARENTAL_GRANT,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employerLastSixMonths: NO,
+          fileUpload: {},
+          applicationType: {
+            option: PARENTAL_GRANT,
           },
         }
 
