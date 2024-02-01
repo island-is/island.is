@@ -80,19 +80,6 @@ const UniversityStudiesFooter: React.FC<
                 {n('haskolanamEmail', 'haskolanam@island.is')}
               </Text>
             </Box>
-            <Box display={'flex'} style={{ gap: '0.5rem' }}>
-              <Box display={'flex'} flexDirection={'column'}>
-                <Text color="blue600" variant="medium">
-                  {n('footerPhoneNumberText', 'Sími: 458 2300')}
-                </Text>
-                <Text color="blue600" variant="medium">
-                  {n(
-                    'footerPhoneServiceHours',
-                    'Símsvörun milli kl. 10 og 15 virka daga',
-                  )}
-                </Text>
-              </Box>
-            </Box>
           </Box>
         </Box>
       </Box>
