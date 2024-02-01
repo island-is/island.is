@@ -20,6 +20,7 @@ import {
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
+  Modal,
   TagAppealState,
   TagCaseState,
   UserContext,
@@ -68,6 +69,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
     },
   )
   const [displayCases, setDisplayCases] = useState<CaseListEntry[]>([])
+  const [modalVisible, setVisibleModal] = useState<'DELETE_CASE'>()
+  // The index of requset that's about to be removed
+  const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>(-1)
   const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
     useCaseList()
 
@@ -148,246 +152,273 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
       ))}
     </>
   ) : (
-    <table className={styles.table} data-testid="activeCasesTable">
-      <thead className={styles.thead}>
-        <tr>
-          <th className={styles.th}>
-            <Text as="span" fontWeight="regular">
-              {formatMessage(tables.caseNumber)}
-            </Text>
-          </th>
-          <th className={styles.th}>
-            <SortButton
-              title={capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
-              onClick={() => requestSort('defendant')}
-              sortAsc={getClassNamesFor('defendant') === 'ascending'}
-              sortDes={getClassNamesFor('defendant') === 'descending'}
-              isActive={sortConfig?.column === 'defendant'}
-              dataTestid="accusedNameSortButton"
-            />
-          </th>
-          <th className={styles.th}>
-            <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.type)}
-            </Text>
-          </th>
-          <th className={styles.th}>
-            <SortButton
-              title={capitalize(formatMessage(tables.created, { suffix: 'i' }))}
-              onClick={() => requestSort('createdAt')}
-              sortAsc={getClassNamesFor('createdAt') === 'ascending'}
-              sortDes={getClassNamesFor('createdAt') === 'descending'}
-              isActive={sortConfig?.column === 'createdAt'}
-              dataTestid="createdAtSortButton"
-            />
-          </th>
-          <th className={styles.th}>
-            <Text as="span" fontWeight="regular">
-              {formatMessage(tables.state)}
-            </Text>
-          </th>
-          <th className={styles.th}>
-            <SortButton
-              title={capitalize(
-                formatMessage(m.activeRequests.table.headers.hearing, {
-                  suffix: 'i',
-                }),
-              )}
-              onClick={() => requestSort('courtDate')}
-              sortAsc={getClassNamesFor('courtDate') === 'ascending'}
-              sortDes={getClassNamesFor('courtDate') === 'descending'}
-              isActive={sortConfig?.column === 'courtDate'}
-            />
-          </th>
-          <th className={styles.th}></th>
-        </tr>
-      </thead>
-      <LayoutGroup>
-        <tbody>
-          <AnimatePresence>
-            {cases.map((c, i) => (
-              <motion.tr
-                key={c.id}
-                className={styles.tableRowContainer}
-                layout
-                data-testid="custody-cases-table-row"
-                role="button"
-                aria-label="Opna kröfu"
-                aria-disabled={isDeletingCase || isOpeningCaseId === c.id}
-                onClick={() => {
-                  handleOpenCase(c.id)
-                }}
-              >
-                <td className={styles.td}>
-                  {c.appealCaseNumber ? (
-                    <Box display="flex" flexDirection="column">
-                      <Text as="span" variant="small">
-                        {c.appealCaseNumber}
-                      </Text>
-                      <Text as="span" variant="small">
-                        {c.courtCaseNumber}
-                      </Text>
-                      <Text as="span" variant="small">
-                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
-                      </Text>
-                    </Box>
-                  ) : c.courtCaseNumber ? (
-                    <>
-                      <Box component="span" className={styles.blockColumn}>
-                        <Text as="span">{c.courtCaseNumber}</Text>
-                      </Box>
-                      <Text
-                        as="span"
-                        variant="small"
-                        color="dark400"
-                        title={c.policeCaseNumbers?.join(', ')}
-                      >
-                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
-                      </Text>
-                    </>
-                  ) : (
-                    <Text as="span" title={c.policeCaseNumbers?.join(', ')}>
-                      {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
-                    </Text>
-                  )}
-                </td>
-                <td className={styles.td}>
-                  {c.defendants && c.defendants.length > 0 ? (
-                    <>
-                      <Text>
-                        <Box component="span" className={styles.blockColumn}>
-                          {c.defendants[0].name ?? '-'}
-                        </Box>
-                      </Text>
-                      {c.defendants.length === 1 ? (
-                        (!c.defendants[0].noNationalId ||
-                          c.defendants[0].nationalId) && (
-                          <Text>
-                            <Text as="span" variant="small" color="dark400">
-                              {formatDOB(
-                                c.defendants[0].nationalId,
-                                c.defendants[0].noNationalId,
-                              )}
-                            </Text>
-                          </Text>
-                        )
-                      ) : (
-                        <Text as="span" variant="small" color="dark400">
-                          {`+ ${c.defendants.length - 1}`}
+    <>
+      <table className={styles.table} data-testid="activeCasesTable">
+        <thead className={styles.thead}>
+          <tr>
+            <th className={styles.th}>
+              <Text as="span" fontWeight="regular">
+                {formatMessage(tables.caseNumber)}
+              </Text>
+            </th>
+            <th className={styles.th}>
+              <SortButton
+                title={capitalize(
+                  formatMessage(core.defendant, { suffix: 'i' }),
+                )}
+                onClick={() => requestSort('defendant')}
+                sortAsc={getClassNamesFor('defendant') === 'ascending'}
+                sortDes={getClassNamesFor('defendant') === 'descending'}
+                isActive={sortConfig?.column === 'defendant'}
+                dataTestid="accusedNameSortButton"
+              />
+            </th>
+            <th className={styles.th}>
+              <Text as="span" fontWeight="regular">
+                {formatMessage(m.activeRequests.table.headers.type)}
+              </Text>
+            </th>
+            <th className={styles.th}>
+              <SortButton
+                title={capitalize(
+                  formatMessage(tables.created, { suffix: 'i' }),
+                )}
+                onClick={() => requestSort('createdAt')}
+                sortAsc={getClassNamesFor('createdAt') === 'ascending'}
+                sortDes={getClassNamesFor('createdAt') === 'descending'}
+                isActive={sortConfig?.column === 'createdAt'}
+                dataTestid="createdAtSortButton"
+              />
+            </th>
+            <th className={styles.th}>
+              <Text as="span" fontWeight="regular">
+                {formatMessage(tables.state)}
+              </Text>
+            </th>
+            <th className={styles.th}>
+              <SortButton
+                title={capitalize(
+                  formatMessage(m.activeRequests.table.headers.hearing, {
+                    suffix: 'i',
+                  }),
+                )}
+                onClick={() => requestSort('courtDate')}
+                sortAsc={getClassNamesFor('courtDate') === 'ascending'}
+                sortDes={getClassNamesFor('courtDate') === 'descending'}
+                isActive={sortConfig?.column === 'courtDate'}
+              />
+            </th>
+            <th className={styles.th}></th>
+          </tr>
+        </thead>
+        <LayoutGroup>
+          <tbody>
+            <AnimatePresence>
+              {cases.map((c, i) => (
+                <motion.tr
+                  key={c.id}
+                  className={styles.tableRowContainer}
+                  layout
+                  data-testid="custody-cases-table-row"
+                  role="button"
+                  aria-label="Opna kröfu"
+                  aria-disabled={isDeletingCase || isOpeningCaseId === c.id}
+                  onClick={() => {
+                    handleOpenCase(c.id)
+                  }}
+                >
+                  <td className={styles.td}>
+                    {c.appealCaseNumber ? (
+                      <Box display="flex" flexDirection="column">
+                        <Text as="span" variant="small">
+                          {c.appealCaseNumber}
                         </Text>
-                      )}
-                    </>
-                  ) : (
-                    <Text>-</Text>
-                  )}
-                </td>
-                <td className={styles.td}>
-                  <ColumnCaseType
-                    type={c.type}
-                    decision={c?.decision}
-                    parentCaseId={c.parentCaseId}
-                  />
-                </td>
-                <td className={styles.td}>
-                  <Text as="span">
-                    {format(parseISO(c.created ?? ''), 'd.M.y', {
-                      locale: localeIS,
-                    })}
-                  </Text>
-                </td>
-                <td className={styles.td} data-testid="tdTag">
-                  <Box
-                    marginRight={c.appealState ? 1 : 0}
-                    marginBottom={c.appealState ? 1 : 0}
-                  >
-                    <TagCaseState
-                      caseState={c.state}
-                      caseType={c.type}
-                      isCourtRole={isDistrictCourtUser(user)}
-                      isValidToDateInThePast={c.isValidToDateInThePast}
-                      courtDate={c.courtDate}
-                    />
-                  </Box>
-                  {c.appealState && (
-                    <TagAppealState
-                      appealState={c.appealState}
-                      appealRulingDecision={c.appealRulingDecision}
-                    />
-                  )}
-                </td>
-                <td className={styles.td}>
-                  {c.courtDate && (
-                    <>
-                      <Text>
+                        <Text as="span" variant="small">
+                          {c.courtCaseNumber}
+                        </Text>
+                        <Text as="span" variant="small">
+                          {displayFirstPlusRemaining(c.policeCaseNumbers)}
+                        </Text>
+                      </Box>
+                    ) : c.courtCaseNumber ? (
+                      <>
                         <Box component="span" className={styles.blockColumn}>
-                          {capitalize(
-                            format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                              locale: localeIS,
-                            }),
-                          ).replace('dagur', 'd.')}
+                          <Text as="span">{c.courtCaseNumber}</Text>
                         </Box>
-                      </Text>
-                      <Text as="span" variant="small">
-                        kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                      </Text>
-                    </>
-                  )}
-                </td>
-                <td className={styles.td}>
-                  <AnimatePresence exitBeforeEnter initial={false}>
-                    {isOpeningCaseId === c.id && showLoading ? (
-                      <div className={styles.deleteButtonWrapper}>
-                        <LoadingIndicator />
-                      </div>
+                        <Text
+                          as="span"
+                          variant="small"
+                          color="dark400"
+                          title={c.policeCaseNumbers?.join(', ')}
+                        >
+                          {displayFirstPlusRemaining(c.policeCaseNumbers)}
+                        </Text>
+                      </>
                     ) : (
-                      <ContextMenu
-                        menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
-                        items={[
-                          {
-                            title: formatMessage(m.contextMenu.openCase),
-                            onClick: () => handleOpenCase(c.id, true),
-                            icon: 'open',
-                          },
-                          ...(isProsecutionUser(user)
-                            ? [
-                                {
-                                  title: formatMessage(
-                                    m.contextMenu.deleteCase,
-                                  ),
-                                  onClick: async () => {
-                                    if (onDeleteCase) {
-                                      await onDeleteCase(cases[i])
-                                      setDisplayCases((prev) =>
-                                        prev.filter(
-                                          (c) => c.id !== cases[i].id,
-                                        ),
-                                      )
-                                    }
-                                  },
-                                  icon: 'trash' as IconMapIcon,
-                                },
-                              ]
-                            : []),
-                        ]}
-                        disclosure={
-                          <IconButton
-                            icon="ellipsisVertical"
-                            colorScheme="transparent"
-                            onClick={(evt) => {
-                              evt.stopPropagation()
-                            }}
-                          />
-                        }
+                      <Text as="span" title={c.policeCaseNumbers?.join(', ')}>
+                        {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
+                      </Text>
+                    )}
+                  </td>
+                  <td className={styles.td}>
+                    {c.defendants && c.defendants.length > 0 ? (
+                      <>
+                        <Text>
+                          <Box component="span" className={styles.blockColumn}>
+                            {c.defendants[0].name ?? '-'}
+                          </Box>
+                        </Text>
+                        {c.defendants.length === 1 ? (
+                          (!c.defendants[0].noNationalId ||
+                            c.defendants[0].nationalId) && (
+                            <Text>
+                              <Text as="span" variant="small" color="dark400">
+                                {formatDOB(
+                                  c.defendants[0].nationalId,
+                                  c.defendants[0].noNationalId,
+                                )}
+                              </Text>
+                            </Text>
+                          )
+                        ) : (
+                          <Text as="span" variant="small" color="dark400">
+                            {`+ ${c.defendants.length - 1}`}
+                          </Text>
+                        )}
+                      </>
+                    ) : (
+                      <Text>-</Text>
+                    )}
+                  </td>
+                  <td className={styles.td}>
+                    <ColumnCaseType
+                      type={c.type}
+                      decision={c?.decision}
+                      parentCaseId={c.parentCaseId}
+                    />
+                  </td>
+                  <td className={styles.td}>
+                    <Text as="span">
+                      {format(parseISO(c.created ?? ''), 'd.M.y', {
+                        locale: localeIS,
+                      })}
+                    </Text>
+                  </td>
+                  <td className={styles.td} data-testid="tdTag">
+                    <Box
+                      marginRight={c.appealState ? 1 : 0}
+                      marginBottom={c.appealState ? 1 : 0}
+                    >
+                      <TagCaseState
+                        caseState={c.state}
+                        caseType={c.type}
+                        isCourtRole={isDistrictCourtUser(user)}
+                        isValidToDateInThePast={c.isValidToDateInThePast}
+                        courtDate={c.courtDate}
+                      />
+                    </Box>
+                    {c.appealState && (
+                      <TagAppealState
+                        appealState={c.appealState}
+                        appealRulingDecision={c.appealRulingDecision}
                       />
                     )}
-                  </AnimatePresence>
-                </td>
-              </motion.tr>
-            ))}
-          </AnimatePresence>
-        </tbody>
-      </LayoutGroup>
-    </table>
+                  </td>
+                  <td className={styles.td}>
+                    {c.courtDate && (
+                      <>
+                        <Text>
+                          <Box component="span" className={styles.blockColumn}>
+                            {capitalize(
+                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
+                                locale: localeIS,
+                              }),
+                            ).replace('dagur', 'd.')}
+                          </Box>
+                        </Text>
+                        <Text as="span" variant="small">
+                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                        </Text>
+                      </>
+                    )}
+                  </td>
+                  <td className={styles.td}>
+                    <AnimatePresence exitBeforeEnter initial={false}>
+                      {isOpeningCaseId === c.id && showLoading ? (
+                        <div className={styles.deleteButtonWrapper}>
+                          <LoadingIndicator />
+                        </div>
+                      ) : (
+                        <ContextMenu
+                          menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
+                          items={[
+                            {
+                              title: formatMessage(m.contextMenu.openCase),
+                              onClick: () => handleOpenCase(c.id, true),
+                              icon: 'open',
+                            },
+                            ...(isProsecutionUser(user)
+                              ? [
+                                  {
+                                    title: formatMessage(
+                                      m.contextMenu.deleteCase,
+                                    ),
+                                    onClick: () => {
+                                      setRequestToRemoveIndex(i)
+                                      setVisibleModal('DELETE_CASE')
+                                    },
+                                    icon: 'trash' as IconMapIcon,
+                                  },
+                                ]
+                              : []),
+                          ]}
+                          disclosure={
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                              onClick={(evt) => {
+                                evt.stopPropagation()
+                              }}
+                            />
+                          }
+                        />
+                      )}
+                    </AnimatePresence>
+                  </td>
+                </motion.tr>
+              ))}
+            </AnimatePresence>
+          </tbody>
+        </LayoutGroup>
+      </table>
+      {modalVisible === 'DELETE_CASE' && (
+        <Modal
+          title={formatMessage(m.activeRequests.deleteCaseModal.title)}
+          text={formatMessage(m.activeRequests.deleteCaseModal.text)}
+          onPrimaryButtonClick={async () => {
+            if (onDeleteCase && requestToRemoveIndex !== -1) {
+              await onDeleteCase(cases[requestToRemoveIndex])
+              setDisplayCases((prev) =>
+                prev.filter((c) => c.id !== cases[requestToRemoveIndex].id),
+              )
+              setRequestToRemoveIndex(-1)
+              setVisibleModal(undefined)
+            }
+          }}
+          onSecondaryButtonClick={() => {
+            setVisibleModal(undefined)
+          }}
+          primaryButtonText={formatMessage(
+            m.activeRequests.deleteCaseModal.primaryButtonText,
+          )}
+          primaryButtonColorScheme="destructive"
+          secondaryButtonText={formatMessage(
+            m.activeRequests.deleteCaseModal.secondaryButtonText,
+          )}
+          isPrimaryButtonLoading={isDeletingCase}
+        />
+      )}
+    </>
   )
 }
 

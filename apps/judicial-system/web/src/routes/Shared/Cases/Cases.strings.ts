@@ -148,6 +148,29 @@ export const cases = {
           'Notaður sem texti í upplýsingasvæði sem segir að engin mál fundust á heimaskjá fangelsisstarfsmanna.',
       },
     }),
+    deleteCaseModal: defineMessages({
+      title: {
+        id: 'judicial.system.core:cases.active_requests.delete_case_modal.title',
+        defaultMessage: 'Afturkalla mál',
+        description: 'Notaður sem titill í Afturkalla mál modal.',
+      },
+      text: {
+        id: 'judicial.system.core:cases.active_requests.delete_case_modal.text',
+        defaultMessage: 'Ertu viss um að þú viljir afturkalla þetta mál?',
+        description: 'Notaður sem texti í Afturkalla mál modal.',
+      },
+      primaryButtonText: {
+        id: 'judicial.system.core:cases.active_requests.delete_case_modal.primary_button_text',
+        defaultMessage: 'Afturkalla',
+        description:
+          'Notaður sem texti á Afturkalla mál takka í Afturkalla mál.',
+      },
+      secondaryButtonText: {
+        id: 'judicial.system.core:cases.active_requests.delete_case_modal.secondary_button_text',
+        defaultMessage: 'Hætta við',
+        description: 'Notaður sem texti á Halda áfram takka í Afturkalla mál.',
+      },
+    }),
   },
   pastRequests: {
     table: {
