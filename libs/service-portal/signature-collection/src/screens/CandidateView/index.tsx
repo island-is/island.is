@@ -17,6 +17,7 @@ import { Skeleton } from '../skeletons'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import copyToClipboard from 'copy-to-clipboard'
+import SignedList from '../../components/SignedList'
 
 const CandidateView = () => {
   useNamespaces('sp.signatureCollection')
@@ -52,7 +53,7 @@ const CandidateView = () => {
             </Button>
           )}
           <Box marginTop={[2, 7]}>
-            <Text variant="h4" marginBottom={2}>
+            <Text variant="h3" marginBottom={2}>
               {formatMessage(m.collectionTitle)}
             </Text>
             <Box
@@ -84,7 +85,12 @@ const CandidateView = () => {
                 {formatMessage(m.copyLinkButton)}
               </Button>
             </Box>
-            <Text marginTop={5} marginBottom={2}>
+
+            {/* Signed list */}
+            <SignedList />
+
+            {/* Candidate created lists */}
+            <Text marginTop={[5, 7]} marginBottom={2}>
               {formatMessage(m.myListsDescription)}
             </Text>
             <Stack space={[3, 5]}>

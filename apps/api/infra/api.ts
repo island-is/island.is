@@ -251,6 +251,7 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
+      ENHANCED_FETCH_DEBUG_CACHE: 'clients-statistics',
     })
 
     .secrets({
