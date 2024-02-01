@@ -8,6 +8,7 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
+  buildImageField,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -79,6 +80,7 @@ import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
+import ManWithStrollerIllustration from '../assets/Images/ManWithStrollerIllustration'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -298,25 +300,38 @@ export const ParentalLeaveForm: Form = buildForm({
                     )
                   },
                 }),
-                buildCustomField({
+                buildRadioField({
+                  id: 'payments.useUnion',
+                  title: parentalLeaveFormMessages.shared.unionName,
+                  description:
+                    parentalLeaveFormMessages.shared.unionDescription,
                   condition: (answers) => {
                     const { applicationType } = getApplicationAnswers(answers)
 
                     return applicationType === PARENTAL_LEAVE
                   },
-                  component: 'UseUnion',
-                  id: 'useUnion',
-                  title: parentalLeaveFormMessages.shared.unionName,
-                  description:
-                    parentalLeaveFormMessages.shared.unionDescription,
+                  space: 6,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-union',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-union',
+                      value: NO,
+                    },
+                  ],
                 }),
                 buildAsyncSelectField({
                   condition: (answers) => {
-                    const { applicationType } = getApplicationAnswers(answers)
-
+                    const { applicationType, useUnion } =
+                      getApplicationAnswers(answers)
                     return (
-                      applicationType === PARENTAL_LEAVE &&
-                      answers.useUnion === YES
+                      applicationType === PARENTAL_LEAVE && useUnion === YES
                     )
                   },
                   title: parentalLeaveFormMessages.shared.union,
@@ -341,27 +356,41 @@ export const ParentalLeaveForm: Form = buildForm({
                     )
                   },
                 }),
-                buildCustomField({
-                  condition: (answers) => {
-                    const { applicationType } = getApplicationAnswers(answers)
-
-                    return applicationType === PARENTAL_LEAVE
-                  },
-                  component: 'UsePrivatePensionFund',
-                  id: 'usePrivatePensionFund',
+                buildRadioField({
+                  id: 'payments.usePrivatePensionFund',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundName,
                   description:
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
-                }),
-                buildAsyncSelectField({
                   condition: (answers) => {
                     const { applicationType } = getApplicationAnswers(answers)
 
+                    return applicationType === PARENTAL_LEAVE
+                  },
+                  space: 6,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-private-pension-fund',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-private-pension-fund',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildAsyncSelectField({
+                  condition: (answers) => {
+                    const { applicationType, usePrivatePensionFund } =
+                      getApplicationAnswers(answers)
                     return (
                       applicationType === PARENTAL_LEAVE &&
-                      answers.usePrivatePensionFund === YES
+                      usePrivatePensionFund === YES
                     )
                   },
                   id: 'payments.privatePensionFund',
@@ -387,11 +416,11 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildSelectField({
                   condition: (answers) => {
-                    const { applicationType } = getApplicationAnswers(answers)
-
+                    const { applicationType, usePrivatePensionFund } =
+                      getApplicationAnswers(answers)
                     return (
                       applicationType === PARENTAL_LEAVE &&
-                      answers.usePrivatePensionFund === YES
+                      usePrivatePensionFund === YES
                     )
                   },
                   id: 'payments.privatePensionFundPercentage',
@@ -1303,12 +1332,19 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'leavePeriods',
       title: getPeriodSectionTitle,
       children: [
-        buildCustomField({
+        buildMultiField({
           id: 'periodsImageScreen',
           title: getPeriodImageTitle,
-          component: 'PeriodsSectionImage',
-          doesNotRequireAnswer: true,
+          children: [
+            buildImageField({
+              id: 'leavePeriods.image',
+              title: '',
+              image: ManWithStrollerIllustration,
+              imageWidth: 'auto',
+            }),
+          ],
         }),
+
         buildSubSection({
           id: 'addPeriods',
           title: parentalLeaveFormMessages.leavePlan.subSection,

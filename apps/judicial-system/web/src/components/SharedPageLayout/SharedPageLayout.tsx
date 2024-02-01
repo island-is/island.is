@@ -8,15 +8,19 @@ const SharedPageLayout: React.FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
   return (
-    <Box paddingX={[2, 2, 4]}>
-      <Box
-        className={styles.casesContainer}
-        marginX={'auto'}
-        marginY={[4, 4, 12]}
-      >
-        {children}
+    <>
+      <Box paddingX={[2, 2, 4]}>
+        <Box
+          className={styles.casesContainer}
+          marginX={'auto'}
+          marginY={[4, 4, 12]}
+        >
+          {children}
+        </Box>
       </Box>
-    </Box>
+      {/* Here we will mount our modal portal */}
+      <div id="modal" data-testid="modal" />
+    </>
   )
 }
 
