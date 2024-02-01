@@ -1,0 +1,54 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "../../apps/form-builder/.next/types/**/*.ts",
+    "../../dist/apps/form-builder/.next/types/**/*.ts",
+    "next-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "jest.config.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
+}
+// {
+//   "extends": "../../tsconfig.base.json",
+//   "compilerOptions": {
+//     "jsx": "preserve",
+//     "allowJs": true,
+//     "esModuleInterop": true,
+//     "allowSyntheticDefaultImports": true,
+//     "types": ["node", "jest"],
+//     "strict": false,
+//     "forceConsistentCasingInFileNames": true,
+//     "noEmit": true,
+//     "resolveJsonModule": true,
+//     "isolatedModules": true,
+//     "incremental": true,
+//   },
+//   "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts", "pages/FormBuilder/components/NewAttribute/index.2tsx"],
+//   "exclude": ["node_modules"]
+// }
