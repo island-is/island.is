@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const menu = style({
-  width: 229,
+  minWidth: 229,
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
   alignItems: 'flex-start',
 
