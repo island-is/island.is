@@ -12,7 +12,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../..'
+import { Case } from '../../models/case.model'
 import { canUserAccessCase } from '../case.filter'
 import { verifyNoAccess, verifyReadAccess } from './verify'
 

@@ -2,12 +2,13 @@ import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { DefendantPlea } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
+  processing as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import {
   CommentsInput,
   FormContentContainer,
   FormContext,
@@ -15,14 +16,10 @@ import {
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
-  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
   CaseState,
   CaseTransition,
-  Institution,
-  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -36,34 +33,15 @@ import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Processing: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { setAndSendCaseToServer, transitionCase } = useCase()
+  const { transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { districtCourts } = useInstitution()
   const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
-
-  const handleCourtChange = (court: Institution) => {
-    if (workingCase) {
-      setAndSendCaseToServer(
-        [
-          {
-            courtId: court.id,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      return true
-    }
-
-    return false
-  }
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -112,11 +90,7 @@ const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
         <ProsecutorSection />
         <Box component="section" marginBottom={5}>
-          <SelectCourt
-            workingCase={workingCase}
-            courts={districtCourts}
-            onChange={handleCourtChange}
-          />
+          <SelectCourt />
         </Box>
         {workingCase.defendants && (
           <Box component="section" marginBottom={5}>

@@ -8,9 +8,14 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { getAppealedDate } from '@island.is/judicial-system/types'
-
 import { CaseListEntry } from '../models/caseList.model'
+
+function getAppealedDate(
+  prosecutorPostponedAppealDate?: string,
+  accusedPostponedAppealDate?: string,
+): string | undefined {
+  return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
+}
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {

@@ -8,8 +8,8 @@ import {
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { TempCase as Case } from '../types'
 import { isBusiness } from './stepHelper'
 
 export type Validation =
