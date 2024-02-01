@@ -77,7 +77,7 @@ jobs:
       - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
         run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
+          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | (sha1sum || shasum) -t | cut -f1 -d" ")
           echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
           export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
