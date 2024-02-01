@@ -2,13 +2,11 @@ import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  processing as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import {
+  BlueBox,
   CommentsInput,
   FormContentContainer,
   FormContext,
@@ -16,10 +14,13 @@ import {
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   CaseTransition,
+  DefendantPlea,
+  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -32,6 +33,7 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
+import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 
 const Processing: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
