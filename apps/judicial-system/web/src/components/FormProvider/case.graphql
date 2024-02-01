@@ -240,6 +240,7 @@ query Case($input: CaseQueryInput!) {
     prosecutorsOffice {
       id
       name
+      policeCaseNumberPrefix
     }
   }
 }
