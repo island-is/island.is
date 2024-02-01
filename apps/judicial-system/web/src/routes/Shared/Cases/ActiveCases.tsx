@@ -6,7 +6,7 @@ import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   capitalize,
@@ -340,43 +340,45 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         <LoadingIndicator />
                       </div>
                     ) : (
-                      isProsecutionUser(user) &&
-                      (c.state === CaseState.NEW ||
-                        c.state === CaseState.DRAFT ||
-                        c.state === CaseState.SUBMITTED ||
-                        c.state === CaseState.RECEIVED) && (
-                        <ContextMenu
-                          menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
-                          items={[
-                            {
-                              title: formatMessage(m.contextMenu.openCase),
-                              onClick: () => handleOpenCase(c.id, true),
-                              icon: 'open',
-                            },
-                            {
-                              title: formatMessage(m.contextMenu.deleteCase),
-                              onClick: async () => {
-                                if (onDeleteCase) {
-                                  await onDeleteCase(cases[i])
-                                  setDisplayCases((prev) =>
-                                    prev.filter((c) => c.id !== cases[i].id),
-                                  )
-                                }
-                              },
-                              icon: 'trash',
-                            },
-                          ]}
-                          disclosure={
-                            <IconButton
-                              icon="ellipsisVertical"
-                              colorScheme="transparent"
-                              onClick={(evt) => {
-                                evt.stopPropagation()
-                              }}
-                            />
-                          }
-                        />
-                      )
+                      <ContextMenu
+                        menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
+                        items={[
+                          {
+                            title: formatMessage(m.contextMenu.openCase),
+                            onClick: () => handleOpenCase(c.id, true),
+                            icon: 'open',
+                          },
+                          ...(isProsecutionUser(user)
+                            ? [
+                                {
+                                  title: formatMessage(
+                                    m.contextMenu.deleteCase,
+                                  ),
+                                  onClick: async () => {
+                                    if (onDeleteCase) {
+                                      await onDeleteCase(cases[i])
+                                      setDisplayCases((prev) =>
+                                        prev.filter(
+                                          (c) => c.id !== cases[i].id,
+                                        ),
+                                      )
+                                    }
+                                  },
+                                  icon: 'trash' as IconMapIcon,
+                                },
+                              ]
+                            : []),
+                        ]}
+                        disclosure={
+                          <IconButton
+                            icon="ellipsisVertical"
+                            colorScheme="transparent"
+                            onClick={(evt) => {
+                              evt.stopPropagation()
+                            }}
+                          />
+                        }
+                      />
                     )}
                   </AnimatePresence>
                 </td>
