@@ -1,4 +1,4 @@
-import { service } from './dsl'
+import { service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -13,7 +13,6 @@ const Staging: EnvironmentConfig = {
   featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 2,
-  defaultMinDisruption: 1,
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
@@ -21,8 +20,8 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('PodDisruptionBudget definitions', () => {
-  it('Support classic replicaCount definition', async () => {
-    const sut = service('api')
+  it('Service should not contain podDisruptionBudget', async () => {
+    const sut: ServiceBuilder<'api'> = service('api')
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
@@ -30,27 +29,12 @@ describe('PodDisruptionBudget definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].replicaCount).toEqual({
-      min: 2,
-      max: 3,
-      default: 2,
-    })
-    expect(result.serviceDef[0].hpa).toEqual({
-      scaling: {
-        replicas: {
-          min: 2,
-          max: 3,
-        },
-        metric: { cpuAverageUtilization: 70, nginxRequestsIrate: 5 },
-      },
-    })
+    const svc = result.serviceDef[0]
+    expect(svc).not.toHaveProperty('podDisruptionBudget.minAvailable')
   })
-  it('Support explicit HPA definition', async () => {
-    const sut = service('api').replicaCount({
-      min: 1,
-      max: 2,
-      default: 2,
-      scalingMagicNumber: 5,
+  it('Service should have minAvailable: 1', async () => {
+    const sut: ServiceBuilder<'api'> = service('api').podDisruption({
+      minAvailable: 1,
     })
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
@@ -58,20 +42,7 @@ describe('PodDisruptionBudget definitions', () => {
       runtime: new Kubernetes(Staging),
       env: Staging,
     })) as SerializeSuccess<HelmService>
-
-    expect(result.serviceDef[0].replicaCount).toEqual({
-      min: 1,
-      max: 2,
-      default: 2,
-    })
-    expect(result.serviceDef[0].hpa).toEqual({
-      scaling: {
-        replicas: {
-          min: 1,
-          max: 2,
-        },
-        metric: { nginxRequestsIrate: 5, cpuAverageUtilization: 70 },
-      },
-    })
+    const pdb = result.serviceDef[0].podDisruptionBudget
+    expect(pdb?.minAvailable).toEqual(1)
   })
 })

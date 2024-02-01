@@ -5,6 +5,7 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'air-discount-scheme-api'> => {
   return service('air-discount-scheme-api')
     .namespace('air-discount-scheme')
+    .podDisruption({ minAvailable: 1 })
     .serviceAccount()
     .env({
       AUTH_AUDIENCE: {
@@ -23,10 +24,12 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       ELASTIC_NODE: {
-        dev: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
+        dev:
+          'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
         staging:
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com',
-        prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
+        prod:
+          'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
       },
       BACKEND_URL: ref((h) => `http://${h.svc(services.adsBackend)}`),
       CONTENTFUL_HOST: {
