@@ -95,6 +95,7 @@ import {
   TryggingastofnunHeader,
 } from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
+import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
@@ -102,7 +103,6 @@ import {
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import { liveChatIncConfig, watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
-import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 
 interface NavigationData {
   title: string
@@ -125,6 +125,7 @@ interface WrapperProps {
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
   showReadSpeaker?: boolean
+  showFooterInMinimalView?: boolean
 }
 
 interface HeaderProps {
@@ -882,6 +883,7 @@ export const OrganizationWrapper: React.FC<
   showSecondaryMenu = true,
   showExternalLinks = false,
   showReadSpeaker = true,
+  showFooterInMinimalView = false,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -1149,16 +1151,17 @@ export const OrganizationWrapper: React.FC<
         </GridContainer>
       )}
       {!!mainContent && <Box className="rs_read">{children}</Box>}
-      {!minimal && (
-        <Box className="rs_read">
-          <OrganizationFooter
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            organizations={[organizationPage.organization]}
-            force={true}
-          />
-        </Box>
-      )}
+      {!minimal ||
+        (minimal && showFooterInMinimalView && (
+          <Box className="rs_read">
+            <OrganizationFooter
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              organizations={[organizationPage.organization]}
+              force={true}
+            />
+          </Box>
+        ))}
       <OrganizationChatPanel
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
