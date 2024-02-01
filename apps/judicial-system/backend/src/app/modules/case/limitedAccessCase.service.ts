@@ -24,14 +24,16 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant, DefendantService } from '../defendant'
-import { CaseFile } from '../file'
+import {
+  CaseFile,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+} from '../file'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'

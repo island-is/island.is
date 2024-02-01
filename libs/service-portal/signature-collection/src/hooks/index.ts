@@ -32,7 +32,7 @@ export const useGetSignatureList = (listId: string) => {
     },
   )
   const listInfo =
-    (signatureList?.signatureCollectionList as SignatureCollectionList) ?? {}
+    (signatureList?.signatureCollectionList as SignatureCollectionList) ?? null
   return { listInfo, refetchSignatureList, loadingList }
 }
 
@@ -121,12 +121,11 @@ export const useGetCurrentCollection = () => {
     loading: loadingCurrentCollection,
     refetch: refetchCurrentCollection,
   } = useQuery<{
-    signatureCollectionCurrentCollection?: SignatureCollection
+    signatureCollectionCurrent?: SignatureCollection
   }>(GetCurrentCollection)
-
   const currentCollection =
-    (getCurrentCollection?.signatureCollectionCurrentCollection as SignatureCollection) ??
-    false
+    (getCurrentCollection?.signatureCollectionCurrent as SignatureCollection) ??
+    null
   return {
     currentCollection,
     loadingCurrentCollection,

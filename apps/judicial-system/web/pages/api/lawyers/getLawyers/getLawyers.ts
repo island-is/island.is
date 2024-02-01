@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import type { Lawyer } from '@island.is/judicial-system-web/src/types'
-
-import { mapToLawyer } from '../utils'
+import { type Lawyer, mapToLawyer } from '@island.is/judicial-system/types'
 
 async function getLawyers(): Promise<Lawyer[]> {
   const response = await fetch('https://lmfi.is/api/lawyers', {
