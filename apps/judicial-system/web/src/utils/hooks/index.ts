@@ -27,5 +27,4 @@ export {
 } from './useIndictmentCounts'
 export { default as useSections } from './useSections'
 export { default as useCaseList } from './useCaseList'
-export { default as useStringHelpers } from './useStringHelpers/useStringHelpers'
 export { default as useNationalRegistry } from './useNationalRegistry'

@@ -107,7 +107,7 @@ const SigneeView = () => {
                   new Date(signedList.endTime) < new Date()
                     ? {
                         label: formatMessage(m.collectionClosed),
-                        variant: 'purple',
+                        variant: 'red',
                         outlined: true,
                       }
                     : undefined
@@ -121,11 +121,20 @@ const SigneeView = () => {
                 onCloseModal={() => setModalIsOpen(false)}
               >
                 <Text variant="h2" marginTop={[5, 0]}>
+                  {formatMessage(m.unSignList)}
+                </Text>
+                <Text variant="default" marginTop={2}>
                   {formatMessage(m.unSignModalMessage)}
                 </Text>
-                <Box marginTop={10} display="flex" justifyContent="center">
+                <Box
+                  marginTop={[7, 10]}
+                  marginBottom={5}
+                  display="flex"
+                  justifyContent="center"
+                >
                   <Button
                     loading={loading}
+                    colorScheme="destructive"
                     onClick={() => {
                       onUnSignList()
                     }}
@@ -158,7 +167,7 @@ const SigneeView = () => {
                     }
                     text={formatMessage(m.collectionTitle)}
                     cta={
-                      new Date(list.endTime) > new Date()
+                      new Date(list.endTime) > new Date() && !list.maxReached
                         ? {
                             label: formatMessage(m.signList),
                             variant: 'text',
@@ -176,7 +185,13 @@ const SigneeView = () => {
                       new Date(list.endTime) < new Date()
                         ? {
                             label: formatMessage(m.collectionClosed),
-                            variant: 'purple',
+                            variant: 'red',
+                            outlined: true,
+                          }
+                        : list.maxReached
+                        ? {
+                            label: formatMessage(m.collectionMaxReached),
+                            variant: 'red',
                             outlined: true,
                           }
                         : undefined

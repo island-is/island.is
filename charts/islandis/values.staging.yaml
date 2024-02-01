@@ -31,10 +31,10 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -54,9 +54,9 @@ air-discount-scheme-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -116,10 +116,10 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -162,9 +162,9 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -211,10 +211,10 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 20
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -237,9 +237,9 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '200m'
@@ -311,6 +311,7 @@ api:
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
+    USER_NOTIFICATION_CLIENT_URL: 'http://user-notification-xrd.internal.staging01.devland.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -427,11 +428,11 @@ api:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '600m'
       memory: '2048Mi'
     requests:
-      cpu: '150m'
-      memory: '512Mi'
+      cpu: '250m'
+      memory: '896Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -576,6 +577,7 @@ application-system-api:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
+    WORKPOINT_ARBORG_SERVICE_PATH: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
@@ -1491,6 +1493,7 @@ namespaces:
     - 'user-notification'
     - 'license-api'
     - 'services-sessions'
+    - 'services-university-gateway'
 portals-admin:
   enabled: true
   env:
@@ -2334,6 +2337,206 @@ services-sessions-worker:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/sessions-worker'
     create: true
     name: 'sessions-worker'
+services-university-gateway:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_university_gateway'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_university_gateway'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'services-university-gateway.internal.staging01.devland.is'
+          paths:
+            - '/api'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        name: 'migrations'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+      - args:
+          - 'sequelize-cli'
+          - 'db:seed:all'
+        command:
+          - 'npx'
+        name: 'seed'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_university_gateway'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'services_university_gateway'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+  namespace: 'services-university-gateway'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '384Mi'
+    requests:
+      cpu: '50m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-university-gateway'
+    create: true
+    name: 'services-university-gateway'
+services-university-gateway-worker:
+  args:
+    - 'main.js'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_university_gateway'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_university_gateway'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+  namespace: 'services-university-gateway'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '384Mi'
+    requests:
+      cpu: '50m'
+      memory: '256Mi'
+  schedule: '0 2 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-university-gateway-worker'
+    create: true
+    name: 'services-university-gateway-worker'
 skilavottord-web:
   enabled: true
   env:
@@ -2560,10 +2763,10 @@ user-notification:
     min: 1
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '384Mi'
     requests:
-      cpu: '15m'
+      cpu: '150m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2581,48 +2784,32 @@ user-notification:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
     create: true
     name: 'user-notification'
-user-notification-worker:
+user-notification-cleanup-worker:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
-    - '--job=worker'
+    - '--job=cleanup'
   command:
     - 'node'
   enabled: true
   env:
-    CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    EMAIL_REGION: 'eu-west-1'
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    MAIN_QUEUE_NAME: 'user-notification'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
-    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
-    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
-    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
-    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
-    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
-    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2671,6 +2858,108 @@ user-notification-worker:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '@midnight'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-cleanup-worker'
+    create: true
+    name: 'user-notification-cleanup-worker'
+user-notification-worker:
+  args:
+    - '--no-experimental-fetch'
+    - 'main.js'
+    - '--job=worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    CONTENTFUL_HOST: 'cdn.contentful.com'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'user_notification'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'user_notification'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_REGION: 'eu-west-1'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    MAIN_QUEUE_NAME: 'user-notification'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    SERVERSIDE_FEATURES_ON: ''
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
+    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/readiness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 2
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'user_notification'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'user_notification'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+  namespace: 'user-notification'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 2
+    min: 1
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '384Mi'
+    requests:
+      cpu: '150m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
@@ -2696,7 +2985,7 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'staging'
-    NODE_OPTIONS: '--max-old-space-size=460'
+    NODE_OPTIONS: '--max-old-space-size=691'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
   grantNamespaces:
@@ -2704,6 +2993,7 @@ web:
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
+    - 'search-indexer'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2711,7 +3001,7 @@ web:
       path: '/liveness'
       timeoutSeconds: 3
     readiness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/readiness'
       timeoutSeconds: 3
   hpa:
@@ -2744,10 +3034,10 @@ web:
   resources:
     limits:
       cpu: '400m'
-      memory: '512Mi'
+      memory: '768Mi'
     requests:
-      cpu: '100m'
-      memory: '256Mi'
+      cpu: '200m'
+      memory: '384Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'

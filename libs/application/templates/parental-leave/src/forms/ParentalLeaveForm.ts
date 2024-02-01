@@ -1,6 +1,7 @@
 import addDays from 'date-fns/addDays'
 
 import {
+  buildAlertMessageField,
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
@@ -40,9 +41,9 @@ import {
   getStartDateTitle,
   getMultipleBirthRequestDays,
   getMinimumStartDate,
-  getLastDayOfLastMonth,
   allowOtherParentToUsePersonalAllowance,
   getBeginningOfMonth3MonthsAgo,
+  getOtherParentOptions,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -74,7 +75,6 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-import { YesOrNo } from '../types'
 import {
   formatPhoneNumber,
   removeCountryCode,
@@ -183,10 +183,10 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
               children: [
-                buildCustomField({
-                  component: 'OtherParent',
+                buildRadioField({
                   id: 'otherParentObj.chooseOtherParent',
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
+                  options: (application) => getOtherParentOptions(application),
                 }),
                 buildTextField({
                   id: 'otherParentObj.otherParentName',
@@ -417,23 +417,48 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.personalAllowance.description,
               children: [
-                buildCustomField({
-                  component: 'PersonalAllowance',
+                buildRadioField({
                   id: 'personalAllowance.usePersonalAllowance',
                   title: parentalLeaveFormMessages.personalAllowance.useYours,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-personal-finance',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-personal-finance',
+                      value: NO,
+                    },
+                  ],
                 }),
-                buildCustomField({
-                  component: 'PersonalUseAsMuchAsPossible',
+                buildRadioField({
                   id: 'personalAllowance.useAsMuchAsPossible',
+                  title:
+                    parentalLeaveFormMessages.personalAllowance
+                      .useAsMuchAsPossible,
+                  width: 'half',
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-as-much-as-possible',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-as-much-as-possible',
+                      value: NO,
+                    },
+                  ],
                   condition: (answers) =>
                     (
                       answers as {
                         personalAllowance: { usePersonalAllowance: string }
                       }
                     )?.personalAllowance?.usePersonalAllowance === YES,
-                  title:
-                    parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossible,
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',
@@ -461,6 +486,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '1%',
                   variant: 'number',
                   width: 'half',
+                  maxLength: 4,
                 }),
               ],
             }),
@@ -479,15 +505,41 @@ export const ParentalLeaveForm: Form = buildForm({
                 )
               },
               children: [
-                buildCustomField({
-                  component: 'PersonalAllowance',
+                buildRadioField({
                   id: 'personalAllowanceFromSpouse.usePersonalAllowance',
                   title:
                     parentalLeaveFormMessages.personalAllowance.useFromSpouse,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      dataTestId: 'use-personal-finance',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      dataTestId: 'dont-use-personal-finance',
+                      value: NO,
+                    },
+                  ],
                 }),
-                buildCustomField({
-                  component: 'SpouseUseAsMuchAsPossible',
+                buildRadioField({
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
+                  title:
+                    parentalLeaveFormMessages.personalAllowance
+                      .useAsMuchAsPossibleFromSpouse,
+                  width: 'half',
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
+                  ],
                   condition: (answers) =>
                     (
                       answers as {
@@ -497,9 +549,6 @@ export const ParentalLeaveForm: Form = buildForm({
                       }
                     )?.personalAllowanceFromSpouse?.usePersonalAllowance ===
                       YES && allowOtherParent(answers),
-                  title:
-                    parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossibleFromSpouse,
                 }),
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
@@ -532,52 +581,93 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '1%',
                   variant: 'number',
                   width: 'half',
+                  maxLength: 4,
                 }),
               ],
             }),
           ],
         }),
         buildSubSection({
+          id: 'employmentSubSection',
+          title: parentalLeaveFormMessages.employer.subSection,
           condition: (answers) => {
             const { applicationType } = getApplicationAnswers(answers)
             return applicationType === PARENTAL_LEAVE
           },
-          id: 'selfEmployed',
-          title: parentalLeaveFormMessages.employer.subSection,
           children: [
             buildMultiField({
-              id: 'isSelfEmployed.benefits',
+              id: 'employment',
               title: '',
               children: [
-                buildCustomField({
-                  component: 'SelfEmployed',
-                  id: 'isSelfEmployed',
-                  childInputIds: [
-                    'isReceivingUnemploymentBenefits',
-                    'isSelfEmployed',
-                  ],
+                buildDescriptionField({
+                  id: 'employment.isSelfEmployed.description',
                   title: parentalLeaveFormMessages.selfEmployed.title,
                   description:
                     parentalLeaveFormMessages.selfEmployed.description,
+                  titleVariant: 'h2',
                 }),
-                buildCustomField({
-                  component: 'UnEmploymentBenefits',
-                  id: 'isReceivingUnemploymentBenefits',
+                buildRadioField({
+                  id: 'employment.isSelfEmployed',
+                  title: '',
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildDescriptionField({
+                  id: 'employment.isReceivingUnemploymentBenefits.description',
                   title:
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsTitle,
                   description:
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsDescription,
-                  condition: (answers) =>
-                    (
-                      answers as {
-                        isSelfEmployed: string
-                      }
-                    )?.isSelfEmployed !== YES,
+                  titleVariant: 'h2',
+                  condition: (answers) => {
+                    const { isSelfEmployed } = getApplicationAnswers(answers)
+                    return isSelfEmployed === NO
+                  },
+                }),
+                buildAlertMessageField({
+                  id: 'employment.isReceivingUnemploymentBenefits.alertMessage',
+                  title: parentalLeaveFormMessages.employer.alertTitle,
+                  message: parentalLeaveFormMessages.employer.alertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  condition: (answers) => {
+                    const { isSelfEmployed } = getApplicationAnswers(answers)
+                    return isSelfEmployed === NO
+                  },
+                }),
+                buildRadioField({
+                  id: 'employment.isReceivingUnemploymentBenefits',
+                  title: '',
+                  width: 'half',
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
+                  ],
+                  condition: (answers) => {
+                    const { isSelfEmployed } = getApplicationAnswers(answers)
+                    return isSelfEmployed === NO
+                  },
                 }),
                 buildSelectField({
-                  id: 'unemploymentBenefits',
+                  id: 'employment.unemploymentBenefits',
                   title:
                     parentalLeaveFormMessages.employer.unemploymentBenefits,
                   options: [
@@ -598,12 +688,15 @@ export const ParentalLeaveForm: Form = buildForm({
                       value: UnEmployedBenefitTypes.other,
                     },
                   ],
-                  condition: (answers) =>
-                    (
-                      answers as {
-                        isReceivingUnemploymentBenefits: string
-                      }
-                    )?.isReceivingUnemploymentBenefits === YES,
+                  condition: (answers) => {
+                    const { isSelfEmployed, isReceivingUnemploymentBenefits } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      isSelfEmployed === NO &&
+                      isReceivingUnemploymentBenefits === YES
+                    )
+                  },
                 }),
               ],
             }),
@@ -789,17 +882,7 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               condition: (answers) => {
-                const isSelfEmployed =
-                  (
-                    answers as {
-                      employer: {
-                        isSelfEmployed: string
-                      }
-                    }
-                  )?.employer?.isSelfEmployed === YES
-                const isNewSelfEmployed =
-                  (answers as { isSelfEmployed: string })?.isSelfEmployed ===
-                  YES
+                const { isSelfEmployed } = getApplicationAnswers(answers)
                 const hasOldSelfEmployedFile =
                   (
                     answers as {
@@ -811,10 +894,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   )?.employer?.selfEmployed?.file?.length > 0
 
-                return (
-                  (isSelfEmployed || isNewSelfEmployed) &&
-                  !hasOldSelfEmployedFile
-                )
+                return isSelfEmployed === YES && !hasOldSelfEmployedFile
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
@@ -856,30 +936,18 @@ export const ParentalLeaveForm: Form = buildForm({
               introduction:
                 parentalLeaveFormMessages.attachmentScreen.benefitDescription,
               condition: (answers) => {
-                const isReceivingUnemploymentBenefits =
-                  (
-                    answers as {
-                      isReceivingUnemploymentBenefits: YesOrNo
-                    }
-                  )?.isReceivingUnemploymentBenefits === YES
-                const unemploymentBenefitsFromUnion =
-                  (
-                    answers as {
-                      unemploymentBenefits: string
-                    }
-                  )?.unemploymentBenefits === UnEmployedBenefitTypes.union
-                const unemploymentBenefitsFromXjúkratryggingar =
-                  (
-                    answers as {
-                      unemploymentBenefits: string
-                    }
-                  )?.unemploymentBenefits ===
-                  UnEmployedBenefitTypes.healthInsurance
+                const {
+                  isReceivingUnemploymentBenefits,
+                  isSelfEmployed,
+                  unemploymentBenefits,
+                } = getApplicationAnswers(answers)
 
                 return (
-                  isReceivingUnemploymentBenefits &&
-                  (unemploymentBenefitsFromUnion ||
-                    unemploymentBenefitsFromXjúkratryggingar)
+                  isSelfEmployed === NO &&
+                  isReceivingUnemploymentBenefits === YES &&
+                  (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+                    unemploymentBenefits ===
+                      UnEmployedBenefitTypes.healthInsurance)
                 )
               },
               maxSize: FILE_SIZE_LIMIT,

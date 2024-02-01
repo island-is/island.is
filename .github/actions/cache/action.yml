@@ -22,16 +22,21 @@ name: 'Cache'
 description: 'Cache with retry'
 inputs:
   path:
+    description: 'path'
     required: true
   key:
+    description: 'key'
     required: true
   retry:
+    description: 'retry'
     required: false
-    default: 2
+    default: '2'
 outputs:
   success:
+    description: 'success'
     value: ${{ steps.computed_outputs.outputs.success }}
   cache-hit:
+    description: 'cache-hit'
     value: ${{ steps.computed_outputs.outputs.cache-hit }}
 runs:
   using: 'composite'

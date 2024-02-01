@@ -9,7 +9,6 @@ import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { getApplicationAnswers } from '../../lib/additionalSupportForTheElderlyUtils'
 import { Comment } from './review-groups/Comment'
 import { Period } from './review-groups/Period'
 import { Attachments } from './review-groups/Attachments'
@@ -34,7 +33,6 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const { comment } = getApplicationAnswers(application.answers)
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
@@ -160,7 +158,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <Payment {...childProps} />
       <Period {...childProps} />
-      {comment && <Comment {...childProps} />}
+      <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
   )

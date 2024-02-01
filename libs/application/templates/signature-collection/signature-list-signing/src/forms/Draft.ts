@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
-  buildSubSection,
   buildSubmitField,
   buildTextField,
   getValueViaPath,
@@ -14,11 +13,10 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import { List } from '../lib/constants'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
-  title: m.applicationName,
+  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,
@@ -34,76 +32,93 @@ export const Draft: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'signeeInfo',
-      title: m.information,
-
+      id: 'selectCandidateSection',
+      title: m.selectCandidate,
+      condition: (_, externalData) => {
+        const lists = getValueViaPath(
+          externalData,
+          'getList.data',
+          [],
+        ) as SignatureCollectionList[]
+        return lists.length > 1
+      },
       children: [
-        buildSubSection({
-          id: 'selectCandidate',
+        buildMultiField({
+          id: 'selectCandidateSection',
           title: m.selectCandidate,
-          condition: (_, externalData) => {
-            const lists = getValueViaPath(
-              externalData,
-              'getList.data',
-              [],
-            ) as SignatureCollectionList[]
-            return lists.length > 1
-          },
+          description: m.selectCandidateDescription,
           children: [
-            buildMultiField({
-              id: 'selectCandidate',
-              title: m.selectCandidate,
-              description: m.selectCandidateDescription,
-              children: [
-                buildRadioField({
-                  id: 'candidate.name',
-                  title: '',
-                  defaultValue: ({ externalData }: Application) => {
-                    const lists = getValueViaPath(
-                      externalData,
-                      'getList.data',
-                      [],
-                    ) as SignatureCollectionList[]
-                    return lists[0].id
-                  },
-                  options: ({
-                    externalData: {
-                      getList: { data },
-                    },
-                  }) => {
-                    return (data as SignatureCollectionList[]).map((list) => ({
-                      value: list.title,
-                      label: list.title,
-                    }))
-                  },
-                }),
-              ],
+            buildRadioField({
+              id: 'listId',
+              title: '',
+              backgroundColor: 'white',
+              defaultValue: '',
+              required: true,
+              options: ({
+                externalData: {
+                  getList: { data },
+                },
+              }) => {
+                return (data as SignatureCollectionList[]).map((list) => ({
+                  value: list.id,
+                  label: list.title,
+                  disabled:
+                    list.maxReached || new Date(list.endTime) < new Date(),
+                  tag: list.maxReached
+                    ? {
+                        label: m.selectCandidateMaxReached.defaultMessage,
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : new Date(list.endTime) < new Date()
+                    ? {
+                        label: m.selectCandidateListExpired.defaultMessage,
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : undefined,
+                }))
+              },
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'signeeInfo',
+      title: m.information,
+      children: [
         buildMultiField({
           id: 'signeeInfo',
           title: m.listName,
           description: m.listDescription,
           children: [
             buildDescriptionField({
-              id: 'signeeInfoHeader',
+              id: 'candidateInfoHeader',
               title: m.candidateInformationHeader,
               titleVariant: 'h3',
             }),
             buildTextField({
-              id: 'candidate.name',
+              id: 'candidateName',
               title: m.name,
               width: 'full',
               readOnly: true,
-              defaultValue: ({ externalData }: Application) => {
-                const list = getValueViaPath(
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists = getValueViaPath(
                   externalData,
                   'getList.data',
                   [],
                 ) as SignatureCollectionList[]
 
-                return list[0].candidate?.name ?? ''
+                if (lists.length === 1) {
+                  return lists[0].candidate.name
+                }
+
+                const candidateName = lists.find(
+                  (list) => list.id === answers.listId,
+                )?.candidate.name
+
+                return candidateName
               },
             }),
             buildDescriptionField({
@@ -138,7 +153,8 @@ export const Draft: Form = buildForm({
               title: m.countryArea,
               width: 'half',
               readOnly: true,
-              defaultValue: 'Sunnlendingafjórðungur',
+              defaultValue: ({ externalData }: Application) =>
+                externalData.canSign?.data.area.name,
             }),
             buildTextField({
               id: 'signee.address',
@@ -167,7 +183,7 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'done',
-      title: m.listSigned,
+      title: m.listSignedShort,
       children: [],
     }),
   ],

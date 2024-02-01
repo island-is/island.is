@@ -23,12 +23,17 @@ export const MultipleStatistics: React.FC<
     <section
       key={slice.id}
       id={slice.id}
-      aria-labelledby={'sliceTitle-' + slice.id}
+      aria-labelledby={slice.title ? 'sliceTitle-' + slice.id : undefined}
     >
       {slice.hasBorderAbove && <BorderAbove />}
       <Box>
         {!!slice.title && (
-          <Text variant="h2" as="h2" marginBottom={4}>
+          <Text
+            variant="h2"
+            as="h2"
+            marginBottom={4}
+            id={'sliceTitle-' + slice.id}
+          >
             {slice.title}
           </Text>
         )}

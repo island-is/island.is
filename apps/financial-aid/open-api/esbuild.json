@@ -1,0 +1,25 @@
+{
+  "platform": "node",
+  "external": [
+    "@nestjs/microservices",
+    "cache-manager",
+    "class-validator",
+    "class-transformer",
+    "@nestjs/microservices/microservices-module",
+    "apollo-server-fastify",
+    "fastify-swagger",
+    "@nestjs/mongoose",
+    "@nestjs/typeorm",
+    "dd-trace",
+    "express",
+    "http-errors",
+    "graphql",
+    "pg",
+    "winston",
+    "logform",
+    "pg-native",
+    "form-data",
+    "@nestjs/websockets/socket-module"
+  ],
+  "keepNames": true
+}

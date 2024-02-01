@@ -38,13 +38,13 @@ jobs:
         run: |
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           # ENVS=("dev" "staging")
-          ENVS=("dev" "staging" "prod")
+          ENVS=("dev" "staging")
           if [[ $GIT_BRANCH =~ ^release\/ ]]; then
             echo "Adding prod environments to test set"
             ENVS+=("prod")
           fi
           ENVS_JSON=$(printf '%s\n' "${ENVS[@]}" | jq -R . | jq -s . | tr -d '[:space:]')
-          echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
+          echo "ENVS={\"env\":$ENVS_JSON}" >> "$GITHUB_OUTPUT"
 
   helm-values-validation:
     runs-on: ec2-runners
@@ -59,7 +59,7 @@ jobs:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
       - uses: actions/checkout@v3
-        if: ${{ github.ref == 'ref/heads/main' }}
+        if: ${{ github.event_name != 'pull_request' }}
 
       - uses: actions/setup-node@v3
         with:
@@ -94,7 +94,7 @@ jobs:
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          ./infra/scripts/generate-chart-values.sh
+          yarn --cwd infra charts
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
 
   check-secrets:

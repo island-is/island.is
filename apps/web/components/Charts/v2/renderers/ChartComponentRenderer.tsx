@@ -9,7 +9,10 @@ import {
   ChartData,
   ChartType,
 } from '../types'
-import { formatValueForPresentation } from '../utils'
+import {
+  formatPercentageForPresentation,
+  formatValueForPresentation,
+} from '../utils'
 
 interface ChartComponentRendererProps {
   component: ChartComponentWithRenderProps
@@ -78,9 +81,10 @@ const renderCustomizedLabel = ({
   outerRadius,
   innerRadius,
   payload,
+  percent,
   activeLocale,
 }: CustomLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 1.6
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.7
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
@@ -88,17 +92,17 @@ const renderCustomizedLabel = ({
 
   return (
     <g>
-      <text
-        x={x}
-        y={y}
-        fill="#00003C"
-        textAnchor={x > outerRadius ? 'middle' : 'end'}
-        dominantBaseline="central"
-        fontSize="12px"
-        fontWeight={500}
-      >
-        {`${value ? formatValueForPresentation(activeLocale, value) : ''}`}{' '}
-        {payload?.name?.toLowerCase()}
+      <text x={x} y={y} fill="#00003C" textAnchor="middle" fontSize="12px">
+        <tspan x={x} dy="0" fontWeight={500}>{`${
+          percent
+            ? formatPercentageForPresentation(percent)
+            : value
+            ? formatValueForPresentation(activeLocale, value)
+            : ''
+        }`}</tspan>
+        <tspan x={x} dy="1.2em">
+          {payload?.name?.toLowerCase()}
+        </tspan>
       </text>
     </g>
   )
@@ -109,7 +113,11 @@ export const renderPieChartComponents = (
   data: ChartData,
   activeLocale: Locale,
 ) => {
-  const pieData = data?.[0]?.statisticsForDate
+  const pieData = data?.[0]?.statisticsForDate ?? []
+  const total = pieData.reduce(
+    (total, { value }) => total + (value ? value : 0),
+    0,
+  )
 
   return (
     <Pie
@@ -119,25 +127,18 @@ export const renderPieChartComponents = (
       cx="50%"
       cy="50%"
       innerRadius="30%"
-      outerRadius="60%"
+      outerRadius="65%"
       label={(props) =>
         renderCustomizedLabel({
           ...props,
           activeLocale,
+          total,
         })
       }
       startAngle={90}
       endAngle={360 + 90}
     >
-      <Label
-        fontSize={24}
-        fontWeight="bold"
-        value={pieData.reduce(
-          (total, { value }) => total + (value ? value : 0),
-          0,
-        )}
-        position="center"
-      />
+      <Label fontSize={24} fontWeight="bold" value={total} position="center" />
       {components.map((c, i) => (
         <Cell
           key={i}

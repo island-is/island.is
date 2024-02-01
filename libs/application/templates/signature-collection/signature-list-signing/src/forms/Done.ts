@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { SignatureCollectionCandidate } from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -34,7 +34,7 @@ export const Done: Form = buildForm({
     /* ------------------------ */
     buildSection({
       id: 'doneScreen',
-      title: m.listSigned,
+      title: m.listSignedShort,
       children: [
         buildMultiField({
           id: 'doneScreen',
@@ -42,9 +42,7 @@ export const Done: Form = buildForm({
           description: (application: Application) => ({
             ...m.listSignedDescription,
             values: {
-              name: (
-                application.answers.candidate as SignatureCollectionCandidate
-              )?.name,
+              name: application.answers.candidateName,
             },
           }),
           children: [

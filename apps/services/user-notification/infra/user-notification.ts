@@ -8,6 +8,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
+const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const dbName = `${serviceName.replace('-', '_')}`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
@@ -79,11 +80,11 @@ export const userNotificationServiceSetup = (services: {
     })
     .resources({
       limits: {
-        cpu: '200m',
+        cpu: '400m',
         memory: '384Mi',
       },
       requests: {
-        cpu: '15m',
+        cpu: '150m',
         memory: '256Mi',
       },
     })
@@ -126,6 +127,21 @@ export const userNotificationWorkerSetup = (services: {
         prod: 'cdn.contentful.com',
       },
     })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '150m',
+        memory: '256Mi',
+      },
+    })
+    .replicaCount({
+      min: 1,
+      max: 2,
+      default: 1,
+    })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
       IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
@@ -137,3 +153,23 @@ export const userNotificationWorkerSetup = (services: {
     .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/readiness')
+
+export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
+  typeof serviceCleanupWorkerName
+> =>
+  service(serviceCleanupWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceCleanupWorkerName)
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
+    .postgres(postgresInfo)
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: postgresInfo,
+    })
+    .extraAttributes({
+      dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })

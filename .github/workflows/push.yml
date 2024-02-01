@@ -249,6 +249,7 @@ jobs:
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_OUTPUT
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+          echo "**Monorepo tag:** ${DOCKER_TAG}" >> $GITHUB_STEP_SUMMARY
 
       - name: Send Slack notification
         id: slack
@@ -272,7 +273,7 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Calculate cache key for node_modules
+      - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
         run: |
           PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")

@@ -24,7 +24,7 @@ export const SpousePersonalAllowance = ({
       isEditable={editable}
       editAction={() => goToScreen?.('personalAllowanceFromSpouse')}
     >
-      <GridRow marginBottom={2}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <RadioValue
             label={formatMessage(
@@ -36,7 +36,10 @@ export const SpousePersonalAllowance = ({
 
         {usePersonalAllowanceFromSpouse === YES &&
           spouseUseAsMuchAsPossible === YES && (
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '5/12']}
+              paddingTop={[2, 2, 2, 0]}
+            >
               <RadioValue
                 label={formatMessage(
                   parentalLeaveFormMessages.reviewScreen
@@ -49,7 +52,10 @@ export const SpousePersonalAllowance = ({
 
         {usePersonalAllowanceFromSpouse === YES &&
           spouseUseAsMuchAsPossible === NO && (
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '5/12']}
+              paddingTop={[2, 2, 2, 0]}
+            >
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.personalAllowance.allowanceUsage,

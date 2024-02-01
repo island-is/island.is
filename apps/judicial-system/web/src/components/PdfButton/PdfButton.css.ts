@@ -22,7 +22,6 @@ export const disabled = style({
 })
 
 export const fileNameContainer = style({
-  flexBasis: '50%',
   marginRight: theme.spacing[2],
   wordBreak: 'break-all',
 
