@@ -151,6 +151,7 @@ const defaultRenderComponent = {
       gridOffset="0"
       slicesAreFullWidth={true}
       dropdownMarginBottom={5}
+      orderOptionsAlphabetically={slice.alphabeticallyOrdered}
     />
   ),
   SectionWithVideo: (slice: SectionWithVideoSchema) => (

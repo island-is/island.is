@@ -11,6 +11,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { sortAlpha } from '@island.is/shared/utils'
 import { SliceMachine } from '@island.is/web/components'
 import { Slice } from '@island.is/web/graphql/schema'
 
@@ -21,6 +22,7 @@ interface SliceProps {
   gridOffset?: SpanType
   slicesAreFullWidth?: boolean
   dropdownMarginBottom?: BoxProps['marginBottom']
+  orderOptionsAlphabetically?: boolean | null
 }
 
 export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
@@ -30,6 +32,7 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
   gridOffset = ['0', '0', '1/9'],
   slicesAreFullWidth = false,
   dropdownMarginBottom = 0,
+  orderOptionsAlphabetically = false,
 }) => {
   const Router = useRouter()
   const [selectedId, setSelectedId] = useState<string>('')
@@ -44,8 +47,11 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
         })
       }
     }
+    if (orderOptionsAlphabetically) {
+      options.sort(sortAlpha('label'))
+    }
     return options
-  }, [slices])
+  }, [orderOptionsAlphabetically, slices])
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
