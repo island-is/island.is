@@ -48,6 +48,11 @@ export interface TUploadFile extends UploadFile {
   policeFileId?: string | null
 }
 
+export interface UploadFileState {
+  isUploading: boolean
+  error: boolean
+}
+
 const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   id: file.id,
   name: file.name ?? '',

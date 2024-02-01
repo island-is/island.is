@@ -32,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
+import { UploadFileState } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
@@ -40,6 +41,11 @@ const AppealToCourtOfAppeals = () => {
   const router = useRouter()
   const { id } = router.query
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
+  const [uploadState, setUploadState] = useState<UploadFileState>({
+    isUploading: false,
+    error: false,
+  })
+
   const {
     uploadFiles,
     allFilesUploaded,
@@ -107,12 +113,13 @@ const AppealToCourtOfAppeals = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) =>
-              handleUpload(
-                addUploadFiles(files, appealBriefType),
-                updateUploadFile,
-              )
-            }
+            onChange={(files) => {
+              setUploadState({ isUploading: false, error: false })
+              addUploadFiles(files, appealBriefType, undefined, {
+                status: 'done',
+                percent: 100,
+              })
+            }}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -141,12 +148,13 @@ const AppealToCourtOfAppeals = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) =>
-              handleUpload(
-                addUploadFiles(files, appealCaseFilesType),
-                updateUploadFile,
-              )
-            }
+            onChange={(files) => {
+              setUploadState({ isUploading: false, error: false })
+              addUploadFiles(files, appealCaseFilesType, undefined, {
+                status: 'done',
+                percent: 100,
+              })
+            }}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />

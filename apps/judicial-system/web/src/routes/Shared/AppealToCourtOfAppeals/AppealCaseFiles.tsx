@@ -33,11 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AppealCaseFiles.strings'
-
-interface UploadState {
-  isUploading: boolean
-  error: boolean
-}
+import { UploadFileState } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 const AppealFiles = () => {
   const { workingCase } = useContext(FormContext)
@@ -52,7 +48,7 @@ const AppealFiles = () => {
 
   const { handleUpload } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
-  const [uploadState, setUploadState] = useState<UploadState>({
+  const [uploadState, setUploadState] = useState<UploadFileState>({
     isUploading: false,
     error: false,
   })
