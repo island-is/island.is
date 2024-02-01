@@ -4,7 +4,10 @@ import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
-import { SignatureCollectionClientService } from '@island.is/clients/signature-collection'
+import {
+  ReasonKey,
+  SignatureCollectionClientService,
+} from '@island.is/clients/signature-collection'
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionIdInput } from './dto/id.input'
 
@@ -42,7 +45,9 @@ export class SignatureCollectionService {
     user: User,
   ): Promise<SignatureCollectionList[]> {
     const { id } = collection
-
+    if (!signee.area || signee.canSignInfo?.includes(ReasonKey.UnderAge)) {
+      return []
+    }
     return await this.signatureCollectionClientService.getLists(
       {
         collectionId: id,
