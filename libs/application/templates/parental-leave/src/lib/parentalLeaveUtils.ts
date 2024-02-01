@@ -1,12 +1,12 @@
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
 import isSameMonth from 'date-fns/isSameMonth'
 import isThisMonth from 'date-fns/isThisMonth'
-import getDaysInMonth from 'date-fns/getDaysInMonth'
 import parseISO from 'date-fns/parseISO'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import differenceInDays from 'date-fns/differenceInDays'
 import round from 'lodash/round'
 
 import { getValueViaPath } from '@island.is/application/core'
@@ -19,46 +19,35 @@ import {
   RepeaterProps,
 } from '@island.is/application/types'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
-import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import {
-  YES,
-  NO,
+  ADOPTION,
   MANUAL,
-  SPOUSE,
-  StartDateOptions,
-  ParentalRelations,
-  TransferRightsOption,
+  NO,
+  OTHER_NO_CHILDREN_FOUND,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  SINGLE,
   PERMANENT_FOSTER_CARE,
-  ADOPTION,
-  OTHER_NO_CHILDREN_FOUND,
+  ParentalRelations,
+  SINGLE,
+  SPOUSE,
+  StartDateOptions,
   States,
+  TransferRightsOption,
+  YES,
 } from '../constants'
+import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
+import { parentalLeaveFormMessages } from '../lib/messages'
 
-import {
-  calculatePeriodLength,
-  daysToMonths,
-  monthsToDays,
-} from '../lib/directorateOfLabour.utils'
-import {
-  YesOrNo,
-  Period,
-  PersonInformation,
-  ChildInformation,
-  ChildrenAndExistingApplications,
-  PregnancyStatusAndRightsResults,
-  EmployerRow,
-  Files,
-  OtherParentObj,
-  VMSTPeriod,
-} from '../types'
 import { FormatMessage } from '@island.is/localization'
-import { currentDateStartTime } from './parentalLeaveTemplateUtils'
+import { dateFormat } from '@island.is/shared/constants'
+import format from 'date-fns/format'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
+import subDays from 'date-fns/subDays'
+import subMonths from 'date-fns/subMonths'
 import {
   additionalSingleParentMonths,
   daysInMonth,
@@ -66,11 +55,24 @@ import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
-import subDays from 'date-fns/subDays'
-import subMonths from 'date-fns/subMonths'
-import isBefore from 'date-fns/isBefore'
-import isEqual from 'date-fns/isEqual'
-import isAfter from 'date-fns/isAfter'
+import {
+  calculatePeriodLength,
+  daysToMonths,
+  monthsToDays,
+} from '../lib/directorateOfLabour.utils'
+import {
+  ChildInformation,
+  ChildrenAndExistingApplications,
+  EmployerRow,
+  Files,
+  OtherParentObj,
+  Period,
+  PersonInformation,
+  PregnancyStatusAndRightsResults,
+  VMSTPeriod,
+  YesOrNo,
+} from '../types'
+import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
 export function getExpectedDateOfBirthOrAdoptionDate(
   application: Application,
@@ -656,13 +658,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
-  const useUnion = getValueViaPath(answers, 'useUnion') as YesOrNo
+  const useUnion = getValueViaPath(answers, 'payments.useUnion') as YesOrNo
 
   const union = getValueViaPath(answers, 'payments.union') as string
 
   const usePrivatePensionFund = getValueViaPath(
     answers,
-    'usePrivatePensionFund',
+    'payments.usePrivatePensionFund',
   ) as YesOrNo
 
   const privatePensionFund = getValueViaPath(
@@ -676,31 +678,50 @@ export function getApplicationAnswers(answers: Application['answers']) {
     '0',
   ) as string
 
-  let isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
-  // olf Empployer obj
+  let isSelfEmployed = getValueViaPath(
+    answers,
+    'employment.isSelfEmployed',
+  ) as YesOrNo
+  // Old values
   if (!isSelfEmployed) {
-    isSelfEmployed = getValueViaPath(
-      answers,
-      'employer.isSelfEmployed',
-    ) as YesOrNo
+    isSelfEmployed = getValueViaPath(answers, 'isSelfEmployed') as YesOrNo
+    if (!isSelfEmployed) {
+      isSelfEmployed = getValueViaPath(
+        answers,
+        'employer.isSelfEmployed',
+      ) as YesOrNo
+    }
   }
 
   let isReceivingUnemploymentBenefits = getValueViaPath(
     answers,
-    'isReceivingUnemploymentBenefits',
+    'employment.isReceivingUnemploymentBenefits',
   ) as YesOrNo
-
+  // Old values
   if (!isReceivingUnemploymentBenefits) {
     isReceivingUnemploymentBenefits = getValueViaPath(
       answers,
-      'isRecivingUnemploymentBenefits',
+      'isReceivingUnemploymentBenefits',
     ) as YesOrNo
+    if (!isReceivingUnemploymentBenefits) {
+      isReceivingUnemploymentBenefits = getValueViaPath(
+        answers,
+        'isRecivingUnemploymentBenefits',
+      ) as YesOrNo
+    }
   }
 
-  const unemploymentBenefits = getValueViaPath(
+  let unemploymentBenefits = getValueViaPath(
     answers,
-    'unemploymentBenefits',
+    'employment.unemploymentBenefits',
   ) as string
+  // Old values
+  if (!unemploymentBenefits) {
+    unemploymentBenefits = getValueViaPath(
+      answers,
+      'unemploymentBenefits',
+    ) as string
+  }
 
   const isResidenceGrant = getValueViaPath(
     answers,
@@ -1787,4 +1808,58 @@ export const setTestBirthAndExpectedDate = (
     birthDate: `${year}${month}${day}`,
     expBirthDate: `${expBirthDateYear}-${expBirthDateMonth}-${expBirthDateDate}`,
   }
+}
+
+export const getChildrenOptions = (application: Application) => {
+  const { children } = getApplicationExternalData(application.externalData) as {
+    children: {
+      expectedDateOfBirth: string
+      adoptionDate: string
+      primaryParentNationalRegistryId?: string
+      primaryParentTypeOfApplication?: string
+      parentalRelation: ParentalRelations
+    }[]
+  }
+
+  const formatDateOfBirth = (value: string) =>
+    format(new Date(value), dateFormat.is)
+
+  return children.map((child, index) => {
+    const subLabel =
+      child.parentalRelation === ParentalRelations.secondary
+        ? {
+            ...parentalLeaveFormMessages.selectChild.secondaryParent,
+            values: {
+              nationalId: child.primaryParentNationalRegistryId ?? '',
+            },
+          }
+        : parentalLeaveFormMessages.selectChild.primaryParent
+
+    return {
+      value: `${index}`,
+      dataTestId: `child-${index}`,
+      label:
+        child.primaryParentTypeOfApplication === PERMANENT_FOSTER_CARE
+          ? {
+              ...parentalLeaveFormMessages.selectChild.fosterCare,
+              values: {
+                dateOfBirth: formatDateOfBirth(child.adoptionDate),
+              },
+            }
+          : child.primaryParentTypeOfApplication === ADOPTION
+          ? {
+              ...parentalLeaveFormMessages.selectChild.adoption,
+              values: {
+                dateOfBirth: formatDateOfBirth(child.adoptionDate),
+              },
+            }
+          : {
+              ...parentalLeaveFormMessages.selectChild.baby,
+              values: {
+                dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth),
+              },
+            },
+      subLabel,
+    }
+  })
 }
