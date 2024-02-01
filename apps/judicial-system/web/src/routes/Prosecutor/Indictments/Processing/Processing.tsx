@@ -2,13 +2,11 @@ import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  processing as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import {
+  BlueBox,
   CommentsInput,
   FormContentContainer,
   FormContext,
@@ -16,24 +14,33 @@ import {
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
   CaseState,
   CaseTransition,
+  DefendantPlea,
+  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
+import { strings } from './processing.strings'
+import * as styles from './Processing.css'
 
 const Processing: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { transitionCase } = useCase()
   const { formatMessage } = useIntl()
+  const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
-
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   const handleNavigationTo = useCallback(
@@ -52,6 +59,17 @@ const Processing: React.FC = () => {
   )
   const stepIsValid = isProcessingStepValidIndictments(workingCase)
 
+  const handleUpdateDefendant = useCallback(
+    (updatedDefendant: UpdateDefendantInput) => {
+      updateDefendantState(updatedDefendant, setWorkingCase)
+
+      if (workingCase.id) {
+        updateDefendant(updatedDefendant)
+      }
+    },
+    [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -66,7 +84,7 @@ const Processing: React.FC = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(m.heading)}
+            {formatMessage(strings.heading)}
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
@@ -74,6 +92,78 @@ const Processing: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SelectCourt />
         </Box>
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.defendantPlea, {
+                defendantCount: workingCase.defendants.length,
+              })}
+            />
+            {workingCase.defendants.map((defendant) => (
+              <Box marginBottom={2}>
+                <BlueBox>
+                  <Text variant="h4" marginBottom={3}>
+                    {`${formatMessage(strings.defendantName, {
+                      name: defendant.name,
+                    })} `}
+                    <RequiredStar />
+                  </Text>
+                  <div className={styles.grid}>
+                    <RadioButton
+                      id={`defendant-${defendant.id}-plea-decision-guilty`}
+                      name={`defendant-${defendant.id}-plea-decision`}
+                      checked={defendant.defendantPlea === DefendantPlea.GUILTY}
+                      onChange={() => {
+                        handleUpdateDefendant({
+                          defendantId: defendant.id,
+                          caseId: workingCase.id,
+                          defendantPlea: DefendantPlea.GUILTY,
+                        })
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(strings.pleaGuilty)}
+                    />
+                    <RadioButton
+                      id={`defendant-${defendant.id}-plea-decision-not-guilty`}
+                      name={`defendant-${defendant.id}-plea-decision`}
+                      checked={
+                        defendant.defendantPlea === DefendantPlea.NOT_GUILTY
+                      }
+                      onChange={() => {
+                        handleUpdateDefendant({
+                          defendantId: defendant.id,
+                          caseId: workingCase.id,
+                          defendantPlea: DefendantPlea.NOT_GUILTY,
+                        })
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(strings.pleaNotGuilty)}
+                    />
+                    <RadioButton
+                      id={`defendant-${defendant.id}-plea-decision-no-plea`}
+                      name={`defendant-${defendant.id}-plea-decision`}
+                      checked={
+                        defendant.defendantPlea === DefendantPlea.NO_PLEA
+                      }
+                      onChange={() => {
+                        handleUpdateDefendant({
+                          defendantId: defendant.id,
+                          caseId: workingCase.id,
+                          defendantPlea: DefendantPlea.NO_PLEA,
+                        })
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(strings.pleaNoPlea)}
+                    />
+                  </div>
+                </BlueBox>
+              </Box>
+            ))}
+          </Box>
+        )}
         <Box component="section" marginBottom={10}>
           <CommentsInput
             workingCase={workingCase}

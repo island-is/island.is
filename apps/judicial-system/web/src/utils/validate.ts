@@ -256,7 +256,14 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return Boolean(workingCase.prosecutor && workingCase.court)
+  const defendantsAreValid = () =>
+    workingCase.defendants?.every((defendant) => {
+      return validate([[defendant.defendantPlea, ['empty']]]).isValid
+    })
+
+  return Boolean(
+    workingCase.prosecutor && workingCase.court && defendantsAreValid(),
+  )
 }
 
 export const isTrafficViolationStepValidIndictments = (
