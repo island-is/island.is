@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   Button,
   Checkbox,
   Filter,
-  FilterMultiChoice,
-  GridColumn,
-  GridRow,
   Input,
   Pagination,
   Stack,
