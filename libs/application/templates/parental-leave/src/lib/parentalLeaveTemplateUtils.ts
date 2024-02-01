@@ -77,8 +77,8 @@ export function findActionName(context: ApplicationContext) {
   const { state } = application
   const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
   if (
-    state === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
-    state === States.RESIDENCE_GRAND_APPLICATION
+    state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
+    state === States.RESIDENCE_GRANT_APPLICATION
   )
     return 'documentPeriod'
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'

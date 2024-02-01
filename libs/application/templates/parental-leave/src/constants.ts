@@ -90,8 +90,8 @@ export enum States {
   VINNUMALASTOFNUN_APPROVE_EDITS_ABORT = 'vinnumalastofnunApproveEditsAbort',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
-  RESIDENCE_GRAND_APPLICATION = 'residenceGrantApplication',
-  RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE = 'residenceGrantApplicationNoBirthDate',
+  RESIDENCE_GRANT_APPLICATION = 'residenceGrantApplication',
+  RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE = 'residenceGrantApplicationNoBirthDate',
 }
 
 export enum AnswerValidationConstants {
