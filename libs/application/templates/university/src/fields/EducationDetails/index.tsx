@@ -28,16 +28,6 @@ export const EducationDetails: FC<FieldBaseProps> = ({
   >([])
 
   useEffect(() => {
-    const withWasRemoved = educationList.map((x) => {
-      return {
-        ...x,
-        wasRemoved: 'false',
-      }
-    })
-    setEducationList(withWasRemoved)
-  }, [])
-
-  useEffect(() => {
     setFilteredEducationList(
       educationList.filter((x) => x.wasRemoved !== 'true'),
     )
@@ -56,7 +46,6 @@ export const EducationDetails: FC<FieldBaseProps> = ({
         wasRemoved: 'false',
       },
     ])
-    console.log('answers', application.answers)
   }
   const handleRemove = (pos: number) => {
     if (pos > -1) {
@@ -88,11 +77,6 @@ export const EducationDetails: FC<FieldBaseProps> = ({
 
   return (
     <Box paddingTop={2}>
-      <Button icon="add" onClick={() => handleAdd()} variant="ghost" fluid>
-        {formatMessage(
-          formerEducation.labels.educationDetails.addMoreButtonTitle,
-        )}
-      </Button>
       {educationList.map((educationItem, index) => {
         const position = filteredEducationList.indexOf(educationItem)
 
@@ -111,20 +95,15 @@ export const EducationDetails: FC<FieldBaseProps> = ({
                 itemNumber={position}
                 addDataToEducationList={addDataToEducationList}
               />
-              <Button
-                icon="add"
-                onClick={() => handleAdd()}
-                variant="ghost"
-                fluid
-              >
-                {formatMessage(
-                  formerEducation.labels.educationDetails.addMoreButtonTitle,
-                )}
-              </Button>
             </Box>
           )
         }
       })}
+      <Button icon="add" onClick={() => handleAdd()} variant="ghost" fluid>
+        {formatMessage(
+          formerEducation.labels.educationDetails.addMoreButtonTitle,
+        )}
+      </Button>
     </Box>
   )
 }

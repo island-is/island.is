@@ -101,7 +101,7 @@ export const RepeateableEducationDetailsSchema = z
   )
 
 const otherDocumentsSchema = z.object({
-  degreeAttachments: FileDocumentSchema,
+  degreeAttachments: FileDocumentSchema.optional(),
 })
 
 export const UniversitySchema = z.object({
@@ -112,7 +112,7 @@ export const UniversitySchema = z.object({
     .enum(['diploma', 'notFinished', 'exemption', 'thirdLevel'])
     .optional(),
   educationDetails: z.array(RepeateableEducationDetailsSchema),
-  otherDocuments: otherDocumentsSchema,
+  otherDocuments: otherDocumentsSchema.optional(),
 })
 
 export type UniversityApplication = z.TypeOf<typeof UniversitySchema>

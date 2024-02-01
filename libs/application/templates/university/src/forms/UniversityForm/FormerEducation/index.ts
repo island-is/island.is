@@ -10,6 +10,6 @@ export const FormerEducationSection = buildSection({
   children: [
     EducationOptionsSubSection,
     EducationDetailsSubSection,
-    OtherDocumentsSubSection,
+    // OtherDocumentsSubSection,
   ],
 })

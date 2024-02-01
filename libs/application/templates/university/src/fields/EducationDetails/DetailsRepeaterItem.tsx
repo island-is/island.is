@@ -103,9 +103,10 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
   }, [repeaterField.moreDetails, setValue, moreDetailsField])
 
   useEffect(() => {
+    console.log('changed here', repeaterField.wasRemoved)
     setValue(wasRemovedField, repeaterField.wasRemoved)
   }, [repeaterField.wasRemoved, setValue, wasRemovedField])
-
+  console.log('repeaterField', repeaterField)
   return (
     <Box
       position="relative"

@@ -3,6 +3,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
 import { FormerEducationSection } from './FormerEducation'
+import { ReviewSection } from '../Review'
 // import { Logo } from '../../assets/Logo'
 
 export const UniversityForm: Form = buildForm({
@@ -20,5 +21,6 @@ export const UniversityForm: Form = buildForm({
     }),
     InformationSection,
     FormerEducationSection,
+    ReviewSection,
   ],
 })
