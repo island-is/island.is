@@ -30,27 +30,6 @@ export interface User {
   loginCount?: number
 }
 
-export interface CreateUser {
-  nationalId: string
-  name: string
-  title: string
-  mobileNumber: string
-  email: string
-  role: UserRole
-  institutionId: string
-  active: boolean
-}
-
-export interface UpdateUser {
-  name?: string
-  title?: string
-  mobileNumber?: string
-  email?: string
-  role?: UserRole
-  institutionId?: string
-  active?: boolean
-}
-
 interface InstitutionUser {
   role?: string | null
   institution?: { type?: string | null } | null
