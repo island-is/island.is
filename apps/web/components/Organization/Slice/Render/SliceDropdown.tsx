@@ -22,6 +22,7 @@ interface SliceProps {
   gridOffset?: SpanType
   slicesAreFullWidth?: boolean
   dropdownMarginBottom?: BoxProps['marginBottom']
+  orderOptionsAlphabetically?: boolean | null
 }
 
 export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
@@ -31,6 +32,7 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
   gridOffset = ['0', '0', '1/9'],
   slicesAreFullWidth = false,
   dropdownMarginBottom = 0,
+  orderOptionsAlphabetically = false,
 }) => {
   const Router = useRouter()
   const [selectedId, setSelectedId] = useState<string>('')
@@ -45,9 +47,11 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
         })
       }
     }
-    options.sort(sortAlpha('label'))
+    if (orderOptionsAlphabetically) {
+      options.sort(sortAlpha('label'))
+    }
     return options
-  }, [slices])
+  }, [orderOptionsAlphabetically, slices])
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
