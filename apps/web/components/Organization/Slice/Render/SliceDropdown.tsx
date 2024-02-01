@@ -11,6 +11,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { sortAlpha } from '@island.is/shared/utils'
 import { SliceMachine } from '@island.is/web/components'
 import { Slice } from '@island.is/web/graphql/schema'
 
@@ -44,6 +45,7 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
         })
       }
     }
+    options.sort(sortAlpha('label'))
     return options
   }, [slices])
 
