@@ -241,6 +241,7 @@ const useS3Upload = (caseId: string) => {
     async (
       files: TUploadFile[],
       updateFile: (file: TUploadFile, newId?: string) => void,
+      onError?: (id?: string) => void,
     ) => {
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPost
@@ -298,6 +299,7 @@ const useS3Upload = (caseId: string) => {
         } catch (e) {
           toast.error(formatMessage(strings.uploadFailed))
           updateFile({ ...file, status: 'error' })
+          onError?.(file.id)
         }
       }
 

@@ -46,7 +46,7 @@ const AppealToCourtOfAppeals = () => {
     error: false,
   })
 
-  const { uploadFiles, allFilesUploaded, addUploadFiles, removeUploadFile } =
+  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload } = useS3Upload(workingCase.id)
   const { transitionCase } = useCase()
@@ -63,10 +63,7 @@ const AppealToCourtOfAppeals = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const isStepValid =
-    uploadFiles.some(
-      (file) => file.category === appealBriefType && file.status === 'done',
-    ) && allFilesUploaded
+  const isStepValid = uploadFiles.length > 0
 
   const newFiles = uploadFiles.filter((file) => {
     return (
@@ -75,29 +72,46 @@ const AppealToCourtOfAppeals = () => {
     )
   })
 
-  const handleNextButtonClick = useCallback(async () => {
-    setUploadState({ isUploading: true, error: false })
+  const handleNextButtonClick = useCallback(
+    async (isRetry: boolean) => {
+      setUploadState({ isUploading: true, error: false })
 
-    const uploadSuccess = await handleUpload(newFiles, () => {
-      // Do nothing
-    })
+      const handleError = (id?: string) => {
+        const file = uploadFiles.find((file) => file.id === id)
 
-    if (!uploadSuccess) {
-      setUploadState({ isUploading: false, error: true })
-      return
-    }
+        if (!file) {
+          return
+        }
 
-    const caseTransitioned = await transitionCase(
-      workingCase.id,
-      CaseTransition.APPEAL,
-    )
+        updateUploadFile({ ...file, status: 'error' })
+      }
 
-    if (caseTransitioned) {
-      setVisibleModal('APPEAL_SENT')
-    }
+      const uploadSuccess = await handleUpload(
+        isRetry ? uploadFiles.filter((uf) => uf.status === 'error') : newFiles,
+        () => {
+          // Do nothing
+        },
+        handleError,
+      )
 
-    setUploadState({ isUploading: false, error: false })
-  }, [handleUpload, newFiles, workingCase.id])
+      if (!uploadSuccess) {
+        setUploadState({ isUploading: false, error: true })
+        return
+      }
+
+      const caseTransitioned = await transitionCase(
+        workingCase.id,
+        CaseTransition.APPEAL,
+      )
+
+      if (caseTransitioned) {
+        setVisibleModal('APPEAL_SENT')
+      }
+
+      setUploadState({ isUploading: false, error: false })
+    },
+    [handleUpload, newFiles, workingCase.id],
+  )
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -190,7 +204,7 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => handleNextButtonClick(uploadState.error)}
           nextButtonText={formatMessage(
             uploadState.error
               ? strings.uploadFailedNextButtonText
