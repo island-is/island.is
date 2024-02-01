@@ -14,7 +14,7 @@ export const AlthingiOmbudsmanClientConfig = defineConfig<
   load(env) {
     return {
       xRoadServicePath: env.required(
-        'ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH',
+        'XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH',
         '',
       ),
       username: env.required('ALTHINGI_OMBUDSMAN_XROAD_USERNAME', ''),
