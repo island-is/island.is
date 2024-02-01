@@ -5,6 +5,11 @@ import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { CaseSignatureType } from './models/caseSignature.type'
 import { SearchCaseTemplateInput } from './models/searchCaseTemplate.input'
+import {
+  DmrClientService,
+  JournalControllerValidateRequest,
+  JournalValidateSuccessResponse,
+} from '@island.is/clients/dmr'
 
 const MockTemplates = [
   {
@@ -21,37 +26,22 @@ const MockTemplates = [
   },
 ]
 
-type SendApplicationResponse =
-  | {
-      type: 'success'
-    }
-  | {
-      type: 'error'
-      reason: string
-    }
-
 @Injectable()
 export class MinistryOfJusticeService {
-  constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {}
+  constructor(private readonly dmrClientService: DmrClientService) {}
 
-  async validateApplication(auth: User): Promise<SendApplicationResponse> {
-    return {
-      type: 'success',
-    }
+  async validateAdvert(
+    auth: User,
+    advert: JournalControllerValidateRequest,
+  ): Promise<JournalValidateSuccessResponse> {
+    console.log('from ministry of justice service:', advert)
+    const results = await this.dmrClientService.validateAdvert(auth, advert)
+    console.log(results)
+    return results
   }
 
-  async submitApplication(auth: User): Promise<SendApplicationResponse> {
-    // return {
-    //   type: 'success',
-    // }
-
-    return {
-      type: 'error',
-      reason: 'Failed to submit application',
-    }
+  async submitApplication(auth: User): Promise<JournalValidateSuccessResponse> {
+    throw new Error('Method not implemented.')
   }
 
   async getOptions(auth: User) {

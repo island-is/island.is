@@ -14,7 +14,6 @@ import {
   DefaultEvents,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { general } from './messages'
 import { TemplateApiActions } from './types'
@@ -93,7 +92,37 @@ const OJOITemplate: ApplicationTemplate<
             throwOnError: false,
           }),
           onExit: defineTemplateApi({
-            action: TemplateApiActions.validateApplication,
+            action: TemplateApiActions.validateAdvert,
+            params: {
+              journalAdvert: {
+                id: '1234',
+                categories: [],
+                createdDate: '',
+                department: 'A deild',
+                document: {
+                  html: null,
+                  isLegacy: false,
+                  pdfUrl: null,
+                },
+                involvedParty: {
+                  id: 'abc',
+                  name: 'abc',
+                },
+                publicationDate: new Date(),
+                status: 'Innsending',
+                title: 'abc',
+                publicationNumber: {
+                  full: 'ABC-123',
+                  number: 123,
+                  year: 2021,
+                },
+                type: 'abc',
+                updatedDate: '',
+                signatureDate: new Date(),
+                subject: '',
+              },
+            },
+
             shouldPersistToExternalData: true,
             externalDataId: 'validateApplication',
             throwOnError: false,
@@ -115,7 +144,6 @@ const OJOITemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [OfficialJournalOfIcelandTemplateApi],
             },
           ],
         },

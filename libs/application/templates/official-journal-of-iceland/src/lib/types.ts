@@ -65,7 +65,7 @@ export type CommitteeSignatureState =
 export enum TemplateApiActions {
   getOptions = 'getOptions',
   submitApplication = 'submitApplication',
-  validateApplication = 'validateApplication',
+  validateAdvert = 'validateAdvert',
   cancelApplication = 'cancelApplication',
 }
 

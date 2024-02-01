@@ -11,10 +11,11 @@ export class DmrClientService {
 
   public async validateAdvert(
     auth: User,
-    request: JournalControllerValidateRequest,
+    advert: JournalControllerValidateRequest,
   ) {
+    console.log('from dmr client service:', advert)
     return await this.dmrApi
       .withMiddleware(new AuthMiddleware(auth))
-      .journalControllerValidate(request)
+      .journalControllerValidate(advert)
   }
 }
