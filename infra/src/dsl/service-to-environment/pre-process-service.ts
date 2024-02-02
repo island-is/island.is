@@ -89,7 +89,6 @@ export const prepareServiceForEnv = (
   )
 
   addToErrors(errors)
-
   let result: ServiceDefinitionForEnv = {
     features: serviceDef.features,
     files: serviceDef.files,
@@ -104,7 +103,6 @@ export const prepareServiceForEnv = (
     accountName: serviceDef.accountName,
     healthPort: serviceDef.healthPort,
     volumes: serviceDef.volumes,
-    podDisruptionBudget: serviceDef.podDisruptionBudget,
     port: serviceDef.port,
     env: envs,
     secrets: { ...serviceDef.secrets },
@@ -114,6 +112,7 @@ export const prepareServiceForEnv = (
     args: serviceDef.args,
     cmds: serviceDef.cmds,
     readiness: serviceDef.readiness,
+    podDisruptionBudget: serviceDef.podDisruptionBudget,
   }
 
   if (serviceDef.postgres) {
@@ -305,9 +304,12 @@ function addFeaturesConfig(
   env: EnvironmentConfig,
   serviceName: string,
 ) {
-  const activeFeatures = Object.entries(serviceDefFeatures).filter(
-    ([feature]) => env.featuresOn.includes(feature as FeatureNames),
-  ) as [FeatureNames, Feature][]
+  const activeFeatures = Object.entries(
+    serviceDefFeatures,
+  ).filter(([feature]) => env.featuresOn.includes(feature as FeatureNames)) as [
+    FeatureNames,
+    Feature,
+  ][]
   const featureEnvs = activeFeatures.map(([name, v]) => {
     const { envs, errors } = getEnvVariables(v.env, serviceName, env.type)
     return {
