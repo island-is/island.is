@@ -133,16 +133,11 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-cypress
 
-      - name: Verify cypress
-        id: cypress-check
-        run: npx cypress verify
-        continue-on-error: true
+      - name: Check cypress cache success
+        run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
 
-      # - name: Check cypress cache success
-      #   run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
-      #
       - name: Install cypress
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
@@ -326,7 +321,7 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: ${{ github.workspace }}/.cache/Cypress
-          key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-cypress
 
       - name: Check cypress cache success
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
