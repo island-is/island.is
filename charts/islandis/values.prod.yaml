@@ -156,6 +156,8 @@ air-discount-scheme-backend:
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -227,6 +229,8 @@ air-discount-scheme-web:
           paths:
             - '/'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -274,7 +278,6 @@ api:
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
     ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://api.thinglysing.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
-    ENHANCED_FETCH_DEBUG_CACHE: 'clients-statistics'
     FILE_DOWNLOAD_BUCKET: 'island-is-prod-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://star-re.crm4.dynamics.com/api/data/v9.1'
@@ -414,6 +417,8 @@ api:
           paths:
             - '/api'
   namespace: 'islandis'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -685,6 +690,8 @@ application-system-api:
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
   namespace: 'application-system'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -806,6 +813,8 @@ application-system-api-worker:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -894,6 +903,8 @@ application-system-form:
           paths:
             - '/umsoknir'
   namespace: 'application-system'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -961,6 +972,8 @@ consultation-portal:
           paths:
             - '/samradsgatt'
   namespace: 'consultation-portal'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1018,6 +1031,8 @@ contentful-translation-extension:
           paths:
             - '/'
   namespace: 'contentful-translation-extension'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1092,6 +1107,8 @@ download-service:
           paths:
             - '/download'
   namespace: 'download-service'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1198,6 +1215,8 @@ endorsement-system-api:
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1308,6 +1327,8 @@ icelandic-names-registry-backend:
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1363,6 +1384,8 @@ island-ui-storybook:
           paths:
             - '/'
   namespace: 'storybook'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1429,6 +1452,8 @@ license-api:
           paths:
             - '/'
   namespace: 'license-api'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1533,6 +1558,8 @@ portals-admin:
           paths:
             - '/stjornbord'
   namespace: 'portals-admin'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1619,6 +1646,8 @@ regulations-admin-backend:
     secrets:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -1743,6 +1772,8 @@ search-indexer-service:
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1500
@@ -1822,6 +1853,8 @@ service-portal:
           paths:
             - '/minarsidur'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1916,6 +1949,8 @@ service-portal-api:
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1999,6 +2034,8 @@ service-portal-api-worker:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2083,6 +2120,8 @@ services-documents:
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2148,6 +2187,8 @@ services-sessions:
           paths:
             - '/'
   namespace: 'services-sessions'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs:
     - accessModes: 'ReadWriteMany'
       mountPath: '/geoip-lite/data'
@@ -2213,6 +2254,8 @@ services-sessions-geoip-job:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   namespace: 'services-sessions'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -2311,6 +2354,8 @@ services-sessions-worker:
     secrets:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2431,6 +2476,8 @@ services-university-gateway:
     secrets:
       DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2509,6 +2556,8 @@ services-university-gateway-worker:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   namespace: 'services-university-gateway'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2523,7 +2572,7 @@ services-university-gateway-worker:
     requests:
       cpu: '50m'
       memory: '256Mi'
-  schedule: '0 2 * * *'
+  schedule: '0 * * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
@@ -2580,6 +2629,8 @@ skilavottord-web:
           paths:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2670,6 +2721,8 @@ skilavottord-ws:
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 3
@@ -2759,6 +2812,8 @@ user-notification:
           paths:
             - '/'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2849,6 +2904,8 @@ user-notification-cleanup-worker:
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2951,6 +3008,8 @@ user-notification-worker:
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3034,6 +3093,8 @@ web:
           paths:
             - '/'
   namespace: 'islandis'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -3092,6 +3153,8 @@ xroad-collector:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
