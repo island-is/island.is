@@ -815,16 +815,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Tilhögun fæðingarstyrks',
       description: 'Grant periods',
     },
-    periodsImageTitle: {
-      id: 'pl.application:periods.image.title',
-      defaultMessage: 'Næst er að velja tímabil fæðingarorlofsins',
-      description: 'Now it is time to select the parental leave periods',
-    },
-    periodsImageGrantTitle: {
-      id: 'pl.application:periods.image.grant.title',
-      defaultMessage: 'Næst er að velja tímabil fæðingarstyrksins',
-      description: 'Now it is time to select the parental grant period',
-    },
     firstPeriodName: {
       id: 'pl.application:first.period.name',
       defaultMessage: 'Fyrsta tímabil orlofsins',

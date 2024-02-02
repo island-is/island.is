@@ -1462,13 +1462,6 @@ export const getRightsDescTitle = (application: Application) => {
     : parentalLeaveFormMessages.shared.rightsDescription
 }
 
-export const getPeriodImageTitle = (application: Application) => {
-  if (isParentalGrant(application)) {
-    return parentalLeaveFormMessages.shared.periodsImageGrantTitle
-  }
-  return parentalLeaveFormMessages.shared.periodsImageTitle
-}
-
 export const getEditOrAddInfoSectionTitle = (application: Application) => {
   if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionTitle
