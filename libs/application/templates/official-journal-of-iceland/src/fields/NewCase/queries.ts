@@ -1,29 +1,47 @@
 import { gql } from '@apollo/client'
 
-export const SEARCH_CASE_TEMPLATES = gql`
-  query SearchCaseTemplate($input: MinistryOfJusticeSearchCaseTemplateInput!) {
-    ministryOfJusticeSearchCaseTemplates(input: $input) {
-      data {
-        applicationId
+export const ADVERTS = gql`
+  query Adverts($input: MinistryOfJusticeAdvertsInput!) {
+    ministryOfJusticeAdverts(input: $input) {
+      adverts {
+        id
         department
-        category
-        subCategory
+        type
+        status
         title
-        template
-        documentContents
-        signatureType
-        signatureContents
+        subject
+        publicationNumber {
+          number
+          year
+        }
+        createdDate
+        updatedDate
         signatureDate
-        ministry
-        preferedPublicationDate
-        fastTrack
+        publicationDate
+        categories {
+          id
+          name
+          slug
+        }
+        involvedParty {
+          id
+          name
+        }
+        document {
+          isLegacy
+          html
+          pdfUrl
+        }
       }
-      totalCount
-      pageInfo {
+      paging {
+        page
+        pageSize
+        totalPages
+        totalItems
         hasNextPage
         hasPreviousPage
-        startCursor
-        endCursor
+        nextPage
+        previousPage
       }
     }
   }

@@ -5,25 +5,22 @@ import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { MinistryOfJusticeService } from './ministryOfJustice.service'
-import { SearchCaseTemplateInput } from './models/searchCaseTemplate.input'
-import { PaginatedSearchCaseTemplateResponse } from './models/searchCaseTemplate.response'
+import { AdvertsResponse } from './models/responses'
+import { AdvertsInput } from './models/adverts.input'
 
 @UseGuards(IdsUserGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
 export class MinistryOfJusticeResolver {
-  constructor(
-    private readonly ministryOfJusticeService: MinistryOfJusticeService,
-  ) {}
+  constructor(private readonly mojService: MinistryOfJusticeService) {}
 
-  @Query(() => PaginatedSearchCaseTemplateResponse, {
-    name: 'ministryOfJusticeSearchCaseTemplates',
+  @Query(() => AdvertsResponse, {
+    name: 'ministryOfJusticeAdverts',
   })
   @Audit()
-  searchCaseTemplates(
-    @CurrentUser() user: User,
-    @Args('input') input: SearchCaseTemplateInput,
-  ) {
-    return this.ministryOfJusticeService.searchCaseTemplates(user, input)
+  adverts(@CurrentUser() user: User, @Args('input') input: AdvertsInput) {
+    return this.mojService.adverts(user, {
+      search: input.search,
+    })
   }
 }

@@ -1,41 +1,25 @@
 import type { User } from '@island.is/auth-nest-tools'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { isDefined } from '@island.is/shared/utils'
-import { Inject, Injectable } from '@nestjs/common'
-import { CaseSignatureType } from './models/caseSignature.type'
-import { SearchCaseTemplateInput } from './models/searchCaseTemplate.input'
 import {
   DmrClientService,
+  JournalControllerAdvertsRequest,
   JournalControllerValidateRequest,
   JournalValidateSuccessResponse,
 } from '@island.is/clients/dmr'
-
-const MockTemplates = [
-  {
-    department: '0',
-    category: '2',
-    subCategory: '0',
-    title:
-      'REGLUGERÐ um breytingu á reglugerð um skipulagsmál í Reykjavíkurborg',
-    template: '',
-    documentContents:
-      '<div><h1>REGLUGERÐ</h1><p>Lorem ipsum dolor sit amet</p></div>',
-    signatureType: '0',
-    signatureContents: 'Jón Bjarni',
-  },
-]
+import { AdvertsResponse } from './models/responses'
+import { Advert, AdvertCategory } from './models/advert.model'
+import { mapAdvertDepartment, mapAdvertStatus } from './mapper'
+import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class MinistryOfJusticeService {
-  constructor(private readonly dmrClientService: DmrClientService) {}
+  constructor(private readonly dmrService: DmrClientService) {}
 
   async validateAdvert(
     auth: User,
     advert: JournalControllerValidateRequest,
   ): Promise<JournalValidateSuccessResponse> {
     console.log('from ministry of justice service:', advert)
-    const results = await this.dmrClientService.validateAdvert(auth, advert)
+    const results = await this.dmrService.validateAdvert(auth, advert)
     console.log(results)
     return results
   }
@@ -70,41 +54,63 @@ export class MinistryOfJusticeService {
     }
   }
 
-  async searchCaseTemplates(user: User, input: SearchCaseTemplateInput) {
-    const { q } = input
+  async adverts(
+    auth: User,
+    input: JournalControllerAdvertsRequest,
+  ): Promise<AdvertsResponse> {
+    const adverts = await this.dmrService.adverts(auth, input)
 
-    if (!q) {
+    const mappedAdverts: Array<Advert> = adverts.map((advert) => {
       return {
-        data: MockTemplates,
-        totalCount: MockTemplates.length,
-        pageInfo: {
-          hasNextPage: false,
-          hasPreviousPage: false,
-          startCursor: '',
-          endCursor: '',
+        id: advert.id,
+        department: mapAdvertDepartment(advert.department),
+        type: advert.type,
+        status: mapAdvertStatus(advert.status),
+        title: advert.title,
+        subject: advert.subject,
+        publicationNumber: advert.publicationNumber
+          ? {
+              number: advert.publicationNumber.number,
+              year: advert.publicationNumber.year,
+              full: advert.publicationNumber.full,
+            }
+          : undefined,
+        createdDate: advert.createdDate,
+        updatedDate: advert.updatedDate,
+        signatureDate: null,
+        publicationDate: null,
+        categories: (advert.categories as unknown as AdvertCategory[]).map(
+          (category) => ({
+            id: category.id,
+            name: category.name,
+            slug: category.slug,
+          }),
+        ),
+        involvedParty: advert.involvedParty,
+        document: {
+          isLegacy: advert.document.isLegacy,
+          html: null,
+          pdfUrl: null,
         },
       }
-    }
-
-    const templates = MockTemplates.filter((template) => {
-      if (!template.title) return false
-      return template.title?.toLowerCase().indexOf(q.toLowerCase()) > -1
     })
-      .filter(isDefined)
-      .map((template) => ({
-        ...template,
-        signatureType: CaseSignatureType.MINISTER,
-      }))
 
-    return {
-      data: templates,
-      totalCount: templates.length,
-      pageInfo: {
-        hasNextPage: false,
-        hasPreviousPage: false,
-        startCursor: '',
-        endCursor: '',
+    console.log('mappedAdverts', mappedAdverts)
+
+    const response: AdvertsResponse = {
+      adverts: mappedAdverts,
+      paging: {
+        page: 0, // data.paging.page,
+        totalPages: 0, // data.paging.totalPages,
+        totalItems: 0, // data.paging.totalItems,
+        pageSize: 0, // data.paging.pageSize,
+        hasNextPage: false, // data.paging.hasNextPage,
+        hasPreviousPage: false, // data.paging.hasPreviousPage,
+        nextPage: 0, // data.paging.nextPage,
+        previousPage: undefined,
       },
     }
+
+    return response
   }
 }

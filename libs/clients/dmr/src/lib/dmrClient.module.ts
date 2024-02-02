@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { DmrClientService } from './dmrClient.service'
-import { DefaultApi as DmrApi } from '../../gen/fetch/apis'
+import { DmrApiProvider } from './dmrClient.provider'
 
 @Module({
-  providers: [DmrApi, DmrClientService],
+  providers: [DmrApiProvider, DmrClientService],
   exports: [DmrClientService],
 })
 export class DmrClientModule {}

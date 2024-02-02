@@ -1,9 +1,5 @@
 import { useLazyQuery } from '@apollo/client'
 import {
-  MinistryOfJusticeCase,
-  MinistryOfJusticePaginatedSearchCaseTemplateResponse,
-} from '@island.is/api/schema'
-import {
   Box,
   Button,
   Input,
@@ -13,85 +9,60 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { useDebounce } from 'react-use'
-import { SEARCH_CASE_TEMPLATES } from './queries'
+import { ADVERTS } from './queries'
 import { general, newCase } from '../../lib/messages'
 import * as styles from './NewCase.css'
-
+import { useDebounce } from 'react-use'
+import {
+  MinistryOfJusticeAdvert,
+  MinistryOfJusticeAdvertsResponse,
+} from '@island.is/api/schema'
 type Props = {
   visible?: boolean
   onClose?: () => void
   onSave: (template: any) => void
 }
 
-type SearchResponse = {
-  ministryOfJusticeSearchCaseTemplates: MinistryOfJusticePaginatedSearchCaseTemplateResponse
-}
-
 export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
   const { formatMessage: f } = useLocale()
   const [selectedTemplateId, setSelectedTemplateId] = useState('')
-  const [templates, setTemplates] = useState([
-    {
-      department: '0',
-      category: '2',
-      subCategory: '0',
-      title:
-        'REGLUGERÐ um breytingu á reglugerð um skipulagsmál í Reykjavíkurborg',
-      template: '',
-      documentContents:
-        '<div><h1>REGLUGERÐ</h1><p>Lorem ipsum dolor sit amet</p></div>',
-      signatureType: 'regular',
-      signatureContents: '<p>Jón Bjarni</p>',
-    },
-    {
-      department: '2',
-      category: '1',
-      subCategory: '',
-      title:
-        'AUGLÝSING um breytingu á reglugerð um skipulagsmál í Reykjavíkurborg',
-      template: '',
-      documentContents:
-        '<div><h1>AUGLÝSING</h1><p>Lorem ipsum dolor sit amet</p></div>',
-      signatureType: 'regular',
-      signatureContents: '<p>Jón Bjarni Ólafsson</p>',
-    },
-  ])
+  const [templates, setTemplates] = useState<MinistryOfJusticeAdvert[]>([])
   const [filter, setFilter] = useState('')
   const [lazyFilter, setLazyFilter] = useState('')
   const [loading, setLoading] = useState(false)
-  const [lazySearchQuery] = useLazyQuery<SearchResponse>(SEARCH_CASE_TEMPLATES)
+  const [lazySearchQuery] = useLazyQuery<{
+    ministryOfJusticeAdverts: MinistryOfJusticeAdvertsResponse
+  }>(ADVERTS)
 
-  // useEffect(() => {
-  //   const load = async () => {
-  //     setLoading(true)
-  //     return lazySearchQuery({
-  //       variables: {
-  //         input: {
-  //           q: lazyFilter,
-  //         },
-  //       },
-  //       fetchPolicy: 'no-cache',
-  //       onCompleted(data) {
-  //         setLoading(false)
-  //         setTemplates(data.ministryOfJusticeSearchCaseTemplates.data)
-  //       },
-  //       onError(error) {
-  //         console.log(error)
-  //         setLoading(false)
-  //       },
-  //     })
-  //   }
-  //   load()
-  // }, [lazySearchQuery, lazyFilter])
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      return lazySearchQuery({
+        variables: {
+          input: {
+            search: lazyFilter,
+          },
+        },
+        onCompleted(data) {
+          setTemplates(data.ministryOfJusticeAdverts.adverts)
+          setLoading(false)
+        },
+        onError(error) {
+          console.error(error)
+          setLoading(false)
+        },
+      })
+    }
+    load()
+  }, [lazySearchQuery, lazyFilter])
 
-  // useDebounce(
-  //   () => {
-  //     setLazyFilter(filter)
-  //   },
-  //   250,
-  //   [filter],
-  // )
+  useDebounce(
+    () => {
+      setLazyFilter(filter)
+    },
+    250,
+    [filter],
+  )
 
   return (
     <ModalBase
