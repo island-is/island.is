@@ -48,7 +48,7 @@ runs:
   using: 'composite'
   steps:
     - name: Exit if no retries
-      if: inputs.retries <= 0
+      if: inputs.retries < 0
       shell: bash
       run: exit 1
 
@@ -73,7 +73,7 @@ runs:
 
     - name: Calculate retries left
       shell: bash
-      id: retries
+      id: calc-retries
       run: echo "retries-left=$(( ${{ inputs.retries }} - 1 ))" >> "$GITHUB_OUTPUT"
 
     - name: Recursively loop caching
@@ -83,7 +83,7 @@ runs:
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-        retries: ${{ steps.retries.outputs.retries-left }}
+        retries: ${{ steps.calc-retries.outputs.retries-left }}
         retry-interval: ${{ inputs.retry-interval }}
         cache-url: ${{ inputs.cache-url }}
 
