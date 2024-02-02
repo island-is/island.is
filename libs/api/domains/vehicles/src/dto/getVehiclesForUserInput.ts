@@ -1,4 +1,5 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { IsOptional } from 'class-validator'
 
 export enum VehicleUserTypeEnum {
   eigandi = 'Eigandi',
@@ -45,6 +46,12 @@ export class GetVehiclesListV2Input {
   @Field()
   page!: number
 
+  @Field(() => Boolean, {
+    description: 'Filter to only show vehicles requiring mileage registration',
+  })
+  @IsOptional()
+  onlyMileageRequiredVehicles?: boolean
+
   @Field({ defaultValue: true })
   showOwned?: boolean
 
@@ -53,9 +60,6 @@ export class GetVehiclesListV2Input {
 
   @Field({ defaultValue: true })
   showOperated?: boolean
-
-  @Field({ nullable: true })
-  onlyMileageRequiredVehicles?: boolean
 
   @Field({ nullable: true })
   permno?: string
