@@ -43,7 +43,7 @@ export const financeNavigation: PortalNavigationItem = {
     {
       name: m.financeLoans,
       path: FinancePaths.FinanceLoans,
-      serviceProvider: HMS_SLUG,
+      serviceProvider: 'rikislogreglustjori',
       description: m.realEstateTooltip,
     },
   ],
