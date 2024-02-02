@@ -65,16 +65,10 @@ const AppealToCourtOfAppeals = () => {
 
   const isStepValid = uploadFiles.length > 0 || uploadState.error
 
-  const newFiles = uploadFiles.filter((file) => {
-    return (
-      workingCase.caseFiles?.find((caseFile) => caseFile.id === file.id) ===
-      undefined
-    )
-  })
-
   const handleNextButtonClick = useCallback(
     async (isRetry: boolean) => {
       setUploadState({ isUploading: true, error: false })
+      console.log(uploadFiles)
 
       const handleError = (id?: string) => {
         const file = uploadFiles.find((file) => file.id === id)
@@ -87,7 +81,9 @@ const AppealToCourtOfAppeals = () => {
       }
 
       const uploadSuccess = await handleUpload(
-        isRetry ? uploadFiles.filter((uf) => uf.status === 'error') : newFiles,
+        uploadFiles.filter(
+          (uf) => uf.status === (isRetry ? 'error' : 'uploading'),
+        ),
         updateUploadFile,
         handleError,
       )
@@ -110,7 +106,6 @@ const AppealToCourtOfAppeals = () => {
     },
     [
       handleUpload,
-      newFiles,
       transitionCase,
       updateUploadFile,
       uploadFiles,
