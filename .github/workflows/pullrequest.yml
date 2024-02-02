@@ -295,6 +295,7 @@ jobs:
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      BASE: ${{ needs.prepare.outputs.last_good_build_sha }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -324,7 +325,7 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: ${{ env.CYPRESS_CACHE_FOLDER }}
+          path: ${{ github.workspace }}/.cache/Cypress
           key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
 
       - name: Check cypress cache success
