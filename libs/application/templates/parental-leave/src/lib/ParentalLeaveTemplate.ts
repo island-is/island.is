@@ -2247,12 +2247,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         }
         if (
           e === DefaultEvents.APPROVE &&
-          state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE 
+          state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE
         ) {
           return context
         }
-        if (e === DefaultEvents.REJECT && state === States.RESIDENCE_GRANT_APPLICATION) {
-          set(answers, 'previousState', States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE)
+        if (
+          e === DefaultEvents.REJECT &&
+          state === States.RESIDENCE_GRANT_APPLICATION
+        ) {
+          set(
+            answers,
+            'previousState',
+            States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
+          )
           return context
         }
 

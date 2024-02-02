@@ -257,22 +257,25 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
-  const handleSubmit = useCallback(async (event: string) => {
-    const res = await submitApplication({
-      variables: {
-        input: {
-          id: application.id,
-          event,
-          answers: application.answers,
+  const handleSubmit = useCallback(
+    async (event: string) => {
+      const res = await submitApplication({
+        variables: {
+          input: {
+            id: application.id,
+            event,
+            answers: application.answers,
+          },
         },
-      },
-    })
-    if (res?.data) {
-      // Takes them to the next state (which loads the relevant form)
-      refetch?.()
-    }
-  }, [application.answers, application.id, refetch, submitApplication])
-  
+      })
+      if (res?.data) {
+        // Takes them to the next state (which loads the relevant form)
+        refetch?.()
+      }
+    },
+    [application.answers, application.id, refetch, submitApplication],
+  )
+
   return (
     <Box marginBottom={10}>
       <Box display="flex" justifyContent="spaceBetween">

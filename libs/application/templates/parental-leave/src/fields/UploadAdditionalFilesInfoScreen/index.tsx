@@ -53,7 +53,7 @@ const UploadAdditionalFilesInfoScreen: FC<
       setFieldLoadingState,
     )
   }, [data, loading, periods, rights, setFieldLoadingState, setRepeaterItems])
-  
+
   return (
     <Box>
       <FieldDescription
