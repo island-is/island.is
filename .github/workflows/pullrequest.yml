@@ -15,7 +15,6 @@ concurrency:
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
-  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
 
 jobs:
