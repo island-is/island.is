@@ -21,7 +21,6 @@ import {
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
-import isEqual from 'lodash/isEqual'
 
 import { VehicleCard } from '../../components/VehicleCard'
 import {
@@ -82,22 +81,19 @@ const VehiclesOverview = () => {
 
   useDebounce(
     () => {
-      const hasActiveFilters = !isEqual(filterValue, defaultFilterValues)
-      if (hasActiveFilters || page > 1) {
-        GetUsersVehiclesLazyQuery({
-          onCompleted: () => setSearchLoading(false),
-          variables: {
-            input: {
-              pageSize: 10,
-              page: page,
-              permno: filterValue.searchQuery,
-              onlyMileage: Boolean(filterValue.onlyMileageRequiredVehicles),
-            },
+      const onlyMileage = Boolean(filterValue.onlyMileageRequiredVehicles)
+      const permno = filterValue.searchQuery
+      GetUsersVehiclesLazyQuery({
+        onCompleted: () => setSearchLoading(false),
+        variables: {
+          input: {
+            pageSize: 10,
+            page: page,
+            ...(permno && { permno }),
+            ...(onlyMileage && { onlyMileage }),
           },
-        })
-      } else {
-        setSearchLoading(false)
-      }
+        },
+      })
     },
     500,
     [filterValue.onlyMileageRequiredVehicles, filterValue.searchQuery, page],
@@ -230,7 +226,10 @@ const VehiclesOverview = () => {
               labelOpen={formatMessage(m.openFilter)}
               labelClose={formatMessage(m.closeFilter)}
               variant="popover"
-              onFilterClear={() => setFilterValue(defaultFilterValues)}
+              onFilterClear={() => {
+                setFilterValue(defaultFilterValues)
+                setPage(1)
+              }}
               align="left"
               reverse
               filterInput={
