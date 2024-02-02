@@ -74,7 +74,7 @@ const VehicleMileage = () => {
             input: {
               internalId: parseInt(details[0].internalId),
               permno: id,
-              mileage: String(submitData.odometerStatus),
+              mileageNumber: submitData.odometerStatus,
             },
           },
         })
@@ -87,7 +87,7 @@ const VehicleMileage = () => {
           input: {
             permno: id,
             originCode: ORIGIN_CODE,
-            mileage: String(submitData.odometerStatus),
+            mileageNumber: submitData.odometerStatus,
           },
         },
       })
@@ -245,9 +245,7 @@ const VehicleMileage = () => {
                               : [...details]
 
                             const highestRegistration = Math.max(
-                              ...detailArray.map((o) =>
-                                parseInt(o.mileage ?? '0'),
-                              ),
+                              ...detailArray.map((o) => o.mileageNumber ?? 0),
                             )
                             if (highestRegistration > value) {
                               return formatMessage(messages.mileageInputTooLow)
@@ -344,7 +342,7 @@ const VehicleMileage = () => {
                             {item.originCode}
                           </Table.Data>
                           <Table.Data align="right">
-                            {displayWithUnit(item.mileage, 'km', true)}
+                            {displayWithUnit(item.mileageNumber, 'km', true)}
                           </Table.Data>
                         </Table.Row>
                       ))}
