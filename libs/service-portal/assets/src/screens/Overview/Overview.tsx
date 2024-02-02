@@ -103,8 +103,9 @@ const VehiclesOverview = () => {
               pageSize: 10,
               page: searchPage,
               permno: filterValue.searchQuery,
-              onlyMileageRequiredVehicles:
+              onlyMileageRequiredVehicles: Boolean(
                 filterValue.onlyMileageRequiredVehicles,
+              ),
             },
           },
         })
