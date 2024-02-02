@@ -119,7 +119,7 @@ jobs:
           source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
           git checkout $GITHUB_SHA
           # Subsequent jobs are assuming they have access to this variable but they don't, so we always use the main branch as affected
-          # echo "BASE=$BASE" >> $GITHUB_ENV
+          echo "BASE=$BASE" >> $GITHUB_ENV
           echo "last_good_build_sha=$BASE" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
