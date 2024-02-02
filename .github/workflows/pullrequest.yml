@@ -221,7 +221,7 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 3
+      MAX_JOBS: 6
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -264,7 +264,7 @@ jobs:
 
       - name: Setup docker (missing on MacOS)
         run: |
-          brew install docker
+          brew install docker parallel
 
       - uses: ./.github/actions/unit-test
         with:
