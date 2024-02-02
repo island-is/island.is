@@ -135,14 +135,14 @@ jobs:
           path: ${{ env.CYPRESS_CACHE_FOLDER }}
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
 
-      - name: Check cypress cache success
-        run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
-
       - name: Verify cypress
         id: cypress-check
         run: npx cypress verify
         continue-on-error: true
 
+      # - name: Check cypress cache success
+      #   run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
+      #
       - name: Install cypress
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
