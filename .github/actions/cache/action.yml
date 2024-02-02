@@ -49,58 +49,91 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Cache try number one
-      id: cache_try_number_one
+    - name: Exit if no retries
+      if: inputs.retries == 0
+      shell: bash
+      run: exit 0
+
+    - name: Cache attempt \#${{ inputs.retries }}
+      id: cache_attempt
       uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
 
-    - name: Give cache server a bit of time to recover
-      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
+    - name: Sleep for ${{ inputs.retry-interval }} seconds
+      if: always() && inputs.retries > 0 && steps.cache_attempt.outputs.success != 'true'
       shell: bash
-      run: sleep 10
+      run: sleep ${{ inputs.retry-interval }}
 
-    - name: Cache try number two
-      id: cache_try_number_two
-      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
-      uses: island-is/cache@v0.3
+    - name: Cache recurse
+      id: recurse
+      if: always() && inputs.retries > 0 && steps.cache_attempt.outputs.success != 'true'
+      uses: ./.github/actions/cache
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
+        retries: ${{ inputs.retries -1 }}
+        retry-interval: ${{ inputs.retries-interval }}
+        cache-url: ${{ inputs.cache-url }}
 
-    - name: Give cache server a bit of time to recover
-      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+    - name: Exit if recurse failed
+      if: always() && steps.recurse.outputs.success != 'true'
       shell: bash
-      run: sleep 10
+      run: exit 1
 
-    - name: Cache try number three
-      id: cache_try_number_three
-      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
-      uses: island-is/cache@v0.3
-      with:
-        path: ${{ inputs.path }}
-        key: ${{ inputs.key }}
-
-    - name: Gather outputs
-      id: computed_outputs
-      if: always()
-      shell: bash
-      run: |
-        if [[ "${{ steps.cache_try_number_one.outputs.success }}" == "true" ]] || \
-           [[ "${{ steps.cache_try_number_two.outputs.success }}" == "true" ]] || \
-           [[ "${{ steps.cache_try_number_three.outputs.success }}" == "true" ]]
-        then
-          echo "success=true" >> $GITHUB_OUTPUT
-        else
-          echo "success=false" >> $GITHUB_OUTPUT
-        fi
-
-        if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" == "true" ]] || \
-           [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" == "true" ]] || \
-           [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" == "true" ]]
-        then
-          echo "cache-hit=true" >> $GITHUB_OUTPUT
-        else
-          echo "cache-hit=false" >> $GITHUB_OUTPUT
-        fi
+    # - name: Cache try number one
+    #   id: cache_try_number_one
+    #   uses: island-is/cache@v0.3
+    #   with:
+    #     path: ${{ inputs.path }}
+    #     key: ${{ inputs.key }}
+    #
+    # - name: Give cache server a bit of time to recover
+    #   if: always() && inputs.retries > 0 && steps.cache_try_number_one.outputs.success != 'true'
+    #   shell: bash
+    #   run: sleep 10
+    #
+    # - name: Cache try number two
+    #   id: cache_try_number_two
+    #   if: always() && inputs.retries > 0 && steps.cache_try_number_one.outputs.success != 'true'
+    #   uses: island-is/cache@v0.3
+    #   with:
+    #     path: ${{ inputs.path }}
+    #     key: ${{ inputs.key }}
+    #
+    # - name: Give cache server a bit of time to recover
+    #   if: always() && inputs.retries > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+    #   shell: bash
+    #   run: sleep 10
+    #
+    # - name: Cache try number three
+    #   id: cache_try_number_three
+    #   if: always() && inputs.retries > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+    #   uses: island-is/cache@v0.3
+    #   with:
+    #     path: ${{ inputs.path }}
+    #     key: ${{ inputs.key }}
+    #
+    # - name: Gather outputs
+    #   id: computed_outputs
+    #   if: always()
+    #   shell: bash
+    #   run: |
+    #     if [[ "${{ steps.cache_try_number_one.outputs.success }}" == "true" ]] || \
+    #        [[ "${{ steps.cache_try_number_two.outputs.success }}" == "true" ]] || \
+    #        [[ "${{ steps.cache_try_number_three.outputs.success }}" == "true" ]]
+    #     then
+    #       echo "success=true" >> $GITHUB_OUTPUT
+    #     else
+    #       echo "success=false" >> $GITHUB_OUTPUT
+    #     fi
+    #
+    #     if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" == "true" ]] || \
+    #        [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" == "true" ]] || \
+    #        [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" == "true" ]]
+    #     then
+    #       echo "cache-hit=true" >> $GITHUB_OUTPUT
+    #     else
+    #       echo "cache-hit=false" >> $GITHUB_OUTPUT
+    #     fi
