@@ -38,6 +38,7 @@ const useCaseList = () => {
   const [clickedCase, setClickedCase] = useState<
     [id: string | null, showLoading: boolean]
   >([null, false])
+  const [openCaseInNewTab, setOpenCaseInNewTab] = useState<boolean>(false)
 
   const { user, limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -137,14 +138,23 @@ const useCaseList = () => {
       }
     }
 
-    if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
+    if (openCaseInNewTab) {
+      window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
+      setOpenCaseInNewTab(false)
+    } else if (routeTo) {
+      router.push(`${routeTo}/${caseToOpen.id}`)
+    }
   }
 
   const handleOpenCase = useCallback(
-    (id: string) => {
+    (id: string, openInNewTab?: boolean) => {
       Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
 
-      if (clickedCase[0] !== id) {
+      if (openInNewTab === true) {
+        setOpenCaseInNewTab(openInNewTab)
+      }
+
+      if (clickedCase[0] !== id && !openInNewTab) {
         setClickedCase([id, false])
 
         timeouts.push(

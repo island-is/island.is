@@ -3,6 +3,8 @@ import ReactHtmlParser from 'react-html-parser'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import getConfig from 'next/config'
+import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 
 import {
   Accordion,
@@ -15,19 +17,28 @@ import {
   Hidden,
   Icon,
   LinkV2,
+  Navigation,
+  NavigationItem,
   Stack,
-  Tabs,
   TabType,
   Text,
 } from '@island.is/island-ui/core'
 import { Requirement } from '@island.is/university-gateway'
-import { IconTitleCard } from '@island.is/web/components'
 import {
+  IconTitleCard,
+  OrganizationFooter,
+  OrganizationHeader,
+} from '@island.is/web/components'
+import {
+  ContentLanguage,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetUniversityGatewayQuery,
   GetUniversityGatewayQueryVariables,
   GetUniversityGatewayUniversitiesQuery,
+  OrganizationPage,
+  Query,
+  QueryGetOrganizationPageArgs,
   UniversityGatewayProgramCourse,
   UniversityGatewayProgramDetails,
   UniversityGatewayUniversity,
@@ -38,7 +49,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import SidebarLayout from '../Layouts/SidebarLayout'
-import { GET_NAMESPACE_QUERY } from '../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import {
   GET_UNIVERSITY_GATEWAY_PROGRAM,
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
@@ -52,6 +63,7 @@ interface UniversityDetailsProps {
   namespace: Record<string, string>
   locale: string
   universities: Array<UniversityGatewayUniversity>
+  organizationPage?: Query['getOrganizationPage']
 }
 
 const UniversityDetails: Screen<UniversityDetailsProps> = ({
@@ -59,9 +71,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
   namespace,
   locale,
   universities,
+  organizationPage,
 }) => {
   const n = useNamespace(namespace)
-
+  const router = useRouter()
   const [sortedCourses, setSortedCourses] = useState<
     Array<UniversityGatewayProgramCourse>
   >([])
@@ -182,339 +195,329 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     return tabList
   }
 
-  return (
-    <SidebarLayout
-      sidebarContent={
-        <Stack space={3}>
-          <LinkV2 href={linkResolver('universitysearch').href} skipTab>
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              truncate
-            >
-              {n('goBack', 'Til baka í yfirlit')}
-            </Button>
-          </LinkV2>
-          <IconTitleCard
-            heading={
-              universities.filter((x) => x.id === data.universityId)[0]
-                .contentfulTitle || ''
-            }
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            href="/"
-            imgSrc={
-              universities.filter((x) => x.id === data.universityId)[0]
-                .contentfulLogoUrl || ''
-            }
-            alt="University infomation"
-          />
-        </Stack>
-      }
-    >
-      <Stack space={3}>
-        <Hidden above="sm">
-          <LinkV2 href={linkResolver('universitysearch').href} skipTab>
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              truncate
-            >
-              {n('goBack', 'Til baka í yfirlit')}
-            </Button>
-          </LinkV2>
-        </Hidden>
-        <Text variant="h1" as="h1">
-          {locale === 'en' ? data.nameEn : data.nameIs}
-        </Text>
+  const navList: NavigationItem[] =
+    organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
+      title: primaryLink?.text ?? '',
+      href: primaryLink?.url,
+      active: primaryLink?.url === router.pathname,
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
+    })) ?? []
 
-        <Box marginTop={2}>
-          {data.credits && data.credits > 0 ? (
-            <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
-          ) : (
-            <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
-          )}
-          <Text marginTop={3} marginBottom={3} variant="default">
-            {locale === 'en'
-              ? ReactHtmlParser(data.descriptionEn ? data.descriptionEn : '')
-              : ReactHtmlParser(data.descriptionIs ? data.descriptionIs : '')}
-          </Text>
-          {data.externalUrlIs && (
-            <LinkV2
-              underlineVisibility="always"
-              color="blue400"
-              as="h5"
-              href={
-                locale === 'en'
-                  ? data.externalUrlEn
-                    ? data.externalUrlEn
-                    : data.externalUrlIs
-                  : data.externalUrlIs
+  return (
+    <>
+      {organizationPage && (
+        <OrganizationHeader organizationPage={organizationPage} />
+      )}
+      <SidebarLayout
+        sidebarContent={
+          <Stack space={3}>
+            <Navigation
+              baseId="pageNav"
+              items={navList}
+              title={n('navigationTitle', 'Efnisyfirlit')}
+              activeItemTitle="Námsleit"
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href} legacyBehavior>
+                    {link}
+                  </NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
+            <IconTitleCard
+              heading={
+                universities.filter((x) => x.id === data.universityId)[0]
+                  .contentfulTitle || ''
               }
-            >
-              <Box display="flex" flexDirection="row">
-                {`${n('seeMoreWeb', 'Sjá meira á vef skóla')}`}
-                <Box marginLeft={1}>
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              href="/"
+              imgSrc={
+                universities.filter((x) => x.id === data.universityId)[0]
+                  .contentfulLogoUrl || ''
+              }
+              alt="University infomation"
+            />
+            <Box width="full">
+              <Button onClick={() => console.log('Route me!')} fluid>
+                <Box display={'flex'} style={{ gap: '0.5rem' }}>
+                  {n('applyToUniversityProgram', 'Sækja um háskólanám')}
                   <Icon icon="open" type="outline" />
                 </Box>
-              </Box>
-            </LinkV2>
-          )}
-        </Box>
-        <Box marginTop={7}>
-          <GridContainer>
-            <GridRow rowGap={1}>
-              <GridColumn span="1/2">
-                <Box display="flex" flexDirection="row">
-                  <Box marginRight={1}>
-                    <Icon icon={'school'} type="outline" color="blue400" />
-                  </Box>
-                  <Text variant="medium">
-                    {n(data.degreeType, TranslationDefaults[data.degreeType])}
-                  </Text>
-                </Box>
-              </GridColumn>
-              <GridColumn span="1/2">
-                <Box display="flex" flexDirection="row">
-                  <Box marginRight={1}>
-                    <Icon icon={'calendar'} type="outline" color="blue400" />
-                  </Box>
-                  <Text variant="medium">{`${n('begins', 'Hefst')} ${n(
-                    data.startingSemesterSeason,
-                    TranslationDefaults[data.startingSemesterSeason],
-                  )} ${data.startingSemesterYear}`}</Text>
-                </Box>
-              </GridColumn>
-
-              <GridColumn span="1/2">
-                <Box display="flex" flexDirection="row">
-                  <Box marginRight={1}>
-                    <Icon icon={'time'} type="outline" color="blue400" />
-                  </Box>
-                  <Text variant="medium">{`${n(
-                    'educationLength',
-                    'Námstími',
-                  )}: ${data.durationInYears} ${
-                    locale === 'en'
-                      ? data.durationInYears === 1
-                        ? 'year'
-                        : 'years'
-                      : 'ár'
-                  }`}</Text>
-                </Box>
-              </GridColumn>
-              <GridColumn span="1/2">
-                <Box display="flex" flexDirection="row">
-                  <Box marginRight={1}>
-                    <Icon icon={'wallet'} type="outline" color="blue400" />
-                  </Box>
-                  <Text variant="medium">
-                    {`${n('yearlyCost', 'Árlegur kostnaður')}: ${
-                      data.costPerYear &&
-                      data.costPerYear.toLocaleString('de-DE')
-                    } kr.`}
-                  </Text>
-                </Box>
-              </GridColumn>
-              <GridColumn span="1/2">
-                <Box display="flex" flexDirection="row">
-                  <Box marginRight={1}>
-                    <Icon icon={'calendar'} type="outline" color="blue400" />
-                  </Box>
-                  <Text variant="medium">{`${n(
-                    'applicationPeriod',
-                    'Umsóknartímabil',
-                  )}: ${format(
-                    new Date(data.applicationStartDate),
-                    'd. MMMM yyyy',
-                    { locale: is },
-                  )} - ${format(
-                    new Date(data.applicationEndDate),
-                    'd. MMMM yyyy',
-                    { locale: is },
-                  )}`}</Text>
-                </Box>
-              </GridColumn>
-
-              <GridColumn span="1/2">
-                <Box display="flex" flexDirection="row">
-                  <Box marginRight={1}>
-                    <Icon icon={'person'} type="outline" color="blue400" />
-                  </Box>
-                  <Text variant="medium">{`${data.modeOfDelivery.map(
-                    (delivery, index) => {
-                      if (index !== 0) {
-                        return `, ${n(delivery, TranslationDefaults[delivery])}`
-                      } else {
-                        return n(delivery, TranslationDefaults[delivery])
-                      }
-                    },
-                  )}`}</Text>
-                </Box>
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-        </Box>
-        <Box>
-          <Accordion
-            singleExpand={false}
-            dividerOnTop={false}
-            dividerOnBottom={false}
-          >
-            <AccordionItem
-              id="application-rules"
-              label={n('admissionRequirements', 'Inntökuskilyrði')}
-              labelUse="p"
-              labelVariant="h3"
-              iconVariant="default"
-              expanded={isOpen[0]}
-              onToggle={() => toggleIsOpen(0)}
-            >
-              <Text as="p">
-                {locale === 'en'
-                  ? ReactHtmlParser(
-                      data.admissionRequirementsEn
-                        ? data.admissionRequirementsEn
-                        : '',
-                    )
-                  : ReactHtmlParser(
-                      data.admissionRequirementsIs
-                        ? data.admissionRequirementsIs
-                        : '',
-                    )}
-              </Text>
-            </AccordionItem>
-            <AccordionItem
-              id="education-requirements"
-              label={n('educationRequirements', 'Námskröfur')}
-              labelUse="p"
-              labelVariant="h3"
-              iconVariant="default"
-              expanded={isOpen[1]}
-              onToggle={() => toggleIsOpen(1)}
-            >
-              <Text as="p">
-                {locale === 'en'
-                  ? ReactHtmlParser(
-                      data.studyRequirementsEn ? data.studyRequirementsEn : '',
-                    )
-                  : ReactHtmlParser(
-                      data.studyRequirementsIs ? data.studyRequirementsIs : '',
-                    )}
-              </Text>
-            </AccordionItem>
-            <AccordionItem
-              id="education-orginization"
-              label={n('educationOrganization', 'Skipulag náms')}
-              labelUse="p"
-              labelVariant="h3"
-              iconVariant="default"
-              expanded={isOpen[2]}
-              onToggle={() => toggleIsOpen(2)}
-            >
-              <Tabs
-                tabs={createTabContent() || []}
-                label="PRUFA"
-                onlyRenderSelectedTab
-                contentBackground="white"
-              />
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="flexStart"
-                alignItems="center"
-                paddingTop={2}
+              </Button>
+            </Box>
+          </Stack>
+        }
+      >
+        <Stack space={3}>
+          <Hidden above="sm">
+            <LinkV2 href={linkResolver('universitysearch').href} skipTab>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                truncate
               >
-                <Box display="flex" paddingRight={1} alignItems="center">
-                  <Box
-                    marginRight={1}
-                    className={[
-                      styles.courseTypeIcon,
-                      styles.capitalizeText,
-                      'small',
-                      'red',
-                    ]}
-                  >
-                    <Text
-                      fontWeight="semiBold"
-                      color="red600"
-                      variant="eyebrow"
-                    >
-                      S
-                    </Text>
-                  </Box>
-                  <Box className={styles.capitalizeText}>
-                    <Text variant="eyebrow">
-                      {n(Requirement.MANDATORY, 'Skylda')}
-                    </Text>
-                  </Box>
-                </Box>
+                {n('goBack', 'Til baka í yfirlit')}
+              </Button>
+            </LinkV2>
+          </Hidden>
+          <Text variant="h1" as="h1">
+            {locale === 'en' ? data.nameEn : data.nameIs}
+          </Text>
+          <Box
+            width="full"
+            display={'flex'}
+            flexDirection={'row'}
+            justifyContent={'spaceBetween'}
+            alignItems={'center'}
+            style={{ backgroundColor: '#F2F7FF' }}
+            padding={3}
+          >
+            <Text variant={'h3'} color={'blue600'}>
+              {n('applyForProgram', 'Umsókn í háskólanám')}
+            </Text>
 
-                <Box display="flex" paddingRight={1} alignItems="center">
-                  <Box
-                    marginRight={1}
-                    className={[styles.courseTypeIcon, styles.capitalizeText]}
-                  >
-                    <Text
-                      fontWeight="semiBold"
-                      color="purple600"
-                      variant="eyebrow"
-                    >
-                      B
-                    </Text>
-                  </Box>
-                  <Box className={styles.capitalizeText}>
-                    <Text variant="eyebrow">
-                      {n(Requirement.FREE_ELECTIVE, 'Bundið val')}
-                    </Text>
-                  </Box>
-                </Box>
-                <Box display="flex" paddingRight={1} alignItems="center">
-                  <Box
-                    marginRight={1}
-                    className={[styles.courseTypeIcon, styles.capitalizeText]}
-                  >
-                    <Text
-                      fontWeight="semiBold"
-                      color="blue600"
-                      variant="eyebrow"
-                    >
-                      V
-                    </Text>
-                  </Box>
-                  <Box className={styles.capitalizeText}>
-                    <Text variant="eyebrow">
-                      {n(Requirement.RESTRICTED_ELECTIVE, 'Valfag')}
-                    </Text>
-                  </Box>
-                </Box>
+            <Button>
+              <Box display={'flex'} style={{ gap: '0.5rem' }}>
+                {n('apply', 'Sækja um')}
+                <Icon icon="open" type="outline" />
               </Box>
-            </AccordionItem>
-            <AccordionItem
-              id="annual-cost"
-              label={n('yearlyCost', 'Árlegt gjald')}
-              labelUse="p"
-              labelVariant="h3"
-              iconVariant="default"
-              expanded={isOpen[3]}
-              onToggle={() => toggleIsOpen(3)}
+            </Button>
+          </Box>
+          <Box marginTop={2}>
+            {data.credits && data.credits > 0 ? (
+              <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
+            ) : (
+              <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
+            )}
+            <Text marginTop={3} marginBottom={3} variant="default">
+              {locale === 'en'
+                ? ReactHtmlParser(data.descriptionEn ? data.descriptionEn : '')
+                : ReactHtmlParser(data.descriptionIs ? data.descriptionIs : '')}
+            </Text>
+            {data.externalUrlIs && (
+              <LinkV2
+                underlineVisibility="always"
+                color="blue400"
+                as="h5"
+                href={
+                  locale === 'en'
+                    ? data.externalUrlEn
+                      ? data.externalUrlEn
+                      : data.externalUrlIs
+                    : data.externalUrlIs
+                }
+              >
+                <Box display="flex" flexDirection="row">
+                  {`${n('seeMoreWeb', 'Sjá meira á vef skóla')}`}
+                  <Box marginLeft={1}>
+                    <Icon icon="open" type="outline" />
+                  </Box>
+                </Box>
+              </LinkV2>
+            )}
+          </Box>
+          <Box marginTop={7}>
+            <GridContainer>
+              <GridRow rowGap={1}>
+                <GridColumn span="1/2">
+                  <Box display="flex" flexDirection="row">
+                    <Box marginRight={1}>
+                      <Icon icon={'school'} type="outline" color="blue400" />
+                    </Box>
+                    <Text variant="medium">
+                      {`${n(
+                        data.degreeType,
+                        TranslationDefaults[data.degreeType],
+                      )}, ${data.degreeAbbreviation}`}
+                    </Text>
+                  </Box>
+                </GridColumn>
+                <GridColumn span="1/2">
+                  <Box display="flex" flexDirection="row">
+                    <Box marginRight={1}>
+                      <Icon icon={'calendar'} type="outline" color="blue400" />
+                    </Box>
+                    <Text variant="medium">{`${n('begins', 'Hefst')} ${n(
+                      data.startingSemesterSeason,
+                      TranslationDefaults[data.startingSemesterSeason],
+                    )} ${data.startingSemesterYear}`}</Text>
+                  </Box>
+                </GridColumn>
+
+                <GridColumn span="1/2">
+                  <Box display="flex" flexDirection="row">
+                    <Box marginRight={1}>
+                      <Icon icon={'time'} type="outline" color="blue400" />
+                    </Box>
+                    <Text variant="medium">{`${n(
+                      'educationLength',
+                      'Námstími',
+                    )}: ${data.durationInYears} ${
+                      locale === 'en'
+                        ? data.durationInYears === 1
+                          ? 'year'
+                          : 'years'
+                        : 'ár'
+                    }`}</Text>
+                  </Box>
+                </GridColumn>
+                <GridColumn span="1/2">
+                  <Box display="flex" flexDirection="row">
+                    <Box marginRight={1}>
+                      <Icon icon={'calendar'} type="outline" color="blue400" />
+                    </Box>
+                    <Text variant="medium">{`${n(
+                      'applicationPeriod',
+                      'Umsóknartímabil',
+                    )}: ${format(
+                      new Date(data.applicationStartDate),
+                      'd. MMMM yyyy',
+                      { locale: is },
+                    )} - ${format(
+                      new Date(data.applicationEndDate),
+                      'd. MMMM yyyy',
+                      { locale: is },
+                    )}`}</Text>
+                  </Box>
+                </GridColumn>
+
+                <GridColumn span="1/2">
+                  <Box display="flex" flexDirection="row">
+                    <Box marginRight={1}>
+                      <Icon icon={'person'} type="outline" color="blue400" />
+                    </Box>
+                    <Text variant="medium">{`${data.modeOfDelivery.map(
+                      (delivery, index) => {
+                        if (index !== 0) {
+                          return `, ${n(
+                            delivery,
+                            TranslationDefaults[delivery],
+                          )}`
+                        } else {
+                          return n(delivery, TranslationDefaults[delivery])
+                        }
+                      },
+                    )}`}</Text>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          </Box>
+          <Box>
+            <Accordion
+              singleExpand={false}
+              dividerOnTop={false}
+              dividerOnBottom={false}
             >
-              <Text as="p">
-                {locale === 'en'
-                  ? data.costInformationEn
-                  : data.costInformationIs}
-              </Text>
-            </AccordionItem>
-          </Accordion>
-        </Box>
-      </Stack>
-    </SidebarLayout>
+              {(data.admissionRequirementsEn ||
+                data.admissionRequirementsIs) && (
+                <AccordionItem
+                  id="application-rules"
+                  label={n('admissionRequirements', 'Inntökuskilyrði')}
+                  labelUse="p"
+                  labelVariant="h3"
+                  iconVariant="default"
+                  expanded={isOpen[0]}
+                  onToggle={() => toggleIsOpen(0)}
+                >
+                  <Text as="p">
+                    {locale === 'en'
+                      ? ReactHtmlParser(
+                          data.admissionRequirementsEn
+                            ? data.admissionRequirementsEn
+                            : '',
+                        )
+                      : ReactHtmlParser(
+                          data.admissionRequirementsIs
+                            ? data.admissionRequirementsIs
+                            : '',
+                        )}
+                  </Text>
+                </AccordionItem>
+              )}
+              {(data.studyRequirementsEn || data.studyRequirementsIs) && (
+                <AccordionItem
+                  id="education-requirements"
+                  label={n('educationRequirements', 'Námskröfur')}
+                  labelUse="p"
+                  labelVariant="h3"
+                  iconVariant="default"
+                  expanded={isOpen[1]}
+                  onToggle={() => toggleIsOpen(1)}
+                >
+                  <Text as="p">
+                    {locale === 'en'
+                      ? ReactHtmlParser(
+                          data.studyRequirementsEn
+                            ? data.studyRequirementsEn
+                            : '',
+                        )
+                      : ReactHtmlParser(
+                          data.studyRequirementsIs
+                            ? data.studyRequirementsIs
+                            : '',
+                        )}
+                  </Text>
+                </AccordionItem>
+              )}
+              <AccordionItem
+                id="education-orginization"
+                label={n('educationOrganization', 'Skipulag náms')}
+                labelUse="p"
+                labelVariant="h3"
+                iconVariant="default"
+                expanded={isOpen[2]}
+                onToggle={() => toggleIsOpen(2)}
+              >
+                <Text as="p">
+                  {locale === 'en'
+                    ? ReactHtmlParser(
+                        data.arrangementEn ? data.arrangementEn : '',
+                      )
+                    : ReactHtmlParser(
+                        data.arrangementIs ? data.arrangementIs : '',
+                      )}
+                </Text>
+              </AccordionItem>
+              {(data.costInformationEn || data.costInformationIs) && (
+                <AccordionItem
+                  id="annual-cost"
+                  label={n('yearlyCost', 'Árlegt gjald')}
+                  labelUse="p"
+                  labelVariant="h3"
+                  iconVariant="default"
+                  expanded={isOpen[3]}
+                  onToggle={() => toggleIsOpen(3)}
+                >
+                  <Text as="p">
+                    {locale === 'en'
+                      ? data.costInformationEn
+                      : data.costInformationIs}
+                  </Text>
+                </AccordionItem>
+              )}
+            </Accordion>
+          </Box>
+        </Stack>
+      </SidebarLayout>
+      <Box className="rs_read">
+        <OrganizationFooter
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizations={[organizationPage.organization]}
+          force={true}
+        />
+      </Box>
+    </>
   )
 }
 
@@ -566,6 +569,19 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
     },
   })
 
+  const organizationPage = await apolloClient.query<
+    Query,
+    QueryGetOrganizationPageArgs
+  >({
+    query: GET_ORGANIZATION_PAGE_QUERY,
+    variables: {
+      input: {
+        slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+        lang: locale as ContentLanguage,
+      },
+    },
+  })
+
   const universities =
     await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
@@ -578,6 +594,7 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
     namespace,
     locale,
     universities: universities.data.universityGatewayUniversities,
+    organizationPage: organizationPage.data.getOrganizationPage,
   }
 }
 

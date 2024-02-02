@@ -104,6 +104,7 @@ export const prepareServiceForEnv = (
     accountName: serviceDef.accountName,
     healthPort: serviceDef.healthPort,
     volumes: serviceDef.volumes,
+    podDisruptionBudget: serviceDef.podDisruptionBudget,
     port: serviceDef.port,
     env: envs,
     secrets: { ...serviceDef.secrets },

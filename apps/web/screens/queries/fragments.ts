@@ -667,8 +667,47 @@ export const slices = gql`
     __typename
     id
     dropdownLabel
+    alphabeticallyOrdered
     slices {
       ...OneColumnTextFields
+    }
+  }
+
+  fragment FeaturedEventsFields on FeaturedEvents {
+    __typename
+    id
+    namespace
+    noEventsFoundText {
+      ...HtmlFields
+    }
+    resolvedEventList {
+      total
+      items {
+        id
+        title
+        slug
+        startDate
+        time {
+          startTime
+          endTime
+        }
+        location {
+          streetAddress
+          floor
+          postalCode
+          useFreeText
+          freeText
+        }
+        thumbnailImage {
+          url
+          title
+          width
+          height
+        }
+        organization {
+          slug
+        }
+      }
     }
   }
 
@@ -843,6 +882,7 @@ export const slices = gql`
     ...LatestEventsSliceFields
     ...ChartFields
     ...ChartNumberBoxFields
+    ...FeaturedEventsFields
   }
 
   fragment AllSlices on Slice {

@@ -1131,6 +1131,34 @@ export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
   }
 }
 
+export interface IFeaturedEventsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** No events found text */
+  noEventsFoundText?: Document | undefined
+}
+
+export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredEvents'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedSupportQnAsFields {
   /** Title */
   title?: string | undefined
@@ -3562,6 +3590,9 @@ export interface ISliceDropdownFields {
   /** Dropdown Label */
   dropdownLabel?: string | undefined
 
+  /** Alphabetically ordered */
+  alphabeticallyOrdered?: boolean | undefined
+
   /** Slices */
   slices?: IOneColumnText[] | undefined
 }
@@ -4734,6 +4765,7 @@ export type CONTENT_TYPE =
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
+  | 'featuredEvents'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'
