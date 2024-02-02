@@ -81,6 +81,7 @@ export class VehiclesResolver {
   ) {
     const res = await this.vehiclesService.getVehiclesListV2(user, input)
     const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+
     return {
       vehicleList: res.data,
       downloadServiceURL,
