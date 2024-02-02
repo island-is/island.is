@@ -16,4 +16,3 @@ echo "Running '$AFFECTED_PROJECTS' in parallel of ${MAX_JOBS} for target $1"
 
 # Now AFFECTED_PROJECTS should be a clean, space-separated list of project names
 echo "$AFFECTED_PROJECTS" | parallel --halt soon,fail=1 --lb -j "$MAX_JOBS" APP={} "$DIR"/"$1".sh
-exec parallel --halt soon,fail=1 --lb -j "$MAX_JOBS" APP={} "$DIR"/"$1".sh ::: "${AFFECTED_PROJECTS[@]}"
