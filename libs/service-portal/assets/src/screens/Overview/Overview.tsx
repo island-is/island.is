@@ -110,7 +110,11 @@ const VehiclesOverview = () => {
       }
     },
     600,
-    [filterValue.onlyMileageRequiredVehicles, filterValue.searchQuery],
+    [
+      filterValue.onlyMileageRequiredVehicles,
+      filterValue.searchQuery,
+      searchPage,
+    ],
   )
 
   useEffect(() => {
