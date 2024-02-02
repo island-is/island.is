@@ -166,10 +166,6 @@ const AppealToCourtOfAppeals = () => {
               removeUploadFile(file)
               setUploadState({ isUploading: false, error: false })
             }}
-            onRetry={(file) => {
-              updateUploadFile({ ...file, status: 'uploading' })
-              handleNextButtonClick(true)
-            }}
             hideIcons={uploadFiles.every((file) => file.status === 'uploading')}
           />
         </Box>

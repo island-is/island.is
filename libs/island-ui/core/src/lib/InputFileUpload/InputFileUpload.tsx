@@ -64,6 +64,7 @@ const UploadingIndicator = (
 export type StatusColor = {
   background: Colors
   border: Colors
+  icon: Colors
 }
 
 interface UploadedFileProps {
@@ -92,17 +93,19 @@ export const UploadedFile = ({
   const statusColor: StatusColor = useMemo<StatusColor>(() => {
     switch (file.status) {
       case 'error':
-        return { background: 'red100', border: 'red200' }
+        return { background: 'red100', border: 'red200', icon: 'red600' }
       case 'done':
         return {
           background: 'blue100',
           border: 'blue200',
+          icon: 'blue400',
         }
       default:
         return (
           defaultBackgroundColor ?? {
             background: 'transparent',
             border: 'blue200',
+            icon: 'blue400',
           }
         )
     }
@@ -197,7 +200,7 @@ export const UploadedFile = ({
               }}
               aria-label="Reyna aftur"
             >
-              <Icon color="red600" icon="reload" />
+              <Icon color={statusColor.icon} icon="reload" />
             </button>
           ) : (
             <button
@@ -210,7 +213,7 @@ export const UploadedFile = ({
               }}
               aria-label="Fjarlægja skrá"
             >
-              <Icon color="blue400" icon={statusIcon(file.status)} />
+              <Icon color={statusColor.icon} icon={statusIcon(file.status)} />
             </button>
           )}
         </Box>
