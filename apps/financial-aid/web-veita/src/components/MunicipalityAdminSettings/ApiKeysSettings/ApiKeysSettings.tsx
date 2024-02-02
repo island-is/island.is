@@ -17,7 +17,7 @@ import {
 } from '@island.is/financial-aid-web/veita/graphql'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import copyToClipboard from 'copy-to-clipboard'
-import { update } from 'lodash'
+import CreateApiKeyModal from '../CreateApiKeyModal/CreateApiKeyModal'
 
 interface Props {
   apiKeyInfo?: ApiKeysForMunicipality
@@ -36,7 +36,7 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
   const [apiKeyState, setApiKeyState] = useState(createApiKeyState(apiKeyInfo))
 
   const [createApiKey] = useMutation(ApiKeyForMunicipalityMutation)
-  const [updateApiKeyMutation, { loading }] = useMutation(
+  const [updateApiKeyMutation] = useMutation(
     UpdateApiKeyForMunicipalityMutation,
   )
 
@@ -45,6 +45,27 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
   useEffect(() => {
     setApiKeyState(createApiKeyState(apiKeyInfo))
   }, [apiKeyInfo])
+
+  const addNewApiKeyToMunicipality = (
+    newApiKeyInfo: ApiKeysForMunicipality,
+  ) => {
+    if (newApiKeyInfo && setMunicipality) {
+      const updatedMunicipality = municipality.map((muni) => ({
+        ...muni,
+        apiKeyInfo:
+          muni.municipalityId === newApiKeyInfo.municipalityCode
+            ? newApiKeyInfo
+            : muni.apiKeyInfo,
+      }))
+
+      setMunicipality(updatedMunicipality)
+      setApiKeyState({
+        ...apiKeyState,
+        isActive: true,
+      })
+      toast.success('Api lykill hefur verið búinn til')
+    }
+  }
 
   const createOrUpdateApiKey = () => {
     if (apiKeyState.isActive) {
@@ -64,7 +85,7 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
       },
     })
       .then((res) => {
-        console.log(res.data)
+        addNewApiKeyToMunicipality(res.data?.updateApiKey)
       })
       .catch(() => {
         toast.error(
@@ -92,23 +113,7 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
       },
     })
       .then((res) => {
-        if (res.data?.createApiKey && setMunicipality) {
-          const newApiKeyInfo = res.data.createApiKey
-          const updatedMunicipality = municipality.map((muni) => ({
-            ...muni,
-            apiKeyInfo:
-              muni.municipalityId === newApiKeyInfo.municipalityCode
-                ? newApiKeyInfo
-                : muni.apiKeyInfo,
-          }))
-
-          setMunicipality(updatedMunicipality)
-          setApiKeyState({
-            ...apiKeyState,
-            isActive: true,
-          })
-          toast.success('Api lykill hefur verið búinn til')
-        }
+        addNewApiKeyToMunicipality(res.data?.createApiKey)
       })
       .catch(() => {
         toast.error(
@@ -144,10 +149,22 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
   }
 
   return (
-    <Box marginBottom={[2, 2, 7]}>
+    <Box marginBottom={[2, 2, 7]} id="apiKeySettings">
       <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
         Tenging við ytri kerfi
       </Text>
+      {/* 
+      {apiKeyState.isActive ? (
+        <Button
+          onClick={() => console.log('open modal')}
+          icon="lockClosed"
+          size="small"
+        >
+          Búa til lykill
+        </Button>
+      ) : (
+        <div>helo</div>
+      )} */}
 
       <Box marginBottom={3} id="apiKeySettings">
         <Checkbox
@@ -229,16 +246,6 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
           disabled={!apiKeyState?.isChecked}
         >
           {apiKeyState.isActive ? `Uppfæra lykil` : `Búa til lykil`}
-        </Button>
-
-        <Button
-          onClick={() => console.log('asda')}
-          icon="removeCircle"
-          size="small"
-          disabled={!apiKeyState?.isChecked}
-          colorScheme="destructive"
-        >
-          Eyða lykli
         </Button>
       </Box>
     </Box>

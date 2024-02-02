@@ -427,6 +427,8 @@ export const UpdateApiKeyForMunicipalityMutation = gql`
     updateApiKey(input: $input) {
       id
       name
+      apiKey
+      municipalityCode
     }
   }
 `
