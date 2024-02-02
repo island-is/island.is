@@ -2523,7 +2523,7 @@ services-university-gateway-worker:
     requests:
       cpu: '50m'
       memory: '256Mi'
-  schedule: '0 2 * * *'
+  schedule: '0 * * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
