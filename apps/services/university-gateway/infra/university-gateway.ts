@@ -128,6 +128,6 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
       dev: { schedule: '0 * * * *' },
       // Schedule to run daily at two in the morning:
       staging: { schedule: '0 2 * * *' },
-      prod: { schedule: '0 2 * * *' },
+      prod: { schedule: '0 * * * *' },
     })
 }
