@@ -53,7 +53,7 @@ runs:
 
     - name: Cached codecov uploader
       id: codecov-cache
-      uses: actions/cache@v3
+      uses: ./.github/actions/cache
       with:
         path: codecov
         key: ${{ runner.os }}-codeconv-${{ env.CODECOV_REV }}
