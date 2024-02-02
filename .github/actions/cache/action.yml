@@ -22,15 +22,23 @@ name: 'Cache'
 description: 'Cache with retry'
 inputs:
   path:
-    description: 'path'
+    description: 'Path(s) to cache'
     required: true
   key:
-    description: 'key'
+    description: 'Cache key'
     required: true
-  retry:
-    description: 'retry'
+  retries:
+    description: 'Number of retries'
     required: false
-    default: '2'
+    default: '1'
+  retry-interval:
+    description: 'Time between retries'
+    required: false
+    default: '10'
+  cache-url:
+    description: 'URL to your cache'
+    required: false
+    default: https://cache.dev01.devland.is/
 outputs:
   success:
     description: 'success'
