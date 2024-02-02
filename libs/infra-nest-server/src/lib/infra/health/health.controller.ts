@@ -11,7 +11,7 @@ import {
   SequelizeHealthIndicator,
 } from '@nestjs/terminus'
 
-import { HealthCheckOptions, HealthCheckOptionsProviderKey } from './types'
+import { type HealthCheckOptions, HealthCheckOptionsProviderKey } from './types'
 
 @Controller('health')
 export class HealthController {
