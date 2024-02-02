@@ -42,13 +42,16 @@ jobs:
     steps:
       - name: Set env (HOME and PATH)
         run: |
-          echo "USER=$USER, id=$(id)"
-          ls -lah / /home
-          export HOME="/tmp/home/runner"
-          echo "HOME=$HOME" >> $GITHUB_ENV
-          mkdir -p "$HOME"
+          set -x
+          set -euo pipefail
+          echo "id=$(id)"
+          # When running locally, root(0) owns all /home/*, but user is runner(1000)
+          if ! test -r "$HOME" || ! test -w "$HOME" || ! test -x "$HOME" ; then
+            export HOME="/tmp/home/runner"
+            echo "HOME=$HOME" >> $GITHUB_ENV
+            mkdir -p "$HOME"
+          fi
           # Shimming node_modules for global install (probably not needed because of $HOME above)
-          export PATH="$PWD/node_modules/bin:$PATH"
           export PATH="$PWD/node_modules/.bin:$PATH"
           echo "PATH=$PATH" >> $GITHUB_ENV
 
