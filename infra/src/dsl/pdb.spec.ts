@@ -23,9 +23,8 @@ const Staging: EnvironmentConfig = {
 describe('PodDisruptionBudget definitions', () => {
   it('Service should get a default podDisruptionBudget', async () => {
     const sut: ServiceBuilder<'api'> = service('api')
-    const serviceDef: Awaited<
-      ReturnType<typeof renderHelmServiceFile>
-    > = await renderHelmServiceFile(Staging, [sut], [sut], 'no-mocks')
+    const serviceDef: Awaited<ReturnType<typeof renderHelmServiceFile>> =
+      await renderHelmServiceFile(Staging, [sut], [sut], 'no-mocks')
     expect(serviceDef.services.api.podDisruptionBudget?.minAvailable).toEqual(1)
   })
 
