@@ -1,10 +1,9 @@
 import { ApolloDriver } from '@nestjs/apollo'
-import { Controller, Get, Module, Res } from '@nestjs/common'
+import { Controller, Get, Module } from '@nestjs/common'
 import { GraphQLModule, Query, Resolver } from '@nestjs/graphql'
-import { Response } from 'express'
 import request, { Test } from 'supertest'
 
-import { testServer } from '@island.is/infra-nest-server'
+import { testServer } from '@island.is/testing/nest'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { ProblemModule } from '../problem.module'
