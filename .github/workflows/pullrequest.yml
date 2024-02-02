@@ -42,7 +42,7 @@ jobs:
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-      last-good-build-sha: ${{ steps.prepare-head-and-base-tags.last-good-build-sha }}
+      last-good-build-sha: ${{ steps.prepare-head-and-base-tags.outputs.last-good-build-sha }}
     steps:
       - uses: actions/checkout@v3
         with:
