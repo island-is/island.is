@@ -64,12 +64,15 @@ jobs:
         uses: ./.github/actions/cache
         continue-on-error: true
         with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn-bustN1
-          retries: 1
+          path: |
+            ./node_modules
+            ./.cache
+            ./.yarn/cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+          retries: 0
 
       - name: Install yarn dependencies
-        if: yarn-cache.cache-hit != 'true'
+        if: steps.yarn-cache.cache-hit != 'true'
         run: yarn install
 
       - name: DEBUG EXIT
