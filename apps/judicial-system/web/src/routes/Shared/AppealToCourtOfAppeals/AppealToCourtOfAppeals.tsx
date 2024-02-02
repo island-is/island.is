@@ -30,9 +30,9 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { UploadFileState } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
-import { UploadFileState } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
@@ -46,13 +46,8 @@ const AppealToCourtOfAppeals = () => {
     error: false,
   })
 
-  const {
-    uploadFiles,
-    addUploadFiles,
-    removeUploadFile,
-    updateUploadFile,
-    allFilesUploaded,
-  } = useUploadFiles(workingCase.caseFiles)
+  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
   const { handleUpload } = useS3Upload(workingCase.id)
   const { transitionCase } = useCase()
 
@@ -68,8 +63,7 @@ const AppealToCourtOfAppeals = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const isStepValid =
-    uploadFiles.length > 0 && (allFilesUploaded || uploadState.error)
+  const isStepValid = uploadFiles.length > 0 || uploadState.error
 
   const newFiles = uploadFiles.filter((file) => {
     return (
@@ -79,12 +73,7 @@ const AppealToCourtOfAppeals = () => {
   })
 
   const handleNextButtonClick = useCallback(
-    async (isRetry: boolean, allUploaded: boolean) => {
-      if (allUploaded) {
-        setVisibleModal('APPEAL_SENT')
-        return
-      }
-
+    async (isRetry: boolean) => {
       setUploadState({ isUploading: true, error: false })
 
       const handleError = (id?: string) => {
@@ -99,9 +88,7 @@ const AppealToCourtOfAppeals = () => {
 
       const uploadSuccess = await handleUpload(
         isRetry ? uploadFiles.filter((uf) => uf.status === 'error') : newFiles,
-        () => {
-          // Do nothing
-        },
+        updateUploadFile,
         handleError,
       )
 
@@ -121,7 +108,14 @@ const AppealToCourtOfAppeals = () => {
 
       setUploadState({ isUploading: false, error: false })
     },
-    [handleUpload, newFiles, workingCase.id],
+    [
+      handleUpload,
+      newFiles,
+      transitionCase,
+      updateUploadFile,
+      uploadFiles,
+      workingCase.id,
+    ],
   )
 
   return (
@@ -165,7 +159,6 @@ const AppealToCourtOfAppeals = () => {
             onChange={(files) => {
               setUploadState({ isUploading: false, error: false })
               addUploadFiles(files, appealBriefType, undefined, {
-                status: 'done',
                 percent: 100,
               })
             }}
@@ -173,6 +166,11 @@ const AppealToCourtOfAppeals = () => {
               removeUploadFile(file)
               setUploadState({ isUploading: false, error: false })
             }}
+            onRetry={(file) => {
+              updateUploadFile({ ...file, status: 'uploading' })
+              handleNextButtonClick(true)
+            }}
+            hideIcons={uploadFiles.every((file) => file.status === 'uploading')}
           />
         </Box>
         <Box
@@ -221,12 +219,7 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={() =>
-            handleNextButtonClick(
-              uploadState.error,
-              uploadFiles.length > 0 && allFilesUploaded,
-            )
-          }
+          onNextButtonClick={() => handleNextButtonClick(uploadState.error)}
           nextButtonText={formatMessage(
             uploadState.error
               ? strings.uploadFailedNextButtonText

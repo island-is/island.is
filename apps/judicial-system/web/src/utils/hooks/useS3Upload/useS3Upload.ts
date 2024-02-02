@@ -273,7 +273,7 @@ const useS3Upload = (caseId: string) => {
 
       for (const file of files) {
         try {
-          if (file.name === 'boarding-pass.pdf') {
+          if (file.name === 'skirteini.pdf') {
             throw Error('Failed to get presigned post')
           }
 
