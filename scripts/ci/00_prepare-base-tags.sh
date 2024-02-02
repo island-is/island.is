@@ -1,18 +1,5 @@
 #!/bin/bash
 
-# Called in CI:
-# set -x
-# set -euo pipefail
-# echo "HEAD=$GITHUB_SHA" >>$GITHUB_ENV
-# export HEAD_REF="$GITHUB_HEAD_REF"
-# export BASE_REF="$GITHUB_BASE_REF"
-# export PR_REF="$GITHUB_SHA"
-# export SHELL=/usr/bin/bash
-# export WORKFLOW_ID=pullrequest
-# source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
-# git checkout "$GITHUB_SHA"
-# echo "BASE=$BASE" >>$GITHUB_ENV
-
 set -euxo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
