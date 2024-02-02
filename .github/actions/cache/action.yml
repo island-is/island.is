@@ -3,7 +3,7 @@
 # continue-on-error feature we need a second step to check the output of the
 # cache action to determine if it ran successfully.
 #
-# Example:
+# ** Example **
 #
 # jobs:
 #   my-job:
@@ -15,9 +15,7 @@
 #       with:
 #         path: node_modules
 #         key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
-#     - name: Check cache success
-#       run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-#
+
 name: 'Cache'
 description: 'Cache with retry'
 inputs:
@@ -50,35 +48,47 @@ runs:
   using: 'composite'
   steps:
     - name: Exit if no retries
-      if: inputs.retries == 0
+      if: inputs.retries <= 0
       shell: bash
-      run: exit 0
+      run: exit 1
 
-    - name: Cache attempt \#${{ inputs.retries }}
+    - name: Attempting to cache (${{ inputs.retries }} retries left)
       id: cache_attempt
-      uses: island-is/cache@v0.3
+      uses: actions/cache@v3 # Good for local debugging with act ❤️
+      # uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
+        cache-url: ${{ inputs.cache-url }}
+
+    - name: Exit successfully if cache is hit
+      if: always() && steps.cache_attempt.outputs.cache-hit == 'true'
+      shell: bash
+      run: exit 0
 
     - name: Sleep for ${{ inputs.retry-interval }} seconds
       if: always() && inputs.retries > 0 && steps.cache_attempt.outputs.success != 'true'
       shell: bash
       run: sleep ${{ inputs.retry-interval }}
 
-    - name: Cache recurse
-      id: recurse
-      if: always() && inputs.retries > 0 && steps.cache_attempt.outputs.success != 'true'
+    - name: Calculate retries left
+      shell: bash
+      id: retries
+      run: echo "retries-left=$(( ${{ inputs.retries }} - 1 ))" >> "$GITHUB_OUTPUT"
+
+    - name: Recursively loop caching
+      id: recurse-loop
+      if: always() && steps.cache_attempt.outputs.success != 'true'
       uses: ./.github/actions/cache
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-        retries: ${{ inputs.retries -1 }}
-        retry-interval: ${{ inputs.retries-interval }}
+        retries: ${{ steps.retries.outputs.retries-left }}
+        retry-interval: ${{ inputs.retry-interval }}
         cache-url: ${{ inputs.cache-url }}
 
     - name: Exit if recurse failed
-      if: always() && steps.recurse.outputs.success != 'true'
+      if: always() && steps.recurse-loop.outputs.success != 'true'
       shell: bash
       run: exit 1
 

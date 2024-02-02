@@ -60,10 +60,17 @@ jobs:
           fetch-depth: 0
 
       - name: Cache yarn install
+        id: yarn-cache
         uses: ./.github/actions/cache
+        continue-on-error: true
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn-bustN1
+          retries: 1
+
+      - name: Install yarn dependencies
+        if: yarn-cache.cache-hit != 'true'
+        run: yarn install
 
       - name: DEBUG EXIT
         run: exit 1
