@@ -18,6 +18,7 @@ env:
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   SKIP_NODEJS_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nodejs-cache') }}
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
 jobs:
   prepare:
