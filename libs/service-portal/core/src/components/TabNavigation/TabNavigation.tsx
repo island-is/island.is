@@ -48,8 +48,11 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
             key={index}
             id={item.path}
             justifyContent="center"
+            alignItems="center"
+            padding={1}
             className={cn(styles.tab, {
               [styles.tabSelected]: item.active,
+              [styles.tabNotSelected]: !item.active,
             })}
             href={item.path}
           >

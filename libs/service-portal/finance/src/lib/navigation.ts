@@ -25,7 +25,7 @@ export const financeNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: m.financeBills,
+      name: m.financePayments,
       path: FinancePaths.FinanceBills,
     },
     {
@@ -33,7 +33,7 @@ export const financeNavigation: PortalNavigationItem = {
       path: FinancePaths.FinanceSchedule,
     },
     {
-      name: m.financeEmployeeClaims,
+      name: m.financeClaims,
       path: FinancePaths.FinanceEmployeeClaims,
     },
     {
@@ -43,14 +43,11 @@ export const financeNavigation: PortalNavigationItem = {
     {
       name: m.financeLoans,
       path: FinancePaths.FinanceLoans,
-      serviceProvider: HMS_SLUG,
-      description: m.realEstateTooltip,
     },
   ],
   icon: {
     icon: 'cellular',
   },
   heading: m.financeHeading,
-  serviceProvider: FJARSYSLAN_SLUG,
   description: m.financeTooltip,
 }

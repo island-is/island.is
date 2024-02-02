@@ -4,26 +4,44 @@ import { theme } from '@island.is/island-ui/theme'
 export const tab = style({
   position: 'relative',
   padding: '10px',
+  minHeight: `${theme.spacing[7]}px`,
   width: '100%',
   outline: 0,
   fontWeight: 'lighter',
-  backgroundColor: theme.color.white,
-  ':after': {
-    content: '""',
-    position: 'absolute',
-    height: '1px',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: theme.color.blue200,
+  backgroundColor: theme.color.blue100,
+  borderBottom: `1px solid ${theme.color.blue200}`,
+})
+
+export const tabNotSelected = style({
+  selectors: {
+    '&:not(last-child):after': {
+      content: '""',
+      position: 'absolute',
+      width: '1px',
+      margin: `${theme.spacing[1]}px 0`,
+      top: 0,
+      bottom: 0,
+      right: -1,
+      zIndex: theme.zIndex.above,
+      backgroundColor: theme.color.blue200,
+    },
   },
 })
 
 export const tabSelected = style({
   color: theme.color.blue400,
+  backgroundColor: theme.color.white,
+  border: `1px solid ${theme.color.blue200}`,
+  borderBottom: 'none',
   fontWeight: theme.typography.semiBold,
-  ':after': {
-    backgroundColor: theme.color.blue400,
+  zIndex: '2',
+  selectors: {
+    '&:first-child': {
+      borderLeft: 'none',
+    },
+    '&:last-child': {
+      borderRight: 'none',
+    },
   },
 })
 

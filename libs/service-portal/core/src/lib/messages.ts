@@ -593,6 +593,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-transaction-periods',
     defaultMessage: 'Gjaldtímabil',
   },
+  financePayments: {
+    id: 'service.portal:finance-payments',
+    defaultMessage: 'Greiðslur',
+  },
   financeBills: {
     id: 'service.portal:finance-bills',
     defaultMessage: 'Greiðsluseðlar og -kvittanir',
@@ -600,6 +604,10 @@ export const m = defineMessages({
   financeSchedules: {
     id: 'service.portal:finance-schedules',
     defaultMessage: 'Greiðsluáætlanir',
+  },
+  financeClaims: {
+    id: 'service.portal:finance-claims',
+    defaultMessage: 'Kröfur',
   },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
