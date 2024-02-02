@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Inject,
-  Res,
   ServiceUnavailableException,
 } from '@nestjs/common'
 import {
@@ -11,7 +10,6 @@ import {
   HealthCheckResult,
   SequelizeHealthIndicator,
 } from '@nestjs/terminus'
-import { Response } from 'express'
 
 import { HealthCheckOptions, HealthCheckOptionsProviderKey } from './types'
 
