@@ -1,6 +1,9 @@
 name: 'Unit Test'
 description: 'Run unit tests'
 inputs:
+  base-sha:
+    description: 'Calculated base sha of last good build'
+    required: true
   dd-api-key:
     description: 'Datadog API key'
     required: true
@@ -50,6 +53,7 @@ runs:
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
         DD_API_KEY: ${{ inputs.dd-api-key }}
+        BASE: ${{ inputs.base-sha }}
 
     - name: Cached codecov uploader
       id: codecov-cache

@@ -5,11 +5,8 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-# Dynamically get the default branch name (e.g., main, master, etc.)
-GIT_ROOT=$(git rev-parse --show-toplevel)
-MAIN_SHA=$(cat ${GIT_ROOT}/.git/refs/heads/main)
 export HEAD=${HEAD:-HEAD}
-export BASE=${BASE:-$MAIN_SHA}
+export BASE=${BASE:-main}
 # This is a helper script to find NX affected projects for a specific target
 
 AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic string `7913-`)

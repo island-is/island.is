@@ -116,7 +116,9 @@ jobs:
           export WORKFLOW_ID=pullrequest
           source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
           git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
+          # Subsequent jobs are assuming they have access to this variable but they don't, so we always use the main branch as affected
+          # echo "BASE=$BASE" >> $GITHUB_ENV
+          echo "last_good_build_sha=$BASE" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
@@ -273,6 +275,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+          base_sha: ${{ needs.prepare.outputs.last_good_build_sha }}
 
   e2e:
     needs:
