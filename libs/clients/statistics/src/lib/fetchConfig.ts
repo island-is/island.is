@@ -35,7 +35,7 @@ const fetchFactory = async (
       overrideCacheControl: () =>
         buildCacheControl({
           maxAge: config.redis.cacheTtl / 1000, // cacheTtl is in milliseconds
-          staleWhileRevalidate: 3600 * 24, // 1 day
+          staleWhileRevalidate: 3600 * 24 * 14, // 14 days
           staleIfError: 3600 * 24 * 30, // 1 month
           public: true,
         }),
