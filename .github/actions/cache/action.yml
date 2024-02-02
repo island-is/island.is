@@ -38,11 +38,8 @@ inputs:
     required: false
     default: https://cache.dev01.devland.is/
 outputs:
-  success:
-    description: 'success'
-    value: ${{ steps.computed_outputs.outputs.success }}
   cache-hit:
-    description: 'cache-hit'
+    description: 'Did the cache key match and restored the cache?'
     value: ${{ steps.computed_outputs.outputs.cache-hit }}
 runs:
   using: 'composite'
