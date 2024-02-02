@@ -30,16 +30,28 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
-      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS && steps.build_projects.outputs.CHUNKS || '[]' }}
+      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS && steps.e2e_projects.outputs.CHUNKS || '[]' }}
+      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS && steps.lint_projects.outputs.CHUNKS || '[]' }}
+      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS && steps.test_projects.outputs.CHUNKS || '[]' }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
+      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
+      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
+      - name: Set env (HOME and PATH)
+        run: |
+          echo "USER=$USER, id=$(id)"
+          ls -lah / /home
+          export HOME="/tmp/home/runner"
+          echo "HOME=$HOME" >> $GITHUB_ENV
+          mkdir -p "$HOME"
+          # Shimming node_modules for global install (probably not needed because of $HOME above)
+          export PATH="$PWD/node_modules/bin:$PATH"
+          export PATH="$PWD/node_modules/.bin:$PATH"
+          echo "PATH=$PATH" >> $GITHUB_ENV
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -57,11 +69,17 @@ jobs:
 
       - name: Checking out relevant branches
         run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
+          set -x
+          set -euo pipefail
+          : "${GITHUB_BASE_REF:=$(git branch --show-current)}"
+          : "${GITHUB_HEAD_REF:=origin/main}"
+          export GITHUB_BASE_REF GITHUB_HEAD_REF GITHUB_SHA
+          git config --global advice.detachedHead "false"
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
+          git checkout -f "$GITHUB_HEAD_REF"
+          git checkout -f "$GITHUB_BASE_REF"
+          git checkout -f "$GITHUB_SHA"
 
           BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
           HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
@@ -70,6 +88,7 @@ jobs:
 
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
+        continue-on-error: true
         with:
           name: pr-event
           path: event.json
@@ -107,21 +126,24 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
-      - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
-          export HEAD_REF="$GITHUB_HEAD_REF"
-          export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF=$GITHUB_SHA
-          export SHELL=/usr/bin/bash
-          export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
+      - name: Preparing HEAD and BASE tags
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-        name: Preparing HEAD and BASE tags
+        run: |
+          set -x
+          set -euo pipefail
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          export HEAD_REF="$GITHUB_HEAD_REF"
+          export BASE_REF="$GITHUB_BASE_REF"
+          export PR_REF="$GITHUB_SHA"
+          export SHELL=/usr/bin/bash
+          export WORKFLOW_ID=pullrequest
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
+          git checkout "$GITHUB_SHA"
+          echo "BASE=$BASE" >> $GITHUB_ENV
 
       - name: Cache for cypress
         id: cypress
@@ -181,6 +203,7 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
           fi
+          echo "Got test project chunks: $CHUNKS"
 
       - name: Prepare e2e targets
         id: e2e_projects
