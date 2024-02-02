@@ -42,6 +42,7 @@ jobs:
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
+      last-good-build-sha: ${{ steps.prepare-head-and-base-tags.last-good-build-sha }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -120,12 +121,13 @@ jobs:
           git checkout $GITHUB_SHA
           # Subsequent jobs are assuming they have access to this variable but they don't, so we always use the main branch as affected
           echo "BASE=$BASE" >> $GITHUB_ENV
-          echo "last_good_build_sha=$BASE" >> $GITHUB_OUTPUT
+          echo "last-good-build-sha=$BASE" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
         name: Preparing HEAD and BASE tags
+        id: prepare-head-and-base-tags
 
       - name: Cache for cypress
         id: cypress
@@ -221,6 +223,7 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       MAX_JOBS: 6
+      BASE: ${{ needs.prepare.outputs.last-good-build-sha}}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -272,7 +275,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-          base-sha: ${{ needs.prepare.outputs.last_good_build_sha }}
+          base-sha: ${{ needs.prepare.outputs.last-good-build-sha }}
 
   e2e:
     needs:
@@ -290,7 +293,7 @@ jobs:
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
-      BASE: ${{ needs.prepare.outputs.last_good_build_sha }}
+      BASE: ${{ needs.prepare.outputs.last-good-build-sha }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -320,7 +323,7 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: ${{ github.workspace }}/.cache/Cypress
+          path: ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ needs.prepare.outputs.node-modules-hash }}-cypress
 
       - name: Check cypress cache success
@@ -494,6 +497,7 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       MAX_JOBS: 2
+      BASE: ${{ needs.prepare.outputs.last-good-build-sha }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
