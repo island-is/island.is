@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common'
 
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -26,6 +35,8 @@ export class ApiUserController {
     private readonly apiUserService: ApiUserService,
   ) {}
 
+  @StaffRolesRules(StaffRole.ADMIN)
+  @Scopes(MunicipalitiesFinancialAidScope.employee)
   @Get('')
   @ApiOkResponse({
     type: [ApiUserModel],
@@ -37,7 +48,6 @@ export class ApiUserController {
     return this.apiUserService.findByMunicipalityCode(staff.municipalityIds)
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Scopes(MunicipalitiesFinancialAidScope.employee)
   @Post('')
@@ -47,5 +57,22 @@ export class ApiUserController {
   })
   create(@Body() input: CreateApiKeyDto): Promise<ApiUserModel> {
     return this.apiUserService.create(input)
+  }
+  @StaffRolesRules(StaffRole.ADMIN)
+  @Scopes(MunicipalitiesFinancialAidScope.write)
+  @Put('/:id')
+  @ApiOkResponse({
+    type: ApiUserModel,
+    description: 'Updates an existing api key',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body()
+    input: {
+      name: string
+    },
+  ): Promise<ApiUserModel> {
+    this.logger.debug(`Api key controller: Updating api key with id ${id}`)
+    return this.apiUserService.updateApiKey(id, input.name)
   }
 }

@@ -169,7 +169,10 @@ export interface UpdateAdmin {
   name: string
   municipalityIds: string[]
 }
-
+export interface UpdatedApiKeysForMunicipality {
+  name: string
+  id: string
+}
 export interface ApiKeysForMunicipality {
   name: string
   apiKey: string

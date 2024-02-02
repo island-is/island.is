@@ -11,7 +11,7 @@ import { ApiKeysModel } from './models'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { ApiKeysForMunicipality } from '@island.is/financial-aid/shared/lib'
-import { CreateApiKeyInput } from './dto'
+import { CreateApiKeyInput, UpdateApiKeyInput } from './dto'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ApiKeysModel)
@@ -37,5 +37,16 @@ export class ApiKeysResolver {
   ): Promise<ApiKeysForMunicipality> {
     this.logger.debug('Creating api key for municipality')
     return backendApi.createApiKey(input)
+  }
+
+  @Mutation(() => ApiKeysModel, { nullable: false })
+  updateApiKey(
+    @Args('input', { type: () => UpdateApiKeyInput })
+    input: UpdateApiKeyInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<ApiKeysModel> {
+    this.logger.debug('Updating api key name')
+
+    return backendApi.updateApiKey(input)
   }
 }

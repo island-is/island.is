@@ -17,6 +17,7 @@ import {
 } from '@island.is/financial-aid-web/veita/graphql'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import copyToClipboard from 'copy-to-clipboard'
+import { update } from 'lodash'
 
 interface Props {
   apiKeyInfo?: ApiKeysForMunicipality
@@ -47,11 +48,29 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
 
   const createOrUpdateApiKey = () => {
     if (apiKeyState.isActive) {
-      console.log('update')
-      // updateApiKeyForMunicipality()
+      updateApiKeyForMunicipality()
     } else {
       createApiKeyForMunicipality()
     }
+  }
+
+  const updateApiKeyForMunicipality = async () => {
+    await updateApiKeyMutation({
+      variables: {
+        input: {
+          id: apiKeyInfo?.id,
+          name: apiKeyState.name,
+        },
+      },
+    })
+      .then((res) => {
+        console.log(res.data)
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að uppfæra nafn á lyklinum, vinsamlega reynið aftur síðar',
+        )
+      })
   }
 
   const createApiKeyForMunicipality = async () => {
