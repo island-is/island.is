@@ -26,7 +26,7 @@ export const dataSchema = z.object({
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   name: z.string(),
   validityPeriod: z.string(),
-  photo: z
+  /*photo: z
     .object({
       attachments: z.array(FileSchema),
       qualityPhoto: z.enum([YES, NO]),
@@ -41,7 +41,7 @@ export const dataSchema = z.object({
         message: m.missingAttachmentValidationError.defaultMessage,
         path: ['attachments'],
       },
-    ),
+    ),*/
   delivery: z
     .object({
       deliveryMethod: z.string(),
