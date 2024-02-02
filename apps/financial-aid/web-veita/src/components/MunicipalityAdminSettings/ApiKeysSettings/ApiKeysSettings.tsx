@@ -18,6 +18,8 @@ import {
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import copyToClipboard from 'copy-to-clipboard'
 import CreateApiKeyModal from '../CreateApiKeyModal/CreateApiKeyModal'
+import { set } from 'lodash'
+import AnimateHeight from 'react-animate-height'
 
 interface Props {
   apiKeyInfo?: ApiKeysForMunicipality
@@ -25,6 +27,9 @@ interface Props {
 }
 
 const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isKeyVisable, setIsKeyVisable] = useState(false)
+
   const createApiKeyState = (apiKeyInfo?: ApiKeysForMunicipality) => ({
     isActive: apiKeyInfo ? true : false,
     isChecked: apiKeyInfo ? true : false,
@@ -57,10 +62,11 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
             ? newApiKeyInfo
             : muni.apiKeyInfo,
       }))
-
       setMunicipality(updatedMunicipality)
       setApiKeyState({
         ...apiKeyState,
+        name: newApiKeyInfo.name,
+        apiKey: newApiKeyInfo.apiKey,
         isActive: true,
       })
       toast.success('Api lykill hefur verið búinn til')
@@ -71,7 +77,7 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
     if (apiKeyState.isActive) {
       updateApiKeyForMunicipality()
     } else {
-      createApiKeyForMunicipality()
+      // createApiKeyForMunicipalityOLD()
     }
   }
 
@@ -94,26 +100,47 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
       })
   }
 
-  const createApiKeyForMunicipality = async () => {
-    if (!apiKeyState.isChecked || !apiKeyState.name || !apiKeyState.apiKey) {
-      setApiKeyState({
-        ...apiKeyState,
-        hasError: true,
-      })
-      return
-    }
+  // const createApiKeyForMunicipalityOLD = async () => {
+  //   if (!apiKeyState.isChecked || !apiKeyState.name || !apiKeyState.apiKey) {
+  //     setApiKeyState({
+  //       ...apiKeyState,
+  //       hasError: true,
+  //     })
+  //     return
+  //   }
 
+  //   await createApiKey({
+  //     variables: {
+  //       input: {
+  //         name: apiKeyState.name,
+  //         municipalityCode: currentMunicipalityCode,
+  //         apiKey: apiKeyState.apiKey,
+  //       },
+  //     },
+  //   })
+  //     .then((res) => {
+  //       addNewApiKeyToMunicipality(res.data?.createApiKey)
+  //     })
+  //     .catch(() => {
+  //       toast.error(
+  //         'Ekki tókst að búa til api lykil, vinsamlega reynið aftur síðar',
+  //       )
+  //     })
+  // }
+
+  const createApiKeyForMunicipality = async (name: string, key: string) => {
     await createApiKey({
       variables: {
         input: {
-          name: apiKeyState.name,
+          name: name,
           municipalityCode: currentMunicipalityCode,
-          apiKey: apiKeyState.apiKey,
+          apiKey: key,
         },
       },
     })
       .then((res) => {
         addNewApiKeyToMunicipality(res.data?.createApiKey)
+        setIsModalVisible(false)
       })
       .catch(() => {
         toast.error(
@@ -136,23 +163,68 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
     }
   }
 
-  // Function to generate a random API key
-  const generateApiKey = () => {
-    // Length of the API key
-    const length = 32
-    // Generate random bytes
-    const bytes = randomBytes(length)
-    // Convert bytes to hexadecimal
-    const apiKey = bytes.toString('hex')
-
-    return apiKey
-  }
-
   return (
     <Box marginBottom={[2, 2, 7]} id="apiKeySettings">
-      <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
-        Tenging við ytri kerfi
-      </Text>
+      <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+        <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+          Tenging við ytri kerfi
+        </Text>
+        <Button
+          size="small"
+          icon="add"
+          variant="ghost"
+          onClick={() => setIsModalVisible(true)}
+        >
+          Búa til lykil
+        </Button>
+      </Box>
+
+      <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+        <Box>
+          <Text variant="eyebrow" marginBottom={1}>
+            Nafn
+          </Text>
+          <Text marginBottom={2}>{apiKeyState?.name}</Text>
+        </Box>
+        <Box display="flex">
+          <Box marginRight={2}>
+            <Button
+              onClick={() => copyApiKeyToClipboard(apiKeyState?.apiKey)}
+              icon="copy"
+              size="small"
+              disabled={!apiKeyState?.apiKey}
+              variant="primary"
+            >
+              Afrit af lykli
+            </Button>
+          </Box>
+
+          <Button
+            onClick={() => setIsKeyVisable(!isKeyVisable)}
+            icon="lockOpened"
+            size="small"
+            disabled={!apiKeyState?.apiKey}
+            variant="ghost"
+          >
+            {isKeyVisable ? 'Fela lykill' : 'Sýna lykill'}
+          </Button>
+        </Box>
+      </Box>
+      <AnimateHeight duration={250} height={isKeyVisable ? 'auto' : 0}>
+        <Text variant="eyebrow" marginBottom={1}>
+          Lykill
+        </Text>
+        <Text marginBottom={2}>{apiKeyState?.apiKey}</Text>
+      </AnimateHeight>
+
+      <CreateApiKeyModal
+        isVisible={isModalVisible}
+        setIsVisible={(isModalVisible) => {
+          setIsModalVisible(isModalVisible)
+        }}
+        onSubmit={(name, key) => createApiKeyForMunicipality(name, key)}
+      />
+
       {/* 
       {apiKeyState.isActive ? (
         <Button
@@ -166,7 +238,7 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
         <div>helo</div>
       )} */}
 
-      <Box marginBottom={3} id="apiKeySettings">
+      {/* <Box marginBottom={3} id="apiKeySettings">
         <Checkbox
           name="isApiKeyActive"
           label="Virkja tengingu við ytri kerfi"
@@ -189,9 +261,9 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
             }
           }}
         />
-      </Box>
+      </Box> */}
 
-      <Input
+      {/* <Input
         label="Kerfi"
         name="name"
         value={apiKeyState?.name}
@@ -207,12 +279,12 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
           })
         }}
         errorMessage="Til að búa til lykill þarf nafn að vera til staðar"
-      />
-      <Text marginTop={1} marginBottom={3} variant="small">
+      /> */}
+      {/* <Text marginTop={1} marginBottom={3} variant="small">
         útskýring
-      </Text>
+      </Text> */}
 
-      <Box display="flex">
+      {/* <Box display="flex">
         <Box flexGrow={1} marginRight={1}>
           <Input
             label="Lykill"
@@ -233,9 +305,9 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
         >
           Afrit af lykli
         </Button>
-      </Box>
+      </Box> */}
 
-      <Text marginTop={1} marginBottom={3} variant="small">
+      {/* <Text marginTop={1} marginBottom={3} variant="small">
         útskýring
       </Text>
       <Box display="flex" justifyContent="spaceBetween">
@@ -247,7 +319,7 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
         >
           {apiKeyState.isActive ? `Uppfæra lykil` : `Búa til lykil`}
         </Button>
-      </Box>
+      </Box> */}
     </Box>
   )
 }
