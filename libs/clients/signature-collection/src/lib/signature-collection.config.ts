@@ -26,14 +26,8 @@ export const SignatureCollectionClientConfig = defineConfig<
       'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1',
     ),
     scope: [NationalRegistryScope.signatureCollection],
-    scopeAdmin: [
-      NationalRegistryScope.signatureCollection,
-      NationalRegistryScope.signatureCollectionProcess,
-    ],
-    scopeManager: [
-      NationalRegistryScope.signatureCollection,
-      NationalRegistryScope.signatureCollectionProcess,
-    ],
+    scopeAdmin: [NationalRegistryScope.signatureCollectionProcess],
+    scopeManager: [NationalRegistryScope.signatureCollectionManage],
     clientId: '@island.is/clients/api',
   }),
 })
