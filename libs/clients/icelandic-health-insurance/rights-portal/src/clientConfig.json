@@ -1649,6 +1649,11 @@
           "refund": {
             "$ref": "#/components/schemas/AidOrNutritionRefundDTO"
           },
+          "maxMonthlyAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "available": {
             "type": "string",
             "nullable": true

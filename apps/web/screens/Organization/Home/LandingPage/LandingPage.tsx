@@ -1,6 +1,22 @@
 import { useMemo } from 'react'
 import NextLink from 'next/link'
+import { useQuery } from '@apollo/client'
 
+import {
+  Box,
+  Breadcrumbs,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Inline,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  FeaturedArticlesSlice,
+  HeadWithSocialSharing,
+  IconTitleCard,
+} from '@island.is/web/components'
 import {
   Article,
   GetArticlesQuery,
@@ -9,25 +25,11 @@ import {
   SortField,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import {
-  Box,
-  Breadcrumbs,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Inline,
-  Text,
-} from '@island.is/island-ui/core'
-import {
-  FeaturedArticlesSlice,
-  HeadWithSocialSharing,
-  IconTitleCard,
-} from '@island.is/web/components'
-import { useQuery } from '@apollo/client'
-import { GET_ARTICLES_QUERY } from '@island.is/web/screens/queries'
-import { useI18n } from '@island.is/web/i18n'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_ARTICLES_QUERY } from '@island.is/web/screens/queries'
+
 import { LandingPageFooter } from './index'
 
 const ARTICLES_PAGE_SIZE = 10
@@ -90,7 +92,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
         // @ts-ignore make web strict
         description={organization?.description}
       />
-      <Box marginBottom={5}>
+      <Stack space={5}>
         <GridContainer>
           <GridRow>
             <GridColumn
@@ -203,7 +205,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
           </GridRow>
         </GridContainer>
         <LandingPageFooter footerItems={organization?.footerItems} />
-      </Box>
+      </Stack>
     </>
   )
 }

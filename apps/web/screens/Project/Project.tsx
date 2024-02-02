@@ -19,6 +19,7 @@ import {
   Stepper,
   stepperUtils,
   TabSectionSlice,
+  TOC,
   Webreader,
 } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
@@ -42,7 +43,6 @@ import { Screen } from '../../types'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { ProjectFooter } from './components/ProjectFooter'
 import { ProjectWrapper } from './components/ProjectWrapper'
-import { TOC } from './ProjectTableOfContents'
 import { getThemeConfig } from './utils'
 
 interface PageProps {
@@ -136,6 +136,8 @@ const ProjectPage: Screen<PageProps> = ({
   const shouldDisplayWebReader =
     projectNamespace?.shouldDisplayWebReader ?? true
 
+  const pageSlices = (subpage ?? projectPage)?.slices ?? []
+
   return (
     <>
       <HeadWithSocialSharing
@@ -177,7 +179,7 @@ const ProjectPage: Screen<PageProps> = ({
               />
             )}
             {subpage.showTableOfContents && (
-              <Box className="rs_read">
+              <Box marginY={6} className="rs_read">
                 <TOC slices={subpage.slices} title={navigationTitle} />
               </Box>
             )}
@@ -256,10 +258,10 @@ const ProjectPage: Screen<PageProps> = ({
             />
           </Box>
         )}
-        {!renderSlicesAsTabs && (
+        {!renderSlicesAsTabs && pageSlices.length > 0 && (
           <Stack space={SLICE_SPACING}>
-            {(subpage ?? projectPage)?.slices.map((slice: Slice, index) => {
-              const sliceCount = (subpage ?? projectPage)?.slices?.length
+            {pageSlices.map((slice: Slice, index) => {
+              const sliceCount = pageSlices.length
               return (
                 <Box className="rs_read">
                   <SliceMachine

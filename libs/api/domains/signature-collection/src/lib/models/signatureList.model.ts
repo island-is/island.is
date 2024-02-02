@@ -4,7 +4,19 @@ import { SignatureCollectionArea } from './area.model'
 import { SignatureCollectionCollector } from './collector.model'
 
 @ObjectType()
-export class SignatureCollectionList {
+export class SignatureCollectionOwnedList {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field(() => SignatureCollectionArea)
+  area!: SignatureCollectionArea
+}
+
+@ObjectType()
+export class SignatureCollectionListBase {
   @Field(() => ID)
   id!: string
 
@@ -20,12 +32,6 @@ export class SignatureCollectionList {
   @Field(() => Date)
   startTime!: Date
 
-  @Field(() => SignatureCollectionCandidate)
-  candidate!: SignatureCollectionCandidate
-
-  @Field(() => [SignatureCollectionCollector], { nullable: true })
-  collectors?: SignatureCollectionCollector[]
-
   @Field(() => Boolean, { nullable: true })
   active?: boolean
 
@@ -40,4 +46,13 @@ export class SignatureCollectionList {
 
   @Field()
   maxReached!: boolean
+}
+
+@ObjectType()
+export class SignatureCollectionList extends SignatureCollectionListBase {
+  @Field(() => SignatureCollectionCandidate)
+  candidate!: SignatureCollectionCandidate
+
+  @Field(() => [SignatureCollectionCollector], { nullable: true })
+  collectors?: SignatureCollectionCollector[]
 }

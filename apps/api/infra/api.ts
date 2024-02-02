@@ -160,6 +160,11 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      USER_NOTIFICATION_CLIENT_URL: {
+        dev: 'http://user-notification-xrd.internal.dev01.devland.is',
+        staging: 'http://user-notification-xrd.internal.staging01.devland.is',
+        prod: 'https://user-notification-xrd.internal.island.is',
+      },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://web-financial-aid-backend',
         staging: 'http://web-financial-aid-backend',
@@ -246,6 +251,7 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
+      ENHANCED_FETCH_DEBUG_CACHE: 'clients-statistics',
     })
 
     .secrets({

@@ -35,6 +35,7 @@ export class EnergyFundsClientService {
         new Date(vehicle.firstRegistrationDate || ''),
         'yyyy-MM-dd',
       ),
+      carNumber: vehicle.permno || '',
     })
 
     return response.item || []
