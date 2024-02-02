@@ -271,7 +271,8 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
       // Takes them to the next state (which loads the relevant form)
       refetch?.()
     }
-  }, [])
+  }, [application.answers, application.id, refetch, submitApplication])
+  
   return (
     <Box marginBottom={10}>
       <Box display="flex" justifyContent="spaceBetween">

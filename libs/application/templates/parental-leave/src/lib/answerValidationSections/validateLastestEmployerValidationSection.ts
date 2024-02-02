@@ -101,7 +101,7 @@ export const validateLatestEmployerValidationSection = (
 
   /* eslint-disable-next-line @typescript-eslint/no-inferrable-types */
   let ratioIndex: number = -1
-  employers?.map((e, i) => {
+  employers?.forEach((e, i) => {
     if (!e.ratio) {
       ratioIndex = i
       return
