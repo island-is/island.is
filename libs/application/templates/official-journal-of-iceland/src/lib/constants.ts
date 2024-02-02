@@ -9,7 +9,7 @@ export const VERDSKRA_LINK =
 
 export enum Routes {
   PREREQUISITES = 'prerequisites',
-  NEW_CASE = 'newCase',
+  ADVERT = 'advert',
   ADDITIONS_AND_DOCUMENTS = 'additionsAndDocuments',
   PREVIEW = 'preview',
   ORIGINAL_DATA = 'originalData',

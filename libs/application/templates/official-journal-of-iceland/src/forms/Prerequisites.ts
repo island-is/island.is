@@ -10,7 +10,7 @@ import { Routes } from '../lib/constants'
 import {
   additionsAndDocuments,
   general,
-  newCase,
+  advert,
   originalData,
   prerequisites,
   preview,
@@ -58,8 +58,8 @@ export const Prerequsites: Form = buildForm({
       ],
     }),
     buildSection({
-      id: Routes.NEW_CASE,
-      title: newCase.general.sectionTitle,
+      id: Routes.ADVERT,
+      title: advert.general.sectionTitle,
       children: [],
     }),
     buildSection({

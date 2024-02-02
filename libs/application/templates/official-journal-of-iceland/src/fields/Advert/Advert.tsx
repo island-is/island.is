@@ -7,7 +7,7 @@ import {
 import { useState } from 'react'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
-import { newCase } from '../../lib/messages'
+import { advert } from '../../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../../lib/types'
 import { useFormContext } from 'react-hook-form'
 import { TemplateModal } from './TemplateModal'
@@ -18,7 +18,7 @@ import { SignatureSection } from './SignatureSection'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
 import { CategoryIds } from '../../lib/constants'
 
-export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
+export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
   const { f } = useFormatMessage(application)
   const [modalToggle, setModalToggle] = useState(false)
@@ -75,8 +75,8 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
   return (
     <>
       <FormIntro
-        title={f(newCase.general.formTitle)}
-        intro={f(newCase.general.formIntro)}
+        title={f(advert.general.formTitle)}
+        intro={f(advert.general.formIntro)}
         button={
           <Button
             variant="utility"
@@ -84,7 +84,7 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
             icon="copy"
             onClick={() => setModalToggle((prev) => !prev)}
           >
-            {f(newCase.buttons.copyOldCase.label)}
+            {f(advert.buttons.copyOldCase.label)}
           </Button>
         }
       />
@@ -93,8 +93,8 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
           <SelectController
             id={InputFields.case.department}
             name={InputFields.case.department}
-            label={f(newCase.inputs.department.label)}
-            placeholder={f(newCase.inputs.department.placeholder)}
+            label={f(advert.inputs.department.label)}
+            placeholder={f(advert.inputs.department.placeholder)}
             defaultValue={state.department}
             options={options.departments}
             onSelect={(opt) =>
@@ -113,8 +113,8 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
           <SelectController
             id={InputFields.case.category}
             name={InputFields.case.category}
-            label={f(newCase.inputs.category.label)}
-            placeholder={f(newCase.inputs.category.placeholder)}
+            label={f(advert.inputs.category.label)}
+            placeholder={f(advert.inputs.category.placeholder)}
             defaultValue={state.category}
             backgroundColor="blue"
             options={options.categories}
@@ -146,8 +146,8 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
               <SelectController
                 id={InputFields.case.subCategory}
                 name={InputFields.case.subCategory}
-                label={f(newCase.inputs.subCategory.label)}
-                placeholder={f(newCase.inputs.subCategory.placeholder)}
+                label={f(advert.inputs.subCategory.label)}
+                placeholder={f(advert.inputs.subCategory.placeholder)}
                 defaultValue={state.subCategory}
                 backgroundColor="blue"
                 options={options.subCategories}
@@ -166,8 +166,8 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
           <InputController
             id={InputFields.case.title}
             name={InputFields.case.title}
-            label={f(newCase.inputs.title.label)}
-            placeholder={f(newCase.inputs.title.placeholder)}
+            label={f(advert.inputs.title.label)}
+            placeholder={f(advert.inputs.title.placeholder)}
             defaultValue={state.title}
             backgroundColor="blue"
             textarea
@@ -177,13 +177,13 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
           />
         </Box>
       </FormGroup>
-      <FormGroup title={f(newCase.materialForPublicationChapter.title)}>
+      <FormGroup title={f(advert.materialForPublicationChapter.title)}>
         <Box width="half">
           <SelectController
             id={InputFields.case.template}
             name={InputFields.case.template}
-            label={f(newCase.inputs.template.label)}
-            placeholder={f(newCase.inputs.template.placeholder)}
+            label={f(advert.inputs.template.label)}
+            placeholder={f(advert.inputs.template.placeholder)}
             defaultValue={state.template}
             backgroundColor="blue"
             options={options.templates}
@@ -214,4 +214,4 @@ export const NewCase = ({ application, errors }: OJOIFieldBaseProps) => {
   )
 }
 
-export default NewCase
+export default Advert

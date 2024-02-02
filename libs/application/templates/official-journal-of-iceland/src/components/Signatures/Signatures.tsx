@@ -7,7 +7,7 @@ import {
   SignatureType,
 } from '../../lib/types'
 import { useFormatMessage } from '../../hooks'
-import { newCase } from '../../lib/messages'
+import { advert } from '../../lib/messages'
 
 import * as styles from './Signatures.css'
 import { RegularSignature } from './Regular'
@@ -44,7 +44,7 @@ export const Signatures = ({
   const tabs = [
     {
       id: 'regular',
-      label: f(newCase.tabs.regular.label),
+      label: f(advert.tabs.regular.label),
       content: (
         <Box className={styles.tabWrapper}>
           <RegularSignature
@@ -57,7 +57,7 @@ export const Signatures = ({
     },
     {
       id: 'committee',
-      label: f(newCase.tabs.committee.label),
+      label: f(advert.tabs.committee.label),
       content: (
         <Box className={styles.tabWrapper}>
           <CommitteeSignature

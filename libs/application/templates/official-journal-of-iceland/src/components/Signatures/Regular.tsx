@@ -1,7 +1,7 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
-import { newCase } from '../../lib/messages'
+import { advert } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   InputFields,
@@ -140,7 +140,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                 INSTITUTION_INDEX,
                 `${index}`,
               )}
-              label={f(newCase.inputs.signature.institution.label)}
+              label={f(advert.inputs.signature.institution.label)}
               defaultValue={institution.institution}
               backgroundColor="blue"
               onChange={(e) =>
@@ -167,8 +167,8 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                 INSTITUTION_INDEX,
                 `${index}`,
               )}
-              label={f(newCase.inputs.signature.date.label)}
-              placeholder={f(newCase.inputs.signature.date.placeholder)}
+              label={f(advert.inputs.signature.date.label)}
+              placeholder={f(advert.inputs.signature.date.placeholder)}
               backgroundColor="blue"
               size="sm"
               defaultValue={institution.date}
@@ -186,7 +186,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
           </Box>
           <Box className={styles.wrapper}>
             <Text variant="h5" marginBottom={2}>
-              {f(newCase.general.signedBy)}
+              {f(advert.general.signedBy)}
             </Text>
             {institution.members?.map((signature, i) => (
               <Box className={styles.inputGroup} key={`${index}-${i}`}>
@@ -207,7 +207,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                           .replace(MEMBER_INDEX, `${i}`),
                       )
                     }
-                    label={f(newCase.inputs.signature.textAbove.label)}
+                    label={f(advert.inputs.signature.textAbove.label)}
                     defaultValue={signature.textAbove}
                     backgroundColor="blue"
                     size="sm"
@@ -231,7 +231,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     name={InputFields.case.signature.regular.members.name
                       .replace(INSTITUTION_INDEX, `${index}`)
                       .replace(MEMBER_INDEX, `${i}`)}
-                    label={f(newCase.inputs.signature.name.label)}
+                    label={f(advert.inputs.signature.name.label)}
                     defaultValue={signature.name}
                     backgroundColor="blue"
                     size="sm"
@@ -254,7 +254,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                           .replace(MEMBER_INDEX, `${i}`),
                       )
                     }
-                    label={f(newCase.inputs.signature.textAfter.label)}
+                    label={f(advert.inputs.signature.textAfter.label)}
                     defaultValue={signature.textAfter}
                     backgroundColor="blue"
                     size="sm"
@@ -275,7 +275,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                           .replace(MEMBER_INDEX, `${i}`),
                       )
                     }
-                    label={f(newCase.inputs.signature.textBelow.label)}
+                    label={f(advert.inputs.signature.textBelow.label)}
                     defaultValue={signature.textBelow}
                     backgroundColor="blue"
                     size="sm"
@@ -302,7 +302,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                 variant="utility"
                 onClick={() => onAddMember(index)}
               >
-                {f(newCase.buttons.addPerson.label)}
+                {f(advert.buttons.addPerson.label)}
               </Button>
             </Box>
           </Box>
@@ -310,7 +310,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
       ))}
       <Box marginTop={2}>
         <Button variant="utility" icon="add" onClick={onAddInstitution}>
-          {f(newCase.buttons.addInstitution.label)}
+          {f(advert.buttons.addInstitution.label)}
         </Button>
       </Box>
     </Box>

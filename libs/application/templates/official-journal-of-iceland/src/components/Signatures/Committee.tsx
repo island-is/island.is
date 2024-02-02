@@ -1,7 +1,7 @@
 import { Box, Text, Button } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
-import { newCase } from '../../lib/messages'
+import { advert } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   CommitteeSignatureState,
@@ -87,7 +87,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
           required={true}
           id={InputFields.case.signature.committee.institution}
           name={InputFields.case.signature.committee.institution}
-          label={f(newCase.inputs.signature.institution.label)}
+          label={f(advert.inputs.signature.institution.label)}
           error={
             errors &&
             getErrorViaPath(
@@ -103,8 +103,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
         <DatePickerController
           id={InputFields.case.signature.committee.date}
           name={InputFields.case.signature.committee.date}
-          label={f(newCase.inputs.signature.date.label)}
-          placeholder={f(newCase.inputs.signature.date.placeholder)}
+          label={f(advert.inputs.signature.date.label)}
+          placeholder={f(advert.inputs.signature.date.placeholder)}
           backgroundColor="blue"
           size="sm"
           defaultValue={state.date}
@@ -113,14 +113,14 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
       </Box>
       <Box className={styles.wrapper}>
         <Text variant="h5" marginBottom={2}>
-          {f(newCase.general.chairman)}
+          {f(advert.general.chairman)}
         </Text>
         <Box className={styles.inputGroup}>
           <Box className={styles.inputWrapper}>
             <InputController
               id={InputFields.case.signature.committee.chairman.textAbove}
               name={InputFields.case.signature.committee.chairman.textAbove}
-              label={f(newCase.inputs.signature.textAbove.label)}
+              label={f(advert.inputs.signature.textAbove.label)}
               defaultValue={state.chairman.textAbove}
               backgroundColor="blue"
               size="sm"
@@ -139,7 +139,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
                   InputFields.case.signature.committee.chairman.name,
                 )
               }
-              label={f(newCase.inputs.signature.name.label)}
+              label={f(advert.inputs.signature.name.label)}
               defaultValue={state.chairman.name}
               backgroundColor="blue"
               size="sm"
@@ -152,7 +152,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
             <InputController
               id={InputFields.case.signature.committee.chairman.textAfter}
               name={InputFields.case.signature.committee.chairman.textAfter}
-              label={f(newCase.inputs.signature.textAfter.label)}
+              label={f(advert.inputs.signature.textAfter.label)}
               defaultValue={state.chairman.textAfter}
               backgroundColor="blue"
               size="sm"
@@ -163,7 +163,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
             <InputController
               id={InputFields.case.signature.committee.chairman.textBelow}
               name={InputFields.case.signature.committee.chairman.textBelow}
-              label={f(newCase.inputs.signature.textBelow.label)}
+              label={f(advert.inputs.signature.textBelow.label)}
               defaultValue={state.chairman.textBelow}
               backgroundColor="blue"
               size="sm"
@@ -176,7 +176,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
       </Box>
       <Box className={styles.wrapper} marginTop={2}>
         <Text variant="h5" marginBottom={2}>
-          {f(newCase.general.committeeMembers)}
+          {f(advert.general.committeeMembers)}
         </Text>
         {state.members?.map((member, index) => {
           const localName =
@@ -191,7 +191,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
                   id={localName}
                   name={localName}
                   error={errors && getErrorViaPath(errors, localName)}
-                  label={f(newCase.inputs.signature.name.label)}
+                  label={f(advert.inputs.signature.name.label)}
                   defaultValue={member.name}
                   backgroundColor="blue"
                   size="sm"
@@ -209,7 +209,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
                     MEMBER_INDEX,
                     `${index}`,
                   )}
-                  label={f(newCase.inputs.signature.textBelow.label)}
+                  label={f(advert.inputs.signature.textBelow.label)}
                   defaultValue={member.textBelow}
                   backgroundColor="blue"
                   size="sm"
@@ -232,7 +232,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
         })}
         <Box marginTop={2}>
           <Button onClick={onAddCommitteeMember} variant="utility" icon="add">
-            {f(newCase.buttons.addCommitteeMember.label)}
+            {f(advert.buttons.addCommitteeMember.label)}
           </Button>
         </Box>
       </Box>

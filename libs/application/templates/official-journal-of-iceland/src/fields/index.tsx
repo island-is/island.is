@@ -1,6 +1,6 @@
 export { AdditionsAndDocuments } from './AdditionsAndDocuments/AdditionsAndDocuments'
 export { Complete } from './Complete/Complete'
-export { NewCase } from './NewCase/NewCase'
+export { Advert } from './Advert/Advert'
 export { OriginalData } from './OriginalData/OriginalData'
 export { Prerequisites } from './Prerequisites/Prerequisites'
 export { Preview } from './Preview/Preview'

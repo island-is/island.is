@@ -10,8 +10,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { ADVERTS } from './queries'
-import { general, newCase } from '../../lib/messages'
-import * as styles from './NewCase.css'
+import { general, advert } from '../../lib/messages'
+import * as styles from './Advert.css'
 import { useDebounce } from 'react-use'
 import {
   MinistryOfJusticeAdvert,
@@ -73,7 +73,7 @@ export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
       <Box className={styles.modalContent}>
         <Box className={styles.modalContentInner}>
           <Text marginBottom={4} variant="h2">
-            {f(newCase.modal.title)}
+            {f(advert.modal.title)}
           </Text>
           <Box marginBottom={2} display="flex" justifyContent="flexStart">
             <Input
@@ -81,7 +81,7 @@ export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
               onChange={(e) => setFilter(e.target.value)}
               icon={{ name: 'search' }}
               size="xs"
-              placeholder={f(newCase.modal.searchPlaceholder)}
+              placeholder={f(advert.modal.searchPlaceholder)}
               name="template-filter"
             />
           </Box>

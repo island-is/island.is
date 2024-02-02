@@ -14,7 +14,7 @@ import { Routes, UPLOAD_ACCEPT } from '../lib/constants'
 import {
   additionsAndDocuments,
   general,
-  newCase,
+  advert,
   originalData,
   prerequisites,
   preview,
@@ -38,13 +38,13 @@ export const Draft: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: Routes.NEW_CASE,
-      title: newCase.general.sectionTitle,
+      id: Routes.ADVERT,
+      title: advert.general.sectionTitle,
       children: [
         buildCustomField({
           id: 'case',
           title: '',
-          component: 'NewCase',
+          component: 'Advert',
         }),
       ],
     }),

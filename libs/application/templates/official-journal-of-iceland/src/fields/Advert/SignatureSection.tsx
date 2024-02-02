@@ -8,7 +8,7 @@ import { Box, StringOption } from '@island.is/island-ui/core'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { HTMLEditor } from '../../components/HTMLEditor/HTMLEditor'
 import { signatureConfig } from '../../components/HTMLEditor/config/signatureConfig'
-import { newCase } from '../../lib/messages'
+import { advert } from '../../lib/messages'
 import {
   CommitteeSignatureState,
   InputFields,
@@ -86,8 +86,8 @@ export const SignatureSection = ({
 
   return (
     <FormGroup
-      title={f(newCase.signatureChapter.title)}
-      description={f(newCase.signatureChapter.intro)}
+      title={f(advert.signatureChapter.title)}
+      description={f(advert.signatureChapter.intro)}
     >
       <Box width="full">
         <Signatures
@@ -109,7 +109,7 @@ export const SignatureSection = ({
       </Box>
       <Box width="full">
         <HTMLEditor
-          title={f(newCase.general.preview)}
+          title={f(advert.general.preview)}
           value={
             tabSelected === 'regular'
               ? regularSignatureTemplate({
