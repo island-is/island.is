@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useMemo } from 'react'
 import { Locale } from 'locale'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
@@ -13,7 +11,6 @@ import {
   Link,
   NavigationItem,
   Stack,
-  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -23,6 +20,7 @@ import {
   SignLanguageButton,
   SliceDropdown,
   SliceMachine,
+  TOC,
   Webreader,
 } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
@@ -37,7 +35,6 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -56,39 +53,6 @@ interface SubPageProps {
   subpage: Query['getOrganizationSubpage']
   namespace: Record<string, string>
   locale: Locale
-}
-
-const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
-  slices,
-  title,
-}) => {
-  const navigation = useMemo(
-    () =>
-      slices
-        .map((slice) => ({
-          id: slice.id,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          text: slice.json?.title ?? slice.title ?? slice.leftTitle ?? '',
-        }))
-        .filter((item) => !!item.text),
-    [slices],
-  )
-  if (navigation.length === 0) {
-    return null
-  }
-  return (
-    <Box marginY={2}>
-      <TableOfContents
-        tableOfContentsTitle={title}
-        headings={navigation.map(({ id, text }) => ({
-          headingTitle: text,
-          headingId: id,
-        }))}
-        onClick={(id) => scrollTo(id, { smooth: true })}
-      />
-    </Box>
-  )
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -126,12 +90,14 @@ const SubPage: Screen<SubPageProps> = ({
   const content = (
     <>
       {subpage?.showTableOfContents && (
-        <TOC
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          slices={subpage.slices}
-          title={n('navigationTitle', 'Efnisyfirlit')}
-        />
+        <Box marginY={2}>
+          <TOC
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            slices={subpage.slices}
+            title={n('navigationTitle', 'Efnisyfirlit')}
+          />
+        </Box>
       )}
       <GridRow className="rs_read">
         {subpage?.description && subpage.description.length > 0 && (

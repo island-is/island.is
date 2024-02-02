@@ -77,7 +77,7 @@ export const m = defineMessages({
   /* Signee View */
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
-    defaultMessage: 'Frambjóðandi sem þú hefur mælt með',
+    defaultMessage: 'Frambjóðandi sem þú hefur mælt með: ',
     description: '',
   },
   mySigneeListsByAreaHeader: {

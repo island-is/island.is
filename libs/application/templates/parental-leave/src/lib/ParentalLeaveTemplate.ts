@@ -31,14 +31,14 @@ import {
   NO,
   MANUAL,
   SPOUSE,
-  NO_PRIVATE_PENSION_FUND,
-  NO_UNION,
   TransferRightsOption,
   SINGLE,
   FileType,
   NO_MULTIPLE_BIRTHS,
-  NO_UNEMPLOYED_BENEFITS,
   UnEmployedBenefitTypes,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -223,7 +223,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'correctTransferRights',
           'clearEmployers',
           'setIfSelfEmployed',
-          'setIfIsReceivingUnemploymentBenefitsNo',
+          'setIfIsReceivingUnemploymentBenefits',
         ],
         meta: {
           name: States.DRAFT,
@@ -1796,8 +1796,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       clearEmployers: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { employers, isSelfEmployed, employerLastSixMonths } =
-          getApplicationAnswers(answers)
+        const {
+          employers,
+          isSelfEmployed,
+          applicationType,
+          employerLastSixMonths,
+          isReceivingUnemploymentBenefits,
+        } = getApplicationAnswers(answers)
 
         if (isSelfEmployed === NO) {
           employers?.forEach((val, i) => {
@@ -1837,6 +1842,22 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
             set(answers, `employers[${i}].companyNationalRegistryId`, '')
           })
+        }
+
+        const hasEmployer =
+          (applicationType === PARENTAL_LEAVE &&
+            isReceivingUnemploymentBenefits !== YES &&
+            isSelfEmployed !== YES) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES)
+
+        if (!hasEmployer) {
+          unset(application.answers, 'employers')
+          unset(
+            application.answers,
+            'fileUpload.employmentTerminationCertificateFile',
+          )
         }
 
         return context
@@ -1989,22 +2010,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (
-          answers.usePrivatePensionFund === NO &&
-          answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND
-        ) {
-          set(
-            application.answers,
-            'payments.privatePensionFund',
-            NO_PRIVATE_PENSION_FUND,
-          )
+        if (answers.usePrivatePensionFund === NO) {
+          unset(application.answers, 'payments.privatePensionFund')
         }
 
-        if (
-          answers.usePrivatePensionFund === NO &&
-          answers.privatePensionFundPercentage !== '0'
-        ) {
-          set(application.answers, 'payments.privatePensionFundPercentage', '0')
+        if (answers.usePrivatePensionFund === NO) {
+          unset(application.answers, 'payments.privatePensionFundPercentage')
         }
 
         return context
@@ -2014,8 +2025,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (answers.useUnion === NO && answers.union !== NO_UNION) {
-          set(application.answers, 'payments.union', NO_UNION)
+        if (answers.useUnion === NO) {
+          unset(application.answers, 'payments.union')
         }
 
         return context
@@ -2317,11 +2328,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             'employment.isReceivingUnemploymentBenefits',
             NO,
           )
-          set(
-            application.answers,
-            'employment.unemploymentBenefits',
-            NO_UNEMPLOYED_BENEFITS,
-          )
+          unset(application.answers, 'employment.unemploymentBenefits')
         }
 
         if (isSelfEmployed === NO) {
@@ -2330,17 +2337,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setIfIsReceivingUnemploymentBenefitsNo: assign((context) => {
+      setIfIsReceivingUnemploymentBenefits: assign((context) => {
         const { application } = context
         const { isReceivingUnemploymentBenefits, unemploymentBenefits } =
           getApplicationAnswers(application.answers)
 
         if (isReceivingUnemploymentBenefits === NO) {
-          set(
-            application.answers,
-            'employment.unemploymentBenefits',
-            NO_UNEMPLOYED_BENEFITS,
-          )
+          unset(application.answers, 'employment.unemploymentBenefits')
           unset(application.answers, 'fileUpload.benefitsFile')
         }
 

@@ -366,7 +366,7 @@ const VehicleDetail = () => {
             <UserInfoLine
               label={formatMessage(messages.lastKnownOdometerStatus)}
               content={displayWithUnit(
-                data.vehiclesDetail.lastMileage?.mileage,
+                data.vehiclesDetail.lastMileage?.mileageNumber,
                 'km',
                 true,
               )}
