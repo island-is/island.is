@@ -95,14 +95,8 @@ export class NotificationsInput extends PaginationInput() {}
 
 @ObjectType('Notifications')
 export class NotificationsResponse extends PaginatedResponse(Notification) {
-  @Field(() => [Notification])
-  data!: Notification[]
-
   @Field(() => Int, { nullable: true })
   unreadCount?: number
-
-  @Field(() => PageInfoDto)
-  pageInfo!: PageInfoDto
 }
 
 @ObjectType()
