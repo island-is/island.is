@@ -88,12 +88,11 @@ export class InternalProgramService {
       `Started updating programs for university ${universityNationalId}`,
     )
 
-
-    let programList: IProgram[] = [];
+    let programList: IProgram[] = []
 
     // In case of some error with the fetch we wrap it in try/catch and log the error
     try {
-      programList = await getPrograms();
+      programList = await getPrograms()
 
       // 1. Mark all programs as "temporarily inactive", so we know in the end which programs
       // should actually be inactive (hidden)
@@ -110,7 +109,7 @@ export class InternalProgramService {
 
       // 2. CREATE/UPDATE all programs for this university (mark them as "temporarily active" again)
       for (let i = 0; i < programList.length; i++) {
-        await this.doUpdateProgramForUniversity(programList[i], universityId);
+        await this.doUpdateProgramForUniversity(programList[i], universityId)
       }
 
       // 3. UPDATE all programs for this university which are still marked as "temporarily inactive" and make them inactive
@@ -122,8 +121,7 @@ export class InternalProgramService {
           where: { universityId, tmpActive: false },
         },
       )
-
-    } catch(e) {
+    } catch (e) {
       logger.error(
         `Failed to update programs for university ${universityNationalId}, reason:`,
         e,
@@ -135,7 +133,10 @@ export class InternalProgramService {
     )
   }
 
-  private async doUpdateProgramForUniversity(program: IProgram, universityId: string): Promise<void> {
+  private async doUpdateProgramForUniversity(
+    program: IProgram,
+    universityId: string,
+  ): Promise<void> {
     const specializationList = program.specializations || []
 
     // Added Math.max to make sure we enter the loop at least once (once for programs with no specialization)
@@ -165,7 +166,7 @@ export class InternalProgramService {
         const programWhere: {
           externalId: string
           specializationExternalId?: string
-        } = {externalId: programObj.externalId}
+        } = { externalId: programObj.externalId }
         if (specialization?.externalId) {
           programWhere.specializationExternalId = specialization.externalId
         }
@@ -175,14 +176,14 @@ export class InternalProgramService {
           attributes: ['id'],
           where: programWhere,
         })
-        const [{id: programId}] = await this.programModel.upsert({
+        const [{ id: programId }] = await this.programModel.upsert({
           ...programObj,
           id: oldProgramObj?.id,
         })
 
         // 2a. DELETE program mode of delivery
         await this.programModeOfDeliveryModel.destroy({
-          where: {programId: programId},
+          where: { programId: programId },
         })
 
         // 2b. CREATE program mode of delivery
@@ -195,7 +196,7 @@ export class InternalProgramService {
 
         // 3a. DELETE program extra application field
         await this.programExtraApplicationFieldModel.destroy({
-          where: {programId: programId},
+          where: { programId: programId },
         })
 
         // 3b. CREATE program extra application field
@@ -210,7 +211,7 @@ export class InternalProgramService {
             required: extraApplicationFieldList[k].required,
             fieldType: extraApplicationFieldList[k].fieldType,
             uploadAcceptedFileType:
-            extraApplicationFieldList[k].uploadAcceptedFileType,
+              extraApplicationFieldList[k].uploadAcceptedFileType,
             options: extraApplicationFieldList[k].options,
           })
         }
