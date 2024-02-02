@@ -17,6 +17,7 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  SKIP_NODE_MODULES_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-node-modules-cache') }}
 
 jobs:
   prepare:
@@ -105,7 +106,7 @@ jobs:
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
+        if: steps.node-modules.outputs.cache-hit != 'true' || env.SKIP_NODE_MODULES_CACHE == 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
       - run: |
@@ -130,7 +131,7 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: /github/home/.cache/Cypress
+          path: ${{ github.workspace }}/.cache/Cypress
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
 
       - name: Check cypress cache success
@@ -275,7 +276,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-          base_sha: ${{ needs.prepare.outputs.last_good_build_sha }}
+          base-sha: ${{ needs.prepare.outputs.last_good_build_sha }}
 
   e2e:
     needs:
