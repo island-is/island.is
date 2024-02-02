@@ -50,6 +50,8 @@ air-discount-scheme-api:
           paths:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -282,6 +284,7 @@ api:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://api-staging.thinglysing.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENHANCED_FETCH_DEBUG_CACHE: 'clients-statistics'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
