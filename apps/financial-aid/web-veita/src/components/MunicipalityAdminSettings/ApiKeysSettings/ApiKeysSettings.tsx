@@ -181,7 +181,7 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
 
       <Box display="flex" alignItems="center" justifyContent="spaceBetween">
         <Box>
-          <Text variant="eyebrow" marginBottom={1}>
+          <Text variant="h5" marginBottom={1}>
             Nafn
           </Text>
           <Text marginBottom={2}>{apiKeyState?.name}</Text>
