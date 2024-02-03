@@ -32,7 +32,7 @@ export const useGetSignatureList = (listId: string) => {
     },
   )
   const listInfo =
-    (signatureList?.signatureCollectionList as SignatureCollectionList) ?? {}
+    (signatureList?.signatureCollectionList as SignatureCollectionList) ?? null
   return { listInfo, refetchSignatureList, loadingList }
 }
 

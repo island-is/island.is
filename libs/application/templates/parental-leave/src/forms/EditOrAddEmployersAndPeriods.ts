@@ -1,41 +1,43 @@
 import addDays from 'date-fns/addDays'
 
 import {
+  NO_ANSWER,
   buildCustomField,
   buildDateField,
   buildForm,
+  buildImageField,
   buildMultiField,
+  buildRadioField,
   buildRepeater,
   buildSection,
-  buildSubmitField,
-  buildSubSection,
-  NO_ANSWER,
-  buildRadioField,
   buildSelectField,
+  buildSubSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes, Application } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import {
   NO,
-  PARENTAL_LEAVE,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
   StartDateOptions,
   YES,
 } from '../constants'
 
+import ManWithStrollerIllustration from '../assets/Images/ManWithStrollerIllustration'
 import Logo from '../assets/Logo'
+import { minPeriodDays } from '../config'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  getApplicationAnswers,
   getAllPeriodDates,
+  getApplicationAnswers,
   getEditOrAddInfoSectionDescription,
   getEditOrAddInfoSectionTitle,
-  getPeriodSectionTitle,
   getLeavePlanTitle,
   getMinimumStartDate,
+  getPeriodSectionTitle,
 } from '../lib/parentalLeaveUtils'
-import { minPeriodDays } from '../config'
 
 export const EditOrAddEmployersAndPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddEmployersAndPeriods',
@@ -47,11 +49,18 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
       id: 'editOrAddInfo',
       title: parentalLeaveFormMessages.shared.editOrAddInfoSection,
       children: [
-        buildCustomField({
-          id: 'periodsImageScreen',
+        buildMultiField({
+          id: 'editOrAddInfoMulti',
           title: getEditOrAddInfoSectionTitle,
           description: getEditOrAddInfoSectionDescription,
-          component: 'PeriodsSectionImage',
+          children: [
+            buildImageField({
+              id: 'editOrAddInfoImage',
+              title: '',
+              image: ManWithStrollerIllustration,
+              imageWidth: 'auto',
+            }),
+          ],
         }),
       ],
     }),
