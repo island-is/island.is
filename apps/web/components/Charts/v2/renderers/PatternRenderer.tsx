@@ -16,13 +16,11 @@ export const renderMultipleFillPatterns = ({
   return (
     <defs>
       {components.map((c) =>
-        c.hasFill
+        c.patternId && c.pattern
           ? renderSingleFillPattern({
-              id: c.fill!.replace('url(#', '').replace(')', ''),
+              id: c.patternId.replace('url(#', '').replace(')', ''),
               color: c.color,
-              type: (chartType === ChartType.pie
-                ? PREDEFINED_PIE_FILL_PATTERNS
-                : PREDEFINED_FILL_PATTERNS)[c.indexWithinType],
+              type: c.pattern as FillPattern,
             })
           : null,
       )}
@@ -220,6 +218,17 @@ export const renderSingleFillPattern = (
           <rect x="0" y="0" width="16" height="16" fill="white" />
           <rect x="0" y="0" width="16" height="16" fill={color} opacity={0.6} />
           <circle cx={8} cy={8} r={4} fill={color} />
+        </pattern>
+      )
+    case FillPattern.waves:
+      return (
+        <pattern id={id} width="16" height="16" patternUnits="userSpaceOnUse">
+          <path
+            stroke={color}
+            strokeLinecap="square"
+            stroke-width="4"
+            d="m0-2 8 8 8-8 8 8 8-8 8 8 8-8 8 8 8-8 8 8 8-8"
+          />
         </pattern>
       )
 

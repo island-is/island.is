@@ -9,7 +9,16 @@ import { ChartComponentType, FillPattern } from './types'
  * 4 1 1 1 => 4 pixels filled 1 pixel empty 1 pixel filled 1 pixel empty
  * ... and so on
  */
-export const PREDEFINED_LINE_DASH_PATTERNS = ['16 2', '16 2 4 2', '8 2', '3 2']
+
+// TODO: see in action
+export const PREDEFINED_LINE_DASH_PATTERNS = [
+  '16 3',
+  '4 8 4 4 8 4',
+  '6 12 18 24',
+  '4 1',
+  '6 6',
+  '4 6 24 4 6 24',
+]
 
 /**
  * Pattern implementations are found in generateFillPattern() from utils.tsx
@@ -25,6 +34,14 @@ export const PREDEFINED_FILL_PATTERNS: FillPattern[] = [
   FillPattern.horizontal,
   FillPattern.vertical,
 ]
+
+export const PRIMARY_FILL_PATTERNS: FillPattern[] = [
+  FillPattern.diagonalSeToNw,
+  FillPattern.vertical,
+  FillPattern.waves,
+  FillPattern.denseDots,
+]
+
 export const PREDEFINED_PIE_FILL_PATTERNS: FillPattern[] = [
   FillPattern.dotsSmall,
   FillPattern.diagonalSeToNw,
@@ -36,10 +53,12 @@ export const PREDEFINED_PIE_FILL_PATTERNS: FillPattern[] = [
 ]
 
 /**
- * By default this will be the order of colors given to chart components
- * Unless they specifically opt to overwrite them
+ * This will be the colors chosen for charts with the same type
+ * of components, for example: just lines / bars.
+ *
+ * By default the colors will appear in the same order as here
  */
-export const DEFAULT_COLORS = [
+export const PRIMARY_COLORS = [
   theme.color.blue400,
   theme.color.purple300,
   theme.color.blueberry400,
@@ -50,6 +69,24 @@ export const DEFAULT_COLORS = [
   theme.color.blue300,
   theme.color.dark400,
   theme.color.dark300,
+]
+
+/**
+ * This will be the colors chosen for the secondary types
+ * of components in a multi type chart, for example:
+ * bars and a line, the line will receive the secondary color
+ *
+ * By default the colors will appear in the same order as here
+ */
+export const SECONDARY_COLORS = [
+  theme.color.roseTinted400,
+  theme.color.blue300,
+  theme.color.purple400,
+  theme.color.blueberry300,
+  theme.color.blueberry400,
+  theme.color.roseTinted300,
+  theme.color.blue400,
+  theme.color.purple300,
 ]
 
 export const COMPONENT_TYPES_WITH_FILL = [

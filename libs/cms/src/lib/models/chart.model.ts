@@ -50,17 +50,16 @@ export class Chart {
 }
 
 export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
+  console.log('mapping chart')
   return {
     id: sys.id,
     typename: 'Chart',
-    ...pick(fields, [
-      'title',
-      'chartDescription',
-      'alternativeDescription',
-      'displayAsCard',
-      'xAxisKey',
-      'xAxisValueType',
-    ]),
+    title: fields.title ?? '',
+    chartDescription: fields.chartDescription ?? '',
+    alternativeDescription: fields.alternativeDescription ?? '',
+    displayAsCard: fields.displayAsCard ?? true,
+    xAxisKey: fields.xAxisKey ?? 'date',
+    xAxisValueType: fields.xAxisValueType ?? 'date',
     startExpanded: fields.startExpanded ?? false,
     dateFrom: fields.dateFrom ?? undefined,
     dateTo: fields.dateTo ?? undefined,

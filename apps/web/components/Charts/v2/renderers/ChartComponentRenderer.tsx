@@ -2,7 +2,6 @@ import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
 import type { Locale } from '@island.is/shared/types'
 
-import { PREDEFINED_LINE_DASH_PATTERNS } from '../constants'
 import {
   ChartComponentType,
   ChartComponentWithRenderProps,
@@ -31,7 +30,7 @@ export const renderChartComponent = ({
     return (
       <Bar
         {...commonProps}
-        fill={component.fill}
+        fill={component.patternId ?? component.color}
         radius={component.shouldRenderBorderRadius ? [6, 6, 0, 0] : undefined}
         barSize={25}
         stackId={component.stackId?.toString()}
@@ -45,15 +44,17 @@ export const renderChartComponent = ({
         {...commonProps}
         stroke={component.color}
         strokeWidth={3}
-        strokeDasharray={
-          component.renderIndex === 0
-            ? undefined // First line is solid
-            : PREDEFINED_LINE_DASH_PATTERNS[component.renderIndex - 1] // The rest gets a pattern
-        }
+        strokeDasharray={component.pattern}
       />
     )
   } else if (component.type === ChartComponentType.area) {
-    return <Area {...commonProps} fill={component.fill} fillOpacity={1} />
+    return (
+      <Area
+        {...commonProps}
+        fill={component.patternId ?? component.color}
+        fillOpacity={1}
+      />
+    )
   }
 
   return null
@@ -101,7 +102,7 @@ const renderCustomizedLabel = ({
             : ''
         }`}</tspan>
         <tspan x={x} dy="1.2em">
-          {payload?.name?.toLowerCase()}
+          {payload?.name}
         </tspan>
       </text>
     </g>
@@ -135,6 +136,7 @@ export const renderPieChartComponents = (
           total,
         })
       }
+      labelLine={true}
       startAngle={90}
       endAngle={360 + 90}
     >
@@ -142,7 +144,7 @@ export const renderPieChartComponents = (
       {components.map((c, i) => (
         <Cell
           key={i}
-          fill={c.fill}
+          fill={c.patternId ?? c.color}
           name={c.label}
           stroke="white"
           strokeWidth={3}

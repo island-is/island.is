@@ -18,7 +18,7 @@ import {
   useGetChartData,
 } from '../hooks'
 import { messages } from '../messages'
-import { ChartType, DataItem } from '../types'
+import { ChartType } from '../types'
 import {
   calculateChartSkeletonLoaderHeight,
   decideChartBase,
@@ -46,8 +46,14 @@ export const Chart = ({ slice }: ChartProps) => {
   const [expanded, setExpanded] = useState(slice.startExpanded)
   const { activeLocale } = useI18n()
   const cartesianGridComponents = useMemo(
-    () => getCartesianGridComponents(activeLocale, chartUsesGrid),
-    [activeLocale, chartUsesGrid],
+    () =>
+      getCartesianGridComponents({
+        activeLocale,
+        chartUsesGrid,
+        xAxisKey: slice.xAxisKey ? slice.xAxisKey : undefined,
+        xAxisValueType: slice.xAxisValueType ? slice.xAxisValueType : undefined,
+      }),
+    [activeLocale, chartUsesGrid, slice],
   )
 
   if (BaseChartComponent === null || chartType === null) {
@@ -130,9 +136,10 @@ export const Chart = ({ slice }: ChartProps) => {
       </Wrapper>
       <AccessibilityTableRenderer
         id={skipId}
+        activeLocale={activeLocale}
         chart={slice}
         componentsWithAddedProps={componentsWithAddedProps}
-        data={queryResult.data}
+        data={data}
       />
     </Box>
   )

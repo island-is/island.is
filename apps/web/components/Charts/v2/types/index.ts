@@ -13,6 +13,8 @@ export enum FillPattern {
   dotsSmall = 'pattern7',
   dotsMedium = 'pattern8',
   dotsLarge = 'pattern9',
+  waves = 'pattern10',
+  denseDots = 'pattern11',
 }
 
 export enum ChartComponentType {
@@ -30,14 +32,7 @@ export enum ChartType {
   mixed = 'mixed',
 }
 
-export type ChartComponentWithRenderProps = ChartComponent & {
-  indexWithinType: number
-  shouldRenderBorderRadius: boolean
-  renderIndex: number
-  hasFill: boolean
-  color: string
-  fill?: string
-}
+export type ChartComponentWithRenderProps = ChartComponent & ComponentStyle
 
 export type DataItemDynamicKeys = {
   [key: string]: string | number | null
@@ -49,3 +44,13 @@ type SingleStatistic =
 export type DataItem = SingleStatistic & DataItemDynamicKeys
 
 export type ChartData = DataItem[]
+
+export interface ComponentStyle {
+  color: string
+  hasFill: boolean
+  pattern?: string
+  patternId?: string
+  shouldRenderBorderRadius: boolean
+  renderIndex: number
+  renderIndexForType: number
+}

@@ -48,42 +48,63 @@ export const decideChartBase = (
   return ChartType.mixed
 }
 
-export const getCartesianGridComponents = (
-  activeLocale: Locale,
-  chartUsesGrid: boolean,
-) =>
-  chartUsesGrid
-    ? [
-        <CartesianGrid
-          stroke="rgb(0, 97, 255, 0.2)"
-          strokeDasharray="4 4"
-          vertical={false}
-        />,
+interface GetCartesianGridComponents {
+  activeLocale: Locale
+  chartUsesGrid: boolean
+  xAxisKey: string | undefined
+  xAxisValueType: string | undefined
+}
 
-        <XAxis
-          axisLine={{ stroke: theme.color.blue200 }}
-          aria-hidden="true"
-          dataKey="date"
-          tickFormatter={formatDate}
-          style={{
-            fontSize: theme.typography.baseFontSize,
-            fontFamily: theme.typography.fontFamily,
-            color: 'red',
-          }}
-          dy={theme.spacing.p2}
-        />,
-        <YAxis
-          axisLine={{ stroke: theme.color.blue200 }}
-          aria-hidden="true"
-          type="number"
-          style={{
-            fontSize: theme.typography.baseFontSize,
-            fontFamily: theme.typography.fontFamily,
-          }}
-          tickFormatter={(v) => formatValueForPresentation(activeLocale, v)}
-        />,
-      ]
-    : null
+export const getCartesianGridComponents = ({
+  activeLocale,
+  chartUsesGrid,
+  xAxisKey = 'date',
+  xAxisValueType = 'date',
+}: GetCartesianGridComponents) => {
+  if (!chartUsesGrid) {
+    return null
+  }
+
+  const tickFormatter = (value: unknown) => {
+    if (xAxisValueType === 'date') {
+      return formatDate(activeLocale, value as Date)
+    } else if (xAxisValueType === 'number') {
+      return formatValueForPresentation(activeLocale, value as string | number)
+    }
+
+    return value as string
+  }
+
+  return [
+    <CartesianGrid
+      stroke="rgb(0, 97, 255, 0.2)"
+      strokeDasharray="4 4"
+      vertical={false}
+    />,
+    <XAxis
+      axisLine={{ stroke: theme.color.blue200 }}
+      aria-hidden="true"
+      dataKey={xAxisKey}
+      tickFormatter={tickFormatter}
+      style={{
+        fontSize: theme.typography.baseFontSize,
+        fontFamily: theme.typography.fontFamily,
+        color: 'red',
+      }}
+      dy={theme.spacing.p2}
+    />,
+    <YAxis
+      axisLine={{ stroke: theme.color.blue200 }}
+      aria-hidden="true"
+      type="number"
+      style={{
+        fontSize: theme.typography.baseFontSize,
+        fontFamily: theme.typography.fontFamily,
+      }}
+      tickFormatter={(v) => formatValueForPresentation(activeLocale, v)}
+    />,
+  ]
+}
 
 export const calculateChartSkeletonLoaderHeight = (
   isCard: boolean,

@@ -1,13 +1,22 @@
 import format from 'date-fns/format'
+import localeIS from 'date-fns/locale/is'
+import capitalize from 'lodash/capitalize'
 import round from 'lodash/round'
 
 import type { Locale } from '@island.is/shared/types'
 
 import { messages } from '../messages'
 
-export const formatDate = (date: Date | string | number) => {
+export const formatDate = (
+  activeLocale: Locale,
+  date: Date | string | number,
+) => {
   try {
-    return format(new Date(date), 'MMM yy')
+    return capitalize(
+      format(new Date(date), 'MMM yy', {
+        locale: activeLocale === 'is' ? localeIS : undefined,
+      }),
+    )
   } catch {
     return ''
   }
