@@ -95,7 +95,6 @@ import {
   TryggingastofnunHeader,
 } from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
-import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
@@ -103,6 +102,7 @@ import {
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import { liveChatIncConfig, watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
+import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 
 interface NavigationData {
   title: string
