@@ -48,13 +48,13 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
       ],
     }),
 
-    buildFormPaymentChargeOverviewSection({
-      sectionTitle: payment.general.sectionTitle,
-      getSelectedChargeItems: (_) =>
-        getChargeItemCodes().map((x) => ({
-          chargeItemCode: x,
-        })),
-    }),
+    // buildFormPaymentChargeOverviewSection({
+    //   sectionTitle: payment.general.sectionTitle,
+    //   getSelectedChargeItems: (_) =>
+    //     getChargeItemCodes().map((x) => ({
+    //       chargeItemCode: x,
+    //     })),
+    // }),
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,
