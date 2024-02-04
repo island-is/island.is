@@ -2,84 +2,84 @@ import { InputType, Field } from '@nestjs/graphql'
 
 @InputType('SocialInsurancePensionCalculationInput')
 export class PensionCalculationInput {
-  @Field(() => Number)
-  typeOfBasePension!: number
+  @Field(() => Number, { nullable: true })
+  typeOfBasePension?: number
 
-  @Field(() => Boolean)
-  hasSpouse!: boolean
+  @Field(() => Boolean, { nullable: true })
+  hasSpouse?: boolean
 
-  @Field(() => Number)
-  livingCondition!: number
+  @Field(() => Number, { nullable: true })
+  livingCondition?: number
 
-  @Field(() => Boolean)
-  mobilityImpairment!: boolean
+  @Field(() => Boolean, { nullable: true })
+  mobilityImpairment?: boolean
 
-  @Field(() => Number)
-  start!: number
+  @Field(() => Number, { nullable: true })
+  start?: number
 
-  @Field(() => Number)
-  yearOfBirth!: number
+  @Field(() => Number, { nullable: true })
+  yearOfBirth?: number
 
-  @Field(() => Number)
-  startPension!: number
+  @Field(() => Number, { nullable: true })
+  startPension?: number
 
-  @Field(() => Number)
-  childCount!: number
+  @Field(() => Number, { nullable: true })
+  childCount?: number
 
-  @Field(() => Number)
-  childSupportCount!: number
+  @Field(() => Number, { nullable: true })
+  childSupportCount?: number
 
-  @Field(() => Number)
-  delayPension!: number
+  @Field(() => Number, { nullable: true })
+  delayPension?: number
 
-  @Field(() => Number)
-  hurryPension!: number
+  @Field(() => Number, { nullable: true })
+  hurryPension?: number
 
-  @Field(() => Number)
-  ageOfFirst75DisabilityAssessment!: number
+  @Field(() => Number, { nullable: true })
+  ageOfFirst75DisabilityAssessment?: number
 
-  @Field(() => Number)
-  livingConditionRatio!: number
+  @Field(() => Number, { nullable: true })
+  livingConditionRatio?: number
 
-  @Field(() => Number)
-  livingConditionAbroadInYears!: number
+  @Field(() => Number, { nullable: true })
+  livingConditionAbroadInYears?: number
 
-  @Field(() => Number)
-  ageNow!: number
+  @Field(() => Number, { nullable: true })
+  ageNow?: number
 
-  @Field(() => Number)
-  taxCard!: number
+  @Field(() => Number, { nullable: true })
+  taxCard?: number
 
-  @Field(() => Number)
-  typeOfPeriodIncome!: number
+  @Field(() => Number, { nullable: true })
+  typeOfPeriodIncome?: number
 
-  @Field(() => Number)
-  income!: number
+  @Field(() => Number, { nullable: true })
+  income?: number
 
-  @Field(() => Number)
-  pensionPayments!: number
+  @Field(() => Number, { nullable: true })
+  pensionPayments?: number
 
-  @Field(() => Number)
-  privatePensionPayments!: number
+  @Field(() => Number, { nullable: true })
+  privatePensionPayments?: number
 
-  @Field(() => Number)
-  otherIncome!: number
+  @Field(() => Number, { nullable: true })
+  otherIncome?: number
 
-  @Field(() => Number)
-  capitalIncome!: number
+  @Field(() => Number, { nullable: true })
+  capitalIncome?: number
 
-  @Field(() => Number)
-  benefitsFromMunicipality!: number
+  @Field(() => Number, { nullable: true })
+  benefitsFromMunicipality?: number
 
-  @Field(() => Number)
-  premium!: number
+  @Field(() => Number, { nullable: true })
+  premium?: number
 
-  @Field(() => Number)
-  installmentClaims!: number
+  @Field(() => Number, { nullable: true })
+  installmentClaims?: number
 
-  @Field(() => Number)
-  foreignBasicPension!: number
+  @Field(() => Number, { nullable: true })
+  foreignBasicPension?: number
 
-  @Field(() => Date)
-  dateOfCalculations!: Date
+  @Field(() => Date, { nullable: true })
+  dateOfCalculations?: Date
 }

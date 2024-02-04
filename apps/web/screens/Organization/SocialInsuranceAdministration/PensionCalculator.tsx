@@ -1,15 +1,11 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import add from 'date-fns/add'
+import addYears from 'date-fns/addYears'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import { useLazyQuery } from '@apollo/client'
 
-import {
-  Box,
-  Button,
-  GridContainer,
-  Option,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Option, Stack, Text } from '@island.is/island-ui/core'
 import {
   DatePickerController,
   InputController,
@@ -28,18 +24,20 @@ import type {
   Query,
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
+  QueryGetPensionCalculationArgs,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../../types'
+import SidebarLayout from '../../Layouts/SidebarLayout'
 import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
+import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
 import * as styles from './PensionCalculator.css'
-import SidebarLayout from '../../Layouts/SidebarLayout'
 
 interface FormState {
   basePensionType: number
@@ -51,15 +49,17 @@ interface FormState {
   childSupportCount: number
   mobilityImpairment: 'yes' | 'no'
   typeOfPeriodIncome: string
-  taxCard: number
-  income: number
-  pensionPayments: number
-  privatePensionPayments: number
-  otherIncome: number
-  capitalIncome: number
-  benefitsFromMunicipality: number
-  premium: number
-  foreignBasicPension: number
+  taxCard: string
+  income: string
+  pensionPayments: string
+  privatePensionPayments: string
+  otherIncome: string
+  capitalIncome: string
+  benefitsFromMunicipality: string
+  premium: string
+  foreignBasicPension: string
+  hasLivedAbroad: 'yes' | 'no'
+  livingConditionAbroadInYears: string
 }
 
 interface PensionCalculatorProps {
@@ -67,11 +67,21 @@ interface PensionCalculatorProps {
   organization: Organization
 }
 
+const convertStringToNumber = (value: string) => {
+  return value ? Number(value) : undefined
+}
+
 const PensionCalculator: Screen<PensionCalculatorProps> = ({
   organizationPage,
   organization,
 }) => {
   const methods = useForm<FormState>()
+  const defaultPensionAge = 67 // TODO: add to namespace
+  const maxMonthPensionDelay = 156 // TODO: add to namespace
+  const maxMonthPensionHurry = 24 // TODO: add to namespace
+
+  const [hasLivedAbroad, setHasLivedAbroad] = useState(false)
+  const [birthdate, setBirthdate] = useState<string>()
 
   const basePensionTypeOptions = useMemo<Option<number>[]>(() => {
     const options = [
@@ -233,18 +243,104 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
     ]
   }, [])
 
+  const [fetchResult, { data, error }] = useLazyQuery<
+    Query,
+    QueryGetPensionCalculationArgs
+  >(GET_PENSION_CALCULATION)
+
+  console.log('DATA', data)
+  console.log('error', error)
+
   const currentDate = new Date() // TODO: change this value depending on year selected (ár reiknivélar)
 
   const onSubmit = (data: FormState) => {
-    console.log('SUBMITTED', data)
+    let hurryPension = 0
+    let delayPension = 0
+
+    if (data.birthdate && data.startDate) {
+      const birthdate = new Date(data.birthdate)
+      const startDate = new Date(data.startDate)
+
+      const defaultPensionDate = addYears(birthdate, defaultPensionAge)
+      console.log(defaultPensionDate)
+
+      const offset = differenceInMonths(startDate, defaultPensionDate)
+      console.log(offset)
+
+      if (offset < 0) {
+        hurryPension = Math.abs(offset)
+      } else {
+        delayPension = offset
+      }
+    }
+
+    // TODO: do calculators for previous years take current year into account? I think not
+
+    const start = data.startDate
+      ? new Date(data.startDate).getFullYear() >= 2018
+        ? 2
+        : 1
+      : undefined
+
+    fetchResult({
+      variables: {
+        input: {
+          hurryPension,
+          delayPension,
+          benefitsFromMunicipality: convertStringToNumber(
+            data.benefitsFromMunicipality,
+          ),
+          capitalIncome: convertStringToNumber(data.capitalIncome),
+          childCount: data.childCount,
+          childSupportCount: data.childSupportCount,
+          dateOfCalculations: currentDate,
+          foreignBasicPension: convertStringToNumber(data.foreignBasicPension),
+          hasSpouse: data.hasSpouse,
+          income: convertStringToNumber(data.income),
+          otherIncome: convertStringToNumber(data.otherIncome),
+          livingCondition: data.livingCondition,
+          livingConditionAbroadInYears: convertStringToNumber(
+            data.livingConditionAbroadInYears,
+          ),
+          taxCard: convertStringToNumber(data.taxCard),
+          mobilityImpairment: data.mobilityImpairment === 'yes',
+          pensionPayments: convertStringToNumber(data.pensionPayments),
+          premium: convertStringToNumber(data.premium),
+          privatePensionPayments: convertStringToNumber(
+            data.privatePensionPayments,
+          ),
+          typeOfPeriodIncome: data.typeOfPeriodIncome === 'year' ? 1 : 2,
+          typeOfBasePension: data.basePensionType,
+          start: start,
+          startPension: start,
+          yearOfBirth: data.birthdate
+            ? new Date(data.birthdate).getFullYear() >= 1952
+              ? 2
+              : 1
+            : undefined,
+          // TODO: handle other fields
+        },
+      },
+    })
   }
 
   const { activeLocale } = useI18n()
 
-  const dateRange = {
+  const birthdateRange = {
     minDate: add(currentDate, { years: -130 }),
     maxDate: currentDate, // TODO: what should this be?
   }
+
+  const startDateRange = !birthdate
+    ? birthdateRange
+    : {
+        minDate: add(add(new Date(birthdate), { years: defaultPensionAge }), {
+          months: -maxMonthPensionHurry,
+        }),
+        maxDate: add(add(new Date(birthdate), { years: defaultPensionAge }), {
+          months: maxMonthPensionDelay, // Perhaps reconsider this date here?
+        }),
+      }
 
   return (
     <>
@@ -294,10 +390,11 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       label="Fæðingardagur"
                       placeholder="Veldu fæðingardag"
                       locale={activeLocale}
-                      minDate={dateRange.minDate}
-                      maxDate={dateRange.maxDate}
-                      minYear={dateRange.minDate.getFullYear()}
-                      maxYear={dateRange.maxDate.getFullYear()}
+                      minDate={birthdateRange.minDate}
+                      maxDate={birthdateRange.maxDate}
+                      minYear={birthdateRange.minDate.getFullYear()}
+                      maxYear={birthdateRange.maxDate.getFullYear()}
+                      onChange={setBirthdate}
                     />
                   </Box>
 
@@ -311,10 +408,11 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       label="Hvenær viltu hefja töku á ellilífeyri"
                       placeholder="Veldu dagsetningu"
                       locale={activeLocale}
-                      minDate={dateRange.minDate}
-                      maxDate={dateRange.maxDate}
-                      minYear={dateRange.minDate.getFullYear()}
-                      maxYear={dateRange.maxDate.getFullYear()}
+                      minDate={startDateRange.minDate}
+                      maxDate={startDateRange.maxDate}
+                      minYear={startDateRange.minDate.getFullYear()}
+                      maxYear={startDateRange.maxDate.getFullYear()}
+                      disabled={!birthdate}
                     />
                   </Box>
 
@@ -376,6 +474,33 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                     </Box>
                   </Stack>
 
+                  <Stack space={2}>
+                    <Text>Hefur búið erlendis</Text>
+                    <Box className={styles.inputContainer}>
+                      <RadioController
+                        id="hasLivedAbroad"
+                        name="hasLivedAbroad"
+                        defaultValue="no"
+                        largeButtons={false}
+                        split="1/2"
+                        options={noYesOptions}
+                        onSelect={(state) => setHasLivedAbroad(state === 'yes')}
+                      />
+                    </Box>
+                    {hasLivedAbroad && (
+                      <Box className={styles.inputContainer}>
+                        <InputController
+                          id="livingConditionAbroadInYears"
+                          name="livingConditionAbroadInYears"
+                          label="Fjöldi ára erlendrar búsetu frá 16 til 67 ára"
+                          placeholder="0 ár"
+                          type="number"
+                          suffix=" ár"
+                        />
+                      </Box>
+                    )}
+                  </Stack>
+
                   <Text variant="h2" as="h2">
                     Tekjur
                   </Text>
@@ -403,6 +528,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       required={true}
                       placeholder="%"
                       type="number"
+                      suffix="%"
                     />
                   </Box>
 

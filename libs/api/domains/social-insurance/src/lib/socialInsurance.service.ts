@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  type ApiProtectedV1PensionCalculatorPostRequest,
-  SocialInsuranceAdministrationClientService,
-} from '@island.is/clients/social-insurance-administration'
+import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
 import { User } from '@island.is/auth-nest-tools'
 import { PaymentPlan } from './models/paymentPlan.model'
 import { handle404 } from '@island.is/clients/middlewares'
