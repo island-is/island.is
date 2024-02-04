@@ -125,7 +125,6 @@ interface WrapperProps {
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
   showReadSpeaker?: boolean
-  showFooterInMinimalView?: boolean
 }
 
 interface HeaderProps {
@@ -883,7 +882,6 @@ export const OrganizationWrapper: React.FC<
   showSecondaryMenu = true,
   showExternalLinks = false,
   showReadSpeaker = true,
-  showFooterInMinimalView = false,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -1151,17 +1149,16 @@ export const OrganizationWrapper: React.FC<
         </GridContainer>
       )}
       {!!mainContent && <Box className="rs_read">{children}</Box>}
-      {!minimal ||
-        (minimal && showFooterInMinimalView && (
-          <Box className="rs_read">
-            <OrganizationFooter
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              organizations={[organizationPage.organization]}
-              force={true}
-            />
-          </Box>
-        ))}
+      {!minimal && (
+        <Box className="rs_read">
+          <OrganizationFooter
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            organizations={[organizationPage.organization]}
+            force={true}
+          />
+        </Box>
+      )}
       <OrganizationChatPanel
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict

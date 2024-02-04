@@ -2,7 +2,14 @@ import { useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import add from 'date-fns/add'
 
-import { Box, Button, Option, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridContainer,
+  Option,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   DatePickerController,
   InputController,
@@ -10,10 +17,16 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { sortAlpha } from '@island.is/shared/utils'
-import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
+import {
+  getThemeConfig,
+  OrganizationFooter,
+  OrganizationHeader,
+} from '@island.is/web/components'
 import type {
+  Organization,
   OrganizationPage,
   Query,
+  QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
@@ -21,7 +34,12 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../../types'
-import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import {
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_QUERY,
+} from '../../queries'
+import * as styles from './PensionCalculator.css'
+import SidebarLayout from '../../Layouts/SidebarLayout'
 
 interface FormState {
   basePensionType: number
@@ -46,10 +64,12 @@ interface FormState {
 
 interface PensionCalculatorProps {
   organizationPage: OrganizationPage
+  organization: Organization
 }
 
 const PensionCalculator: Screen<PensionCalculatorProps> = ({
   organizationPage,
+  organization,
 }) => {
   const methods = useForm<FormState>()
 
@@ -227,16 +247,18 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   }
 
   return (
-    <OrganizationWrapper
-      organizationPage={organizationPage}
-      navigationData={{ items: [], title: '' }}
-      pageTitle="Reiknivél lífeyris"
-      minimal={true}
-      showFooterInMinimalView={true}
-      mainContent={
-        <Box paddingBottom={3}>
-          <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)}>
+    <>
+      <OrganizationHeader organizationPage={organizationPage} />
+
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <Stack space={3}>
+            <SidebarLayout
+              sidebarContent={null}
+              flexDirection="rowReverse"
+              paddingTop={[5, 5, 8]}
+              paddingBottom={3}
+            >
               <Stack space={3}>
                 <Text variant="h1" as="h1">
                   Reiknivél lífeyris {currentDate.getFullYear()}
@@ -246,16 +268,26 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                   niðurstöður
                 </Text>
 
-                <SelectController
-                  id="basePensionType"
-                  name="basePensionType"
-                  label="Tegund lífeyris"
-                  options={basePensionTypeOptions}
-                  defaultValue={1}
-                />
+                <Box className={styles.inputContainer}>
+                  <SelectController
+                    id="basePensionType"
+                    name="basePensionType"
+                    label="Tegund lífeyris"
+                    options={basePensionTypeOptions}
+                    defaultValue={1}
+                  />
+                </Box>
+              </Stack>
+            </SidebarLayout>
 
-                <Box background="blue100">
-                  <Stack space={3}>
+            <Box paddingTop={5} background="blue100">
+              <SidebarLayout
+                sidebarContent={null}
+                flexDirection="rowReverse"
+                paddingTop={0}
+              >
+                <Stack space={3}>
+                  <Box className={styles.inputContainer}>
                     <DatePickerController
                       id="birthdate"
                       name="birthdate"
@@ -267,11 +299,12 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       minYear={dateRange.minDate.getFullYear()}
                       maxYear={dateRange.maxDate.getFullYear()}
                     />
+                  </Box>
 
-                    <Text variant="h2" as="h2">
-                      Upphaf greiðslna
-                    </Text>
-
+                  <Text variant="h2" as="h2">
+                    Upphaf greiðslna
+                  </Text>
+                  <Box className={styles.inputContainer}>
                     <DatePickerController
                       id="startDate"
                       name="startDate"
@@ -283,11 +316,13 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       minYear={dateRange.minDate.getFullYear()}
                       maxYear={dateRange.maxDate.getFullYear()}
                     />
+                  </Box>
 
-                    <Text variant="h2" as="h2">
-                      Þínar aðstæður
-                    </Text>
+                  <Text variant="h2" as="h2">
+                    Þínar aðstæður
+                  </Text>
 
+                  <Box className={styles.inputContainer}>
                     <SelectController
                       id="hasSpouse"
                       name="hasSpouse"
@@ -295,7 +330,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="Veldu hjúskaparstöðu"
                       options={hasSpouseOptions}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <SelectController
                       id="livingCondition"
                       name="livingCondition"
@@ -303,7 +340,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="Heimilisaðstæður"
                       options={livingConditionOptions}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <SelectController
                       id="childCount"
                       name="childCount"
@@ -311,7 +350,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="Veldu fjölda barna"
                       options={childCountOptions}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <SelectController
                       id="childSupportCount"
                       name="childSupportCount"
@@ -319,9 +360,11 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="Veldu fjölda barna"
                       options={childSupportCountOptions}
                     />
+                  </Box>
 
-                    <Stack space={2}>
-                      <Text>Með hreyfihömlunarmat</Text>
+                  <Stack space={2}>
+                    <Text>Með hreyfihömlunarmat</Text>
+                    <Box className={styles.inputContainer}>
                       <RadioController
                         id="mobilityImpairment"
                         name="mobilityImpairment"
@@ -330,16 +373,18 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                         split="1/2"
                         options={noYesOptions}
                       />
-                    </Stack>
+                    </Box>
+                  </Stack>
 
-                    <Text variant="h2" as="h2">
-                      Tekjur
-                    </Text>
+                  <Text variant="h2" as="h2">
+                    Tekjur
+                  </Text>
 
-                    <Text variant="h3" as="h3">
-                      Tekjur fyrir skatt
-                    </Text>
+                  <Text variant="h3" as="h3">
+                    Tekjur fyrir skatt
+                  </Text>
 
+                  <Box className={styles.inputContainer}>
                     <RadioController
                       id="typeOfPeriodIncome"
                       name="typeOfPeriodIncome"
@@ -348,7 +393,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       split="1/2"
                       options={typeOfPeriodIncomeOptions}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="taxCard"
                       name="taxCard"
@@ -357,7 +404,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="%"
                       type="number"
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="income"
                       name="income"
@@ -365,7 +414,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="kr."
                       currency={true}
                     />
-
+                  </Box>
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="pensionPayments"
                       name="pensionPayments"
@@ -373,7 +423,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="kr."
                       currency={true}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="privatePensionPayments"
                       name="privatePensionPayments"
@@ -381,7 +433,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="kr."
                       currency={true}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="otherIncome"
                       name="otherIncome"
@@ -389,7 +443,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="kr."
                       currency={true}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="capitalIncome"
                       name="capitalIncome"
@@ -397,7 +453,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="kr."
                       currency={true}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="benefitsFromMunicipality"
                       name="benefitsFromMunicipality"
@@ -405,7 +463,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="kr."
                       currency={true}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="premium"
                       name="premium"
@@ -413,7 +473,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="kr."
                       currency={true}
                     />
+                  </Box>
 
+                  <Box className={styles.inputContainer}>
                     <InputController
                       id="foreignBasicPension"
                       name="foreignBasicPension"
@@ -421,16 +483,18 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       placeholder="kr."
                       currency={true}
                     />
+                  </Box>
 
-                    <Button type="submit">Reikna niðurstöður</Button>
-                  </Stack>
-                </Box>
-              </Stack>
-            </form>
-          </FormProvider>
-        </Box>
-      }
-    />
+                  <Button type="submit">Reikna niðurstöður</Button>
+                </Stack>
+              </SidebarLayout>
+            </Box>
+          </Stack>
+        </form>
+      </FormProvider>
+
+      <OrganizationFooter organizations={[organization]} />
+    </>
   )
 }
 
@@ -442,9 +506,21 @@ PensionCalculator.getProps = async ({ apolloClient, locale }) => {
     {
       data: { getOrganizationPage },
     },
+    {
+      data: { getOrganization },
+    },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: 'is',
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationArgs>({
+      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug,
@@ -461,9 +537,16 @@ PensionCalculator.getProps = async ({ apolloClient, locale }) => {
     )
   }
 
+  if (!getOrganization) {
+    throw new CustomNextError(
+      404,
+      `Organization with slug: ${slug} was not found`,
+    )
+  }
+
   return {
     organizationPage: getOrganizationPage,
-
+    organization: getOrganization,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
