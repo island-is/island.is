@@ -91,7 +91,9 @@ const SpecificHousingBenefitSupportCalculator = ({
           householdMemberCount === 1 ||
           householdMemberCount === 2 ||
           householdMemberCount === 3 ||
-          householdMemberCount === 4
+          householdMemberCount === 4 ||
+          householdMemberCount === 5 ||
+          householdMemberCount === 6
         )
       }
       return Boolean(inputState[key as keyof InputState])
@@ -147,13 +149,31 @@ const SpecificHousingBenefitSupportCalculator = ({
                     checked={value === 3}
                   />
                   <RadioButton
-                    label={n('fourOrMore', '4 eða fleiri')}
-                    name="fourOrMoreHouseholdMembers"
+                    label="4"
+                    name="fourHouseholdMembers"
                     onChange={() => {
                       onChange(4)
                       updateInputState('householdMemberCount', 4)
                     }}
                     checked={value === 4}
+                  />
+                  <RadioButton
+                    label="5"
+                    name="fiveHouseholdMembers"
+                    onChange={() => {
+                      onChange(5)
+                      updateInputState('householdMemberCount', 5)
+                    }}
+                    checked={value === 5}
+                  />
+                  <RadioButton
+                    label={n('sixOrMore', '6 eða fleiri')}
+                    name="sixOrMoreHouseholdMembers"
+                    onChange={() => {
+                      onChange(6)
+                      updateInputState('householdMemberCount', 6)
+                    }}
+                    checked={value === 6}
                   />
                 </Inline>
               )}
