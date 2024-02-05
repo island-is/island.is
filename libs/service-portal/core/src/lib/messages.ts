@@ -61,6 +61,10 @@ export const m = defineMessages({
     id: 'service.portal:effective-date',
     defaultMessage: 'Gildisdagur',
   },
+  validTo: {
+    id: 'service.portal:valid-to',
+    defaultMessage: 'Gildir til',
+  },
   feeItem: {
     id: 'service.portal:fee-item',
     defaultMessage: 'Gjaldliður',
@@ -469,7 +473,7 @@ export const m = defineMessages({
   },
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
-    defaultMessage: 'Meðmælalistar',
+    defaultMessage: 'Meðmælasöfnun',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
@@ -1354,5 +1358,13 @@ export const m = defineMessages({
     id: 'service.portal:december',
     defaultMessage: 'Desember',
     description: 'December',
+  },
+  english: {
+    id: 'service.portal:english',
+    defaultMessage: 'Enska',
+  },
+  icelandic: {
+    id: 'service.portal:icelandic',
+    defaultMessage: 'Íslenska',
   },
 })

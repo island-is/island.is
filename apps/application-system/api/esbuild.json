@@ -62,7 +62,8 @@
     "url-parse-lax",
     "safer-buffer",
     "canvas",
-    "path-scurry"
+    "path-scurry",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

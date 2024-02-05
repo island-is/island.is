@@ -4,6 +4,18 @@ import { SignatureCollectionArea } from './area.model'
 import { SignatureCollectionCollector } from './collector.model'
 
 @ObjectType()
+export class SignatureCollectionOwnedList {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field(() => SignatureCollectionArea)
+  area!: SignatureCollectionArea
+}
+
+@ObjectType()
 export class SignatureCollectionListBase {
   @Field(() => ID)
   id!: string
