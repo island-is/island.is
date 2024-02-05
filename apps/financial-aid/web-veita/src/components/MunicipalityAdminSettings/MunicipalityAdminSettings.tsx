@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Text,
   Box,
@@ -34,6 +34,10 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
   )
+
+  useEffect(() => {
+    setState(currentMunicipality)
+  }, [currentMunicipality])
 
   const { setMunicipality } = useContext(AdminContext)
 
@@ -348,10 +352,10 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         </Text>
       </Box>
 
-      <ApiKeysSettings
+      {/* <ApiKeysSettings
         apiKeyInfo={state.apiKeyInfo}
         currentMunicipalityCode={state.municipalityId}
-      />
+      /> */}
 
       <Box className={`contentUp delay-25`}>
         {navAndMultiSelectContent.map((el, index) => {

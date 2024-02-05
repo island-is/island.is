@@ -1,13 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Text,
-  Box,
-  Input,
-  Button,
-  toast,
-  Checkbox,
-} from '@island.is/island-ui/core'
-import { randomBytes } from 'crypto'
+import { Text, Box, Button, toast } from '@island.is/island-ui/core'
 
 import { ApiKeysForMunicipality } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
@@ -17,9 +9,9 @@ import {
 } from '@island.is/financial-aid-web/veita/graphql'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import copyToClipboard from 'copy-to-clipboard'
-import CreateApiKeyModal from '../CreateApiKeyModal/CreateApiKeyModal'
-import { set } from 'lodash'
+import CreateApiKeyModal from '../ApiKeyModal/CreateApiKeyModal'
 import AnimateHeight from 'react-animate-height'
+import UpdateApiKeyModal from '../ApiKeyModal/UpdateApiKeyModal'
 
 interface Props {
   apiKeyInfo?: ApiKeysForMunicipality
@@ -27,7 +19,9 @@ interface Props {
 }
 
 const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
-  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false)
+
   const [isKeyVisable, setIsKeyVisable] = useState(false)
 
   const createApiKeyState = (apiKeyInfo?: ApiKeysForMunicipality) => ({
@@ -69,29 +63,23 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
         apiKey: newApiKeyInfo.apiKey,
         isActive: true,
       })
-      toast.success('Api lykill hefur verið búinn til')
     }
   }
-
-  const createOrUpdateApiKey = () => {
-    if (apiKeyState.isActive) {
-      updateApiKeyForMunicipality()
-    } else {
-      // createApiKeyForMunicipalityOLD()
-    }
-  }
-
-  const updateApiKeyForMunicipality = async () => {
+  const updateApiKeyForMunicipality = async (name: string) => {
     await updateApiKeyMutation({
       variables: {
         input: {
           id: apiKeyInfo?.id,
-          name: apiKeyState.name,
+          name: name,
         },
       },
     })
       .then((res) => {
-        addNewApiKeyToMunicipality(res.data?.updateApiKey)
+        if (res.data?.updateApiKey) {
+          addNewApiKeyToMunicipality(res.data?.updateApiKey)
+          toast.success('Api lykill hefur verið uppfærður')
+          setIsUpdateModalVisible(false)
+        }
       })
       .catch(() => {
         toast.error(
@@ -99,34 +87,6 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
         )
       })
   }
-
-  // const createApiKeyForMunicipalityOLD = async () => {
-  //   if (!apiKeyState.isChecked || !apiKeyState.name || !apiKeyState.apiKey) {
-  //     setApiKeyState({
-  //       ...apiKeyState,
-  //       hasError: true,
-  //     })
-  //     return
-  //   }
-
-  //   await createApiKey({
-  //     variables: {
-  //       input: {
-  //         name: apiKeyState.name,
-  //         municipalityCode: currentMunicipalityCode,
-  //         apiKey: apiKeyState.apiKey,
-  //       },
-  //     },
-  //   })
-  //     .then((res) => {
-  //       addNewApiKeyToMunicipality(res.data?.createApiKey)
-  //     })
-  //     .catch(() => {
-  //       toast.error(
-  //         'Ekki tókst að búa til api lykil, vinsamlega reynið aftur síðar',
-  //       )
-  //     })
-  // }
 
   const createApiKeyForMunicipality = async (name: string, key: string) => {
     await createApiKey({
@@ -139,8 +99,11 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
       },
     })
       .then((res) => {
-        addNewApiKeyToMunicipality(res.data?.createApiKey)
-        setIsModalVisible(false)
+        if (res.data?.createApiKey) {
+          addNewApiKeyToMunicipality(res.data?.createApiKey)
+          toast.success('Api lykill hefur búinn til')
+          setIsCreateModalVisible(false)
+        }
       })
       .catch(() => {
         toast.error(
@@ -169,47 +132,66 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
         <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
           Tenging við ytri kerfi
         </Text>
-        <Button
-          size="small"
-          icon="add"
-          variant="ghost"
-          onClick={() => setIsModalVisible(true)}
-        >
-          Búa til lykil
-        </Button>
+        {apiKeyState.isActive ? (
+          <Button
+            size="small"
+            icon="pencil"
+            variant="ghost"
+            onClick={() => setIsUpdateModalVisible(true)}
+          >
+            Uppfæra lykil
+          </Button>
+        ) : (
+          <Button
+            size="small"
+            icon="add"
+            variant="ghost"
+            onClick={() => setIsCreateModalVisible(true)}
+          >
+            Búa til lykil
+          </Button>
+        )}
       </Box>
 
-      <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-        <Box>
+      {!apiKeyState.isActive ? (
+        <>
           <Text variant="h5" marginBottom={1}>
-            Nafn
+            Enginn lykill
           </Text>
-          <Text marginBottom={2}>{apiKeyState?.name}</Text>
-        </Box>
-        <Box display="flex">
-          <Box marginRight={2}>
+        </>
+      ) : (
+        <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+          <Box>
+            <Text variant="h5" marginBottom={1}>
+              Nafn
+            </Text>
+            <Text marginBottom={2}>{apiKeyState.name}</Text>
+          </Box>
+          <Box display="flex">
             <Button
-              onClick={() => copyApiKeyToClipboard(apiKeyState?.apiKey)}
-              icon="copy"
+              onClick={() => setIsKeyVisable(!isKeyVisable)}
+              icon="lockOpened"
               size="small"
               disabled={!apiKeyState?.apiKey}
-              variant="primary"
+              variant="ghost"
             >
-              Afrit af lykli
+              {isKeyVisable ? 'Fela lykill' : 'Sýna lykill'}
             </Button>
+            <Box marginLeft={2}>
+              <Button
+                onClick={() => copyApiKeyToClipboard(apiKeyState?.apiKey)}
+                icon="copy"
+                size="small"
+                disabled={!apiKeyState?.apiKey}
+                variant="primary"
+              >
+                Afrit af lykli
+              </Button>
+            </Box>
           </Box>
-
-          <Button
-            onClick={() => setIsKeyVisable(!isKeyVisable)}
-            icon="lockOpened"
-            size="small"
-            disabled={!apiKeyState?.apiKey}
-            variant="ghost"
-          >
-            {isKeyVisable ? 'Fela lykill' : 'Sýna lykill'}
-          </Button>
         </Box>
-      </Box>
+      )}
+
       <AnimateHeight duration={250} height={isKeyVisable ? 'auto' : 0}>
         <Text variant="eyebrow" marginBottom={1}>
           Lykill
@@ -218,108 +200,22 @@ const ApiKeysSettings = ({ apiKeyInfo, currentMunicipalityCode }: Props) => {
       </AnimateHeight>
 
       <CreateApiKeyModal
-        isVisible={isModalVisible}
+        isVisible={isCreateModalVisible}
         setIsVisible={(isModalVisible) => {
-          setIsModalVisible(isModalVisible)
+          setIsCreateModalVisible(isModalVisible)
         }}
         onSubmit={(name, key) => createApiKeyForMunicipality(name, key)}
       />
 
-      {/* 
-      {apiKeyState.isActive ? (
-        <Button
-          onClick={() => console.log('open modal')}
-          icon="lockClosed"
-          size="small"
-        >
-          Búa til lykill
-        </Button>
-      ) : (
-        <div>helo</div>
-      )} */}
-
-      {/* <Box marginBottom={3} id="apiKeySettings">
-        <Checkbox
-          name="isApiKeyActive"
-          label="Virkja tengingu við ytri kerfi"
-          checked={apiKeyState.isChecked}
-          hasError={apiKeyState.hasError && !apiKeyState.isChecked}
-          onChange={(event) => {
-            if (event.target.checked && !apiKeyState.apiKey) {
-              setApiKeyState({
-                ...apiKeyState,
-                isChecked: event.target.checked,
-                apiKey: generateApiKey(),
-                hasError: false,
-              })
-            } else {
-              setApiKeyState({
-                ...apiKeyState,
-                isChecked: event.target.checked,
-                hasError: false,
-              })
-            }
-          }}
-        />
-      </Box> */}
-
-      {/* <Input
-        label="Kerfi"
-        name="name"
-        value={apiKeyState?.name}
-        backgroundColor="blue"
-        disabled={!apiKeyState?.isChecked}
-        autoComplete="off"
-        hasError={apiKeyState.hasError && !apiKeyState.name}
-        onChange={(event) => {
-          setApiKeyState({
-            ...apiKeyState,
-            name: event.target.value,
-            hasError: false,
-          })
+      <UpdateApiKeyModal
+        isVisible={isUpdateModalVisible}
+        setIsVisible={(isModalVisible) => {
+          setIsUpdateModalVisible(isModalVisible)
         }}
-        errorMessage="Til að búa til lykill þarf nafn að vera til staðar"
-      /> */}
-      {/* <Text marginTop={1} marginBottom={3} variant="small">
-        útskýring
-      </Text> */}
-
-      {/* <Box display="flex">
-        <Box flexGrow={1} marginRight={1}>
-          <Input
-            label="Lykill"
-            name="apiKey"
-            value={apiKeyState?.apiKey}
-            backgroundColor="blue"
-            autoComplete="off"
-            readOnly
-            disabled={!apiKeyState?.isChecked}
-          />
-        </Box>
-
-        <Button
-          onClick={() => copyApiKeyToClipboard(apiKeyState?.apiKey)}
-          icon="copy"
-          size="small"
-          disabled={!apiKeyState?.apiKey}
-        >
-          Afrit af lykli
-        </Button>
-      </Box> */}
-
-      {/* <Text marginTop={1} marginBottom={3} variant="small">
-        útskýring
-      </Text>
-      <Box display="flex" justifyContent="spaceBetween">
-        <Button
-          onClick={() => createOrUpdateApiKey()}
-          icon="checkmark"
-          size="small"
-          disabled={!apiKeyState?.isChecked}
-        >
-          {apiKeyState.isActive ? `Uppfæra lykil` : `Búa til lykil`}
-        </Button>
-      </Box> */}
+        name={apiKeyState.name}
+        apiKey={apiKeyState.apiKey}
+        onSubmit={(name) => updateApiKeyForMunicipality(name)}
+      />
     </Box>
   )
 }

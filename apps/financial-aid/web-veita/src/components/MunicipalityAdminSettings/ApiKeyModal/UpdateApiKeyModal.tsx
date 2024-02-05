@@ -1,45 +1,46 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, Input } from '@island.is/island-ui/core'
-import { randomBytes } from 'crypto'
 
 import ActionModal from '../../ActionModal/ActionModal'
 
 interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
-  onSubmit: (name: string, key: string) => void
+  name: string
+  apiKey: string
+  onSubmit: (name: string) => void
 }
 interface ApiKeyState {
   name?: string
   apiKey: string
   hasError: boolean
 }
-// Function to generate a random API key
-const generateApiKey = () => {
-  // Length of the API key
-  const length = 32
-  // Generate random bytes
-  const bytes = randomBytes(length)
-  // Convert bytes to hexadecimal
-  const apiKey = bytes.toString('hex')
 
-  return apiKey
-}
-
-const CreateApiKeyModal = ({ isVisible, setIsVisible, onSubmit }: Props) => {
+const UpdateApiKeyModal = ({
+  isVisible,
+  setIsVisible,
+  name,
+  apiKey,
+  onSubmit,
+}: Props) => {
   const [apiKeyState, setApiKeyState] = useState<ApiKeyState>({
     hasError: false,
-    apiKey: generateApiKey(),
+    apiKey: apiKey,
+    name: name,
   })
+
+  useEffect(() => {
+    setApiKeyState({ ...apiKeyState, apiKey: apiKey, name: name })
+  }, [name, apiKey])
 
   return (
     <ActionModal
       isVisible={isVisible}
       setIsVisible={setIsVisible}
-      header={'Nýr lykill'}
-      hasError={false}
-      errorMessage="Það þarf að velja nafn á kerfið"
-      submitButtonText={'Stofna Api lykil'}
+      header={'Uppfæra lykill'}
+      hasError={apiKeyState.hasError}
+      errorMessage="Kerfi þarf að hafa nafn"
+      submitButtonText={'Uppfæra'}
       onSubmit={() => {
         if (!apiKeyState.name) {
           setApiKeyState({
@@ -48,7 +49,7 @@ const CreateApiKeyModal = ({ isVisible, setIsVisible, onSubmit }: Props) => {
           })
           return
         }
-        onSubmit(apiKeyState.name, apiKeyState.apiKey)
+        onSubmit(apiKeyState.name)
       }}
     >
       <Input
@@ -65,10 +66,10 @@ const CreateApiKeyModal = ({ isVisible, setIsVisible, onSubmit }: Props) => {
             hasError: false,
           })
         }}
-        errorMessage="Til að búa til lykill þarf nafn að vera til staðar"
+        errorMessage="Til að uppfæra til lykill þarf nafn að vera til staðar"
       />
       <Text marginTop={1} marginBottom={3} variant="small">
-        Veldu nafn á kerfið
+        Nafn á kerfið
       </Text>
 
       <Input
@@ -79,11 +80,8 @@ const CreateApiKeyModal = ({ isVisible, setIsVisible, onSubmit }: Props) => {
         autoComplete="off"
         readOnly
       />
-      <Text marginTop={1} marginBottom={3} variant="small">
-        Lykill hefur verið búin til
-      </Text>
     </ActionModal>
   )
 }
 
-export default CreateApiKeyModal
+export default UpdateApiKeyModal
