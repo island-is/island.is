@@ -142,28 +142,28 @@ export const advert = {
         description: 'Placeholder for the department input',
       },
     }),
-    category: defineMessages({
+    type: defineMessages({
       label: {
-        id: 'ojoi.application:advert.inputs.category.label',
+        id: 'ojoi.application:advert.inputs.type.label',
         defaultMessage: 'Tegund birtingar',
         description: 'Label for the publishing type input',
       },
       placeholder: {
-        id: 'ojoi.application:advert.inputs.category.placeholder',
+        id: 'ojoi.application:advert.inputs.type.placeholder',
         defaultMessage: 'Veldu tegund birtingar',
         description: 'Placeholder for the publishing type input',
       },
     }),
-    subCategory: defineMessages({
+    subType: defineMessages({
       label: {
-        id: 'ojoi.application:advert.inputs.subCategory.label',
+        id: 'ojoi.application:advert.inputs.subType.label',
         defaultMessage: 'Undirtegund',
-        description: 'Label for the sub category input',
+        description: 'Label for the sub type input',
       },
       placeholder: {
-        id: 'ojoi.application:advert.inputs.subCategory.placeholder',
+        id: 'ojoi.application:advert.inputs.subType.placeholder',
         defaultMessage: 'Veldu undirtegund',
-        description: 'Placeholder for the sub category input',
+        description: 'Placeholder for the sub type input',
       },
     }),
     title: defineMessages({

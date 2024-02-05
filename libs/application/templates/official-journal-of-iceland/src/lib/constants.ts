@@ -20,7 +20,7 @@ export enum Routes {
 
 // this will be replaced with correct values once the api is ready
 
-export enum CategoryIds {
+export enum TypeIds {
   GJALDSKRA = '0',
   AUGLYSING = '1',
   REGLUGERDIR = '2',

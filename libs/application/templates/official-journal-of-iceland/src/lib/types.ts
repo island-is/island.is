@@ -9,8 +9,8 @@ export const InputFields = {
   },
   case: {
     department: 'case.department',
-    category: 'case.category',
-    subCategory: 'case.subCategory',
+    type: 'case.type',
+    subType: 'case.subType',
     title: 'case.title',
     template: 'case.template',
     documentContents: 'case.documentContents',

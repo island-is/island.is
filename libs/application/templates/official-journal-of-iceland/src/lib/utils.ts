@@ -1,7 +1,7 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { CategoryIds, emailRegex } from './constants'
+import { TypeIds, emailRegex } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationContext } from '@island.is/application/types'
 
@@ -70,15 +70,43 @@ export const mapDepartmentToId = (department?: string) => {
   }
 }
 
-export const mapIdToDepartment = (id?: string) => {
-  if (!id) return ''
-  switch (id) {
-    case '0':
+export const mapDepartmentEnumToDepartment = (department?: string) => {
+  if (!department) return ''
+  switch (department) {
+    case 'ADeild':
       return 'A deild'
-    case '1':
+    case 'BDeild':
       return 'B deild'
-    case '2':
+    case 'CDeild':
       return 'C deild'
+    default:
+      return ''
+  }
+}
+
+export const mapStatusEnumToStatus = (status?: string) => {
+  if (!status) return ''
+  switch (status) {
+    case 'Active':
+      return 'Virk'
+    case 'Revoked':
+      return 'Afturkölluð'
+    case 'Draft':
+      return 'Drög'
+    case 'Old':
+      return 'Eldri auglýsing'
+    case 'Rejected':
+      return 'Hafnað'
+    case 'Waiting':
+      return 'Í bið'
+    case 'InProgress':
+      return 'Í vinnslu'
+    case 'Submitted':
+      return 'Innsend'
+    case 'ReadyForPublication':
+      return 'Tilbúin til útgáfu'
+    case 'Published':
+      return 'Útgefin'
     default:
       return ''
   }
@@ -93,16 +121,16 @@ export const isApplicationValid = (applicationContext: ApplicationContext) => {
   return status === 'success'
 }
 
-export const mapIdToCategory = (id?: CategoryIds | string) => {
+export const mapIdToType = (id?: TypeIds | string) => {
   if (!id) return ''
   switch (id) {
-    case CategoryIds.AUGLYSING:
+    case TypeIds.AUGLYSING:
       return 'Auglýsing'
-    case CategoryIds.GJALDSKRA:
+    case TypeIds.GJALDSKRA:
       return 'Gjaldskrá'
-    case CategoryIds.REGLUGERDIR:
+    case TypeIds.REGLUGERDIR:
       return 'Reglugerðir'
-    case CategoryIds.SKIPULAGSSKRA:
+    case TypeIds.SKIPULAGSSKRA:
       return 'Skipulagsskrá'
     default:
       return ''

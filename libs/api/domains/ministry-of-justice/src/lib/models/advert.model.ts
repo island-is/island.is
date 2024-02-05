@@ -46,11 +46,11 @@ export class AdvertDocument {
   @Field(() => Boolean)
   isLegacy!: boolean
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   html!: string | null
 
   @Field(() => String, { nullable: true })
-  pdfUrl!: string | null
+  pdfUrl?: string | null
 }
 
 @ObjectType('MinistryOfJusticeAdvertInvolvedParty')

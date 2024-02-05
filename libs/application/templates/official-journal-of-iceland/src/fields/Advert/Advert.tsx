@@ -4,7 +4,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { useFormatMessage } from '../../hooks'
 import { advert } from '../../lib/messages'
@@ -16,37 +16,48 @@ import { HTMLText } from '@island.is/regulations-tools/types'
 import { baseConfig } from '../../components/HTMLEditor/config/baseConfig'
 import { SignatureSection } from './SignatureSection'
 import { FormIntro } from '../../components/FormIntro/FormIntro'
-import { CategoryIds } from '../../lib/constants'
+import { TypeIds } from '../../lib/constants'
+import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
 
 export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
   const { answers } = application
   const { f } = useFormatMessage(application)
   const [modalToggle, setModalToggle] = useState(false)
 
+  const [reRenderEditor, setReRenderEditor] = useState(false)
+
   const { setValue } = useFormContext()
 
   const [state, setState] = useState({
     department: answers?.case?.department ?? '',
-    category: answers?.case?.category ?? '',
-    subCategory: answers?.case?.subCategory ?? '',
+    type: answers?.case?.type ?? '',
+    subType: answers?.case?.subType ?? '',
     title: answers?.case?.title ?? '',
     template: answers?.case?.template ?? '',
     documentContents: answers?.case?.documentContents ?? '',
-    signatureType: answers?.case?.signatureType ?? 'regular',
   })
 
-  const onSave = (template: typeof state) => {
+  useEffect(() => {
+    if (reRenderEditor) {
+      setReRenderEditor(false)
+    }
+  }, [reRenderEditor])
+
+  const setDocumentHTML = () => {
+    setReRenderEditor(true)
+  }
+
+  const onSave = (advert: MinistryOfJusticeAdvert) => {
     const newState: typeof state = {
-      category: template.category ?? '',
-      department: template.department ?? '',
-      documentContents: template.documentContents ?? '',
-      subCategory: template.subCategory ?? '',
-      template: template.template ?? '',
-      title: template.title ?? '',
-      signatureType: template.signatureType ?? 'regular',
+      type: advert.type,
+      department: advert.department,
+      documentContents: advert.document.html ?? '',
+      subType: '', // TODO updated values when API is updated
+      template: '',
+      title: advert.title,
     }
 
-    setValue(InputFields.case.category, newState.category, {
+    setValue(InputFields.case.type, newState.type, {
       shouldValidate: true,
     })
     setValue(InputFields.case.department, newState.department, {
@@ -55,18 +66,20 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
     setValue(InputFields.case.documentContents, newState.documentContents, {
       shouldValidate: true,
     })
-    setValue(InputFields.case.subCategory, newState.subCategory, {
+    setValue(InputFields.case.type, newState.type, {
       shouldValidate: true,
     })
     setValue(InputFields.case.template, newState.template, {
       shouldValidate: true,
     })
     setValue(InputFields.case.title, newState.title, { shouldValidate: true })
-    setValue(InputFields.case.signatureType, newState.signatureType, {
-      shouldValidate: true,
-    })
+
+    // setValue(InputFields.case.signatureType, newState.signatureType, {
+    //   shouldValidate: true,
+    // })
 
     setState(newState)
+    setDocumentHTML()
     setModalToggle(false)
   }
 
@@ -111,17 +124,17 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
         </Box>
         <Box width="half">
           <SelectController
-            id={InputFields.case.category}
-            name={InputFields.case.category}
-            label={f(advert.inputs.category.label)}
-            placeholder={f(advert.inputs.category.placeholder)}
-            defaultValue={state.category}
+            id={InputFields.case.type}
+            name={InputFields.case.type}
+            label={f(advert.inputs.type.label)}
+            placeholder={f(advert.inputs.type.placeholder)}
+            defaultValue={state.type}
             backgroundColor="blue"
             options={options.categories}
             onSelect={(opt) => {
               const adverb =
-                opt.value === CategoryIds.GJALDSKRA ||
-                opt.value === CategoryIds.GJALDSKRA
+                opt.value === TypeIds.GJALDSKRA ||
+                opt.value === TypeIds.GJALDSKRA
                   ? 'fyrir'
                   : 'um'
               const title = `${opt.label.toUpperCase()} ${adverb}`
@@ -132,36 +145,32 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
               }
               setState({
                 ...state,
-                category: opt.value,
+                type: opt.value,
                 title: state.title ? state.title : title,
               })
             }}
             size="sm"
-            error={errors && getErrorViaPath(errors, InputFields.case.category)}
+            error={errors && getErrorViaPath(errors, InputFields.case.type)}
           />
         </Box>
-        {state.category === CategoryIds.REGLUGERDIR &&
-          options.subCategories.length && (
-            <Box width="half">
-              <SelectController
-                id={InputFields.case.subCategory}
-                name={InputFields.case.subCategory}
-                label={f(advert.inputs.subCategory.label)}
-                placeholder={f(advert.inputs.subCategory.placeholder)}
-                defaultValue={state.subCategory}
-                backgroundColor="blue"
-                options={options.subCategories}
-                onSelect={(opt) =>
-                  setState({ ...state, subCategory: opt.value })
-                }
-                size="sm"
-                error={
-                  errors &&
-                  getErrorViaPath(errors, InputFields.case.subCategory)
-                }
-              />
-            </Box>
-          )}
+        {state.type === TypeIds.REGLUGERDIR && options.subCategories.length && (
+          <Box width="half">
+            <SelectController
+              id={InputFields.case.subType}
+              name={InputFields.case.subType}
+              label={f(advert.inputs.subType.label)}
+              placeholder={f(advert.inputs.subType.placeholder)}
+              defaultValue={state.subType}
+              backgroundColor="blue"
+              options={options.subCategories}
+              onSelect={(opt) => setState({ ...state, subType: opt.value })}
+              size="sm"
+              error={
+                errors && getErrorViaPath(errors, InputFields.case.subType)
+              }
+            />
+          </Box>
+        )}
         <Box width="full">
           <InputController
             id={InputFields.case.title}
@@ -192,17 +201,19 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             error={errors && getErrorViaPath(errors, InputFields.case.template)}
           />
         </Box>
-        <Box width="full">
-          <HTMLEditor
-            config={baseConfig}
-            value={state.documentContents as HTMLText}
-            name={InputFields.case.documentContents}
-            error={
-              errors &&
-              getErrorViaPath(errors, InputFields.case.documentContents)
-            }
-          />
-        </Box>
+        {!reRenderEditor && (
+          <Box width="full">
+            <HTMLEditor
+              config={baseConfig}
+              value={state.documentContents as HTMLText}
+              name={InputFields.case.documentContents}
+              error={
+                errors &&
+                getErrorViaPath(errors, InputFields.case.documentContents)
+              }
+            />
+          </Box>
+        )}
       </FormGroup>
       <SignatureSection application={application} errors={errors} />
       <TemplateModal

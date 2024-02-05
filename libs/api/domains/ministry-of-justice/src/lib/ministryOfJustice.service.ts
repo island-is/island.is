@@ -79,18 +79,16 @@ export class MinistryOfJusticeService {
         updatedDate: advert.updatedDate,
         signatureDate: null,
         publicationDate: null,
-        categories: (advert.categories as unknown as AdvertCategory[]).map(
-          (category) => ({
-            id: category.id,
-            name: category.name,
-            slug: category.slug,
-          }),
-        ),
+        categories: advert.categories.map((category) => ({
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+        })),
         involvedParty: advert.involvedParty,
         document: {
           isLegacy: advert.document.isLegacy,
-          html: null,
-          pdfUrl: null,
+          html: advert.document.html,
+          pdfUrl: advert.document.pdfUrl,
         },
       }
     })

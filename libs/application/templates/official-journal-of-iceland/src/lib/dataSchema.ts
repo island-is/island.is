@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { error } from './messages'
 import { AnswerOption, InputFields } from './types'
-import { CategoryIds, INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
+import { TypeIds, INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -22,10 +22,10 @@ export const dataSchema = z.object({
       department: z.string().refine((v) => v && v.length > 0, {
         params: error.emptyFieldError,
       }),
-      category: z.string().refine((v) => v && v.length > 0, {
+      type: z.string().refine((v) => v && v.length > 0, {
         params: error.emptyFieldError,
       }),
-      subCategory: z.string().optional(),
+      subType: z.string().optional(),
       title: z.string().refine((v) => v && v.length > 0, {
         params: error.emptyFieldError,
       }),
@@ -155,12 +155,12 @@ export const dataSchema = z.object({
         })
       }
 
-      if (caseSchema.category === CategoryIds.REGLUGERDIR) {
-        if (!caseSchema.subCategory) {
+      if (caseSchema.type === TypeIds.REGLUGERDIR) {
+        if (!caseSchema.subType) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             params: error.emptyFieldError,
-            path: InputFields.case.subCategory.split('.').slice(1),
+            path: InputFields.case.subType.split('.').slice(1),
           })
         }
       }
