@@ -92,9 +92,6 @@ export async function updateItem(type: string, data: IStep | IGroup | IInput) {
 export async function getNewForm(organisationId: number) {
   try {
     const response = await axios.post(`${BASEURL}/Forms/${organisationId}`)
-
-    console.log('api', response.data)
-
     return response.data
   } catch (error) {
     console.error('Error in getNewForm: ', error)
