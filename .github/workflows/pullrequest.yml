@@ -30,6 +30,7 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
+      # Don't cause a syntax error during JSON parsing if the relevant steps fail producing outputs
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS && steps.build_projects.outputs.CHUNKS || '[]' }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS && steps.e2e_projects.outputs.CHUNKS || '[]' }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS && steps.lint_projects.outputs.CHUNKS || '[]' }}
@@ -40,6 +41,15 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
+      - name: Debug user and home
+        run: |
+          id
+          echo "HOME=${HOME}"
+          ls -lah "$HOME" /home
+
+      - name: Fail on start
+        run: exit 1
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
