@@ -378,10 +378,7 @@ export const inheritanceReportSchema = z.object({
     //     })
     //     .array()
     //     .optional(),
-    total: z
-      .number()
-      .refine((v) => v === 0 || v < 101)
-      .optional(),
+    total: customZodError(z.number().min(0).max(100), m.addAsset),
   }),
 
   heirsAdditionalInfo: z.string().optional(),

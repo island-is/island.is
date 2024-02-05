@@ -15,6 +15,8 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       {heirs?.map((heir, index) => {
+        if (!heir.enabled) return null
+
         return (
           <Box key={index}>
             <Text marginBottom={2} variant="h4">
