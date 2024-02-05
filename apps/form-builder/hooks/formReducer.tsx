@@ -132,6 +132,10 @@ export function formReducer(formBuilder: IFormBuilder, action: Action) {
       } else {
         dependencies[active] = [itemAsString]
       }
+      saveFormSettings(formBuilder.form.id, {
+        id: formBuilder.form.id,
+        dependencies: dependencies,
+      })
       return {
         ...formBuilder,
         form: {
@@ -142,7 +146,6 @@ export function formReducer(formBuilder: IFormBuilder, action: Action) {
     }
 
     case 'formSettings': {
-      console.log('formReducer formSettings')
       const { property, value } = action.payload
       const { id } = formBuilder.form
       saveFormSettings(id, {
@@ -173,6 +176,7 @@ export function formReducer(formBuilder: IFormBuilder, action: Action) {
         },
       }
     }
+
     default:
       return formBuilder
   }

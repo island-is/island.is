@@ -89,3 +89,12 @@ export enum EInputType {
   Vottorð = 28,
   Aðili = 29,
 }
+
+export enum EFormApplicantTypes {
+  einstaklingur = 'Einstaklingur',
+  einstaklingurMedUmbodAnnarsEinstaklings = 'Einstaklingur_með_umboð_annars_einstaklings',
+  einstaklingurMedUmbodLogadila = 'Einstaklingur_með_umboð_lögaðila',
+  einstaklingurMedProkuru = 'Einstaklingur_með_prókúru',
+  einstaklingurUmbodsveitandi = 'Einstaklingur_umboðsveitandi',
+  logadili = 'Lögaðili',
+}

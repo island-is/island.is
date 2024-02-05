@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, Dispatch, SetStateAction, FocusEvent } from 'react'
 import { UniqueIdentifier } from '@dnd-kit/core'
+import { EFormApplicantTypes } from './enums'
 
 export interface IFormBuilderContext {
   formBuilder: IFormBuilder
@@ -73,7 +74,7 @@ export interface IForm {
   invalidationDate?: Date
   isTranslated: boolean
   documentTypes: string[]
-  adilar: string[]
+  formApplicantTypes: IFormApplicantType[]
 }
 
 export interface IStep {
@@ -161,9 +162,20 @@ export interface ICertificate {
 }
 
 export interface IApplicantType {
-  type: string
-  name: string
-  nameSuggestions: ILanguage[]
+  id: number
+  name: ILanguage
+  type: EFormApplicantTypes
+  nameSuggestions: {
+    applicantTypeId: number
+    nameSuggestion: ILanguage
+  }[]
+}
+
+export type IFormApplicantType = {
+  formId: number //formID
+  applicantTypeId: number
+  name: ILanguage
+  type: EFormApplicantTypes
 }
 
 export interface IInputTypes {

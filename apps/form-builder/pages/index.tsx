@@ -14,7 +14,6 @@ export default Index
 
 export async function getServerSideProps() {
   const allForms: IFormBuilder = await getAllFormsFromOrganisation(1)
-  console.log(allForms)
   return {
     props: {
       formBuilder: allForms,

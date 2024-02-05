@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {
   IForm,
+  IFormApplicantType,
   IFormBuilder,
   IGroup,
   IInput,
@@ -235,11 +236,11 @@ export async function deleteItem(type: ItemType, id: number) {
   }
 }
 
-export async function saveFormSettings(formId: number, settings: object) {
+export async function saveFormSettings(id: number, settings: object) {
   console.log(settings)
   try {
     const response = await axios.put(
-      `${BASEURL}/Forms/${formId}/Settings`,
+      `${BASEURL}/Forms/${id}/Settings`,
       settings,
       {
         headers: {
@@ -256,6 +257,32 @@ export async function saveFormSettings(formId: number, settings: object) {
   }
 }
 
+export async function saveApplicantTypes(
+  id: number,
+  types: IFormApplicantType[],
+) {
+  const requestData = {
+    id: id,
+    formApplicantTypes: types,
+  }
+  try {
+    const response = await axios.put(
+      `${BASEURL}/Forms/${id}/Settings`,
+      requestData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+
+    console.log('saveApplicantTypes response: ', response)
+    return response
+  } catch (error) {
+    console.error('Error in saveApplicantTypes: ', error)
+    throw error
+  }
+}
 export async function getList(type: string) {
   try {
     const response = await axios.get(`${BASEURL}/Services/${type}`)

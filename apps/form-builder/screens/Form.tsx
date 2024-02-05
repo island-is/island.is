@@ -41,9 +41,9 @@ export default function Form({ form }: Props) {
   const [selectStatus, setSelectStatus] = useState<NavbarSelectStatus>(
     NavbarSelectStatus.OFF,
   )
-  console.log('THE FORM: ', form)
   const [activeListItem, setActiveListItem] = useState<IListItem | null>(null)
   const { infoDispatch } = useContext(LayoutContext)
+
   const initialNavbar: ILists = {
     activeItem: inSettings
       ? { type: 'Step', data: baseSettingsStep }
@@ -57,14 +57,9 @@ export default function Form({ form }: Props) {
     groups: form.form.groupsList,
     inputs: form.form.inputsList,
   }
-
+  console.log('FORM', form)
   const [formBuilder, formDispatch] = useReducer(formReducer, form)
-  const [list, listsDispatch] = useReducer(
-    listsReducer,
-    initialNavbar,
-    undefined,
-  )
-  const lists = list as ILists
+  const [lists, listsDispatch] = useReducer(listsReducer, initialNavbar)
   const { activeItem } = lists
 
   const isMounted = useRef(false)
@@ -177,9 +172,7 @@ export default function Form({ form }: Props) {
   function blur(e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
     // Check whether value has changed
     if (e.target.value !== focus) {
-      //saveItem()
       setOnFocus(null)
-      //formUpdate()
       updateItem(activeItem.type, activeItem.data)
     }
     setIsTyping(false)

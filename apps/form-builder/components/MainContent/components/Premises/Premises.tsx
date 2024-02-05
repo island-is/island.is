@@ -7,6 +7,7 @@ export default function Premises() {
 
   const newDocuments = (type: string) => {
     const { documentTypes } = formBuilder.form
+    console.log('documentTypes', documentTypes)
     if (documentTypes?.includes(type)) {
       if (documentTypes.length === 1) {
         return []
@@ -34,7 +35,7 @@ export default function Premises() {
               label={d.name.is}
               subLabel={d.description.is}
               value={d.type}
-              //large
+              large
               checked={formBuilder.form.documentTypes?.includes(d.type)}
               onChange={() =>
                 formDispatch({
@@ -49,7 +50,6 @@ export default function Premises() {
           )
         })}
       </Stack>
-      <Checkbox label="test" />
     </Box>
   ) : null
 }
