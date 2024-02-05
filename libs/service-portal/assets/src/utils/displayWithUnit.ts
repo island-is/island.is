@@ -1,7 +1,7 @@
 import { numberFormat } from '@island.is/service-portal/core'
 
 export const displayWithUnit = (
-  value: string | undefined | null,
+  value: string | undefined | null | number,
   unit: 'kg' | 'cc' | 'hö' | 'mm' | 'g/km' | 'km',
   formatNumber?: boolean,
 ) => {
