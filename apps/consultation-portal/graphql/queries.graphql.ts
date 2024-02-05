@@ -244,7 +244,6 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
           policyAreaName
           processBegins
           processEnds
-          publishOnWeb
         }
         adviceDocuments {
           id
