@@ -40,7 +40,13 @@ inputs:
 outputs:
   cache-hit:
     description: 'Did the cache key match and restored the cache?'
-    value: ${{ steps.computed_outputs.outputs.cache-hit }}
+    value: ${{ steps.cache-attempt.outputs.cache-hit }}
+  result:
+    description: 'Result of the action'
+    value: ${{ steps.cache-attempt.outputs.result }}
+  success:
+    description: 'Did the action succeed?'
+    value: ${{ steps.cache-attempt.outputs.success }}
 runs:
   using: 'composite'
   steps:
