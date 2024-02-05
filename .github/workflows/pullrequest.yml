@@ -42,18 +42,13 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
-      - name: Debug user and home
-        run: |
-          id
-          echo "HOME=${HOME}"
-          ls -lah "$HOME" /home
-
-      - name: Fail on start
-        run: exit 1
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.8.0'
 
       - name: Cache yarn install
         id: yarn-cache
@@ -67,19 +62,19 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
           retries: 0
 
-      - name: Debug all outputs
-        run: |
-          echo "cache-hit=${{ steps.yarn-cache.outputs.cache-hit }}"
-          echo "result=${{ steps.yarn-cache.result }}"
-          echo "success=${{ steps.yarn-cache.success }}"
+      - name: Debug yarn install location before 'yarn install'
+        if: env.ACTIONS_STEP_DEBUG == 'true'
+        continue-on-error: true
+        run: which yarn
 
       - name: Install yarn dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18.8.0'
+      - name: Debug yarn install location after 'yarn install'
+        if: env.ACTIONS_STEP_DEBUG == 'true'
+        continue-on-error: true
+        run: which yarn
 
       - name: Setup yarn
         run: npm install -g yarn
