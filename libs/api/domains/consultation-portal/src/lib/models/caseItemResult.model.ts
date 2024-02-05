@@ -30,6 +30,9 @@ export class CaseItemResult {
   policyAreaName?: string | null
 
   @Field({ nullable: true })
+  publishOnWeb?: Date
+
+  @Field({ nullable: true })
   processBegins?: Date
 
   @Field({ nullable: true })
