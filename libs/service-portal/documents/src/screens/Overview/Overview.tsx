@@ -412,6 +412,17 @@ export const ServicePortalDocuments = () => {
                       },
                     })
                   }
+                  onRead={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'read',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
                 />
               ) : (
                 <Text variant="eyebrow">{formatMessage(m.date)}</Text>
