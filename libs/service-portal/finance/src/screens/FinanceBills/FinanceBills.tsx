@@ -9,11 +9,6 @@ const FinanceBills = () => {
   return (
     <DocumentScreen
       title={formatMessage(m.financeBills)}
-      intro={formatMessage({
-        id: 'sp.finance-bills:intro',
-        defaultMessage:
-          'Hér er að finna greidda og ógreidda greiðsluseðla fyrir valið tímabil. Einnig eru hér greiðslukvittanir nema þar sem greiðsluseðill hefur verið greiddur beint í banka.',
-      })}
       listPath="billReceipt"
     />
   )

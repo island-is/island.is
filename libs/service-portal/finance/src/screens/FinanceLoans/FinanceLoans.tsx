@@ -20,12 +20,6 @@ const FinanceLoans = () => {
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-      <FinanceIntro
-        text={formatMessage({
-          id: 'sp.finance-loans:intro',
-          defaultMessage: 'Virk lán hjá HMS',
-        })}
-      />
       <Box marginTop={2}>
         {loanOverviewError && (
           <AlertBanner

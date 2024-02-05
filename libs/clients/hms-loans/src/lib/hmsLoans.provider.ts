@@ -22,7 +22,7 @@ export const HmsLoansApiProvider: Provider<LibraApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-hms-loans',
-          organizationSlug: 'husnaedis-og-mannvirkjastofnun',
+          organizationSlug: 'hms',
           logErrorResponseBody: true,
           autoAuth: idsClientConfig.isConfigured
             ? {

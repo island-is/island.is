@@ -54,6 +54,10 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
     }
   }
 
+  const descriptionText =
+    activeItemChildren?.find((itemChild) => pathname === itemChild.path)
+      ?.description ?? activeItem?.description
+
   const isMobile = width < theme.breakpoints.md
   return (
     <>
@@ -96,7 +100,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
         </Box>
       )}
       {activeItem && (
-        <Box marginTop={[1, 1, 2, 2, 4]}>
+        <Box marginTop={[1, 1, 2, 4, 4]}>
           <GridContainer>
             <GridRow>
               {(!!activeItem.description ||
@@ -123,10 +127,17 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                         ))}
                       </Inline>
                     )}
-                    {activeItem.description && (
+                    {descriptionText && (
                       <Box>
                         <Text marginBottom={4}>
-                          {formatMessage(activeItem.description)}
+                          {formatMessage(descriptionText, {
+                            br: (
+                              <>
+                                <br />
+                                <br />
+                              </>
+                            ),
+                          })}
                         </Text>
                       </Box>
                     )}
