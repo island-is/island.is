@@ -40,21 +40,6 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
-      - name: Set env (HOME and PATH)
-        run: |
-          set -x
-          set -euo pipefail
-          echo "id=$(id)"
-          # When running locally, root(0) owns all /home/*, but user is runner(1000)
-          if ! test -r "$HOME" || ! test -w "$HOME" || ! test -x "$HOME" ; then
-            export HOME="/tmp/home/runner"
-            echo "HOME=$HOME" >> $GITHUB_ENV
-            mkdir -p "$HOME"
-          fi
-          # Shimming node_modules for global install (probably not needed because of $HOME above)
-          export PATH="$PWD/node_modules/.bin:$PATH"
-          echo "PATH=$PATH" >> $GITHUB_ENV
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
