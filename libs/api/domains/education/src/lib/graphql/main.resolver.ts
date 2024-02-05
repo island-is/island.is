@@ -92,7 +92,8 @@ export class MainResolver {
     @Args('familyIndex', { type: () => Int }) familyIndex: number,
   ): Promise<ExamResult> {
     const family = await this.educationService.getFamily(user.nationalId)
-    const familyMember = family[familyIndex]
+
+    const familyMember = family?.[familyIndex]
 
     if (!familyMember) {
       throw new ApolloError('The requested nationalId is not a part of family')
@@ -103,7 +104,7 @@ export class MainResolver {
         auth: user,
         namespace,
         action: 'educationExamResult',
-        resources: familyMember.Kennitala,
+        resources: familyMember.nationalId,
       },
       this.educationService.getExamResult(familyMember),
     )
