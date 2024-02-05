@@ -42,7 +42,7 @@ const SpecificHousingBenefitSupportCalculator = ({
   const n = useNamespace(slice.json ?? {})
   const [inputState, setInputState] = useState<InputState>({
     housingCost: '',
-    householdMemberCount: 0,
+    householdMemberCount: 1,
   })
   const [data, setData] =
     useState<GetSpecificHousingBenefitSupportCalculationQuery>()
