@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { ApplicationController } from './application.controller'
-import { ApplicationService } from './application.service'
+import { UniversityApplicationController } from './universityApplication.controller'
+import { UniversityApplicationService } from './universityApplication.service'
 import { Application } from './model/application'
 import { ProgramModeOfDelivery } from '../program/model/programModeOfDelivery'
 import { Program } from '../program/model/program'
@@ -28,7 +28,7 @@ import { HolarUniversityApplicationClientModule } from '@island.is/clients/unive
     AgriculturalUniversityOfIcelandApplicationClientModule,
     HolarUniversityApplicationClientModule,
   ],
-  controllers: [ApplicationController],
-  providers: [ApplicationService],
+  controllers: [UniversityApplicationController],
+  providers: [UniversityApplicationService],
 })
-export class ApplicationModule {}
+export class UniversityApplicationModule {}

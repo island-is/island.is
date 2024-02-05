@@ -8,7 +8,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { UniversityGatewayScope } from '@island.is/auth/scopes'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
-import { ApplicationService } from './application.service'
+import { UniversityApplicationService } from './universityApplication.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { Application } from './model/application'
@@ -22,8 +22,10 @@ import { UpdateApplicationDto } from './dto/updateApplicationDto'
   path: 'applications',
   version: ['1'],
 })
-export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+export class UniversityApplicationController {
+  constructor(
+    private readonly applicationService: UniversityApplicationService,
+  ) {}
 
   @Get(':id')
   @Documentation({

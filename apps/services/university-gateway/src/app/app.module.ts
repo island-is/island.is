@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ApplicationModule } from './modules/application/application.module'
+import { UniversityApplicationModule } from './modules/application/universityApplication.module'
 import { CourseModule } from './modules/course/course.module'
 import { ProgramModule } from './modules/program/program.module'
 import { UniversityModule } from './modules/university/university.module'
@@ -19,7 +19,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 
 @Module({
   imports: [
-    ApplicationModule,
+    UniversityApplicationModule,
     CourseModule,
     ProgramModule,
     UniversityModule,

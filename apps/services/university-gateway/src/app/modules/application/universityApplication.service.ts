@@ -17,7 +17,7 @@ import { Program } from '../program/model/program'
 import { NoContentException } from '@island.is/nest/problem'
 
 @Injectable()
-export class ApplicationService {
+export class UniversityApplicationService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
 

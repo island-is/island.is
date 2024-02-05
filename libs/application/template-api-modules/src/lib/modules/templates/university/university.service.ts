@@ -2,14 +2,22 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 import {
   ProgramApi,
   UniversityApi,
+  ApplicationApi,
+  CreateApplicationDtoModeOfDeliveryEnum,
 } from '@island.is/clients/university-gateway-api'
+
+import { UniversityAnswers } from '@island.is/application/templates/university'
+
 @Injectable()
 export class UniversityService extends BaseTemplateApiService {
   constructor(
@@ -17,6 +25,7 @@ export class UniversityService extends BaseTemplateApiService {
     private readonly nationalRegistryApi: NationalRegistryClientService,
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
+    private readonly universityApplicationApi: ApplicationApi,
   ) {
     super(ApplicationTypes.UNIVERSITY)
   }
@@ -73,6 +82,58 @@ export class UniversityService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    return
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+
+    if (!isPayment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    const answers = application.answers as UniversityAnswers
+    const userFromAnswers = answers.userInformation
+    const externalData = application.externalData as any
+    const nationalRegistryUser =
+      externalData.nationalRegistry as NationalRegistryIndividual
+    const user = {
+      givenName: nationalRegistryUser.givenName || '',
+      middleName: '',
+      familyName: nationalRegistryUser.familyName || '',
+      genderCode: nationalRegistryUser.genderCode,
+      citizenshipCode: nationalRegistryUser.citizenship?.code || '',
+      streetAddress: nationalRegistryUser.address?.streetAddress || '',
+      postalCode: nationalRegistryUser.address?.postalCode || '',
+      city: nationalRegistryUser.address?.city || '', // TODO what to use then?
+      municipalityCode: nationalRegistryUser.address?.municipalityCode || '',
+      countryCode: nationalRegistryUser.address?.locality || '', // TODO is this right?
+      email: userFromAnswers.email,
+      phone: userFromAnswers.phone,
+    }
+
+    const createApplicationDto = {
+      createApplicationDto: {
+        universityId: '',
+        programId: '',
+        modeOfDelivery: CreateApplicationDtoModeOfDeliveryEnum.ON_SITE,
+        applicant: user,
+        preferredLanguage: '',
+        educationList: [],
+        workExperienceList: [],
+        extraFieldList: [],
+      },
+    }
+    await this.universityApplicationApi.applicationControllerCreateApplication(
+      createApplicationDto,
+    )
   }
 }
