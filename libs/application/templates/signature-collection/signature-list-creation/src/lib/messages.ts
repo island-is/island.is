@@ -70,11 +70,6 @@ export const m = defineMessages({
     defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
-  canCreateProviderSubtitle: {
-    id: 'slc.application:canCreateProviderSubtitle',
-    defaultMessage: 'Skilyrði fyrir að stofna meðmælalista',
-    description: '',
-  },
 
   /* Upplýsingar um meðmælalista */
   listInformationSection: {

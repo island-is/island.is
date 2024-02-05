@@ -71,11 +71,6 @@ export const m = defineMessages({
     defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
-  canSignProviderSubtitle: {
-    id: 'sls.application:canSignProviderSubtitle',
-    defaultMessage: 'Skilyrði fyrir að mæla með lista',
-    description: '',
-  },
 
   /* Signee Information */
   information: {
