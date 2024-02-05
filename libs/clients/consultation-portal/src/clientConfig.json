@@ -759,6 +759,10 @@
             "type": "string",
             "nullable": true
           },
+          "publishOnWeb": {
+            "type": "string",
+            "format": "date-time"
+          },
           "processBegins": {
             "type": "string",
             "format": "date-time"
@@ -882,6 +886,10 @@
             "type": "string",
             "nullable": true
           },
+          "publishOnWeb": {
+            "type": "string",
+            "format": "date-time"
+          },
           "stakeholders": {
             "type": "array",
             "items": {
@@ -917,10 +925,6 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
             "type": "string",
             "nullable": true
           }
