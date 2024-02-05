@@ -1,27 +1,72 @@
-import { InputType, Field } from '@nestjs/graphql'
+import { InputType, Field, registerEnumType } from '@nestjs/graphql'
+
+export enum BasePensionType {
+  Retirement = 'Retirement',
+  FishermanRetirement = 'FishermanRetirement',
+  Disability = 'Disability',
+  Rehabilitation = 'Rehabilitation',
+  HalfRetirement = 'HalfRetirement',
+}
+
+registerEnumType(BasePensionType, {
+  name: 'SocialInsurancePensionCalculationBasePensionType',
+})
+
+export enum LivingCondition {
+  LivesAlone = 'LivesAlone',
+  DoesNotLiveAlone = 'DoesNotLiveAlone',
+}
+
+registerEnumType(LivingCondition, {
+  name: 'SocialInsurancePensionCalculationLivingCondition',
+})
+
+export enum PensionStart {
+  Starts2017OrBefore = 'Starts2017OrBefore',
+  Starts2018OrLater = 'Starts2018OrLater',
+}
+
+registerEnumType(PensionStart, {
+  name: 'SocialInsurancePensionCalculationPensionStart',
+})
+
+export enum Birthyear {
+  Born1951OrEarlier = 'Born1951OrEarlier',
+  Born1952OrLater = 'Born1952OrLater',
+}
+
+registerEnumType(Birthyear, {
+  name: 'SocialInsurancePensionCalculationBirthyear',
+})
+
+export enum PeriodIncomeType {
+  Month = 'Month',
+  Year = 'Year',
+}
+
+registerEnumType(PeriodIncomeType, {
+  name: 'SocialInsurancePensionCalculationPeriodIncomeType',
+})
 
 @InputType('SocialInsurancePensionCalculationInput')
 export class PensionCalculationInput {
-  @Field(() => Number, { nullable: true })
-  typeOfBasePension?: number
+  @Field(() => BasePensionType, { nullable: true })
+  typeOfBasePension?: BasePensionType
 
   @Field(() => Boolean, { nullable: true })
   hasSpouse?: boolean
 
-  @Field(() => Number, { nullable: true })
-  livingCondition?: number
+  @Field(() => LivingCondition, { nullable: true })
+  livingCondition?: LivingCondition
 
   @Field(() => Boolean, { nullable: true })
   mobilityImpairment?: boolean
 
-  @Field(() => Number, { nullable: true })
-  start?: number
+  @Field(() => Birthyear, { nullable: true })
+  yearOfBirth?: Birthyear
 
-  @Field(() => Number, { nullable: true })
-  yearOfBirth?: number
-
-  @Field(() => Number, { nullable: true })
-  startPension?: number
+  @Field(() => PensionStart, { nullable: true })
+  startPension?: PensionStart
 
   @Field(() => Number, { nullable: true })
   childCount?: number
@@ -50,8 +95,8 @@ export class PensionCalculationInput {
   @Field(() => Number, { nullable: true })
   taxCard?: number
 
-  @Field(() => Number, { nullable: true })
-  typeOfPeriodIncome?: number
+  @Field(() => PeriodIncomeType, { nullable: true })
+  typeOfPeriodIncome?: PeriodIncomeType
 
   @Field(() => Number, { nullable: true })
   income?: number

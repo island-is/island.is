@@ -18,13 +18,18 @@ import {
   OrganizationFooter,
   OrganizationHeader,
 } from '@island.is/web/components'
-import type {
+import {
   Organization,
   OrganizationPage,
   Query,
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   QueryGetPensionCalculationArgs,
+  SocialInsurancePensionCalculationBasePensionType as BasePensionType,
+  SocialInsurancePensionCalculationBirthyear as Birthyear,
+  SocialInsurancePensionCalculationLivingCondition as LivingCondition,
+  SocialInsurancePensionCalculationPensionStart as PensionStart,
+  SocialInsurancePensionCalculationPeriodIncomeType as PeriodIncomeType,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -40,15 +45,15 @@ import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
 import * as styles from './PensionCalculator.css'
 
 interface FormState {
-  basePensionType: number
+  basePensionType: BasePensionType
   birthdate: string
   startDate: string
   hasSpouse: boolean
-  livingCondition: number
+  livingCondition: LivingCondition
   childCount: number
   childSupportCount: number
   mobilityImpairment: 'yes' | 'no'
-  typeOfPeriodIncome: string
+  typeOfPeriodIncome: PeriodIncomeType
   taxCard: string
   income: string
   pensionPayments: string
@@ -78,32 +83,37 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   const methods = useForm<FormState>()
   const defaultPensionAge = 67 // TODO: add to namespace
   const maxMonthPensionDelay = 156 // TODO: add to namespace
-  const maxMonthPensionHurry = 24 // TODO: add to namespace
 
   const [hasLivedAbroad, setHasLivedAbroad] = useState(false)
   const [birthdate, setBirthdate] = useState<string>()
+  const [basePensionType, setBasePensionType] = useState<BasePensionType>(
+    BasePensionType.Retirement,
+  )
 
-  const basePensionTypeOptions = useMemo<Option<number>[]>(() => {
+  const maxMonthPensionHurry =
+    basePensionType === BasePensionType.Retirement ? 12 * 7 : 12 * 2 // TODO: add to namespace
+
+  const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
     const options = [
       {
         label: 'Ellilífeyrir',
-        value: 1,
+        value: BasePensionType.Retirement,
       },
       {
         label: 'Ellilífeyrir sjómanna',
-        value: 2,
+        value: BasePensionType.FishermanRetirement,
       },
       {
         label: 'Örorkulífeyrir',
-        value: 3,
+        value: BasePensionType.Disability,
       },
       {
         label: 'Endurhæfingarlífeyrir',
-        value: 4,
+        value: BasePensionType.Rehabilitation,
       },
       {
         label: 'Hálfur ellilífeyrir',
-        value: 5,
+        value: BasePensionType.HalfRetirement,
       },
     ]
     options.sort(sortAlpha('label'))
@@ -120,15 +130,15 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
     ]
   }, [])
 
-  const livingConditionOptions = useMemo<Option<number>[]>(() => {
+  const livingConditionOptions = useMemo<Option<LivingCondition>[]>(() => {
     return [
       {
         label: 'Bý ein(n)',
-        value: 1,
+        value: LivingCondition.LivesAlone,
       },
       {
         label: 'Bý ekki ein(n)',
-        value: 2,
+        value: LivingCondition.DoesNotLiveAlone,
       },
     ]
   }, [])
@@ -229,17 +239,23 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
         label: 'Nei',
         value: 'no',
       },
-      { label: 'Já', value: 'yes' },
+      {
+        label: 'Já',
+        value: 'yes',
+      },
     ]
   }, [])
 
-  const typeOfPeriodIncomeOptions = useMemo<Option<string>[]>(() => {
+  const typeOfPeriodIncomeOptions = useMemo<Option<PeriodIncomeType>[]>(() => {
     return [
       {
         label: 'Mánaðartekjur',
-        value: 'month',
+        value: PeriodIncomeType.Month,
       },
-      { label: 'Árstekjur', value: 'year' },
+      {
+        label: 'Árstekjur',
+        value: PeriodIncomeType.Year,
+      },
     ]
   }, [])
 
@@ -276,10 +292,10 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
     // TODO: do calculators for previous years take current year into account? I think not
 
-    const start = data.startDate
+    const pensionStart = data.startDate
       ? new Date(data.startDate).getFullYear() >= 2018
-        ? 2
-        : 1
+        ? PensionStart.Starts2018OrLater
+        : PensionStart.Starts2017OrBefore
       : undefined
 
     fetchResult({
@@ -309,14 +325,13 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
           privatePensionPayments: convertStringToNumber(
             data.privatePensionPayments,
           ),
-          typeOfPeriodIncome: data.typeOfPeriodIncome === 'year' ? 1 : 2,
+          typeOfPeriodIncome: data.typeOfPeriodIncome,
           typeOfBasePension: data.basePensionType,
-          start: start,
-          startPension: start,
+          startPension: pensionStart,
           yearOfBirth: data.birthdate
             ? new Date(data.birthdate).getFullYear() >= 1952
-              ? 2
-              : 1
+              ? Birthyear.Born1952OrLater
+              : Birthyear.Born1951OrEarlier
             : undefined,
           // TODO: handle other fields
         },
@@ -370,7 +385,12 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                     name="basePensionType"
                     label="Tegund lífeyris"
                     options={basePensionTypeOptions}
-                    defaultValue={1}
+                    defaultValue={BasePensionType.Retirement}
+                    onSelect={(option) => {
+                      if (option) {
+                        setBasePensionType(option.value)
+                      }
+                    }}
                   />
                 </Box>
               </Stack>
@@ -513,7 +533,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                     <RadioController
                       id="typeOfPeriodIncome"
                       name="typeOfPeriodIncome"
-                      defaultValue="month"
+                      defaultValue={PeriodIncomeType.Month}
                       largeButtons={false}
                       split="1/2"
                       options={typeOfPeriodIncomeOptions}

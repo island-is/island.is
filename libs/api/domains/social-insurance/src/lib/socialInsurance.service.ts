@@ -9,6 +9,8 @@ import { PaymentGroup } from './models/paymentGroup'
 import { isDefined } from '@island.is/shared/utils'
 import addYears from 'date-fns/addYears'
 import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import { PensionCalculationInput } from './dtos/pensionCalculation.input'
+import { mapPensionCalculationInput } from './utils'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -102,10 +104,11 @@ export class SocialInsuranceService {
   }
 
   async getPensionCalculation(
-    input: Parameters<typeof this.socialInsuranceApi.getPensionCalculation>[0],
+    input: PensionCalculationInput,
   ): Promise<PensionCalculationResponse> {
+    const mappedInput = mapPensionCalculationInput(input)
     return {
-      items: await this.socialInsuranceApi.getPensionCalculation(input),
+      items: await this.socialInsuranceApi.getPensionCalculation(mappedInput),
     }
   }
 }
