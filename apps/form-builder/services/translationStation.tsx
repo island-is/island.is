@@ -39,24 +39,3 @@ export const translationStation = async (
     throw error
   }
 }
-// export const translationStation = async (input: string): Promise<ITranslationResponse> => {
-//     console.log('translationStation', input)
-//     return await fetch("https://stafraentisland.greynir.is/translate/", {
-//         method: 'POST',
-//         headers: {
-//             'content-type': 'application/json',
-//             'accept': 'application/json',
-//             'X-API-Key': 'jtn1QACg.jCxAuvopgqplC5i38Nav1BubiSik6tDK'
-//         },
-//         body: JSON.stringify({
-//             "contents": [input],
-//             "sourceLanguageCode": "is",
-//             "targetLanguageCode": "en",
-//             "model": "",
-//             "domain": ""
-//         })
-//     }).then(res => {
-//         console.log(res)
-//         return res.json()
-//     })
-// }
