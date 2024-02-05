@@ -19,12 +19,29 @@
 name: 'Cache'
 description: 'Cache with retry'
 inputs:
-  path:
-    description: 'Path(s) to cache'
-    required: true
+  # From https://github.com/actions/cache?tab=readme-ov-file#inputs
   key:
-    description: 'Cache key'
-    required: true
+    description: 'An explicit key for a cache entry. See creating a cache key.'
+    required: false
+  path:
+    description: 'A list of files, directories, and wildcard patterns to cache and restore. See @actions/glob for supported patterns.'
+    required: false
+  restore-keys:
+    description: 'An ordered list of prefix-matched keys to use for restoring stale cache if no cache hit occurred for key.'
+    required: false
+  enableCrossOsArchive:
+    description: 'An optional boolean when enabled, allows Windows runners to save or restore caches that can be restored or saved respectively on other platforms'
+    required: false
+    default: 'false'
+  fail-on-cache-miss:
+    description: 'Fail the workflow if cache entry is not found'
+    required: false
+    default: 'false'
+  lookup-only:
+    description: 'If true, only checks if cache entry exists and skips download. Does not change save cache behavior'
+    required: false
+    default: 'false'
+  # From https://github.com/island-is/cache?tab=readme-ov-file#inputs
   retries:
     description: 'Number of retries'
     required: false
@@ -47,6 +64,7 @@ outputs:
   success:
     description: 'Did the action succeed?'
     value: ${{ steps.cache-attempt.outputs.success }}
+
 runs:
   using: 'composite'
   steps:
