@@ -38,6 +38,7 @@ type AssetsRepeaterProps = {
 export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & AssetsRepeaterProps>
 > = ({ application, field, errors }) => {
+  console.log('application', application)
   const { id } = field
   const texts = field?.props?.texts
   const assetName = field?.props?.assetName
