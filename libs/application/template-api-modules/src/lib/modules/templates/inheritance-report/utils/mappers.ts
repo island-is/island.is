@@ -207,16 +207,29 @@ export const expandAnswers = (
     heirs: {
       data: (answers.heirs?.data ?? []).map((heir) => {
         return {
+          ...heir,
           email: heir.email ?? '',
-          heirsName: heir.heirsName ?? '',
+          heirsName: heir.name ?? '',
           heirsPercentage: heir.heirsPercentage ?? 0,
-          inheritance: heir.inheritance ?? '',
-          inheritanceTax: heir.inheritanceTax ?? 0,
-          nationalId: heir.nationalId ?? '',
           phone: heir.phone ?? '',
           relation: heir.relation ?? '',
+          nationalId: heir.nationalId ?? '',
+          inheritance: heir.inheritance ?? '',
+          inheritanceTax: heir.inheritanceTax ?? 0,
           taxableInheritance: heir.taxableInheritance ?? 0,
           taxFreeInheritance: heir.taxFreeInheritance ?? 0,
+          dateOfBirth: heir.dateOfBirth ?? '',
+          enabled: heir.enabled ?? true,
+          // TODO: investigate better why nationalId and SSN is required
+          ssn: '',
+          relationWithApplicant: heir.relationWithApplicant ?? '',
+          advocate: {
+            address: '',
+            email: heir.advocate?.email ?? '',
+            name: heir.advocate?.name ?? '',
+            nationalId: heir.advocate?.nationalId ?? '',
+            phone: heir.advocate?.phone ?? '',
+          },
         }
       }),
       total: answers.heirs?.total ?? 0,

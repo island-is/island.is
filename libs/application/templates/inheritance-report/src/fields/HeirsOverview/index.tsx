@@ -27,7 +27,7 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               </Box>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.name)}</Text>
-                <Text>{heir.heirsName}</Text>
+                <Text>{heir.name}</Text>
               </Box>
             </Box>
             <Box display={'flex'} marginBottom={2}>

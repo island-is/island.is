@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
@@ -7,12 +7,20 @@ import {
   Button,
   GridColumn,
   GridRow,
+  Input,
   InputError,
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
-import { Answers, EstateMember, EstateTypes, heirAgeValidation, relationWithApplicant } from '../../types'
+import { formatCurrency } from '@island.is/application/ui-components'
+import {
+  Answers,
+  EstateMember,
+  EstateTypes,
+  heirAgeValidation,
+  relationWithApplicant,
+} from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -23,18 +31,60 @@ import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 
+type RepeaterProps = {
+  field: {
+    props: {
+      // sectionTitle?: string
+      // sectionTitleVariant?: string
+      // fields: Array<object>
+      repeaterButtonText: string
+      sumField: string
+      customFields: {
+        title: string
+        id: string
+        readOnly: true
+        currency: true
+      }[]
+      // fromExternalData?: string
+    }
+  }
+}
+
+function setIfValueIsNotNan(
+  setValue: (id: string, value: string | number) => void,
+  fieldId: string,
+  value: string | number,
+) {
+  if (typeof value === 'number' && isNaN(value)) {
+    return
+  }
+  setValue(fieldId, value)
+}
+
 export const HeirsAndPartitionRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers>>
+  React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
+  const { answers } = application
   console.log('application', application)
-  const { id } = field
+  const { id, props } = field
+  const { customFields } = props
   const { formatMessage } = useLocale()
-  const { getValues, setError } = useFormContext()
+  const { getValues, setError, setValue } = useFormContext()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
   const values = getValues()
   const selectedEstate = application.answers.selectedEstate
+  const taxFreeLimit = Number(
+    formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
+  )
+  /* ------ Heirs ------ */
+  const [index, setIndex] = useState('0')
+  const [percentage, setPercentage] = useState(0)
+  const [taxFreeInheritance, setTaxFreeInheritance] = useState(0)
+  const [inheritance, setInheritance] = useState(0)
+  const [taxableInheritance, setTaxableInheritance] = useState(0)
+  const [inheritanceTax, setInheritanceTax] = useState(0)
 
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
@@ -119,6 +169,65 @@ export const HeirsAndPartitionRepeater: FC<
       name: undefined,
     })
 
+  /* ------ Set heirs calculations ------ */
+  useEffect(() => {
+    console.log('/* ------ Set heirs calculations ------ */')
+    console.log('index', index)
+
+    const assetsTotal = Number(getValueViaPath(answers, 'assets.assetsTotal'))
+    const debtsTotal = Number(getValueViaPath(answers, 'debts.debtsTotal'))
+    const businessTotal = Number(
+      getValueViaPath(answers, 'business.businessTotal'),
+    )
+    const totalDeduction = Number(getValueViaPath(answers, 'totalDeduction'))
+
+    console.log(
+      'values',
+      assetsTotal,
+      debtsTotal,
+      businessTotal,
+      totalDeduction,
+    )
+
+    const inheritanceValue = Math.round(
+      (assetsTotal - debtsTotal + businessTotal - totalDeduction) * percentage,
+    )
+
+    console.log('percentage', percentage)
+    console.log('inheritanceValue', inheritanceValue)
+
+    setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
+    setInheritance(inheritanceValue)
+    setTaxableInheritance(Math.round(inheritance - taxFreeInheritance))
+    setInheritanceTax(Math.round(taxableInheritance * 0.1))
+
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.taxFreeInheritance`,
+      taxFreeInheritance,
+    )
+    setIfValueIsNotNan(setValue, `${index}.inheritance`, inheritance)
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.inheritanceTax`,
+      Math.round(taxableInheritance * 0.01),
+    )
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.taxableInheritance`,
+      taxableInheritance,
+    )
+  }, [
+    index,
+    percentage,
+    taxFreeInheritance,
+    inheritance,
+    taxableInheritance,
+    inheritanceTax,
+    setValue,
+    answers,
+  ])
+
   useEffect(() => {
     if (
       !hasEstateMemberUnder18 &&
@@ -136,6 +245,25 @@ export const HeirsAndPartitionRepeater: FC<
     clearErrors,
   ])
 
+  /* ------ Total ------ */
+  const [total, setTotal] = useState(0)
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+    if (!values) {
+      return
+    }
+
+    const total = values.reduce(
+      (acc: number, current: any) =>
+        Number(acc) + Number(current[props.sumField]),
+      0,
+    )
+    const addTotal = id.replace('data', 'total')
+    setValue(addTotal, total)
+
+    setTotal(total)
+  }, [getValues, id, props.sumField])
+
   useEffect(() => {
     if (fields.length === 0 && estateData?.estate?.estateMembers) {
       // ran into a problem with "append", as it appeared to be getting called multiple times
@@ -144,6 +272,18 @@ export const HeirsAndPartitionRepeater: FC<
       replace(estateData.estate.estateMembers)
     }
   }, [])
+
+  const getDefaults = (fieldId: string) => {
+    return fieldId === 'taxFreeInheritance'
+      ? taxFreeInheritance
+      : fieldId === 'inheritance'
+      ? inheritance
+      : fieldId === 'taxableInheritance'
+      ? taxableInheritance
+      : fieldId === 'inheritanceTax'
+      ? inheritanceTax
+      : ''
+  }
 
   return (
     <Box>
@@ -160,6 +300,9 @@ export const HeirsAndPartitionRepeater: FC<
         if (!member.initial) {
           return acc
         }
+
+        const fieldIndex = `${id}[${index}]`
+
         return [
           ...acc,
           <Box marginTop={index > 0 ? 7 : 0} key={index}>
@@ -177,15 +320,16 @@ export const HeirsAndPartitionRepeater: FC<
                       enabled: !member.enabled,
                     }
                     update(index, updatedMember)
-                    clearErrors(`${id}[${index}].phone`)
-                    clearErrors(`${id}[${index}].email`)
-                    clearErrors(`${id}[${index}].advocate.phone`)
-                    clearErrors(`${id}[${index}].advocate.email`)
+                    clearErrors(`${fieldIndex}.phone`)
+                    clearErrors(`${fieldIndex}.email`)
+                    clearErrors(`${fieldIndex}.advocate.phone`)
+                    clearErrors(`${fieldIndex}.advocate.email`)
                   }}
                 >
-                  {member.enabled
-                    ? 'm.inheritanceDisableMember'
-                    : 'm.inheritanceEnableMember'
+                  {
+                    member.enabled
+                      ? 'm.inheritanceDisableMember'
+                      : 'm.inheritanceEnableMember'
                     // ? formatMessage(m.inheritanceDisableMember)
                     // : formatMessage(m.inheritanceEnableMember)
                   }
@@ -195,12 +339,13 @@ export const HeirsAndPartitionRepeater: FC<
             <GridRow>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
-                  id={`${id}[${index}].nationalId`}
-                  name={`${id}[${index}].nationalId`}
+                  id={`${fieldIndex}.nationalId`}
+                  name={`${fieldIndex}.nationalId`}
                   // label={formatMessage(m.inheritanceKtLabel)}
                   label={'m.inheritanceKtLabel'}
                   defaultValue={formatNationalId(member.nationalId || '')}
                   backgroundColor="white"
+                  // readOnly
                   disabled={!member.enabled}
                   format={'######-####'}
                   error={error && error[index] && error[index].nationalId}
@@ -208,8 +353,8 @@ export const HeirsAndPartitionRepeater: FC<
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
-                  id={`${id}[${index}].name`}
-                  name={`${id}[${index}].name`}
+                  id={`${fieldIndex}.name`}
+                  name={`${fieldIndex}.name`}
                   // label={formatMessage(m.inheritanceNameLabel)}
                   label={'m.inheritanceNameLabel'}
                   readOnly
@@ -220,8 +365,8 @@ export const HeirsAndPartitionRepeater: FC<
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
-                  id={`${id}[${index}].relation`}
-                  name={`${id}[${index}].relation`}
+                  id={`${fieldIndex}.relation`}
+                  name={`${fieldIndex}.relation`}
                   // label={formatMessage(m.inheritanceRelationLabel)}
                   label={'m.inheritanceRelationLabel'}
                   readOnly
@@ -235,8 +380,8 @@ export const HeirsAndPartitionRepeater: FC<
                 member.relation !== 'Maki' && (
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <SelectController
-                      id={`${id}[${index}].relationWithApplicant`}
-                      name={`${id}[${index}].relationWithApplicant`}
+                      id={`${fieldIndex}.relationWithApplicant`}
+                      name={`${fieldIndex}.relationWithApplicant`}
                       // label={formatMessage(
                       //   m.inheritanceRelationWithApplicantLabel,
                       // )}
@@ -254,8 +399,8 @@ export const HeirsAndPartitionRepeater: FC<
                 <>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].email`}
-                      name={`${id}[${index}].email`}
+                      id={`${fieldIndex}.email`}
+                      name={`${fieldIndex}.email`}
                       label={formatMessage(m.email)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
@@ -266,8 +411,8 @@ export const HeirsAndPartitionRepeater: FC<
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].phone`}
-                      name={`${id}[${index}].phone`}
+                      id={`${fieldIndex}.phone`}
+                      name={`${fieldIndex}.phone`}
                       label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
@@ -279,6 +424,52 @@ export const HeirsAndPartitionRepeater: FC<
                   </GridColumn>
                 </>
               )}
+              {customFields.map((customField, currencyIndex) => {
+                return (
+                  <GridColumn
+                    span={['1/2']}
+                    paddingBottom={2}
+                    key={currencyIndex}
+                  >
+                    <InputController
+                      id={`${fieldIndex}.${customField?.id}`}
+                      name={`${fieldIndex}.${customField?.id}`}
+                      defaultValue={'0'}
+                      // format={field.format}
+                      label={customField?.title}
+                      // placeholder={field.placeholder}
+                      // backgroundColor={field.color ? field.color : 'blue'}
+                      currency={customField?.currency}
+                      readOnly={customField?.readOnly}
+                      // type={field.type}
+                      // textarea={field.variant}
+                      // rows={field.rows}
+                      // required={field.required}
+                      error={
+                        error && error[index]
+                          ? error[index][field.id]
+                          : undefined
+                      }
+                      onChange={(elem) => {
+                        const value = elem.target.value.replace(/\D/g, '')
+
+                        // heirs
+                        console.log('customField.id', customField.id)
+                        if (customField.id === 'heirsPercentage') {
+                          console.log('setting percentage...')
+                          setPercentage(Number(value) / 100)
+                        }
+
+                        if (props.sumField === customField.id) {
+                          calculateTotal()
+                        }
+
+                        setIndex(fieldIndex)
+                      }}
+                    />
+                  </GridColumn>
+                )
+              })}
             </GridRow>
 
             {/* ADVOCATE */}
@@ -302,8 +493,8 @@ export const HeirsAndPartitionRepeater: FC<
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].advocate.nationalId`}
-                      name={`${id}[${index}].advocate.nationalId`}
+                      id={`${fieldIndex}.advocate.nationalId`}
+                      name={`${fieldIndex}.advocate.nationalId`}
                       // label={formatMessage(m.inheritanceKtLabel)}
                       label={'m.inheritanceKtLabel'}
                       readOnly
@@ -318,8 +509,8 @@ export const HeirsAndPartitionRepeater: FC<
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].advocate.name`}
-                      name={`${id}[${index}].advocate.name`}
+                      id={`${fieldIndex}.advocate.name`}
+                      name={`${fieldIndex}.advocate.name`}
                       // label={formatMessage(m.inheritanceNameLabel)}
                       label={'m.inheritanceNameLabel'}
                       readOnly
@@ -331,8 +522,8 @@ export const HeirsAndPartitionRepeater: FC<
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].advocate.phone`}
-                      name={`${id}[${index}].advocate.phone`}
+                      id={`${fieldIndex}.advocate.phone`}
+                      name={`${fieldIndex}.advocate.phone`}
                       label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
@@ -347,8 +538,8 @@ export const HeirsAndPartitionRepeater: FC<
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].advocate.email`}
-                      name={`${id}[${index}].advocate.email`}
+                      id={`${fieldIndex}.advocate.email`}
+                      name={`${fieldIndex}.advocate.email`}
                       label={formatMessage(m.email)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
@@ -366,7 +557,7 @@ export const HeirsAndPartitionRepeater: FC<
           </Box>,
         ]
       }, [] as JSX.Element[])}
-      {fields.map((member: GenericFormField<EstateMember>, index) => {
+      {/* {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
           <Box key={member.id} hidden={member.initial}>
             <AdditionalEstateMember
@@ -381,7 +572,7 @@ export const HeirsAndPartitionRepeater: FC<
             />
           </Box>
         )
-      })}
+      })} */}
 
       <Box marginTop={3}>
         <Button
@@ -402,12 +593,43 @@ export const HeirsAndPartitionRepeater: FC<
               selectedEstate === EstateTypes.divisionOfEstateByHeirs
                 ? 'm.inheritanceAgeValidation'
                 : 'm.heirAdvocateAgeValidation'
-                // ? formatMessage(m.inheritanceAgeValidation)
-                // : formatMessage(m.heirAdvocateAgeValidation)
+              // ? formatMessage(m.inheritanceAgeValidation)
+              // : formatMessage(m.heirAdvocateAgeValidation)
             }
           />
         </Box>
       ) : null}
+      {!!fields.length && props.sumField && (
+        <Box marginTop={5}>
+          <GridRow>
+            <GridColumn span={['1/1', '1/2']}>
+              <Input
+                id={`${id}.total`}
+                name={`${id}.total`}
+                value={
+                  props.sumField === 'heirsPercentage'
+                    ? String(total) + ' / 100%'
+                    : formatCurrency(String(total))
+                }
+                label={
+                  props.sumField === 'heirsPercentage'
+                    ? formatMessage(m.totalPercentage)
+                    : formatMessage(m.total)
+                }
+                backgroundColor="white"
+                readOnly
+                hasError={
+                  (props.sumField === 'heirsPercentage' &&
+                    error &&
+                    total !== 100) ??
+                  false
+                }
+                errorMessage={formatMessage(m.totalPercentageError)}
+              />
+            </GridColumn>
+          </GridRow>
+        </Box>
+      )}
     </Box>
   )
 }

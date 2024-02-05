@@ -67,6 +67,9 @@ export const AdditionalEstateMember = ({
   const { control, setValue, clearErrors, getValues } = useFormContext()
 
   const values = getValues()
+  console.log('AdditionalEstateMember')
+  console.log('values', values)
+
   const currentEstateMember = values?.estate?.estateMembers?.[index]
 
   const hasForeignCitizenship =
