@@ -324,38 +324,47 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
               instance.updateLanguagePack(languagePack)
             }
 
-            // Keep the chat log in memory
-            instance.on({
-              type: 'receive',
-              handler: (event) => {
-                chatLog.push(event)
-              },
-            })
-            instance.on({
-              type: 'send',
-              handler: (event) => {
-                chatLog.push(event)
-              },
-            })
+            if (
+              // Útlendingastofnun
+              props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54' &&
+              // Samgöngustofa
+              props.integrationID !== 'fe12e960-329c-46d5-9ae1-8bd8b8219f43' &&
+              // Samgöngustofa - english
+              props.integrationID !== '1e649a3f-9476-4995-ba24-0e72040b0cc0'
+            ) {
+              // Keep the chat log in memory
+              instance.on({
+                type: 'receive',
+                handler: (event) => {
+                  chatLog.push(event)
+                },
+              })
+              instance.on({
+                type: 'send',
+                handler: (event) => {
+                  chatLog.push(event)
+                },
+              })
 
-            instance.on({
-              type: 'view:change',
-              handler: (event) => {
-                const atLeastOneMessageReceived = chatLog.some(
-                  (log) => log.type === 'receive',
-                )
-                const atLeastOneMessageSent = chatLog.some(
-                  (log) => log.type === 'send',
-                )
-                if (
-                  event.reason === 'mainWindowClosedAndRestarted' &&
-                  atLeastOneMessageReceived &&
-                  atLeastOneMessageSent
-                ) {
-                  setShouldDisplayFeedbackPanel(true)
-                }
-              },
-            })
+              instance.on({
+                type: 'view:change',
+                handler: (event) => {
+                  const atLeastOneMessageReceived = chatLog.some(
+                    (log) => log.type === 'receive',
+                  )
+                  const atLeastOneMessageSent = chatLog.some(
+                    (log) => log.type === 'send',
+                  )
+                  if (
+                    event.reason === 'mainWindowClosedAndRestarted' &&
+                    atLeastOneMessageReceived &&
+                    atLeastOneMessageSent
+                  ) {
+                    setShouldDisplayFeedbackPanel(true)
+                  }
+                },
+              })
+            }
 
             if (
               // Askur - Útlendingastofnun
