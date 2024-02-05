@@ -693,6 +693,9 @@
       "@island.is/clients/university-application/agricultural-university-of-iceland": [
         "libs/clients/university-application/agricultural-university-of-iceland/src/index.ts"
       ],
+      "@island.is/clients/university-application/bifrost-university": [
+        "libs/clients/university-application/bifrost-university/src/index.ts"
+      ],
       "@island.is/clients/university-application/holar-university": [
         "libs/clients/university-application/holar-university/src/index.ts"
       ],
