@@ -49,6 +49,8 @@ auth-admin-web:
           paths:
             - '/admin'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    minAvailable: 1
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -150,6 +152,8 @@ identity-server:
           paths:
             - '/'
   namespace: 'identity-server'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -246,6 +250,8 @@ services-auth-admin-api:
           paths:
             - '/backend'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -320,6 +326,8 @@ services-auth-delegation-api:
           paths:
             - '/'
   namespace: 'identity-server-delegation'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -428,6 +436,8 @@ services-auth-ids-api:
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -491,6 +501,8 @@ services-auth-personal-representative:
           paths:
             - '/'
   namespace: 'personal-representative'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -558,6 +570,8 @@ services-auth-personal-representative-public:
           paths:
             - '/'
   namespace: 'personal-representative'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -639,6 +653,8 @@ services-auth-public-api:
           paths:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
