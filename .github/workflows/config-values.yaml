@@ -23,14 +23,13 @@ defaults:
 
 env:
   AWS_MAX_ATTEMPTS: 10
-  EC2_IMAGE: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
 
 jobs:
   prepare:
     runs-on: ec2-runners
     container:
-      image: ${{ env.EC2_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -50,7 +49,7 @@ jobs:
   helm-values-validation:
     runs-on: ec2-runners
     container:
-      image: ${{ env.EC2_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -104,7 +103,7 @@ jobs:
       - helm-values-validation # waiting on this job so the cache would be prepared
     runs-on: ec2-runners
     container:
-      image: ${{ env.EC2_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}

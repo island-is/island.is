@@ -8,9 +8,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  EC2_IMAGE: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
@@ -18,7 +15,7 @@ jobs:
     env:
       CHECK: 'false'
     container:
-      image: ${{ env.EC2_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
     steps:
       - uses: actions/checkout@v3
@@ -26,8 +23,7 @@ jobs:
           fetch-depth: 0
       - name: Check if codeowners file changed
         run: |
-          set -euo pipefail
-          MERGE_BASE=$(git merge-base "${{ github.event.pull_request.base.sha }}" "$GITHUB_SHA") || true
+          MERGE_BASE=$(git merge-base ${{github.event.pull_request.base.sha}} $GITHUB_SHA)
           if ! git diff --exit-code --name-only $MERGE_BASE..$GITHUB_SHA .github/CODEOWNERS; then
             echo "CHECK=true" >> $GITHUB_ENV
             if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
