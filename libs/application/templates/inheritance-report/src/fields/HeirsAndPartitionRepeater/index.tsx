@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, Fragment, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
@@ -34,12 +34,11 @@ import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 type RepeaterProps = {
   field: {
     props: {
-      // sectionTitle?: string
-      // sectionTitleVariant?: string
       // fields: Array<object>
       repeaterButtonText: string
       sumField: string
       customFields: {
+        sectionTitle?: string
         title: string
         id: string
         readOnly: true
@@ -149,10 +148,10 @@ export const HeirsAndPartitionRepeater: FC<
 
   const estateData = getEstateDataFromApplication(application)
 
-  const relationsWithApplicant = relationWithApplicant.map((relation) => ({
-    value: relation,
-    label: relation,
-  }))
+  // const relationsWithApplicant = relationWithApplicant.map((relation) => ({
+  //   value: relation,
+  //   label: relation,
+  // }))
 
   const relations =
     externalData.relationOptions?.map((relation) => ({
@@ -363,7 +362,7 @@ export const HeirsAndPartitionRepeater: FC<
                   disabled={!member.enabled}
                 />
               </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <GridColumn span={['1/1']} paddingBottom={2}>
                 <InputController
                   id={`${fieldIndex}.relation`}
                   name={`${fieldIndex}.relation`}
@@ -387,7 +386,7 @@ export const HeirsAndPartitionRepeater: FC<
                       // )}
                       label={'m.inheritanceRelationWithApplicantLabel'}
                       defaultValue={member.relationWithApplicant}
-                      options={relationsWithApplicant}
+                      options={relations}
                       error={error?.relationWithApplicant}
                       backgroundColor="blue"
                       disabled={!member.enabled}
@@ -424,50 +423,60 @@ export const HeirsAndPartitionRepeater: FC<
                   </GridColumn>
                 </>
               )}
-              {customFields.map((customField, currencyIndex) => {
+              {customFields.map((customField, customFieldIndex) => {
                 return (
-                  <GridColumn
-                    span={['1/2']}
-                    paddingBottom={2}
-                    key={currencyIndex}
-                  >
-                    <InputController
-                      id={`${fieldIndex}.${customField?.id}`}
-                      name={`${fieldIndex}.${customField?.id}`}
-                      defaultValue={'0'}
-                      // format={field.format}
-                      label={customField?.title}
-                      // placeholder={field.placeholder}
-                      // backgroundColor={field.color ? field.color : 'blue'}
-                      currency={customField?.currency}
-                      readOnly={customField?.readOnly}
-                      // type={field.type}
-                      // textarea={field.variant}
-                      // rows={field.rows}
-                      // required={field.required}
-                      error={
-                        error && error[index]
-                          ? error[index][field.id]
-                          : undefined
-                      }
-                      onChange={(elem) => {
-                        const value = elem.target.value.replace(/\D/g, '')
+                  <Fragment key={customFieldIndex}>
+                    {customField?.sectionTitle ? (
+                      <GridColumn span="1/1">
+                        <Text
+                          variant="h5"
+                          marginBottom={2}
+                        >
+                          {customField.sectionTitle}
+                        </Text>
+                      </GridColumn>
+                    ) : null}
 
-                        // heirs
-                        console.log('customField.id', customField.id)
-                        if (customField.id === 'heirsPercentage') {
-                          console.log('setting percentage...')
-                          setPercentage(Number(value) / 100)
+                    <GridColumn span={['1/2']} paddingBottom={2}>
+                      <InputController
+                        id={`${fieldIndex}.${customField?.id}`}
+                        name={`${fieldIndex}.${customField?.id}`}
+                        defaultValue={'0'}
+                        disabled={!member.enabled}
+                        // format={field.format}
+                        label={customField?.title}
+                        // placeholder={field.placeholder}
+                        // backgroundColor={field.color ? field.color : 'blue'}
+                        currency={customField?.currency}
+                        readOnly={customField?.readOnly}
+                        // type={field.type}
+                        // textarea={field.variant}
+                        // rows={field.rows}
+                        // required={field.required}
+                        error={
+                          error && error[index]
+                            ? error[index][field.id]
+                            : undefined
                         }
+                        onChange={(elem) => {
+                          const value = elem.target.value.replace(/\D/g, '')
 
-                        if (props.sumField === customField.id) {
-                          calculateTotal()
-                        }
+                          // heirs
+                          console.log('customField.id', customField.id)
+                          if (customField.id === 'heirsPercentage') {
+                            console.log('setting percentage...')
+                            setPercentage(Number(value) / 100)
+                          }
 
-                        setIndex(fieldIndex)
-                      }}
-                    />
-                  </GridColumn>
+                          if (props.sumField === customField.id) {
+                            calculateTotal()
+                          }
+
+                          setIndex(fieldIndex)
+                        }}
+                      />
+                    </GridColumn>
+                  </Fragment>
                 )
               })}
             </GridRow>
