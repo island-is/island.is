@@ -1,4 +1,4 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
+import { testServer, TestServerOptions } from '@island.is/testing/nest'
 import { INestApplication } from '@nestjs/common'
 import { AppModule } from '../src/app/app.module'
 
