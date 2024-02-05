@@ -10,7 +10,7 @@ export type OrganizationSlugType =
   | 'thjodskra'
   | 'stafraent-island'
   | 'samgongustofa'
-  | 'husnaedis-og-mannvirkjastofnun'
+  | 'hms'
   | 'fjarsysla-rikisins'
   | 'stjornarrad-islands'
   | 'rikislogreglustjori'
@@ -31,3 +31,4 @@ export type OrganizationSlugType =
   | 'vegagerdin'
   | 'landlaeknir'
   | 'hugverkastofan'
+  | 'hms'
