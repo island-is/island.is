@@ -1,0 +1,12 @@
+diff --git a/dist/health-indicator/database/sequelize.health.js b/dist/health-indicator/database/sequelize.health.js
+index f34c37b6d2b8d9b2f0ba2b6fbe1ef7bc4b8da389..c664fc1070337090de44833e83549c995943d9de 100644
+--- a/dist/health-indicator/database/sequelize.health.js
++++ b/dist/health-indicator/database/sequelize.health.js
+@@ -41,7 +41,6 @@ let SequelizeHealthIndicator = class SequelizeHealthIndicator extends health_ind
+     constructor(moduleRef) {
+         super();
+         this.moduleRef = moduleRef;
+-        this.checkDependantPackages();
+     }
+     /**
+      * Checks if the dependant packages are present

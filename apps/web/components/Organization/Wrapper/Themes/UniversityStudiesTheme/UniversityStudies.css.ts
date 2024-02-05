@@ -4,15 +4,29 @@ import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   position: 'relative',
+  zIndex: '-1',
   ...themeUtils.responsiveStyle({
-    xs: {},
-    md: {
+    xs: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       height: 340,
-      marginTop: 16,
+      marginTop: -105,
+    },
+    md: {
+      display: 'block',
+      justifyContent: 'unset',
+      alignItems: 'unset',
+      height: 340,
+      marginTop: -170,
     },
     lg: {
       height: 444,
-      marginTop: 16,
+      marginTop: -175,
+    },
+    xl: {
+      height: 444,
+      marginTop: -162,
     },
   }),
 })
@@ -58,7 +72,7 @@ export const headerBorder = style({
 })
 
 export const headerWrapper = style({
-  marginTop: -20,
+  marginTop: 20,
 })
 
 export const headerLogo = style({
@@ -94,7 +108,7 @@ export const footerLinksContainer = style({
     md: {
       flexDirection: 'row',
       padding: '3rem 0',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
     },
   }),
 })
@@ -139,11 +153,21 @@ export const ellipsisRight = style({
   }),
 })
 
-export const footerLinkContainer = style({
+export const footerFirstColumnContainer = style({
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  width: '17rem',
+  height: '100%',
+  gap: '1.5rem',
+})
+
+export const footerSecondColumnContainer = style({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'flex-start',
-  gap: '0.625rem',
+  width: '17rem',
+  gap: '1.5rem',
 })
 
 export const navigation = style({
@@ -161,20 +185,3 @@ export const navigation = style({
     },
   }),
 })
-
-// export const desktopTitleContainer = style({
-//   ...themeUtils.responsiveStyle({
-//     xl: {
-//       display: 'flex',
-//       justifyContent: 'center',
-//     },
-//   }),
-// })
-
-// export const desktopTitle = style({
-//   ...themeUtils.responsiveStyle({
-//     xl: {
-//       transform: 'translate(-150px, 165px)',
-//     },
-//   }),
-// })

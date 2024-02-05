@@ -51,6 +51,7 @@ export type Icon =
   | 'lockOpened'
   | 'logOut'
   | 'mail'
+  | 'mailOpen'
   | 'menu'
   | 'notifications'
   | 'open'
@@ -141,6 +142,7 @@ export default {
     lockOpened: 'LockOpened',
     logOut: 'LogOut',
     mail: 'Mail',
+    mailOpen: 'MailOpen',
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
@@ -230,6 +232,7 @@ export default {
     lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
     mail: 'MailOutline',
+    mailOpen: 'MailOpenOutline',
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',

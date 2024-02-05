@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationName: {
     id: 'slc.application:applicationName',
-    defaultMessage: 'Stofna meðmælalista',
+    defaultMessage: 'Stofna meðmælasöfnun',
     description: '',
   },
   institution: {
@@ -68,16 +68,6 @@ export const m = defineMessages({
   userProfileProviderSubtitle: {
     id: 'slc.application:userProfileProviderSubtitle',
     defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
-    description: '',
-  },
-  canCreateProviderTitle: {
-    id: 'slc.application:canCreateProviderTitle',
-    defaultMessage: 'Kjörskrá',
-    description: '',
-  },
-  canCreateProviderSubtitle: {
-    id: 'slc.application:canCreateProviderSubtitle',
-    defaultMessage: 'Skilyrði fyrir að stofna meðmælalista',
     description: '',
   },
 
@@ -173,7 +163,7 @@ export const m = defineMessages({
   },
   createList: {
     id: 'slc.application:createList',
-    defaultMessage: 'Stofna meðmælalista',
+    defaultMessage: 'Stofna meðmælasöfnun',
     description: '',
   },
 

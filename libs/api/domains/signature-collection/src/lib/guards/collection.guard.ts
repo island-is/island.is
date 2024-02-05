@@ -17,8 +17,7 @@ export class CollectionGuard implements CanActivate {
 
     const user = request.user
     // make collection info available to all
-    const collection =
-      await this.signatureCollectionService.currentCollectionInfo()
+    const collection = await this.signatureCollectionService.currentCollection()
     if (!user || !user.scope.includes(ApiScope.signatureCollection)) {
       request.body = {
         ...request.body,

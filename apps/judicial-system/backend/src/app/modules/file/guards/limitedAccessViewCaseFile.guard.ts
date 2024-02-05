@@ -8,8 +8,6 @@ import {
 
 import {
   CaseFileCategory,
-  defenderCaseFileCategoriesForIndictmentCases,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -21,6 +19,10 @@ import {
 
 import { Case } from '../../case'
 import { CaseFile } from '../models/file.model'
+import {
+  defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+} from './caseFileCategory'
 
 @Injectable()
 export class LimitedAccessViewCaseFileGuard implements CanActivate {
