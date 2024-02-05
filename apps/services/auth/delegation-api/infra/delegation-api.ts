@@ -1,10 +1,5 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  NationalRegistry,
-  RskProcuring,
-} from '../../../../../infra/src/dsl/xroad'
+import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 export const serviceSetup =
   (): ServiceBuilder<'services-auth-delegation-api'> => {

@@ -55,7 +55,8 @@
     "to-readable-stream",
     "url-parse-lax",
     "safer-buffer",
-    "ioredis"
+    "ioredis",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }
