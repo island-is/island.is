@@ -8,10 +8,18 @@ export const financeNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.financeStatus,
+      description: m.financeStatusDescription,
+      serviceProvider: 'fjarsysla-rikisins',
+      serviceProviderTooltip: m.financeTooltip,
+      displayServiceProviderLogo: true,
       path: FinancePaths.FinanceStatus,
     },
     {
       name: m.financeTransactions,
+      description: m.financeTransactionsDescription,
+      serviceProvider: 'fjarsysla-rikisins',
+      serviceProviderTooltip: m.financeTooltip,
+      displayServiceProviderLogo: true,
       path: FinancePaths.FinanceTransactions,
       children: [
         {

@@ -8,6 +8,8 @@ import {
   Button,
   GridColumn,
   GridRow,
+  Hidden,
+  Inline,
   SkeletonLoader,
   Stack,
   Table as T,
@@ -90,79 +92,6 @@ const FinanceStatus = () => {
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   const financeStatusZero = financeStatusData?.statusTotals === 0
 
-  const buttonsGroup = useMemo(() => {
-    const buttons = [
-      <Button
-        colorScheme="default"
-        icon="print"
-        iconType="filled"
-        onClick={() => window.print()}
-        preTextIconType="filled"
-        size="default"
-        type="button"
-        variant="utility"
-      >
-        {formatMessage(m.print)}
-      </Button>,
-      <DropdownExport
-        onGetCSV={() => exportGreidslustadaFile(financeStatusData, 'csv')}
-        onGetExcel={() => exportGreidslustadaFile(financeStatusData, 'xlsx')}
-        dropdownItems={[
-          {
-            title: formatMessage({
-              id: 'sp.finance-status:get-debt-certificate',
-              defaultMessage: 'Skuldleysisvottorð',
-            }),
-            href: '/umsoknir/skuldleysisvottord/',
-          },
-          {
-            title: formatMessage(endOfYearMessage, {
-              year: previousYear,
-            }),
-            onClick: () =>
-              formSubmit(
-                `${financeStatusData.downloadServiceURL}${previousYear}`,
-                true,
-              ),
-          },
-          {
-            title: formatMessage(endOfYearMessage, {
-              year: twoYearsAgo,
-            }),
-            onClick: () =>
-              formSubmit(
-                `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
-                true,
-              ),
-          },
-        ]}
-      />,
-    ]
-
-    if (!isDelegation && scheduleButtonVisible) {
-      buttons.unshift(
-        <a href="/umsoknir/greidsluaaetlun/" target="_blank" rel="noreferrer">
-          <Button
-            colorScheme="default"
-            icon="receipt"
-            iconType="filled"
-            size="default"
-            type="button"
-            variant="utility"
-            as="span"
-            unfocusable
-          >
-            {formatMessage({
-              id: 'sp.finance-status:make-payment-schedule',
-              defaultMessage: 'Gera greiðsluáætlun',
-            })}
-          </Button>
-        </a>,
-      )
-    }
-    return buttons
-  }, [])
-
   if (error && !loading) {
     return (
       <Problem error={error} type="internal_service_error" noBorder={false} />
@@ -170,18 +99,81 @@ const FinanceStatus = () => {
   }
 
   return (
-    <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-      <FinanceIntro
-        buttonGroup={buttonsGroup}
-        serviceProviderSlug="fjarsysla-rikisins"
-        serviceProviderTooltip={formatMessage(m.financeTooltip)}
-      >
-        {formatMessage({
-          id: 'sp.finance-status:intro',
-          defaultMessage:
-            'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
-        })}
-      </FinanceIntro>
+    <Box marginBottom={[6, 6, 10]}>
+      <Hidden print={true}>
+        <Inline flexWrap="wrap" space={2}>
+          <Button
+            colorScheme="default"
+            icon="print"
+            iconType="filled"
+            onClick={() => window.print()}
+            preTextIconType="filled"
+            size="default"
+            type="button"
+            variant="utility"
+          >
+            {formatMessage(m.print)}
+          </Button>
+          <DropdownExport
+            onGetCSV={() => exportGreidslustadaFile(financeStatusData, 'csv')}
+            onGetExcel={() =>
+              exportGreidslustadaFile(financeStatusData, 'xlsx')
+            }
+            dropdownItems={[
+              {
+                title: formatMessage({
+                  id: 'sp.finance-status:get-debt-certificate',
+                  defaultMessage: 'Skuldleysisvottorð',
+                }),
+                href: '/umsoknir/skuldleysisvottord/',
+              },
+              {
+                title: formatMessage(endOfYearMessage, {
+                  year: previousYear,
+                }),
+                onClick: () =>
+                  formSubmit(
+                    `${financeStatusData.downloadServiceURL}${previousYear}`,
+                    true,
+                  ),
+              },
+              {
+                title: formatMessage(endOfYearMessage, {
+                  year: twoYearsAgo,
+                }),
+                onClick: () =>
+                  formSubmit(
+                    `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
+                    true,
+                  ),
+              },
+            ]}
+          />
+          {!isDelegation && scheduleButtonVisible && (
+            <a
+              href="/umsoknir/greidsluaaetlun/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button
+                colorScheme="default"
+                icon="receipt"
+                iconType="filled"
+                size="default"
+                type="button"
+                variant="utility"
+                as="span"
+                unfocusable
+              >
+                {formatMessage({
+                  id: 'sp.finance-status:make-payment-schedule',
+                  defaultMessage: 'Gera greiðsluáætlun',
+                })}
+              </Button>
+            </a>
+          )}
+        </Inline>
+      </Hidden>
       <Stack space={2}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>

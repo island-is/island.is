@@ -581,9 +581,19 @@ export const m = defineMessages({
     id: 'service.portal:finance-status',
     defaultMessage: 'Staða',
   },
+  financeStatusDescription: {
+    id: 'service.portal:finance-status-description',
+    defaultMessage:
+      'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum',
+  },
   financeTransactions: {
     id: 'service.portal:finance-transactions',
     defaultMessage: 'Hreyfingar',
+  },
+  financeTransactionsDescription: {
+    id: 'service.portal:finance-transactions-description',
+    defaultMessage:
+      'Hér sérð þú hreyfingar gjaldflokka fyrir valin skilyrði. Opnaðu síu og veldu gjaldflokka og tímabil. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
   },
   financeTransactionsCategories: {
     id: 'service.portal:finance-transactions-categories',

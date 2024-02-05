@@ -63,6 +63,16 @@ export interface PortalNavigationItem {
    * Service provider id used for displaying service provider information in the module.
    */
   serviceProvider?: OrganizationSlugType
+
+  /**
+   * If the service provider logo should be displayed beneath the tab navigation
+   */
+  displayServiceProviderLogo?: boolean
+
+  /**
+   * Service provider tooltip to display if service provider logo is supplied.
+   */
+  serviceProviderTooltip?: MessageDescriptor
 }
 
 /**

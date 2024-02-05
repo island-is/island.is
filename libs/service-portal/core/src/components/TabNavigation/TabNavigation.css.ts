@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const tab = style({
@@ -64,4 +64,10 @@ export const tabList = style({
       display: 'none',
     },
   },
+})
+
+export const description = style({})
+
+globalStyle(`${description} > div:not(:first-child)`, {
+  marginTop: `${theme.spacing[4]}px`,
 })

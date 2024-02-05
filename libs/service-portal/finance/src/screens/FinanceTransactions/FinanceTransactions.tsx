@@ -119,131 +119,128 @@ const FinanceTransactions = () => {
     value: item.id,
   }))
 
-  const buttonGroup = [
-    <Filter
-      variant="popover"
-      align="left"
-      reverse
-      labelClear={formatMessage(m.clearFilter)}
-      labelClearAll={formatMessage(m.clearAllFilters)}
-      labelOpen={formatMessage(m.openFilter)}
-      labelClose={formatMessage(m.closeFilter)}
-      filterInput={
-        <FilterInput
-          placeholder={formatMessage(m.searchPlaceholder)}
-          name="finance-transaction-input"
-          value={q}
-          onChange={(e) => setQ(e)}
-          backgroundColor="blue"
-        />
-      }
-      onFilterClear={clearAllFilters}
-    >
-      <FilterMultiChoice
-        labelClear={formatMessage(m.clearSelected)}
-        singleExpand={true}
-        onChange={({ selected }) => {
-          setDropdownSelect(selected)
-        }}
-        onClear={() => {
-          setEmptyChargeTypes()
-        }}
-        categories={[
-          {
-            id: 'flokkur',
-            label: formatMessage(messages.transactionsLabel),
-            selected: dropdownSelect ? [...dropdownSelect] : [],
-            filters: chargeTypeSelect,
-            inline: false,
-            singleOption: false,
-          },
-        ]}
-      />
-      <Box className={styles.dateFilter} paddingX={3}>
-        <Box borderBottomWidth="standard" borderColor="blue200" width="full" />
-        <Box marginTop={1}>
-          <Accordion
-            dividerOnBottom={false}
-            dividerOnTop={false}
-            singleExpand={false}
-          >
-            <AccordionItem
-              key="date-accordion-item"
-              id="date-accordion-item"
-              label={formatMessage(m.datesLabel)}
-              labelColor="dark400"
-              labelUse="h5"
-              labelVariant="h5"
-              iconVariant="small"
-            >
-              <Box
-                className={styles.accordionBox}
-                display="flex"
-                flexDirection="column"
-              >
-                <DatePicker
-                  label={formatMessage(m.datepickerFromLabel)}
-                  placeholderText={formatMessage(m.datepickLabel)}
-                  locale="is"
-                  backgroundColor="blue"
-                  size="xs"
-                  handleChange={(d) => setFromDate(d)}
-                  selected={fromDate}
-                  appearInline
-                />
-                <Box marginTop={3}>
-                  <DatePicker
-                    label={formatMessage(m.datepickerToLabel)}
-                    placeholderText={formatMessage(m.datepickLabel)}
-                    locale="is"
-                    backgroundColor="blue"
-                    size="xs"
-                    handleChange={(d) => setToDate(d)}
-                    selected={toDate}
-                    appearInline
-                  />
-                </Box>
-              </Box>
-            </AccordionItem>
-          </Accordion>
-        </Box>
-      </Box>
-    </Filter>,
-    <Button
-      colorScheme="default"
-      icon="print"
-      iconType="filled"
-      onClick={() => window.print()}
-      preTextIconType="filled"
-      size="default"
-      type="button"
-      variant="utility"
-    >
-      {formatMessage(m.print)}
-    </Button>,
-    <DropdownExport
-      onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
-      onGetExcel={() => exportHreyfingarFile(recordsDataArray, 'xlsx')}
-    />,
-  ]
-
   return (
     <DynamicWrapper>
-      <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-        <FinanceIntro
-          buttonGroup={buttonGroup}
-          serviceProviderSlug="fjarsysla-rikisins"
-          serviceProviderTooltip={formatMessage(m.financeTooltip)}
-        >
-          {formatMessage({
-            id: 'sp.finance-transactions:intro',
-            defaultMessage:
-              'Hér sérð þú hreyfingar gjaldflokka fyrir valin skilyrði. Opnaðu síu og veldu gjaldflokka og tímabil. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
-          })}
-        </FinanceIntro>
+      <Box marginBottom={[6, 6, 10]}>
         <Stack space={2}>
           <Hidden print={true}>
-            <Box marginTop={[1, 1, 2, 2, 5]}></Box>
+            <Filter
+              variant="popover"
+              align="left"
+              reverse
+              labelClear={formatMessage(m.clearFilter)}
+              labelClearAll={formatMessage(m.clearAllFilters)}
+              labelOpen={formatMessage(m.openFilter)}
+              labelClose={formatMessage(m.closeFilter)}
+              filterInput={
+                <FilterInput
+                  placeholder={formatMessage(m.searchPlaceholder)}
+                  name="finance-transaction-input"
+                  value={q}
+                  onChange={(e) => setQ(e)}
+                  backgroundColor="blue"
+                />
+              }
+              additionalFilters={
+                <>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                  <DropdownExport
+                    onGetCSV={() =>
+                      exportHreyfingarFile(recordsDataArray, 'csv')
+                    }
+                    onGetExcel={() =>
+                      exportHreyfingarFile(recordsDataArray, 'xlsx')
+                    }
+                  />
+                </>
+              }
+              onFilterClear={clearAllFilters}
+            >
+              <FilterMultiChoice
+                labelClear={formatMessage(m.clearSelected)}
+                singleExpand={true}
+                onChange={({ selected }) => {
+                  setDropdownSelect(selected)
+                }}
+                onClear={() => {
+                  setEmptyChargeTypes()
+                }}
+                categories={[
+                  {
+                    id: 'flokkur',
+                    label: formatMessage(messages.transactionsLabel),
+                    selected: dropdownSelect ? [...dropdownSelect] : [],
+                    filters: chargeTypeSelect,
+                    inline: false,
+                    singleOption: false,
+                  },
+                ]}
+              />
+              <Box className={styles.dateFilter} paddingX={3}>
+                <Box
+                  borderBottomWidth="standard"
+                  borderColor="blue200"
+                  width="full"
+                />
+                <Box marginTop={1}>
+                  <Accordion
+                    dividerOnBottom={false}
+                    dividerOnTop={false}
+                    singleExpand={false}
+                  >
+                    <AccordionItem
+                      key="date-accordion-item"
+                      id="date-accordion-item"
+                      label={formatMessage(m.datesLabel)}
+                      labelColor="dark400"
+                      labelUse="h5"
+                      labelVariant="h5"
+                      iconVariant="small"
+                    >
+                      <Box
+                        className={styles.accordionBox}
+                        display="flex"
+                        flexDirection="column"
+                      >
+                        <DatePicker
+                          label={formatMessage(m.datepickerFromLabel)}
+                          placeholderText={formatMessage(m.datepickLabel)}
+                          locale="is"
+                          backgroundColor="blue"
+                          size="xs"
+                          handleChange={(d) => setFromDate(d)}
+                          selected={fromDate}
+                          appearInline
+                        />
+                        <Box marginTop={3}>
+                          <DatePicker
+                            label={formatMessage(m.datepickerToLabel)}
+                            placeholderText={formatMessage(m.datepickLabel)}
+                            locale="is"
+                            backgroundColor="blue"
+                            size="xs"
+                            handleChange={(d) => setToDate(d)}
+                            selected={toDate}
+                            appearInline
+                          />
+                        </Box>
+                      </Box>
+                    </AccordionItem>
+                  </Accordion>
+                </Box>
+              </Box>
+            </Filter>
           </Hidden>
 
           <Box marginTop={2}>
