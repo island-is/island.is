@@ -11557,19 +11557,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/sequelize@npm:9.0.2":
-  version: 9.0.2
-  resolution: "@nestjs/sequelize@npm:9.0.2"
+"@nestjs/sequelize@npm:10.0.0":
+  version: 10.0.0
+  resolution: "@nestjs/sequelize@npm:10.0.0"
   dependencies:
     uuid: 9.0.0
   peerDependencies:
-    "@nestjs/common": ^8.0.0 || ^9.0.0
-    "@nestjs/core": ^8.0.0 || ^9.0.0
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
     reflect-metadata: ^0.1.13
     rxjs: ^7.2.0
     sequelize: ^6.3.5
     sequelize-typescript: ^2.0.0
-  checksum: f7d6aaf257619b502cab0eac5cd45b554a2c3eed2bfd511b4ac24621f949f600bd58ca236b8de1e864d8c4ac07fa80aabded98c16b263612306e5d00b4450e1e
+  checksum: b1fdb54d2cbeac1080419bdd00fba45798d40938c7b5ee1a2c4f805d260b9b5aa15ec8e7e979ecffea11809199044b179e2045849772a26ec80f0badbe3ea478
   languageName: node
   linkType: hard
 
@@ -11600,9 +11600,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/terminus@npm:10.1.1":
-  version: 10.1.1
-  resolution: "@nestjs/terminus@npm:10.1.1"
+"@nestjs/terminus@npm:10.2.0":
+  version: 10.2.0
+  resolution: "@nestjs/terminus@npm:10.2.0"
   dependencies:
     boxen: 5.1.2
     check-disk-space: 3.4.0
@@ -11651,7 +11651,62 @@ __metadata:
       optional: true
     typeorm:
       optional: true
-  checksum: 62e8707b16e86500cd94415188c7b303eed18cf216951e207693ba917965241c7e2130e982d48fc481ceafed8ed998b2e71f1866f1097541b067a39d51cd84a0
+  checksum: 16e060b56d4e655ba80a397cf45727a15df4537ab1531e1a1b54be02ff0f03c1101904c68783d9dfbd284fff464131677a8f3989b54bff620edcdfdb99b36adc
+  languageName: node
+  linkType: hard
+
+"@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::locator=island.is%40workspace%3A.":
+  version: 10.2.0
+  resolution: "@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::version=10.2.0&hash=293b8c&locator=island.is%40workspace%3A."
+  dependencies:
+    boxen: 5.1.2
+    check-disk-space: 3.4.0
+  peerDependencies:
+    "@grpc/grpc-js": "*"
+    "@grpc/proto-loader": "*"
+    "@mikro-orm/core": "*"
+    "@mikro-orm/nestjs": "*"
+    "@nestjs/axios": ^1.0.0 || ^2.0.0 || ^3.0.0
+    "@nestjs/common": ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0
+    "@nestjs/microservices": ^9.0.0 || ^10.0.0
+    "@nestjs/mongoose": ^9.0.0 || ^10.0.0
+    "@nestjs/sequelize": ^9.0.0 || ^10.0.0
+    "@nestjs/typeorm": ^9.0.0 || ^10.0.0
+    "@prisma/client": "*"
+    mongoose: "*"
+    reflect-metadata: 0.1.x
+    rxjs: 7.x
+    sequelize: "*"
+    typeorm: "*"
+  peerDependenciesMeta:
+    "@grpc/grpc-js":
+      optional: true
+    "@grpc/proto-loader":
+      optional: true
+    "@mikro-orm/core":
+      optional: true
+    "@mikro-orm/nestjs":
+      optional: true
+    "@nestjs/axios":
+      optional: true
+    "@nestjs/microservices":
+      optional: true
+    "@nestjs/mongoose":
+      optional: true
+    "@nestjs/sequelize":
+      optional: true
+    "@nestjs/typeorm":
+      optional: true
+    "@prisma/client":
+      optional: true
+    mongoose:
+      optional: true
+    sequelize:
+      optional: true
+    typeorm:
+      optional: true
+  checksum: 9a9f4351c14c1b663ffd528620764fb2a125c2b9c0532caeb59e1c3509496bb1f7bc929da729eade12dcbfdc11d36312ea0376e5755861d690c55320e93a900d
   languageName: node
   linkType: hard
 
@@ -33767,9 +33822,9 @@ __metadata:
     "@nestjs/passport": 8.2.2
     "@nestjs/platform-express": 10.0.5
     "@nestjs/schematics": 10.0.1
-    "@nestjs/sequelize": 9.0.2
+    "@nestjs/sequelize": 10.0.0
     "@nestjs/swagger": 7.1.1
-    "@nestjs/terminus": 10.1.1
+    "@nestjs/terminus": 10.2.0
     "@nestjs/testing": 10.0.5
     "@nx/cypress": 16.9.0
     "@nx/eslint-plugin": 16.9.0

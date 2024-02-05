@@ -89,7 +89,6 @@ export const prepareServiceForEnv = (
   )
 
   addToErrors(errors)
-
   let result: ServiceDefinitionForEnv = {
     features: serviceDef.features,
     files: serviceDef.files,
@@ -104,7 +103,6 @@ export const prepareServiceForEnv = (
     accountName: serviceDef.accountName,
     healthPort: serviceDef.healthPort,
     volumes: serviceDef.volumes,
-    podDisruptionBudget: serviceDef.podDisruptionBudget,
     port: serviceDef.port,
     env: envs,
     secrets: { ...serviceDef.secrets },
@@ -114,6 +112,7 @@ export const prepareServiceForEnv = (
     args: serviceDef.args,
     cmds: serviceDef.cmds,
     readiness: serviceDef.readiness,
+    podDisruptionBudget: serviceDef.podDisruptionBudget,
   }
 
   if (serviceDef.postgres) {

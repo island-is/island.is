@@ -473,7 +473,7 @@ export const m = defineMessages({
   },
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
-    defaultMessage: 'Meðmælalistar',
+    defaultMessage: 'Meðmælasöfnun',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
@@ -1233,6 +1233,10 @@ export const m = defineMessages({
   addToStorage: {
     id: 'service.portal:add-to-storage',
     defaultMessage: 'Setja í geymslu',
+  },
+  markAsRead: {
+    id: 'service.portal:mark-as-read',
+    defaultMessage: 'Merkja sem lesið',
   },
   removeFromStorage: {
     id: 'service.portal:remove-from-storage',

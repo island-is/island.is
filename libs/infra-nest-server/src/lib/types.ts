@@ -2,6 +2,8 @@ import { INestApplication, NestInterceptor, Type } from '@nestjs/common'
 import { OpenAPIObject } from '@nestjs/swagger'
 import { Server } from 'http'
 
+import { HealthCheckOptions } from './infra/health/types'
+
 export type RunServerOptions = {
   /**
    * Main nest module.
@@ -57,6 +59,13 @@ export type RunServerOptions = {
    * to the bytes library for parsing. Defaults to '100kb'.
    */
   jsonBodyLimit?: number | string
+
+  /**
+   * Enables health check endpoint.
+   * If true then the health check endpoint will be available with defaults.
+   * Otherwise an object can be provided to override specific options.
+   */
+  healthCheck?: boolean | HealthCheckOptions
 }
 
 export interface InfraNestServer {
