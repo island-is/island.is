@@ -158,6 +158,8 @@ export const HeirsAndPartitionRepeater: FC<
       value: relation,
       label: relation,
     })) || []
+
+  console.log('relations', relations)
   const error = (errors as any)?.estate?.estateMembers
 
   const handleAddMember = () =>
@@ -246,6 +248,7 @@ export const HeirsAndPartitionRepeater: FC<
 
   /* ------ Total ------ */
   const [total, setTotal] = useState(0)
+
   const calculateTotal = useCallback(() => {
     const values = getValues(id)
     if (!values) {
@@ -262,6 +265,10 @@ export const HeirsAndPartitionRepeater: FC<
 
     setTotal(total)
   }, [getValues, id, props.sumField])
+
+  useEffect(() => {
+    calculateTotal()
+  }, [calculateTotal])
 
   useEffect(() => {
     if (fields.length === 0 && estateData?.estate?.estateMembers) {
@@ -306,8 +313,7 @@ export const HeirsAndPartitionRepeater: FC<
           ...acc,
           <Box marginTop={index > 0 ? 7 : 0} key={index}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              {/* <Text variant="h4">{formatMessage(m.estateMember)}</Text> */}
-              <Text variant="h4">m.estateMember</Text>
+              <Text variant="h4">{formatMessage(m.heir)}</Text>
               <Box>
                 <Button
                   variant="text"
@@ -325,13 +331,9 @@ export const HeirsAndPartitionRepeater: FC<
                     clearErrors(`${fieldIndex}.advocate.email`)
                   }}
                 >
-                  {
-                    member.enabled
-                      ? 'm.inheritanceDisableMember'
-                      : 'm.inheritanceEnableMember'
-                    // ? formatMessage(m.inheritanceDisableMember)
-                    // : formatMessage(m.inheritanceEnableMember)
-                  }
+                  {member.enabled
+                    ? formatMessage(m.inheritanceDisableMember)
+                    : formatMessage(m.inheritanceEnableMember)}
                 </Button>
               </Box>
             </Box>
@@ -340,8 +342,7 @@ export const HeirsAndPartitionRepeater: FC<
                 <InputController
                   id={`${fieldIndex}.nationalId`}
                   name={`${fieldIndex}.nationalId`}
-                  // label={formatMessage(m.inheritanceKtLabel)}
-                  label={'m.inheritanceKtLabel'}
+                  label={formatMessage(m.inheritanceKtLabel)}
                   defaultValue={formatNationalId(member.nationalId || '')}
                   backgroundColor="white"
                   // readOnly
@@ -354,26 +355,24 @@ export const HeirsAndPartitionRepeater: FC<
                 <InputController
                   id={`${fieldIndex}.name`}
                   name={`${fieldIndex}.name`}
-                  // label={formatMessage(m.inheritanceNameLabel)}
-                  label={'m.inheritanceNameLabel'}
+                  label={formatMessage(m.inheritanceNameLabel)}
                   readOnly
                   defaultValue={member.name || ''}
                   backgroundColor="white"
                   disabled={!member.enabled}
                 />
               </GridColumn>
-              <GridColumn span={['1/1']} paddingBottom={2}>
+              {/* <GridColumn span={['1/1']} paddingBottom={2}>
                 <InputController
                   id={`${fieldIndex}.relation`}
                   name={`${fieldIndex}.relation`}
-                  // label={formatMessage(m.inheritanceRelationLabel)}
-                  label={'m.inheritanceRelationLabel'}
+                  label={formatMessage(m.inheritanceRelationLabel)}
                   readOnly
                   defaultValue={member.relation}
                   backgroundColor="white"
                   disabled={!member.enabled}
                 />
-              </GridColumn>
+              </GridColumn> */}
               {application.answers.selectedEstate ===
                 EstateTypes.permitForUndividedEstate &&
                 member.relation !== 'Maki' && (
@@ -381,10 +380,9 @@ export const HeirsAndPartitionRepeater: FC<
                     <SelectController
                       id={`${fieldIndex}.relationWithApplicant`}
                       name={`${fieldIndex}.relationWithApplicant`}
-                      // label={formatMessage(
-                      //   m.inheritanceRelationWithApplicantLabel,
-                      // )}
-                      label={'m.inheritanceRelationWithApplicantLabel'}
+                      label={formatMessage(
+                        m.inheritanceRelationWithApplicantLabel,
+                      )}
                       defaultValue={member.relationWithApplicant}
                       options={relations}
                       error={error?.relationWithApplicant}
@@ -428,54 +426,93 @@ export const HeirsAndPartitionRepeater: FC<
                   <Fragment key={customFieldIndex}>
                     {customField?.sectionTitle ? (
                       <GridColumn span="1/1">
-                        <Text
-                          variant="h5"
-                          marginBottom={2}
-                        >
+                        <Text variant="h5" marginBottom={2}>
                           {customField.sectionTitle}
                         </Text>
                       </GridColumn>
                     ) : null}
 
-                    <GridColumn span={['1/2']} paddingBottom={2}>
-                      <InputController
-                        id={`${fieldIndex}.${customField?.id}`}
-                        name={`${fieldIndex}.${customField?.id}`}
-                        defaultValue={'0'}
-                        disabled={!member.enabled}
-                        // format={field.format}
-                        label={customField?.title}
-                        // placeholder={field.placeholder}
-                        // backgroundColor={field.color ? field.color : 'blue'}
-                        currency={customField?.currency}
-                        readOnly={customField?.readOnly}
-                        // type={field.type}
-                        // textarea={field.variant}
-                        // rows={field.rows}
-                        // required={field.required}
-                        error={
-                          error && error[index]
-                            ? error[index][field.id]
-                            : undefined
-                        }
-                        onChange={(elem) => {
-                          const value = elem.target.value.replace(/\D/g, '')
-
-                          // heirs
-                          console.log('customField.id', customField.id)
-                          if (customField.id === 'heirsPercentage') {
-                            console.log('setting percentage...')
-                            setPercentage(Number(value) / 100)
+                    {customField.id === 'relation' ? (
+                      <Fragment>
+                        {member.initial && (
+                          <GridColumn span="1/1" paddingBottom={2}>
+                            <InputController
+                              id={`${fieldIndex}.${customField.id}`}
+                              name={`${fieldIndex}.${customField.id}`}
+                              label={customField?.title}
+                              readOnly
+                              defaultValue={member.relation}
+                              backgroundColor="blue"
+                              disabled={!member.enabled}
+                            />
+                          </GridColumn>
+                        )}
+                        {application.answers.selectedEstate ===
+                          EstateTypes.permitForUndividedEstate &&
+                          member.relation !== 'Maki' && (
+                            <GridColumn span="1/1" paddingBottom={2}>
+                              <SelectController
+                                id={`${fieldIndex}.relationWithApplicant`}
+                                name={`${fieldIndex}.relationWithApplicant`}
+                                label={formatMessage(
+                                  m.inheritanceRelationWithApplicantLabel,
+                                )}
+                                defaultValue={member.relationWithApplicant}
+                                options={relations}
+                                error={error?.relationWithApplicant}
+                                backgroundColor="blue"
+                                disabled={!member.enabled}
+                                required
+                              />
+                            </GridColumn>
+                          )}
+                      </Fragment>
+                    ) : (
+                      <GridColumn span={['1/2']} paddingBottom={2}>
+                        <InputController
+                          id={`${fieldIndex}.${customField.id}`}
+                          name={`${fieldIndex}.${customField.id}`}
+                          // defaultValue={'0'}
+                          defaultValue={
+                            getValues(`${fieldIndex}.${customField.id}`)
+                              ? getValues(`${fieldIndex}.${customField.id}`)
+                              : getDefaults(customField.id)
                           }
-
-                          if (props.sumField === customField.id) {
-                            calculateTotal()
+                          disabled={!member.enabled}
+                          // format={field.format}
+                          label={customField.title}
+                          // placeholder={field.placeholder}
+                          // backgroundColor={field.color ? field.color : 'blue'}
+                          currency={customField?.currency}
+                          readOnly={customField?.readOnly}
+                          // type={field.type}
+                          // textarea={field.variant}
+                          // rows={field.rows}
+                          // required={field.required}
+                          error={
+                            error && error[index]
+                              ? error[index][field.id]
+                              : undefined
                           }
+                          onChange={(elem) => {
+                            const value = elem.target.value.replace(/\D/g, '')
 
-                          setIndex(fieldIndex)
-                        }}
-                      />
-                    </GridColumn>
+                            // heirs
+                            console.log('customField.id', customField.id)
+                            if (customField.id === 'heirsPercentage') {
+                              console.log('setting percentage...')
+                              setPercentage(Number(value) / 100)
+                            }
+
+                            if (props.sumField === customField.id) {
+                              calculateTotal()
+                            }
+
+                            setIndex(fieldIndex)
+                          }}
+                        />
+                      </GridColumn>
+                    )}
                   </Fragment>
                 )
               })}
@@ -496,16 +533,14 @@ export const HeirsAndPartitionRepeater: FC<
                       variant="h4"
                       color={member.enabled ? 'dark400' : 'dark300'}
                     >
-                      {/* {formatMessage(m.inheritanceAdvocateLabel)} */}
-                      m.inheritanceAdvocateLabel
+                      {formatMessage(m.inheritanceAdvocateLabel)}
                     </Text>
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
                       id={`${fieldIndex}.advocate.nationalId`}
                       name={`${fieldIndex}.advocate.nationalId`}
-                      // label={formatMessage(m.inheritanceKtLabel)}
-                      label={'m.inheritanceKtLabel'}
+                      label={formatMessage(m.inheritanceKtLabel)}
                       readOnly
                       defaultValue={formatNationalId(
                         member.advocate?.nationalId || '',
@@ -520,8 +555,7 @@ export const HeirsAndPartitionRepeater: FC<
                     <InputController
                       id={`${fieldIndex}.advocate.name`}
                       name={`${fieldIndex}.advocate.name`}
-                      // label={formatMessage(m.inheritanceNameLabel)}
-                      label={'m.inheritanceNameLabel'}
+                      label={formatMessage(m.inheritanceNameLabel)}
                       readOnly
                       defaultValue={member.advocate?.name || ''}
                       backgroundColor="white"
@@ -591,8 +625,7 @@ export const HeirsAndPartitionRepeater: FC<
           onClick={handleAddMember}
           size="small"
         >
-          {/* formatMessage(m.inheritanceAddMember) */}
-          m.inheritanceAddMember
+          {formatMessage(m.inheritanceAddMember)}
         </Button>
       </Box>
       {errors && errors[heirAgeValidation] ? (
@@ -600,10 +633,8 @@ export const HeirsAndPartitionRepeater: FC<
           <InputError
             errorMessage={
               selectedEstate === EstateTypes.divisionOfEstateByHeirs
-                ? 'm.inheritanceAgeValidation'
-                : 'm.heirAdvocateAgeValidation'
-              // ? formatMessage(m.inheritanceAgeValidation)
-              // : formatMessage(m.heirAdvocateAgeValidation)
+                ? formatMessage(m.inheritanceAgeValidation)
+                : formatMessage(m.heirAdvocateAgeValidation)
             }
           />
         </Box>

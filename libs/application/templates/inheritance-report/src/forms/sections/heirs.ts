@@ -118,6 +118,10 @@ export const heirs = buildSection({
               {
                 customFields: [
                   {
+                    title: m.heirsRelation.defaultMessage,
+                    id: 'relation',
+                  },
+                  {
                     sectionTitle: m.heirShare.defaultMessage,
                     title: m.heirsInheritanceRate.defaultMessage,
                     id: 'heirsPercentage',
