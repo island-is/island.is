@@ -1,8 +1,9 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import { Gender } from '@island.is/judicial-system/types'
+import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
 
 registerEnumType(Gender, { name: 'Gender' })
+registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
 
 @ObjectType()
 export class Defendant {
@@ -50,4 +51,7 @@ export class Defendant {
 
   @Field(() => Boolean, { nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
+
+  @Field(() => DefendantPlea, { nullable: true })
+  readonly defendantPlea?: DefendantPlea
 }
