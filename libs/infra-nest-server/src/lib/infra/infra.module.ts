@@ -3,11 +3,14 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
 
 import { LoggingModule } from '@island.is/logging'
 
-import { InfraController } from './infra.controller'
 import { ApmInterceptor } from './apm.interceptor'
+import { InfraController } from './infra.controller'
+import { HealthModule } from './health/health.module'
+import { HealthCheckOptions } from './health/types'
 
 interface InfraModuleOptions {
-  appModule: Type<any>
+  appModule: Type<unknown>
+  healthCheck?: boolean | HealthCheckOptions
 }
 
 @Module({
@@ -21,12 +24,23 @@ interface InfraModuleOptions {
   imports: [LoggingModule],
 })
 export class InfraModule {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static forRoot({ appModule }: InfraModuleOptions): DynamicModule {
-    const imports = [appModule]
+  static forRoot({
+    appModule,
+    healthCheck,
+  }: InfraModuleOptions): DynamicModule {
+    const defaultImports = [appModule]
     return {
       module: InfraModule,
-      imports,
+      imports: [
+        ...defaultImports,
+        ...(healthCheck === false
+          ? []
+          : [
+              HealthModule.register(
+                healthCheck === true ? undefined : healthCheck,
+              ),
+            ]),
+      ],
     }
   }
 }
