@@ -95,92 +95,135 @@ export const heirs = buildSection({
         }),
       ],
     }),
-    // buildSubSection({
-    //   id: 'heirs',
-    //   title: m.heirsAndPartition,
-    //   children: [
-    //     buildMultiField({
-    //       id: 'heirs',
-    //       title: m.heirsAndPartition,
-    //       description: m.heirsAndPartitionDescription,
-    //       children: [
-    //         buildDescriptionField({
-    //           id: 'heirs.total',
-    //           title: '',
-    //         }),
-    //         buildCustomField(
-    //           {
-    //             title: '',
-    //             id: 'heirs.data',
-    //             doesNotRequireAnswer: true,
-    //             component: 'HeirsAndPartitionRepeater',
-    //           },
-    //           {
-    //             fields: [
-    //               {
-    //                 sectionTitle: m.heirs.defaultMessage,
-    //                 sectionTitleVariant: 'h3',
-    //                 title: m.heirsNationalId.defaultMessage,
-    //                 id: 'nationalId',
-    //                 format: '######-####',
-    //               },
-    //               {
-    //                 title: m.heirsName.defaultMessage,
-    //                 id: 'heirsName',
-    //               },
-    //               {
-    //                 title: m.heirsRelation.defaultMessage,
-    //                 id: 'relation',
-    //                 width: 'full',
-    //               },
-    //               {
-    //                 sectionTitle: m.heirContactInfo.defaultMessage,
-    //                 title: m.heirsEmail.defaultMessage,
-    //                 id: 'email',
-    //               },
-    //               {
-    //                 title: m.heirsPhone.defaultMessage,
-    //                 id: 'phone',
-    //                 format: '###-####',
-    //               },
-    //               {
-    //                 sectionTitle: m.heirShare.defaultMessage,
-    //                 title: m.heirsInheritanceRate.defaultMessage,
-    //                 id: 'heirsPercentage',
-    //               },
-    //               {
-    //                 title: m.taxFreeInheritance.defaultMessage,
-    //                 id: 'taxFreeInheritance',
-    //                 readOnly: true,
-    //                 currency: true,
-    //               },
-    //               {
-    //                 title: m.inheritanceAmount.defaultMessage,
-    //                 id: 'inheritance',
-    //                 readOnly: true,
-    //                 currency: true,
-    //               },
-    //               {
-    //                 title: m.taxableInheritance.defaultMessage,
-    //                 id: 'taxableInheritance',
-    //                 readOnly: true,
-    //                 currency: true,
-    //               },
-    //               {
-    //                 title: m.inheritanceTax.defaultMessage,
-    //                 id: 'inheritanceTax',
-    //                 readOnly: true,
-    //                 currency: true,
-    //               },
-    //             ],
-    //             repeaterButtonText: m.addHeir.defaultMessage,
-    //             sumField: 'heirsPercentage',
-    //           },
-    //         ),
-    //       ],
-    //     }),
-    //   ],
-    // }),
+    buildSubSection({
+      id: 'heirs',
+      title: m.heirsAndPartition,
+      children: [
+        buildMultiField({
+          id: 'heirs',
+          title: m.heirsAndPartition,
+          description: m.heirsAndPartitionDescription,
+          children: [
+            buildDescriptionField({
+              id: 'heirs.total',
+              title: '',
+            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'heirs.data',
+                doesNotRequireAnswer: true,
+                component: 'HeirsAndPartitionRepeater',
+              },
+              {
+                customFields: [
+                  {
+                    sectionTitle: m.heirShare.defaultMessage,
+                    title: m.heirsInheritanceRate.defaultMessage,
+                    id: 'heirsPercentage',
+                  },
+                  {
+                    title: m.taxFreeInheritance.defaultMessage,
+                    id: 'taxFreeInheritance',
+                    readOnly: true,
+                    currency: true,
+                  },
+                  {
+                    title: m.inheritanceAmount.defaultMessage,
+                    id: 'inheritance',
+                    readOnly: true,
+                    currency: true,
+                  },
+                  {
+                    title: m.taxableInheritance.defaultMessage,
+                    id: 'taxableInheritance',
+                    readOnly: true,
+                    currency: true,
+                  },
+                  {
+                    title: m.inheritanceTax.defaultMessage,
+                    id: 'inheritanceTax',
+                    readOnly: true,
+                    currency: true,
+                  },
+                ],
+                repeaterButtonText: m.addHeir.defaultMessage,
+                sumField: 'heirsPercentage',
+              },
+            ),
+            // buildCustomField(
+            //   {
+            //     title: '',
+            //     id: 'heirs.data',
+            //     doesNotRequireAnswer: true,
+            //     component: 'HeirsAndPartitionRepeater',
+            //   },
+            //   {
+            //     fields: [
+            //       {
+            //         sectionTitle: m.heirs.defaultMessage,
+            //   °      sectionTitleVariant: 'h3',
+            //         title: m.heirsNationalId.defaultMessage,
+            //         id: 'nationalId',
+            //         format: '######-####',
+            //       },
+            //       {
+            //         title: m.heirsName.defaultMessage,
+            //         id: 'heirsName',
+            //       },
+            //       {
+            //         title: m.heirsRelation.defaultMessage,
+            //         id: 'relation',
+            //         width: 'full',
+            //       },
+            //       {
+            //         sectionTitle: m.heirContactInfo.defaultMessage,
+            //         title: m.heirsEmail.defaultMessage,
+            //         id: 'email',
+            //       },
+            //       {
+            //         title: m.heirsPhone.defaultMessage,
+            //         id: 'phone',
+            //         format: '###-####',
+            //       },
+            //       {
+            //         sectionTitle: m.heirShare.defaultMessage,
+            //         title: m.heirsInheritanceRate.defaultMessage,
+            //         id: 'heirsPercentage',
+            //       },
+            //       {
+            //         title: m.taxFreeInheritance.defaultMessage,
+            //         id: 'taxFreeInheritance',
+            //         readOnly: true,
+            //         currency: true,
+            //       },
+            //       {
+            //         title: m.inheritanceAmount.defaultMessage,
+            //         id: 'inheritance',
+            //         readOnly: true,
+            //         currency: true,
+            //       },
+            //       {
+            //         title: m.taxableInheritance.defaultMessage,
+            //         id: 'taxableInheritance',
+            //         readOnly: true,
+            //         currency: true,
+            //       },
+            //       {
+            //         title: m.inheritanceTax.defaultMessage,
+            //         id: 'inheritanceTax',
+            //         readOnly: true,
+            //         currency: true,
+            //       },
+            //     ],
+            //     repeaterButtonText: m.addHeir.defaultMessage,
+            //     sumField: 'heirsPercentage',
+            //   },
+            // ),
+          ],
+        }),
+      ],
+    }),
     buildSubSection({
       id: 'heirsAdditionalInfo',
       title: m.heirAdditionalInfo,
