@@ -16,7 +16,7 @@ concurrency:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
-  EC2_IMAGE: ${{ env.EC2_IMAGE }}
+  EC2_IMAGE: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
 jobs:
   prepare:
