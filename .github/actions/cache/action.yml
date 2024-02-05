@@ -68,6 +68,10 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Simulate cache failure
+      shell: bash
+      run: exit 1
+
     - name: Exit if no retries
       if: inputs.retries < 0
       shell: bash
