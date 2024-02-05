@@ -193,6 +193,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/health-insurance/                                                                      @island-is/norda
 /libs/application/templates/health-insurance/                                                            @island-is/norda
 /libs/clients/rsk/company-registry                                                                       @island-is/norda
+/libs/clients/althingi-ombudsman/                                                                        @island-is/norda
 /libs/api/domains/company-registry                                                                       @island-is/norda
 /libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda                                                                       @island-is/norda
 /libs/clients/data-protection-complaint/                                                                 @island-is/norda
