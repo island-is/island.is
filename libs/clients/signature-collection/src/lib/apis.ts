@@ -14,10 +14,13 @@ export class AdminConfig extends Configuration {}
 export class AdminListApi extends MedmaelalistarApi {}
 export class AdminCollectionApi extends MedmaelasofnunApi {}
 export class AdminSignatureApi extends MedmaeliApi {}
+export class AdminCandidateApi extends FrambodApi {}
 
 export class ManagerConfig extends Configuration {}
 export class ManagerListApi extends MedmaelalistarApi {}
 export class ManagerCollectionApi extends MedmaelasofnunApi {}
+export class ManagerSignatureApi extends MedmaeliApi {}
+export class ManagerCandidateApi extends FrambodApi {}
 
 const configFactory = (
   config: ConfigType<typeof SignatureCollectionClientConfig>,
@@ -66,7 +69,12 @@ export const exportedApis = [
       ],
     }),
   ),
-  ...[AdminListApi, AdminCollectionApi, AdminSignatureApi].map((Api) => ({
+  ...[
+    AdminListApi,
+    AdminCollectionApi,
+    AdminSignatureApi,
+    AdminCandidateApi,
+  ].map((Api) => ({
     provide: Api,
     useFactory: (
       config: ConfigType<typeof SignatureCollectionClientConfig>,
@@ -90,7 +98,12 @@ export const exportedApis = [
       XRoadConfig.KEY,
     ],
   })),
-  ...[ManagerListApi, ManagerCollectionApi].map((Api) => ({
+  ...[
+    ManagerListApi,
+    ManagerCollectionApi,
+    ManagerSignatureApi,
+    ManagerCandidateApi,
+  ].map((Api) => ({
     provide: Api,
     useFactory: (
       config: ConfigType<typeof SignatureCollectionClientConfig>,

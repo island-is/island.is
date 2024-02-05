@@ -6,7 +6,7 @@ import { ConfigType } from '@nestjs/config'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Lawyer, mapToLawyer } from '@island.is/judicial-system/types'
+import { type Lawyer, mapToLawyer } from '@island.is/judicial-system/types'
 
 import { defenderModuleConfig } from './defender.config'
 

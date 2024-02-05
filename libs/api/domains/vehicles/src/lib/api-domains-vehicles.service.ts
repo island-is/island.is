@@ -34,6 +34,7 @@ import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
+import { mileageDetailConstructor } from '../utils/helpers'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -269,8 +270,12 @@ export class VehiclesService {
     const isEditing =
       isReadDateToday(latestDate ?? undefined) && isIslandIsReading
 
+    const returnData = res.map((item) => {
+      return mileageDetailConstructor(item)
+    })
+
     return {
-      data: res,
+      data: returnData,
       permno: input.permno,
       editing: isEditing,
     }

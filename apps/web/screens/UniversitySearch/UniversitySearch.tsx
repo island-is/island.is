@@ -402,7 +402,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text ?? '',
       href: primaryLink?.url,
-      active: primaryLink?.url === router.pathname,
+      active: primaryLink?.url === router.pathname, // TODO This fails because of the contentful url (/haskolanam-temp)
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -411,10 +411,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   return (
     <Box>
+      {organizationPage && (
+        <OrganizationHeader organizationPage={organizationPage} />
+      )}
       <GridContainer>
-        {organizationPage && (
-          <OrganizationHeader organizationPage={organizationPage} />
-        )}
         <SidebarLayout
           paddingTop={[2, 2, 9]}
           paddingBottom={[4, 4, 4]}
@@ -507,6 +507,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 if (keyField !== 'OTHER') {
                                   return (
                                     <Checkbox
+                                      key={keyField}
                                       label={
                                         <Box
                                           display="flex"
@@ -836,31 +837,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 }`}
                               />
                             }
-                            customBottomContent={
-                              <Checkbox
-                                label={n('compare', 'Setja í samanburð')}
-                                labelVariant="default"
-                                onChange={() =>
-                                  handleComparisonChange({
-                                    id: dataItem.id,
-                                    nameIs:
-                                      locale === 'en'
-                                        ? dataItem.nameEn
-                                        : dataItem.nameIs,
-                                    iconSrc:
-                                      universities.filter(
-                                        (x) => x.id === dataItem.universityId,
-                                      )[0].contentfulLogoUrl || '',
-                                  })
-                                }
-                                checked={
-                                  selectedComparison.filter(
-                                    (x) => x.id === dataItem.id,
-                                  ).length > 0
-                                }
-                                id={dataItem.id}
-                              />
-                            }
                             sidePanelConfig={{
                               cta: createPrimaryCTA(dataItem),
                               buttonLabel: n('apply', 'Sækja um'),
@@ -996,8 +972,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             key={index}
                           >
                             <ListViewCard
-                              key={index}
-                              iconText="Háskólinn í Reykjavík"
+                              iconText={
+                                universities.filter(
+                                  (x) => x.id === dataItem.universityId,
+                                )[0].contentfulTitle || ''
+                              }
                               heading={
                                 locale === 'en'
                                   ? dataItem.nameEn
@@ -1017,27 +996,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   }`}
                                 />
                               }
-                              onCheck={() =>
-                                handleComparisonChange({
-                                  id: dataItem.id,
-                                  nameIs:
-                                    locale === 'en'
-                                      ? dataItem.nameEn
-                                      : dataItem.nameIs,
-                                  iconSrc:
-                                    universities.filter(
-                                      (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl || '',
-                                })
-                              }
-                              checked={
-                                selectedComparison.filter(
-                                  (x) => x.id === dataItem.id,
-                                ).length > 0
-                              }
                               buttonLabel={n('apply', 'Sækja um')}
-                              checkboxLabel={n('compare', 'Setja í samanburð')}
-                              checkboxId={dataItem.id}
                               cta={createPrimaryCTA(dataItem)}
                               href={
                                 linkResolver('universitysearchdetails', [
@@ -1374,58 +1333,59 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Page not found')
   }
 
-  const organizationPage = await apolloClient.query<
-    Query,
-    QueryGetOrganizationPageArgs
-  >({
-    query: GET_ORGANIZATION_PAGE_QUERY,
-    variables: {
-      input: {
-        slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
-        lang: locale as ContentLanguage,
-      },
+  const [
+    {
+      data: { getOrganizationPage },
     },
-  })
-
-  const organization = await apolloClient.query<
-    Query,
-    QueryGetOrganizationPageArgs
-  >({
-    query: GET_ORGANIZATION_QUERY,
-    variables: {
-      input: {
-        slug: locale === 'is' ? 'haskolanam' : 'university-studies',
-        lang: locale as ContentLanguage,
-      },
+    {
+      data: { getOrganization },
     },
-  })
-
-  const newResponse =
-    await apolloClient.query<GetUniversityGatewayProgramsQuery>({
+    {
+      data: { universityGatewayPrograms },
+    },
+    filters,
+    {
+      data: { universityGatewayUniversities },
+    },
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_QUERY,
+      variables: {
+        input: {
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<GetUniversityGatewayProgramsQuery>({
       query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-    })
-
-  const data = newResponse.data.universityGatewayPrograms.data
-
-  const filters =
-    await apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
+    }),
+    apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
       query: GET_UNIVERSITY_GATEWAY_FILTERS,
-    })
-
-  const universities =
-    await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+    }),
+    apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-    })
+    }),
+  ])
 
   return {
-    data,
+    data: universityGatewayPrograms.data,
     searchQuery: search as string,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
     namespace,
-    organizationPage: organizationPage.data.getOrganizationPage,
-    organization: organization.data.getOrganization,
-    universities: universities.data.universityGatewayUniversities,
+    organizationPage: getOrganizationPage,
+    organization: getOrganization,
+    universities: universityGatewayUniversities,
   }
 }
 

@@ -63,6 +63,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       )}`,
     },
     secrets: {},
+    podDisruptionBudget: serviceDef.podDisruptionBudget ?? { minAvailable: 1 },
     healthCheck: {
       port: serviceDef.healthPort,
       liveness: {
@@ -86,7 +87,9 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.args) {
     result.args = serviceDef.args
   }
-
+  if (serviceDef.podDisruptionBudget) {
+    result.podDisruptionBudget = serviceDef.podDisruptionBudget
+  }
   // resources
   result.resources = serviceDef.resources
 
