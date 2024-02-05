@@ -380,7 +380,7 @@ export const inheritanceReportSchema = z.object({
     //     .optional(),
     total: z
       .number()
-      //.refine((v) => v === 100)
+      .refine((v) => v === 0 || v < 101)
       .optional(),
   }),
 

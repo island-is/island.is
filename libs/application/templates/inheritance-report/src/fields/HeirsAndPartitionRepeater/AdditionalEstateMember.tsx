@@ -66,6 +66,8 @@ export const AdditionalEstateMember = ({
 
   const { control, setValue, clearErrors, getValues } = useFormContext()
 
+  console.log('error', error)
+
   const values = getValues()
   console.log('AdditionalEstateMember')
   console.log('values', values)

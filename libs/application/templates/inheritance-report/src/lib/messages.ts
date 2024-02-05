@@ -946,6 +946,90 @@ export const m = defineMessages({
     defaultMessage: 'Erfðafjárskattur',
     description: '',
   },
+  inheritanceAddMember: {
+    id: 'ir.application:inheritanceAddMember',
+    defaultMessage: 'Bæta við erfingja',
+    description: 'Inheritance step add member of estate',
+  },
+  inheritanceDisableMember: {
+    id: 'ir.application:inheritanceDisableMember',
+    defaultMessage: 'Afvirkja',
+    description: 'Inheritance step disable member of estate',
+  },
+  inheritanceEnableMember: {
+    id: 'ir.application:inheritanceEnableMember',
+    defaultMessage: 'Virkja',
+    description: 'Inheritance step enable member of estate',
+  },
+  inheritanceDeleteMember: {
+    id: 'ir.application:inheritanceDeleteMember',
+    defaultMessage: 'Eyða',
+    description: 'Inheritance step delete member of estate',
+  },
+  inheritanceKtLabel: {
+    id: 'ir.application:inheritanceKtLabel',
+    defaultMessage: 'Kennitala',
+    description: 'National id label',
+  },
+  inheritanceRelationLabel: {
+    id: 'ir.application:inheritanceRelationLabel',
+    defaultMessage: 'Tengsl',
+    description: 'Relation label',
+  },
+  inheritanceRelationWithApplicantLabel: {
+    id: 'ir.application:inheritanceRelationWithApplicantLabel',
+    defaultMessage: 'Tengsl við umsækjanda',
+    description: 'Relation label',
+  },
+  inheritanceRelationPlaceholder: {
+    id: 'ir.application:inheritanceRelationPlaceholder',
+    defaultMessage: 'Veldu tengsl',
+    description: 'Relation placeholder',
+  },
+  inheritanceNameLabel: {
+    id: 'ir.application:inheritanceNameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Name label',
+  },
+  inheritanceForeignCitizenshipLabel: {
+    id: 'ir.application:inheritanceForeignCitizenshipLabel',
+    defaultMessage: 'Aðili án íslenskrar kennitölu',
+    description: '',
+  },
+  inheritanceDayOfBirthLabel: {
+    id: 'ir.application:inheritanceDayOfBirthLabel',
+    defaultMessage: 'Fæðingardagur',
+    description: 'Day of birth label',
+  },
+  inheritanceAdvocateLabel: {
+    id: 'ir.application:inheritanceAdvocateLabel',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
+    description: 'Custody label',
+  },
+  inheritanceUnder18Error: {
+    id: 'ir.application:inheritanceUnder18Error',
+    defaultMessage:
+      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceUnder18ErrorAdvocate: {
+    id: 'ir.application:inheritanceUnder18ErrorAdvocate',
+    defaultMessage:
+      'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
+  inheritanceAgeValidation: {
+    id: 'ir.application:inheritanceAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
+    description: '',
+  },
+  heirAdvocateAgeValidation: {
+    id: 'ir.application:heirAdvocateAgeValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
+    description: '',
+  },
   addHeir: {
     id: 'ir.application:addHeir',
     defaultMessage: 'Bæta við erfingja',
@@ -1052,7 +1136,7 @@ export const m = defineMessages({
     description: '',
   },
   errorRelation: {
-    id: 'es.application:error.errorRelation',
+    id: 'ir.application:error.errorRelation',
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
   },
