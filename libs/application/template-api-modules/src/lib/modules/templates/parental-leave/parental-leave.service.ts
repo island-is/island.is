@@ -454,7 +454,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (
       state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
       state === States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT ||
-      state === States.RESIDENCE_GRAND_APPLICATION
+      state === States.RESIDENCE_GRANT_APPLICATION
     ) {
       if (residenceGrantFiles) {
         residenceGrantFiles.forEach(async (item, index) => {
@@ -1462,7 +1462,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     try {
       const actionNameFromParams =
-        previousState === States.RESIDENCE_GRAND_APPLICATION
+        previousState === States.RESIDENCE_GRANT_APPLICATION
           ? this.isParamsActionName(params)
           : undefined
 
@@ -1501,10 +1501,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       // This try/catch keeps application in correct state
       try {
         //if (
-        //  application.state === States.RESIDENCE_GRAND_APPLICATION ||
+        //  application.state === States.RESIDENCE_GRANT_APPLICATION ||
         //  application.state ===
-        //    States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
-        //  previousState === States.RESIDENCE_GRAND_APPLICATION
+        //    States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
+        //  previousState === States.RESIDENCE_GRANT_APPLICATION
         //)
         //  return
         const selfEmployed =
@@ -1557,7 +1557,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const { previousState } = getApplicationAnswers(application.answers)
     /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
     // Reject from
-    if (previousState === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE) {
+    if (previousState === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE) {
       return
     }
     const attachments = await this.getAttachments(application)

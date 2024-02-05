@@ -17,15 +17,11 @@ import {
   StartDateOptions,
   YES,
   NO,
-  PERMANENT_FOSTER_CARE,
-  ADOPTION,
   MINIMUM_PERIOD_LENGTH,
 } from '../../constants'
 import {
-  getApplicationAnswers,
   getApplicationExternalData,
   getExpectedDateOfBirthOrAdoptionDate,
-  residentGrantIsOpenForApplication,
 } from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
@@ -36,8 +32,7 @@ import {
 } from '../../config'
 import { errorMessages } from '../messages'
 import { calculatePeriodLength } from '../directorateOfLabour.utils'
-
-import { ChildInformation, Period } from '../../types'
+import { Period } from '../../types'
 import { MessageDescriptor } from 'react-intl'
 
 const hasBeenAnswered = (answer: unknown) => answer !== undefined
@@ -305,26 +300,4 @@ export const validatePeriod = (
       return buildError('ratio', errorMessages.periodsRatioAboveMaximum)
     }
   }
-}
-
-// applicant that cannot apply for residence grant: secondary parents, adoption and foster care
-export const showResidenceGrant = (application: Application) => {
-  const { children } = getApplicationExternalData(application.externalData)
-  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
-    application.answers,
-  )
-  const childrenData = children as unknown as ChildInformation[]
-  if (
-    childrenData?.length &&
-    childrenData[0]?.parentalRelation?.match('primary') &&
-    noChildrenFoundTypeOfApplication !== PERMANENT_FOSTER_CARE &&
-    noChildrenFoundTypeOfApplication !== ADOPTION
-  )
-    return true
-  return false
-}
-
-export const disableResidenceGrantApplication = (dateOfBirth: string) => {
-  if (!residentGrantIsOpenForApplication(dateOfBirth)) return false
-  return true
 }
