@@ -50,7 +50,7 @@ runs:
       run: exit 1
 
     - name: Attempting to cache (${{ inputs.retries }} retries left)
-      id: cache_attempt
+      id: cache-attempt
       uses: actions/cache@v3 # Good for local debugging with act ❤️
       # uses: island-is/cache@v0.3
       with:
@@ -59,12 +59,12 @@ runs:
         cache-url: ${{ inputs.cache-url }}
 
     - name: Exit successfully if cache is hit
-      if: ! cancelled() && steps.cache_attempt.outputs.cache-hit == 'true'
+      if: ! cancelled() && steps.cache-attempt.outputs.cache-hit == 'true'
       shell: bash
       run: exit 0
 
     - name: Sleep for ${{ inputs.retry-interval }} seconds
-      if: ! cancelled() && inputs.retries > 0 && steps.cache_attempt.outputs.success != 'true'
+      if: ! cancelled() && inputs.retries > 0 && steps.cache-attempt.outputs.success != 'true'
       shell: bash
       run: sleep ${{ inputs.retry-interval }}
 
@@ -75,7 +75,7 @@ runs:
 
     - name: Recursively loop caching
       id: recurse-loop
-      if: ! cancelled() && steps.cache_attempt.outputs.success != 'true'
+      if: ! cancelled() && steps.cache-attempt.outputs.success != 'true'
       uses: ./.github/actions/cache
       with:
         path: ${{ inputs.path }}
