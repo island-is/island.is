@@ -119,12 +119,16 @@ export const dataSchema = z.object({
         },
         { params: errorMessages.bank },
       ),
-      useUnion: z.enum([YES, NO]),
-      usePrivatePensionFund: z.enum([YES, NO]),
-      pensionFund: z.string(),
+      useUnion: z.enum([YES, NO]).optional(),
+      usePrivatePensionFund: z.enum([YES, NO]).optional(),
+      pensionFund: z.string().optional(),
       privatePensionFund: z.string().optional(),
       privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
       union: z.string().optional(),
+    })
+    .refine((p) => ('pensionFund' in p ? !!p.pensionFund : true), {
+      path: ['pensionFund'],
+      params: coreErrorMessages.missingAnswer,
     })
     .refine(
       ({ useUnion, union }) =>
@@ -202,6 +206,7 @@ export const dataSchema = z.object({
           : true,
       { path: ['unemploymentBenefits'] },
     ),
+  employerLastSixMonths: z.enum([YES, NO]),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z

@@ -27,7 +27,7 @@ export const SignatureCollectionClientConfig = defineConfig<
     ),
     scope: [NationalRegistryScope.signatureCollection],
     scopeAdmin: [NationalRegistryScope.signatureCollectionProcess],
-    scopeManager: [NationalRegistryScope.signatureCollectionProcess],
+    scopeManager: [NationalRegistryScope.signatureCollectionManage],
     clientId: '@island.is/clients/api',
   }),
 })

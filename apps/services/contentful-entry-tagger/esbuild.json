@@ -45,7 +45,8 @@
     "@protobufjs/pool",
     "@protobufjs/utf8",
     "pseudomap",
-    "safer-buffer"
+    "safer-buffer",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }
