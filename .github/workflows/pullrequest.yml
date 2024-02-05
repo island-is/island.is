@@ -533,7 +533,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: ${{ vars.EC2_IMAGE }}
-    if: ! cancelled()
+    if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace
