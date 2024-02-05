@@ -71,6 +71,12 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
           retries: 0
 
+      - name: Debug all outputs
+        run: |
+          echo "cache-hit=${{ steps.yarn-cache.outputs.cache-hit }}"
+          echo "result=${{ steps.yarn-cache.result }}"
+          echo "success=${{ steps.yarn-cache.success }}"
+
       - name: Install yarn dependencies
         if: steps.yarn-cache.cache-hit != 'true'
         run: yarn install
