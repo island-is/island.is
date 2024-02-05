@@ -273,9 +273,6 @@ const useS3Upload = (caseId: string) => {
 
       for (const file of files) {
         try {
-          if (file.name === 'skirteini.pdf') {
-            throw Error('Failed to upload file to S3')
-          }
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
