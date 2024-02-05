@@ -81,9 +81,6 @@ jobs:
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install
 
-      - name: DEBUG EXIT
-        run: exit 1
-
       - uses: actions/setup-node@v3
         with:
           node-version: '18.8.0'
