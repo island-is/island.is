@@ -3,6 +3,7 @@ import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
+import { renderHelmServiceFile } from './exports/helm'
 import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
@@ -20,21 +21,16 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('PodDisruptionBudget definitions', () => {
-  it('Service should not contain podDisruptionBudget', async () => {
+  it('Service should get a default podDisruptionBudget', async () => {
     const sut: ServiceBuilder<'api'> = service('api')
-    const result = (await generateOutputOne({
-      outputFormat: renderers.helm,
-      service: sut,
-      runtime: new Kubernetes(Staging),
-      env: Staging,
-    })) as SerializeSuccess<HelmService>
-
-    const svc = result.serviceDef[0]
-    expect(svc).not.toHaveProperty('podDisruptionBudget.minAvailable')
+    const serviceDef: Awaited<ReturnType<typeof renderHelmServiceFile>> =
+      await renderHelmServiceFile(Staging, [sut], [sut], 'no-mocks')
+    expect(serviceDef.services.api.podDisruptionBudget?.minAvailable).toEqual(1)
   })
-  it('Service should have minAvailable: 1', async () => {
+
+  it('Service should have minAvailable: 2, thus overriding the default', async () => {
     const sut: ServiceBuilder<'api'> = service('api').podDisruption({
-      minAvailable: 1,
+      minAvailable: 2,
     })
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
@@ -43,6 +39,6 @@ describe('PodDisruptionBudget definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
     const pdb = result.serviceDef[0].podDisruptionBudget
-    expect(pdb?.minAvailable).toEqual(1)
+    expect(pdb?.minAvailable).toEqual(2)
   })
 })
