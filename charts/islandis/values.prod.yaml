@@ -1030,6 +1030,8 @@ contentful-apps:
           paths:
             - '/'
   namespace: 'contentful-apps'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
