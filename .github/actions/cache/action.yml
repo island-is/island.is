@@ -81,6 +81,14 @@ runs:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
         cache-url: ${{ inputs.cache-url }}
+        fail-on-missing: ${{ inputs.fail-on-cache-miss }}
+        lookup-only: ${{ inputs.lookup-only }}
+        enable-cross-os-archive: ${{ inputs.enableCrossOsArchive }}
+
+    - name: Fail on cache miss
+      if: inputs.fail-on-cache-miss == 'true' && steps.cache-attempt.outputs.success != 'true'
+      shell: bash
+      run: exit 1
 
     - name: Exit successfully if cache is hit
       if: ! cancelled() && steps.cache-attempt.outputs.cache-hit == 'true'
