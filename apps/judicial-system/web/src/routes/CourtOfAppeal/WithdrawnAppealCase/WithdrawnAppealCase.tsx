@@ -19,6 +19,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { strings } from './WithdrawnAppealCase.strings'
 
@@ -39,22 +40,22 @@ const WithdrawnAppealCase = () => {
 
   const previousUrl = `${constants.COURT_OF_APPEAL_CASES_ROUTE}`
 
-  const isStepValid = allFilesUploaded
+  const isStepValid = allFilesUploaded && workingCase.appealCaseNumber
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.withdrawAppeal)} />
       <FormContentContainer>
-        <Box marginBottom={2}>
+        <Box marginBottom={6}>
           <Text as="h1" variant="h1">
             {formatMessage(strings.title)}
           </Text>
         </Box>
-        <Box marginBottom={2}>
-          <CaseNumbers />
+        <Box component="section" marginBottom={5}>
+          <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
+          <CaseNumberInput />
         </Box>
-
-        <Box component="section">
+        <Box component="section" marginBottom={10}>
           <SectionHeading
             title={formatMessage(strings.courtRecordFileTitle)}
             marginBottom={1}
@@ -73,7 +74,7 @@ const WithdrawnAppealCase = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(strings.uploadBoxButtonLabel)}
-            onChange={(files) => 
+            onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, CaseFileCategory.APPEAL_COURT_RECORD),
                 updateUploadFile,
