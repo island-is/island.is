@@ -8,6 +8,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  EC2_IMAGE: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
@@ -15,7 +18,7 @@ jobs:
     env:
       CHECK: 'false'
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ env.EC2_IMAGE }}
 
     steps:
       - uses: actions/checkout@v3
