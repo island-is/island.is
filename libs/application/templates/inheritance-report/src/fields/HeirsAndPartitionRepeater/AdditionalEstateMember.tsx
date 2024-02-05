@@ -16,7 +16,11 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import intervalToDuration from 'date-fns/intervalToDuration'
-import { GenericFormField, Application, YES } from '@island.is/application/types'
+import {
+  GenericFormField,
+  Application,
+  YES,
+} from '@island.is/application/types'
 import { hasYes } from '@island.is/application/core'
 import { useEffect } from 'react'
 import { EstateMember, EstateTypes } from '../../types'
@@ -67,23 +71,20 @@ export const AdditionalEstateMember = ({
   const { control, setValue, clearErrors, getValues } = useFormContext()
 
   const values = getValues()
-  console.log('AdditionalEstateMember')
-  console.log('values', values)
 
-  const currentEstateMember = values?.estate?.estateMembers?.[index]
+  const currentHeir = values?.heir?.data?.[index]
 
-  const hasForeignCitizenship =
-    currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
-  const birthDate = currentEstateMember?.dateOfBirth
+  const hasForeignCitizenship = currentHeir?.foreignCitizenship?.[0] === 'Yes'
+  const birthDate = currentHeir?.dateOfBirth
 
   const memberAge =
     hasForeignCitizenship && birthDate
       ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
           ?.years
-      : kennitala.info(currentEstateMember.nationalId)?.age
+      : kennitala.info(currentHeir?.nationalId)?.age
 
   const hideContactInfo =
-    kennitala.isPerson(currentEstateMember.nationalId) &&
+    kennitala.isPerson(currentHeir?.nationalId) &&
     memberAge !== undefined &&
     memberAge < 18
 
@@ -92,6 +93,7 @@ export const AdditionalEstateMember = ({
     clearErrors(relationField)
     clearErrors(dateOfBirthField)
     clearErrors(`${fieldIndex}.nationalId`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [foreignCitizenship])
 
   return (
@@ -109,8 +111,7 @@ export const AdditionalEstateMember = ({
         render={() => <input type="hidden" />}
       />
       <Box display={'flex'} justifyContent="spaceBetween">
-        {/* <Text variant="h4">{formatMessage(m.estateMember)}</Text> */}
-        <Text variant="h4">m.estateMember</Text>
+        <Text variant="h4">{formatMessage(m.heir)}</Text>
         <Box>
           <Button
             variant="text"
@@ -120,8 +121,7 @@ export const AdditionalEstateMember = ({
               remove(index)
             }}
           >
-            {/* {formatMessage(m.inheritanceDeleteMember)} */}
-            m.inheritanceDeleteMember
+            {formatMessage(m.inheritanceDeleteMember)}
           </Button>
         </Box>
       </Box>
@@ -135,17 +135,14 @@ export const AdditionalEstateMember = ({
               backgroundColor="blue"
               defaultValue={field.name}
               error={error?.name ?? undefined}
-              // label={formatMessage(m.inheritanceNameLabel)}
-              label={'m.inheritanceNameLabel'}
+              label={formatMessage(m.inheritanceNameLabel)}
               required
             />
           </GridColumn>
           <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
             <DatePickerController
-              // label={formatMessage(m.inheritanceDayOfBirthLabel)}
-              label={'m.inheritanceDayOfBirthLabel'}
-              // placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
-              placeholder={'m.inheritanceDayOfBirthLabel'}
+              label={formatMessage(m.inheritanceDayOfBirthLabel)}
+              placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
               id={dateOfBirthField}
               key={dateOfBirthField}
               name={dateOfBirthField}
@@ -163,6 +160,7 @@ export const AdditionalEstateMember = ({
         </GridRow>
       ) : (
         <Box paddingY={2}>
+          LookupPerson
           {/* <LookupPerson
             // message={formatMessage(m.inheritanceUnder18Error)}
             message={'m.inheritanceUnder18Error'}
@@ -184,8 +182,7 @@ export const AdditionalEstateMember = ({
             key={relationField}
             id={relationField}
             name={relationField}
-            // label={formatMessage(m.inheritanceRelationLabel)}
-            label={'m.inheritanceRelationLabel'}
+            label={formatMessage(m.inheritanceRelationLabel)}
             defaultValue={field.relation}
             options={relationOptions}
             error={error?.relation}
@@ -200,8 +197,7 @@ export const AdditionalEstateMember = ({
               key={relationWithApplicantField}
               id={relationWithApplicantField}
               name={relationWithApplicantField}
-              // label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
-              label={'m.inheritanceRelationWithApplicantLabel'}
+              label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
               defaultValue={field.relationWithApplicant}
               options={relationWithApplicantOptions}
               error={error?.relationWithApplicant}
@@ -240,7 +236,7 @@ export const AdditionalEstateMember = ({
       </GridRow>
       {/* ADVOCATE */}
       {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
-        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        (currentHeir?.nationalId || hasForeignCitizenship) &&
         memberAge !== undefined &&
         memberAge < 18 && (
           <Box
@@ -254,11 +250,11 @@ export const AdditionalEstateMember = ({
             <GridRow>
               <GridColumn span={['1/1']} paddingBottom={2}>
                 <Text variant="h4">
-                  {/* {formatMessage(m.inheritanceAdvocateLabel)} */}
-                  m.inheritanceAdvocateLabel
+                  {formatMessage(m.inheritanceAdvocateLabel)}
                 </Text>
               </GridColumn>
               <GridColumn span={['1/1']} paddingBottom={2}>
+                LookupPerson
                 {/* <LookupPerson
                   message={
                     selectedEstate === EstateTypes.divisionOfEstateByHeirs
@@ -316,8 +312,7 @@ export const AdditionalEstateMember = ({
             defaultValue={field?.foreignCitizenship || []}
             options={[
               {
-                // label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                label: 'm.inheritanceForeignCitizenshipLabel',
+                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
                 value: YES,
               },
             ]}

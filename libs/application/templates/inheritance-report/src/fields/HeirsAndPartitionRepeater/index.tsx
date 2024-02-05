@@ -593,8 +593,17 @@ export const HeirsAndPartitionRepeater: FC<
         ]
       }, [] as JSX.Element[])}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
+        if (member.initial) {
+          return null
+        }
+
+        console.log('member', member)
+
+        member.nationalId = member.nationalId ?? ''
+        member.name = member.name ?? ''
+
         return (
-          <Box key={member.id} hidden={member.initial}>
+          <Box key={member.id}>
             <AdditionalEstateMember
               application={application}
               field={member}
