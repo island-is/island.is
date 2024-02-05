@@ -67,7 +67,7 @@ export class ApiUserService {
       throw new NotFoundException(`Api key ${id} does not exist`)
     }
 
-    return updatedApiKey
+    return this.decryptApiKey(updatedApiKey)
   }
 
   decryptApiKey(apiKeyInfo?: ApiUserModel) {

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Text,
   Box,
@@ -11,16 +11,15 @@ import {
 import {
   Aid,
   AidName,
+  ApiKeysForMunicipality,
   Municipality,
   scrollToId,
 } from '@island.is/financial-aid/shared/lib'
 import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import ApiKeysSettings from './ApiKeysSettings/ApiKeysSettings'
-// import { useCurrentMunicipalityState } from '../../utils/useCurrentMunicipalityState'
-// import useCurrentMunicipalityState from '@island.is/financial-aid-web/veita/src/utils/useCurrentMunicipalitState'
 import useCurrentMunicipalityState from '@island.is/financial-aid-web/veita/src/utils/useCurrentMunicipalityState'
+import ApiKeysSettings from './ApiKeysSettings/ApiKeysSettings'
+import ApiKeyInfo from './ApiKeysSettings/ApiKeysInfo'
 
 interface Props {
   currentMunicipality: Municipality
@@ -31,6 +30,8 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     useCurrentMunicipalityState({
       municipality: currentMunicipality,
     })
+
+  const { apiKeyInfo, municipalityId } = state
 
   const [hasNavError, setHasNavError] = useState(false)
   const [hasAidError, setHasAidError] = useState(false)
@@ -312,12 +313,11 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         <Text as="h1" variant="h1">
           Sveitarfélagsstillingar
         </Text>
-      </Box>
 
-      {/* <ApiKeysSettings
-        apiKeyInfo={state.apiKeyInfo}
-        currentMunicipalityCode={state.municipalityId}
-      /> */}
+        <Button loading={loading} onClick={submit} icon="checkmark">
+          Vista stillingar
+        </Button>
+      </Box>
 
       <Box className={`contentUp delay-25`}>
         {navAndMultiSelectContent.map((el, index) => {
@@ -339,12 +339,29 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           )
         })}
       </Box>
+      <Box className={`contentUp`}>
+        <Box marginBottom={[2, 2, 7]} id="apiKeySettings">
+          <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+            <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+              Tenging við ytri kerfi
+            </Text>
+            <ApiKeysSettings
+              apiKeyInfo={apiKeyInfo}
+              code={municipalityId}
+              setCurrentState={(ApiKeyInfo: ApiKeysForMunicipality) =>
+                setState({ ...state, apiKeyInfo: ApiKeyInfo })
+              }
+            />
+          </Box>
+          <ApiKeyInfo apiKeyInfo={apiKeyInfo} />
+        </Box>
+      </Box>
 
       {EmailSiteAidContent.map((el, index) => {
         return (
           <Box
             marginBottom={[2, 2, 7]}
-            className={`contentUp`}
+            className={`contentUp delay-25`}
             style={{ animationDelay: index * 10 + 30 + 'ms' }}
             key={`EmailSiteAidContent-${index}`}
           >

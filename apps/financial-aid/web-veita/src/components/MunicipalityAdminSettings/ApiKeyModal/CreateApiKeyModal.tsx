@@ -47,8 +47,8 @@ const CreateApiKeyModal = ({ isVisible, setIsVisible, onSubmit }: Props) => {
       isVisible={isVisible}
       setIsVisible={setIsVisible}
       header={'Nýr lykill'}
-      hasError={apiKeyState.hasError}
-      errorMessage="Það þarf að velja nafn á kerfið"
+      hasError={false}
+      errorMessage=""
       submitButtonText={'Stofna Api lykil'}
       onSubmit={() => {
         if (!apiKeyState.name) {
