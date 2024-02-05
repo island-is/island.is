@@ -1,7 +1,7 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from './constants'
-import { isValidString } from './utils/helpers'
+import { customZodError, isValidEmail, isValidPhoneNumber, isValidString } from './utils/helpers'
 import { m } from './messages'
 
 export const inheritanceReportSchema = z.object({
@@ -123,6 +123,78 @@ export const inheritanceReportSchema = z.object({
       })
       .optional(),
     assetsTotal: z.number().optional(),
+    estateMembers: z
+      .object({
+        name: z.string(),
+        relation: customZodError(z.string().min(1), m.errorRelation),
+        relationWithApplicant: z.string().optional(),
+        nationalId: z.string().optional(),
+        custodian: z.string().length(10).optional(),
+        foreignCitizenship: z.string().array().min(0).max(1).optional(),
+        dateOfBirth: z.string().optional(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+        phone: z.string(),
+        email: z.string(),
+        // Málsvari
+        advocate: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z.string(),
+            email: z.string(),
+          })
+          .optional(),
+      })
+      .refine(
+        ({ foreignCitizenship, nationalId }) => {
+          return !foreignCitizenship?.length
+            ? nationalId && kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+
+      /* Validating email and phone of member depending on whether the field is 
+          enabled and whether member has advocate */
+      .refine(
+        ({ enabled, advocate, phone }) => {
+          return enabled && !advocate ? isValidPhoneNumber(phone) : true
+        },
+        {
+          path: ['phone'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate, email }) => {
+          return enabled && !advocate ? isValidEmail(email) : true
+        },
+        {
+          path: ['email'],
+        },
+      )
+
+      /* validation for advocates */
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
+        },
+        {
+          path: ['advocate', 'phone'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidEmail(advocate.email) : true
+        },
+        {
+          path: ['advocate', 'email'],
+        },
+      )
+      .array()
+      .optional(),
   }),
 
   /* debts */

@@ -54,6 +54,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     ])
     const estate = estateTransformer(estateResponse[0])
 
+    console.log('syslumennOnEtry estate', estate)
     return {
       success: true,
       estate,

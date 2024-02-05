@@ -1,4 +1,4 @@
-import { EstateAsset, EstateInfo } from '@island.is/clients/syslumenn'
+import { EstateAsset, EstateInfo, EstateMember } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 
@@ -20,13 +20,33 @@ export const trueOrHasYes = (element: string | boolean): string => {
   return value.toString()
 }
 
+const estateMemberMapper = (element: EstateMember) => {
+  return {
+    ...element,
+    initial: true,
+    enabled: true,
+    phone: '',
+    email: '',
+    relationWithApplicant: '',
+    advocate: element.advocate
+      ? {
+          ...element.advocate,
+          phone: '',
+          email: '',
+        }
+      : undefined,
+  }
+}
+
 export const estateTransformer = (estate: EstateInfo): InheritanceData => {
   const realEstate = estate.assets.map((el) => initialMapper<EstateAsset>(el))
   const vehicles = estate.vehicles.map((el) => initialMapper<EstateAsset>(el))
   const guns = estate.guns.map((el) => initialMapper<EstateAsset>(el))
+  const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
-  return {
+  const bla = {
     ...estate,
+    estateMembers,
     realEstate: {
       data: realEstate,
     },
@@ -37,6 +57,9 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
       data: guns,
     },
   }
+  console.log('bla', bla)
+
+  return bla
 }
 
 // -----------------------------------------------------------------

@@ -12,8 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
-import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { Answers, EstateMember } from '../../types'
+import { Answers, EstateMember, EstateTypes, heirAgeValidation, relationWithApplicant } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -21,15 +20,10 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
-import {
-  EstateTypes,
-  heirAgeValidation,
-  relationWithApplicant,
-} from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
-import { getEstateDataFromApplication } from '../../lib/utils'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 
-export const EstateMembersRepeater: FC<
+export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   console.log('application', application)
@@ -170,7 +164,8 @@ export const EstateMembersRepeater: FC<
           ...acc,
           <Box marginTop={index > 0 ? 7 : 0} key={index}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Text variant="h4">{formatMessage(m.estateMember)}</Text>
+              {/* <Text variant="h4">{formatMessage(m.estateMember)}</Text> */}
+              <Text variant="h4">m.estateMember</Text>
               <Box>
                 <Button
                   variant="text"
@@ -189,8 +184,11 @@ export const EstateMembersRepeater: FC<
                   }}
                 >
                   {member.enabled
-                    ? formatMessage(m.inheritanceDisableMember)
-                    : formatMessage(m.inheritanceEnableMember)}
+                    ? 'm.inheritanceDisableMember'
+                    : 'm.inheritanceEnableMember'
+                    // ? formatMessage(m.inheritanceDisableMember)
+                    // : formatMessage(m.inheritanceEnableMember)
+                  }
                 </Button>
               </Box>
             </Box>
@@ -199,7 +197,8 @@ export const EstateMembersRepeater: FC<
                 <InputController
                   id={`${id}[${index}].nationalId`}
                   name={`${id}[${index}].nationalId`}
-                  label={formatMessage(m.inheritanceKtLabel)}
+                  // label={formatMessage(m.inheritanceKtLabel)}
+                  label={'m.inheritanceKtLabel'}
                   defaultValue={formatNationalId(member.nationalId || '')}
                   backgroundColor="white"
                   disabled={!member.enabled}
@@ -211,7 +210,8 @@ export const EstateMembersRepeater: FC<
                 <InputController
                   id={`${id}[${index}].name`}
                   name={`${id}[${index}].name`}
-                  label={formatMessage(m.inheritanceNameLabel)}
+                  // label={formatMessage(m.inheritanceNameLabel)}
+                  label={'m.inheritanceNameLabel'}
                   readOnly
                   defaultValue={member.name || ''}
                   backgroundColor="white"
@@ -222,7 +222,8 @@ export const EstateMembersRepeater: FC<
                 <InputController
                   id={`${id}[${index}].relation`}
                   name={`${id}[${index}].relation`}
-                  label={formatMessage(m.inheritanceRelationLabel)}
+                  // label={formatMessage(m.inheritanceRelationLabel)}
+                  label={'m.inheritanceRelationLabel'}
                   readOnly
                   defaultValue={member.relation}
                   backgroundColor="white"
@@ -236,9 +237,10 @@ export const EstateMembersRepeater: FC<
                     <SelectController
                       id={`${id}[${index}].relationWithApplicant`}
                       name={`${id}[${index}].relationWithApplicant`}
-                      label={formatMessage(
-                        m.inheritanceRelationWithApplicantLabel,
-                      )}
+                      // label={formatMessage(
+                      //   m.inheritanceRelationWithApplicantLabel,
+                      // )}
+                      label={'m.inheritanceRelationWithApplicantLabel'}
                       defaultValue={member.relationWithApplicant}
                       options={relationsWithApplicant}
                       error={error?.relationWithApplicant}
@@ -294,14 +296,16 @@ export const EstateMembersRepeater: FC<
                       variant="h4"
                       color={member.enabled ? 'dark400' : 'dark300'}
                     >
-                      {formatMessage(m.inheritanceAdvocateLabel)}
+                      {/* {formatMessage(m.inheritanceAdvocateLabel)} */}
+                      m.inheritanceAdvocateLabel
                     </Text>
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
                       id={`${id}[${index}].advocate.nationalId`}
                       name={`${id}[${index}].advocate.nationalId`}
-                      label={formatMessage(m.inheritanceKtLabel)}
+                      // label={formatMessage(m.inheritanceKtLabel)}
+                      label={'m.inheritanceKtLabel'}
                       readOnly
                       defaultValue={formatNationalId(
                         member.advocate?.nationalId || '',
@@ -316,7 +320,8 @@ export const EstateMembersRepeater: FC<
                     <InputController
                       id={`${id}[${index}].advocate.name`}
                       name={`${id}[${index}].advocate.name`}
-                      label={formatMessage(m.inheritanceNameLabel)}
+                      // label={formatMessage(m.inheritanceNameLabel)}
+                      label={'m.inheritanceNameLabel'}
                       readOnly
                       defaultValue={member.advocate?.name || ''}
                       backgroundColor="white"
@@ -386,7 +391,8 @@ export const EstateMembersRepeater: FC<
           onClick={handleAddMember}
           size="small"
         >
-          {formatMessage(m.inheritanceAddMember)}
+          {/* formatMessage(m.inheritanceAddMember) */}
+          m.inheritanceAddMember
         </Button>
       </Box>
       {errors && errors[heirAgeValidation] ? (
@@ -394,8 +400,10 @@ export const EstateMembersRepeater: FC<
           <InputError
             errorMessage={
               selectedEstate === EstateTypes.divisionOfEstateByHeirs
-                ? formatMessage(m.inheritanceAgeValidation)
-                : formatMessage(m.heirAdvocateAgeValidation)
+                ? 'm.inheritanceAgeValidation'
+                : 'm.heirAdvocateAgeValidation'
+                // ? formatMessage(m.inheritanceAgeValidation)
+                // : formatMessage(m.heirAdvocateAgeValidation)
             }
           />
         </Box>
@@ -404,4 +412,4 @@ export const EstateMembersRepeater: FC<
   )
 }
 
-export default EstateMembersRepeater
+export default HeirsAndPartitionRepeater

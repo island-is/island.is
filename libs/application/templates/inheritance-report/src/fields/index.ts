@@ -1,6 +1,8 @@
 export { DoneImage } from './DoneImage'
 export { ReportFieldsRepeater } from './ReportFieldsRepeater'
+export { HeirsAndPartitionRepeater } from './HeirsAndPartitionRepeater'
 export { PrintScreen } from './PrintScreen'
+export { LookupPerson } from './LookupPerson'
 export { HeirsOverview } from './HeirsOverview'
 export { CalculateTotalAssets } from './CalculationsOfTotal/CalculateTotalAssets'
 export { CalculateTotalDebts } from './CalculationsOfTotal/CalculateTotalDebts'

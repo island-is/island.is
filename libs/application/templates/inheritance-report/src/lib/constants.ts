@@ -24,3 +24,5 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
 }
+
+export type ErrorValue = { [key: string]: any }
