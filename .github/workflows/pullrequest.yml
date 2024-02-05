@@ -22,7 +22,7 @@ jobs:
   prepare:
     runs-on: ec2-runners
     container:
-      image: ${{ env.EC2_IMAGE }}
+      image: '${{ env.EC2_IMAGE }}'
     timeout-minutes: 35
 
     env:
