@@ -6,6 +6,7 @@ const schema = z.object({
   directorateOfImmigrationPrivateRSAKey: z.string(),
   directorateOfImmigrationPublicIBMKey: z.string(),
   chatFeedbackUrl: z.string(),
+  chatFeedbackApiKey: z.string(),
 })
 
 export const WatsonAssistantChatConfig = defineConfig({
@@ -23,6 +24,9 @@ export const WatsonAssistantChatConfig = defineConfig({
         'DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY',
       ),
       chatFeedbackUrl: env.required('WATSON_ASSISTANT_CHAT_FEEDBACK_URL'),
+      chatFeedbackApiKey: env.required(
+        'WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
+      ),
     }
   },
 })

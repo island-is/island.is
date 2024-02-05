@@ -53,16 +53,44 @@ export class WatsonAssistantChatService {
     }
   }
 
-  async submitFeedback(input: SubmitFeedbackInput) {
-    const response = await this.fetch(this.config.chatFeedbackUrl, {
+  private async fetchAccessToken() {
+    const body = new URLSearchParams()
+    body.append('grant_type', 'urn:ibm:params:oauth:grant-type:apikey')
+    body.append('apikey', this.config.chatFeedbackApiKey)
+
+    const response = await fetch('https://iam.cloud.ibm.com/identity/token', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body,
+      redirect: 'follow',
+    })
+
+    const result = await response.json()
+    return result.access_token
+  }
+
+  async submitFeedback(input: SubmitFeedbackInput) {
+    const accessToken = await this.fetchAccessToken()
+    const requestParameters = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
       body: JSON.stringify({
         ...input,
         thumbStatus: thumbStatusToNumberMap[input.thumbStatus],
-        timestamp: Date.now(),
+        timestamp: new Date().toISOString(),
       }),
-    })
+    }
+
+    const response = await this.fetch(
+      this.config.chatFeedbackUrl,
+      requestParameters,
+    )
+
     return {
       success: response.ok,
     }
