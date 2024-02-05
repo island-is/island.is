@@ -9,3 +9,13 @@ export const GET_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN = gql`
     }
   }
 `
+
+export const SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK = gql`
+  mutation SubmitWatsonAssistantChatFeedback(
+    $input: WatsonAssistantChatSubmitFeedbackInput!
+  ) {
+    watsonAssistantChatSubmitFeedback(input: $input) {
+      success
+    }
+  }
+`

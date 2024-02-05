@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType()
-export class WatsonAssistantChatIdentityTokenInput {
+@InputType('WatsonAssistantChatIdentityTokenInput')
+export class IdentityTokenInput {
   @Field()
   email!: string
 
