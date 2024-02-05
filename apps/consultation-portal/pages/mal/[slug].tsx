@@ -13,6 +13,8 @@ interface CaseProps {
   is500: boolean
 }
 
+const isNumber = (str: string) => /^\d+$/.test(str)
+
 const CaseDetails: React.FC<React.PropsWithChildren<CaseProps>> = ({
   case: Case,
   caseId,
@@ -30,6 +32,18 @@ export default withApollo(CaseDetails)
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
+
+  if (!isNumber(ctx.query.slug))
+    return {
+      props: {
+        case: null,
+        caseId: null,
+        is500: true,
+      },
+    }
+
+  const id = parseInt(ctx.query.slug)
+
   try {
     const [
       {
@@ -40,7 +54,7 @@ export const getServerSideProps = async (ctx) => {
         query: CASE_GET_CASE_BY_ID,
         variables: {
           input: {
-            caseId: parseInt(ctx.query['slug']),
+            caseId: id,
           },
         },
       }),
@@ -49,7 +63,7 @@ export const getServerSideProps = async (ctx) => {
     return {
       props: {
         case: consultationPortalCaseById,
-        caseId: parseInt(ctx.query['slug']),
+        caseId: id,
         is500: false,
       },
     }

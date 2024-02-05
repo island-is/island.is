@@ -91,7 +91,6 @@ export function prepareServiceForEnv(
   )
 
   addToErrors(errors)
-
   let result: ServiceDefinitionForEnv = {
     features: serviceDef.features,
     files: serviceDef.files,
@@ -115,6 +114,7 @@ export function prepareServiceForEnv(
     args: serviceDef.args,
     cmds: serviceDef.cmds,
     readiness: serviceDef.readiness,
+    podDisruptionBudget: serviceDef.podDisruptionBudget,
   }
 
   if (serviceDef.postgres) {

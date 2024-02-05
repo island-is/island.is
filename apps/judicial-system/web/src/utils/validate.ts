@@ -8,8 +8,8 @@ import {
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { TempCase as Case } from '../types'
 import { isBusiness } from './stepHelper'
 
 export type Validation =
@@ -256,7 +256,14 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return Boolean(workingCase.prosecutor && workingCase.court)
+  const defendantsAreValid = () =>
+    workingCase.defendants?.every((defendant) => {
+      return validate([[defendant.defendantPlea, ['empty']]]).isValid
+    })
+
+  return Boolean(
+    workingCase.prosecutor && workingCase.court && defendantsAreValid(),
+  )
 }
 
 export const isTrafficViolationStepValidIndictments = (

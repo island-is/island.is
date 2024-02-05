@@ -30,6 +30,7 @@ import { policeCaseInfo } from './PoliceCaseInfo.strings'
 interface Props {
   index: number
   policeCaseNumbers: string[]
+  policeCaseNumberPrefix?: string | null
   subtypes?: IndictmentSubtype[]
   crimeScene?: CrimeScene
   setPoliceCase: (
@@ -58,6 +59,7 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
   const {
     index,
     policeCaseNumbers,
+    policeCaseNumberPrefix,
     subtypes,
     crimeScene,
     setPoliceCase,
@@ -185,7 +187,10 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
             placeholder={formatMessage(
               policeCaseInfo.policeCaseNumberPlaceholder,
               {
-                prefix: user?.institution?.policeCaseNumberPrefix ?? '',
+                prefix:
+                  policeCaseNumberPrefix ??
+                  user?.institution?.policeCaseNumberPrefix ??
+                  '',
                 year: new Date().getFullYear(),
               },
             )}

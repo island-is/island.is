@@ -52,7 +52,7 @@ const Cards = ({
               id: item.id,
               title: item.name,
               tag: MapCaseStatuses[item.statusName],
-              published: item.created,
+              published: item.publishOnWeb,
               processEnds: item.processEnds,
               processBegins: item.processBegins,
               eyebrows: [item.typeName, item.institutionName],

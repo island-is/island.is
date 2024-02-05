@@ -292,7 +292,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },
@@ -301,7 +301,7 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: locale === 'is' ? 'haskolanam-temp' : 'university-studies',
+          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
           lang: locale as ContentLanguage,
         },
       },
@@ -344,4 +344,4 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(LandingPage, { showFooter: false })
+export default withMainLayout(LandingPage)
