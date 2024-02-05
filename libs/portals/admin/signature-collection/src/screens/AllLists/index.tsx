@@ -214,6 +214,11 @@ const Lists = () => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
+                        tag={{
+                          label: m.confirmListReviewed.defaultMessage,
+                          variant: 'mint',
+                          outlined: false,
+                        }}
                         cta={{
                           label: formatMessage(m.viewList),
                           variant: 'text',
