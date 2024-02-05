@@ -1188,7 +1188,8 @@ const useSections = (
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
     const { id, appealRulingDecision, appealState } = workingCase
-    const routeIndex = courtOfAppealRoutes.findIndex(
+    const isWithdrawnAppealCase = appealState === CaseAppealState.WITHDRAWN
+    const routeIndex = courtOfAppealRoutes(isWithdrawnAppealCase).findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
        * and we want to remove the /[:id] part
@@ -1216,44 +1217,81 @@ const useSections = (
             isActive: routeIndex === 0,
             href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
           },
-          {
-            name: formatMessage(sections.courtOfAppealSection.reception),
-            isActive: routeIndex === 1,
-            href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
-            onClick:
-              routeIndex !== 1 &&
-              validateFormStepper(
-                isValid,
-                [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
-                workingCase,
-              ) &&
-              onNavigationTo
-                ? async () =>
-                    await onNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
-                : undefined,
-          },
-          {
-            name: formatMessage(sections.courtOfAppealSection.ruling),
-            isActive: routeIndex === 2,
-            href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
-            onClick:
-              routeIndex !== 2 &&
-              validateFormStepper(
-                isValid,
-                [
-                  constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
-                  constants.COURT_OF_APPEAL_CASE_ROUTE,
-                ],
-                workingCase,
-              ) &&
-              onNavigationTo
-                ? async () =>
-                    await onNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
-                : undefined,
-          },
+          ...(!isWithdrawnAppealCase
+            ? [
+                {
+                  name: formatMessage(sections.courtOfAppealSection.reception),
+                  isActive: routeIndex === 1,
+                  href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+                  onClick:
+                    routeIndex !== 1 &&
+                    validateFormStepper(
+                      isValid,
+                      [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                      workingCase,
+                    ) &&
+                    onNavigationTo
+                      ? async () =>
+                          await onNavigationTo(
+                            constants.COURT_OF_APPEAL_CASE_ROUTE,
+                          )
+                      : undefined,
+                },
+              ]
+            : []),
+          ...(!isWithdrawnAppealCase
+            ? [
+                {
+                  name: formatMessage(sections.courtOfAppealSection.ruling),
+                  isActive: routeIndex === 2,
+                  href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
+                  onClick:
+                    routeIndex !== 2 &&
+                    validateFormStepper(
+                      isValid,
+                      [
+                        constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
+                        constants.COURT_OF_APPEAL_CASE_ROUTE,
+                      ],
+                      workingCase,
+                    ) &&
+                    onNavigationTo
+                      ? async () =>
+                          await onNavigationTo(
+                            constants.COURT_OF_APPEAL_RULING_ROUTE,
+                          )
+                      : undefined,
+                },
+              ]
+            : []),
+
+          ...(isWithdrawnAppealCase
+            ? [
+                {
+                  name: formatMessage(sections.courtOfAppealSection.withdrawal),
+                  isActive: routeIndex === 1,
+                  href: `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${workingCase.id}`,
+                  onClick:
+                    routeIndex !== 1 &&
+                    validateFormStepper(
+                      isValid,
+                      [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                      workingCase,
+                    ) &&
+                    onNavigationTo
+                      ? async () =>
+                          await onNavigationTo(
+                            constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
+                          )
+                      : undefined,
+                },
+              ]
+            : []),
           {
             name: formatMessage(sections.courtOfAppealSection.summary),
-            isActive: routeIndex === 3,
+            isActive: isWithdrawnAppealCase
+              ? routeIndex === 2
+              : routeIndex === 3,
             href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
             onClick:
               routeIndex !== 3 &&
@@ -1280,9 +1318,10 @@ const useSections = (
           appealState === CaseAppealState.COMPLETED
             ? getAppealResultTextByValue(appealRulingDecision)
             : formatMessage(sections.caseResults.result),
-        isActive:
-          routeIndex === 4 ||
-          workingCase.appealState === CaseAppealState.COMPLETED,
+        isActive: isWithdrawnAppealCase
+          ? routeIndex === 3
+          : routeIndex === 4 ||
+            workingCase.appealState === CaseAppealState.COMPLETED,
         children: [],
       },
     ]

@@ -145,3 +145,21 @@ export const isReopenedCOACase = (
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
   )
 }
+
+export const shouldUseAppealWithdrawnRoutes = (
+  appealState?: CaseAppealState | null,
+  appealCaseId?: string | null,
+  appealAssistantId?: string | null,
+  appealJudge1Id?: string | null,
+  appealJudge2Id?: string | null,
+  appealJudge3Id?: string | null,
+): boolean => {
+  return (
+    appealState === CaseAppealState.WITHDRAWN &&
+    (!appealCaseId ||
+      !appealAssistantId ||
+      !appealJudge1Id ||
+      !appealJudge2Id ||
+      !appealJudge3Id)
+  )
+}

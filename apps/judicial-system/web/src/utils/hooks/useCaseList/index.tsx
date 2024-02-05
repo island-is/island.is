@@ -30,7 +30,10 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import { isTrafficViolationCase } from '../../stepHelper'
+import {
+  isTrafficViolationCase,
+  shouldUseAppealWithdrawnRoutes,
+} from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
@@ -89,19 +92,24 @@ const useCaseList = () => {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
+        const isWithdrawnRoute = shouldUseAppealWithdrawnRoutes(
+          caseToOpen.appealState,
+          caseToOpen.appealAssistant?.id,
+          caseToOpen.appealJudge1?.id,
+          caseToOpen.appealJudge2?.id,
+          caseToOpen.appealJudge3?.id,
+        )
+
         if (
-          caseToOpen.appealState === CaseAppealState.WITHDRAWN &&
-          !caseToOpen.appealCaseNumber
-        ) {
-          routeTo = constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
-        } else if (
-          findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen) ===
-          constants.courtOfAppealRoutes[1]
+          findFirstInvalidStep(
+            constants.courtOfAppealRoutes(isWithdrawnRoute),
+            caseToOpen,
+          ) === constants.courtOfAppealRoutes(isWithdrawnRoute)[1]
         ) {
           routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
         } else {
           routeTo = findFirstInvalidStep(
-            constants.courtOfAppealRoutes,
+            constants.courtOfAppealRoutes(isWithdrawnRoute),
             caseToOpen,
           )
         }

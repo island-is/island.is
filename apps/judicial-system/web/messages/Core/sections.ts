@@ -364,6 +364,11 @@ export const sections = {
       defaultMessage: 'Samantekt',
       description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
     },
+    withdrawal: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.withdrawn',
+      defaultMessage: 'Niðurfelling máls',
+      description: 'Notaður sem texti í skrefum á hliðarstiku þegar kæruhafnað',
+    },
   }),
   caseResults: defineMessages({
     dissmissed: {

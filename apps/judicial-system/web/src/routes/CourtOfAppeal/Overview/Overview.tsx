@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
@@ -165,7 +166,17 @@ const CourtOfAppealOverview: React.FC<
           <FormFooter
             previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
             onNextButtonClick={() =>
-              handleNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
+              handleNavigationTo(
+                shouldUseAppealWithdrawnRoutes(
+                  workingCase.appealState,
+                  workingCase.appealAssistant?.id,
+                  workingCase.appealJudge1?.id,
+                  workingCase.appealJudge2?.id,
+                  workingCase.appealJudge3?.id,
+                )
+                  ? constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
+                  : constants.COURT_OF_APPEAL_CASE_ROUTE,
+              )
             }
             nextButtonIcon="arrowForward"
           />

@@ -236,10 +236,11 @@ export const courtIndictmentRoutes = [
   INDICTMENTS_COURT_RECORD_ROUTE,
 ]
 
-export const courtOfAppealRoutes = [
+export const courtOfAppealRoutes = (isWithdrawnAppeal: boolean) => [
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
-  COURT_OF_APPEAL_CASE_ROUTE,
-  COURT_OF_APPEAL_RULING_ROUTE,
+  ...(!isWithdrawnAppeal ? [COURT_OF_APPEAL_CASE_ROUTE] : []),
+  ...(!isWithdrawnAppeal ? [COURT_OF_APPEAL_RULING_ROUTE] : []),
+  ...(isWithdrawnAppeal ? [COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE] : []),
   COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_RESULT_ROUTE,
 ]
