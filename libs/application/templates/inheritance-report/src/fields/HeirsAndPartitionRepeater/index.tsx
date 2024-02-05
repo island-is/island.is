@@ -34,7 +34,6 @@ import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 type RepeaterProps = {
   field: {
     props: {
-      // fields: Array<object>
       repeaterButtonText: string
       sumField: string
       customFields: {
@@ -44,7 +43,6 @@ type RepeaterProps = {
         readOnly: true
         currency: true
       }[]
-      // fromExternalData?: string
     }
   }
 }
@@ -63,21 +61,25 @@ function setIfValueIsNotNan(
 export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
-  const { answers } = application
   console.log('application', application)
+  console.log('errors', errors)
+
+  const { answers } = application
   const { id, props } = field
   const { customFields } = props
+
   const { formatMessage } = useLocale()
   const { getValues, setError, setValue } = useFormContext()
-  const { fields, append, remove, update, replace } = useFieldArray({
+  const { fields, append, update, replace } = useFieldArray({
     name: id,
   })
+
   const values = getValues()
   const selectedEstate = application.answers.selectedEstate
   const taxFreeLimit = Number(
     formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
   )
-  /* ------ Heirs ------ */
+
   const [index, setIndex] = useState('0')
   const [percentage, setPercentage] = useState(0)
   const [taxFreeInheritance, setTaxFreeInheritance] = useState(0)
@@ -159,8 +161,7 @@ export const HeirsAndPartitionRepeater: FC<
       label: relation,
     })) || []
 
-  console.log('relations', relations)
-  const error = (errors as any)?.estate?.estateMembers
+  const error = (errors as any)?.heirs?.data ?? {}
 
   const handleAddMember = () =>
     append({
@@ -170,11 +171,7 @@ export const HeirsAndPartitionRepeater: FC<
       name: undefined,
     })
 
-  /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    console.log('/* ------ Set heirs calculations ------ */')
-    console.log('index', index)
-
     const assetsTotal = Number(getValueViaPath(answers, 'assets.assetsTotal'))
     const debtsTotal = Number(getValueViaPath(answers, 'debts.debtsTotal'))
     const businessTotal = Number(
@@ -182,20 +179,9 @@ export const HeirsAndPartitionRepeater: FC<
     )
     const totalDeduction = Number(getValueViaPath(answers, 'totalDeduction'))
 
-    console.log(
-      'values',
-      assetsTotal,
-      debtsTotal,
-      businessTotal,
-      totalDeduction,
-    )
-
     const inheritanceValue = Math.round(
       (assetsTotal - debtsTotal + businessTotal - totalDeduction) * percentage,
     )
-
-    console.log('percentage', percentage)
-    console.log('inheritanceValue', inheritanceValue)
 
     setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
     setInheritance(inheritanceValue)
@@ -218,6 +204,7 @@ export const HeirsAndPartitionRepeater: FC<
       `${index}.taxableInheritance`,
       taxableInheritance,
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     index,
     percentage,
@@ -239,6 +226,7 @@ export const HeirsAndPartitionRepeater: FC<
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
@@ -246,24 +234,27 @@ export const HeirsAndPartitionRepeater: FC<
     clearErrors,
   ])
 
-  /* ------ Total ------ */
   const [total, setTotal] = useState(0)
 
   const calculateTotal = useCallback(() => {
     const values = getValues(id)
+
     if (!values) {
       return
     }
 
+    console.log('values', values)
+
     const total = values.reduce(
       (acc: number, current: any) =>
-        Number(acc) + Number(current[props.sumField]),
+        current?.enabled ? Number(acc) + Number(current[props.sumField]) : acc,
       0,
     )
     const addTotal = id.replace('data', 'total')
     setValue(addTotal, total)
 
     setTotal(total)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getValues, id, props.sumField])
 
   useEffect(() => {
@@ -329,6 +320,7 @@ export const HeirsAndPartitionRepeater: FC<
                     clearErrors(`${fieldIndex}.email`)
                     clearErrors(`${fieldIndex}.advocate.phone`)
                     clearErrors(`${fieldIndex}.advocate.email`)
+                    calculateTotal()
                   }}
                 >
                   {member.enabled
@@ -373,7 +365,7 @@ export const HeirsAndPartitionRepeater: FC<
                   disabled={!member.enabled}
                 />
               </GridColumn> */}
-              {application.answers.selectedEstate ===
+              {/* {application.answers.selectedEstate ===
                 EstateTypes.permitForUndividedEstate &&
                 member.relation !== 'Maki' && (
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -391,7 +383,7 @@ export const HeirsAndPartitionRepeater: FC<
                       required
                     />
                   </GridColumn>
-                )}
+                )} */}
               {!member.advocate && (
                 <>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
