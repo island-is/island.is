@@ -1,10 +1,7 @@
-import React, { ReactElement, ReactNode, forwardRef, ElementType } from 'react'
-import cn from 'classnames'
-import { ObjectFitProperty } from 'csstype'
+import React, { forwardRef, ReactElement } from 'react'
 import { useMeasure } from 'react-use'
 import { UseMeasureRef } from 'react-use/lib/useMeasure'
 
-import * as styles from './ActionCategoryCard.css'
 import {
   Box,
   Button,
@@ -19,6 +16,8 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
+
+import * as styles from './ActionCategoryCard.css'
 
 export const STACK_WIDTH = 280
 
@@ -225,7 +224,9 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                 </Text>
               </Box>
               <Text paddingTop={1}>
-                <Box className={styles.truncatedText}>{text}</Box>
+                <Box className={styles.truncatedText} component={'span'}>
+                  {text}
+                </Box>
               </Text>
             </FocusableBox>
             {/* You can only have tags or a custom component */}
@@ -269,6 +270,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                 sidePanelConfig.items.map((item) => {
                   return (
                     <Box
+                      key={item.title}
                       display="flex"
                       flexDirection="row"
                       width="full"

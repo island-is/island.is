@@ -11600,9 +11600,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/terminus@npm:10.1.1":
-  version: 10.1.1
-  resolution: "@nestjs/terminus@npm:10.1.1"
+"@nestjs/terminus@npm:10.2.0":
+  version: 10.2.0
+  resolution: "@nestjs/terminus@npm:10.2.0"
   dependencies:
     boxen: 5.1.2
     check-disk-space: 3.4.0
@@ -11651,7 +11651,7 @@ __metadata:
       optional: true
     typeorm:
       optional: true
-  checksum: 62e8707b16e86500cd94415188c7b303eed18cf216951e207693ba917965241c7e2130e982d48fc481ceafed8ed998b2e71f1866f1097541b067a39d51cd84a0
+  checksum: 16e060b56d4e655ba80a397cf45727a15df4537ab1531e1a1b54be02ff0f03c1101904c68783d9dfbd284fff464131677a8f3989b54bff620edcdfdb99b36adc
   languageName: node
   linkType: hard
 
@@ -17990,7 +17990,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.2.13, @types/react@npm:>=16, @types/react@npm:^18.0.24":
+"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.0.24":
   version: 18.2.13
   resolution: "@types/react@npm:18.2.13"
   dependencies:
@@ -18020,6 +18020,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 4b49644466c72c4fc2eafa16f8c787eac09d84117b3ab7d17d547f938cdb7bdce7cac92cb12c94d860bbdc0316802eca5af01afd7ed4ef06f6009b4bae8a494b
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:18.2.14":
+  version: 18.2.14
+  resolution: "@types/react@npm:18.2.14"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: a6a5e8cc78f486b9020d1ad009aa6c56943c68c7c6376e0f8399e9cbcd950b7b8f5d73f00200f5379f5e58d31d57d8aed24357f301d8e86108cd438ce6c8b3dd
   languageName: node
   linkType: hard
 
@@ -33758,7 +33769,7 @@ __metadata:
     "@nestjs/schematics": 10.0.1
     "@nestjs/sequelize": 9.0.2
     "@nestjs/swagger": 7.1.1
-    "@nestjs/terminus": 10.1.1
+    "@nestjs/terminus": 10.2.0
     "@nestjs/testing": 10.0.5
     "@nx/cypress": 16.9.0
     "@nx/eslint-plugin": 16.9.0
@@ -33824,7 +33835,7 @@ __metadata:
     "@types/pdfkit": 0.11.2
     "@types/pg": 8.6.4
     "@types/pubsub-js": 1.8.1
-    "@types/react": 18.2.13
+    "@types/react": 18.2.14
     "@types/react-csv": 1.1.1
     "@types/react-datepicker": 4.10.0
     "@types/react-dom": 18.2.6

@@ -1,4 +1,5 @@
 export enum SignatureCollectionPaths {
-  Lists = '/min-gogn/medmaelalistar',
-  ViewList = '/min-gogn/medmaelalistar/:id',
+  RootPath = '/min-gogn/listar',
+  SignatureCollectionLists = '/min-gogn/listar/medmaelalistar',
+  ViewList = '/min-gogn/listar/medmaelalistar/:id',
 }

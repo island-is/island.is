@@ -112,7 +112,7 @@ const Lists = () => {
             imgHiddenBelow="sm"
           />
           <GridRow marginBottom={5}>
-            <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
                 name="input"
                 placeholder={formatMessage(m.searchInAllListsPlaceholder)}
@@ -121,7 +121,7 @@ const Lists = () => {
                 backgroundColor="white"
               />
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box
                 display="flex"
                 justifyContent="spaceBetween"
@@ -213,6 +213,11 @@ const Lists = () => {
                           currentProgress: list.numberOfSignatures ?? 0,
                           maxProgress: list.area.min,
                           withLabel: true,
+                        }}
+                        tag={{
+                          label: m.confirmListReviewed.defaultMessage,
+                          variant: 'mint',
+                          outlined: false,
                         }}
                         cta={{
                           label: formatMessage(m.viewList),

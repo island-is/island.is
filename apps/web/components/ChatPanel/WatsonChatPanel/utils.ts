@@ -10,6 +10,8 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN } from '@island.is/web/screens/queries/WatsonAssistantChat'
 
+import type { WatsonInstance } from './types'
+
 const emailInputId = 'watson-assistant-chat-email'
 const nameInputId = 'watson-assistant-chat-name'
 const submitButtonId = 'watson-assistant-chat-submit-button'
@@ -69,9 +71,7 @@ const getUserID = () => {
 }
 
 const getUserInformation = async (
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  instance,
+  instance: WatsonInstance,
   namespace: Record<string, string>,
   activeLocale: Locale,
   translationVariant: TranslationVariant,
@@ -195,9 +195,7 @@ const fetchIdentityToken = async (
 }
 
 export const onAuthenticatedWatsonAssistantChatLoad = (
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  instance,
+  instance: WatsonInstance,
   namespace: Record<string, string>,
   activeLocale: Locale,
   translationVariant: TranslationVariant,
@@ -206,8 +204,6 @@ export const onAuthenticatedWatsonAssistantChatLoad = (
 
   instance.on({
     type: 'identityTokenExpired',
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     handler: (event) => {
       return new Promise((resolve, reject) => {
         // Make sure we are authenticated from the start

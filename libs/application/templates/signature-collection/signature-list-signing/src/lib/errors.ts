@@ -45,7 +45,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.active.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
@@ -76,24 +76,36 @@ export const errorMessages = {
   deniedByService: defineMessages({
     title: {
       id: 'sls.application:error.deniedByService.title',
-      defaultMessage: 'Etthvað fór úrskeiðis',
+      defaultMessage: 'Eitthvað fór úrskeiðis',
       description: '',
     },
     summary: {
       id: 'sls.application:error.deniedByService.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
+      description: '',
+    },
+  }),
+  maxReached: defineMessages({
+    title: {
+      id: 'sls.application:error.maxReached.title',
+      defaultMessage: 'Framboð hefur náð hámarksfjölda meðmæla.',
+      description: '',
+    },
+    summary: {
+      id: 'sls.application:error.maxReached.summary',
+      defaultMessage: 'Ekki er lengur hægt að mæla með þessu framboði.',
       description: '',
     },
   }),
   submitFailure: defineMessages({
     title: {
       id: 'sls.application:error.submitFailure.title',
-      defaultMessage: 'Ekitthvað fór úrskeiðis',
+      defaultMessage: 'Eitthvað fór úrskeiðis',
       description: '',
     },
     summary: {
       id: 'sls.application:error.submitFailure.summary',
-      defaultMessage: 'Ekki er hægt að stöfna söfnun meðmæla.',
+      defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),

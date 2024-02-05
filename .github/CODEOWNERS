@@ -140,6 +140,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
 /libs/api/domains/regulations-admin/                                                                     @island-is/hugsmidjan
 /libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
+/libs/api/domains/social-insurance                                                                       @island-is/hugsmidjan
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
@@ -158,6 +159,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/vehicles-mileage/                                                                          @island-is/hugsmidjan
+/libs/clients/user-notification/                                                                         @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
@@ -191,6 +193,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/health-insurance/                                                                      @island-is/norda
 /libs/application/templates/health-insurance/                                                            @island-is/norda
 /libs/clients/rsk/company-registry                                                                       @island-is/norda
+/libs/clients/althingi-ombudsman/                                                                        @island-is/norda
 /libs/api/domains/company-registry                                                                       @island-is/norda
 /libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda                                                                       @island-is/norda
 /libs/clients/data-protection-complaint/                                                                 @island-is/norda
@@ -332,7 +335,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
-**/infra/                                                                                                @island-is/devops @island-is/core
+**/infra/                                                                                                @island-is/devops
 /libs/logging/                                                                                           @island-is/devops
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core

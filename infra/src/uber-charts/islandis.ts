@@ -37,6 +37,7 @@ import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-ac
 
 import {
   userNotificationServiceSetup,
+  userNotificationCleanUpWorkerSetup,
   userNotificationWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
@@ -127,10 +128,14 @@ const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
 })
 
-const userNotificationService = userNotificationServiceSetup()
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
+const userNotificationCleanupWorkerService =
+  userNotificationCleanUpWorkerSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -164,10 +169,14 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     licenseApi,
     sessionsService,
     sessionsWorker,
     sessionsGeoip,
+    universityGatewayService,
+    universityGatewayWorker,
+    contentfulApps,
   ],
   staging: [
     appSystemApi,
@@ -196,10 +205,13 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     licenseApi,
     sessionsService,
     sessionsWorker,
     sessionsGeoip,
+    universityGatewayService,
+    universityGatewayWorker,
   ],
   dev: [
     appSystemApi,
@@ -228,6 +240,7 @@ export const Services: EnvironmentServices = {
     githubActionsCache,
     userNotificationService,
     userNotificationWorkerService,
+    userNotificationCleanupWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -248,8 +261,8 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
+  userNotificationCleanupWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
-  universityGatewayWorker,
 ]

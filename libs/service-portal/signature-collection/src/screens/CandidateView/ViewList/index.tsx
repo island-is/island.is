@@ -10,12 +10,12 @@ const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const listId = pathname.replace('/min-gogn/medmaelalistar/', '')
+  const listId = pathname.replace('/min-gogn/listar/medmaelalistar/', '')
   const { listInfo, loadingList } = useGetSignatureList(listId)
 
   return (
     <>
-      {!loadingList && (
+      {!loadingList && !!listInfo && (
         <Stack space={5}>
           <Box>
             <Text variant="h3">

@@ -201,6 +201,9 @@
       "@island.is/api/domains/signature-collection": [
         "libs/api/domains/signature-collection/src/index.ts"
       ],
+      "@island.is/api/domains/social-insurance": [
+        "libs/api/domains/social-insurance/src/index.ts"
+      ],
       "@island.is/api/domains/statistics": [
         "libs/api/domains/statistics/src/index.ts"
       ],
@@ -372,6 +375,9 @@
       ],
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/home-support": [
+        "libs/application/templates/home-support/src/index.ts"
       ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
@@ -711,6 +717,9 @@
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"
       ],
+      "@island.is/clients/user-notification": [
+        "libs/clients/user-notification/src/index.ts"
+      ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],
@@ -724,6 +733,9 @@
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/work-machines": [
         "libs/clients/work-machines/src/index.ts"
+      ],
+      "@island.is/clients/workpoint/arborg": [
+        "libs/clients/workpoint/arborg/src/index.ts"
       ],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
@@ -960,6 +972,9 @@
       ],
       "@island.is/service-portal/signature-collection": [
         "libs/service-portal/signature-collection/src/index.ts"
+      ],
+      "@island.is/service-portal/social-insurance-maintenance": [
+        "libs/service-portal/social-insurance-maintenance/src/index.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"

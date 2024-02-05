@@ -105,7 +105,7 @@ export const m = defineMessages({
   },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
-    defaultMessage: 'Engir meðmælalistar',
+    defaultMessage: 'Engin meðmælasöfnun',
     description: '',
   },
   noListsFoundBySearch: {
@@ -151,9 +151,29 @@ export const m = defineMessages({
     defaultMessage: 'Leitaðu að nafni eða kennitölu',
     description: '',
   },
-  filterLists: {
-    id: 'admin-portal.signature-collection:filterLists',
-    defaultMessage: 'Sía',
+  sortBy: {
+    id: 'admin-portal.signature-collection:sortBy',
+    defaultMessage: 'Raða eftir',
+    description: '',
+  },
+  sortAlphabeticallyAsc: {
+    id: 'admin-portal.signature-collection:sortAlphabeticallyAsc',
+    defaultMessage: 'A-Ö',
+    description: '',
+  },
+  sortAlphabeticallyDesc: {
+    id: 'admin-portal.signature-collection:sortAlphabeticallyDesc',
+    defaultMessage: 'Ö-A',
+    description: '',
+  },
+  sortDateAsc: {
+    id: 'admin-portal.signature-collection:sortDateAsc',
+    defaultMessage: 'Nýjustu fyrst',
+    description: '',
+  },
+  sortDateDesc: {
+    id: 'admin-portal.signature-collection:sortDateDesc',
+    defaultMessage: 'Elstu fyrst',
     description: '',
   },
   signeeDate: {
@@ -200,6 +220,11 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
       'Þegar búið er að fara yfir meðmælalistann skal ýta á hnappinn.',
+    description: '',
+  },
+  listReviewedAlert: {
+    id: 'admin-portal.signature-collection:listReviewedAlert',
+    defaultMessage: 'Úrvinnslu er lokið á þessari söfnun',
     description: '',
   },
 

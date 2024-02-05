@@ -5,6 +5,7 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'air-discount-scheme-api'> => {
   return service('air-discount-scheme-api')
     .namespace('air-discount-scheme')
+    .podDisruption({ minAvailable: 1 })
     .serviceAccount()
     .env({
       AUTH_AUDIENCE: {
@@ -64,6 +65,12 @@ export const serviceSetup = (services: {
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
+    })
+    .replicaCount({
+      min: 2,
+      max: 10,
+      default: 2,
+      scalingMagicNumber: 20,
     })
     .readiness('/liveness')
     .liveness('/liveness')

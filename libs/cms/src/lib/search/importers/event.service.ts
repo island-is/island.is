@@ -6,13 +6,15 @@ import { logger } from '@island.is/logging'
 import { IEvent } from '../../generated/contentfulTypes'
 import { mapEvent } from '../../models/event.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 
 @Injectable()
 export class EventSyncService implements CmsSyncProvider<IEvent> {
   processSyncData(entries: processSyncDataInput<IEvent>) {
-    logger.info('Processing sync data for events')
-
     // only process events that we consider not to be empty
     return entries.filter(
       (entry: Entry<any>): entry is IEvent =>
@@ -39,7 +41,9 @@ export class EventSyncService implements CmsSyncProvider<IEvent> {
             return false
           }
 
-          const content = extractStringsFromObject(mapped.content)
+          const content = extractStringsFromObject(
+            mapped.content.map(pruneNonSearchableSliceUnionFields),
+          )
 
           const tags = [
             {

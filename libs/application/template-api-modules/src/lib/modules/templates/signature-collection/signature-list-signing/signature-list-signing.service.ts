@@ -25,7 +25,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
-      auth.nationalId,
+      auth,
     )
     if (signature) {
       return signature
@@ -35,9 +35,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
-    const signee = await this.signatureCollectionClientService.getSignee(
-      auth.nationalId,
-    )
+    const signee = await this.signatureCollectionClientService.getSignee(auth)
     const { canSign, canSignInfo } = signee
 
     if (canSign) {
@@ -70,12 +68,37 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
+    const areaId = (
+      application.externalData.canSign.data as { area: { id: string } }
+    ).area?.id
+
+    if (!areaId) {
+      // If no area user will be stopped by can sign above
+      return null
+    }
     const ownerId = application.answers.initialQuery as string
+    // Check if user got correct ownerId, if not user has to pick list
+    const isCandidateId =
+      await this.signatureCollectionClientService.isCandidateId(ownerId, auth)
+
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
       nationalId: auth.nationalId,
-      candidateId: ownerId,
+      candidateId: isCandidateId ? ownerId : undefined,
+      areaId,
+      onlyActive: true,
     })
+    // If candidateId existed or if there is only one list, check if maxReached
+    if (lists.length === 1) {
+      const { maxReached } = lists[0]
+      if (maxReached) {
+        throw new TemplateApiError(errorMessages.maxReached, 405)
+      }
+    }
+    if (lists.length === 0) {
+      throw new TemplateApiError(errorMessages.active, 404)
+    }
+
     return lists
   }
 }

@@ -90,10 +90,10 @@ export default {
     'latestEventsSlice',
     'supportCategory',
     'supportSubCategory',
-    'lifeEventPageListSlice',
     'manualChapter',
     'chart',
     'chartComponent',
+    'featuredEvents',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

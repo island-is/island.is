@@ -10,6 +10,7 @@ import Signees from './components/signees'
 import ActionExtendDeadline from './components/extendDeadline'
 import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
+import ListReviewedAlert from './components/listReviewedAlert'
 
 export const List = () => {
   const { list } = useLoaderData() as { list: SignatureCollectionList }
@@ -41,8 +42,9 @@ export const List = () => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
+              <ListReviewedAlert />
               <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
-              <Signees />
+              <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
               <PaperUpload listId={list.id} />
               <ActionReviewComplete />
             </>

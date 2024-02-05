@@ -28,6 +28,7 @@ export interface Case {
   documents?: Array<Document>
   additionalDocuments?: Array<Document>
   stakeholders?: Array<Stakeholder>
+  publishOnWeb?: string
   extraStakeholderList?: string
   allowUsersToSendPrivateAdvices?: boolean
   relatedCases?: Array<RelatedCase>
@@ -245,4 +246,8 @@ export interface CaseExpressions {
   isRelatedCasesNotEmpty: boolean
   isStakeholdersBoxVisible: boolean
   shouldDisplayHidden: boolean
+}
+
+export type ApolloExtraProps = {
+  __typename: string
 }

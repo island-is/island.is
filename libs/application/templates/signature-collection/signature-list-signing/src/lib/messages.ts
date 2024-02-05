@@ -71,16 +71,6 @@ export const m = defineMessages({
     defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
-  canSignProviderTitle: {
-    id: 'sls.application:canSignProviderTitle',
-    defaultMessage: 'Kjörskrá',
-    description: '',
-  },
-  canSignProviderSubtitle: {
-    id: 'sls.application:canSignProviderSubtitle',
-    defaultMessage: 'Skilyrði fyrir að mæla með lista',
-    description: '',
-  },
 
   /* Signee Information */
   information: {
@@ -111,6 +101,16 @@ export const m = defineMessages({
   selectCandidateDescription: {
     id: 'sls.application:selectCandidateDescription',
     defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með',
+    description: '',
+  },
+  selectCandidateMaxReached: {
+    id: 'sls.application:selectCandidateMaxReached',
+    defaultMessage: 'Hámarki meðmæla náð',
+    description: '',
+  },
+  selectCandidateListExpired: {
+    id: 'sls.application:selectCandidateListExpired',
+    defaultMessage: 'Söfnuninni lokið',
     description: '',
   },
   listDateTil: {
@@ -154,6 +154,11 @@ export const m = defineMessages({
   listSigned: {
     id: 'sls.application:listSigned',
     defaultMessage: 'Þú hefur mælt með framboði',
+    description: '',
+  },
+  listSignedShort: {
+    id: 'sls.application:listSignedShort',
+    defaultMessage: 'Mælt með framboði',
     description: '',
   },
   listSignedDescription: {
