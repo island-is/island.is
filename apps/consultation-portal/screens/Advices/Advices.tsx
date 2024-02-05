@@ -66,7 +66,7 @@ export const AdvicesScreen = () => {
                 id: item.caseId,
                 title: item._case?.name,
                 tag: item._case?.statusName,
-                published: item._case?.publishOnWeb,
+                published: item.created,
                 processEnds: item._case?.processEnds,
                 processBegins: item._case?.processBegins,
                 eyebrows: [item._case?.typeName, item._case?.institutionName],
