@@ -473,7 +473,7 @@ export const m = defineMessages({
   },
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
-    defaultMessage: 'Meðmælalistar',
+    defaultMessage: 'Meðmælasöfnun',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
