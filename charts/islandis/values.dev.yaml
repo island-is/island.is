@@ -588,6 +588,7 @@ application-system-api:
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     WORKPOINT_ARBORG_SERVICE_PATH: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1'
+    XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
@@ -718,7 +719,6 @@ application-system-api:
       memory: '512Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
-    ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH'
     ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
