@@ -75,8 +75,8 @@ runs:
 
     - name: Attempting to cache (${{ inputs.retries }} retries left)
       id: cache-attempt
-      uses: actions/cache@v3 # Good for local debugging with act ❤️
-      # uses: island-is/cache@v0.3
+      # uses: actions/cache@v3 # Good for local debugging with act ❤️
+      uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
