@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationName: {
     id: 'slc.application:applicationName',
-    defaultMessage: 'Stofna meðmælalista',
+    defaultMessage: 'Stofna meðmælasöfnun',
     description: '',
   },
   institution: {
@@ -163,7 +163,7 @@ export const m = defineMessages({
   },
   createList: {
     id: 'slc.application:createList',
-    defaultMessage: 'Stofna meðmælalista',
+    defaultMessage: 'Stofna meðmælasöfnun',
     description: '',
   },
 
