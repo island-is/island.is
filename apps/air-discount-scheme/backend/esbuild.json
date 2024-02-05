@@ -45,7 +45,8 @@
     "safer-buffer",
     "pseudomap",
     "safer-buffer",
-    "ioredis"
+    "ioredis",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }
