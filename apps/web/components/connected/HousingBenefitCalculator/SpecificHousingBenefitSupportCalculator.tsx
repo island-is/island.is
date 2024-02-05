@@ -6,8 +6,8 @@ import {
   AlertMessage,
   Box,
   Button,
-  Inline,
-  RadioButton,
+  Option,
+  Select,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -100,6 +100,17 @@ const SpecificHousingBenefitSupportCalculator = ({
     })
   }, [inputState])
 
+  const householdMemberOptions = useMemo<Option<number>[]>(() => {
+    return [
+      { label: '1', value: 1 },
+      { label: '2', value: 2 },
+      { label: '3', value: 3 },
+      { label: '4', value: 4 },
+      { label: '5', value: 5 },
+      { label: n('sixOrMore', '6 eða fleiri'), value: 6 },
+    ]
+  }, [])
+
   return (
     <Box>
       <Box
@@ -117,65 +128,22 @@ const SpecificHousingBenefitSupportCalculator = ({
             <Controller
               control={control}
               name="householdMemberCount"
-              defaultValue=""
+              defaultValue={1}
               rules={{ required: true }}
               render={({ field: { onChange, value } }) => (
-                <Inline space={5} collapseBelow="sm">
-                  <RadioButton
-                    label="1"
-                    name="oneHouseholdMember"
-                    onChange={() => {
-                      onChange(1)
-                      updateInputState('householdMemberCount', 1)
-                    }}
-                    checked={value === 1}
-                  />
-                  <RadioButton
-                    label="2"
-                    name="twoHouseholdMembers"
-                    onChange={() => {
-                      onChange(2)
-                      updateInputState('householdMemberCount', 2)
-                    }}
-                    checked={value === 2}
-                  />
-                  <RadioButton
-                    label="3"
-                    name="threeHouseholdMembers"
-                    onChange={() => {
-                      onChange(3)
-                      updateInputState('householdMemberCount', 3)
-                    }}
-                    checked={value === 3}
-                  />
-                  <RadioButton
-                    label="4"
-                    name="fourHouseholdMembers"
-                    onChange={() => {
-                      onChange(4)
-                      updateInputState('householdMemberCount', 4)
-                    }}
-                    checked={value === 4}
-                  />
-                  <RadioButton
-                    label="5"
-                    name="fiveHouseholdMembers"
-                    onChange={() => {
-                      onChange(5)
-                      updateInputState('householdMemberCount', 5)
-                    }}
-                    checked={value === 5}
-                  />
-                  <RadioButton
-                    label={n('sixOrMore', '6 eða fleiri')}
-                    name="sixOrMoreHouseholdMembers"
-                    onChange={() => {
-                      onChange(6)
-                      updateInputState('householdMemberCount', 6)
-                    }}
-                    checked={value === 6}
-                  />
-                </Inline>
+                <Select
+                  size="sm"
+                  options={householdMemberOptions}
+                  value={householdMemberOptions.find(
+                    (option) => option.value === value,
+                  )}
+                  onChange={(option) => {
+                    if (option) {
+                      onChange(option.value)
+                      updateInputState('householdMemberCount', option.value)
+                    }
+                  }}
+                />
               )}
             />
           </Box>
@@ -183,6 +151,7 @@ const SpecificHousingBenefitSupportCalculator = ({
             <Text variant="medium" fontWeight="light" paddingBottom={2}>
               {n('housingCostsPerMonth', 'Húsnæðiskostnaður á mánuði?')}
             </Text>
+
             <InputController
               id="housingCost"
               control={control}
