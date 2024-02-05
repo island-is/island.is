@@ -2,7 +2,13 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  InputFileUpload,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
@@ -68,7 +74,6 @@ const AppealToCourtOfAppeals = () => {
   const handleNextButtonClick = useCallback(
     async (isRetry: boolean) => {
       setUploadState({ isUploading: true, error: false })
-      console.log(uploadFiles)
 
       const handleError = (id?: string) => {
         const file = uploadFiles.find((file) => file.id === id)
@@ -113,6 +118,18 @@ const AppealToCourtOfAppeals = () => {
     ],
   )
 
+  const handleRemoveFile = (file: UploadFile) => {
+    removeUploadFile(file)
+    setUploadState({ isUploading: false, error: false })
+  }
+
+  const handleChange = (files: File[], type: CaseFileCategory) => {
+    setUploadState({ isUploading: false, error: false })
+    addUploadFiles(files, type, undefined, {
+      percent: 100,
+    })
+  }
+
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
@@ -151,17 +168,14 @@ const AppealToCourtOfAppeals = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) => {
-              setUploadState({ isUploading: false, error: false })
-              addUploadFiles(files, appealBriefType, undefined, {
-                percent: 100,
-              })
-            }}
+            onChange={(files) => handleChange(files, appealBriefType)}
             onRemove={(file) => {
-              removeUploadFile(file)
-              setUploadState({ isUploading: false, error: false })
+              handleRemoveFile(file)
             }}
-            hideIcons={uploadFiles.every((file) => file.status === 'uploading')}
+            hideIcons={uploadFiles
+              .filter((file) => file.category === appealBriefType)
+              .every((file) => file.status === 'uploading')}
+            disabled={uploadState.isUploading}
           />
         </Box>
         <Box
@@ -188,17 +202,12 @@ const AppealToCourtOfAppeals = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) => {
-              setUploadState({ isUploading: false, error: false })
-              addUploadFiles(files, appealCaseFilesType, undefined, {
-                status: 'done',
-                percent: 100,
-              })
-            }}
-            onRemove={(file) => {
-              removeUploadFile(file)
-              setUploadState({ isUploading: false, error: false })
-            }}
+            onChange={(files) => handleChange(files, appealCaseFilesType)}
+            onRemove={(file) => handleRemoveFile(file)}
+            hideIcons={uploadFiles
+              .filter((file) => file.category === appealCaseFilesType)
+              .every((file) => file.status === 'uploading')}
+            disabled={uploadState.isUploading}
           />
         </Box>
         {isProsecutionUser(user) && (
