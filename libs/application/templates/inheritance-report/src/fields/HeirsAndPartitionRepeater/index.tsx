@@ -70,7 +70,7 @@ export const HeirsAndPartitionRepeater: FC<
 
   const { formatMessage } = useLocale()
   const { getValues, setError, setValue } = useFormContext()
-  const { fields, append, update, replace } = useFieldArray({
+  const { fields, append, update, remove, replace } = useFieldArray({
     name: id,
   })
 
@@ -592,7 +592,7 @@ export const HeirsAndPartitionRepeater: FC<
           </Box>,
         ]
       }, [] as JSX.Element[])}
-      {/* {fields.map((member: GenericFormField<EstateMember>, index) => {
+      {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
           <Box key={member.id} hidden={member.initial}>
             <AdditionalEstateMember
@@ -601,13 +601,13 @@ export const HeirsAndPartitionRepeater: FC<
               fieldName={id}
               index={index}
               relationOptions={relations}
-              relationWithApplicantOptions={relationsWithApplicant}
+              relationWithApplicantOptions={relations}
               remove={remove}
               error={error && error[index] ? error[index] : null}
             />
           </Box>
         )
-      })} */}
+      })}
 
       <Box marginTop={3}>
         <Button
