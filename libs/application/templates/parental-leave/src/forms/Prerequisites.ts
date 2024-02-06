@@ -1,6 +1,6 @@
 import {
+  buildActionCardListField,
   buildAlertMessageField,
-  buildCustomField,
   buildDataProviderItem,
   buildDataProviderPermissionItem,
   buildDateField,
@@ -41,7 +41,13 @@ import {
   isEligibleForParentalLeave,
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
+  mapExistingApplicationsToActionCard,
 } from '../lib/parentalLeaveUtils'
+
+import { useLocale } from '@island.is/localization'
+
+import { useNavigate } from 'react-router-dom'
+import { ChildrenAndExistingApplications } from '../types'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -633,11 +639,39 @@ export const PrerequisitesForm: Form = buildForm({
                     return hasMultipleBirths === YES && selectedChild
                   },
                 }),
-                buildCustomField({
+                buildDescriptionField({
+                  id: 'exisitingApplicationsDescription',
+                  title: '',
+                  description:
+                    parentalLeaveFormMessages.selectChild.activeApplications,
+                  marginTop: 'gutter',
+                  marginBottom: 'none',
+                }),
+
+                buildActionCardListField({
+                  marginTop: 'gutter',
                   id: 'exisitingApplications',
+                  doesNotRequireAnswer: true,
                   title:
                     parentalLeaveFormMessages.selectChild.activeApplication,
-                  component: 'ExistingApplications',
+                  condition: (_, externalData) => {
+                    const children = externalData.children
+                      ?.data as ChildrenAndExistingApplications
+
+                    return children?.existingApplications.length > 0
+                  },
+                  items: (application) => {
+                    const children = application.externalData.children
+                      .data as ChildrenAndExistingApplications
+
+                    return children.existingApplications.map((x) =>
+                      mapExistingApplicationsToActionCard(
+                        x,
+                        useLocale().formatMessage,
+                        useNavigate(),
+                      ),
+                    )
+                  },
                 }),
                 buildSubmitField({
                   id: 'toDraft',
