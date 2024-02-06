@@ -96,7 +96,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
-    .readiness('/liveness')
+    .readiness('/health/check')
     .liveness('/liveness')
     .initContainer({
       postgres: postgresInfo,
