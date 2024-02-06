@@ -18,7 +18,7 @@ describe('Mapper', () => {
       })
       it('should map if postal code and city is provided', () => {
         expect(mapFullAddress([undefined, '101', 'Reykjavík'])).toMatch(
-          '101 Reykjavík',
+          '101, Reykjavík',
         )
       })
       it('should map if address and postal code is provided', () => {
@@ -35,7 +35,7 @@ describe('Mapper', () => {
       it('should map on all arguments', () => {
         expect(
           mapFullAddress(['Hraunhólar 10090', '101', 'Reykjavík']),
-        ).toMatch('Hraunhólar 10090, 101 Reykjavík')
+        ).toMatch('Hraunhólar 10090, 101, Reykjavík')
       })
       it('should abort if no arguments', () => {
         expect(

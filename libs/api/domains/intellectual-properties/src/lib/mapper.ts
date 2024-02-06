@@ -38,5 +38,12 @@ export const mapTrademarkSubtype = (
     : TrademarkSubType.TRADEMARK
 }
 
-export const mapFullAddress = (strings: Array<string | undefined>) =>
-  strings.filter(isDefined).join(', ')
+export const mapFullAddress = (strings: Array<string | undefined>) => {
+  const filteredStrings = strings.filter(isDefined)
+
+  if (!filteredStrings.length) {
+    return undefined
+  }
+
+  return filteredStrings.join(', ')
+}
