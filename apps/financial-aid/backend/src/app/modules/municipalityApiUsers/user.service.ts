@@ -64,7 +64,6 @@ export class ApiUserService {
     const numberOfAffectedRows = await promisedUpdate
 
     if (numberOfAffectedRows !== 1) {
-      // Tolerate failure, but log error
       throw new NotFoundException(`Api key ${id} does not exist`)
     }
 
