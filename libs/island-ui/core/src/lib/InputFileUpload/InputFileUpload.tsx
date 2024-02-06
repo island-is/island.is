@@ -64,7 +64,7 @@ const UploadingIndicator = (
 export type StatusColor = {
   background: Colors
   border: Colors
-  icon: Colors
+  icon?: Colors
 }
 
 interface UploadedFileProps {
