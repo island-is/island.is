@@ -27,6 +27,7 @@ export class MunicipalityService {
     private readonly municipalityModel: typeof MunicipalityModel,
     private readonly aidService: AidService,
     private readonly staffService: StaffService,
+
     private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
