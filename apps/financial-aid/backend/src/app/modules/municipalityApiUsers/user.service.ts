@@ -6,6 +6,7 @@ import { Op } from 'sequelize'
 import { CreateApiKeyDto } from './dto'
 import { environment } from '../../../environments'
 import { uuid } from 'uuidv4'
+import { DeleteApiKeyResponse } from './models/deleteFile.response'
 
 @Injectable()
 export class ApiUserService {
@@ -39,20 +40,24 @@ export class ApiUserService {
   }
 
   async create(input: CreateApiKeyDto): Promise<ApiUserModel> {
-    return await this.apiUserModel.findOne({
-      where: {
-        id,
-      },
-    })
-  }
+    const cryptedApiKey = CryptoJS.AES.encrypt(
+      input.apiKey,
+      environment.municipalityAccessApiEncryptionKey,
+      { iv: CryptoJS.enc.Hex.parse(uuid()) },
+    ).toString()
 
-  async delete(id: string): Promise<DeleteApiKeyResponse> {
     const apiUserModel = await this.apiUserModel.create({
       ...input,
       apiKey: cryptedApiKey,
     })
 
     return this.decryptApiKey(apiUserModel)
+  }
+
+  async delete(id: string): Promise<DeleteApiKeyResponse> {
+    await this.apiUserModel.destroy({})
+
+    return null
   }
 
   async updateApiKey(id: string, name: string): Promise<ApiUserModel> {
