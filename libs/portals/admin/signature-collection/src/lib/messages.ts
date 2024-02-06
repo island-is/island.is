@@ -105,7 +105,7 @@ export const m = defineMessages({
   },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
-    defaultMessage: 'Engir meðmælalistar',
+    defaultMessage: 'Engin meðmælasöfnun',
     description: '',
   },
   noListsFoundBySearch: {
@@ -220,6 +220,11 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
       'Þegar búið er að fara yfir meðmælalistann skal ýta á hnappinn.',
+    description: '',
+  },
+  listReviewedAlert: {
+    id: 'admin-portal.signature-collection:listReviewedAlert',
+    defaultMessage: 'Úrvinnslu er lokið á þessari söfnun',
     description: '',
   },
 

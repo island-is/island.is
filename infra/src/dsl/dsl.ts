@@ -53,6 +53,7 @@ export class ServiceBuilder<ServiceType> {
       xroadConfig: [],
       files: [],
       volumes: [],
+      // podDisruptionBudget: {},
     }
   }
 
@@ -171,10 +172,7 @@ export class ServiceBuilder<ServiceType> {
    * @param pdb PodDisruptionBudget definitions
    */
   podDisruption(pdb: PodDisruptionBudget) {
-    this.serviceDef.podDisruptionBudget = {
-      ...this.serviceDef.podDisruptionBudget,
-      ...pdb,
-    }
+    this.serviceDef.podDisruptionBudget = pdb
     return this
   }
 

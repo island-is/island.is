@@ -53,6 +53,7 @@ import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { NotificationsModule } from '@island.is/api/domains/notifications'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
@@ -188,13 +189,6 @@ const environment = getConfig
           grade: environment.education.xroadGradeServiceId!,
         },
       },
-      nationalRegistry: {
-        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
-        user: environment.nationalRegistry.user!,
-        password: environment.nationalRegistry.password!,
-        host: environment.nationalRegistry.host!,
-      },
-
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
     ApplicationModule.register({
@@ -286,6 +280,7 @@ const environment = getConfig
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
+    NotificationsModule,
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
