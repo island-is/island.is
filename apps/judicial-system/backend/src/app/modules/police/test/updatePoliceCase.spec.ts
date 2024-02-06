@@ -1,5 +1,4 @@
 import { Agent } from 'https'
-import { Base64 } from 'js-base64'
 import fetch from 'node-fetch'
 import { uuid } from 'uuidv4'
 
