@@ -111,6 +111,10 @@ export const m = defineMessages({
     id: 'service.portal:transactions',
     defaultMessage: 'Færslur',
   },
+  country: {
+    id: 'service.portal:country',
+    defaultMessage: 'Land',
+  },
   date: {
     id: 'service.portal:date',
     defaultMessage: 'Dagsetning',
@@ -1233,6 +1237,10 @@ export const m = defineMessages({
   addToStorage: {
     id: 'service.portal:add-to-storage',
     defaultMessage: 'Setja í geymslu',
+  },
+  markAsRead: {
+    id: 'service.portal:mark-as-read',
+    defaultMessage: 'Merkja sem lesið',
   },
   removeFromStorage: {
     id: 'service.portal:remove-from-storage',
