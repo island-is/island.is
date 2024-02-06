@@ -37,7 +37,7 @@ const UpdateApiKeyModal = ({
     <ActionModal
       isVisible={isVisible}
       setIsVisible={setIsVisible}
-      header={'Uppfæra lykill'}
+      header={'Uppfæra lykil'}
       hasError={apiKeyState.hasError}
       errorMessage="Kerfi þarf að hafa nafn"
       submitButtonText={'Uppfæra'}
@@ -66,7 +66,7 @@ const UpdateApiKeyModal = ({
             hasError: false,
           })
         }}
-        errorMessage="Til að uppfæra til lykill þarf nafn að vera til staðar"
+        errorMessage="Nafn þarf að vera til staðar til að uppfæra lykilinn"
       />
       <Text marginTop={1} marginBottom={3} variant="small">
         Nafn á kerfið
