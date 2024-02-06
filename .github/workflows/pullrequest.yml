@@ -65,6 +65,9 @@ jobs:
         if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
         run: yarn install
 
+      - name: DEBUG FAIL
+        run: exit 1
+
       - name: Check node version
         run: |
           node -v
