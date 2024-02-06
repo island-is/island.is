@@ -157,6 +157,7 @@ import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectua
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
+import { DocumentsClientConfig } from '@island.is/clients/documents'
 
 const environment = getConfig
 
@@ -197,14 +198,7 @@ const environment = getConfig
     LicenseServiceModule,
     DirectorateOfLabourModule.register(),
     FileUploadModule,
-    DocumentModule.register({
-      documentClientConfig: {
-        basePath: environment.documentService.basePath!,
-        clientId: environment.documentService.clientId,
-        clientSecret: environment.documentService.clientSecret,
-        tokenUrl: environment.documentService.tokenUrl,
-      },
-    }),
+    DocumentModule,
     DocumentProviderModule.register({
       test: {
         basePath: environment.documentProviderService.test.basePath!,
@@ -316,6 +310,7 @@ const environment = getConfig
         NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
+        DocumentsClientConfig,
         DisabilityLicenseClientConfig,
         AdrDigitalLicenseClientConfig,
         FirearmDigitalLicenseClientConfig,
