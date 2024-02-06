@@ -121,7 +121,7 @@ export const hasSentNotification = (
   notifications?: Notification[] | null,
 ) => {
   if (!notifications || notifications.length === 0) {
-    return false
+    return { hasSent: false, date: null }
   }
 
   const notificationsOfType = notifications.filter(
@@ -129,12 +129,15 @@ export const hasSentNotification = (
   )
 
   if (notificationsOfType.length === 0) {
-    return false
+    return { hasSent: false, date: null }
   }
 
-  return Boolean(
-    notificationsOfType[0].recipients?.some((recipient) => recipient.success),
-  )
+  return {
+    hasSent: Boolean(
+      notificationsOfType[0].recipients?.some((recipient) => recipient.success),
+    ),
+    date: notificationsOfType[0].created,
+  }
 }
 
 export const isReopenedCOACase = (
@@ -144,6 +147,7 @@ export const isReopenedCOACase = (
   return (
     appealState !== CaseAppealState.COMPLETED &&
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
+      .hasSent
   )
 }
 

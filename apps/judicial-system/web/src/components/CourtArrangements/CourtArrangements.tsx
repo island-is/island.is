@@ -43,7 +43,7 @@ export const useCourtArrangements = (workingCase: Case) => {
         hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
-        )
+        ).hasSent
       ) {
         setCourtDateHasChanged(true)
       }

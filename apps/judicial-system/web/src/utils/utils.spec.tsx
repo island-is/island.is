@@ -283,8 +283,8 @@ describe('Step helper', () => {
       const nt = NotificationType.COURT_DATE
 
       // Act
-      const res1 = hasSentNotification(nt, n1)
-      const res2 = hasSentNotification(nt, n2)
+      const res1 = hasSentNotification(nt, n1).hasSent
+      const res2 = hasSentNotification(nt, n2).hasSent
 
       // Assert
       expect(res1).toEqual(false)
@@ -323,7 +323,7 @@ describe('Step helper', () => {
       const nt = NotificationType.COURT_DATE
 
       // Act
-      const res = hasSentNotification(nt, n)
+      const res = hasSentNotification(nt, n).hasSent
 
       // Assert
       expect(res).toEqual(false)
@@ -350,7 +350,7 @@ describe('Step helper', () => {
     const nt = NotificationType.REVOKED
 
     // Act
-    const res = hasSentNotification(nt, n)
+    const res = hasSentNotification(nt, n).hasSent
 
     // Assert
     expect(res).toEqual(false)
@@ -388,7 +388,7 @@ describe('Step helper', () => {
     const nt = NotificationType.COURT_DATE
 
     // Act
-    const res = hasSentNotification(nt, n)
+    const res = hasSentNotification(nt, n).hasSent
 
     // Assert
     expect(res).toEqual(true)

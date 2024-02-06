@@ -25,10 +25,12 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   InstitutionType,
+  NotificationType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 
+import { hasSentNotification } from '../../stepHelper'
 import { strings } from './useAppealAlertBanner.strings'
 import * as styles from './useAppealAlertBanner.css'
 
@@ -108,6 +110,11 @@ const useAppealAlertBanner = (
     (isProsecutionUser(user) && prosecutorStatementDate) ||
     (isDefenceUser(user) && defendantStatementDate)
 
+  const appealCompletedDate = hasSentNotification(
+    NotificationType.APPEAL_COMPLETED,
+    workingCase.notifications,
+  ).date
+
   // COURT OF APPEALS AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
   if (
     user?.institution?.type === InstitutionType.COURT_OF_APPEALS ||
@@ -115,7 +122,7 @@ const useAppealAlertBanner = (
   ) {
     if (appealState === CaseAppealState.COMPLETED) {
       title = formatMessage(strings.appealCompletedTitle, {
-        appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
+        appealedDate: formatDate(appealCompletedDate, 'PPP'),
       })
       description = getAppealDecision(formatMessage, appealRulingDecision)
     } else {
@@ -170,7 +177,7 @@ const useAppealAlertBanner = (
     }
   } else if (appealState === CaseAppealState.COMPLETED) {
     title = formatMessage(strings.appealCompletedTitle, {
-      appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
+      appealedDate: formatDate(appealCompletedDate, 'PPP'),
     })
     description = getAppealDecision(formatMessage, appealRulingDecision)
   }

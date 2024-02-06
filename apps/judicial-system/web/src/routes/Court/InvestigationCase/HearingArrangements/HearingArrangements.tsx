@@ -98,7 +98,7 @@ const HearingArrangements = () => {
         (hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
-        ) &&
+        ).hasSent &&
           !courtDateHasChanged)
       ) {
         router.push(`${destination}/${workingCase.id}`)
