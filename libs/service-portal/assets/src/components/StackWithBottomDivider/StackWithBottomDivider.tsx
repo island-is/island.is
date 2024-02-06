@@ -15,7 +15,9 @@ export const StackWithBottomDivider = (props: Props) => {
   return (
     <Box {...box}>
       <Stack {...otherProps} dividers />
-      <Divider />
+      <Box paddingTop={1}>
+        <Divider />
+      </Box>
     </Box>
   )
 }
