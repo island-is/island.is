@@ -65,6 +65,10 @@ jobs:
         if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
         run: yarn install
 
+      - name: Debug fail, but continue
+        continue-on-error: true
+        run: exit 1
+
       - name: DEBUG FAIL
         run: exit 1
 
