@@ -13,7 +13,6 @@ import {
   DownloadFileButtons,
   ExpandHeader,
   ExpandRow,
-  IntroHeader,
   LinkResolver,
   UserInfoLine,
   amountFormat,
@@ -36,7 +35,10 @@ import * as styles from './Medicine.css'
 import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
-import { exportMedicineFile } from '../../utils/FileBreakdown'
+import {
+  exportMedicineBill,
+  exportMedicineFile,
+} from '../../utils/FileBreakdown'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const MedicinePurchase = () => {
@@ -477,6 +479,22 @@ export const MedicinePurchase = () => {
             </>
           )
         )}
+        {bills?.length ? (
+          <DownloadFileButtons
+            BoxProps={{
+              paddingTop: 2,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flexEnd',
+            }}
+            buttons={[
+              {
+                text: formatMessage(m.getAsExcel),
+                onClick: () => exportMedicineBill(bills),
+              },
+            ]}
+          />
+        ) : undefined}
       </Box>
     </MedicineWrapper>
   )

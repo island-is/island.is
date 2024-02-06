@@ -52,6 +52,7 @@ export const medicineHeaders = [
   'Greiðsluþátttökuverð',
   'Greitt af einstakling',
 ]
+
 export const medicineLineHeaders = [
   'Lyfjaheiti',
   'Styrkur',
@@ -61,4 +62,20 @@ export const medicineLineHeaders = [
   'Greiðsluþátttökuverð',
   'Umframverð',
   'Greitt af einstakling',
+]
+
+export const medicineBillHeaders = [
+  'Dagsetning',
+  'Skýring',
+  'Greiðsluþátttökuverð',
+  'Greitt af einstakling',
+]
+
+export const paymentParticipateOverviewHeaders = [
+  'Réttindastaða',
+  'Mánuður',
+  'Greiðslumark',
+  'Greitt í mán.',
+  'Réttur',
+  'Endurgreitt',
 ]

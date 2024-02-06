@@ -1,5 +1,4 @@
 import {
-  AlertMessage,
   Box,
   DatePicker,
   SkeletonLoader,
@@ -8,6 +7,7 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 import {
+  DownloadFileButtons,
   ExpandHeader,
   ExpandRow,
   UserInfoLine,
@@ -29,14 +29,19 @@ import sub from 'date-fns/sub'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import {
+  exportPaymentParticipationFile,
+  exportPaymentParticipationOverview,
+} from '../../utils/FileBreakdown'
 
 export const PaymentPartication = () => {
-  const { formatMessage, formatDateFns } = useLocale()
+  const { formatMessage, formatDateFns, lang } = useLocale()
 
   const [startDate, setStartDate] = useState<Date>(
     sub(new Date(), { years: 1 }),
   )
   const [endDate, setEndDate] = useState<Date>(new Date())
+  const [loadingExpand, setLoadingExpand] = useState<number[]>([])
 
   const { data, loading, error } = useGetCopaymentStatusQuery()
   const [
@@ -57,14 +62,18 @@ export const PaymentPartication = () => {
     },
   })
 
-  const getBills = (periodId: number) =>
+  const getBills = (periodId: number) => {
     getCopaymentBillsQuery({
       variables: {
         input: {
           periodId,
         },
       },
+      onCompleted: () => {
+        setLoadingExpand(loadingExpand.filter((item) => item !== periodId))
+      },
     })
+  }
 
   if (error) {
     return (
@@ -144,6 +153,7 @@ export const PaymentPartication = () => {
                 handleChange={(date) => setStartDate(date)}
                 selected={startDate}
                 backgroundColor="blue"
+                locale={lang}
               />
               <DatePicker
                 size="xs"
@@ -152,6 +162,7 @@ export const PaymentPartication = () => {
                 handleChange={(date) => setEndDate(date)}
                 selected={endDate}
                 backgroundColor="blue"
+                locale={lang}
               />
             </Box>
           </Box>
@@ -176,8 +187,13 @@ export const PaymentPartication = () => {
                         key={`period-row-${idx}`}
                         expandWhenLoadingFinished
                         backgroundColor="default"
-                        loading={billsLoading}
-                        onExpandCallback={() => getBills(period.id ?? 0)}
+                        loading={
+                          billsLoading && loadingExpand.includes(period.id ?? 0)
+                        }
+                        onExpandCallback={() => {
+                          getBills(period.id ?? 0)
+                          setLoadingExpand([...loadingExpand, period.id ?? 0])
+                        }}
                         data={[
                           {
                             value: period.status?.display ?? '',
@@ -203,7 +219,7 @@ export const PaymentPartication = () => {
                             variant="default"
                             fontWeight="semiBold"
                           >
-                            Sundurliðun reikninga í völdum mánuði
+                            {formatMessage(messages.monthlyBreakdownOfInvoices)}
                           </Text>
                           <T.Table box={{ className: styles.subTable }}>
                             <T.Head>
@@ -341,6 +357,25 @@ export const PaymentPartication = () => {
                               </tr>
                             </T.Body>
                           </T.Table>
+                          <DownloadFileButtons
+                            BoxProps={{
+                              paddingTop: 2,
+                              display: 'flex',
+                              flexDirection: 'row',
+                              justifyContent: 'flexEnd',
+                            }}
+                            buttons={[
+                              {
+                                text: formatMessage(m.getAsExcel),
+                                onClick: () =>
+                                  exportPaymentParticipationFile(
+                                    billsData?.rightsPortalCopaymentBills
+                                      ?.items ?? [],
+                                    'xlsx',
+                                  ),
+                              },
+                            ]}
+                          />
                         </Box>
                       </ExpandRow>
                     ),
@@ -359,6 +394,25 @@ export const PaymentPartication = () => {
               />
             </Box>
           )}
+          {periods?.rightsPortalCopaymentPeriods?.items?.length ? (
+            <DownloadFileButtons
+              BoxProps={{
+                paddingTop: 2,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flexEnd',
+              }}
+              buttons={[
+                {
+                  text: formatMessage(m.getAsExcel),
+                  onClick: () =>
+                    exportPaymentParticipationOverview(
+                      periods?.rightsPortalCopaymentPeriods?.items ?? [],
+                    ),
+                },
+              ]}
+            />
+          ) : undefined}
         </Box>
       )}
       <Box>

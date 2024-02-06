@@ -7,15 +7,18 @@ import {
   aidHeaders,
   dentistHeaders,
   healthCenterHeaders,
+  medicineBillHeaders,
   medicineHeaders,
   medicineLineHeaders,
   nutritionHeaders,
   paymentOverviewHeaders,
+  paymentParticipateOverviewHeaders,
   paymentParticipationHeaders,
 } from './dataHeaders'
 import {
   RightsPortalAidOrNutrition,
   RightsPortalCopaymentBill,
+  RightsPortalCopaymentPeriod,
   RightsPortalDentistBill,
   RightsPortalDrugBill,
   RightsPortalDrugBillLine,
@@ -146,6 +149,34 @@ export const exportDentistFile = async (
   ]
 
   await downloadFile(name, dentistHeaders, [...dataArray, total], type)
+}
+
+export const exportMedicineBill = async (data: RightsPortalDrugBill[]) => {
+  const name = `Lyfjareikningar`
+  const dataArray = data.map((item) => [
+    formatDate(item.date) ?? item.date ?? '',
+    item.description ?? '',
+    amountFormat(item.totalCopaymentAmount) ?? '',
+    amountFormat(item.totalCustomerAmount) ?? '',
+  ])
+
+  await downloadFile(name, medicineBillHeaders, dataArray, 'xlsx')
+}
+
+export const exportPaymentParticipationOverview = async (
+  data: RightsPortalCopaymentPeriod[],
+) => {
+  const name = `Greidsluthatttaka`
+  const dataArray = data.map((item) => [
+    item.status?.display ?? '',
+    item.month ?? '',
+    amountFormat(item.maximumPayment) ?? '',
+    amountFormat(item.monthPayment) ?? '',
+    amountFormat(item.overpaid) ?? '',
+    amountFormat(item.repaid) ?? '',
+  ])
+
+  await downloadFile(name, paymentParticipateOverviewHeaders, dataArray, 'xlsx')
 }
 
 export const exportHealthCenterFile = async (
