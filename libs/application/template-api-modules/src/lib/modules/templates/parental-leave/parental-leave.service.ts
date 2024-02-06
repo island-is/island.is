@@ -255,14 +255,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           },
         )
       return {
-        dateOfBirth: '2024-01-01', //applicationInformation.dateOfBirth,
+        dateOfBirth: applicationInformation.dateOfBirth,
       }
     } catch (e) {
       this.logger.warning('Failed to fetch application information', e)
     }
 
     return {
-      dateOfBirth: '2024-01-01',
+      dateOfBirth: '',
     }
   }
 

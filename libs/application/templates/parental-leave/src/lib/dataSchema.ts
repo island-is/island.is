@@ -327,23 +327,13 @@ export const dataSchema = z.object({
         }),
     }),
   }),
-  additionalDocumentsScreen: z.object({
-    selfEfileUploadmployed: z.object({
-      additionalDocuments: z
-        .array(FileSchema)
-        .optional()
-        .refine((a) => a === undefined || a.length > 0, {
-          params: errorMessages.requiredAttachment,
-        }),
-    }),
-  }),
   fileUpload: z.object({
-    // selfEmployedFile: z
-    //   .array(FileSchema)
-    //   .optional()
-    //   .refine((a) => a === undefined || a.length > 0, {
-    //     params: errorMessages.requiredAttachment,
-    //   }),
+    selfEmployedFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
     studentFile: z
       .array(FileSchema)
       .optional()
@@ -380,13 +370,19 @@ export const dataSchema = z.object({
       .refine((a) => a === undefined || a.length > 0, {
         params: errorMessages.requiredAttachment,
       }),
-    // benefitsFile: z
-    //   .array(FileSchema)
-    //   .optional()
-    //   .refine((a) => a === undefined || a.length > 0, {
-    //     params: errorMessages.requiredAttachment,
-    //   }),
+    benefitsFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
     residenceGrant: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    additionalDocuments: z
       .array(FileSchema)
       .optional()
       .refine((a) => a === undefined || a.length > 0, {

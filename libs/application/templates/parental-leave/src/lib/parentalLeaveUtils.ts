@@ -1686,14 +1686,6 @@ export const synchronizeVMSTPeriods = (
   }
 }
 
-// export const isNotStillEmployed = (application: Application) => {
-//   const { employers } = getApplicationAnswers(application.answers)
-
-//   return employers?.some(
-//     (employer) => employer.stillEmployed === NO,
-//   )
-// }
-
 export const isParentalGrant = (application: Application) => {
   const { applicationType } = getApplicationAnswers(application.answers)
   return (

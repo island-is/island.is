@@ -96,7 +96,6 @@ export enum States {
 
 export enum AnswerValidationConstants {
   EMPLOYER = 'employer',
-  FILEUPLOAD = 'fileUpload',
   PAYMENTS = 'payments',
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',

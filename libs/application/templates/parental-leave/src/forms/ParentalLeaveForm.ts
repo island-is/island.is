@@ -1099,14 +1099,17 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.attachmentScreen
                   .employmentTerminationCertificateDescription,
               condition: (answers) => {
-                const { applicationType, employerLastSixMonths, isNotStillEmployed } =
-                  getApplicationAnswers(answers)
+                const {
+                  applicationType,
+                  employerLastSixMonths,
+                  isNotStillEmployed,
+                } = getApplicationAnswers(answers)
 
                 return (
                   (applicationType === PARENTAL_GRANT ||
                     applicationType === PARENTAL_GRANT_STUDENTS) &&
                   employerLastSixMonths === YES &&
-                  isNotStillEmployed === true
+                  isNotStillEmployed
                 )
               },
               maxSizeErrorText:

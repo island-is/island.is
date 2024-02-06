@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildImageField,
@@ -8,8 +7,7 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
-
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
 import {
@@ -17,11 +15,14 @@ import {
   parentalLeaveFormMessages,
 } from '../lib/messages'
 import WomanWithLaptopIllustration from '../assets/Images/WomanWithLaptopIllustration'
+
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'ParentalLeaveInReviewUpload',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'reviewUpload',
@@ -47,16 +48,14 @@ export const AdditionalDocumentsRequired: Form = buildForm({
             }),
           ],
         }),
-
         buildMultiField({
           id: 'additionalDocumentsScreen',
           title: parentalLeaveFormMessages.attachmentScreen.title,
+          description: parentalLeaveFormMessages.attachmentScreen.description,
           children: [
             buildFileUploadField({
               id: 'fileUpload.additionalDocuments',
-              title: parentalLeaveFormMessages.attachmentScreen.title,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.description,
+              title: '',
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
@@ -79,16 +78,11 @@ export const AdditionalDocumentsRequired: Form = buildForm({
                   name: parentalLeaveFormMessages.attachmentScreen
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
-                  event: 'APPROVE',
+                  event: DefaultEvents.APPROVE,
                 },
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),
