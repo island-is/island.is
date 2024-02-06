@@ -85,11 +85,11 @@ export class IntellectualPropertiesService {
       },
       markOwners: trademark.markOwners?.map((o) => ({
         name: o.name ?? '',
-        addressFull: mapFullAddress(
-          undefined,
+        addressFull: mapFullAddress([
           o.postalCode ?? undefined,
           o.county ?? undefined,
-        ),
+          o.country ?? undefined,
+        ]),
         address: o.address ?? '',
         postalCode: o.postalCode ?? '',
         county: o.county ?? '',
@@ -107,11 +107,11 @@ export class IntellectualPropertiesService {
       markAgent: trademark.markAgent
         ? {
             name: trademark?.markAgent?.name ?? '',
-            addressFull: mapFullAddress(
+            addressFull: mapFullAddress([
               trademark.markAgent.address ?? undefined,
               trademark.markAgent.postalCode ?? undefined,
               trademark.markAgent.county ?? undefined,
-            ),
+            ]),
             address: trademark.markAgent.address ?? '',
             postalCode: trademark.markAgent.postalCode ?? '',
             county: trademark.markAgent.county ?? '',
@@ -187,11 +187,12 @@ export class IntellectualPropertiesService {
         id: o.id?.toString(),
         name: o.name ?? undefined,
         address: o.address ?? undefined,
-        addressFull: mapFullAddress(
+        addressFull: mapFullAddress([
           o.address ?? undefined,
           o.postalCode ?? undefined,
           o.city ?? undefined,
-        ),
+          o.country?.code ?? undefined,
+        ]),
         country: {
           name: o.country?.name ?? undefined,
           code: o.country?.code ?? undefined,
@@ -202,11 +203,12 @@ export class IntellectualPropertiesService {
         nationalId: res.spcAgent?.ssn ?? undefined,
         name: res.spcAgent?.name ?? undefined,
         address: res.spcAgent?.address ?? undefined,
-        addressFull: mapFullAddress(
+        addressFull: mapFullAddress([
           res.spcAgent?.address ?? undefined,
           res.spcAgent?.postalCode ?? undefined,
           res.spcAgent?.city ?? undefined,
-        ),
+          res.spcAgent?.country?.code ?? undefined,
+        ]),
         postalCode: res.spcAgent?.postalCode ?? undefined,
         city: res.spcAgent?.city ?? undefined,
         telephone: res.spcAgent?.phone ?? undefined,
@@ -302,10 +304,7 @@ export class IntellectualPropertiesService {
       })),
       priorities: patent.priorities?.map((p) => ({
         applicationDate: parseIPDate(p.dateApplication),
-        country: {
-          code: p.country?.code ?? '',
-          name: p.country?.name ?? '',
-        },
+        country: p.country?.code ?? undefined,
         number: p.number ?? '',
         creationDate: parseIPDate(p.createDate),
       })),
@@ -317,7 +316,10 @@ export class IntellectualPropertiesService {
         {
           name: patent.ownerName ?? '',
           address: patent.ownerHome ?? '',
-          addressFull: mapFullAddress(patent.ownerHome ?? undefined),
+          addressFull: mapFullAddress([
+            patent.ownerHome ?? undefined,
+            patent.ownerCountry?.code ?? undefined,
+          ]),
           country: {
             name: patent.ownerCountry?.name ?? '',
             code: patent.ownerCountry?.code ?? '',
@@ -329,11 +331,11 @@ export class IntellectualPropertiesService {
         nationalId: patent.patentAgent?.ssn ?? '',
         name: patent.patentAgent?.name ?? '',
         address: patent.patentAgent?.address ?? '',
-        addressFull: mapFullAddress(
+        addressFull: mapFullAddress([
           patent.patentAgent?.address ?? undefined,
           patent.patentAgent?.postalCode ?? undefined,
           patent.patentAgent?.city ?? undefined,
-        ),
+        ]),
         postalCode: patent.patentAgent?.postalCode ?? '',
         city: patent.patentAgent?.city ?? '',
         mobilePhone: patent.patentAgent?.mobile ?? '',
@@ -348,11 +350,12 @@ export class IntellectualPropertiesService {
         ?.map((i) => ({
           ...i,
           name: i.name ?? '',
-          addressFull: mapFullAddress(
+          addressFull: mapFullAddress([
             i.address ?? undefined,
             i.postalCode ?? undefined,
             i.city ?? undefined,
-          ),
+            i.country?.code ?? undefined,
+          ]),
           address: i.address ?? '',
           postalCode: i.postalCode ?? '',
           city: i.city ?? '',
@@ -369,6 +372,9 @@ export class IntellectualPropertiesService {
         expiryDate: parseIPDate(patent.expires),
         publishDate: parseIPDate(patent.applicationDatePublishedAsAvailable),
         maxValidDate: parseIPDate(patent.maxValidDate),
+        maxValidObjectionDate: patent.regDate
+          ? parseIPDate(addMonths(patent.regDate, 9))
+          : undefined,
         lastModified: parseIPDate(patent.lastModified),
       },
     }
@@ -458,11 +464,12 @@ export class IntellectualPropertiesService {
       })),
       owners: response.owners?.map((o) => ({
         name: o.name ?? '',
-        addressFull: mapFullAddress(
+        addressFull: mapFullAddress([
           o.address ?? undefined,
           o.postalcode ?? undefined,
           o.city ?? undefined,
-        ),
+          o.countryDetails?.code ?? undefined,
+        ]),
         address: o.address ?? '',
         postalCode: o.postalcode ?? '',
         city: o.city ?? '',
@@ -477,11 +484,12 @@ export class IntellectualPropertiesService {
       })),
       designers: response.designers?.map((d) => ({
         name: d.name ?? '',
-        addressFull: mapFullAddress(
+        addressFull: mapFullAddress([
           d.address ?? undefined,
           d.postalcode ?? undefined,
           d.city ?? undefined,
-        ),
+          d.countryDetails?.code ?? undefined,
+        ]),
         address: d.address ?? '',
         postalCode: d.postalcode ?? '',
         city: d.city ?? '',
@@ -497,11 +505,12 @@ export class IntellectualPropertiesService {
       agent: {
         name: response?.agent?.name ?? '',
         address: response?.agent?.address ?? '',
-        addressFull: mapFullAddress(
+        addressFull: mapFullAddress([
           response?.agent?.address ?? undefined,
           response?.agent?.postalcode ?? undefined,
           response?.agent?.city ?? undefined,
-        ),
+          response?.agent?.countryDetails?.code ?? undefined,
+        ]),
         postalCode: response?.agent?.postalcode ?? '',
         city: response?.agent?.city ?? '',
         country: {

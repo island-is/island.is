@@ -35,10 +35,10 @@ const PatentIS = ({ data, loading }: Props) => {
       },
       {
         date: data.lifecycle.registrationDate ?? undefined,
-        message: formatMessage(ipMessages.registration),
+        message: formatMessage(ipMessages.applicationRegistration),
       },
       {
-        date: data.lifecycle.applicationDatePublishedAsAvailable ?? undefined,
+        date: data.lifecycle.publishDate ?? undefined,
         message: formatMessage(ipMessages.publish),
       },
       {
@@ -171,6 +171,28 @@ const PatentIS = ({ data, loading }: Props) => {
           },
         ]}
       />
+      {data?.priorities && (
+        <StackOrTableBlock
+          box={{ marginTop: [2, 2, 6] }}
+          entries={data?.priorities}
+          title={formatMessage(ipMessages.priority)}
+          columns={[
+            {
+              label: formatMessage(coreMessages.number),
+              key: 'number',
+            },
+            {
+              label: formatMessage(coreMessages.date),
+              isDate: true,
+              key: 'applicationDate',
+            },
+            {
+              label: formatMessage(coreMessages.country),
+              key: 'country',
+            },
+          ]}
+        />
+      )}
       {data?.pct?.date && data?.pct?.number && (
         <StackOrTableBlock
           box={{ marginTop: [2, 2, 6] }}

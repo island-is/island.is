@@ -189,7 +189,7 @@ const PatentEP = ({ data, loading }: Props) => {
               date: p.applicationDate
                 ? formatDate(new Date(p.applicationDate))
                 : undefined,
-              country: p.country.name ?? '',
+              country: p.country ?? '',
             }
           }) ?? []
         }
@@ -204,7 +204,7 @@ const PatentEP = ({ data, loading }: Props) => {
             key: 'date',
           },
           {
-            label: formatMessage(ipMessages.country),
+            label: formatMessage(coreMessages.country),
             key: 'country',
           },
         ]}

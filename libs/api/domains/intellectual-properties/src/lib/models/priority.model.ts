@@ -1,5 +1,4 @@
 import { ObjectType, Field } from '@nestjs/graphql'
-import { Country } from './country.model'
 
 @ObjectType('IntellectualPropertiesPriority')
 export class Priority {
@@ -12,6 +11,6 @@ export class Priority {
   @Field({ nullable: true })
   number?: string
 
-  @Field(() => Country)
-  country?: Country
+  @Field({ nullable: true })
+  country?: string
 }

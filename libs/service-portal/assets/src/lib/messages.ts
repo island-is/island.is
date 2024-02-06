@@ -874,10 +874,6 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:description',
     defaultMessage: 'Lýsing',
   },
-  country: {
-    id: 'sp.intellectual-property:country',
-    defaultMessage: 'Land',
-  },
   baseInfo: {
     id: 'sp.intellectual-property:base-info',
     defaultMessage: 'Grunnupplýsingar',

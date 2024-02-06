@@ -18,7 +18,7 @@ query getIntellectualPropertiesPatentById(
       lifecycle {
         applicationDate
         registrationDate
-        applicationDatePublishedAsAvailable
+        publishDate
         maxValidObjectionDate
         expiryDate
         maxValidDate
@@ -31,6 +31,12 @@ query getIntellectualPropertiesPatentById(
       }
       agent {
         ...PersonFragment
+      }
+      priorities {
+        applicationDate
+        creationDate
+        number
+        country
       }
     }
     ... on IntellectualPropertiesPatentEP {
@@ -49,9 +55,7 @@ query getIntellectualPropertiesPatentById(
       }
       priorities {
         number
-        country {
-          name
-        }
+        country
         applicationDate
       }
       lifecycle {
