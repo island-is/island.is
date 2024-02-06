@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
 import { useMutation, useQuery } from '@apollo/client'
 
 import {
@@ -55,7 +54,6 @@ const ChatFeedbackPanel = ({
   pushUp = false,
 }: ChatFeedbackPanelProps) => {
   const { activeLocale } = useI18n()
-  const router = useRouter()
 
   const [thumbStatus, setThumbStatus] = useState<ThumbStatus>(
     ThumbStatus.NoChoice,
