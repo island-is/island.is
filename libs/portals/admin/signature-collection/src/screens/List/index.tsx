@@ -47,7 +47,11 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              <ActionExtendDeadline listId={list.id} endTime={list.endTime} allowedToProcess={allowedToProcess} />
+              <ActionExtendDeadline
+                listId={list.id}
+                endTime={list.endTime}
+                allowedToProcess={allowedToProcess}
+              />
               <ListReviewedAlert />
               <ActionExtendDeadline
                 listId={list.id}
