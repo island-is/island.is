@@ -54,6 +54,7 @@ inputs:
     description: 'URL to your cache'
     required: false
     default: https://cache.dev01.devland.is/
+
 outputs:
   cache-hit:
     description: 'Did the cache key match and restored the cache?'
@@ -124,3 +125,49 @@ runs:
       if: ${{ steps.recurse-loop.outputs.success != 'true' }}
       shell: bash
       run: exit 1
+
+      # From https://github.com/marketplace/actions/slack-notify#environment-variables
+      # SLACK_CHANNEL: general
+      # SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+      # SLACK_ICON: https://github.com/rtCamp.png?size=48
+      # SLACK_MESSAGE: 'Post Content :rocket:'
+      # SLACK_TITLE: Post Title
+      # SLACK_USERNAME: rtCamp
+      # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      # 👆 Available environment variables/concfig
+    - name: Slack Notify defaults
+      if: ${{ !cancelled() }}
+      env:
+        SLACK_CHANNEL: infra-updates
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_ICON: https://github.com/island-is.png?size=48
+        SLACK_MESSAGE: ''
+        SLACK_TITLE: Github Actions cache check
+        SLACK_USERNAME: Digital Iceland cache bot
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      shell: bash
+      run: |
+        echo "SLACK_CHANNEL=${SLACK_CHANNEL}"
+        echo "SLACK_COLOR=${SLACK_COLOR}"
+        echo "SLACK_ICON=${SLACK_ICON}"
+        echo "SLACK_MESSAGE=${SLACK_MESSAGE}"
+        echo "SLACK_TITLE=${SLACK_TITLE}"
+        echo "SLACK_USERNAME=${SLACK_USERNAME}"
+        echo "SLACK_WEBHOOK=${SLACK_WEBHOOK}"
+
+    - name: Notify on failure
+      if: ${{ !cancelled() && success() }}
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_COLOR: '#00ee66'
+        SLACK_MESSAGE: 'Cache success'
+
+    - name: Notify on failure
+      if: ${{ !cancelled() && !success() }}
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_USERNAME: Github Actions cache bot
+        SLACK_CHANNEL: infra-updates
+        SLACK_COLOR: '#ff0000'
+        SLACK_MESSAGE: 'Cache failed'
