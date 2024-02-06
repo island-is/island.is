@@ -6,6 +6,7 @@ import {
 import {
   aidHeaders,
   dentistHeaders,
+  drugHeaders,
   healthCenterHeaders,
   medicineBillHeaders,
   medicineHeaders,
@@ -17,15 +18,18 @@ import {
 } from './dataHeaders'
 import {
   RightsPortalAidOrNutrition,
+  RightsPortalCalculatorRequestInput,
   RightsPortalCopaymentBill,
   RightsPortalCopaymentPeriod,
   RightsPortalDentistBill,
   RightsPortalDrugBill,
   RightsPortalDrugBillLine,
+  RightsPortalDrugCalculatorResponse,
   RightsPortalHealthCenterRecord,
   RightsPortalPaymentOverviewBill,
 } from '@island.is/api/schema'
 import { totalNumber } from '../format'
+import { RightsPortalCalculatorSelectedDrug } from '../../screens/Medicine/MedicineCalculator'
 
 type FileTypes = 'xlsx' | 'csv'
 
@@ -192,6 +196,36 @@ export const exportHealthCenterFile = async (
   ])
 
   await downloadFile(name, healthCenterHeaders, dataArray, type)
+}
+
+export const exportDrugListFile = async (
+  data: Array<RightsPortalCalculatorSelectedDrug>,
+  type: FileTypes,
+  calculatorResults: RightsPortalDrugCalculatorResponse,
+) => {
+  const name = `Lyfjareiknivel_sundurlidun`
+
+  const dataArray = data.map((item) => [
+    item.name ?? '',
+    item.strength ?? '',
+    item.units ?? '',
+    item.lineNumber
+      ? calculatorResults?.drugs?.at(item.lineNumber - 1)?.fullPrice ?? ''
+      : '',
+    item.lineNumber
+      ? calculatorResults?.drugs?.at(item.lineNumber - 1)?.customerPrice ?? ''
+      : '',
+  ])
+
+  const footer = [
+    'Samtals',
+    '',
+    '',
+    calculatorResults.totalPrice ?? '',
+    calculatorResults.totalCustomerPrice ?? '',
+  ]
+
+  await downloadFile(name, drugHeaders, [...dataArray, footer], type)
 }
 
 export const exportMedicineFile = async (

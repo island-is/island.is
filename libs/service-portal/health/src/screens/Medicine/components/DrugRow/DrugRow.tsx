@@ -1,14 +1,8 @@
-import { Table as T, Icon } from '@island.is/island-ui/core'
+import { Table as T, Icon, Hidden } from '@island.is/island-ui/core'
 import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
 import { useState } from 'react'
 import { amountFormat } from '@island.is/service-portal/core'
-
-type DrugRowDrug = {
-  name?: string | null
-  strength?: string | null
-  totalPrice?: number | null
-  totalPaidIndividual?: number | null
-}
+import { DrugRowDrug } from '../../MedicineCalculator'
 
 type Props = {
   drug: DrugRowDrug
@@ -53,9 +47,11 @@ export const DrugRow: React.FC<Props> = ({
         {amountFormat(drug.totalPaidIndividual ?? 0)}
       </T.Data>
       <T.Data text={{ variant: 'medium' }} align="center">
-        <button onClick={handleRemove}>
-          <Icon icon="trash" color="blue400" type="outline" size="small" />
-        </button>
+        <Hidden print>
+          <button onClick={handleRemove}>
+            <Icon icon="trash" color="blue400" type="outline" size="small" />
+          </button>
+        </Hidden>
       </T.Data>
     </>
   )

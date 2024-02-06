@@ -6,6 +6,7 @@ import {
   FilterInput,
   Button,
   LoadingDots,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
@@ -28,9 +29,20 @@ import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { EmptyTable } from '@island.is/service-portal/core'
+import { exportDrugListFile } from '../../utils/FileBreakdown/filesStructure'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
+
+export type DrugRowDrug = {
+  name?: string | null
+  strength?: string | null
+  totalPrice?: number | null
+  totalPaidIndividual?: number | null
+}
+
+export type RightsPortalCalculatorSelectedDrug =
+  RightsPortalCalculatorRequestInput & DrugRowDrug
 
 export const MedicineCalulator = () => {
   const { formatMessage } = useLocale()
@@ -39,7 +51,7 @@ export const MedicineCalulator = () => {
   const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER)
   const [hoveredDrug, setHoveredDrug] = useState(-1)
   const [selectedDrugList, setSelectedDrugList] = useState<
-    RightsPortalCalculatorRequestInput[]
+    RightsPortalCalculatorSelectedDrug[]
   >([])
   const ref = useRef<HTMLDivElement>(null)
 
@@ -167,130 +179,137 @@ export const MedicineCalulator = () => {
       )}
       {!error && (
         <Box>
-          <Box
-            display="flex"
-            flexDirection="column"
-            rowGap={1}
-            alignItems="flexStart"
-            marginBottom={SECTION_GAP}
-          >
-            <Text color="blue400" variant="eyebrow">
-              {formatMessage(messages.medicineFindDrug)}
-            </Text>
-            <Box display="flex" alignItems="center" width="full" columnGap={2}>
-              <Box width="half">
-                <FilterInput
-                  name="drugs"
-                  backgroundColor="blue"
-                  placeholder={formatMessage(messages.medicineSearchForDrug)}
-                  onChange={(value) => setSearch(value)}
-                  value={search}
-                />
+          <Hidden print={true}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              rowGap={1}
+              alignItems="flexStart"
+              marginBottom={SECTION_GAP}
+            >
+              <Text color="blue400" variant="eyebrow">
+                {formatMessage(messages.medicineFindDrug)}
+              </Text>
+              <Box
+                display="flex"
+                alignItems="center"
+                width="full"
+                columnGap={2}
+              >
+                <Box width="half">
+                  <FilterInput
+                    name="drugs"
+                    backgroundColor="blue"
+                    placeholder={formatMessage(messages.medicineSearchForDrug)}
+                    onChange={(value) => setSearch(value)}
+                    value={search}
+                  />
+                </Box>
+                {drugsLoading && <LoadingDots />}
               </Box>
-              {drugsLoading && <LoadingDots />}
             </Box>
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="column"
-            rowGap={2}
-            marginBottom={SECTION_GAP}
-            ref={ref}
-          >
-            <T.Table>
-              <T.Head>
-                <tr className={styles.tableRowStyles}>
-                  <T.HeadData>
-                    {formatMessage(messages.medicineDrugName)}
-                  </T.HeadData>
-                  <T.HeadData>
-                    {formatMessage(messages.medicineForm)}
-                  </T.HeadData>
-                  <T.HeadData>
-                    {formatMessage(messages.medicineStrength)}
-                  </T.HeadData>
-                  <T.HeadData>
-                    {formatMessage(messages.medicinePackaging)}
-                  </T.HeadData>
-                  <T.HeadData>
-                    {formatMessage(messages.medicinePrice)}
-                  </T.HeadData>
-                  <T.HeadData></T.HeadData>
-                </tr>
-              </T.Head>
-              {SHOW_TABLE && (
-                <T.Body>
-                  {drugs?.rightsPortalDrugs.data?.map((drug, i) => {
-                    return (
-                      <tr
-                        onMouseLeave={() => setHoveredDrug(-1)}
-                        onMouseOver={() => setHoveredDrug(i)}
-                        key={i}
-                      >
-                        <T.Data text={{ variant: 'medium' }}>
-                          {drug.name}
-                        </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
-                          {drug.form}
-                        </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
-                          {drug.strength}
-                        </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
-                          {drug.packaging}
-                        </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
-                          {amountFormat(drug.price ?? 0)}
-                        </T.Data>
-                        <T.Data text={{ variant: 'medium' }}>
-                          <Box
-                            className={styles.saveButtonWrapperStyle({
-                              visible: hoveredDrug === i || isMobile,
-                            })}
-                          >
-                            <Button
-                              size="small"
-                              variant="text"
-                              icon="add"
-                              disabled={
-                                !drug?.name ||
-                                !drug?.price ||
-                                selectedDrugList.find(
-                                  (d) => d.nordicCode === drug.nordicCode,
-                                ) !== undefined
-                              }
-                              onClick={() => handleAddDrug(drug)}
+            <Box
+              display="flex"
+              flexDirection="column"
+              rowGap={2}
+              marginBottom={SECTION_GAP}
+              ref={ref}
+            >
+              <T.Table>
+                <T.Head>
+                  <tr className={styles.tableRowStyles}>
+                    <T.HeadData>
+                      {formatMessage(messages.medicineDrugName)}
+                    </T.HeadData>
+                    <T.HeadData>
+                      {formatMessage(messages.medicineForm)}
+                    </T.HeadData>
+                    <T.HeadData>
+                      {formatMessage(messages.medicineStrength)}
+                    </T.HeadData>
+                    <T.HeadData>
+                      {formatMessage(messages.medicinePackaging)}
+                    </T.HeadData>
+                    <T.HeadData>
+                      {formatMessage(messages.medicinePrice)}
+                    </T.HeadData>
+                    <T.HeadData></T.HeadData>
+                  </tr>
+                </T.Head>
+                {SHOW_TABLE && (
+                  <T.Body>
+                    {drugs?.rightsPortalDrugs.data?.map((drug, i) => {
+                      return (
+                        <tr
+                          onMouseLeave={() => setHoveredDrug(-1)}
+                          onMouseOver={() => setHoveredDrug(i)}
+                          key={i}
+                        >
+                          <T.Data text={{ variant: 'medium' }}>
+                            {drug.name}
+                          </T.Data>
+                          <T.Data text={{ variant: 'medium' }}>
+                            {drug.form}
+                          </T.Data>
+                          <T.Data text={{ variant: 'medium' }}>
+                            {drug.strength}
+                          </T.Data>
+                          <T.Data text={{ variant: 'medium' }}>
+                            {drug.packaging}
+                          </T.Data>
+                          <T.Data text={{ variant: 'medium' }}>
+                            {amountFormat(drug.price ?? 0)}
+                          </T.Data>
+                          <T.Data text={{ variant: 'medium' }}>
+                            <Box
+                              className={styles.saveButtonWrapperStyle({
+                                visible: hoveredDrug === i || isMobile,
+                              })}
                             >
-                              {formatMessage(messages.medicineSelect)}
-                            </Button>
-                          </Box>
-                        </T.Data>
-                      </tr>
-                    )
-                  })}
-                </T.Body>
-              )}
-            </T.Table>
-            {!SHOW_TABLE && (
-              <EmptyTable message={messages.medicineCalculatorEmptySearch} />
-            )}
-            {SHOW_TABLE && totalPaginatedPages > 1 && (
-              <Pagination
-                totalPages={totalPaginatedPages}
-                page={pageNumber}
-                renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={() => {
-                      return setPageNumber(page)
-                    }}
-                  >
-                    {children}
-                  </button>
+                              <Button
+                                size="small"
+                                variant="text"
+                                icon="add"
+                                disabled={
+                                  !drug?.name ||
+                                  !drug?.price ||
+                                  selectedDrugList.find(
+                                    (d) => d.nordicCode === drug.nordicCode,
+                                  ) !== undefined
+                                }
+                                onClick={() => handleAddDrug(drug)}
+                              >
+                                {formatMessage(messages.medicineSelect)}
+                              </Button>
+                            </Box>
+                          </T.Data>
+                        </tr>
+                      )
+                    })}
+                  </T.Body>
                 )}
-              />
-            )}
-          </Box>
+              </T.Table>
+              {!SHOW_TABLE && (
+                <EmptyTable message={messages.medicineCalculatorEmptySearch} />
+              )}
+              {SHOW_TABLE && totalPaginatedPages > 1 && (
+                <Pagination
+                  totalPages={totalPaginatedPages}
+                  page={pageNumber}
+                  renderLink={(page, className, children) => (
+                    <button
+                      className={className}
+                      onClick={() => {
+                        return setPageNumber(page)
+                      }}
+                    >
+                      {children}
+                    </button>
+                  )}
+                />
+              )}
+            </Box>
+          </Hidden>
           <Box marginBottom={SECTION_GAP}>
             <Box
               marginBottom={CONTENT_GAP_LG}
@@ -303,6 +322,46 @@ export const MedicineCalulator = () => {
                 {formatMessage(messages.medicineResults)}
               </Text>
             </Box>
+            {selectedDrugList.length && calculatorResults ? (
+              <Box
+                display="flex"
+                flexDirection={['column', 'row', 'row']}
+                paddingRight={2}
+                marginBottom={CONTENT_GAP_LG}
+                justifyContent="flexStart"
+                alignItems="flexStart"
+              >
+                <Button
+                  colorScheme="default"
+                  icon="print"
+                  iconType="filled"
+                  onClick={() => window.print()}
+                  preTextIconType="filled"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+                <Box marginRight={[0, 2, 2]} marginBottom={[1, 0, 0]} />
+                <Button
+                  colorScheme="default"
+                  icon="download"
+                  iconType="filled"
+                  onClick={() =>
+                    exportDrugListFile(
+                      selectedDrugList ?? [],
+                      'xlsx',
+                      calculatorResults,
+                    )
+                  }
+                  preTextIconType="filled"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.getAsExcel)}
+                </Button>
+              </Box>
+            ) : null}
             <Box className={CALCULATOR_DISABLED ? styles.disabledTable : ''}>
               <T.Table>
                 <T.Head>
