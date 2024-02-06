@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import CryptoJS from 'crypto-js'
-import { ApiUserModel } from './user.model'
+import { ApiUserModel } from './models/user.model'
 import { Op } from 'sequelize'
 import { CreateApiKeyDto } from './dto'
 import { environment } from '../../../environments'
@@ -39,12 +39,14 @@ export class ApiUserService {
   }
 
   async create(input: CreateApiKeyDto): Promise<ApiUserModel> {
-    const cryptedApiKey = CryptoJS.AES.encrypt(
-      input.apiKey,
-      environment.municipalityAccessApiEncryptionKey,
-      { iv: CryptoJS.enc.Hex.parse(uuid()) },
-    ).toString()
+    return await this.apiUserModel.findOne({
+      where: {
+        id,
+      },
+    })
+  }
 
+  async delete(id: string): Promise<DeleteApiKeyResponse> {
     const apiUserModel = await this.apiUserModel.create({
       ...input,
       apiKey: cryptedApiKey,

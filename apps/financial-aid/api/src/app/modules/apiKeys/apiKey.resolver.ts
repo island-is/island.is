@@ -7,11 +7,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BackendAPI } from '../../../services'
 
-import { ApiKeysModel } from './models'
+import { ApiKeysModel, DeleteApiKeyResponse } from './models'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { ApiKeysForMunicipality } from '@island.is/financial-aid/shared/lib'
-import { CreateApiKeyInput, UpdateApiKeyInput } from './dto'
+import { CreateApiKeyInput, DeleteApiKeyInput, UpdateApiKeyInput } from './dto'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ApiKeysModel)
@@ -48,5 +48,16 @@ export class ApiKeysResolver {
     this.logger.debug('Updating api key name')
 
     return backendApi.updateApiKey(input)
+  }
+
+  @Mutation(() => DeleteApiKeyResponse, { nullable: false })
+  deleteApiKey(
+    @Args('input', { type: () => DeleteApiKeyInput })
+    input: DeleteApiKeyInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<ApiKeysModel> {
+    this.logger.debug('Updating api key name')
+
+    return backendApi.deleteApiKey(input)
   }
 }
