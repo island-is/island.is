@@ -228,6 +228,7 @@ jobs:
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        continue-on-error: true
         with:
           name: pr-event
           path: event.json
