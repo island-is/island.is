@@ -52,7 +52,6 @@ jobs:
       - name: Cache yarn install
         id: yarn-cache
         uses: ./.github/actions/cache
-        continue-on-error: true
         with:
           path: |
             ./node_modules
@@ -61,6 +60,10 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
           retries: 0
           slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Catch failed cache
+        if: ${{ !cancelled() && steps.yarn-cache.outputs.cache-hit != 'true' }}
+        run: echo "Cache failed"
 
       - name: Install yarn dependencies
         if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
