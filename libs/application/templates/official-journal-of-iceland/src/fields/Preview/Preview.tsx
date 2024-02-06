@@ -25,7 +25,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
 
   const { answers } = application
 
-  const { documentContents, title, type, signatureType } = answers.case
+  const { documentContents, title, type, signatureType } = answers.advert
 
   return (
     <Box>
@@ -71,14 +71,14 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
             signature:
               signatureType === 'regular'
                 ? regularSignatureTemplate({
-                    signatureGroups: answers.case.signature.regular,
+                    signatureGroups: answers.advert.signature.regular,
                     additionalSignature:
-                      answers.case.signature.additionalSignature,
+                      answers.advert.signature.additionalSignature,
                   })
                 : committeeSignatureTemplate({
-                    signature: answers.case.signature.committee,
+                    signature: answers.advert.signature.committee,
                     additionalSignature:
-                      answers.case.signature.additionalSignature,
+                      answers.advert.signature.additionalSignature,
                   }),
             readonly: true,
           })}

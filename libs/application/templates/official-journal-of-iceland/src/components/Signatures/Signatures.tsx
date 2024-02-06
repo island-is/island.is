@@ -38,7 +38,7 @@ export const Signatures = ({
   const { setValue } = useFormContext()
 
   useEffect(() => {
-    setValue(InputFields.case.signatureType, selectedTab)
+    setValue(InputFields.advert.signatureType, selectedTab)
   }, [selectedTab])
 
   const tabs = [

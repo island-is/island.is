@@ -132,11 +132,11 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
         <Box className={styles.institutionWrapper} key={index}>
           <Box className={styles.institution}>
             <InputController
-              id={InputFields.case.signature.regular.institution.replace(
+              id={InputFields.advert.signature.regular.institution.replace(
                 INSTITUTION_INDEX,
                 `${index}`,
               )}
-              name={InputFields.case.signature.regular.institution.replace(
+              name={InputFields.advert.signature.regular.institution.replace(
                 INSTITUTION_INDEX,
                 `${index}`,
               )}
@@ -150,7 +150,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                 errors &&
                 getErrorViaPath(
                   errors,
-                  InputFields.case.signature.regular.institution.replace(
+                  InputFields.advert.signature.regular.institution.replace(
                     INSTITUTION_INDEX,
                     `${index}`,
                   ),
@@ -159,11 +159,11 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
               size="sm"
             />
             <DatePickerController
-              id={InputFields.case.signature.regular.date.replace(
+              id={InputFields.advert.signature.regular.date.replace(
                 INSTITUTION_INDEX,
                 `${index}`,
               )}
-              name={InputFields.case.signature.regular.date.replace(
+              name={InputFields.advert.signature.regular.date.replace(
                 INSTITUTION_INDEX,
                 `${index}`,
               )}
@@ -192,17 +192,17 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
               <Box className={styles.inputGroup} key={`${index}-${i}`}>
                 <Box className={styles.inputWrapper}>
                   <InputController
-                    id={InputFields.case.signature.regular.members.textAbove
+                    id={InputFields.advert.signature.regular.members.textAbove
                       .replace(INSTITUTION_INDEX, `${index}`)
                       .replace(MEMBER_INDEX, `${i}`)}
-                    name={InputFields.case.signature.regular.members.textAbove
+                    name={InputFields.advert.signature.regular.members.textAbove
                       .replace(INSTITUTION_INDEX, `${index}`)
                       .replace(MEMBER_INDEX, `${i}`)}
                     error={
                       errors &&
                       getErrorViaPath(
                         errors,
-                        InputFields.case.signature.regular.members.textAbove
+                        InputFields.advert.signature.regular.members.textAbove
                           .replace(INSTITUTION_INDEX, `${index}`)
                           .replace(MEMBER_INDEX, `${i}`),
                       )
@@ -216,19 +216,19 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     }
                   />
                   <InputController
-                    id={InputFields.case.signature.regular.members.name
+                    id={InputFields.advert.signature.regular.members.name
                       .replace(INSTITUTION_INDEX, `${index}`)
                       .replace(MEMBER_INDEX, `${i}`)}
                     error={
                       errors &&
                       getErrorViaPath(
                         errors,
-                        InputFields.case.signature.regular.members.name
+                        InputFields.advert.signature.regular.members.name
                           .replace(INSTITUTION_INDEX, `${index}`)
                           .replace(MEMBER_INDEX, `${i}`),
                       )
                     }
-                    name={InputFields.case.signature.regular.members.name
+                    name={InputFields.advert.signature.regular.members.name
                       .replace(INSTITUTION_INDEX, `${index}`)
                       .replace(MEMBER_INDEX, `${i}`)}
                     label={f(advert.inputs.signature.name.label)}
@@ -242,14 +242,14 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                 </Box>
                 <Box className={styles.inputWrapper}>
                   <InputController
-                    id={InputFields.case.signature.regular.members.textAfter
+                    id={InputFields.advert.signature.regular.members.textAfter
                       .replace(INSTITUTION_INDEX, `${index}`)
                       .replace(MEMBER_INDEX, `${i}`)}
                     error={
                       errors &&
                       getErrorViaPath(
                         errors,
-                        InputFields.case.signature.regular.members.textAfter
+                        InputFields.advert.signature.regular.members.textAfter
                           .replace(INSTITUTION_INDEX, `${index}`)
                           .replace(MEMBER_INDEX, `${i}`),
                       )
@@ -263,14 +263,14 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                     }
                   />
                   <InputController
-                    id={InputFields.case.signature.regular.members.textBelow
+                    id={InputFields.advert.signature.regular.members.textBelow
                       .replace(INSTITUTION_INDEX, `${index}`)
                       .replace(MEMBER_INDEX, `${i}`)}
                     error={
                       errors &&
                       getErrorViaPath(
                         errors,
-                        InputFields.case.signature.regular.members.textBelow
+                        InputFields.advert.signature.regular.members.textBelow
                           .replace(INSTITUTION_INDEX, `${index}`)
                           .replace(MEMBER_INDEX, `${i}`),
                       )

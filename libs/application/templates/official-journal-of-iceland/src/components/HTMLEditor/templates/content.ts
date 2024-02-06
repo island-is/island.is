@@ -1,7 +1,7 @@
 import { HTMLText } from '@island.is/regulations-tools/types'
 
 type Params = {
-  caseId?: string
+  advertId?: string
   date?: string
   category?: string
   title?: string
@@ -10,13 +10,17 @@ type Params = {
   readonly?: boolean
 }
 
-// will be useful later when case is published
-const documentHeader = (caseId?: string, date?: string) => {
-  if (!caseId && !date) return ''
+// will be useful later when advert is published
+const documentHeader = (advertId?: string, date?: string) => {
+  if (!advertId && !date) return ''
 
   return `
     <div class="document-header">
-      ${caseId ? `<div class="document-header__case-id">${caseId}</div>` : ''}
+      ${
+        advertId
+          ? `<div class="document-header__case-id">${advertId}</div>`
+          : ''
+      }
       ${date ? `<div class="document-header__date">${date}</div>` : ''}
     </div>
   `
@@ -36,7 +40,7 @@ const documentTitle = (title?: string, category?: string) => {
 }
 
 export const advertisementTemplate = ({
-  caseId,
+  advertId,
   date,
   category,
   title,
@@ -46,7 +50,7 @@ export const advertisementTemplate = ({
 }: Params) => {
   return `
     <div class="advertisement ${readonly ? 'readonly' : ''}">
-      ${documentHeader(caseId, date)}
+      ${documentHeader(advertId, date)}
       ${documentTitle(title, category)}
       <div class="document-content">
         ${content}

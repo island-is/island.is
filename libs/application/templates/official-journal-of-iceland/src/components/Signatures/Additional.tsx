@@ -27,8 +27,8 @@ export const AdditionalSignature = ({
       </Text>
       <Box display="flex" justifyContent="flexStart">
         <InputController
-          name={InputFields.case.signature.additonalSignature}
-          id={InputFields.case.signature.additonalSignature}
+          name={InputFields.advert.signature.additonalSignature}
+          id={InputFields.advert.signature.additonalSignature}
           onChange={(event) => setSignature(event.target.value)}
           label={f(advert.inputs.signature.name.label)}
           defaultValue={signature}
@@ -38,7 +38,7 @@ export const AdditionalSignature = ({
             errors &&
             getErrorViaPath(
               errors,
-              InputFields.case.signature.additonalSignature,
+              InputFields.advert.signature.additonalSignature,
             )
           }
         />

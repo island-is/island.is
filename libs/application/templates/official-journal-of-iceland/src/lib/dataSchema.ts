@@ -17,7 +17,7 @@ export const dataSchema = z.object({
       params: error.dataGathering,
       path: InputFields.prerequisites.approveExternalData.split('.').slice(1),
     }),
-  case: z
+  advert: z
     .object({
       department: z.string().refine((v) => v && v.length > 0, {
         params: error.emptyFieldError,
@@ -75,15 +75,15 @@ export const dataSchema = z.object({
         additionalSignature: z.string().optional(),
       }),
     })
-    .superRefine((caseSchema, ctx) => {
-      if (caseSchema.signatureType === 'regular') {
+    .superRefine((advert, ctx) => {
+      if (advert.signatureType === 'regular') {
         // required fields are institution and members name
-        caseSchema.signature.regular?.forEach((signature, institutionIndex) => {
+        advert.signature.regular?.forEach((signature, institutionIndex) => {
           if (!signature.institution) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               params: error.emptyFieldError,
-              path: InputFields.case.signature.regular.institution
+              path: InputFields.advert.signature.regular.institution
                 .replace(INSTITUTION_INDEX, `${institutionIndex}`)
                 .split('.')
                 .slice(1),
@@ -95,7 +95,7 @@ export const dataSchema = z.object({
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: error.emptyFieldError,
-                path: InputFields.case.signature.regular.members.name
+                path: InputFields.advert.signature.regular.members.name
                   .replace(INSTITUTION_INDEX, `${institutionIndex}`)
                   .replace(MEMBER_INDEX, `${memberIndex}`)
                   .split('.')
@@ -106,23 +106,23 @@ export const dataSchema = z.object({
         })
       } else {
         // required fields are institution and chairman name and members name
-        if (!caseSchema.signature.committee.institution) {
+        if (!advert.signature.committee.institution) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             params: error.emptyFieldError,
-            path: InputFields.case.signature.committee.institution
+            path: InputFields.advert.signature.committee.institution
               .split('.')
               .slice(1),
           })
 
           // check name of members
-          caseSchema.signature.committee.members?.forEach((member, index) => {
+          advert.signature.committee.members?.forEach((member, index) => {
             console.log('member', member)
             if (!member.name) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 params: error.emptyFieldError,
-                path: InputFields.case.signature.committee.members.name
+                path: InputFields.advert.signature.committee.members.name
                   .replace(MEMBER_INDEX, `${index}`)
                   .split('.')
                   .slice(1),
@@ -131,22 +131,22 @@ export const dataSchema = z.object({
           })
         }
 
-        if (!caseSchema.signature.committee.chairman.name) {
+        if (!advert.signature.committee.chairman.name) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             params: error.emptyFieldError,
-            path: InputFields.case.signature.committee.chairman.name
+            path: InputFields.advert.signature.committee.chairman.name
               .split('.')
               .slice(1),
           })
         }
 
-        caseSchema.signature.committee.members?.forEach((member, index) => {
+        advert.signature.committee.members?.forEach((member, index) => {
           if (!member.name) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               params: error.emptyFieldError,
-              path: InputFields.case.signature.committee.members.name
+              path: InputFields.advert.signature.committee.members.name
                 .replace(MEMBER_INDEX, `${index}`)
                 .split('.')
                 .slice(1),
@@ -155,12 +155,12 @@ export const dataSchema = z.object({
         })
       }
 
-      if (caseSchema.type === TypeIds.REGLUGERDIR) {
-        if (!caseSchema.subType) {
+      if (advert.type === TypeIds.REGLUGERDIR) {
+        if (!advert.subType) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             params: error.emptyFieldError,
-            path: InputFields.case.subType.split('.').slice(1),
+            path: InputFields.advert.subType.split('.').slice(1),
           })
         }
       }

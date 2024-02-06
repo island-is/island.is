@@ -5,6 +5,11 @@ export const ADVERTS = gql`
     ministryOfJusticeAdverts(input: $input) {
       adverts {
         id
+        department {
+          id
+          title
+          slug
+        }
         type {
           id
           title

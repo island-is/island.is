@@ -44,7 +44,6 @@ export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
           },
         },
         onCompleted(data) {
-          console.log(data)
           setTemplates(data.ministryOfJusticeAdverts.adverts)
           setLoading(false)
         },

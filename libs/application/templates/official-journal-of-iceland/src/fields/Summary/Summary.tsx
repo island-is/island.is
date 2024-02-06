@@ -9,14 +9,14 @@ import { OJOIFieldBaseProps } from '../../lib/types'
 const MOCK_DATA = {
   sender: 'Stofnun X',
   type: 'Auglýsing',
-  caseTitle:
+  advertTitle:
     'AUGLÝSING um skrá yfir þau störf hjá Múlaþingi sem eru undanskilin verkfallsheimild.',
-  caseDepartment: 'B-Deild',
+  advertDepartment: 'B-Deild',
   dateOfSubmission: '25.07.2023',
-  caseFastTrack: 'Nei',
+  advertFastTrack: 'Nei',
   estimatedDateOfPublication: '25.10.2023',
   estimatedPrice: '23.000',
-  caseClassicifation: 'Verkföll og vinnudeilur',
+  advertClassicifation: 'Verkföll og vinnudeilur',
 }
 
 export const Summary = ({ application }: OJOIFieldBaseProps) => {
@@ -38,11 +38,11 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
         <Property name={f(summary.properties.type)} value={MOCK_DATA.type} />
         <Property
           name={f(summary.properties.title)}
-          value={MOCK_DATA.caseTitle}
+          value={MOCK_DATA.advertTitle}
         />
         <Property
           name={f(summary.properties.department)}
-          value={MOCK_DATA.caseDepartment}
+          value={MOCK_DATA.advertDepartment}
         />
         <Property
           name={f(summary.properties.submissionDate)}
@@ -50,7 +50,7 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
         />
         <Property
           name={f(summary.properties.fastTrack)}
-          value={MOCK_DATA.caseFastTrack}
+          value={MOCK_DATA.advertFastTrack}
         />
         <Property
           name={f(summary.properties.estimatedDate)}
@@ -62,7 +62,7 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
         />
         <Property
           name={f(summary.properties.classification)}
-          value={MOCK_DATA.caseClassicifation}
+          value={MOCK_DATA.advertClassicifation}
         />
       </Stack>
     </Box>

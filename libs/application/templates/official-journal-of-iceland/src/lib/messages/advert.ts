@@ -5,18 +5,18 @@ export const advert = {
     formTitle: {
       id: 'ojoi.application:advert.general.formTitle',
       defaultMessage: 'Nýtt mál',
-      description: 'Title of the new case form',
+      description: 'Title of the new advert form',
     },
     formIntro: {
       id: 'ojoi.application:advert.general.formIntro',
       defaultMessage:
         'Veldu deild og tegund birtingar í fellilistanum hér að neðan og skráðu heiti auglýsingar í viðeigandi reit. Tegundarheitið birtist sjálfkrafa í hástöfum í fyrirsögn og titillinn í næstu línu. Efni auglýsinga er sett í ritilinn hér að neðan og skal vanda alla uppsetningu, setja inn töluliði, töflur o.þ.h. Til einföldunar við vinnslu meginmáls getur þú valið sniðmát og aðlagað það að þinni auglýsingu eða sótt eldri auglýsingu og breytt henni.',
-      description: 'Description of the new case form',
+      description: 'Description of the new advert form',
     },
     sectionTitle: {
       id: 'ojoi.application:advert.general.sectionTitle',
       defaultMessage: 'Grunnupplýsingar',
-      description: 'Title of the new case section',
+      description: 'Title of the new advert section',
     },
     additonalSignature: {
       id: 'ojoi.application:advert.general.additonalSignature',
@@ -64,7 +64,7 @@ export const advert = {
     title: {
       id: 'ojoi.application:advert.modal.title',
       defaultMessage: 'Mál til afritunar',
-      description: 'Title of the copy old case modal',
+      description: 'Title of the copy old advert modal',
     },
     searchPlaceholder: {
       id: 'ojoi.application:advert.modal.searchPlaceholder',
@@ -93,11 +93,11 @@ export const advert = {
     },
   }),
   buttons: {
-    copyOldCase: defineMessages({
+    copyOldAdvert: defineMessages({
       label: {
-        id: 'ojoi.application:advert.buttons.copyOldCase.label',
+        id: 'ojoi.application:advert.buttons.copyOldAdvert.label',
         defaultMessage: 'Afrita eldra mál',
-        description: 'Label for the copy old case button',
+        description: 'Label for the copy old advert button',
       },
     }),
     copyLastSignature: defineMessages({
@@ -170,12 +170,12 @@ export const advert = {
       label: {
         id: 'ojoi.application:advert.inputs.title.label',
         defaultMessage: 'Heiti auglýsingar',
-        description: 'Label for the title of case input',
+        description: 'Label for the title of advert input',
       },
       placeholder: {
         id: 'ojoi.application:advert.inputs.title.placeholder',
         defaultMessage: 'Heiti auglýsingar',
-        description: 'Placeholder for the name of case input',
+        description: 'Placeholder for the name of advert input',
       },
     }),
     template: defineMessages({

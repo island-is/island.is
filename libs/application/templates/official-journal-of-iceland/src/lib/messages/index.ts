@@ -1,4 +1,4 @@
-// id format ex. -> ojoi.application:advert.buttons.copyOldCase.label
+// id format ex. -> ojoi.application:advert.buttons.copyOldAdvert.label
 
 export * from './additionAndDocuments'
 export * from './error'

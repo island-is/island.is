@@ -20,7 +20,6 @@ import { TypeIds } from '../../lib/constants'
 import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
 import { useLazyQuery } from '@apollo/client'
 import { TYPES } from './queries'
-import { coerce } from 'yargs'
 
 type AvertTypeResponse = {
   ministryOfJusticeTypes: AdvertOption<'types'>
@@ -36,12 +35,12 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
 
   const [state, setState] = useState({
-    department: answers?.case?.department ?? '',
-    type: answers?.case?.type ?? '',
-    subType: answers?.case?.subType ?? '',
-    title: answers?.case?.title ?? '',
-    template: answers?.case?.template ?? '',
-    documentContents: answers?.case?.documentContents ?? '',
+    department: answers?.advert?.department ?? '',
+    type: answers?.advert?.type ?? '',
+    subType: answers?.advert?.subType ?? '',
+    title: answers?.advert?.title ?? '',
+    template: answers?.advert?.template ?? '',
+    documentContents: answers?.advert?.documentContents ?? '',
   })
 
   useEffect(() => {
@@ -56,34 +55,31 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
 
   const onSave = (advert: MinistryOfJusticeAdvert) => {
     const newState: typeof state = {
-      type: advert.type.title,
-      department: advert.department.title,
+      type: advert.type.slug,
+      title: advert.title,
+      department: advert.department.slug,
       documentContents: advert.document.html ?? '',
       subType: '', // TODO updated values when API is updated
       template: '',
-      title: advert.title,
     }
 
-    setValue(InputFields.case.type, newState.type, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.case.department, newState.department, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.case.documentContents, newState.documentContents, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.case.type, newState.type, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.case.template, newState.template, {
-      shouldValidate: true,
-    })
-    setValue(InputFields.case.title, newState.title, { shouldValidate: true })
-
     setState(newState)
-    setDocumentHTML()
     setModalToggle(false)
+    setDocumentHTML()
+
+    setValue(InputFields.advert.type, newState.type, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.advert.department, newState.department, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.advert.documentContents, newState.documentContents, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.advert.template, newState.template, {
+      shouldValidate: true,
+    })
+    setValue(InputFields.advert.title, newState.title, { shouldValidate: true })
   }
 
   const { departments } = application.externalData
@@ -112,6 +108,12 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
     }
   }, [state.department])
 
+  const typeInternalKey = `${state.department}-${state.type}-${
+    typeOptions?.types.length
+      ? typeOptions.types.map((t) => t.slug).join('-')
+      : ''
+  }`
+
   return (
     <>
       <FormIntro
@@ -124,15 +126,15 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             icon="copy"
             onClick={() => setModalToggle((prev) => !prev)}
           >
-            {f(advert.buttons.copyOldCase.label)}
+            {f(advert.buttons.copyOldAdvert.label)}
           </Button>
         }
       />
       <FormGroup>
         <Box width="half">
           <SelectController
-            id={InputFields.case.department}
-            name={InputFields.case.department}
+            id={InputFields.advert.department}
+            name={InputFields.advert.department}
             label={f(advert.inputs.department.label)}
             placeholder={f(advert.inputs.department.placeholder)}
             defaultValue={state.department}
@@ -140,30 +142,33 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
               label: d.title,
               value: d.slug,
             }))}
-            onSelect={(opt) =>
+            onSelect={(opt) => {
               setState({
                 ...state,
+                type: '',
                 department: opt.value,
               })
-            }
+              setValue(InputFields.advert.type, '', { shouldValidate: false })
+            }}
             size="sm"
             error={
-              errors && getErrorViaPath(errors, InputFields.case.department)
+              errors && getErrorViaPath(errors, InputFields.advert.department)
             }
           />
         </Box>
         <Box width="half">
           <SelectController
+            internalKey={typeInternalKey}
             disabled={!typeOptions}
-            id={InputFields.case.type}
-            name={InputFields.case.type}
+            id={InputFields.advert.type}
+            name={InputFields.advert.type}
             label={f(advert.inputs.type.label)}
             placeholder={f(advert.inputs.type.placeholder)}
             defaultValue={state.type}
             backgroundColor="blue"
             options={typeOptions?.types.map((t) => ({
               label: t.title,
-              value: t.id,
+              value: t.slug,
             }))}
             onSelect={(opt) => {
               const adverb =
@@ -173,7 +178,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
                   : 'um'
               const title = `${opt.label.toUpperCase()} ${adverb}`
               if (state.title === '') {
-                setValue(InputFields.case.title, title, {
+                setValue(InputFields.advert.title, title, {
                   shouldValidate: true,
                 })
               }
@@ -184,14 +189,14 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
               })
             }}
             size="sm"
-            error={errors && getErrorViaPath(errors, InputFields.case.type)}
+            error={errors && getErrorViaPath(errors, InputFields.advert.type)}
           />
         </Box>
         {/* {state.type === TypeIds.REGLUGERDIR && options.subCategories.length && (
           <Box width="half">
             <SelectController
-              id={InputFields.case.subType}
-              name={InputFields.case.subType}
+              id={InputFields.advert.subType}
+              name={InputFields.advert.subType}
               label={f(advert.inputs.subType.label)}
               placeholder={f(advert.inputs.subType.placeholder)}
               defaultValue={state.subType}
@@ -200,15 +205,15 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
               onSelect={(opt) => setState({ ...state, subType: opt.value })}
               size="sm"
               error={
-                errors && getErrorViaPath(errors, InputFields.case.subType)
+                errors && getErrorViaPath(errors, InputFields.advert.subType)
               }
             />
           </Box>
         )} */}
         <Box width="full">
           <InputController
-            id={InputFields.case.title}
-            name={InputFields.case.title}
+            id={InputFields.advert.title}
+            name={InputFields.advert.title}
             label={f(advert.inputs.title.label)}
             placeholder={f(advert.inputs.title.placeholder)}
             defaultValue={state.title}
@@ -216,15 +221,15 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             textarea
             rows={4}
             onChange={(e) => setState({ ...state, title: e.target.value })}
-            error={errors && getErrorViaPath(errors, InputFields.case.title)}
+            error={errors && getErrorViaPath(errors, InputFields.advert.title)}
           />
         </Box>
       </FormGroup>
       <FormGroup title={f(advert.materialForPublicationChapter.title)}>
         {/* <Box width="half">
           <SelectController
-            id={InputFields.case.template}
-            name={InputFields.case.template}
+            id={InputFields.advert.template}
+            name={InputFields.advert.template}
             label={f(advert.inputs.template.label)}
             placeholder={f(advert.inputs.template.placeholder)}
             defaultValue={state.template}
@@ -232,7 +237,7 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             options={options.templates}
             onSelect={(opt) => setState({ ...state, template: opt.value })}
             size="sm"
-            error={errors && getErrorViaPath(errors, InputFields.case.template)}
+            error={errors && getErrorViaPath(errors, InputFields.advert.template)}
           />
         </Box> */}
         {!reRenderEditor && (
@@ -240,10 +245,10 @@ export const Advert = ({ application, errors }: OJOIFieldBaseProps) => {
             <HTMLEditor
               config={baseConfig}
               value={state.documentContents as HTMLText}
-              name={InputFields.case.documentContents}
+              name={InputFields.advert.documentContents}
               error={
                 errors &&
-                getErrorViaPath(errors, InputFields.case.documentContents)
+                getErrorViaPath(errors, InputFields.advert.documentContents)
               }
             />
           </Box>

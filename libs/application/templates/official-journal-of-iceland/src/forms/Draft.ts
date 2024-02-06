@@ -42,7 +42,7 @@ export const Draft: Form = buildForm({
       title: advert.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'case',
+          id: 'advert',
           title: '',
           component: 'Advert',
         }),
@@ -168,7 +168,7 @@ export const Draft: Form = buildForm({
               divider: true,
               paddingY: 3,
               paddingX: 4,
-              value: ({ answers }) => (answers as answerSchemas).case.title,
+              value: ({ answers }) => (answers as answerSchemas).advert.title,
             }),
             buildKeyValueField({
               display: 'flex',
@@ -177,7 +177,7 @@ export const Draft: Form = buildForm({
               paddingY: 3,
               paddingX: 4,
               value: ({ answers }) =>
-                (answers as answerSchemas).case.department,
+                (answers as answerSchemas).advert.department,
             }),
             buildKeyValueField({
               display: 'flex',

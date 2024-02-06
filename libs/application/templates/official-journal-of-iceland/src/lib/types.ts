@@ -6,41 +6,41 @@ export const InputFields = {
   prerequisites: {
     approveExternalData: 'prerequisites.approveExternalData',
   },
-  case: {
-    department: 'case.department',
-    type: 'case.type',
-    subType: 'case.subType',
-    title: 'case.title',
-    template: 'case.template',
-    documentContents: 'case.documentContents',
-    signatureType: 'case.signatureType',
-    signatureContents: 'case.signatureContents',
+  advert: {
+    department: 'advert.department',
+    type: 'advert.type',
+    subType: 'advert.subType',
+    title: 'advert.title',
+    template: 'advert.template',
+    documentContents: 'advert.documentContents',
+    signatureType: 'advert.signatureType',
+    signatureContents: 'advert.signatureContents',
     signature: {
       regular: {
-        institution: `case.signature.regular-${INSTITUTION_INDEX}.institution`,
-        date: `case.signature.regular-${INSTITUTION_INDEX}.date`,
+        institution: `advert.signature.regular-${INSTITUTION_INDEX}.institution`,
+        date: `advert.signature.regular-${INSTITUTION_INDEX}.date`,
         members: {
-          textAbove: `case.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAbove`,
-          name: `case.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.name`,
-          textBelow: `case.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textBelow`,
-          textAfter: `case.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAfter`,
+          textAbove: `advert.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAbove`,
+          name: `advert.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.name`,
+          textBelow: `advert.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textBelow`,
+          textAfter: `advert.signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.textAfter`,
         },
       },
       committee: {
-        institution: 'case.signature.committee.institution',
-        date: 'case.signature.committee.date',
+        institution: 'advert.signature.committee.institution',
+        date: 'advert.signature.committee.date',
         chairman: {
-          textAbove: 'case.signature.committee.chairman.textAbove',
-          name: 'case.signature.committee.chairman.name',
-          textAfter: 'case.signature.committee.chairman.textAfter',
-          textBelow: 'case.signature.committee.chairman.textBelow',
+          textAbove: 'advert.signature.committee.chairman.textAbove',
+          name: 'advert.signature.committee.chairman.name',
+          textAfter: 'advert.signature.committee.chairman.textAfter',
+          textBelow: 'advert.signature.committee.chairman.textBelow',
         },
         members: {
-          name: `case.signature.committee.members-${MEMBER_INDEX}.name`,
-          textBelow: `case.signature.committee.members-${MEMBER_INDEX}.textBelow`,
+          name: `advert.signature.committee.members-${MEMBER_INDEX}.name`,
+          textBelow: `advert.signature.committee.members-${MEMBER_INDEX}.textBelow`,
         },
       },
-      additonalSignature: 'case.signature.additonalSignature',
+      additonalSignature: 'advert.signature.additonalSignature',
     },
   },
   additionsAndDocuments: {
@@ -69,9 +69,9 @@ export type AdvertOption<Key extends string> = {
 
 export type SignatureType = 'regular' | 'committee'
 export type RegularSignatureState =
-  answerSchemas['case']['signature']['regular']
+  answerSchemas['advert']['signature']['regular']
 export type CommitteeSignatureState =
-  answerSchemas['case']['signature']['committee']
+  answerSchemas['advert']['signature']['committee']
 
 export enum TemplateApiActions {
   departments = 'departments',

@@ -85,14 +85,14 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
       >
         <InputController
           required={true}
-          id={InputFields.case.signature.committee.institution}
-          name={InputFields.case.signature.committee.institution}
+          id={InputFields.advert.signature.committee.institution}
+          name={InputFields.advert.signature.committee.institution}
           label={f(advert.inputs.signature.institution.label)}
           error={
             errors &&
             getErrorViaPath(
               errors,
-              InputFields.case.signature.committee.institution,
+              InputFields.advert.signature.committee.institution,
             )
           }
           defaultValue={state.institution}
@@ -101,8 +101,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
           size="sm"
         />
         <DatePickerController
-          id={InputFields.case.signature.committee.date}
-          name={InputFields.case.signature.committee.date}
+          id={InputFields.advert.signature.committee.date}
+          name={InputFields.advert.signature.committee.date}
           label={f(advert.inputs.signature.date.label)}
           placeholder={f(advert.inputs.signature.date.placeholder)}
           backgroundColor="blue"
@@ -118,8 +118,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
         <Box className={styles.inputGroup}>
           <Box className={styles.inputWrapper}>
             <InputController
-              id={InputFields.case.signature.committee.chairman.textAbove}
-              name={InputFields.case.signature.committee.chairman.textAbove}
+              id={InputFields.advert.signature.committee.chairman.textAbove}
+              name={InputFields.advert.signature.committee.chairman.textAbove}
               label={f(advert.inputs.signature.textAbove.label)}
               defaultValue={state.chairman.textAbove}
               backgroundColor="blue"
@@ -130,13 +130,13 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
             />
             <InputController
               required={true}
-              id={InputFields.case.signature.committee.chairman.name}
-              name={InputFields.case.signature.committee.chairman.name}
+              id={InputFields.advert.signature.committee.chairman.name}
+              name={InputFields.advert.signature.committee.chairman.name}
               error={
                 errors &&
                 getErrorViaPath(
                   errors,
-                  InputFields.case.signature.committee.chairman.name,
+                  InputFields.advert.signature.committee.chairman.name,
                 )
               }
               label={f(advert.inputs.signature.name.label)}
@@ -150,8 +150,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
           </Box>
           <Box className={styles.inputWrapper}>
             <InputController
-              id={InputFields.case.signature.committee.chairman.textAfter}
-              name={InputFields.case.signature.committee.chairman.textAfter}
+              id={InputFields.advert.signature.committee.chairman.textAfter}
+              name={InputFields.advert.signature.committee.chairman.textAfter}
               label={f(advert.inputs.signature.textAfter.label)}
               defaultValue={state.chairman.textAfter}
               backgroundColor="blue"
@@ -161,8 +161,8 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
               }
             />
             <InputController
-              id={InputFields.case.signature.committee.chairman.textBelow}
-              name={InputFields.case.signature.committee.chairman.textBelow}
+              id={InputFields.advert.signature.committee.chairman.textBelow}
+              name={InputFields.advert.signature.committee.chairman.textBelow}
               label={f(advert.inputs.signature.textBelow.label)}
               defaultValue={state.chairman.textBelow}
               backgroundColor="blue"
@@ -180,7 +180,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
         </Text>
         {state.members?.map((member, index) => {
           const localName =
-            InputFields.case.signature.committee.members.name.replace(
+            InputFields.advert.signature.committee.members.name.replace(
               MEMBER_INDEX,
               `${index}`,
             )
@@ -201,11 +201,11 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
                   }
                 />
                 <InputController
-                  id={InputFields.case.signature.committee.members.textBelow.replace(
+                  id={InputFields.advert.signature.committee.members.textBelow.replace(
                     MEMBER_INDEX,
                     `${index}`,
                   )}
-                  name={InputFields.case.signature.committee.members.textBelow.replace(
+                  name={InputFields.advert.signature.committee.members.textBelow.replace(
                     MEMBER_INDEX,
                     `${index}`,
                   )}

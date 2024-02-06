@@ -24,6 +24,7 @@ interface SelectControllerProps<Value> {
   required?: boolean
   rules?: RegisterOptions
   size?: SelectProps<Value>['size']
+  internalKey?: string
 }
 
 export const SelectController = <Value,>({
@@ -42,6 +43,7 @@ export const SelectController = <Value,>({
   size,
   required = false,
   rules,
+  internalKey,
 }: SelectControllerProps<Value> & TestSupport) => {
   const { clearErrors } = useFormContext()
   return (
@@ -51,6 +53,7 @@ export const SelectController = <Value,>({
       rules={rules}
       render={({ field: { onChange, value } }) => (
         <Select
+          key={internalKey}
           required={required}
           backgroundColor={backgroundColor}
           hasError={error !== undefined}

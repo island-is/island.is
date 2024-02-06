@@ -56,32 +56,32 @@ export const SignatureSection = ({
 
   const [regularSignatures, setRegularSignatures] =
     useState<RegularSignatureState>(
-      answers?.case?.signature?.regular ?? [{ ...emptyRegularSignature }],
+      answers?.advert?.signature?.regular ?? [{ ...emptyRegularSignature }],
     )
 
   const [committeeSignatures, setCommitteeSignatures] =
     useState<CommitteeSignatureState>({
-      institution: answers?.case?.signature?.committee.institution ?? '',
-      date: answers?.case?.signature?.committee.date ?? '',
-      chairman: answers?.case?.signature?.committee.chairman ?? {
+      institution: answers?.advert?.signature?.committee.institution ?? '',
+      date: answers?.advert?.signature?.committee.date ?? '',
+      chairman: answers?.advert?.signature?.committee.chairman ?? {
         ...emptyChairman,
       },
-      members: answers?.case?.signature?.committee.members ?? [
+      members: answers?.advert?.signature?.committee.members ?? [
         { ...emptyCommitteeMember },
         { ...emptyCommitteeMember },
       ],
     })
 
   useEffect(() => {
-    setValue('case.signature.regular', regularSignatures)
+    setValue('advert.signature.regular', regularSignatures)
   }, [regularSignatures, setValue])
 
   useEffect(() => {
-    setValue('case.signature.committee', committeeSignatures)
+    setValue('advert.signature.committee', committeeSignatures)
   }, [committeeSignatures, setValue])
 
   const [additonalSignature, setAdditionalSignature] = useState(
-    answers?.case?.signature.additionalSignature ?? '',
+    answers?.advert?.signature.additionalSignature ?? '',
   )
 
   return (
@@ -123,10 +123,10 @@ export const SignatureSection = ({
           }
           config={signatureConfig}
           readOnly={true}
-          name={InputFields.case.signatureContents}
+          name={InputFields.advert.signatureContents}
           error={
             errors &&
-            getErrorViaPath(errors, InputFields.case.signatureContents)
+            getErrorViaPath(errors, InputFields.advert.signatureContents)
           }
         />
       </Box>
