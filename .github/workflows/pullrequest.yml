@@ -108,6 +108,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
@@ -255,6 +256,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
@@ -316,6 +318,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
@@ -365,6 +368,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - uses: actions/setup-node@v3
         with:
@@ -426,6 +430,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
@@ -472,6 +477,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
@@ -524,6 +530,7 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check node-modules cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'

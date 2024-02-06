@@ -143,7 +143,6 @@ runs:
       if: ${{ !cancelled() }}
       env:
         SLACK_CHANNEL: infra-updates
-        SLACK_COLOR: ${{ job.status }}
         SLACK_ICON: https://github.com/island-is.png?size=48
         SLACK_MESSAGE: ''
         SLACK_TITLE: Github Actions cache check
@@ -161,6 +160,7 @@ runs:
 
     - name: Notify on failure
       if: ${{ !cancelled() && success() }}
+      continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
       env:
         SLACK_COLOR: '#00ee66'
@@ -174,6 +174,7 @@ runs:
 
     - name: Notify on failure
       if: ${{ !cancelled() && !success() }}
+      continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
       env:
         SLACK_COLOR: '#ff0000'
