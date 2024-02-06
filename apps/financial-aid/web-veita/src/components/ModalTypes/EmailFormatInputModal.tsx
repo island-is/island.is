@@ -95,6 +95,7 @@ const EmailFormatInputModal = ({
           return
         }
         const modifiedHtml = ref.current.innerHTML.replace(/<br\s*\/?>/g, '\n')
+
         onSaveApplication(modifiedHtml)
       }}
       submitButtonText={submitButtonText}
