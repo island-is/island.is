@@ -36,6 +36,9 @@ export class AppService {
           representation: 'date',
         }),
     )
+    if (filters.state) {
+      url.searchParams.append('state', filters.state)
+    }
 
     return fetch(url, {
       method: 'GET',
@@ -45,7 +48,6 @@ export class AppService {
         'Municipality-Code': municipalityCode,
       },
     }).then(async (res) => {
-      console.log('res', res)
       return res.json()
     })
   }
