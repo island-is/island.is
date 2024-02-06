@@ -14,13 +14,18 @@ export class ApiUserService {
     private readonly apiUserModel: typeof ApiUserModel,
   ) {}
 
-  async findByApiKey(apiKey: string): Promise<ApiUserModel> {
-    return this.decryptApiKey(
-      await this.apiUserModel.findOne({
-        where: {
-          apiKey,
-        },
-      }),
+  async findByMunicipalityCodeAndApiKey(
+    apiKey: string,
+    municipalityCode: string,
+  ): Promise<ApiUserModel> {
+    const keysWithMunicipalityCode = await this.apiUserModel.findAll({
+      where: {
+        municipalityCode,
+      },
+    })
+
+    return keysWithMunicipalityCode.find(
+      (m) => this.decryptApiKey(m).apiKey === apiKey,
     )
   }
 

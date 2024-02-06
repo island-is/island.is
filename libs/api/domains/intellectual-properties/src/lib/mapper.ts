@@ -1,5 +1,6 @@
 import { HUXELSAPICommonTrademarkModelsTrademarks } from '@island.is/clients/intellectual-properties'
 import { TrademarkSubType, TrademarkType } from './models/trademark.model'
+import { isDefined } from '@island.is/shared/utils'
 
 export const mapTrademarkType = (type: string | null | undefined) => {
   if (!type) {
@@ -37,31 +38,12 @@ export const mapTrademarkSubtype = (
     : TrademarkSubType.TRADEMARK
 }
 
-export const mapFullAddress = (
-  streetAddress?: string | undefined,
-  postalCode?: string | undefined,
-  city?: string | undefined,
-) => {
-  if (!streetAddress && !postalCode && !city) {
+export const mapFullAddress = (strings: Array<string | undefined>) => {
+  const filteredStrings = strings.filter(isDefined)
+
+  if (!filteredStrings.length) {
     return undefined
   }
 
-  let address = ''
-
-  if (streetAddress) {
-    address += streetAddress
-
-    if (postalCode || city) {
-      address += ','
-    }
-  }
-
-  if (postalCode) {
-    address += ` ${postalCode}`
-  }
-  if (city) {
-    address += ` ${city}`
-  }
-
-  return address
+  return filteredStrings.join(', ')
 }
