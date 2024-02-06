@@ -441,9 +441,9 @@
             "nullable": true
           },
           "mileage": {
-            "type": "string",
+            "type": "integer",
             "description": "Mileage reading",
-            "nullable": true
+            "format": "int32"
           },
           "operation": {
             "type": "string",
@@ -478,10 +478,12 @@
             "description": "Where does reading come from"
           },
           "mileage": {
-            "maxLength": 7,
-            "minLength": 1,
-            "type": "string",
-            "description": "Mileage reading"
+            "maximum": 9999999,
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "type": "integer",
+            "description": "Mileage reading",
+            "format": "int32"
           },
           "operation": {
             "type": "string",
@@ -520,10 +522,12 @@
             "format": "int32"
           },
           "mileage": {
-            "maxLength": 7,
-            "minLength": 1,
-            "type": "string",
-            "description": "Mileage reading"
+            "maximum": 9999999,
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "type": "integer",
+            "description": "Mileage reading",
+            "format": "int32"
           }
         },
         "additionalProperties": false,
