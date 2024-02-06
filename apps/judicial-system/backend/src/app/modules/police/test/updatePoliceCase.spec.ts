@@ -1,5 +1,4 @@
 import { Agent } from 'https'
-import { Base64 } from 'js-base64'
 import fetch from 'node-fetch'
 import { uuid } from 'uuidv4'
 
@@ -15,6 +14,7 @@ import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { randomDate } from '../../../test'
 import { policeModuleConfig } from '../police.config'
+import { CourtDocumentType } from '../police.service'
 
 jest.mock('node-fetch')
 
@@ -34,11 +34,10 @@ describe('PoliceController - Update Police Case', () => {
   const defendantNationalId = uuid()
   const validToDate = randomDate()
   const caseConclusion = 'test conclusion'
-  const requestPdf = 'test request pdf'
-  const courtRecordPdf = 'test court record pdf'
-  const rulingPdf = 'test ruling pdf'
-  const custodyNoticePdf = 'test custody notice pdf'
-  const appealRulingPdf = 'test court of appeals ruling pdf'
+  const courtDocuments = [
+    { type: CourtDocumentType.RVKR, courtDocument: 'test request pdf' },
+    { type: CourtDocumentType.RVTB, courtDocument: 'test court record pdf' },
+  ]
 
   let mockConfig: ConfigType<typeof policeModuleConfig>
   let xRoadPath: string
@@ -74,11 +73,7 @@ describe('PoliceController - Update Police Case', () => {
           defendantNationalId,
           validToDate,
           caseConclusion,
-          requestPdf,
-          courtRecordPdf,
-          rulingPdf,
-          custodyNoticePdf,
-          [appealRulingPdf],
+          courtDocuments,
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -114,13 +109,7 @@ describe('PoliceController - Update Police Case', () => {
             courtVerdict: caseState,
             expiringDate: validToDate,
             courtVerdictString: caseConclusion,
-            courtDocuments: [
-              { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
-              { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
-              { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
-              { type: 'RVVI', courtDocument: Base64.btoa(custodyNoticePdf) },
-              { type: 'RVUL', courtDocument: Base64.btoa(appealRulingPdf) },
-            ],
+            courtDocuments,
           }),
         },
       )
