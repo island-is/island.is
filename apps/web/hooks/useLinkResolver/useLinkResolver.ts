@@ -99,6 +99,14 @@ export const routesTemplate = {
     is: '/starfatorg/[id]',
     en: '',
   },
+  pensioncalculatorresults: {
+    is: '/s/tryggingastofnun/reiknivel/nidurstada',
+    en: '/en/o/social-insurance-administration/calculator/results',
+  },
+  pensioncalculator: {
+    is: '/s/tryggingastofnun/reiknivel',
+    en: '/en/o/social-insurance-administration/calculator',
+  },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
     en: '/en/o/digital-iceland/island-services',

@@ -30,15 +30,6 @@ registerEnumType(PensionStart, {
   name: 'SocialInsurancePensionCalculationPensionStart',
 })
 
-export enum Birthyear {
-  Born1951OrEarlier = 'Born1951OrEarlier',
-  Born1952OrLater = 'Born1952OrLater',
-}
-
-registerEnumType(Birthyear, {
-  name: 'SocialInsurancePensionCalculationBirthyear',
-})
-
 export enum PeriodIncomeType {
   Month = 'Month',
   Year = 'Year',
@@ -62,23 +53,14 @@ export class PensionCalculationInput {
   @Field(() => Boolean, { nullable: true })
   mobilityImpairment?: boolean
 
-  @Field(() => Birthyear, { nullable: true })
-  yearOfBirth?: Birthyear
-
-  @Field(() => PensionStart, { nullable: true })
-  startPension?: PensionStart
+  @Field(() => Date, { nullable: true })
+  startDate?: Date
 
   @Field(() => Number, { nullable: true })
   childCount?: number
 
   @Field(() => Number, { nullable: true })
   childSupportCount?: number
-
-  @Field(() => Number, { nullable: true })
-  delayPension?: number
-
-  @Field(() => Number, { nullable: true })
-  hurryPension?: number
 
   @Field(() => Number, { nullable: true })
   ageOfFirst75DisabilityAssessment?: number
@@ -88,9 +70,6 @@ export class PensionCalculationInput {
 
   @Field(() => Number, { nullable: true })
   livingConditionAbroadInYears?: number
-
-  @Field(() => Number, { nullable: true })
-  ageNow?: number
 
   @Field(() => Number, { nullable: true })
   taxCard?: number
@@ -124,6 +103,9 @@ export class PensionCalculationInput {
 
   @Field(() => Number, { nullable: true })
   foreignBasicPension?: number
+
+  @Field(() => Date)
+  birthdate!: Date
 
   @Field(() => Date, { nullable: true })
   dateOfCalculations?: Date

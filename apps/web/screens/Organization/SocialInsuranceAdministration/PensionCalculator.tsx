@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import add from 'date-fns/add'
-import addYears from 'date-fns/addYears'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import { useLazyQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
 
 import { Box, Button, Option, Stack, Text } from '@island.is/island-ui/core'
 import {
@@ -13,24 +11,18 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { sortAlpha } from '@island.is/shared/utils'
-import {
-  getThemeConfig,
-  OrganizationFooter,
-  OrganizationHeader,
-} from '@island.is/web/components'
+import { getThemeConfig } from '@island.is/web/components'
 import {
   Organization,
   OrganizationPage,
   Query,
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
-  QueryGetPensionCalculationArgs,
   SocialInsurancePensionCalculationBasePensionType as BasePensionType,
-  SocialInsurancePensionCalculationBirthyear as Birthyear,
   SocialInsurancePensionCalculationLivingCondition as LivingCondition,
-  SocialInsurancePensionCalculationPensionStart as PensionStart,
   SocialInsurancePensionCalculationPeriodIncomeType as PeriodIncomeType,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -41,7 +33,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
+import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import * as styles from './PensionCalculator.css'
 
 interface FormState {
@@ -65,15 +57,12 @@ interface FormState {
   foreignBasicPension: string
   hasLivedAbroad: 'yes' | 'no'
   livingConditionAbroadInYears: string
+  ageOfFirst75DisabilityAssessment: string
 }
 
 interface PensionCalculatorProps {
   organizationPage: OrganizationPage
   organization: Organization
-}
-
-const convertStringToNumber = (value: string) => {
-  return value ? Number(value) : undefined
 }
 
 const PensionCalculator: Screen<PensionCalculatorProps> = ({
@@ -259,91 +248,89 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
     ]
   }, [])
 
-  const [fetchResult, { data, error }] = useLazyQuery<
-    Query,
-    QueryGetPensionCalculationArgs
-  >(GET_PENSION_CALCULATION)
+  const dateOfCalculations = new Date() // TODO: change this value depending on year selected (ár reiknivélar)
 
-  console.log('DATA', data)
-  console.log('error', error)
+  const { linkResolver } = useLinkResolver()
 
-  const currentDate = new Date() // TODO: change this value depending on year selected (ár reiknivélar)
+  const router = useRouter()
 
   const onSubmit = (data: FormState) => {
-    let hurryPension = 0
-    let delayPension = 0
+    const baseUrl = linkResolver('pensioncalculatorresults').href
+    const queryParams = new URLSearchParams()
 
-    if (data.birthdate && data.startDate) {
-      const birthdate = new Date(data.birthdate)
-      const startDate = new Date(data.startDate)
-
-      const defaultPensionDate = addYears(birthdate, defaultPensionAge)
-      console.log(defaultPensionDate)
-
-      const offset = differenceInMonths(startDate, defaultPensionDate)
-      console.log(offset)
-
-      if (offset < 0) {
-        hurryPension = Math.abs(offset)
-      } else {
-        delayPension = offset
-      }
+    if (data.benefitsFromMunicipality) {
+      queryParams.append(
+        'benefitsFromMunicipality',
+        data.benefitsFromMunicipality,
+      )
+    }
+    if (data.capitalIncome) {
+      queryParams.append('capitalIncome', data.capitalIncome)
+    }
+    if (data.childCount) {
+      queryParams.append('childCount', String(data.childCount))
+    }
+    if (data.childSupportCount) {
+      queryParams.append('childSupportCount', String(data.childSupportCount))
+    }
+    if (data.foreignBasicPension) {
+      queryParams.append('foreignBasicPension', data.foreignBasicPension)
+    }
+    if (data.income) {
+      queryParams.append('income', data.income)
+    }
+    if (data.otherIncome) {
+      queryParams.append('otherIncome', data.otherIncome)
+    }
+    if (data.livingCondition) {
+      queryParams.append('livingCondition', data.livingCondition)
+    }
+    if (data.livingConditionAbroadInYears) {
+      queryParams.append(
+        'livingConditionAbroadInYears',
+        data.livingConditionAbroadInYears,
+      )
+    }
+    if (data.taxCard) {
+      queryParams.append('taxCard', data.taxCard)
+    }
+    if (data.pensionPayments) {
+      queryParams.append('pensionPayments', data.pensionPayments)
+    }
+    if (data.premium) {
+      queryParams.append('premium', data.premium)
+    }
+    if (data.privatePensionPayments) {
+      queryParams.append('privatePensionPayments', data.privatePensionPayments)
+    }
+    if (data.privatePensionPayments) {
+      queryParams.append('privatePensionPayments', data.privatePensionPayments)
+    }
+    if (data.typeOfPeriodIncome) {
+      queryParams.append('typeOfPeriodIncome', data.typeOfPeriodIncome)
+    }
+    if (data.basePensionType) {
+      queryParams.append('typeOfBasePension', data.basePensionType)
+    }
+    if (data.birthdate) {
+      queryParams.append('birthdate', data.birthdate)
     }
 
-    // TODO: do calculators for previous years take current year into account? I think not
+    queryParams.append(
+      'mobilityImpairment',
+      data.mobilityImpairment === 'yes' ? 'true' : 'false',
+    )
+    queryParams.append('hasSpouse', data.hasSpouse ? 'true' : 'false')
+    queryParams.append('dateOfCalculations', dateOfCalculations.toISOString())
 
-    const pensionStart = data.startDate
-      ? new Date(data.startDate).getFullYear() >= 2018
-        ? PensionStart.Starts2018OrLater
-        : PensionStart.Starts2017OrBefore
-      : undefined
-
-    fetchResult({
-      variables: {
-        input: {
-          hurryPension,
-          delayPension,
-          benefitsFromMunicipality: convertStringToNumber(
-            data.benefitsFromMunicipality,
-          ),
-          capitalIncome: convertStringToNumber(data.capitalIncome),
-          childCount: data.childCount,
-          childSupportCount: data.childSupportCount,
-          dateOfCalculations: currentDate,
-          foreignBasicPension: convertStringToNumber(data.foreignBasicPension),
-          hasSpouse: data.hasSpouse,
-          income: convertStringToNumber(data.income),
-          otherIncome: convertStringToNumber(data.otherIncome),
-          livingCondition: data.livingCondition,
-          livingConditionAbroadInYears: convertStringToNumber(
-            data.livingConditionAbroadInYears,
-          ),
-          taxCard: convertStringToNumber(data.taxCard),
-          mobilityImpairment: data.mobilityImpairment === 'yes',
-          pensionPayments: convertStringToNumber(data.pensionPayments),
-          premium: convertStringToNumber(data.premium),
-          privatePensionPayments: convertStringToNumber(
-            data.privatePensionPayments,
-          ),
-          typeOfPeriodIncome: data.typeOfPeriodIncome,
-          typeOfBasePension: data.basePensionType,
-          startPension: pensionStart,
-          yearOfBirth: data.birthdate
-            ? new Date(data.birthdate).getFullYear() >= 1952
-              ? Birthyear.Born1952OrLater
-              : Birthyear.Born1951OrEarlier
-            : undefined,
-          // TODO: handle other fields
-        },
-      },
-    })
+    router.push(`${baseUrl}?${queryParams.toString()}`)
   }
 
   const { activeLocale } = useI18n()
 
   const birthdateRange = {
-    minDate: add(currentDate, { years: -130 }),
-    maxDate: currentDate, // TODO: what should this be?
+    minDate: add(dateOfCalculations, { years: -130 }),
+    maxDate: dateOfCalculations, // TODO: what should this be?
   }
 
   const startDateRange = !birthdate
@@ -358,9 +345,10 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
       }
 
   return (
-    <>
-      <OrganizationHeader organizationPage={organizationPage} />
-
+    <PensionCalculatorWrapper
+      organizationPage={organizationPage}
+      organization={organization}
+    >
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Stack space={3}>
@@ -372,7 +360,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
             >
               <Stack space={3}>
                 <Text variant="h1" as="h1">
-                  Reiknivél lífeyris {currentDate.getFullYear()}
+                  Reiknivél lífeyris {dateOfCalculations.getFullYear()}
                 </Text>
                 <Text>
                   Vinsamlegast athugið að reiknivélin gefur ekki bindandi
@@ -479,6 +467,19 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       options={childSupportCountOptions}
                     />
                   </Box>
+
+                  {(basePensionType === BasePensionType.Disability ||
+                    basePensionType === BasePensionType.Rehabilitation) && (
+                    <Box className={styles.inputContainer}>
+                      <InputController
+                        id="ageOfFirst75DisabilityAssessment"
+                        name="ageOfFirst75DisabilityAssessment"
+                        label="Fyrsta 75% örorkumat"
+                        suffix=" ára"
+                        type="number"
+                      />
+                    </Box>
+                  )}
 
                   <Stack space={2}>
                     <Text>Með hreyfihömlunarmat</Text>
@@ -638,9 +639,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
           </Stack>
         </form>
       </FormProvider>
-
-      <OrganizationFooter organizations={[organization]} />
-    </>
+    </PensionCalculatorWrapper>
   )
 }
 
@@ -661,7 +660,7 @@ PensionCalculator.getProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           slug,
-          lang: 'is',
+          lang: locale,
         },
       },
     }),
@@ -670,7 +669,7 @@ PensionCalculator.getProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           slug,
-          lang: 'is',
+          lang: locale,
         },
       },
     }),
