@@ -80,26 +80,17 @@ const AppealFiles = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
+  const newUploadFiles = uploadFiles.filter((file) => !file.key)
+
   const handleNextButtonClick = useCallback(
     async (isRetry: boolean) => {
       setUploadState({ isUploading: true, error: false })
 
-      const handleError = (id?: string) => {
-        const file = uploadFiles.find((file) => file.id === id)
-
-        if (!file) {
-          return
-        }
-
-        updateUploadFile({ ...file, status: 'error' })
-      }
-
       const uploadSuccess = await handleUpload(
-        uploadFiles.filter(
+        newUploadFiles.filter(
           (uf) => uf.status === (isRetry ? 'error' : 'uploading'),
         ),
         updateUploadFile,
-        handleError,
       )
 
       if (!uploadSuccess) {
@@ -117,9 +108,9 @@ const AppealFiles = () => {
     },
     [
       handleUpload,
+      newUploadFiles,
       sendNotification,
       updateUploadFile,
-      uploadFiles,
       workingCase.id,
     ],
   )
@@ -191,13 +182,10 @@ const AppealFiles = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            fileList={newUploadFiles.filter(
               (file) =>
                 file.category &&
-                caseFilesTypesToDisplay.includes(file.category) &&
-                workingCase.caseFiles?.find(
-                  (caseFile) => caseFile.id === file.id,
-                ) === undefined,
+                caseFilesTypesToDisplay.includes(file.category),
             )}
             accept={'application/pdf'}
             header={formatMessage(core.uploadBoxTitle)}
@@ -209,7 +197,7 @@ const AppealFiles = () => {
               handleChange(files, appealCaseFilesType)
             }}
             onRemove={(file) => handleRemoveFile(file)}
-            hideIcons={uploadFiles
+            hideIcons={newUploadFiles
               .filter((file) => file.category === appealCaseFilesType)
               .every((file) => file.status === 'uploading')}
             disabled={uploadState.isUploading}
@@ -232,7 +220,7 @@ const AppealFiles = () => {
           )}
           nextButtonIcon={undefined}
           nextIsLoading={uploadState.isUploading}
-          nextIsDisabled={uploadFiles.length === 0}
+          nextIsDisabled={newUploadFiles.length === 0}
           nextButtonColorScheme={uploadState.error ? 'destructive' : 'default'}
         />
       </FormContentContainer>

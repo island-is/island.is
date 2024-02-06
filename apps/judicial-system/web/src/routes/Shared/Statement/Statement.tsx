@@ -72,7 +72,8 @@ const Statement = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const isStepValid = uploadFiles.length > 0 || uploadState.error
+  const newUploadFiles = uploadFiles.filter((file) => !file.key)
+  const isStepValid = newUploadFiles.length > 0 || uploadState.error
 
   const handleNextButtonClick = useCallback(
     async (isRetry: boolean) => {
@@ -80,24 +81,13 @@ const Statement = () => {
         ? { defendantStatementDate: new Date().toISOString() }
         : { prosecutorStatementDate: new Date().toISOString() }
 
-      const handleError = (id?: string) => {
-        const file = uploadFiles.find((file) => file.id === id)
-
-        if (!file) {
-          return
-        }
-
-        updateUploadFile({ ...file, status: 'error' })
-      }
-
       setUploadState({ isUploading: true, error: false })
 
       const uploadSuccess = await handleUpload(
-        uploadFiles.filter(
+        newUploadFiles.filter(
           (uf) => uf.status === (isRetry ? 'error' : 'uploading'),
         ),
         updateUploadFile,
-        handleError,
       )
 
       if (uploadSuccess) {
@@ -111,9 +101,9 @@ const Statement = () => {
     },
     [
       handleUpload,
+      newUploadFiles,
       updateCase,
       updateUploadFile,
-      uploadFiles,
       user,
       workingCase.id,
     ],
@@ -179,7 +169,7 @@ const Statement = () => {
                 required
               />
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                fileList={newUploadFiles.filter(
                   (file) => file.category === appealStatementType,
                 )}
                 accept={'application/pdf'}
@@ -190,7 +180,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealStatementType)}
                 onRemove={(file) => handleRemoveFile(file)}
-                hideIcons={uploadFiles
+                hideIcons={newUploadFiles
                   .filter((file) => file.category === appealStatementType)
                   .every((file) => file.status === 'uploading')}
                 disabled={uploadState.isUploading}
@@ -211,7 +201,7 @@ const Statement = () => {
                   `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
               </Text>
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                fileList={newUploadFiles.filter(
                   (file) => file.category === appealCaseFilesType,
                 )}
                 accept={'application/pdf'}
@@ -222,7 +212,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealCaseFilesType)}
                 onRemove={(file) => handleRemoveFile(file)}
-                hideIcons={uploadFiles
+                hideIcons={newUploadFiles
                   .filter((file) => file.category === appealCaseFilesType)
                   .every((file) => file.status === 'uploading')}
                 disabled={uploadState.isUploading}

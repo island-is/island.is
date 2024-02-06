@@ -69,28 +69,18 @@ const AppealToCourtOfAppeals = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const isStepValid = uploadFiles.length > 0 || uploadState.error
+  const newUploadFiles = uploadFiles.filter((file) => !file.key)
+  const isStepValid = newUploadFiles.length > 0 || uploadState.error
 
   const handleNextButtonClick = useCallback(
     async (isRetry: boolean) => {
       setUploadState({ isUploading: true, error: false })
 
-      const handleError = (id?: string) => {
-        const file = uploadFiles.find((file) => file.id === id)
-
-        if (!file) {
-          return
-        }
-
-        updateUploadFile({ ...file, status: 'error' })
-      }
-
       const uploadSuccess = await handleUpload(
-        uploadFiles.filter(
+        newUploadFiles.filter(
           (uf) => uf.status === (isRetry ? 'error' : 'uploading'),
         ),
         updateUploadFile,
-        handleError,
       )
 
       if (!uploadSuccess) {
@@ -111,9 +101,9 @@ const AppealToCourtOfAppeals = () => {
     },
     [
       handleUpload,
+      newUploadFiles,
       transitionCase,
       updateUploadFile,
-      uploadFiles,
       workingCase.id,
     ],
   )
@@ -159,7 +149,7 @@ const AppealToCourtOfAppeals = () => {
             required
           />
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            fileList={newUploadFiles.filter(
               (file) => file.category === appealBriefType,
             )}
             accept={'application/pdf'}
@@ -172,7 +162,7 @@ const AppealToCourtOfAppeals = () => {
             onRemove={(file) => {
               handleRemoveFile(file)
             }}
-            hideIcons={uploadFiles
+            hideIcons={newUploadFiles
               .filter((file) => file.category === appealBriefType)
               .every((file) => file.status === 'uploading')}
             disabled={uploadState.isUploading}
@@ -193,7 +183,7 @@ const AppealToCourtOfAppeals = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            fileList={newUploadFiles.filter(
               (file) => file.category === appealCaseFilesType,
             )}
             accept={'application/pdf'}
@@ -204,7 +194,7 @@ const AppealToCourtOfAppeals = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
-            hideIcons={uploadFiles
+            hideIcons={newUploadFiles
               .filter((file) => file.category === appealCaseFilesType)
               .every((file) => file.status === 'uploading')}
             disabled={uploadState.isUploading}
