@@ -1,8 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const dark50 = '#F8F8FA'
-
 export const wrapper = style({
   width: '100%',
 })
@@ -22,7 +20,7 @@ export const active = style({
 })
 
 export const unread = style({
-  backgroundColor: dark50,
+  backgroundColor: theme.color.blueberry100,
 })
 
 export const unopenedWrapper = style({
