@@ -12,7 +12,6 @@ import round from 'lodash/round'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
-  ApplicationConfigurations,
   ExternalData,
   Field,
   FormValue,
@@ -41,7 +40,6 @@ import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { parentalLeaveFormMessages } from '../lib/messages'
 
-import { ActionCardProps } from '@island.is/island-ui/core/types'
 import { FormatMessage } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
@@ -66,7 +64,6 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
   EmployerRow,
-  ExistingChildApplication,
   Files,
   OtherParentObj,
   Period,
@@ -76,8 +73,6 @@ import {
   YesOrNo,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
-
-import { NavigateFunction } from 'react-router-dom'
 
 export function getExpectedDateOfBirthOrAdoptionDate(
   application: Application,
@@ -1868,30 +1863,3 @@ export const getChildrenOptions = (application: Application) => {
     }
   })
 }
-
-export const mapExistingApplicationsToActionCard = (
-  existingApplication: ExistingChildApplication,
-  formatMessage: FormatMessage,
-  navigate: NavigateFunction,
-): ActionCardProps => ({
-  headingVariant: 'h4',
-  heading: existingApplication.adoptionDate
-    ? formatMessage(
-        parentalLeaveFormMessages.selectChild.fosterCareOrAdoption,
-        {
-          dateOfBirth: formatDateOfBirth(existingApplication.adoptionDate),
-        },
-      )
-    : formatMessage(parentalLeaveFormMessages.selectChild.baby, {
-        dateOfBirth: formatDateOfBirth(existingApplication.expectedDateOfBirth),
-      }),
-  text: existingApplication.applicationId,
-  cta: {
-    label: formatMessage(parentalLeaveFormMessages.selectChild.choose),
-    onClick: () => {
-      navigate(
-        `/${ApplicationConfigurations.ParentalLeave.slug}/${existingApplication.applicationId}`,
-      )
-    },
-  },
-})
