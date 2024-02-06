@@ -75,7 +75,7 @@ const CreateApiKeyModal = ({ isVisible, setIsVisible, onSubmit }: Props) => {
             hasError: false,
           })
         }}
-        errorMessage="Til að búa til lykill þarf nafn að vera til staðar"
+        errorMessage="Til að búa til lykil þarf nafn að vera til staðar"
       />
       <Text marginTop={1} marginBottom={3} variant="small">
         Veldu nafn á kerfið
@@ -90,7 +90,7 @@ const CreateApiKeyModal = ({ isVisible, setIsVisible, onSubmit }: Props) => {
         readOnly
       />
       <Text marginTop={1} marginBottom={3} variant="small">
-        Lykill hefur verið búin til
+        Lykill hefur verið búinn til
       </Text>
     </ActionModal>
   )
