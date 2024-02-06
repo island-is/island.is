@@ -10,8 +10,8 @@ import ActionExtendDeadline from './components/extendDeadline'
 import ActionReviewComplete from './components/completeReview'
 import PaperUpload from './components/paperUpload'
 import ListReviewedAlert from './components/listReviewedAlert'
-import landskjortjorn from '../../../assets/landskjortjorn.svg'
-import thjodskra from '../../../assets/thjodskra.svg'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { list } = useLoaderData() as { list: SignatureCollectionList }
@@ -43,7 +43,11 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                     ? formatMessage(m.singleListIntro)
                     : formatMessage(m.singleListIntroManage)
                 }
-                img={allowedToProcess ? landskjortjorn : thjodskra}
+                img={
+                  allowedToProcess
+                    ? electionsCommitteeLogo
+                    : nationalRegistryLogo
+                }
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />

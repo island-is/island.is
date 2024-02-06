@@ -24,8 +24,8 @@ import { Filters, countryAreas, pageSize } from '../../lib/utils'
 import CompareLists from './components/compareLists'
 import { format as formatNationalId } from 'kennitala'
 import CreateCollection from './components/createCollection'
-import landskjortjorn from '../../../assets/landskjortjorn.svg'
-import thjodskra from '../../../assets/thjodskra.svg'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -107,7 +107,9 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           <IntroHeader
             title={formatMessage(m.signatureListsTitle)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={allowedToProcess ? landskjortjorn : thjodskra}
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
             imgPosition="right"
             imgHiddenBelow="sm"
           />
