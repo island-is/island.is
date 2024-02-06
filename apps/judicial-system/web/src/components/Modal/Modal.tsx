@@ -17,6 +17,7 @@ interface ModalProps {
   onPrimaryButtonClick?: () => void
   isPrimaryButtonLoading?: boolean
   isPrimaryButtonDisabled?: boolean
+  primaryButtonColorScheme?: 'default' | 'destructive'
   isSecondaryButtonLoading?: boolean
   errorMessage?: string
   children?: ReactNode
@@ -33,6 +34,7 @@ const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
   onPrimaryButtonClick,
   isPrimaryButtonLoading,
   isPrimaryButtonDisabled,
+  primaryButtonColorScheme = 'default',
   isSecondaryButtonLoading,
   errorMessage,
   children,
@@ -110,6 +112,7 @@ const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
                 onClick={onPrimaryButtonClick}
                 loading={isPrimaryButtonLoading}
                 disabled={isPrimaryButtonDisabled}
+                colorScheme={primaryButtonColorScheme}
               >
                 {primaryButtonText}
               </Button>
@@ -138,6 +141,7 @@ const ModalPortal = ({
   onPrimaryButtonClick,
   isPrimaryButtonLoading,
   isPrimaryButtonDisabled,
+  primaryButtonColorScheme,
   isSecondaryButtonLoading,
   errorMessage,
   children,
@@ -157,6 +161,7 @@ const ModalPortal = ({
       onPrimaryButtonClick={onPrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
       isPrimaryButtonDisabled={isPrimaryButtonDisabled}
+      primaryButtonColorScheme={primaryButtonColorScheme}
       isSecondaryButtonLoading={isSecondaryButtonLoading}
       errorMessage={errorMessage}
       children={children}

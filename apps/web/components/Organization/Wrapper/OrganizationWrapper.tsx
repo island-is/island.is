@@ -95,6 +95,7 @@ import {
   TryggingastofnunHeader,
 } from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
+import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
@@ -102,7 +103,6 @@ import {
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import { liveChatIncConfig, watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
-import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 
 interface NavigationData {
   title: string
@@ -125,6 +125,7 @@ interface WrapperProps {
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
   showReadSpeaker?: boolean
+  isSubpage?: boolean
 }
 
 interface HeaderProps {
@@ -882,6 +883,7 @@ export const OrganizationWrapper: React.FC<
   showSecondaryMenu = true,
   showExternalLinks = false,
   showReadSpeaker = true,
+  isSubpage = true,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -927,7 +929,7 @@ export const OrganizationWrapper: React.FC<
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
-          paddingBottom={[4, 4, 9]}
+          paddingBottom={[6, 6, 9]}
           isSticky={false}
           fullWidthContent={fullWidthContent}
           sidebarContent={
@@ -1106,7 +1108,7 @@ export const OrganizationWrapper: React.FC<
             {mainContent ?? children}
           </Box>
 
-          {isMobile && sidebarCards.length > 0 && (
+          {isMobile && !isSubpage && sidebarCards.length > 0 && (
             <Box marginY={4}>
               <Stack space={3}>
                 {sidebarCards.map((card) => {

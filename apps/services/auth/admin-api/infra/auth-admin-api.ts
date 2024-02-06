@@ -54,7 +54,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         },
       },
     })
-    .readiness('/backend/liveness')
+    .readiness('/backend/health/check')
     .liveness('/backend/liveness')
     .resources({
       limits: {

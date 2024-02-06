@@ -189,6 +189,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:clear-filters',
     defaultMessage: 'Hreinsa síu',
   },
+  vehiclesRequireMileageRegistration: {
+    id: 'sp.vehicles:vehicles-require-mileage-registration',
+    defaultMessage: 'Skráningarskyld ökutæki',
+  },
   notFound: {
     id: 'sp.vehicles:not-found',
     defaultMessage: 'Ökutæki fannst ekki',
