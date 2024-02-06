@@ -147,7 +147,10 @@ export interface IngressForEnv {
   extraAnnotations?: { [idx: string]: string | null }
 }
 
-export type PodDisruptionBudget = { minAvailable?: number, maxUnavailable?: number}
+export type PodDisruptionBudget = {
+  minAvailable?: number
+  maxUnavailable?: number
+}
 export type PersistentVolumeClaim = {
   name?: string
   size: '1Gi' | '5Gi' | '10Gi' | string
