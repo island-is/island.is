@@ -12,5 +12,8 @@ export class Priority {
   number?: string
 
   @Field({ nullable: true })
-  country?: string
+  countryCode?: string
+
+  @Field({ nullable: true })
+  countryName?: string
 }

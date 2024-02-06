@@ -69,11 +69,6 @@ const PatentSPC = ({ data, loading }: Props) => {
           loading={loading}
         />
         <UserInfoLine
-          label={ipMessages.applicationRegistration}
-          content={formatDate(data.grantPublishedInGazetteDate) ?? ''}
-          loading={loading}
-        />
-        <UserInfoLine
           label={ipMessages.maxValidDate}
           content={formatDate(data.lifecycle?.maxValidDate) ?? ''}
           loading={loading}
@@ -119,6 +114,22 @@ const PatentSPC = ({ data, loading }: Props) => {
         <UserInfoLine
           title={formatMessage(ipMessages.marketingAuthorization)}
           label={formatMessage(ipMessages.marketingAuthorizationNumber)}
+          content={
+            data.marketingAuthorization?.icelandicAuthorizationNumber ?? ''
+          }
+          loading={loading}
+        />
+        <UserInfoLine
+          label={formatMessage(coreMessages.date)}
+          content={
+            formatDate(
+              data.marketingAuthorization?.icelandicAuthorizationDate,
+            ) ?? ''
+          }
+          loading={loading}
+        />
+        <UserInfoLine
+          label={formatMessage(ipMessages.foreignMarketingAuthorizationNumber)}
           content={
             data.marketingAuthorization?.foreignAuthorizationNumber ?? ''
           }

@@ -188,7 +188,7 @@ const PatentIS = ({ data, loading }: Props) => {
             },
             {
               label: formatMessage(coreMessages.country),
-              key: 'country',
+              key: 'countryName',
             },
           ]}
         />

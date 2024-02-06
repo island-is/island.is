@@ -304,7 +304,8 @@ export class IntellectualPropertiesService {
       })),
       priorities: patent.priorities?.map((p) => ({
         applicationDate: parseIPDate(p.dateApplication),
-        country: p.country?.code ?? undefined,
+        countryCode: p.country?.code ?? undefined,
+        countryName: p.country?.code ?? undefined,
         number: p.number ?? '',
         creationDate: parseIPDate(p.createDate),
       })),
