@@ -12,7 +12,6 @@ import {
   VehicleSearchDto,
   PersidnoLookupResultDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
-  CurrentvehicleswithmileageandinspGetRequest,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
