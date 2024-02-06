@@ -230,7 +230,7 @@ services-auth-admin-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/backend/liveness'
+      path: '/backend/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -307,7 +307,7 @@ services-auth-delegation-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -389,7 +389,7 @@ services-auth-ids-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -482,7 +482,7 @@ services-auth-personal-representative:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -551,7 +551,7 @@ services-auth-personal-representative-public:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -638,7 +638,7 @@ services-auth-public-api:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:

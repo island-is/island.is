@@ -1,0 +1,20 @@
+diff --git a/dist/health-indicator/database/sequelize.health.js b/dist/health-indicator/database/sequelize.health.js
+index f34c37b6d2b8d9b2f0ba2b6fbe1ef7bc4b8da389..90265aa07914c626d4fd068287004d780f4564cd 100644
+--- a/dist/health-indicator/database/sequelize.health.js
++++ b/dist/health-indicator/database/sequelize.health.js
+@@ -41,7 +41,6 @@ let SequelizeHealthIndicator = class SequelizeHealthIndicator extends health_ind
+     constructor(moduleRef) {
+         super();
+         this.moduleRef = moduleRef;
+-        this.checkDependantPackages();
+     }
+     /**
+      * Checks if the dependant packages are present
+@@ -89,7 +88,6 @@ let SequelizeHealthIndicator = class SequelizeHealthIndicator extends health_ind
+     pingCheck(key, options = {}) {
+         return __awaiter(this, void 0, void 0, function* () {
+             let isHealthy = false;
+-            this.checkDependantPackages();
+             const connection = options.connection || this.getContextConnection();
+             const timeout = options.timeout || 1000;
+             if (!connection) {
