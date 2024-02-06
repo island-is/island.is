@@ -23,7 +23,10 @@ export class AppService {
     municipalityCode: string,
     filters: FilterApplicationsDto,
   ) {
-    this.logger.info(`trying to fetching all applications`, filters)
+    this.logger.info(
+      `trying to fetching all applications with municipalityCode ${municipalityCode}`,
+      filters,
+    )
 
     const url = new URL(
       `${this.config.backend.url}/api/financial-aid/open-api-applications/getAll`,
