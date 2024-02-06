@@ -148,7 +148,7 @@ runs:
         SLACK_MESSAGE: ''
         SLACK_TITLE: Github Actions cache check
         SLACK_USERNAME: Digital Iceland cache bot
-        SLACK_WEBHOOK: ${{ input.slack-webhook }}
+        SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
       shell: bash
       run: |
         echo "SLACK_CHANNEL=${SLACK_CHANNEL}"
@@ -170,7 +170,7 @@ runs:
       if: ${{ !cancelled() && !success() }}
       uses: rtCamp/action-slack-notify@v2
       env:
-        SLACK_WEBHOOK: ${{ input.slack-webhook }}
+        SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
         SLACK_USERNAME: Github Actions cache bot
         SLACK_CHANNEL: infra-updates
         SLACK_COLOR: '#ff0000'
