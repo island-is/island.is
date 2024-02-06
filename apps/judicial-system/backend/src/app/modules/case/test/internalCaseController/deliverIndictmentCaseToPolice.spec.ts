@@ -2,7 +2,6 @@ import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import {
-  CaseAppealState,
   CaseFileCategory,
   CaseOrigin,
   CaseState,
@@ -14,9 +13,12 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
+import { nowFactory } from '../../../factories'
 import { CourtDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
+
+jest.mock('../../../factories')
 
 interface Then {
   result: DeliverResponse
@@ -25,7 +27,8 @@ interface Then {
 
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
-describe('InternalCaseController - Deliver appeal to police', () => {
+describe('InternalCaseController - Deliver indictment case to police', () => {
+  const date = randomDate()
   const userId = uuid()
   const user = { id: userId } as User
 
@@ -40,6 +43,8 @@ describe('InternalCaseController - Deliver appeal to police', () => {
     mockAwsS3Service = awsS3Service
     mockPoliceService = policeService
 
+    const mockToday = nowFactory as jest.Mock
+    mockToday.mockReturnValueOnce(date)
     const mockGetObject = awsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
@@ -49,7 +54,7 @@ describe('InternalCaseController - Deliver appeal to police', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverAppealToPolice(caseId, theCase, { user })
+        .deliverIndictmentCaseToPolice(caseId, theCase, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -57,28 +62,26 @@ describe('InternalCaseController - Deliver appeal to police', () => {
     }
   })
 
-  describe('deliver appeal to police', () => {
+  describe('deliver case to police', () => {
     const caseId = uuid()
-    const caseType = CaseType.CUSTODY
+    const caseType = CaseType.INDICTMENT
     const caseState = CaseState.ACCEPTED
     const policeCaseNumber = uuid()
     const defendantNationalId = '0123456789'
-    const validToDate = randomDate()
-    const caseConclusion = 'test conclusion'
-    const appealRulingKey = uuid()
-    const appealRulingPdf = 'test appeal ruling'
+    const courtRecordKey = uuid()
+    const courtRecordPdf = 'test court record'
+    const rulingKey = uuid()
+    const rulingPdf = 'test ruling'
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
       type: caseType,
       state: caseState,
-      appealState: CaseAppealState.COMPLETED,
       policeCaseNumbers: [policeCaseNumber],
       defendants: [{ nationalId: defendantNationalId }],
-      validToDate,
-      conclusion: caseConclusion,
       caseFiles: [
-        { key: appealRulingKey, category: CaseFileCategory.APPEAL_RULING },
+        { key: courtRecordKey, category: CaseFileCategory.COURT_RECORD },
+        { key: rulingKey, category: CaseFileCategory.RULING },
       ],
     } as Case
 
@@ -86,15 +89,18 @@ describe('InternalCaseController - Deliver appeal to police', () => {
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(appealRulingPdf)
+      mockGetObject.mockResolvedValueOnce(courtRecordPdf)
+      mockGetObject.mockResolvedValueOnce(rulingPdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)
     })
+
     it('should update the police case', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(appealRulingKey)
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(courtRecordKey)
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(rulingKey)
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
@@ -102,12 +108,16 @@ describe('InternalCaseController - Deliver appeal to police', () => {
         caseState,
         policeCaseNumber,
         defendantNationalId,
-        validToDate,
-        caseConclusion,
+        date,
+        '',
         [
           {
-            type: CourtDocumentType.RVUL,
-            courtDocument: Base64.btoa(appealRulingPdf),
+            type: CourtDocumentType.RVTB,
+            courtDocument: Base64.btoa(courtRecordPdf),
+          },
+          {
+            type: CourtDocumentType.RVDO,
+            courtDocument: Base64.btoa(rulingPdf),
           },
         ],
       )
