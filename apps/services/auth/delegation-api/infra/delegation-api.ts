@@ -55,7 +55,7 @@ export const serviceSetup =
           '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
       })
       .xroad(Base, Client, RskProcuring)
-      .readiness('/liveness')
+      .readiness('/health/check')
       .liveness('/liveness')
       .replicaCount({
         default: 2,

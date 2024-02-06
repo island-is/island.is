@@ -37,6 +37,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     minDate,
     maxDate,
     onChange,
+    readOnly,
   } = field
   const { formatMessage, lang } = useLocale()
 
@@ -129,6 +130,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           minDate={finalMinDate}
           maxDate={finalMaxDate}
           backgroundColor={backgroundColor}
+          readOnly={readOnly}
           label={formatText(title, application, formatMessage)}
           placeholder={
             placeholder
