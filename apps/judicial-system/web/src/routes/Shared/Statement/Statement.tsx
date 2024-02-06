@@ -72,7 +72,12 @@ const Statement = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const newUploadFiles = uploadFiles.filter((file) => !file.key)
+  const newUploadFiles = uploadFiles.filter((file) => {
+    return (
+      workingCase.caseFiles?.find((caseFile) => caseFile.id === file.id) ===
+      undefined
+    )
+  })
   const isStepValid = newUploadFiles.length > 0 || uploadState.error
 
   const handleNextButtonClick = useCallback(
