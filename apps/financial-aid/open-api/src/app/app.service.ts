@@ -18,7 +18,11 @@ export class AppService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async getApplications(apiKey: string, filters: FilterApplicationsDto) {
+  async getApplications(
+    apiKey: string,
+    municipalityCode: string,
+    filters: FilterApplicationsDto,
+  ) {
     this.logger.info(`trying to fetching all applications`, filters)
 
     const url = new URL(
@@ -38,6 +42,7 @@ export class AppService {
       headers: {
         'Content-Type': 'application/json',
         'API-Key': apiKey,
+        'Municipality-Code': municipalityCode,
       },
     }).then(async (res) => {
       console.log('res', res)
