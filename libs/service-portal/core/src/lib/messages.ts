@@ -111,6 +111,10 @@ export const m = defineMessages({
     id: 'service.portal:transactions',
     defaultMessage: 'Færslur',
   },
+  country: {
+    id: 'service.portal:country',
+    defaultMessage: 'Land',
+  },
   date: {
     id: 'service.portal:date',
     defaultMessage: 'Dagsetning',
