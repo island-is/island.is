@@ -203,7 +203,7 @@ const ChatFeedbackPanel = ({
                     assistantChatLog: chatLogCopy,
                     thumbStatus,
                     feedback: feedbackText,
-                    path: router.asPath,
+                    url: window.location.href,
                   },
                 },
               })

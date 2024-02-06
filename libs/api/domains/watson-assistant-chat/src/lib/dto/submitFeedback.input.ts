@@ -23,5 +23,5 @@ export class SubmitFeedbackInput {
   assistantChatLog!: typeof GraphQLJSONObject[]
 
   @Field(() => String, { nullable: true })
-  path?: string | null
+  url?: string | null
 }
