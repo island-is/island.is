@@ -61,27 +61,14 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
           retries: 0
 
-      - name: Debug yarn install location before 'yarn install'
-        if: env.ACTIONS_STEP_DEBUG == 'true'
-        continue-on-error: true
-        run: which yarn
-
       - name: Install yarn dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
         run: yarn install
-
-      - name: Debug yarn install location after 'yarn install'
-        if: env.ACTIONS_STEP_DEBUG == 'true'
-        continue-on-error: true
-        run: which yarn
-
-      - name: Setup yarn
-        run: npm install -g yarn
 
       - name: Check node version
         run: |
           node -v
-          ls -l `which node`
+          ls -l "$(which node)"
 
       - name: Checking out relevant branches
         run: |
@@ -533,7 +520,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: ${{ vars.EC2_IMAGE }}
-    if: ${{ !cancelled() }}
+    # if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace
