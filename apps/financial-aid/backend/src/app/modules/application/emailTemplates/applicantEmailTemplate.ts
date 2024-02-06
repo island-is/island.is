@@ -93,7 +93,7 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
                           ${header(emailData.header)}
                          </tr> 
                          <tr> 
-                          <td align="left" style="padding:0;Margin:0"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">
+                          <td align="left" style="padding:0;Margin:0"><p style="Margin:0;white-space: break-spaces;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#00003c;font-size:18px">
                            <span dangerouslySetInnerHTML={{ __html: ${
                              emailData.content
                            } }}></span>
