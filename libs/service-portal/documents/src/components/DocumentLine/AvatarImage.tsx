@@ -5,6 +5,7 @@ import { Box } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as styles from './DocumentLine.css'
 import { useLocale } from '@island.is/localization'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   background: 'blue100' | 'blue200' | 'white'
@@ -29,7 +30,9 @@ const AvatarImage: FC<Props> = ({
       justifyContent="center"
       background={background}
       style={
-        background === 'blue100' ? { background: styles.dark50 } : undefined
+        background === 'blue100'
+          ? { background: theme.color.blueberry100 }
+          : undefined
       }
       borderRadius="circle"
       className={cn(styles.imageContainer, {
