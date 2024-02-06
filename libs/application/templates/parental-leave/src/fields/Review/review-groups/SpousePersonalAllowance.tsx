@@ -4,10 +4,9 @@ import {
   ReviewGroup,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { NO, YES, parentalLeaveFormMessages } from '../../..'
+import { NO, YES, getApplicationAnswers, parentalLeaveFormMessages } from '../../..'
 import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 
 export const SpousePersonalAllowance = ({
   application,
@@ -15,9 +14,9 @@ export const SpousePersonalAllowance = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [
-    { usePersonalAllowanceFromSpouse, spouseUseAsMuchAsPossible, spouseUsage },
-  ] = useStatefulAnswers(application)
+  const { 
+    usePersonalAllowanceFromSpouse, spouseUseAsMuchAsPossible, spouseUsage 
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup

@@ -13,8 +13,8 @@ import {
   SINGLE,
   SPOUSE,
 } from '../../../constants'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import {
+  getApplicationAnswers,
   getOtherParentId,
   getOtherParentName,
   getSelectedChild,
@@ -30,8 +30,8 @@ export const OtherParent = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [{ otherParent, otherParentEmail, otherParentPhoneNumber }] =
-    useStatefulAnswers(application)
+  const { otherParent, otherParentEmail, otherParentPhoneNumber } =
+    getApplicationAnswers(application.answers)
 
   const selectedChild = getSelectedChild(
     application.answers,
