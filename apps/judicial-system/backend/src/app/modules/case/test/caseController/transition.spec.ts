@@ -199,6 +199,11 @@ describe('CaseController - Transition', () => {
                   user: defaultUser,
                   caseId,
                 },
+                {
+                  type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
+                  user: defaultUser,
+                  caseId,
+                },
               ],
             )
           } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
