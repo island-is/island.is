@@ -570,6 +570,9 @@ export interface IChartFields {
 
   /** X Axis Value Type */
   xAxisValueType?: 'date' | 'number' | 'string' | undefined
+
+  /** X Axis Format */
+  xAxisFormat?: string | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -3589,6 +3592,9 @@ export interface ISliceDropdownFields {
 
   /** Dropdown Label */
   dropdownLabel?: string | undefined
+
+  /** Alphabetically ordered */
+  alphabeticallyOrdered?: boolean | undefined
 
   /** Slices */
   slices?: IOneColumnText[] | undefined

@@ -46,6 +46,9 @@ export class Chart {
   xAxisKey?: string
 
   @Field({ nullable: true })
+  xAxisFormat?: string
+
+  @Field({ nullable: true })
   xAxisValueType?: string
 }
 
@@ -58,8 +61,9 @@ export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
     chartDescription: fields.chartDescription ?? '',
     alternativeDescription: fields.alternativeDescription ?? '',
     displayAsCard: fields.displayAsCard ?? true,
-    xAxisKey: fields.xAxisKey ?? 'date',
-    xAxisValueType: fields.xAxisValueType ?? 'date',
+    xAxisKey: fields.xAxisKey ?? undefined,
+    xAxisValueType: fields.xAxisValueType ?? undefined,
+    xAxisFormat: fields.xAxisFormat ?? undefined,
     startExpanded: fields.startExpanded ?? false,
     dateFrom: fields.dateFrom ?? undefined,
     dateTo: fields.dateTo ?? undefined,

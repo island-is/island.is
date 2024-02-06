@@ -1,7 +1,5 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
-import { List } from './types/list.dto'
-
-import { User } from '@island.is/auth-nest-tools'
+import { ListBase } from './types/list.dto'
 
 export enum ListState {
   Open = 'open',
@@ -11,7 +9,7 @@ export interface GetListInput {
   areaId?: string
   nationalId?: string
   candidateId?: string
-  collectionId?: number
+  collectionId?: string
   onlyActive?: boolean
 }
 
@@ -44,8 +42,8 @@ export interface CanCreateInput {
   requirementsMet?: boolean
   canCreateInfo?: EinstaklingurMaFrambodInfo
   isPresidential: boolean
-  isActive: boolean
-  ownedLists: List[]
+  isActive?: boolean
+  ownedLists: ListBase[]
 }
 
 export interface CanSignInput {
