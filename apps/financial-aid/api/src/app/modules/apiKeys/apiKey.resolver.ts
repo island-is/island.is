@@ -55,9 +55,9 @@ export class ApiKeysResolver {
     @Args('input', { type: () => DeleteApiKeyInput })
     input: DeleteApiKeyInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApiKeysModel> {
-    this.logger.debug('Updating api key name')
+  ): Promise<DeleteApiKeyResponse> {
+    this.logger.debug(`delete api key ${input.id}`)
 
-    return backendApi.deleteApiKey(input)
+    return backendApi.deleteApiKey(input.id)
   }
 }

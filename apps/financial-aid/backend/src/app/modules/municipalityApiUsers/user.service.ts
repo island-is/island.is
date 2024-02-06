@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import CryptoJS from 'crypto-js'
 import { ApiUserModel } from './models/user.model'
@@ -7,12 +7,14 @@ import { CreateApiKeyDto } from './dto'
 import { environment } from '../../../environments'
 import { uuid } from 'uuidv4'
 import { DeleteApiKeyResponse } from './models/deleteFile.response'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ApiUserService {
   constructor(
     @InjectModel(ApiUserModel)
     private readonly apiUserModel: typeof ApiUserModel,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findByApiKey(apiKey: string): Promise<ApiUserModel> {
@@ -55,9 +57,20 @@ export class ApiUserService {
   }
 
   async delete(id: string): Promise<DeleteApiKeyResponse> {
-    await this.apiUserModel.destroy({})
+    const promisedUpdate = this.apiUserModel.destroy({
+      where: {
+        id,
+      },
+    })
 
-    return null
+    const numberOfAffectedRows = await promisedUpdate
+
+    if (numberOfAffectedRows !== 1) {
+      // Tolerate failure, but log error
+      throw new NotFoundException(`Api key ${id} does not exist`)
+    }
+
+    return { success: numberOfAffectedRows === 1 }
   }
 
   async updateApiKey(id: string, name: string): Promise<ApiUserModel> {

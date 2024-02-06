@@ -1,36 +1,17 @@
-import React, { useState } from 'react'
-import { Text, Box, Button, toast } from '@island.is/island-ui/core'
+import React from 'react'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 
 import { ApiKeysForMunicipality } from '@island.is/financial-aid/shared/lib'
-import copyToClipboard from 'copy-to-clipboard'
 import AnimateHeight from 'react-animate-height'
-import { DeleteApiKeyForMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
-import { useMutation } from '@apollo/client'
+import useApiKeysInfo from '@island.is/financial-aid-web/veita/src/utils/useApiKeysInfo'
 
 interface Props {
   apiKeyInfo?: ApiKeysForMunicipality
 }
 
 const ApiKeyInfo = ({ apiKeyInfo }: Props) => {
-  const [isKeyVisable, setIsKeyVisable] = useState(false)
-
-  const [deleteApiKeyMutation] = useMutation(
-    DeleteApiKeyForMunicipalityMutation,
-  )
-
-  const copyApiKeyToClipboard = (apiKey?: string) => {
-    if (apiKey) {
-      const copied = copyToClipboard(apiKey)
-
-      if (copied) {
-        toast.success('Lykill hefur verið afritaður')
-      } else {
-        toast.error('Ekki tókst að afrita lykil')
-      }
-    } else {
-      toast.error('Vantar lykill')
-    }
-  }
+  const { isKeyVisable, setIsKeyVisable, copyApiKeyToClipboard } =
+    useApiKeysInfo()
 
   if (apiKeyInfo) {
     return (
@@ -44,15 +25,6 @@ const ApiKeyInfo = ({ apiKeyInfo }: Props) => {
               <Text marginBottom={2}>{apiKeyInfo?.name}</Text>
             </Box>
           </Box>
-          <Button
-            onClick={() => setIsKeyVisable(!isKeyVisable)}
-            icon="close"
-            size="small"
-            variant="primary"
-            colorScheme="destructive"
-          >
-            Eyða lykli
-          </Button>
           <Box display="flex">
             <Button
               onClick={() => setIsKeyVisable(!isKeyVisable)}
