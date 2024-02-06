@@ -47,6 +47,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.healthAssistiveAndNutrition,
   ApiScope.healthTherapies,
   ApiScope.healthHealthcare,
+  ApiScope.healthRightsStatus,
   ApiScope.healthDentists,
   ApiScope.signatureCollection,
   NotificationsScope.read,
