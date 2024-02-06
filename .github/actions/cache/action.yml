@@ -151,13 +151,13 @@ runs:
         SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
       shell: bash
       run: |
-        echo "SLACK_CHANNEL=${SLACK_CHANNEL}"
-        echo "SLACK_COLOR=${SLACK_COLOR}"
-        echo "SLACK_ICON=${SLACK_ICON}"
-        echo "SLACK_MESSAGE=${SLACK_MESSAGE}"
-        echo "SLACK_TITLE=${SLACK_TITLE}"
-        echo "SLACK_USERNAME=${SLACK_USERNAME}"
-        echo "SLACK_WEBHOOK=${SLACK_WEBHOOK}"
+        echo "SLACK_CHANNEL=${SLACK_CHANNEL}" >> "$GITHUB_ENV"
+        echo "SLACK_COLOR=${SLACK_COLOR}" >> "$GITHUB_ENV"
+        echo "SLACK_ICON=${SLACK_ICON}" >> "$GITHUB_ENV"
+        echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> "$GITHUB_ENV"
+        echo "SLACK_TITLE=${SLACK_TITLE}" >> "$GITHUB_ENV"
+        echo "SLACK_USERNAME=${SLACK_USERNAME}" >> "$GITHUB_ENV"
+        echo "SLACK_WEBHOOK=${SLACK_WEBHOOK}" >> "$GITHUB_ENV"
 
     - name: Notify on failure
       if: ${{ !cancelled() && success() }}
@@ -165,13 +165,22 @@ runs:
       env:
         SLACK_COLOR: '#00ee66'
         SLACK_MESSAGE: 'Cache success'
+        # Defaults
+        SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+        SLACK_ICON: ${{ env.SLACK_ICON }}
+        SLACK_TITLE: ${{ env.SLACK_TITLE }}
+        SLACK_USERNAME: ${{ env.SLACK_USERNAME }}
+        SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
 
     - name: Notify on failure
       if: ${{ !cancelled() && !success() }}
       uses: rtCamp/action-slack-notify@v2
       env:
-        SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
-        SLACK_USERNAME: Github Actions cache bot
-        SLACK_CHANNEL: infra-updates
         SLACK_COLOR: '#ff0000'
         SLACK_MESSAGE: 'Cache failed'
+        # Defaults
+        SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+        SLACK_ICON: ${{ env.SLACK_ICON }}
+        SLACK_TITLE: ${{ env.SLACK_TITLE }}
+        SLACK_USERNAME: ${{ env.SLACK_USERNAME }}
+        SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
