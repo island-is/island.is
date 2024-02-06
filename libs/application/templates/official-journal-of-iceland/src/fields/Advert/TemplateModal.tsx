@@ -17,10 +17,6 @@ import {
   MinistryOfJusticeAdvert,
   MinistryOfJusticeAdvertsResponse,
 } from '@island.is/api/schema'
-import {
-  mapStatusEnumToStatus,
-  mapDepartmentEnumToDepartment,
-} from '../../lib/utils'
 type Props = {
   visible?: boolean
   onClose?: () => void
@@ -48,17 +44,8 @@ export const TemplateModal = ({ visible = false, onSave, onClose }: Props) => {
           },
         },
         onCompleted(data) {
-          setTemplates(
-            data.ministryOfJusticeAdverts.adverts.map((advert) => ({
-              ...advert,
-              status: mapStatusEnumToStatus(
-                advert.status,
-              ) as MinistryOfJusticeAdvert['status'],
-              department: mapDepartmentEnumToDepartment(
-                advert.department,
-              ) as MinistryOfJusticeAdvert['department'],
-            })),
-          )
+          console.log(data)
+          setTemplates(data.ministryOfJusticeAdverts.adverts)
           setLoading(false)
         },
         onError(error) {

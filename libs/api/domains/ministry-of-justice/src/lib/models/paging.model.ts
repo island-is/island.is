@@ -11,18 +11,18 @@ export class AdvertPaging {
   @Field(() => Number)
   totalItems!: number
 
-  @Field(() => Number)
-  nextPage!: number
+  @Field(() => Number, { nullable: true })
+  nextPage!: number | null
 
   @Field(() => Number, { nullable: true })
-  previousPage?: number
+  previousPage!: number | null
 
   @Field(() => Number)
   pageSize!: number
 
-  @Field(() => Boolean)
-  hasNextPage!: boolean
+  @Field(() => Boolean, { nullable: true })
+  hasNextPage!: boolean | null
 
-  @Field(() => Boolean)
-  hasPreviousPage!: boolean
+  @Field(() => Boolean, { nullable: true })
+  hasPreviousPage!: boolean | null
 }

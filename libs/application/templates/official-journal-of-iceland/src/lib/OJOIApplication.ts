@@ -85,48 +85,19 @@ const OJOITemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: TemplateApiActions.getOptions,
-            shouldPersistToExternalData: true,
-            externalDataId: 'options',
-            throwOnError: false,
-          }),
-          onExit: defineTemplateApi({
-            action: TemplateApiActions.validateAdvert,
-            params: {
-              journalAdvert: {
-                id: '1234',
-                categories: [],
-                createdDate: '',
-                department: 'A deild',
-                document: {
-                  html: null,
-                  isLegacy: false,
-                  pdfUrl: null,
-                },
-                involvedParty: {
-                  id: 'abc',
-                  name: 'abc',
-                },
-                publicationDate: new Date(),
-                status: 'Innsending',
-                title: 'abc',
-                publicationNumber: {
-                  full: 'ABC-123',
-                  number: 123,
-                  year: 2021,
-                },
-                type: 'abc',
-                updatedDate: '',
-                signatureDate: new Date(),
-                subject: '',
-              },
-            },
-
-            shouldPersistToExternalData: true,
-            externalDataId: 'validateApplication',
-            throwOnError: false,
-          }),
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.departments,
+              externalDataId: 'departments',
+              order: 1,
+            }),
+            defineTemplateApi({
+              action: TemplateApiActions.types,
+              externalDataId: 'types',
+              order: 2,
+            }),
+          ],
+          // onExit -> validate
           roles: [
             {
               id: Roles.APPLICANT,

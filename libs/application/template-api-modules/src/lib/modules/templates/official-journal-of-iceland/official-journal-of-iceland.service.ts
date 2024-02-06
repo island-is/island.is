@@ -5,7 +5,6 @@ import { User } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { SharedTemplateApiService } from '../../shared'
 import { MinistryOfJusticeService } from '@island.is/api/domains/ministry-of-justice'
-import { JournalControllerValidateRequest } from '@island.is/clients/dmr'
 
 @Injectable()
 export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
@@ -16,17 +15,11 @@ export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
     super(ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND)
   }
 
-  async getOptions(auth: User) {
-    const { data } = await this.ministryOfJusticeService.getOptions(auth)
-
-    return data
-  }
-  async validateAdvert(auth: User, params: JournalControllerValidateRequest) {
-    console.log('from template api:', params)
-    return await this.ministryOfJusticeService.validateAdvert(auth, params)
+  async departments(user: User) {
+    return this.ministryOfJusticeService.departments(user)
   }
 
-  async submitApplication(auth: User) {
-    return await this.ministryOfJusticeService.submitApplication(auth)
+  async types(user: User) {
+    return this.ministryOfJusticeService.types(user, {})
   }
 }

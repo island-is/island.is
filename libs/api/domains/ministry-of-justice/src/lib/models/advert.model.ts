@@ -1,12 +1,5 @@
 import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-export enum AdvertDepartment {
-  ADeild = 'A deild',
-  BDeild = 'B deild',
-  CDeild = 'C deild',
-  Unknown = 'Óþekkt',
-}
-
 export enum AdvertStatus {
   Active = 'Virk',
   Revoked = 'Afturkölluð',
@@ -21,13 +14,21 @@ export enum AdvertStatus {
   Unknown = 'Óþekkt',
 }
 
-registerEnumType(AdvertDepartment, {
-  name: 'MinistryOfJusticeAdvertDepartment',
-})
-
 registerEnumType(AdvertStatus, {
   name: 'MinistryOfJusticeAdvertStatus',
 })
+
+@ObjectType('MinistryOfJusticeAdvertDepartment')
+export class AdvertDepartment {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String)
+  slug!: string
+}
 
 @ObjectType('MinistryOfJusticeAdvertCategory')
 export class AdvertCategory {
@@ -35,7 +36,7 @@ export class AdvertCategory {
   id!: string
 
   @Field(() => String)
-  name!: string
+  title!: string
 
   @Field(() => String)
   slug!: string
@@ -59,7 +60,10 @@ export class AdvertInvolvedParty {
   id!: string
 
   @Field(() => String)
-  name!: string
+  title!: string
+
+  @Field(() => String)
+  slug!: string
 }
 
 @ObjectType('MinistryOfJusticeAdvertPublicationNumber')
@@ -74,6 +78,21 @@ export class AdvertPublicationNumber {
   full!: string
 }
 
+@ObjectType('MinistryOfJusticeAdvertType')
+export class AdvertType {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String)
+  slug!: string
+
+  @Field(() => AdvertDepartment)
+  department!: AdvertDepartment
+}
+
 @ObjectType('MinistryOfJusticeAdvert')
 export class Advert {
   @Field(() => ID)
@@ -82,10 +101,10 @@ export class Advert {
   @Field(() => AdvertDepartment)
   department!: AdvertDepartment
 
-  @Field(() => String) // will be a enum in the future
-  type!: string
+  @Field(() => AdvertType)
+  type!: AdvertType
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   subject?: string
 
   @Field(() => String)
@@ -94,8 +113,8 @@ export class Advert {
   @Field(() => AdvertStatus)
   status!: AdvertStatus
 
-  @Field(() => AdvertPublicationNumber, { nullable: true })
-  publicationNumber?: AdvertPublicationNumber
+  @Field(() => AdvertPublicationNumber)
+  publicationNumber!: AdvertPublicationNumber | null
 
   @Field(() => String)
   createdDate!: string
@@ -103,10 +122,10 @@ export class Advert {
   @Field(() => String)
   updatedDate!: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   signatureDate!: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   publicationDate!: string | null
 
   @Field(() => [AdvertCategory])

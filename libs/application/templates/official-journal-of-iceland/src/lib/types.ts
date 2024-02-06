@@ -1,5 +1,4 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
-import { StringOption as Option } from '@island.is/island-ui/core'
 import { dataSchema, type answerSchemas } from './dataSchema'
 import { INSTITUTION_INDEX, MEMBER_INDEX } from './constants'
 
@@ -56,6 +55,18 @@ export const InputFields = {
   },
 }
 
+type Option = {
+  id: string
+  title: string
+  slug: string
+}
+
+type AdvertPaging = {}
+
+export type AdvertOption<Key extends string> = {
+  [key in Key]: Array<Option>
+}
+
 export type SignatureType = 'regular' | 'committee'
 export type RegularSignatureState =
   answerSchemas['case']['signature']['regular']
@@ -63,7 +74,8 @@ export type CommitteeSignatureState =
   answerSchemas['case']['signature']['committee']
 
 export enum TemplateApiActions {
-  getOptions = 'getOptions',
+  departments = 'departments',
+  types = 'types',
   submitApplication = 'submitApplication',
   validateAdvert = 'validateAdvert',
   cancelApplication = 'cancelApplication',
@@ -90,16 +102,15 @@ type MinistryStatusRespnose =
 
 export type ErrorSchema = NestedType<answerSchemas>
 
-type Options = {
-  departments: Option[]
-  categories: Option[]
-  subCategories: Option[]
-  templates: Option[]
-}
-
 export interface ExternalData {
-  options: {
-    data: Options
+  departments: {
+    data: AdvertOption<'departments'>
+    date: string
+    status: StatusProvider
+  }
+
+  types: {
+    data: AdvertOption<'types'>
     date: string
     status: StatusProvider
   }

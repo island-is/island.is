@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common'
 import { MinistryOfJusticeResolver } from './ministryOfJustice.resolver'
 import { MinistryOfJusticeService } from './ministryOfJustice.service'
-import {
-  DmrClientModule,
-  DmrClientService,
-  DefaultApi as DmrApi,
-} from '@island.is/clients/dmr'
+import { DmrClientService, DefaultApi as DmrApi } from '@island.is/clients/dmr'
 
 @Module({
   providers: [

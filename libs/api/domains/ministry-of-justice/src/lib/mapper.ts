@@ -1,22 +1,4 @@
-import { Advert, AdvertDepartment, AdvertStatus } from './models/advert.model'
-
-// This is a 1to1 mapping of the enum values from libs/clients/dmr/gen/fetch/models/JournalAdvert.ts -> JournalAdvertDepartmentEnum
-export const mapAdvertDepartment = (department?: string) => {
-  if (!department) return AdvertDepartment.Unknown
-
-  switch (department) {
-    case 'A deild':
-      return AdvertDepartment.ADeild
-    case 'B deild':
-      return AdvertDepartment.BDeild
-    case 'C deild':
-      return AdvertDepartment.CDeild
-    default:
-      return AdvertDepartment.Unknown
-  }
-}
-
-// This is a 1to1 mapping of the enum values from libs/clients/dmr/gen/fetch/models/JournalAdvert.ts -> JournalAdvertStatusEnum
+import { AdvertStatus } from './models/advert.model'
 export const mapAdvertStatus = (status?: string) => {
   if (!status) return AdvertStatus.Unknown
 

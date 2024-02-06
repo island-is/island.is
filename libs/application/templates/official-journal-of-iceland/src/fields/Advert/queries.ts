@@ -5,14 +5,23 @@ export const ADVERTS = gql`
     ministryOfJusticeAdverts(input: $input) {
       adverts {
         id
-        department
-        type
+        type {
+          id
+          title
+          slug
+          department {
+            id
+            title
+            slug
+          }
+        }
         status
         title
         subject
         publicationNumber {
           number
           year
+          full
         }
         createdDate
         updatedDate
@@ -20,18 +29,41 @@ export const ADVERTS = gql`
         publicationDate
         categories {
           id
-          name
+          title
           slug
         }
         involvedParty {
           id
-          name
+          title
+          slug
         }
         document {
           isLegacy
           html
           pdfUrl
         }
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        totalItems
+        hasNextPage
+        hasPreviousPage
+        nextPage
+        previousPage
+      }
+    }
+  }
+`
+
+export const TYPES = gql`
+  query AdvertTypes($params: MinistryOfJusticeTypesInput!) {
+    ministryOfJusticeTypes(params: $params) {
+      types {
+        id
+        title
+        slug
       }
       paging {
         page
