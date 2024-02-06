@@ -54,6 +54,10 @@ inputs:
     description: 'URL to your cache'
     required: false
     default: https://cache.dev01.devland.is/
+  # Custom secrets
+  slack-webhook:
+    description: 'Slack webhook'
+    required: false
 
 outputs:
   cache-hit:
@@ -144,7 +148,7 @@ runs:
         SLACK_MESSAGE: ''
         SLACK_TITLE: Github Actions cache check
         SLACK_USERNAME: Digital Iceland cache bot
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_WEBHOOK: ${{ input.slack-webhook }}
       shell: bash
       run: |
         echo "SLACK_CHANNEL=${SLACK_CHANNEL}"
@@ -166,7 +170,7 @@ runs:
       if: ${{ !cancelled() && !success() }}
       uses: rtCamp/action-slack-notify@v2
       env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_WEBHOOK: ${{ input.slack-webhook }}
         SLACK_USERNAME: Github Actions cache bot
         SLACK_CHANNEL: infra-updates
         SLACK_COLOR: '#ff0000'

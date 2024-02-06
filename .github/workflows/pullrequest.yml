@@ -60,6 +60,7 @@ jobs:
             ./.yarn/cache
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
           retries: 0
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Install yarn dependencies
         if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
