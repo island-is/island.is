@@ -295,7 +295,7 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn-invalid
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
