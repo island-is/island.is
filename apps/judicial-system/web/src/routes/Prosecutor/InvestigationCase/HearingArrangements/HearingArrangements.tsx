@@ -94,18 +94,6 @@ const HearingArrangements = () => {
     [formatMessage, router, setWorkingCase, transitionCase, workingCase],
   )
 
-  const handleCourtChange = async (courtId: string) => {
-    if (workingCase) {
-      const updatedCase = await updateCase(workingCase.id, {
-        courtId,
-      })
-
-      setWorkingCase((prevWorkingCase) => ({
-        ...prevWorkingCase,
-        court: updatedCase?.court,
-      }))
-    }
-  }
   const stepIsValid = isHearingArrangementsStepValidIC(workingCase)
 
   return (

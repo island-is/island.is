@@ -189,13 +189,6 @@ const environment = getConfig
           grade: environment.education.xroadGradeServiceId!,
         },
       },
-      nationalRegistry: {
-        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
-        user: environment.nationalRegistry.user!,
-        password: environment.nationalRegistry.password!,
-        host: environment.nationalRegistry.host!,
-      },
-
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
     ApplicationModule.register({
