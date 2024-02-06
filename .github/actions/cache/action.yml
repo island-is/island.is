@@ -58,6 +58,10 @@ inputs:
   slack-webhook:
     description: 'Slack webhook'
     required: false
+  slack-notify-on-success:
+    description: 'Notify on success'
+    required: false
+    default: 'false'
 
 outputs:
   cache-hit:
@@ -73,10 +77,6 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Simulate cache failure
-      shell: bash
-      run: exit 1
-
     - name: Exit if no retries
       if: inputs.retries < 0
       shell: bash
@@ -159,11 +159,11 @@ runs:
         echo "SLACK_WEBHOOK=${SLACK_WEBHOOK}" >> "$GITHUB_ENV"
 
     - name: Notify on failure
-      if: ${{ !cancelled() && success() }}
+      if: ${{ !cancelled() && success() && inputs.slack-notify-on-success == 'true' }}
       continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
       env:
-        SLACK_COLOR: '#00ee66'
+        SLACK_COLOR: 'good'
         SLACK_MESSAGE: 'Cache success'
         # Defaults
         SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
@@ -177,7 +177,7 @@ runs:
       continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
       env:
-        SLACK_COLOR: '#ff0000'
+        SLACK_COLOR: 'bad'
         SLACK_MESSAGE: 'Cache failed'
         # Defaults
         SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
