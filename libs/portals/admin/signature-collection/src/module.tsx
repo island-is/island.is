@@ -23,13 +23,25 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.SignatureLists,
-      element: <AllLists />,
+      element: (
+        <AllLists
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
       loader: listsLoader(props),
     },
     {
       name: m.singleList,
       path: SignatureCollectionPaths.SignatureList,
-      element: <List />,
+      element: (
+        <List
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
       loader: listLoader(props),
     },
   ],
