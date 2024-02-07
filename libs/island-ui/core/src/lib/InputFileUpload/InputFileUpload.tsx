@@ -136,7 +136,9 @@ export const UploadedFile = ({
   }
 
   const isUploading =
-    file.percent && file.percent < 100 && file.status === 'uploading'
+    file.percent !== undefined &&
+    file.percent < 100 &&
+    file.status === 'uploading'
 
   return (
     <Box

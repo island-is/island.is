@@ -92,8 +92,8 @@ const AppealFiles = () => {
       setUploadState({ isUploading: true, error: false })
 
       const uploadSuccess = await handleUpload(
-        newUploadFiles.filter(
-          (uf) => uf.status === (isRetry ? 'error' : 'uploading'),
+        newUploadFiles.filter((uf) =>
+          isRetry ? uf.status === 'error' : !uf.key,
         ),
         updateUploadFile,
       )

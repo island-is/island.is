@@ -275,7 +275,7 @@ const useS3Upload = (caseId: string) => {
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            updateFile({ ...file, percent })
+            updateFile({ ...file, percent, status: 'uploading' })
           })
 
           const newFileId = await addFileToCaseState({
