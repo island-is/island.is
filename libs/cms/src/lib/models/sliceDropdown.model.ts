@@ -15,6 +15,9 @@ export class SliceDropdown {
 
   @CacheField(() => [OneColumnText])
   slices!: OneColumnText[]
+
+  @Field(() => Boolean, { nullable: true })
+  alphabeticallyOrdered?: boolean
 }
 
 export const mapSliceDropdown = ({
@@ -25,4 +28,5 @@ export const mapSliceDropdown = ({
   id: sys.id,
   dropdownLabel: fields.dropdownLabel,
   slices: fields?.slices?.map(mapOneColumnText) ?? [],
+  alphabeticallyOrdered: fields.alphabeticallyOrdered ?? false,
 })

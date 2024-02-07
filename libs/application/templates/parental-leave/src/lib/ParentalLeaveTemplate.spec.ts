@@ -11,13 +11,12 @@ import {
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 import {
   NO,
-  NO_PRIVATE_PENSION_FUND,
-  NO_UNION,
   PARENTAL_LEAVE,
   SPOUSE,
   States as ApplicationStates,
   States,
   YES,
+  PARENTAL_GRANT,
 } from '../constants'
 
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -57,7 +56,7 @@ function buildApplication(data: {
     typeId: ApplicationTypes.PARENTAL_LEAVE,
     created: new Date(),
     modified: new Date(),
-    attachments: {},
+    applicantActors: [],
     answers,
     state,
     externalData,
@@ -79,6 +78,8 @@ describe('Parental Leave Application Template', () => {
                   name: 'Tester Testerson',
                 },
               },
+              date: new Date(),
+              status: 'success',
             },
             children: {
               data: {
@@ -98,7 +99,7 @@ describe('Parental Leave Application Template', () => {
           },
           answers: {
             requestRights: {
-              isRequestingRights: 'yes',
+              isRequestingRights: YES,
             },
             otherParentObj: {
               chooseOtherParent: SPOUSE,
@@ -113,7 +114,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('otherParentApproval')
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_APPROVAL)
       expect(newApplication.assignees).toEqual([otherParentId])
     })
 
@@ -122,13 +123,15 @@ describe('Parental Leave Application Template', () => {
         buildApplication({
           answers: {
             requestRights: {
-              isRequestingRights: 'no',
+              isRequestingRights: NO,
             },
             otherParentObj: {
               otherParentId,
             },
-            isSelfEmployed: 'no',
-            isReceivingUnemploymentBenefits: 'no',
+            employment: {
+              isSelfEmployed: NO,
+              isReceivingUnemploymentBenefits: NO,
+            },
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -140,7 +143,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('employerWaitingToAssign')
+      expect(newState).toBe(ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN)
       // There should be no one assigned until employer accepts to be assigned
       expect(newApplication.assignees).toEqual([])
     })
@@ -157,6 +160,8 @@ describe('Parental Leave Application Template', () => {
                   name: 'Tester Testerson',
                 },
               },
+              date: new Date(),
+              status: 'success',
             },
             children: {
               data: {
@@ -176,15 +181,17 @@ describe('Parental Leave Application Template', () => {
           },
           answers: {
             requestRights: {
-              isRequestingRights: 'yes',
+              isRequestingRights: YES,
             },
             otherParentObj: {
               chooseOtherParent: SPOUSE,
               otherParentId,
             },
-            isSelfEmployed: 'no',
+            employment: {
+              isSelfEmployed: NO,
+              isReceivingUnemploymentBenefits: NO,
+            },
             selectedChild: '0',
-            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -196,7 +203,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('otherParentApproval')
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_APPROVAL)
       expect(newApplication.assignees).toEqual([otherParentId])
 
       const finalHelper = new ApplicationTemplateHelper(
@@ -208,7 +215,7 @@ describe('Parental Leave Application Template', () => {
           type: DefaultEvents.APPROVE,
         })
       expect(hasChangedAgain).toBe(true)
-      expect(finalState).toBe('employerWaitingToAssign')
+      expect(finalState).toBe(ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN)
       expect(finalApplication.assignees).toEqual([])
     })
 
@@ -225,6 +232,8 @@ describe('Parental Leave Application Template', () => {
                   name: 'Tester Testerson',
                 },
               },
+              date: new Date(),
+              status: 'success',
             },
             children: {
               data: {
@@ -244,15 +253,17 @@ describe('Parental Leave Application Template', () => {
           },
           answers: {
             requestRights: {
-              isRequestingRights: 'yes',
+              isRequestingRights: YES,
             },
             otherParentObj: {
               chooseOtherParent: SPOUSE,
               otherParentId,
             },
-            isSelfEmployed: 'yes',
+            employment: {
+              isSelfEmployed: YES,
+              isReceivingUnemploymentBenefits: NO,
+            },
             selectedChild: '0',
-            isReceivingUnemploymentBenefits: 'no',
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -264,7 +275,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('otherParentApproval')
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_APPROVAL)
       expect(newApplication.assignees).toEqual([otherParentId])
 
       const finalHelper = new ApplicationTemplateHelper(
@@ -279,7 +290,7 @@ describe('Parental Leave Application Template', () => {
         })
 
       expect(hasChangedAgain).toBe(true)
-      expect(finalState).toBe('vinnumalastofnunApproval')
+      expect(finalState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
       expect(finalApplication.assignees).toEqual([VMST_ID])
     })
 
@@ -289,8 +300,6 @@ describe('Parental Leave Application Template', () => {
           const helper = new ApplicationTemplateHelper(
             buildApplication({
               externalData: {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 person: {
                   data: {
                     spouse: {
@@ -298,6 +307,8 @@ describe('Parental Leave Application Template', () => {
                       name: 'Tester Testerson',
                     },
                   },
+                  date: new Date(),
+                  status: 'success',
                 },
               },
               answers: {
@@ -309,8 +320,10 @@ describe('Parental Leave Application Template', () => {
                     email: 'selfemployed@test.test',
                   },
                 ],
-                isSelfEmployed: YES,
-                isReceivingUnemploymentBenefits: 'no',
+                employment: {
+                  isSelfEmployed: YES,
+                  isReceivingUnemploymentBenefits: NO,
+                },
                 applicationType: {
                   option: PARENTAL_LEAVE,
                 },
@@ -321,11 +334,15 @@ describe('Parental Leave Application Template', () => {
           const [hasChanged, newState, newApplication] = helper.changeState({
             type: DefaultEvents.SUBMIT,
           })
+          const newApplicationOtherParentId = (
+            newApplication.answers as {
+              otherParentObj: { otherParentId: string }
+            }
+          )?.otherParentObj?.otherParentId
+
           expect(hasChanged).toBe(true)
-          expect(newState).toBe('vinnumalastofnunApproval')
-          expect(newApplication.answers.otherParentObj.otherParentId).toEqual(
-            otherParentId,
-          )
+          expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
+          expect(newApplicationOtherParentId).toEqual(otherParentId)
         })
       })
     })
@@ -340,8 +357,10 @@ describe('Parental Leave Application Template', () => {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
+              employment: {
+                isSelfEmployed: NO,
+                isReceivingUnemploymentBenefits: NO,
+              },
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -372,8 +391,10 @@ describe('Parental Leave Application Template', () => {
                 usage: '33%',
                 useAsMuchAsPossible: NO,
               },
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
+              employment: {
+                isSelfEmployed: NO,
+                isReceivingUnemploymentBenefits: NO,
+              },
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -402,8 +423,10 @@ describe('Parental Leave Application Template', () => {
                 usage: '0',
                 useAsMuchAsPossible: YES,
               },
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
+              employment: {
+                isSelfEmployed: NO,
+                isReceivingUnemploymentBenefits: NO,
+              },
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -435,9 +458,6 @@ describe('Parental Leave Application Template', () => {
                 usage: '0',
                 useAsMuchAsPossible: YES,
               },
-              employer: {
-                isSelfEmployed: 'no',
-              },
             },
           }),
           ParentalLeaveTemplate,
@@ -461,20 +481,17 @@ describe('Parental Leave Application Template', () => {
     })
 
     describe('privatePensionFund and privatePensionFundPercentage', () => {
-      it('should set privatePensionFund and privatePensionFundPercentage to NO_PRIVATE_PENSION_FUND and 0 if use usePrivatePensionFund is NO', () => {
+      it('should unset privatePensionFund and privatePensionFundPercentage if use usePrivatePensionFund is NO', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
               payments: {
                 bank: '123454312300',
                 pensionFund: 'id-frjalsi',
-                union: NO_UNION,
                 privatePensionFund: '',
                 privatePensionFundPercentage: '',
+                usePrivatePensionFund: NO,
               },
-              usePrivatePensionFund: NO,
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -486,9 +503,7 @@ describe('Parental Leave Application Template', () => {
         const answer = {
           bank: '123454312300',
           pensionFund: 'id-frjalsi',
-          union: NO_UNION,
-          privatePensionFund: NO_PRIVATE_PENSION_FUND,
-          privatePensionFundPercentage: '0',
+          usePrivatePensionFund: NO,
         }
 
         const [hasChanged, _, newApplication] = helper.changeState({
@@ -501,7 +516,7 @@ describe('Parental Leave Application Template', () => {
     })
 
     describe('union', () => {
-      it('should set union to NO_UNION if useUnion is NO', () => {
+      it('should unset union if useUnion is NO', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
@@ -509,12 +524,8 @@ describe('Parental Leave Application Template', () => {
                 bank: '123454312300',
                 pensionFund: 'id-frjalsi',
                 union: '',
-                privatePensionFund: NO_PRIVATE_PENSION_FUND,
-                privatePensionFundPercentage: '0',
+                useUnion: NO,
               },
-              useUnion: NO,
-              isSelfEmployed: 'no',
-              isReceivingUnemploymentBenefits: 'no',
               applicationType: {
                 option: PARENTAL_LEAVE,
               },
@@ -526,9 +537,7 @@ describe('Parental Leave Application Template', () => {
         const answer = {
           bank: '123454312300',
           pensionFund: 'id-frjalsi',
-          union: NO_UNION,
-          privatePensionFund: NO_PRIVATE_PENSION_FUND,
-          privatePensionFundPercentage: '0',
+          useUnion: NO,
         }
 
         const [hasChanged, _, newApplication] = helper.changeState({
@@ -537,6 +546,301 @@ describe('Parental Leave Application Template', () => {
 
         expect(hasChanged).toBe(true)
         expect(newApplication.answers.payments).toEqual(answer)
+      })
+    })
+
+    describe('isSelfEmployed', () => {
+      it('should set isReceivingUnemploymentBenefits to NO and unset unemploymentBenefits if isSelfEmployed is YES', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employment: {
+                isSelfEmployed: YES,
+                isReceivingUnemploymentBenefits: YES,
+                unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              },
+              fileUpload: {
+                selfEmployedFile: [],
+              },
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employment: {
+            isSelfEmployed: YES,
+            isReceivingUnemploymentBenefits: NO,
+          },
+          fileUpload: {
+            selfEmployedFile: [],
+          },
+          applicationType: {
+            option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+      it('should unset selfEmployedFile if isSelfEmployed is NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employment: {
+                isSelfEmployed: NO,
+                isReceivingUnemploymentBenefits: NO,
+              },
+              fileUpload: {
+                selfEmployedFile: [],
+              },
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employment: {
+            isSelfEmployed: NO,
+            isReceivingUnemploymentBenefits: NO,
+          },
+          fileUpload: {},
+          applicationType: {
+            option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+    })
+
+    describe('isReceivingUnemploymentBenefits', () => {
+      it('should unset unemploymentBenefits and benefitsFile if isReceivingUnemploymentBenefits is NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employment: {
+                isSelfEmployed: NO,
+                isReceivingUnemploymentBenefits: NO,
+                unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              },
+              fileUpload: {
+                benefitsFile: [],
+              },
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employment: {
+            isSelfEmployed: NO,
+            isReceivingUnemploymentBenefits: NO,
+          },
+          fileUpload: {},
+          applicationType: {
+            option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+    })
+
+    describe('unemploymentBenefits', () => {
+      it('should unset benefitsFile if unemploymentBenefits is not union or healthInsurance', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employment: {
+                isSelfEmployed: NO,
+                isReceivingUnemploymentBenefits: YES,
+                unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+              },
+              fileUpload: {
+                benefitsFile: [],
+              },
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employment: {
+            isSelfEmployed: NO,
+            isReceivingUnemploymentBenefits: YES,
+            unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+          },
+          fileUpload: {},
+          applicationType: {
+            option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+    })
+
+    describe('employers', () => {
+      it('should unset employers if isSelfEmployed is YES', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employers: [
+                {
+                  email: 'testEmail@test.is',
+                  ratio: '100',
+                  phoneNumber: '',
+                },
+              ],
+              employment: {
+                isSelfEmployed: YES,
+                isReceivingUnemploymentBenefits: NO,
+              },
+              fileUpload: {
+                selfEmployedFile: [],
+              },
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employment: {
+            isSelfEmployed: YES,
+            isReceivingUnemploymentBenefits: NO,
+          },
+          fileUpload: {
+            selfEmployedFile: [],
+          },
+          applicationType: {
+            option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+      it('should unset employers if isReceivingUnemploymentBenefits is YES', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employers: [
+                {
+                  email: 'testEmail@test.is',
+                  ratio: '100',
+                  phoneNumber: '',
+                },
+              ],
+              employment: {
+                isSelfEmployed: NO,
+                unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+                isReceivingUnemploymentBenefits: YES,
+              },
+              fileUpload: {},
+              applicationType: {
+                option: PARENTAL_LEAVE,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employment: {
+            isSelfEmployed: NO,
+            unemploymentBenefits: 'Vinnumálastofnun (atvinnuleysisbætur)',
+            isReceivingUnemploymentBenefits: YES,
+          },
+          fileUpload: {},
+          applicationType: {
+            option: PARENTAL_LEAVE,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
+      it('should unset employers and employmentTerminationCertificateFile if employerLastSixMonths is NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              employerLastSixMonths: NO,
+              employers: [
+                {
+                  email: 'testEmail@test.is',
+                  ratio: '100',
+                  phoneNumber: '',
+                  stillEmployed: NO,
+                },
+              ],
+              fileUpload: {
+                employmentTerminationCertificateFile: [],
+              },
+              applicationType: {
+                option: PARENTAL_GRANT,
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          employerLastSixMonths: NO,
+          fileUpload: {},
+          applicationType: {
+            option: PARENTAL_GRANT,
+          },
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
       })
     })
   })
@@ -727,8 +1031,10 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
-            isSelfEmployed: 'no',
-            isReceivingUnemploymentBenefits: 'no',
+            employment: {
+              isSelfEmployed: NO,
+              isReceivingUnemploymentBenefits: NO,
+            },
             applicationType: {
               option: PARENTAL_LEAVE,
             },
@@ -818,7 +1124,7 @@ describe('Parental Leave Application Template', () => {
           ratio: '100',
           rawIndex: 0,
           startDate: '2021-06-17',
-          useLength: 'yes',
+          useLength: YES,
         },
       ]
 

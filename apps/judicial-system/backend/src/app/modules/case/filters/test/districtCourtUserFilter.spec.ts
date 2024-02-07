@@ -11,7 +11,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../..'
+import { Case } from '../../models/case.model'
 import { verifyFullAccess, verifyNoAccess } from './verify'
 
 const continueFromCaseState = (user: User, type: string, state: string) => {

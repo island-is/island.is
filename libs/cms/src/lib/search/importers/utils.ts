@@ -1,5 +1,6 @@
 import flatten from 'lodash/flatten'
 import type { CONTENT_TYPE } from '../../generated/contentfulTypes'
+import type { SliceUnion } from '../../unions/slice.union'
 
 export const createTerms = (termStrings: string[]): string[] => {
   const singleWords = termStrings.map((termString = '') => {
@@ -177,4 +178,17 @@ export const removeEntryHyperlinkFields = (node: any) => {
       removeEntryHyperlinkFields(contentNode)
     }
   }
+}
+
+export const pruneNonSearchableSliceUnionFields = (
+  slice: typeof SliceUnion,
+) => {
+  if ((slice as { typename?: string })?.typename === 'ConnectedComponent') {
+    return {
+      ...slice,
+      json: {},
+      configJson: {},
+    }
+  }
+  return slice
 }

@@ -90,6 +90,7 @@ export const generateRawUploadData = (
       phoneNumber: answers.applicant.phone,
       relation: relation ?? '',
       ssn: answers.applicant.nationalId,
+      autonomous: trueOrHasYes(answers.applicant.autonomous ?? 'false'),
     },
     otherAssets: {
       info: answers.otherAssets?.info ?? '',

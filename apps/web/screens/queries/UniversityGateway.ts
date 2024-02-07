@@ -41,6 +41,7 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
       contentfulKey
       contentfulLogoUrl
       contentfulTitle
+      contentfulLink
     }
   }
 `
@@ -118,6 +119,8 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       studentAnswerDate
       studyRequirementsEn
       studyRequirementsIs
+      arrangementIs
+      arrangementEn
       universityContentfulKey
       universityId
     }

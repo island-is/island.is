@@ -23,32 +23,33 @@ type RegistrarSelectOption = ReactSelectOption & { registrar: User }
 
 const SelectCourtOfficials = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { setAndSendCaseToServer } = useCase()
+  const { updateCase } = useCase()
   const { data: usersData, loading: usersLoading } =
     useSelectCourtOfficialsUsersQuery({
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     })
 
-  const setJudge = (judge: User) => {
+  const setJudge = async (judgeId: string) => {
     if (workingCase) {
-      setAndSendCaseToServer(
-        [{ judgeId: judge.id, force: true }],
-        workingCase,
-        setWorkingCase,
-      )
+      const updatedCase = await updateCase(workingCase.id, {
+        judgeId,
+      })
+
+      setWorkingCase((wc) => ({ ...wc, judge: updatedCase?.judge }))
     }
   }
 
-  const setRegistrar = (registrar?: User) => {
+  const setRegistrar = async (registrarId?: string) => {
     if (workingCase) {
-      setAndSendCaseToServer(
-        [{ registrarId: registrar?.id ?? null, force: true }],
-        workingCase,
-        setWorkingCase,
-      )
+      const updatedCase = await updateCase(workingCase.id, {
+        registrarId: registrarId ?? null,
+      })
+
+      setWorkingCase((wc) => ({ ...wc, registrar: updatedCase?.registrar }))
     }
   }
+
   const { formatMessage } = useIntl()
 
   const judges = (usersData?.users ?? [])
@@ -98,7 +99,7 @@ const SelectCourtOfficials = () => {
             value={defaultJudge}
             options={judges}
             onChange={(selectedOption) =>
-              setJudge((selectedOption as JudgeSelectOption).judge)
+              setJudge((selectedOption as JudgeSelectOption).judge.id)
             }
             required
             isDisabled={usersLoading}
@@ -111,7 +112,9 @@ const SelectCourtOfficials = () => {
           value={defaultRegistrar}
           options={registrars}
           onChange={(selectedOption) =>
-            setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
+            setRegistrar(
+              (selectedOption as RegistrarSelectOption)?.registrar.id,
+            )
           }
           isClearable
           isDisabled={usersLoading}

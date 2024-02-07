@@ -56,6 +56,8 @@ export class ReykjavikUniversityApplicationClient {
           externalUrlEn: program.externalUrlEn,
           admissionRequirementsIs: program.admissionRequirementsIs,
           admissionRequirementsEn: program.admissionRequirementsEn,
+          arrangementIs: undefined, //TODO missing in api
+          arrangementEn: undefined, //TODO missing in api
           studyRequirementsIs: program.studyRequirementsIs,
           studyRequirementsEn: program.studyRequirementsEn,
           costInformationIs: program.costInformationIs,
@@ -68,7 +70,11 @@ export class ReykjavikUniversityApplicationClient {
               if (!m) {
                 return ModeOfDelivery.UNDEFINED
               } else {
-                return mapStringToEnum(m, ModeOfDelivery)
+                return mapStringToEnum(
+                  m,
+                  ModeOfDelivery,
+                  ModeOfDelivery.UNDEFINED,
+                )
               }
             }) || [],
           extraApplicationFields: program.extraApplicationFields?.map(

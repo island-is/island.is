@@ -32,6 +32,8 @@ export interface IProgram {
   studyRequirementsEn?: string
   costInformationIs?: string
   costInformationEn?: string
+  arrangementIs?: string
+  arrangementEn?: string
   allowException: boolean
   allowThirdLevelQualification: boolean
   modeOfDelivery: ModeOfDelivery[]

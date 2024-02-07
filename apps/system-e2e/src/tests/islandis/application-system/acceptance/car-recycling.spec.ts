@@ -75,6 +75,14 @@ applicationTest.describe('Car recycling', () => {
             name: label(carRecyclingMessages.cars.selectedTitle),
           }),
         ).toBeVisible()
+
+        const mileage = page.getByRole('textbox', {
+          name: label(carRecyclingMessages.cars.mileage),
+        })
+
+        await mileage.selectText()
+        await mileage.type('12345')
+
         await proceed()
       })
 

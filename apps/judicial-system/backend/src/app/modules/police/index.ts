@@ -1,1 +1,1 @@
-export { PoliceService } from './police.service'
+export { CourtDocumentType, PoliceService } from './police.service'

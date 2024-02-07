@@ -15,7 +15,7 @@ export const m = defineMessages({
   signatureListsIntro: {
     id: 'admin-portal.signature-collection:signatureListsIntro',
     defaultMessage:
-      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið.',
+      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið. Hægt er að leita að listum og sía eftir landsfjórðungi og frambjóðanda.',
     description: '',
   },
   searchInAllListsPlaceholder: {
@@ -105,7 +105,7 @@ export const m = defineMessages({
   },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
-    defaultMessage: 'Engir meðmælalistar',
+    defaultMessage: 'Engin meðmælasöfnun',
     description: '',
   },
   noListsFoundBySearch: {
@@ -124,6 +124,12 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:singleListIntro',
     defaultMessage:
       'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
+    description: '',
+  },
+  singleListIntroManage: {
+    id: 'admin-portal.signature-collection:singleListIntroManage',
+    defaultMessage:
+      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að leita að meðmælendum eftir nafni eða kennitölu.',
     description: '',
   },
   noSignees: {
@@ -220,6 +226,11 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
       'Þegar búið er að fara yfir meðmælalistann skal ýta á hnappinn.',
+    description: '',
+  },
+  listReviewedAlert: {
+    id: 'admin-portal.signature-collection:listReviewedAlert',
+    defaultMessage: 'Úrvinnslu er lokið á þessari söfnun',
     description: '',
   },
 

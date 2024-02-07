@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   pageTitle: {
     id: 'sp.signatureCollection:title',
-    defaultMessage: 'Meðmælalistar',
+    defaultMessage: 'Meðmælasöfnun',
     description: '',
   },
   pageDescription: {
@@ -77,7 +77,7 @@ export const m = defineMessages({
   /* Signee View */
   mySigneeListsHeader: {
     id: 'sp.signatureCollection:mySigneeListsHeader',
-    defaultMessage: 'Frambjóðandi sem þú hefur mælt með',
+    defaultMessage: 'Frambjóðandi sem þú hefur mælt með: ',
     description: '',
   },
   mySigneeListsByAreaHeader: {

@@ -37,7 +37,7 @@ const Logo: React.FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box display="flex">
-      <Box marginRight={2} marginBottom={[0, 0, 1, 0]}>
+      <Box marginRight={2}>
         {isPolice ? <PoliceStar /> : <LandWightsLogo />}
       </Box>
       <p className={styles.logoText}>

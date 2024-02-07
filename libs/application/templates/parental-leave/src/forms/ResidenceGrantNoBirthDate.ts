@@ -1,13 +1,14 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildForm,
+  buildImageField,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
 
+import WomanWithLaptopIllustration from '../assets/Images/WomanWithLaptopIllustration'
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { getApplicationExternalData } from '../lib/parentalLeaveUtils'
@@ -72,11 +73,11 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField({
+            buildImageField({
               id: 'residenceGrantApplicationNoBirthDate.image',
               title: '',
-              defaultValue: 1,
-              component: 'ImageField',
+              image: WomanWithLaptopIllustration,
+              imageWidth: 'auto',
             }),
           ],
         }),

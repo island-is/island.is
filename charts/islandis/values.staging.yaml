@@ -50,6 +50,8 @@ air-discount-scheme-api:
           paths:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -160,6 +162,8 @@ air-discount-scheme-backend:
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -235,6 +239,8 @@ air-discount-scheme-web:
           paths:
             - '/'
   namespace: 'air-discount-scheme'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -365,7 +371,7 @@ api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-    XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1/api/protected/v1'
+    XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
@@ -419,6 +425,8 @@ api:
           paths:
             - '/api'
   namespace: 'islandis'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -513,6 +521,8 @@ api:
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
     VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
+    WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY'
+    WATSON_ASSISTANT_CHAT_FEEDBACK_URL: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
@@ -577,6 +587,8 @@ application-system-api:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
+    WORKPOINT_ARBORG_SERVICE_PATH: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1'
+    XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
@@ -612,7 +624,7 @@ application-system-api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-    XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1/api/protected/v1'
+    XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
@@ -689,6 +701,8 @@ application-system-api:
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
   namespace: 'application-system'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -705,7 +719,6 @@ application-system-api:
       memory: '512Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
-    ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH'
     ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
@@ -810,6 +823,8 @@ application-system-api-worker:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -896,6 +911,8 @@ application-system-form:
           paths:
             - '/umsoknir'
   namespace: 'application-system'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -961,6 +978,8 @@ consultation-portal:
           paths:
             - '/samradsgatt'
   namespace: 'consultation-portal'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1019,6 +1038,8 @@ contentful-translation-extension:
           paths:
             - '/'
   namespace: 'contentful-translation-extension'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1094,6 +1115,8 @@ download-service:
           paths:
             - '/download'
   namespace: 'download-service'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1200,6 +1223,8 @@ endorsement-system-api:
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1310,6 +1335,8 @@ icelandic-names-registry-backend:
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1366,6 +1393,8 @@ island-ui-storybook:
           paths:
             - '/'
   namespace: 'storybook'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1433,6 +1462,8 @@ license-api:
           paths:
             - '/'
   namespace: 'license-api'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1492,6 +1523,7 @@ namespaces:
     - 'user-notification'
     - 'license-api'
     - 'services-sessions'
+    - 'services-university-gateway'
 portals-admin:
   enabled: true
   env:
@@ -1534,6 +1566,8 @@ portals-admin:
           paths:
             - '/stjornbord'
   namespace: 'portals-admin'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1620,6 +1654,8 @@ regulations-admin-backend:
     secrets:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -1744,6 +1780,8 @@ search-indexer-service:
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1500
@@ -1821,6 +1859,8 @@ service-portal:
           paths:
             - '/minarsidur'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -1915,6 +1955,8 @@ service-portal-api:
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1998,6 +2040,8 @@ service-portal-api-worker:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   namespace: 'service-portal'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -2082,6 +2126,8 @@ services-documents:
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -2147,6 +2193,8 @@ services-sessions:
           paths:
             - '/'
   namespace: 'services-sessions'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs:
     - accessModes: 'ReadWriteMany'
       mountPath: '/geoip-lite/data'
@@ -2212,6 +2260,8 @@ services-sessions-geoip-job:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   namespace: 'services-sessions'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -2310,6 +2360,8 @@ services-sessions-worker:
     secrets:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2335,6 +2387,212 @@ services-sessions-worker:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/sessions-worker'
     create: true
     name: 'sessions-worker'
+services-university-gateway:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_university_gateway'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_university_gateway'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: 'IS-DEV/EDU/10057/Bifrost-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'services-university-gateway.internal.staging01.devland.is'
+          paths:
+            - '/api'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        name: 'migrations'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+      - args:
+          - 'sequelize-cli'
+          - 'db:seed:all'
+        command:
+          - 'npx'
+        name: 'seed'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_university_gateway'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'services_university_gateway'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+  namespace: 'services-university-gateway'
+  podDisruptionBudget:
+    minAvailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '384Mi'
+    requests:
+      cpu: '50m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-university-gateway'
+    create: true
+    name: 'services-university-gateway'
+services-university-gateway-worker:
+  args:
+    - 'main.js'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_university_gateway'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_university_gateway'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_BIFROST_UNIVERSITY_PATH: 'IS-DEV/EDU/10057/Bifrost-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/umsoknir-v1'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+  namespace: 'services-university-gateway'
+  podDisruptionBudget:
+    minAvailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '384Mi'
+    requests:
+      cpu: '50m'
+      memory: '256Mi'
+  schedule: '0 2 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-university-gateway-worker'
+    create: true
+    name: 'services-university-gateway-worker'
 skilavottord-web:
   enabled: true
   env:
@@ -2376,6 +2634,8 @@ skilavottord-web:
           paths:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -2463,6 +2723,8 @@ skilavottord-ws:
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -2552,6 +2814,8 @@ user-notification:
           paths:
             - '/'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2642,6 +2906,8 @@ user-notification-cleanup-worker:
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2744,6 +3010,8 @@ user-notification-worker:
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2824,6 +3092,8 @@ web:
           paths:
             - '/'
   namespace: 'islandis'
+  podDisruptionBudget:
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 2
@@ -2882,6 +3152,8 @@ xroad-collector:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
+  podDisruptionBudget:
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
