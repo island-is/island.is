@@ -22,6 +22,7 @@ import {
   PropertyDetail,
   TemporaryEventLicence,
   VehicleRegistration,
+  RegistryPerson,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -43,6 +44,7 @@ import {
   mapTemporaryEventLicence,
   mapMasterLicence,
   mapVehicle,
+  mapDepartedToRegistryPerson,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -457,6 +459,18 @@ export class SyslumennService {
         .map((relation) => relation?.heiti)
         .filter((heiti): heiti is string => Boolean(heiti)),
     }
+  }
+
+  async getRegistryPerson(nationalId: string): Promise<RegistryPerson> {
+    const { id, api } = await this.createApi()
+    const res = await api.leitaAdKennitoluIThjodskraPost({
+      skeyti: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+
+    return mapDepartedToRegistryPerson(res)
   }
 
   async changeEstateRegistrant(
