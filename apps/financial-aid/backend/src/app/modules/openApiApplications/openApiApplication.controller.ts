@@ -1,20 +1,14 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  Param,
-  Query,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ApplicationModel } from '../application/models'
 import { OpenApiApplicationService } from './openApiApplication.service'
 import { ApiKeyGuard } from '../../guards/apiKey.guard'
 import { CurrentMunicipalityCode } from '../../decorators/apiKey.decorator'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import { ApplicationModel } from '../application'
 
 @Controller(`${apiBasePath}/open-api-applications`)
 @UseGuards(ApiKeyGuard)
@@ -36,10 +30,18 @@ export class OpenApiApplicationController {
     @CurrentMunicipalityCode() municipalityCode: string,
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
+    @Query('state') state?: ApplicationState,
   ) {
     this.logger.info(
-      `${municipalityCode} fetched all applications from ${startDate} to ${endDate}`,
+      `${municipalityCode} fetched all applications from ${startDate} to ${endDate} ${
+        state && `with state ${state}`
+      }`,
     )
-    return this.applicationService.getAll(municipalityCode, startDate, endDate)
+    return this.applicationService.getAll(
+      municipalityCode,
+      startDate,
+      endDate,
+      state,
+    )
   }
 }
