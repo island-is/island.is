@@ -640,6 +640,11 @@ export class CaseService {
           user,
           caseId: theCase.id,
         },
+        {
+          type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
+          user,
+          caseId: theCase.id,
+        },
       ]),
     )
   }
