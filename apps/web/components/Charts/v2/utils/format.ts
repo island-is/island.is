@@ -5,15 +5,17 @@ import round from 'lodash/round'
 
 import type { Locale } from '@island.is/shared/types'
 
+import { DEFAULT_XAXIS_FORMAT } from '../constants'
 import { messages } from '../messages'
 
 export const formatDate = (
   activeLocale: Locale,
   date: Date | string | number,
+  dateFormat = DEFAULT_XAXIS_FORMAT,
 ) => {
   try {
     return capitalize(
-      format(new Date(date), 'MMM yy', {
+      format(new Date(date), dateFormat, {
         locale: activeLocale === 'is' ? localeIS : undefined,
       }),
     )

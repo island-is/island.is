@@ -2,7 +2,7 @@ import { CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 import type { Locale } from '@island.is/shared/types'
-import { ChartComponent } from '@island.is/web/graphql/schema'
+import { Chart, ChartComponent } from '@island.is/web/graphql/schema'
 
 import { BASE_ACCORDION_HEIGHT, CHART_HEIGHT } from '../constants'
 import { ChartComponentType, ChartType } from '../types'
@@ -51,23 +51,25 @@ export const decideChartBase = (
 interface GetCartesianGridComponents {
   activeLocale: Locale
   chartUsesGrid: boolean
-  xAxisKey: string | undefined
-  xAxisValueType: string | undefined
+  slice: Chart
 }
 
 export const getCartesianGridComponents = ({
   activeLocale,
   chartUsesGrid,
-  xAxisKey = 'date',
-  xAxisValueType = 'date',
+  slice,
 }: GetCartesianGridComponents) => {
   if (!chartUsesGrid) {
     return null
   }
 
+  const xAxisKey = slice.xAxisKey || 'date'
+  const xAxisValueType = slice.xAxisValueType || 'date'
+  const xAxisFormat = slice.xAxisFormat || undefined
+
   const tickFormatter = (value: unknown) => {
     if (xAxisValueType === 'date') {
-      return formatDate(activeLocale, value as Date)
+      return formatDate(activeLocale, value as Date, xAxisFormat || undefined)
     } else if (xAxisValueType === 'number') {
       return formatValueForPresentation(activeLocale, value as string | number)
     }
@@ -84,7 +86,7 @@ export const getCartesianGridComponents = ({
     <XAxis
       axisLine={{ stroke: theme.color.blue200 }}
       aria-hidden="true"
-      dataKey={xAxisKey}
+      dataKey={xAxisKey || undefined}
       tickFormatter={tickFormatter}
       style={{
         fontSize: theme.typography.baseFontSize,

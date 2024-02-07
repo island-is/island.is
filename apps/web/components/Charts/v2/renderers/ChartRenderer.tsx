@@ -50,8 +50,7 @@ export const Chart = ({ slice }: ChartProps) => {
       getCartesianGridComponents({
         activeLocale,
         chartUsesGrid,
-        xAxisKey: slice.xAxisKey ? slice.xAxisKey : undefined,
-        xAxisValueType: slice.xAxisValueType ? slice.xAxisValueType : undefined,
+        slice,
       }),
     [activeLocale, chartUsesGrid, slice],
   )
