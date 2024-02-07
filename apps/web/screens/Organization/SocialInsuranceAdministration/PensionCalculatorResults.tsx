@@ -33,6 +33,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { formatCurrency } from '@island.is/web/utils/currency'
 
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import {
@@ -41,11 +42,7 @@ import {
 } from '../../queries'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
-
-export const formatCurrency = (answer: number | null | undefined) => {
-  if (typeof answer !== 'number') return answer
-  return String(answer).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-}
+import * as styles from './PensionCalculatorResults.css'
 
 interface PensionCalculatorResultsProps {
   organizationPage: OrganizationPage
@@ -65,28 +62,32 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
   const totalAfterTax = calculation.items.find((item) =>
     item.name?.includes('Samtals frá TR eftir skatt'),
   )
-  console.log(calculation)
-  console.log(totalAfterTax)
+
+  const perMonthText = 'á mánuði'
+  const perYearText = 'á ári'
+
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
       organization={organization}
     >
       <SidebarLayout sidebarContent={null} flexDirection="rowReverse">
-        <Stack space={2}>
-          <Text variant="h1" as="h1">
-            Reiknivél lífeyris {calculationYear}
-          </Text>
-          <Box>
-            <Text>
-              Vinsamlega hafðu í huga að reiknivélin reiknar greiðslur miðað við
-              þær forsendur sem þú gefur upp.
+        <Stack space={5}>
+          <Stack space={2}>
+            <Text variant="h1" as="h1">
+              Reiknivél lífeyris {calculationYear}
             </Text>
-            <Text>
-              Líkanið er einungis til leiðbeiningar en veitir ekki bindandi
-              upplýsingar um endanlega afgreiðslu máls eða greiðslufjárhæðir
-            </Text>
-          </Box>
+            <Box>
+              <Text>
+                Vinsamlega hafðu í huga að reiknivélin reiknar greiðslur miðað
+                við þær forsendur sem þú gefur upp.
+              </Text>
+              <Text>
+                Líkanið er einungis til leiðbeiningar en veitir ekki bindandi
+                upplýsingar um endanlega afgreiðslu máls eða greiðslufjárhæðir
+              </Text>
+            </Box>
+          </Stack>
           <Inline alignY="center" justifyContent="spaceBetween" space={5}>
             <Text variant="h2" as="h2">
               Samtals greiðslur frá TR eftir skatt
@@ -97,27 +98,35 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
               </Button>
             </LinkV2>
           </Inline>
-          <Inline space={8}>
-            <Box textAlign="right">
+          <Box display="flex" paddingLeft={5}>
+            <Box textAlign="right" paddingTop={2} paddingRight={4}>
               <Text variant="h3">
                 {formatCurrency(totalAfterTax?.monthlyAmount)}
               </Text>
-              <Text>á mánuði</Text>
+              <Text>{perMonthText}</Text>
             </Box>
-            {/* TODO: add line */}
-            <Box textAlign="right">
+            <Box>
+              <Box className={styles.line} />
+            </Box>
+            <Box textAlign="right" paddingTop={2} paddingLeft={5}>
               <Text variant="h3">
                 {formatCurrency(totalAfterTax?.yearlyAmount)}
               </Text>
-              <Text>á ári</Text>
+              <Text>{perYearText}</Text>
             </Box>
-          </Inline>
+          </Box>
 
-          <Accordion>
+          <Accordion dividerOnTop={false}>
             <AccordionItem id="sundurlidun" label="Sundurliðun">
               <Stack space={3}>
                 <Box display="flex" justifyContent="flexEnd">
-                  <Button icon="print" variant="utility" onClick={window.print}>
+                  <Button
+                    icon="print"
+                    variant="utility"
+                    onClick={() => {
+                      window.print()
+                    }}
+                  >
                     Prenta
                   </Button>
                 </Box>
@@ -127,14 +136,16 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
                       <Table.HeadData>
                         Greiðslur frá Tryggingastofnun
                       </Table.HeadData>
-                      <Table.HeadData>á mánuði</Table.HeadData>
-                      <Table.HeadData>á ári</Table.HeadData>
+                      <Table.HeadData>{perMonthText}</Table.HeadData>
+                      <Table.HeadData>{perYearText}</Table.HeadData>
                     </Table.Row>
                   </Table.Head>
                   <Table.Body>
                     {calculation.items.map((item, index) => (
                       <Table.Row key={index}>
-                        <Table.Data>{item.name}</Table.Data>
+                        <Table.Data>
+                          <Text>{item.name}</Text>
+                        </Table.Data>
                         <Table.Data>
                           <Text>{formatCurrency(item.monthlyAmount)}</Text>
                         </Table.Data>
