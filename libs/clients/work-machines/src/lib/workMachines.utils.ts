@@ -3,8 +3,14 @@ import {
   MachineOwnerChangeCompleteDto,
   ApiMachineOwnerChangePostRequest,
   MachineOwnerChangeCreateDto,
+  ApiMachineSupervisorChangePostRequest,
+  MachineSupervisorChangeDto,
 } from '../../gen/fetch'
-import { ConfirmOwnerChange, ChangeMachineOwner } from './workMachines.types'
+import {
+  ConfirmOwnerChange,
+  ChangeMachineOwner,
+  SupervisorChange,
+} from './workMachines.types'
 
 export const confirmChangeToApiRequest = (
   confirmChange: ConfirmOwnerChange,
@@ -43,4 +49,22 @@ export const apiChangeMachineOwnerToApiRequest = (
   }
 
   return { machineOwnerChangeCreateDto }
+}
+
+export const apiChangeSupervisorToApiRequest = (
+  changeSupervisor: SupervisorChange,
+): ApiMachineSupervisorChangePostRequest => {
+  const machineSupervisorChangeDto: MachineSupervisorChangeDto = {
+    machineId: changeSupervisor.machineId,
+    delegateNationalId: changeSupervisor.delegateNationalId,
+    ownerNationalId: changeSupervisor.ownerNationalId,
+    supervisorNationalId: changeSupervisor.supervisorNationalId,
+    email: changeSupervisor.email,
+    phoneNumber: changeSupervisor.phoneNumber,
+    address: changeSupervisor.address,
+    postalCode: changeSupervisor.postalCode,
+    moreInfo: changeSupervisor.moreInfo,
+  }
+
+  return { machineSupervisorChangeDto }
 }

@@ -2,17 +2,14 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   HouseholdSupplementHousing,
   AttachmentLabel,
-  MONTHS,
   AttachmentTypes,
 } from './constants'
 import {
-  Option,
   Application,
   YesOrNo,
   YES,
-  NO,
+  ExternalData,
 } from '@island.is/application/types'
-import { householdSupplementFormMessage } from './messages'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
@@ -23,7 +20,10 @@ import {
   FileType,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  MONTHS,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantPhonenumber = getValueViaPath(
@@ -156,6 +156,26 @@ export function getApplicationExternalData(
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
 
+  const spouseName = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.name',
+  ) as string
+
+  const spouseNationalId = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.nationalId',
+  ) as string
+
+  const maritalStatus = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.maritalStatus',
+  ) as string
+
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
+
   return {
     cohabitants,
     applicantName,
@@ -164,21 +184,11 @@ export function getApplicationExternalData(
     email,
     currencies,
     isEligible,
+    spouseName,
+    spouseNationalId,
+    maritalStatus,
+    hasSpouse,
   }
-}
-
-export function getYesNOOptions() {
-  const options: Option[] = [
-    {
-      value: YES,
-      label: householdSupplementFormMessage.shared.yes,
-    },
-    {
-      value: NO,
-      label: householdSupplementFormMessage.shared.no,
-    },
-  ]
-  return options
 }
 
 export function isExistsCohabitantOlderThan25(
@@ -257,12 +267,7 @@ export function getAttachments(application: Application) {
 
 // returns available years. Available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableYears(application: Application) {
-  const { applicantNationalId } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  if (!applicantNationalId) return []
+export function getAvailableYears() {
   const today = new Date()
   const twoYearsBackInTime = subYears(
     today.setMonth(today.getMonth() + 1),
@@ -283,15 +288,7 @@ export function getAvailableYears(application: Application) {
 
 // returns available months for selected year, since available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableMonths(
-  application: Application,
-  selectedYear: string,
-) {
-  const { applicantNationalId } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  if (!applicantNationalId) return []
+export function getAvailableMonths(selectedYear: string) {
   if (!selectedYear) return []
 
   const twoYearsBackInTime = subYears(new Date(), 2)
@@ -305,4 +302,10 @@ export function getAvailableMonths(
   }
 
   return months
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible
 }

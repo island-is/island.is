@@ -1,10 +1,12 @@
 import cn from 'classnames'
-import { Box, Text, Hidden } from '@island.is/island-ui/core'
+
+import { Box, Hidden, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { ServiceWebSearchInput } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
-import { TextModes } from '../types'
+import { useI18n } from '@island.is/web/i18n'
 
+import { TextModes } from '../types'
 import * as styles from './SearchSection.css'
 
 interface SearchSectionProps {
@@ -27,6 +29,7 @@ export const SearchSection = ({
   showLogoOnMobileDisplays = true,
 }: SearchSectionProps) => {
   const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
 
   const textProps: { color?: Colors } =
     textMode === 'dark'
@@ -70,7 +73,10 @@ export const SearchSection = ({
       )}
       <ServiceWebSearchInput
         placeholder={searchPlaceholder}
-        nothingFoundText={n('nothingFoundText', 'Ekkert fannst')}
+        nothingFoundText={n(
+          'nothingFoundText',
+          activeLocale === 'is' ? 'Ekkert fannst' : 'Nothing found',
+        )}
       />
     </Box>
   )

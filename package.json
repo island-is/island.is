@@ -57,8 +57,10 @@
     "schemas": "echo 'The `schemas` script is deprecated. Please run `yarn codegen` instead.' && node scripts/codegen.js",
     "postinstall": "node -e 'process.exit(process.env.CI || process.env.SKIP_POSTINSTALL ? 0 : 1);' || node ./scripts/postinstall.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
-    "charts": "cd ./infra && yarn charts",
-    "infra": "cd ./infra && yarn cli",
+    "charts": "cd ./infra && yarn install > /dev/null && yarn charts",
+    "infra": "cd ./infra && yarn install > /dev/null && yarn cli",
+    "run-proxies": "./scripts/run-proxies.sh",
+    "proxies": "yarn run-proxies",
     "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {
@@ -102,9 +104,9 @@
     "@nestjs/jwt": "8.0.1",
     "@nestjs/passport": "8.2.2",
     "@nestjs/platform-express": "10.0.5",
-    "@nestjs/sequelize": "9.0.2",
+    "@nestjs/sequelize": "10.0.0",
     "@nestjs/swagger": "7.1.1",
-    "@nestjs/terminus": "10.1.1",
+    "@nestjs/terminus": "10.2.0",
     "@react-pdf/renderer": "^3.1.9",
     "@rehooks/component-size": "1.0.3",
     "@sindresorhus/slugify": "1.0.0",
@@ -180,7 +182,7 @@
     "graphql-tag": "2.12.5",
     "graphql-type-json": "0.3.2",
     "handlebars": "4.7.7",
-    "hot-shots": "9.0.0",
+    "hot-shots": "10.0.0",
     "http-cache-semantics": "4.1.1",
     "http-proxy-middleware": "2.0.6",
     "hypher": "0.2.5",
@@ -383,7 +385,7 @@
     "@types/opossum": "4.1.1",
     "@types/passport-jwt": "3.0.8",
     "@types/pg": "8.6.4",
-    "@types/react": "18.2.13",
+    "@types/react": "18.2.14",
     "@types/react-datepicker": "4.10.0",
     "@types/react-dom": "18.2.6",
     "@types/react-html-parser": "2.0.1",
@@ -474,7 +476,8 @@
     "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch",
     "dd-trace@3.32.1": "patch:dd-trace@npm%3A3.32.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch",
     "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch",
-    "geoip-lite@1.4.7": "patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch"
+    "geoip-lite@1.4.7": "patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch",
+    "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch"
   },
   "volta": {
     "node": "18.16.0"

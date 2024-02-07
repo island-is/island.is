@@ -40,10 +40,10 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.fuelCode && parseInt(x.fuelCode) === 3,
     )
 
-    let onlyElectricVehiclesWithGrant = onlyElectricVehicles
+    let onlyElectricVehiclesWithGrant = undefined
 
     if (onlyElectricVehicles.length < 6) {
-      onlyElectricVehicles = await Promise.all(
+      const withGrant = await Promise.all(
         onlyElectricVehicles.map(async (vehicle: VehicleMiniDto) => {
           const vehicleGrant =
             await this.energyFundsClientService.getCatalogValueForVehicle(
@@ -57,9 +57,11 @@ export class EnergyFundsService extends BaseTemplateApiService {
           }
         }),
       )
-      onlyElectricVehiclesWithGrant = onlyElectricVehicles.filter(
+      onlyElectricVehiclesWithGrant = withGrant.filter(
         (x) => x.vehicleGrant !== undefined,
       )
+    } else {
+      onlyElectricVehiclesWithGrant = onlyElectricVehicles
     }
 
     // Validate that user has at least 1 vehicle that fulfills requirements
@@ -80,8 +82,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
       onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
         let hasReceivedSubsidy: boolean | undefined
 
-        // Only validate if fewer than 5 items
-        if (onlyElectricVehiclesWithGrant.length < 5) {
+        // Only validate if fewer than 6 items
+        if (onlyElectricVehiclesWithGrant.length < 6) {
           // Get subsidy status
           hasReceivedSubsidy =
             await this.energyFundsClientService.checkVehicleSubsidyAvilability(
@@ -120,14 +122,39 @@ export class EnergyFundsService extends BaseTemplateApiService {
       (x) => x.permno === applicationAnswers.selectVehicle.plate,
     )
 
+    try {
+      const vehicleApiDetails = await this.vehiclesApiWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
+        vin: currentvehicleDetails?.vin || '',
+      })
+      if (
+        !vehicleApiDetails.owners?.find((x) => x.persidno === auth.nationalId)
+      ) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.vehicleNotOwner,
+            summary: coreErrorMessages.vehicleNotOwner,
+          },
+          400,
+        )
+      }
+    } catch (error) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.applicationSubmitFailed,
+          summary: coreErrorMessages.applicationSubmitFailed,
+        },
+        400,
+      )
+    }
+
     const answers = {
       nationalId: auth.nationalId,
       vIN: currentvehicleDetails?.vin || '',
       carNumber: applicationAnswers?.selectVehicle.plate,
       carType: (currentvehicleDetails && currentvehicleDetails.make) || '',
-      itemcode:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrantItemCode) ||
-        '',
+      itemcode: applicationAnswers?.selectVehicle.grantItemCode || '',
       vehicleGroup: currentvehicleDetails?.vehicleRegistrationCode || '',
       purchasePrice:
         (applicationAnswers?.vehicleDetails.price &&
@@ -145,8 +172,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
             'yyyy-MM-dd',
           )
         : '',
-      subsidyAmount:
-        (currentvehicleDetails && currentvehicleDetails.vehicleGrant) || 0,
+      subsidyAmount: applicationAnswers?.selectVehicle.grantAmount || 0,
     }
 
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {

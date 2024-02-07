@@ -15,25 +15,38 @@ import {
   PERMANENT_FOSTER_CARE,
   OTHER_NO_CHILDREN_FOUND,
   ADOPTION,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  NO_UNEMPLOYED_BENEFITS,
 } from '../constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
 import { yearFosterCareOrAdoption, yearInMonths } from '../config'
+import { coreErrorMessages } from '@island.is/application/core'
+import { defaultMultipleBirthsMonths } from '../config'
 
 const PersonalAllowance = z
   .object({
     usePersonalAllowance: z.enum([YES, NO]),
-    usage: z
-      .string()
-      .refine((x) => parseFloat(x) >= 1 && parseFloat(x) <= 100)
-      .optional(),
+    usage: z.string().optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
   .refine(
-    (schema) =>
-      schema.usePersonalAllowance === YES ? !!schema.useAsMuchAsPossible : true,
+    ({ usePersonalAllowance, useAsMuchAsPossible }) =>
+      usePersonalAllowance === YES ? !!useAsMuchAsPossible : true,
     {
       path: ['useAsMuchAsPossible'],
+    },
+  )
+  .refine(
+    ({ usePersonalAllowance, usage, useAsMuchAsPossible }) =>
+      usePersonalAllowance === YES && useAsMuchAsPossible === NO
+        ? usage
+          ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
+          : false
+        : true,
+    {
+      path: ['usage'],
     },
   )
 
@@ -97,22 +110,57 @@ export const dataSchema = z.object({
   }),
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
-  payments: z.object({
-    bank: z.string().refine(
-      (b) => {
-        const bankAccount = formatBankInfo(b)
-        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+  payments: z
+    .object({
+      bank: z.string().refine(
+        (b) => {
+          const bankAccount = formatBankInfo(b)
+          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+        },
+        { params: errorMessages.bank },
+      ),
+      useUnion: z.enum([YES, NO]).optional(),
+      usePrivatePensionFund: z.enum([YES, NO]).optional(),
+      pensionFund: z.string().optional(),
+      privatePensionFund: z.string().optional(),
+      privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
+      union: z.string().optional(),
+    })
+    .refine((p) => ('pensionFund' in p ? !!p.pensionFund : true), {
+      path: ['pensionFund'],
+      params: coreErrorMessages.missingAnswer,
+    })
+    .refine(
+      ({ useUnion, union }) =>
+        useUnion === YES ? !!union && union !== NO_UNION : true,
+      {
+        path: ['union'],
+        params: coreErrorMessages.missingAnswer,
       },
-      { params: errorMessages.bank },
+    )
+    .refine(
+      ({ usePrivatePensionFund, privatePensionFund }) =>
+        usePrivatePensionFund === YES
+          ? !!privatePensionFund &&
+            privatePensionFund !== NO_PRIVATE_PENSION_FUND
+          : true,
+      {
+        path: ['privatePensionFund'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
+    .refine(
+      ({ usePrivatePensionFund, privatePensionFundPercentage }) =>
+        usePrivatePensionFund === YES
+          ? !!privatePensionFundPercentage &&
+            privatePensionFundPercentage !== '0'
+          : true,
+      {
+        path: ['privatePensionFundPercentage'],
+        params: coreErrorMessages.missingAnswer,
+      },
     ),
-    pensionFund: z.string().optional(),
-    privatePensionFund: z.string().optional(),
-    privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
-    union: z.string().optional(),
-  }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
-  useUnion: z.enum([YES, NO]),
-  usePrivatePensionFund: z.enum([YES, NO]),
   // We don't have away to validate companyId yet because isCompany return false on personal business ID
   employerNationalRegistryId: z.string().refine((n) => kennitala.isValid(n), {
     params: errorMessages.employerNationalRegistryId,
@@ -135,10 +183,30 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
-  isSelfEmployed: z.enum([YES, NO]),
-  isReceivingUnemploymentBenefits: z.enum([YES, NO]),
-  isRecivingUnemploymentBenefits: z.enum([YES, NO]),
-  unemploymentBenefits: z.string().min(1),
+  employment: z
+    .object({
+      isSelfEmployed: z.enum([YES, NO]),
+      isReceivingUnemploymentBenefits: z.enum([YES, NO]).optional(),
+      unemploymentBenefits: z.string().optional(),
+    })
+    .refine(
+      ({ isSelfEmployed, isReceivingUnemploymentBenefits }) =>
+        isSelfEmployed === NO ? !!isReceivingUnemploymentBenefits : true,
+      { path: ['isReceivingUnemploymentBenefits'] },
+    )
+    .refine(
+      ({
+        isSelfEmployed,
+        isReceivingUnemploymentBenefits,
+        unemploymentBenefits,
+      }) =>
+        isSelfEmployed === NO && isReceivingUnemploymentBenefits === YES
+          ? !!unemploymentBenefits &&
+            unemploymentBenefits !== NO_UNEMPLOYED_BENEFITS
+          : true,
+      { path: ['unemploymentBenefits'] },
+    ),
+  employerLastSixMonths: z.enum([YES, NO]),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
@@ -171,6 +239,14 @@ export const dataSchema = z.object({
           params: errorMessages.otherParentId,
         }),
     })
+    .refine(
+      ({ chooseOtherParent, otherParentId }) =>
+        chooseOtherParent === MANUAL ? !!otherParentId : true,
+      {
+        params: coreErrorMessages.missingAnswer,
+        path: ['otherParentId'],
+      },
+    )
     .optional(),
   otherParent: z.enum([SPOUSE, NO, MANUAL, SINGLE]).optional(),
   otherParentName: z.string().optional(),
@@ -200,13 +276,39 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
-  multipleBirths: z.object({
-    hasMultipleBirths: z.enum([YES, NO]),
-    multipleBirths: z
-      .string()
-      .refine((v) => !isNaN(Number(v)))
-      .optional(),
-  }),
+  multipleBirths: z
+    .object({
+      hasMultipleBirths: z.enum([YES, NO]),
+      multipleBirths: z.string().optional(),
+    })
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES ? !!multipleBirths : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.missingMultipleBirthsAnswer,
+      },
+    )
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES && multipleBirths
+          ? Number(multipleBirths) >= 2
+          : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.tooFewMultipleBirthsAnswer,
+      },
+    )
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES && multipleBirths
+          ? Number(multipleBirths) <= defaultMultipleBirthsMonths + 1
+          : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.tooManyMultipleBirthsAnswer,
+      },
+    ),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
 })

@@ -10,9 +10,11 @@ import {
 import {
   Form,
   FormModes,
+  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from '../lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
@@ -20,11 +22,11 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { getApplicationExternalData } from '../lib/householdSupplementUtils'
+import { isEligible } from '../lib/householdSupplementUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
-  title: householdSupplementFormMessage.shared.formTitle,
+  title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: false,
@@ -32,22 +34,24 @@ export const PrerequisitesForm: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: householdSupplementFormMessage.pre.externalDataSection,
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: householdSupplementFormMessage.pre.externalDataSection,
-          subTitle: householdSupplementFormMessage.pre.externalDataDescription,
-          checkboxLabel: householdSupplementFormMessage.pre.checkboxProvider,
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre.externalDataDescription,
+          checkboxLabel:
+            socialInsuranceAdministrationMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: householdSupplementFormMessage.pre.startApplication,
+            title: socialInsuranceAdministrationMessage.pre.startApplication,
             refetchApplicationAfterSubmit: true,
             actions: [
               {
                 event: 'SUBMIT',
-                name: householdSupplementFormMessage.pre.startApplication,
+                name: socialInsuranceAdministrationMessage.pre.startApplication,
                 type: 'primary',
               },
             ],
@@ -55,7 +59,8 @@ export const PrerequisitesForm: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: householdSupplementFormMessage.pre.skraInformationTitle,
+              title:
+                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
               subTitle:
                 householdSupplementFormMessage.pre.skraInformationSubTitle,
             }),
@@ -65,19 +70,31 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationApplicantApi,
-              title:
-                householdSupplementFormMessage.pre
-                  .socialInsuranceAdministrationInformationTitle,
+              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
-                householdSupplementFormMessage.pre
+                socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
-              title: '',
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationInformationTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDataDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationPrivacyDescription,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
               title: '',
             }),
           ],
@@ -85,10 +102,9 @@ export const PrerequisitesForm: Form = buildForm({
         buildMultiField({
           id: 'isNotEligible',
           title: householdSupplementFormMessage.pre.isNotEligibleLabel,
-          condition: (FormValue, externalData) => {
-            const { isEligible } = getApplicationExternalData(externalData)
+          condition: (_, externalData) => {
             // Show if applicant is not eligible
-            return !isEligible
+            return !isEligible(externalData)
           },
           children: [
             buildDescriptionField({
@@ -109,7 +125,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'infoSection',
-      title: householdSupplementFormMessage.info.section,
+      title: socialInsuranceAdministrationMessage.info.section,
       children: [],
     }),
     buildSection({
@@ -119,27 +135,27 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'periodSection',
-      title: householdSupplementFormMessage.info.periodTitle,
+      title: socialInsuranceAdministrationMessage.period.overviewTitle,
       children: [],
     }),
     buildSection({
       id: 'fileUpload',
-      title: householdSupplementFormMessage.fileUpload.title,
+      title: socialInsuranceAdministrationMessage.fileUpload.title,
       children: [],
     }),
     buildSection({
       id: 'additionalInfo',
-      title: householdSupplementFormMessage.additionalInfo.section,
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [],
     }),
     buildSection({
       id: 'confirm',
-      title: householdSupplementFormMessage.confirm.overviewTitle,
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
       children: [],
     }),
     buildSection({
-      id: 'confirm',
-      title: householdSupplementFormMessage.confirm.section,
+      id: 'conclusion',
+      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
       children: [],
     }),
   ],

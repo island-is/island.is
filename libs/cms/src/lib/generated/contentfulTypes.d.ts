@@ -144,7 +144,6 @@ export interface IAnchorPageFields {
   pageType?:
     | 'Digital Iceland Service'
     | 'Digital Iceland Community Page'
-    | 'Life Event'
     | undefined
 
   /** featured image */
@@ -571,6 +570,9 @@ export interface IChartFields {
 
   /** X Axis Value Type */
   xAxisValueType?: 'date' | 'number' | 'string' | undefined
+
+  /** X Axis Format */
+  xAxisFormat?: string | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -1132,6 +1134,34 @@ export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
   }
 }
 
+export interface IFeaturedEventsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** No events found text */
+  noEventsFoundText?: Document | undefined
+}
+
+export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredEvents'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedSupportQnAsFields {
   /** Title */
   title?: string | undefined
@@ -1341,7 +1371,7 @@ export interface IFrontpageFields {
   slides?: IFrontpageSlider[] | undefined
 
   /** Life Events */
-  lifeEvents?: (ILifeEventPage | IAnchorPage)[] | undefined
+  lifeEvents?: ILifeEventPage[] | undefined
 
   /** Namespace */
   namespace: IUiConfiguration
@@ -1820,48 +1850,50 @@ export interface ILatestNewsSlice extends Entry<ILatestNewsSliceFields> {
 }
 
 export interface ILifeEventPageFields {
-  /** title */
+  /** Title */
   title: string
 
-  /** short title */
+  /** Short Title */
   shortTitle?: string | undefined
 
-  /** slug */
+  /** Slug */
   slug: string
 
-  /** intro */
+  /** Intro */
   intro?: string | undefined
 
-  /** short intro */
+  /** Short Intro */
   shortIntro?: string | undefined
 
-  /** image */
+  /** Image */
   image?: Asset | undefined
 
-  /** thumbnail */
+  /** Thumbnail */
   thumbnail?: Asset | undefined
 
-  /** tiny thumbnail */
+  /** Tiny Thumbnail */
   tinyThumbnail?: Asset | undefined
 
-  /** content */
+  /** Featured Image */
+  featuredImage?: Asset | undefined
+
+  /** Content */
   content: Document
 
-  /** category */
+  /** Featured */
+  featured?: IFeatured[] | undefined
+
+  /** Organizations */
+  organizations?: IOrganization[] | undefined
+
+  /** Category */
   category?: IArticleCategory | undefined
 
-  /** see more text */
+  /** Related Life Events */
+  relatedLifeEvents?: ILifeEventPage[] | undefined
+
+  /** See More Text */
   seeMoreText?: string | undefined
-
-  /** page type */
-  pageType?:
-    | 'Life Event'
-    | 'Digital Iceland Service'
-    | 'Digital Iceland Community Page'
-    | undefined
-
-  /** featured image */
-  featuredImage?: Asset | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1874,32 +1906,6 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ILifeEventPageListSliceFields {
-  /** Title */
-  title?: string | undefined
-
-  /** List */
-  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
-}
-
-export interface ILifeEventPageListSlice
-  extends Entry<ILifeEventPageListSliceFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2732,7 +2738,6 @@ export interface IOrganizationPageFields {
   slices?:
     | (
         | IAccordionSlice
-        | ILifeEventPageListSlice
         | IBigBulletList
         | IDistricts
         | IEmailSignup
@@ -2750,6 +2755,7 @@ export interface IOrganizationPageFields {
         | ITwoColumnText
         | ISectionWithVideo
         | IAnchorPageList
+        | ISectionWithImage
       )[]
     | undefined
 
@@ -2875,7 +2881,6 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
-        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
@@ -3243,6 +3248,9 @@ export interface IProjectPageFields {
 
   /** Namespace */
   namespace?: IUiConfiguration | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -3452,6 +3460,9 @@ export interface IServiceWebPageFields {
 
   /** Slices */
   slices?: IFeaturedArticles[] | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -3581,6 +3592,9 @@ export interface ISliceDropdownFields {
 
   /** Dropdown Label */
   dropdownLabel?: string | undefined
+
+  /** Alphabetically ordered */
+  alphabeticallyOrdered?: boolean | undefined
 
   /** Slices */
   slices?: IOneColumnText[] | undefined
@@ -4754,6 +4768,7 @@ export type CONTENT_TYPE =
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
+  | 'featuredEvents'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'
@@ -4772,7 +4787,6 @@ export type CONTENT_TYPE =
   | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
-  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'

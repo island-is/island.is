@@ -26,7 +26,6 @@ module.exports = {
               'REMOTE',
               'MIXED',
               'ONLINE',
-              'ONLINE_WITH_SESSION',
               'UNDEFINED',
             ),
             allowNull: false,

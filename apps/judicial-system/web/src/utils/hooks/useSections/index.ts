@@ -11,7 +11,10 @@ import {
   prosecutorRestrictionCasesRoutes,
 } from '@island.is/judicial-system/consts'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  getAppealResultTextByValue,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -36,7 +39,6 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
-import useStringHelpers from '../useStringHelpers/useStringHelpers'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -64,7 +66,6 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { getAppealResultText } = useStringHelpers()
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
@@ -1277,7 +1278,7 @@ const useSections = (
       {
         name:
           appealState === CaseAppealState.COMPLETED
-            ? getAppealResultText(appealRulingDecision)
+            ? getAppealResultTextByValue(appealRulingDecision)
             : formatMessage(sections.caseResults.result),
         isActive:
           routeIndex === 4 ||
@@ -1293,7 +1294,8 @@ const useSections = (
   ) => {
     return {
       ...getRestrictionCaseCourtSections(workingCase, user),
-      isActive: !workingCase.state && isDistrictCourtUser(user),
+      isActive:
+        !isCompletedCase(workingCase.state) && isDistrictCourtUser(user),
     }
   }
 

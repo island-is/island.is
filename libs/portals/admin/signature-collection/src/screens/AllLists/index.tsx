@@ -13,7 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -21,12 +20,14 @@ import { useEffect, useState } from 'react'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import header from '../../../assets/headerImage.svg'
 import { Filters, countryAreas, pageSize } from '../../lib/utils'
 import CompareLists from './components/compareLists'
 import { format as formatNationalId } from 'kennitala'
+import CreateCollection from './components/createCollection'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
-const Lists = () => {
+const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -51,19 +52,17 @@ const Lists = () => {
     filteredList = filteredList.filter((list) => {
       return (
         // Filter by area
-        ((filters.area.length === 0 || filters.area.includes(list.area.name)) &&
-          // Filter by candidate
-          (filters.candidate.length === 0 ||
-            filters.candidate.includes(list.owner.name)) &&
-          // Filter by input
-          (filters.input.length === 0 ||
-            list.owner.name
-              .toLowerCase()
-              .includes(filters.input.toLowerCase()) ||
-            list.area.name
-              .toLowerCase()
-              .includes(filters.input.toLowerCase()))) ||
-        formatNationalId(list.owner.nationalId).includes(filters.input)
+        (filters.area.length === 0 || filters.area.includes(list.area.name)) &&
+        // Filter by candidate
+        (filters.candidate.length === 0 ||
+          filters.candidate.includes(list.candidate.name)) &&
+        // Filter by input
+        (filters.input.length === 0 ||
+          list.candidate.name
+            .toLowerCase()
+            .includes(filters.input.toLowerCase()) ||
+          list.area.name.toLowerCase().includes(filters.input.toLowerCase()) ||
+          formatNationalId(list.candidate.nationalId).includes(filters.input))
       )
     })
 
@@ -75,7 +74,7 @@ const Lists = () => {
     // set candidates on initial load of lists
     if (lists.length > 0) {
       const candidates = lists
-        .map((list) => list.owner.name)
+        .map((list) => list.candidate.name)
         .filter((value, index, self) => self.indexOf(value) === index)
         .map((candidate) => {
           return {
@@ -108,12 +107,14 @@ const Lists = () => {
           <IntroHeader
             title={formatMessage(m.signatureListsTitle)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={header}
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
             imgPosition="right"
             imgHiddenBelow="sm"
           />
           <GridRow marginBottom={5}>
-            <GridColumn span={['12/12', '12/12', '7/12']}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
                 name="input"
                 placeholder={formatMessage(m.searchInAllListsPlaceholder)}
@@ -122,11 +123,11 @@ const Lists = () => {
                 backgroundColor="white"
               />
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '5/12']}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box
                 display="flex"
                 justifyContent="spaceBetween"
-                marginTop={[2, 2, 0, 0]}
+                marginTop={[2, 2, 2, 0]}
               >
                 <Filter
                   labelClear=""
@@ -174,68 +175,70 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-
-                <Box
-                  display="flex"
-                  justifyContent="flexEnd"
-                  alignItems="flexEnd"
-                  style={{ minWidth: '150px' }}
-                >
-                  {filters.input.length > 0 ||
-                  filters.area.length > 0 ||
-                  filters.candidate.length > 0
-                    ? lists.length > 0 && (
-                        <Text variant="eyebrow" textAlign="right">
-                          {formatMessage(m.uploadResultsHeader)}: {lists.length}
-                        </Text>
-                      )
-                    : allLists.length > 0 && (
-                        <Text variant="eyebrow" textAlign="right">
-                          {formatMessage(m.totalListResults)}: {allLists.length}
-                        </Text>
-                      )}
-                </Box>
+                {allowedToProcess && <CreateCollection />}
               </Box>
             </GridColumn>
           </GridRow>
 
           {lists?.length > 0 ? (
-            <Stack space={5}>
-              {lists
-                .slice(pageSize * (page - 1), pageSize * page)
-                .map((list: SignatureCollectionList) => {
-                  return (
-                    <ActionCard
-                      key={list.id}
-                      eyebrow={
-                        formatMessage(m.listEndTime) +
-                        ': ' +
-                        format(new Date(list.endTime), 'dd.MM.yyyy')
-                      }
-                      heading={list.owner.name + ' - ' + list.area.name}
-                      text={formatMessage(m.collectionTitle)}
-                      progressMeter={{
-                        currentProgress: list.numberOfSignatures ?? 0,
-                        maxProgress: list.area.min,
-                        withLabel: true,
-                      }}
-                      cta={{
-                        label: formatMessage(m.viewList),
-                        variant: 'text',
-                        icon: 'arrowForward',
-                        onClick: () => {
-                          navigate(
-                            SignatureCollectionPaths.SignatureList.replace(
-                              ':id',
-                              list.id,
-                            ),
-                          )
-                        },
-                      }}
-                    />
-                  )
-                })}
-            </Stack>
+            <>
+              <Box marginBottom={2}>
+                {filters.input.length > 0 ||
+                filters.area.length > 0 ||
+                filters.candidate.length > 0
+                  ? lists.length > 0 && (
+                      <Text variant="eyebrow">
+                        {formatMessage(m.uploadResultsHeader)}: {lists.length}
+                      </Text>
+                    )
+                  : allLists.length > 0 && (
+                      <Text variant="eyebrow">
+                        {formatMessage(m.totalListResults)}: {allLists.length}
+                      </Text>
+                    )}
+              </Box>
+              <Stack space={5}>
+                {lists
+                  .slice(pageSize * (page - 1), pageSize * page)
+                  .map((list: SignatureCollectionList) => {
+                    return (
+                      <ActionCard
+                        key={list.id}
+                        eyebrow={
+                          formatMessage(m.listEndTime) +
+                          ': ' +
+                          format(new Date(list.endTime), 'dd.MM.yyyy')
+                        }
+                        heading={list.title}
+                        text={formatMessage(m.collectionTitle)}
+                        progressMeter={{
+                          currentProgress: list.numberOfSignatures ?? 0,
+                          maxProgress: list.area.min,
+                          withLabel: true,
+                        }}
+                        tag={{
+                          label: m.confirmListReviewed.defaultMessage,
+                          variant: 'mint',
+                          outlined: false,
+                        }}
+                        cta={{
+                          label: formatMessage(m.viewList),
+                          variant: 'text',
+                          icon: 'arrowForward',
+                          onClick: () => {
+                            navigate(
+                              SignatureCollectionPaths.SignatureList.replace(
+                                ':id',
+                                list.id,
+                              ),
+                            )
+                          },
+                        }}
+                      />
+                    )
+                  })}
+              </Stack>
+            </>
           ) : filters.input.length > 0 ? (
             <Box display="flex">
               <Text>{formatMessage(m.noListsFoundBySearch)}</Text>
@@ -263,7 +266,7 @@ const Lists = () => {
               )}
             />
           </Box>
-          <CompareLists />
+          {allowedToProcess && <CompareLists />}
         </GridColumn>
       </GridRow>
     </GridContainer>

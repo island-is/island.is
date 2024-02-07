@@ -36,6 +36,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Breyta',
     description: 'Edit button for review screen and so on',
   },
+  buttonAdd: {
+    id: 'application.system:button.add',
+    defaultMessage: 'Bæta við',
+    description: 'Add button',
+  },
   cardButtonInProgress: {
     id: 'application.system:card.button.inProgress',
     defaultMessage: 'Opna umsókn',
@@ -209,6 +214,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Bíð staðfestingar frá greiðsluveitu',
     description:
       'Text indicating we are waiting for confirmation from 3rd party payment gateway',
+  },
+  deleteFieldText: {
+    id: 'application.system:core.delete.field.text',
+    defaultMessage: 'Eyða færslu',
+    description: 'Delete field text',
   },
   deleteApplicationDialogTitle: {
     id: 'application.system:delete.application.dialog.title',
@@ -598,13 +608,18 @@ export const coreErrorMessages = defineMessages({
     description:
       'You do not have any electric vehicles where you are the main owner',
   },
+  vehicleNotOwner: {
+    id: 'application.system:core.fetch.data.vehicleNotOwner',
+    defaultMessage: 'Þú ert ekki aðaleigandi á þessu ökutæki',
+    description: 'You are not the main owner of this vehicle',
+  },
   noBankAccountError: {
     id: 'application.system:core.fetch.data.noBankAccountError',
     defaultMessage: 'Þú ert ekki með skráðan bankareikning',
     description: 'No bank account error',
   },
   machinesEmptyListDefault: {
-    id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
+    id: 'application.system:core.fetch.data.machinesEmptyListDefault',
     defaultMessage: 'Ekki fundust nein tæki',
     description: 'Did not find any machines',
   },

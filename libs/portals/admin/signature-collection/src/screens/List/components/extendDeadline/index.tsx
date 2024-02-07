@@ -7,22 +7,30 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { m } from '../../../../lib/messages'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import format from 'date-fns/format'
 import { useExtendDeadlineMutation } from './extendDeadline.generated'
+import { useRevalidator } from 'react-router-dom'
 
 const ActionExtendDeadline = ({
   listId,
   endTime,
+  allowedToProcess,
 }: {
   listId: string
   endTime: string
+  allowedToProcess: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
-  const [newEndDate, setNewEndDate] = useState(endTime)
-  const [extendDeadlineMutation, { loading }] = useExtendDeadlineMutation()
+  const [endDate, setEndDate] = useState(endTime)
+  const [extendDeadlineMutation] = useExtendDeadlineMutation()
+  const { revalidate } = useRevalidator()
+
+  useEffect(() => {
+    setEndDate(endDate)
+  }, [endTime])
 
   const extendDeadline = async (newEndDate: string) => {
     try {
@@ -34,9 +42,11 @@ const ActionExtendDeadline = ({
           },
         },
       })
-
-      if (res.data) {
+      if (res.data?.signatureCollectionAdminExtendDeadline.success) {
         toast.success(formatMessage(m.updateListEndTimeSuccess))
+        revalidate()
+      } else {
+        toast.error(formatMessage(m.updateListEndTimeError))
       }
     } catch (e) {
       toast.error(e.message)
@@ -51,17 +61,18 @@ const ActionExtendDeadline = ({
           size="xs"
           label={formatMessage(m.listEndTime)}
           readOnly
-          defaultValue={format(new Date(endTime), 'dd.MM.yyyy HH:mm')}
+          value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
         />
-        <Box marginLeft={2}>
-          <Button
-            icon="calendar"
-            iconType="outline"
-            size="small"
-            variant="utility"
-            onClick={() => setModalChangeDateIsOpen(true)}
-          ></Button>
-        </Box>
+        {allowedToProcess && (
+          <Box marginLeft={2}>
+            <Button
+              icon="calendar"
+              iconType="outline"
+              variant="utility"
+              onClick={() => setModalChangeDateIsOpen(true)}
+            ></Button>
+          </Box>
+        )}
       </Box>
       <Modal
         id="extendDeadline"
@@ -75,15 +86,15 @@ const ActionExtendDeadline = ({
           <DatePicker
             locale="is"
             label={formatMessage(m.listEndTime)}
-            selected={new Date(newEndDate)}
-            handleChange={(date) => setNewEndDate(new Date(date).toISOString())}
+            selected={new Date(endDate)}
+            handleChange={(date) => setEndDate(new Date(date).toISOString())}
             placeholderText=""
             showTimeInput
           />
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               onClick={() => {
-                extendDeadline(newEndDate)
+                extendDeadline(endDate)
                 setModalChangeDateIsOpen(false)
               }}
             >

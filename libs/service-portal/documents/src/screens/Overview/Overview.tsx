@@ -7,7 +7,6 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
-  Button,
   SkeletonLoader,
   Checkbox,
   toast,
@@ -408,6 +407,17 @@ export const ServicePortalDocuments = () => {
                         input: {
                           messageIds: selectedLines,
                           action: 'bookmark',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
+                  onRead={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'read',
                           status: true,
                         },
                       },

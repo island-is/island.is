@@ -10,6 +10,7 @@ import {
   CaseCustodyRestrictions,
   CaseFileCategory,
   CaseType,
+  DefendantPlea,
   Gender,
   Notification,
   NotificationType,
@@ -56,8 +57,11 @@ export const getRestrictionTagVariant = (
   }
 }
 
-export const kb = (bytes?: number) => {
-  return bytes ? Math.ceil(bytes / 1024) : ''
+export const fileSize = (bytes?: number) => {
+  if (!bytes) return ''
+
+  const kb = Math.ceil(bytes / 1024)
+  return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
 }
 
 export const getAppealEndDate = (rulingDate: string) => {
@@ -141,4 +145,20 @@ export const isReopenedCOACase = (
     appealState !== CaseAppealState.COMPLETED &&
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
   )
+}
+
+export const getDefendantPleaText = (
+  defendantName?: string | null,
+  defendantPlea?: DefendantPlea,
+) => {
+  switch (defendantPlea) {
+    case DefendantPlea.GUILTY:
+      return `${defendantName} - Játar sök`
+    case DefendantPlea.NOT_GUILTY:
+      return `${defendantName} - Neitar sök`
+    case DefendantPlea.NO_PLEA:
+      return `${defendantName} - Tjáir sig ekki / óljóst`
+    default:
+      return ''
+  }
 }

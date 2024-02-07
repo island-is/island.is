@@ -1,5 +1,5 @@
 query allLists {
-  signatureCollectionAllLists {
+  signatureCollectionAdminLists {
     id
     title
     area {
@@ -10,7 +10,8 @@ query allLists {
     }
     endTime
     startTime
-    owner {
+    candidate {
+      id
       nationalId
       name
       phone
@@ -19,12 +20,11 @@ query allLists {
     collectors {
       nationalId
       name
-      phone
-      email
     }
     active
     collectionId
-    link
+    slug
     numberOfSignatures
+    maxReached
   }
 }

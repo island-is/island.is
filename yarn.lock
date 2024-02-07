@@ -11557,19 +11557,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/sequelize@npm:9.0.2":
-  version: 9.0.2
-  resolution: "@nestjs/sequelize@npm:9.0.2"
+"@nestjs/sequelize@npm:10.0.0":
+  version: 10.0.0
+  resolution: "@nestjs/sequelize@npm:10.0.0"
   dependencies:
     uuid: 9.0.0
   peerDependencies:
-    "@nestjs/common": ^8.0.0 || ^9.0.0
-    "@nestjs/core": ^8.0.0 || ^9.0.0
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
     reflect-metadata: ^0.1.13
     rxjs: ^7.2.0
     sequelize: ^6.3.5
     sequelize-typescript: ^2.0.0
-  checksum: f7d6aaf257619b502cab0eac5cd45b554a2c3eed2bfd511b4ac24621f949f600bd58ca236b8de1e864d8c4ac07fa80aabded98c16b263612306e5d00b4450e1e
+  checksum: b1fdb54d2cbeac1080419bdd00fba45798d40938c7b5ee1a2c4f805d260b9b5aa15ec8e7e979ecffea11809199044b179e2045849772a26ec80f0badbe3ea478
   languageName: node
   linkType: hard
 
@@ -11600,9 +11600,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/terminus@npm:10.1.1":
-  version: 10.1.1
-  resolution: "@nestjs/terminus@npm:10.1.1"
+"@nestjs/terminus@npm:10.2.0":
+  version: 10.2.0
+  resolution: "@nestjs/terminus@npm:10.2.0"
   dependencies:
     boxen: 5.1.2
     check-disk-space: 3.4.0
@@ -11651,7 +11651,62 @@ __metadata:
       optional: true
     typeorm:
       optional: true
-  checksum: 62e8707b16e86500cd94415188c7b303eed18cf216951e207693ba917965241c7e2130e982d48fc481ceafed8ed998b2e71f1866f1097541b067a39d51cd84a0
+  checksum: 16e060b56d4e655ba80a397cf45727a15df4537ab1531e1a1b54be02ff0f03c1101904c68783d9dfbd284fff464131677a8f3989b54bff620edcdfdb99b36adc
+  languageName: node
+  linkType: hard
+
+"@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::locator=island.is%40workspace%3A.":
+  version: 10.2.0
+  resolution: "@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::version=10.2.0&hash=aeebab&locator=island.is%40workspace%3A."
+  dependencies:
+    boxen: 5.1.2
+    check-disk-space: 3.4.0
+  peerDependencies:
+    "@grpc/grpc-js": "*"
+    "@grpc/proto-loader": "*"
+    "@mikro-orm/core": "*"
+    "@mikro-orm/nestjs": "*"
+    "@nestjs/axios": ^1.0.0 || ^2.0.0 || ^3.0.0
+    "@nestjs/common": ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0
+    "@nestjs/microservices": ^9.0.0 || ^10.0.0
+    "@nestjs/mongoose": ^9.0.0 || ^10.0.0
+    "@nestjs/sequelize": ^9.0.0 || ^10.0.0
+    "@nestjs/typeorm": ^9.0.0 || ^10.0.0
+    "@prisma/client": "*"
+    mongoose: "*"
+    reflect-metadata: 0.1.x
+    rxjs: 7.x
+    sequelize: "*"
+    typeorm: "*"
+  peerDependenciesMeta:
+    "@grpc/grpc-js":
+      optional: true
+    "@grpc/proto-loader":
+      optional: true
+    "@mikro-orm/core":
+      optional: true
+    "@mikro-orm/nestjs":
+      optional: true
+    "@nestjs/axios":
+      optional: true
+    "@nestjs/microservices":
+      optional: true
+    "@nestjs/mongoose":
+      optional: true
+    "@nestjs/sequelize":
+      optional: true
+    "@nestjs/typeorm":
+      optional: true
+    "@prisma/client":
+      optional: true
+    mongoose:
+      optional: true
+    sequelize:
+      optional: true
+    typeorm:
+      optional: true
+  checksum: e7d412de26628e132bb255e89744ccd4bad72468a1b8247c77e4f556a959e26db2d4f72474c0b799ad5fcd87d79a92b678996aca665b941e01556803d499ee39
   languageName: node
   linkType: hard
 
@@ -17990,7 +18045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.2.13, @types/react@npm:>=16, @types/react@npm:^18.0.24":
+"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.0.24":
   version: 18.2.13
   resolution: "@types/react@npm:18.2.13"
   dependencies:
@@ -18020,6 +18075,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 4b49644466c72c4fc2eafa16f8c787eac09d84117b3ab7d17d547f938cdb7bdce7cac92cb12c94d860bbdc0316802eca5af01afd7ed4ef06f6009b4bae8a494b
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:18.2.14":
+  version: 18.2.14
+  resolution: "@types/react@npm:18.2.14"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: a6a5e8cc78f486b9020d1ad009aa6c56943c68c7c6376e0f8399e9cbcd950b7b8f5d73f00200f5379f5e58d31d57d8aed24357f301d8e86108cd438ce6c8b3dd
   languageName: node
   linkType: hard
 
@@ -21688,7 +21754,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bindings@npm:^1.3.0, bindings@npm:^1.5.0":
+"bindings@npm:^1.5.0":
   version: 1.5.0
   resolution: "bindings@npm:1.5.0"
   dependencies:
@@ -31577,15 +31643,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hot-shots@npm:9.0.0":
-  version: 9.0.0
-  resolution: "hot-shots@npm:9.0.0"
+"hot-shots@npm:10.0.0":
+  version: 10.0.0
+  resolution: "hot-shots@npm:10.0.0"
   dependencies:
-    unix-dgram: 2.0.x
+    unix-dgram: 2.x
   dependenciesMeta:
     unix-dgram:
       optional: true
-  checksum: bafc26a2a89154d6f0777d89f506f7aa03a0cb14f0bb6e9bc147bbca5ca549085b634db69bc7f754607360bd58e520b94fa398621cef30aaf8081bb2f08ea48b
+  checksum: b37f611190e897bbd2d8d07542cd24c98f2dcca01813f25cd8ba36155c0fa26db5216e01058a2b47142c2be8e45e6d80965358d69a7f0d85a6878ca27951813e
   languageName: node
   linkType: hard
 
@@ -33756,9 +33822,9 @@ __metadata:
     "@nestjs/passport": 8.2.2
     "@nestjs/platform-express": 10.0.5
     "@nestjs/schematics": 10.0.1
-    "@nestjs/sequelize": 9.0.2
+    "@nestjs/sequelize": 10.0.0
     "@nestjs/swagger": 7.1.1
-    "@nestjs/terminus": 10.1.1
+    "@nestjs/terminus": 10.2.0
     "@nestjs/testing": 10.0.5
     "@nx/cypress": 16.9.0
     "@nx/eslint-plugin": 16.9.0
@@ -33824,7 +33890,7 @@ __metadata:
     "@types/pdfkit": 0.11.2
     "@types/pg": 8.6.4
     "@types/pubsub-js": 1.8.1
-    "@types/react": 18.2.13
+    "@types/react": 18.2.14
     "@types/react-csv": 1.1.1
     "@types/react-datepicker": 4.10.0
     "@types/react-dom": 18.2.6
@@ -33934,7 +34000,7 @@ __metadata:
     graphql-type-json: 0.3.2
     handlebars: 4.7.7
     history: ^5.3.0
-    hot-shots: 9.0.0
+    hot-shots: 10.0.0
     http-cache-semantics: 4.1.1
     http-proxy-middleware: 2.0.6
     hypher: 0.2.5
@@ -39794,14 +39860,14 @@ __metadata:
   linkType: hard
 
 "msgpackr@npm:^1.5.2":
-  version: 1.9.5
-  resolution: "msgpackr@npm:1.9.5"
+  version: 1.10.1
+  resolution: "msgpackr@npm:1.10.1"
   dependencies:
     msgpackr-extract: ^3.0.2
   dependenciesMeta:
     msgpackr-extract:
       optional: true
-  checksum: 4a9ebbdd61b985aeb47072f65b242e21a65fba90372dc45927d1a9aba2d0f7fbdb84fbe7c2ea224444c58040e2a81f6778582c16ecaf883a471613c3e9aa4bc3
+  checksum: e422d18b01051598b23701eebeb4b9e2c686b9c7826b20f564724837ba2b5cd4af74c91a549eaeaf8186645cc95e8196274a4a19442aa3286ac611b98069c194
   languageName: node
   linkType: hard
 
@@ -39890,7 +39956,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.12.1, nan@npm:^2.13.2, nan@npm:^2.14.1, nan@npm:^2.15.0":
+"nan@npm:^2.12.1, nan@npm:^2.14.1, nan@npm:^2.15.0":
   version: 2.15.0
   resolution: "nan@npm:2.15.0"
   dependencies:
@@ -39899,7 +39965,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.17.0":
+"nan@npm:^2.16.0, nan@npm:^2.17.0":
   version: 2.18.0
   resolution: "nan@npm:2.18.0"
   dependencies:
@@ -50402,9 +50468,9 @@ __metadata:
   linkType: hard
 
 "tinymce@npm:^5.10.2, tinymce@npm:^5.5.1":
-  version: 5.10.2
-  resolution: "tinymce@npm:5.10.2"
-  checksum: 6f80abd64f51f558a6135e48fb5061a5fed2badfc742c1560dfc1b56be2f9a30cfe48e48f8aaa14537dc9526ee70ece5408272245109114cdf894e07492497ff
+  version: 5.10.9
+  resolution: "tinymce@npm:5.10.9"
+  checksum: 9927f3132820c183ca1a3ed19b4e650b16276385b4c253e51cf2a399a5981522d4197901b7abd8a7bf7000d783880eda9727b5eee9381b5c4c42c48c48a1d6f5
   languageName: node
   linkType: hard
 
@@ -51874,14 +51940,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unix-dgram@npm:2.0.x":
-  version: 2.0.4
-  resolution: "unix-dgram@npm:2.0.4"
+"unix-dgram@npm:2.x":
+  version: 2.0.6
+  resolution: "unix-dgram@npm:2.0.6"
   dependencies:
-    bindings: ^1.3.0
-    nan: ^2.13.2
+    bindings: ^1.5.0
+    nan: ^2.16.0
     node-gyp: latest
-  checksum: 2ff0d015687ebb3a04c25b372269a206bd627d50f62f0bdf945f7c1fb36cfca9a67b24b4b540f57f3cee1ed6243c34fdfd5eaa155121b22ae2d9e622b9bd442d
+  checksum: 0ab238726fd69e0a0174664225117b4575b40bd5df546c50a01de2fadf9da602c385ec8ff2f159607a127a6e7bf67628931903d43d286db27460b5abbe8cf8ac
   languageName: node
   linkType: hard
 

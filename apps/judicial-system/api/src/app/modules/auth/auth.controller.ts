@@ -112,38 +112,44 @@ export class AuthController {
       )
     }
 
-    const codeVerifier = randomBytes(32)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=/g, '')
+    randomBytes(32, (err, buf) => {
+      if (err) {
+        this.logger.error('Failed to generate code verifier', { err })
+      } else {
+        const codeVerifier = buf
+          .toString('base64')
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=/g, '')
 
-    const codeChallenge = createHash('sha256')
-      .update(codeVerifier)
-      .digest('base64')
-      .replace(/=/g, '')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
+        const codeChallenge = createHash('sha256')
+          .update(codeVerifier)
+          .digest('base64')
+          .replace(/=/g, '')
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
 
-    const params = new URLSearchParams({
-      response_type: 'code',
-      scope: this.config.scope,
-      code_challenge: codeChallenge,
-      code_challenge_method: 'S256',
-      redirect_uri: this.config.redirectUri,
-      client_id: this.config.clientId,
+        const params = new URLSearchParams({
+          response_type: 'code',
+          scope: this.config.scope,
+          code_challenge: codeChallenge,
+          code_challenge_method: 'S256',
+          redirect_uri: this.config.redirectUri,
+          client_id: this.config.clientId,
+        })
+
+        const loginUrl = `${this.config.issuer}/connect/authorize?${params}`
+
+        res
+          .cookie(name, { redirectRoute }, options)
+          .cookie(
+            CODE_VERIFIER_COOKIE.name,
+            codeVerifier,
+            CODE_VERIFIER_COOKIE.options,
+          )
+          .redirect(loginUrl)
+      }
     })
-
-    const loginUrl = `${this.config.issuer}/connect/authorize?${params}`
-
-    return res
-      .cookie(name, { redirectRoute }, options)
-      .cookie(
-        CODE_VERIFIER_COOKIE.name,
-        codeVerifier,
-        CODE_VERIFIER_COOKIE.options,
-      )
-      .redirect(loginUrl)
   }
 
   @Get('callback/identity-server')
@@ -182,6 +188,15 @@ export class AuthController {
     }
 
     return res.redirect('/?villa=innskraning-ogild')
+  }
+
+  @Get('callback')
+  async deprecatedAuth(@Res() res: Response) {
+    this.logger.debug(
+      'Received login request through a deprecated authentication system',
+    )
+
+    res.redirect('/?villa=innskraning-gomul')
   }
 
   @Get('logout')

@@ -313,6 +313,33 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('deliver indictment case to police', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_INDICTMENT_CASE_TO_POLICE,
+        user,
+        caseId,
+      })
+    })
+
+    it('should deliver indictment case to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverIndictmentCaseToPolice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('deliver appeal to police', () => {
     let then: Then
 

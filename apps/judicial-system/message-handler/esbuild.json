@@ -26,7 +26,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "safer-buffer"
+    "safer-buffer",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

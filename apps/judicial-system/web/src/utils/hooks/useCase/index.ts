@@ -384,9 +384,12 @@ const useCase = () => {
         return
       }
 
-      // The case has not been created
+      setWorkingCase((theCase) => ({
+        ...theCase,
+        ...updatesToCase,
+      }))
+
       if (!workingCase.id) {
-        setWorkingCase((theCase) => ({ ...theCase, ...updatesToCase }))
         return
       }
 
@@ -395,8 +398,6 @@ const useCase = () => {
       if (!newWorkingCase) {
         throw new Error()
       }
-
-      setWorkingCase((theCase) => ({ ...theCase, ...(newWorkingCase as Case) }))
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
     }

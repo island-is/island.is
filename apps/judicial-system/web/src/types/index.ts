@@ -14,6 +14,7 @@ export enum LoginErrorCodes {
   UNAUTHORIZED = 'innskraning-ekki-notandi',
   UNAUTHENTICATED = 'innskraning-utrunnin',
   LOGIN_FAILED = 'innskraning-ogild',
+  DEPRECATED_LOGIN = 'innskraning-gomul',
 }
 
 export type directionType = 'ascending' | 'descending'
@@ -161,14 +162,6 @@ export interface NationalRegistryResponseBusiness {
   items?: NationalRegistryBusiness[]
   meta?: NationalRegistryMeta
   error?: string
-}
-
-export interface Lawyer {
-  name: string
-  practice: string
-  email: string
-  phoneNr: string
-  nationalId: string
 }
 
 /**

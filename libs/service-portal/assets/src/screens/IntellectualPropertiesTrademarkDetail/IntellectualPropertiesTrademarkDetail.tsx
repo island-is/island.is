@@ -13,9 +13,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Button,
   Divider,
-  Inline,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -27,6 +25,9 @@ import { TrademarkType } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
 import { useGetIntellectualPropertiesTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { orderTimelineData } from '../../utils/timelineMapper'
+import { useMemo } from 'react'
+import { makeArrayEven } from '../../utils/makeArrayEven'
 
 type UseParams = {
   id: string
@@ -46,19 +47,154 @@ const IntellectualPropertiesTrademarkDetail = () => {
       },
     })
 
-  if (error && !loading) {
-    return <Problem type="not_found" />
-  }
-
   const ip = data?.intellectualPropertiesTrademark
-
-  if (!ip && !loading) {
-    return <Problem type="no_data" />
-  }
 
   const categories = ip?.markCategories?.filter(
     (c) => !!c.categoryDescription && !!c.categoryNumber,
   )
+
+  const orderedDates = useMemo(
+    () =>
+      orderTimelineData([
+        {
+          date: ip?.lifecycle.applicationDate ?? undefined,
+          message: formatMessage(ipMessages.application),
+        },
+        {
+          date: ip?.lifecycle.maxValidObjectionDate ?? undefined,
+          message: formatMessage(ipMessages.maxValidObjectionDate),
+        },
+        {
+          date: ip?.lifecycle.registrationDate ?? undefined,
+          message: formatMessage(ipMessages.registration),
+        },
+        {
+          date: ip?.lifecycle.expiryDate ?? undefined,
+          message: formatMessage(ipMessages.expires),
+        },
+        {
+          date: ip?.lifecycle.publishDate ?? undefined,
+          message: formatMessage(ipMessages.publish),
+        },
+      ]),
+    [formatMessage, ip?.lifecycle],
+  )
+
+  const extraInfoArray = useMemo(() => {
+    if (ip) {
+      const extraInfoArray = [
+        ip?.applicationNumber
+          ? {
+              title: formatMessage(ipMessages.applicationNumber),
+              value: ip?.applicationNumber ?? '',
+            }
+          : null,
+        ip?.imageCategories
+          ? {
+              title: formatMessage(ipMessages.imageCategories),
+              value: ip.imageCategories,
+            }
+          : null,
+        ip?.registrationNumber
+          ? {
+              title: formatMessage(ipMessages.registrationNumber),
+              value: ip.registrationNumber,
+            }
+          : null,
+        ip?.isColorMark
+          ? {
+              title: formatMessage(ipMessages.colorMark),
+              value: ip?.isColorMark
+                ? formatMessage(m.yes)
+                : formatMessage(m.no),
+            }
+          : null,
+      ].filter(isDefined)
+
+      return makeArrayEven(extraInfoArray, { title: '', value: '' })
+    }
+  }, [formatMessage, ip])
+
+  const mapTrademarkToHero = (
+    type: TrademarkType,
+    mediaUrl: string,
+    mediaText: string,
+  ) => {
+    switch (type) {
+      case TrademarkType.TEXT:
+        return (
+          <Box>
+            <Text variant="eyebrow" as="div" color="purple400">
+              {formatMessage(ipMessages.text)}
+            </Text>
+            <Image url={mediaUrl} title={mediaText} />
+          </Box>
+        )
+      case TrademarkType.MULTIMEDIA:
+        return (
+          <Box>
+            <Text variant="eyebrow" as="div" color="purple400" marginBottom={2}>
+              {formatMessage(ipMessages.video)}
+            </Text>
+            <VideoPlayer url={mediaUrl} title={mediaText} />
+          </Box>
+        )
+      case TrademarkType.ANIMATION:
+        return (
+          <Box>
+            <Text variant="eyebrow" as="div" color="purple400">
+              {formatMessage(ipMessages.animation)}
+            </Text>
+            <Image
+              url={mediaUrl}
+              title={mediaText}
+              height="352px"
+              width="352px"
+              isAnimation
+            />
+          </Box>
+        )
+
+      case TrademarkType.IMAGE:
+      case TrademarkType.TEXT_AND_IMAGE:
+        return (
+          <Box>
+            <Text variant="eyebrow" as="div" color="purple400" marginBottom={2}>
+              {formatMessage(ipMessages.image)}
+            </Text>
+            <Image
+              url={mediaUrl}
+              title={mediaText}
+              height="352px"
+              width="352px"
+              isRemoteUrl
+            />
+          </Box>
+        )
+      case TrademarkType.AUDIO:
+        return (
+          <Box>
+            <Text
+              variant="eyebrow"
+              as="div"
+              paddingBottom={2}
+              color="purple400"
+            >
+              {formatMessage(ipMessages.audio)}
+            </Text>
+            <AudioPlayer url={mediaUrl} title={mediaText} />
+          </Box>
+        )
+    }
+  }
+
+  if (error && !loading) {
+    return <Problem error={error} />
+  }
+
+  if (!ip && !loading) {
+    return <Problem type="no_data" />
+  }
 
   return (
     <>
@@ -72,75 +208,14 @@ const IntellectualPropertiesTrademarkDetail = () => {
         />
       </Box>
       <Stack space="containerGutter">
-        <Box marginBottom={3} paddingRight={2}>
-          <Inline space={2}>
-            <Button
-              size="medium"
-              icon="reader"
-              iconType="outline"
-              variant="utility"
-            >
-              {formatMessage(ipMessages.registrationCertificate)}
-            </Button>
-          </Inline>
-        </Box>
-
-        {ip?.type === TrademarkType.TEXT && (
-          <Box>
-            <Text variant="eyebrow" as="div" color="purple400">
-              {formatMessage(ipMessages.text)}
-            </Text>
-            {ip?.imagePath && (
-              <Image url={ip.imagePath} title={ip.text ?? ''} />
-            )}
-          </Box>
-        )}
-        {ip?.type === TrademarkType.MULTIMEDIA && (
-          <Box>
-            <Text variant="eyebrow" as="div" color="purple400" marginBottom={2}>
-              {formatMessage(ipMessages.video)}
-            </Text>
-            {ip.media?.mediaPath && (
-              <VideoPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
-            )}
-          </Box>
-        )}
-        {ip?.type === TrademarkType.ANIMATION && (
-          <Box>
-            <Text variant="eyebrow" as="div" color="purple400">
-              {formatMessage(ipMessages.animation)}
-            </Text>
-            {ip.media?.mediaPath && (
-              <Image
-                url={ip.media?.mediaPath}
-                title={ip?.text ?? ''}
-                height="352px"
-                width="352px"
-                isAnimation
-              />
-            )}
-          </Box>
-        )}
-        {ip?.type === TrademarkType.AUDIO && (
-          <Box>
-            <Text
-              variant="eyebrow"
-              as="div"
-              paddingBottom={2}
-              color="purple400"
-            >
-              {formatMessage(ipMessages.audio)}
-            </Text>
-            {ip.media?.mediaPath && (
-              <AudioPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
-            )}
-          </Box>
-        )}
+        {ip?.type &&
+          ip?.media?.mediaPath &&
+          mapTrademarkToHero(ip.type, ip.media.mediaPath, ip?.text ?? '')}
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
             label={ipMessages.name}
-            content={ip?.text ?? ip?.vmId ?? ''}
+            content={ip?.text ? ip.text : ip?.id ?? ''}
             loading={loading}
           />
           <Divider />
@@ -163,88 +238,26 @@ const IntellectualPropertiesTrademarkDetail = () => {
           />
           <Divider />
         </Stack>
-        {!loading &&
-          !error &&
-          ip?.lifecycle.expiryDate &&
-          ip.lifecycle.applicationDate && (
-            <>
-              <Timeline
-                title={formatMessage(ipMessages.timeline)}
-                maxDate={new Date(ip.lifecycle.expiryDate)}
-                minDate={new Date(ip.lifecycle.applicationDate)}
-              >
-                {[
-                  <Stack key="list-item-application-date" space="smallGutter">
-                    <Text variant="h5">
-                      {ip?.lifecycle.applicationDate
-                        ? formatDate(ip.lifecycle.applicationDate)
-                        : ''}
-                    </Text>
-                    <Text>{formatMessage(ipMessages.application)}</Text>
-                  </Stack>,
-                  <Stack key="list-item-publish-date" space="smallGutter">
-                    <Text variant="h5">
-                      {ip?.lifecycle.publishDate
-                        ? formatDate(ip.lifecycle.publishDate)
-                        : ''}
-                    </Text>
-                    <Text>{formatMessage(ipMessages.publish)}</Text>
-                  </Stack>,
-                  <Stack
-                    key="list-item-maxValidObjectionDate"
-                    space="smallGutter"
-                  >
-                    <Text variant="h5">
-                      {ip?.lifecycle.maxValidObjectionDate
-                        ? formatDate(ip.lifecycle.maxValidObjectionDate)
-                        : ''}
-                    </Text>
-                    <Text>
-                      {formatMessage(ipMessages.maxValidObjectionDate)}
-                    </Text>
-                  </Stack>,
-                  <Stack key="list-item-registrationDate" space="smallGutter">
-                    <Text variant="h5">
-                      {ip?.lifecycle.registrationDate
-                        ? formatDate(ip.lifecycle.registrationDate)
-                        : ''}
-                    </Text>
-                    <Text> {formatMessage(ipMessages.registration)}</Text>
-                  </Stack>,
-                  <Stack key="list-item-expiration-date" space="smallGutter">
-                    <Text variant="h5">
-                      {ip?.lifecycle.expiryDate
-                        ? formatDate(ip?.lifecycle.expiryDate)
-                        : ''}
-                    </Text>
-                    <Text>{formatMessage(ipMessages.expires)}</Text>
-                  </Stack>,
-                ]}
-              </Timeline>
-              <TableGrid
-                title={formatMessage(ipMessages.information)}
-                dataArray={chunk(
-                  [
-                    {
-                      title: formatMessage(ipMessages.expires),
-                      value: ip?.vmId ? formatDate(ip?.vmId) : '',
-                    },
-                    {
-                      title: formatMessage(ipMessages.imageCategories),
-                      value: ip?.imageCategories ?? '',
-                    },
-                    {
-                      title: formatMessage(ipMessages.colorMark),
-                      value: ip?.isColorMark
-                        ? formatMessage(m.yes)
-                        : formatMessage(m.no),
-                    },
-                  ].filter(isDefined),
-                  2,
-                )}
-              />
-            </>
-          )}
+        {!loading && !error && orderedDates.length > 0 && (
+          <Box>
+            <Timeline
+              title={formatMessage(ipMessages.timeline)}
+              maxDate={orderedDates[orderedDates.length - 1].date}
+              minDate={orderedDates[0].date}
+            >
+              {orderedDates.map((datapoint) => (
+                <Stack key="list-item-application-date" space="smallGutter">
+                  <Text variant="h5">{formatDate(datapoint.date)}</Text>
+                  <Text>{datapoint.message}</Text>
+                </Stack>
+              ))}
+            </Timeline>
+            <TableGrid
+              title={formatMessage(ipMessages.information)}
+              dataArray={chunk(extraInfoArray, 2)}
+            />
+          </Box>
+        )}
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.owner)}
@@ -255,12 +268,12 @@ const IntellectualPropertiesTrademarkDetail = () => {
           <Divider />
           <UserInfoLine
             label={formatMessage(ipMessages.address)}
-            content={ip?.markOwners?.[0]?.address ?? ''}
+            content={ip?.markOwners?.[0]?.addressFull ?? ''}
             loading={loading}
           />
           <Divider />
         </Stack>
-        {ip?.markAgent?.name && ip?.markAgent.address && (
+        {ip?.markAgent?.name && ip?.markAgent.addressFull && (
           <Stack space="p2">
             <UserInfoLine
               title={formatMessage(ipMessages.agent)}
@@ -271,7 +284,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(ipMessages.address)}
-              content={ip?.markAgent?.address ?? ''}
+              content={ip?.markAgent?.addressFull ?? ''}
               loading={loading}
             />
             <Divider />
@@ -279,27 +292,32 @@ const IntellectualPropertiesTrademarkDetail = () => {
         )}
 
         {!!categories?.length && (
-          <Accordion dividerOnTop={false} space={3}>
-            {ip?.markCategories
-              ?.map((category, index) => {
-                if (!category.categoryNumber) {
-                  return null
-                }
+          <Box>
+            <Text variant="eyebrow" color="purple400">
+              {formatMessage(ipMessages.productsAndServices)}
+            </Text>
+            <Accordion dividerOnTop={false} space={3}>
+              {ip?.markCategories
+                ?.map((category, index) => {
+                  if (!category.categoryNumber) {
+                    return null
+                  }
 
-                return (
-                  <AccordionItem
-                    key={`${category.categoryNumber}-${index}}`}
-                    id={category.categoryNumber}
-                    label={`${formatMessage(ipMessages.category)} ${
-                      category.categoryNumber
-                    }`}
-                  >
-                    <Text>{category.categoryDescription ?? ''}</Text>
-                  </AccordionItem>
-                )
-              })
-              .filter(isDefined)}
-          </Accordion>
+                  return (
+                    <AccordionItem
+                      key={`${category.categoryNumber}-${index}}`}
+                      id={category.categoryNumber}
+                      label={`${formatMessage(ipMessages.category)} ${
+                        category.categoryNumber
+                      }`}
+                    >
+                      <Text>{category.categoryDescription ?? ''}</Text>
+                    </AccordionItem>
+                  )
+                })
+                .filter(isDefined)}
+            </Accordion>
+          </Box>
         )}
       </Stack>
     </>

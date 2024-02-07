@@ -12,7 +12,6 @@ import {
 } from './models'
 
 import { Op } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   CreateApplicationDto,
@@ -573,6 +572,7 @@ export class ApplicationService {
             status: 'Umsókn',
             id: application.nationalId,
             phoneNo: application.phoneNumber,
+            employeeKt: application?.staff?.nationalId,
             email: application.email,
             bankAccount: `${application.bankNumber}${application.ledger}${application.accountNumber}`,
             grantAmount: calculateNavAmount(amount),

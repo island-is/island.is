@@ -21,9 +21,11 @@ export enum ApiScope {
   healthTherapies = '@island.is/health/therapies',
   healthHealthcare = '@island.is/health/healthcare',
   healthDentists = '@island.is/health/dentists',
+  healthRightsStatus = '@island.is/health/rights-status',
   workMachines = '@island.is/work-machines',
   vinnueftirlitid = '@island.is/applications/ver',
   samgongustofaVehicles = '@island.is/applications/samgongustofa-vehicles',
   carRecycling = '@island.is/applications/urvinnslusjodur',
   energyFunds = '@island.is/applications/orkusjodur',
+  signatureCollection = '@island.is/signature-collection',
 }

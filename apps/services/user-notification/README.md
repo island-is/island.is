@@ -1,5 +1,11 @@
 # User Notification
 
+## About
+
+This service queues up notifications, stores notifications in database and sends push and emails.
+
+## Sequence Diagram
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -10,29 +16,56 @@ sequenceDiagram
     User-Notification-Worker->>AWS SQS:requests 10 notifications
     AWS SQS->>User-Notification-Worker:responds with 0-10 notifications
     end
-    loop if worker throws an unexpected error, it will try 2 more times with 10 minute interval
+    User-Notification-Worker->>Database: saves notification
     User-Notification-Worker->>User-Profile-Service:requests notification settings
     User-Profile-Service->>User-Notification-Worker:returns user settings and tokens
-    end
     User-Notification-Worker->>Firebase Cloud Messaging: sends notification
-    Firebase Cloud Messaging->>island.is app:sends notification
+    Firebase Cloud Messaging->>island.is app:sends push notification
+    User-Notification-Worker->>User email: sends e-mail
 ```
 
-## About
+## Running the project:
 
-This service manages queueing up messages to send push notifications / sms / emails.
+### Initial Setup
 
-## running the project:
-
-### Dev setup & running:
+Sign into AWS:
 
 ```sh
-yarn dev-services services-user-notification
-yarn start services-user-notification
+aws sso login
 ```
 
-### Starting a worker
+Get secrets:
+
+```sh
+yarn get-secrets user-notification
+```
+
+Initalize dependencies:
+
+```sh
+yarn dev-init services-user-notification
+```
+
+### Start User Notification Service
+
+```sh
+yarn dev services-user-notification
+```
+
+### User Notification Worker
+
+This worker gets messages from the queue and saves to database and sends via push and email.
+Start a worker with this command:
 
 ```sh
 yarn nx run services-user-notification:worker
+```
+
+### User Notification Cleanup Worker
+
+This worker deletes old messages from the database
+Start a cleanup worker with this command:
+
+```sh
+yarn nx run services-user-notification:cleanup
 ```

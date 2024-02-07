@@ -408,7 +408,8 @@ export class Program extends ProgramBase {
 
   @ApiPropertyOptional({
     description: 'Arrangement for program (skipulag náms) (Icelandic)',
-    example: 'Á fyrsta ári er 60 einingar, á öðru 60 einingar og á þriðja 60 einingar',
+    example:
+      'Á fyrsta ári er 60 einingar, á öðru 60 einingar og á þriðja 60 einingar',
   })
   @Column({
     type: DataType.STRING,
@@ -418,7 +419,8 @@ export class Program extends ProgramBase {
 
   @ApiPropertyOptional({
     description: 'Arrangement for program (English)',
-    example: 'The first year is 60 credits, the second 60 credits and the third 60 credits',
+    example:
+      'The first year is 60 credits, the second 60 credits and the third 60 credits',
   })
   @Column({
     type: DataType.STRING,

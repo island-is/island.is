@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   Button,
-  GridColumn,
-  GridRow,
+  Checkbox,
+  Filter,
   Input,
   Pagination,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -29,7 +30,7 @@ import {
 } from '../../lib/messages'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 
-import { useGetUsersVehiclesLazyQuery } from './Overview.generated'
+import { useGetUsersVehiclesV2LazyQuery } from './Overview.generated'
 import { useGetExcelVehiclesLazyQuery } from '../../utils/VehicleExcel.generated'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import useDebounce from 'react-use/lib/useDebounce'
@@ -37,9 +38,11 @@ import { VehiclesDetail } from '@island.is/api/schema'
 
 const defaultFilterValues = {
   searchQuery: '',
+  onlyMileageRequiredVehicles: undefined,
 }
 type FilterValues = {
   searchQuery: string
+  onlyMileageRequiredVehicles?: boolean
 }
 
 const VehiclesOverview = () => {
@@ -47,8 +50,8 @@ const VehiclesOverview = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
+  const [searchLoading, setSearchLoading] = useState(false)
 
-  const [searchPage, setSearchPage] = useState(1)
   const [downloadExcel, setDownloadExcel] = useState(false)
   const [vehicleData, setVehicleData] = useState<
     Array<VehiclesDetail> | undefined | null
@@ -57,57 +60,43 @@ const VehiclesOverview = () => {
   const [filterValue, setFilterValue] =
     useState<FilterValues>(defaultFilterValues)
 
-  const [isSearching, setIsSearching] = useState(false)
-  const [
-    GetUsersVehiclesLazyQuery,
-    { loading, error, fetchMore, ...usersVehicleQuery },
-  ] = useGetUsersVehiclesLazyQuery({
-    variables: {
-      input: {
-        pageSize: 10,
-        page: page,
-        showDeregeristered: false,
-        showHistory: false,
-      },
-    },
-  })
+  const [GetUsersVehiclesLazyQuery, { loading, error, ...usersVehicleQuery }] =
+    useGetUsersVehiclesV2LazyQuery()
 
-  const [
-    GetUsersSearchVehiclesLazyQuery,
-    {
-      loading: searchLoading,
-      error: searchError,
-      fetchMore: searchFetchMore,
-      ...usersSearchVehicleQuery
-    },
-  ] = useGetUsersVehiclesLazyQuery({
-    variables: {
-      input: {
-        pageSize: 10,
-        page: searchPage,
-        showDeregeristered: false,
-        showHistory: false,
-        permno: filterValue.searchQuery,
-      },
-    },
-  })
   const [
     GetExcelVehiclesLazyQuery,
     { loading: excelLoading, error: excelError, ...usersExcelVehicleQuery },
   ] = useGetExcelVehiclesLazyQuery()
 
   useEffect(() => {
-    GetUsersVehiclesLazyQuery()
-  }, [page])
+    GetUsersVehiclesLazyQuery({
+      variables: {
+        input: {
+          pageSize: 10,
+          page: 1,
+        },
+      },
+    })
+  }, [])
 
   useDebounce(
     () => {
-      if (isSearching) {
-        GetUsersSearchVehiclesLazyQuery()
-      }
+      const onlyMileage = Boolean(filterValue.onlyMileageRequiredVehicles)
+      const permno = filterValue.searchQuery
+      GetUsersVehiclesLazyQuery({
+        onCompleted: () => setSearchLoading(false),
+        variables: {
+          input: {
+            pageSize: 10,
+            page: page,
+            ...(permno && { permno }),
+            ...(onlyMileage && { onlyMileage }),
+          },
+        },
+      })
     },
     500,
-    [isSearching],
+    [filterValue.onlyMileageRequiredVehicles, filterValue.searchQuery, page],
   )
 
   useEffect(() => {
@@ -131,16 +120,11 @@ const VehiclesOverview = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicleData])
-  const vehicles = isSearching
-    ? usersSearchVehicleQuery.data?.vehiclesList
-    : usersVehicleQuery.data?.vehiclesList
+  const vehicles = usersVehicleQuery.data?.vehiclesListV2
 
-  const ownershipPdf = usersVehicleQuery.data?.vehiclesList?.downloadServiceURL
+  const ownershipPdf =
+    usersVehicleQuery.data?.vehiclesListV2?.downloadServiceURL
   const filteredVehicles = vehicles?.vehicleList ?? []
-
-  const handleSearchChange = useCallback((value: string) => {
-    setFilterValue({ ...defaultFilterValues, searchQuery: value })
-  }, [])
 
   if (error && !loading) {
     return (
@@ -155,6 +139,7 @@ const VehiclesOverview = () => {
       />
     )
   }
+
   return (
     <>
       <IntroHeader
@@ -164,9 +149,10 @@ const VehiclesOverview = () => {
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
 
-      {((!loading && !error && filteredVehicles.length > 0) || isSearching) && (
+      {((!loading && !error && filteredVehicles.length > 0) ||
+        searchLoading) && (
         <Box marginBottom={3} display="flex" flexWrap="wrap">
-          {!loading && ownershipPdf && (
+          {(ownershipPdf || searchLoading) && (
             <Box marginRight={2} marginBottom={[1]}>
               <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
@@ -232,34 +218,65 @@ const VehiclesOverview = () => {
         </Box>
       )}
       <Stack space={2}>
-        {!loading && !error && (
-          <GridRow>
-            <GridColumn span={['9/9', '9/9', '5/9', '4/9', '3/9']}>
-              <Box marginBottom={1}>
+        {((!loading && !error) || searchLoading) && (
+          <Box marginBottom={1}>
+            <Filter
+              labelClear={formatMessage(m.clearFilter)}
+              labelClearAll={formatMessage(m.clearAllFilters)}
+              labelOpen={formatMessage(m.openFilter)}
+              labelClose={formatMessage(m.closeFilter)}
+              variant="popover"
+              onFilterClear={() => {
+                setFilterValue(defaultFilterValues)
+                setPage(1)
+              }}
+              align="left"
+              reverse
+              filterInput={
                 <Input
                   icon={{ name: 'search' }}
                   backgroundColor="blue"
                   size="xs"
                   value={filterValue.searchQuery}
                   onChange={(ev) => {
-                    if (!isSearching) {
+                    if (ev.target.value !== filterValue.searchQuery) {
                       setPage(1)
-                      setIsSearching(true)
-                    } else {
-                      if (ev.target.value === '') {
-                        setIsSearching(false)
-                        setPage(1)
-                      }
+                      setSearchLoading(true)
                     }
-                    handleSearchChange(ev.target.value)
+                    setFilterValue({
+                      ...filterValue,
+                      searchQuery: ev.target.value,
+                    })
                   }}
                   name="okutaeki-leit"
                   label={formatMessage(m.searchLabel)}
                   placeholder={formatMessage(vehicleMessage.searchForPlate)}
                 />
+              }
+            >
+              <Box padding={4}>
+                <Text variant="eyebrow" as="p" paddingBottom={2}>
+                  {formatMessage(m.filterBy)}
+                </Text>
+                <Checkbox
+                  name="onlyMileageRequiredVehicles"
+                  label={formatMessage(
+                    vehicleMessage.vehiclesRequireMileageRegistration,
+                  )}
+                  value="onlyMileageRequiredVehicles"
+                  checked={Boolean(filterValue.onlyMileageRequiredVehicles)}
+                  onChange={(e) => {
+                    setPage(1)
+                    setSearchLoading(true)
+                    setFilterValue({
+                      ...filterValue,
+                      onlyMileageRequiredVehicles: e.target.checked,
+                    })
+                  }}
+                />
               </Box>
-            </GridColumn>
-          </GridRow>
+            </Filter>
+          </Box>
         )}
 
         {(loading || searchLoading) && <CardLoader />}
@@ -281,9 +298,10 @@ const VehiclesOverview = () => {
               renderLink={(page, className, children) => (
                 <button
                   className={className}
-                  onClick={() =>
-                    isSearching ? setSearchPage(page) : setPage(page)
-                  }
+                  onClick={() => {
+                    setSearchLoading(true)
+                    setPage(page)
+                  }}
                 >
                   {children}
                 </button>

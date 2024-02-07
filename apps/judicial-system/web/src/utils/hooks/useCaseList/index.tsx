@@ -7,7 +7,12 @@ import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
@@ -33,6 +38,7 @@ const useCaseList = () => {
   const [clickedCase, setClickedCase] = useState<
     [id: string | null, showLoading: boolean]
   >([null, false])
+  const [openCaseInNewTab, setOpenCaseInNewTab] = useState<boolean>(false)
 
   const { user, limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -69,7 +75,13 @@ const useCaseList = () => {
     let routeTo = null
     const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
-    if (
+    if (isDefenceUser(user)) {
+      if (isIndictmentCase(caseToOpen.type)) {
+        routeTo = DEFENDER_INDICTMENT_ROUTE
+      } else {
+        routeTo = DEFENDER_ROUTE
+      }
+    } else if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
@@ -126,20 +138,31 @@ const useCaseList = () => {
       }
     }
 
-    if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
+    if (openCaseInNewTab) {
+      window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
+      setOpenCaseInNewTab(false)
+    } else if (routeTo) {
+      router.push(`${routeTo}/${caseToOpen.id}`)
+    }
   }
 
   const handleOpenCase = useCallback(
-    (id: string) => {
+    (id: string, openInNewTab?: boolean) => {
       Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
 
-      setClickedCase([id, false])
+      if (openInNewTab === true) {
+        setOpenCaseInNewTab(openInNewTab)
+      }
 
-      timeouts.push(
-        setTimeout(() => {
-          setClickedCase([id, true])
-        }, 2000),
-      )
+      if (clickedCase[0] !== id && !openInNewTab) {
+        setClickedCase([id, false])
+
+        timeouts.push(
+          setTimeout(() => {
+            setClickedCase([id, true])
+          }, 2000),
+        )
+      }
 
       const getCaseToOpen = (id: string) => {
         limitedAccess

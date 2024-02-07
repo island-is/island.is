@@ -3,6 +3,7 @@ import { Person } from './person.model'
 import { ApplicationLifecycle } from './applicationLifecycle.model'
 import { Media } from './media.model'
 import { Category } from './category.model'
+import { IntellectualProperty } from './intellectualProperty.model'
 
 export enum TrademarkSubType {
   TRADEMARK = 'Trademark',
@@ -15,15 +16,20 @@ export enum TrademarkType {
   ANIMATION = 'Animation',
   MULTIMEDIA = 'Multimedia',
   TEXT = 'Text',
+  TEXT_AND_IMAGE = 'TextAndImage',
+  IMAGE = 'Image',
+  UNKNOWN = 'Unknown',
 }
 
 registerEnumType(TrademarkType, { name: 'TrademarkType' })
 registerEnumType(TrademarkSubType, { name: 'TrademarkSubType' })
 
-@ObjectType('IntellectualPropertiesTrademark')
-export class Trademark {
+@ObjectType('IntellectualPropertiesTrademark', {
+  implements: () => IntellectualProperty,
+})
+export class Trademark implements IntellectualProperty {
   @Field()
-  vmId!: string
+  id!: string
 
   @Field(() => String, { nullable: true })
   text?: string
@@ -54,9 +60,6 @@ export class Trademark {
 
   @Field(() => Person, { nullable: true })
   markAgent?: Person
-
-  @Field(() => String, { nullable: true })
-  imagePath?: string
 
   @Field(() => ApplicationLifecycle)
   lifecycle?: ApplicationLifecycle

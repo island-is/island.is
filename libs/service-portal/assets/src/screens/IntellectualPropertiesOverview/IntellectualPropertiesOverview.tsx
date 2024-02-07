@@ -47,7 +47,11 @@ const IntellectualPropertiesOverview = () => {
   )
 
   if (error && !loading) {
-    return <Problem type="not_found" />
+    return <Problem error={error} />
+  }
+
+  if (!data?.intellectualProperties?.totalCount && !loading) {
+    return <Problem type="no_data" />
   }
 
   return (
@@ -76,21 +80,23 @@ const IntellectualPropertiesOverview = () => {
           ?.map((ip, index) => {
             switch (ip.__typename) {
               case 'IntellectualPropertiesDesign':
-                if (!ip.hId) {
+                if (!ip.id) {
                   return null
                 }
                 return generateActionCard(
                   index,
                   ip.specification?.description,
-                  ip.hId,
+                  ip.id,
                   undefined,
                   AssetsPaths.AssetsIntellectualPropertiesDesign.replace(
                     ':id',
-                    ip.hId,
+                    ip.id,
                   ),
                   ip.status,
                 )
-              case 'IntellectualPropertiesPatent':
+              case 'IntellectualPropertiesPatentIS':
+              case 'IntellectualPropertiesPatentEP':
+              case 'IntellectualPropertiesSPC':
                 return generateActionCard(
                   index,
                   ip.name,
@@ -106,11 +112,11 @@ const IntellectualPropertiesOverview = () => {
                 return generateActionCard(
                   index,
                   ip.text,
-                  ip.vmId,
+                  ip.id,
                   ip.type,
                   AssetsPaths.AssetsIntellectualPropertiesTrademark.replace(
                     ':id',
-                    ip.vmId ?? '',
+                    ip.id ?? '',
                   ),
                   ip.status,
                 )

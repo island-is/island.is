@@ -1,9 +1,22 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { SignatureCollectionOwner } from './owner.model'
+import { SignatureCollectionCandidate } from './candidate.model'
 import { SignatureCollectionArea } from './area.model'
+import { SignatureCollectionCollector } from './collector.model'
 
 @ObjectType()
-export class SignatureCollectionList {
+export class SignatureCollectionOwnedList {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field(() => SignatureCollectionArea)
+  area!: SignatureCollectionArea
+}
+
+@ObjectType()
+export class SignatureCollectionListBase {
   @Field(() => ID)
   id!: string
 
@@ -19,21 +32,27 @@ export class SignatureCollectionList {
   @Field(() => Date)
   startTime!: Date
 
-  @Field(() => SignatureCollectionOwner)
-  owner!: SignatureCollectionOwner
-
-  @Field(() => [SignatureCollectionOwner], { nullable: true })
-  collectors?: SignatureCollectionOwner[]
-
   @Field(() => Boolean, { nullable: true })
   active?: boolean
 
   @Field()
   collectionId!: string
 
-  @Field({ nullable: true })
-  link?: string
+  @Field()
+  slug!: string
 
   @Field({ nullable: true })
   numberOfSignatures?: number
+
+  @Field()
+  maxReached!: boolean
+}
+
+@ObjectType()
+export class SignatureCollectionList extends SignatureCollectionListBase {
+  @Field(() => SignatureCollectionCandidate)
+  candidate!: SignatureCollectionCandidate
+
+  @Field(() => [SignatureCollectionCollector], { nullable: true })
+  collectors?: SignatureCollectionCollector[]
 }

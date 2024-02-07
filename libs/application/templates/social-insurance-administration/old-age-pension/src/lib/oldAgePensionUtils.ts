@@ -6,21 +6,15 @@ import {
   earlyRetirementMaxAge,
   ApplicationType,
   Employment,
-  TaxLevelOptions,
-  MONTHS,
   AttachmentLabel,
   AttachmentTypes,
 } from './constants'
 import {
-  Option,
   Application,
   NationalRegistryResidenceHistory,
   YesOrNo,
-  YES,
-  NO,
 } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
-
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
@@ -32,7 +26,11 @@ import {
   SelfEmployed,
   FileUpload,
 } from '../types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  MONTHS,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   Attachments,
   BankInfo,
@@ -227,21 +225,6 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data',
   ) as object
 
-  const spouseName = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.name',
-  ) as string
-
-  const spouseNationalId = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.nationalId',
-  ) as string
-
-  const maritalStatus = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.maritalStatus',
-  ) as string
-
   const email = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.emailAddress',
@@ -269,9 +252,6 @@ export function getApplicationExternalData(
     applicantAddress,
     applicantMunicipality,
     hasSpouse,
-    spouseName,
-    spouseNationalId,
-    maritalStatus,
     isEligible,
     email,
     bankInfo,
@@ -292,7 +272,7 @@ export function getStartDateAndEndDate(
   const thisYearBirthday = new Date(
     today.getFullYear(),
     dateOfBirth.getMonth(),
-    dateOfBirth.getDay(),
+    dateOfBirth.getDate(),
   )
 
   const thisYearAge = thisYearBirthday > today ? age + 1 : age
@@ -302,9 +282,9 @@ export function getStartDateAndEndDate(
   // startDate is 1st day of the month after birhday this year
   let startDate = addDays(
     thisYearBirthdayPlusOneMonth,
-    thisYearBirthdayPlusOneMonth.getDay() + 1,
+    thisYearBirthdayPlusOneMonth.getDate() + 1,
   )
-  const endDate = addMonths(today, 6) // þarf að spyrja hvort það sé +6 eða +7
+  const endDate = addMonths(today, 6)
 
   if (thisYearAge >= oldAgePensionAge) {
     // >= 67 year old
@@ -525,40 +505,6 @@ export function getCombinedResidenceHistory(
   return [...combinedResidenceHistory].reverse()
 }
 
-export function getYesNOOptions() {
-  const options: Option[] = [
-    {
-      value: YES,
-      label: oldAgePensionFormMessage.shared.yes,
-    },
-    {
-      value: NO,
-      label: oldAgePensionFormMessage.shared.no,
-    },
-  ]
-
-  return options
-}
-
-export function getTaxOptions() {
-  const options: Option[] = [
-    {
-      value: TaxLevelOptions.INCOME,
-      label: oldAgePensionFormMessage.payment.taxIncomeLevel,
-    },
-    {
-      value: TaxLevelOptions.FIRST_LEVEL,
-      label: oldAgePensionFormMessage.payment.taxFirstLevel,
-    },
-    {
-      value: TaxLevelOptions.SECOND_LEVEL,
-      label: oldAgePensionFormMessage.payment.taxSecondLevel,
-    },
-  ]
-
-  return options
-}
-
 export function isMoreThan2Year(answers: Application['answers']) {
   const { selectedMonth, selectedYear } = getApplicationAnswers(answers)
   const today = new Date()
@@ -599,4 +545,36 @@ export const filterValidEmployers = (
     })
 
   return filtered as Employer[]
+}
+
+export const getEligibleDesc = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleDescription
+    : applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleHalfDescription
+    : oldAgePensionFormMessage.pre.isNotEligibleSailorDescription
+}
+
+export const getEligibleLabel = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleLabel
+    : applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.isNotEligibleHalfLabel
+    : oldAgePensionFormMessage.pre.isNotEligibleSailorLabel
+}
+
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+    ? oldAgePensionFormMessage.pre.halfRetirementPensionApplicationTitle
+    : applicationType === ApplicationType.SAILOR_PENSION
+    ? oldAgePensionFormMessage.pre.fishermenApplicationTitle
+    : oldAgePensionFormMessage.shared.applicationTitle
 }

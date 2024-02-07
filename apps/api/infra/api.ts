@@ -160,6 +160,11 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      USER_NOTIFICATION_CLIENT_URL: {
+        dev: 'http://user-notification-xrd.internal.dev01.devland.is',
+        staging: 'http://user-notification-xrd.internal.staging01.devland.is',
+        prod: 'https://user-notification-xrd.internal.island.is',
+      },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://web-financial-aid-backend',
         staging: 'http://web-financial-aid-backend',
@@ -348,6 +353,10 @@ export const serviceSetup = (services: {
       CHART_STATISTIC_SOURCE_DATA_PATHS:
         '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS',
       CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_URL:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -414,8 +423,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '400m', memory: '2048Mi' },
-      requests: { cpu: '150m', memory: '512Mi' },
+      limits: { cpu: '600m', memory: '2048Mi' },
+      requests: { cpu: '250m', memory: '896Mi' },
     })
     .replicaCount({
       default: 2,
