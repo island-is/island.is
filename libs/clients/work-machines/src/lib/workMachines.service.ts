@@ -66,7 +66,7 @@ export class WorkMachinesClientService {
     user: User,
     input: GetMachineRequest,
   ): Promise<MachineHateoasDto> =>
-    this.machinesApiWithAuth(user).getMachine(input)
+    this.machineApiWithAuth(user).getMachine(input)
 
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
