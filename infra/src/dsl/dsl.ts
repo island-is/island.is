@@ -281,6 +281,18 @@ export class ServiceBuilder<ServiceType extends string> {
       postgres,
     })
   }
+  seed(postgres?: PostgresInfo): this {
+    return this.initContainer({
+      postgres: postgres,
+      containers: [
+        {
+          name: 'seed',
+          command: 'npx',
+          args: ['sequelize-cli', 'db:seed:all'],
+        },
+      ],
+    })
+  }
 
   db(): this
   db(postgres: PostgresInfo): this
