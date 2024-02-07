@@ -201,6 +201,7 @@ const ChatFeedbackPanel = ({
                     assistantChatLog: chatLogCopy,
                     thumbStatus,
                     feedback: feedbackText,
+                    url: window.location.href,
                   },
                 },
               })

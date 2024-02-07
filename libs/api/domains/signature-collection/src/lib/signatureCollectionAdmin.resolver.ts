@@ -45,6 +45,10 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => [SignatureCollectionList])
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminLists(
     @CurrentUser() user: User,
@@ -54,6 +58,10 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => SignatureCollectionList)
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminList(
     @CurrentUser() user: User,
@@ -63,6 +71,10 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => [SignatureCollectionSignature], { nullable: true })
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminSignatures(
     @CurrentUser() user: User,

@@ -18,11 +18,12 @@ export class AppController {
   @ApiCreatedResponse({ description: 'Gets application for municipality' })
   async getApplication(
     @Headers('API-Key') apiKey: string,
+    @Headers('Municipality-Code') municipalityCode: string,
     @Query() filters: FilterApplicationsDto,
   ) {
     this.logger.info('Gets all application')
     return this.appService
-      .getApplications(apiKey, filters)
+      .getApplications(apiKey, municipalityCode, filters)
       .then((applications) => {
         this.logger.info(`Application fetched`)
         return applications

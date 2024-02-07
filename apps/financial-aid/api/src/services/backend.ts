@@ -36,6 +36,7 @@ import {
   PersonalTaxReturnResponse,
 } from '../app/modules/personalTaxReturn/models'
 import { FilterApplicationsInput } from '../app/modules/application/dto'
+import { DeleteApiKeyResponse } from '../app/modules/apiKeys/models'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -82,6 +83,10 @@ class BackendAPI extends RESTDataSource {
     input: UpdatedApiKeysForMunicipality,
   ): Promise<ApiKeysForMunicipality> {
     return this.put(`apiKeys/${input.id}`, { name: input.name })
+  }
+
+  deleteApiKey(id: string): Promise<DeleteApiKeyResponse> {
+    return this.delete(`apiKeys/${id}`)
   }
 
   createApiKey(
