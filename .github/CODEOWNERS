@@ -133,6 +133,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan @island-is/origo
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
+/libs/api/domains/notifications/                                                                         @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
@@ -193,6 +194,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/health-insurance/                                                                      @island-is/norda
 /libs/application/templates/health-insurance/                                                            @island-is/norda
 /libs/clients/rsk/company-registry                                                                       @island-is/norda
+/libs/clients/althingi-ombudsman/                                                                        @island-is/norda
 /libs/api/domains/company-registry                                                                       @island-is/norda
 /libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda                                                                       @island-is/norda
 /libs/clients/data-protection-complaint/                                                                 @island-is/norda
@@ -334,7 +336,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
-**/infra/                                                                                                @island-is/devops @island-is/core
+**/infra/                                                                                                @island-is/devops
 /libs/logging/                                                                                           @island-is/devops
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core

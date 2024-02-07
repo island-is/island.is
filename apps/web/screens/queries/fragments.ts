@@ -826,6 +826,7 @@ export const slices = gql`
     }
     sourceData
     xAxisKey
+    xAxisFormat
     xAxisValueType
   }
 

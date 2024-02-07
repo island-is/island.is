@@ -13,7 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -21,13 +20,14 @@ import { useEffect, useState } from 'react'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import header from '../../../assets/headerImage.svg'
 import { Filters, countryAreas, pageSize } from '../../lib/utils'
 import CompareLists from './components/compareLists'
 import { format as formatNationalId } from 'kennitala'
 import CreateCollection from './components/createCollection'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
-const Lists = () => {
+const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -107,7 +107,9 @@ const Lists = () => {
           <IntroHeader
             title={formatMessage(m.signatureListsTitle)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={header}
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
             imgPosition="right"
             imgHiddenBelow="sm"
           />
@@ -173,7 +175,7 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-                <CreateCollection />
+                {allowedToProcess && <CreateCollection />}
               </Box>
             </GridColumn>
           </GridRow>
@@ -213,6 +215,11 @@ const Lists = () => {
                           currentProgress: list.numberOfSignatures ?? 0,
                           maxProgress: list.area.min,
                           withLabel: true,
+                        }}
+                        tag={{
+                          label: m.confirmListReviewed.defaultMessage,
+                          variant: 'mint',
+                          outlined: false,
                         }}
                         cta={{
                           label: formatMessage(m.viewList),
@@ -259,7 +266,7 @@ const Lists = () => {
               )}
             />
           </Box>
-          <CompareLists />
+          {allowedToProcess && <CompareLists />}
         </GridColumn>
       </GridRow>
     </GridContainer>
