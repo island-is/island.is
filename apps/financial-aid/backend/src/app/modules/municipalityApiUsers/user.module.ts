@@ -3,7 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { AidModule } from '../aid/aid.module'
 import { StaffModule } from '../staff/staff.module'
 import { ApiUserService } from './user.service'
-import { ApiUserModel } from './user.model'
+import { ApiUserModel } from './models/user.model'
 import { ApiUserController } from './user.controller'
 
 @Module({

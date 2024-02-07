@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 
 import { ApiKeysForMunicipality } from '@island.is/financial-aid/shared/lib'
 import CreateApiKeyModal from '../ApiKeyModal/CreateApiKeyModal'
@@ -9,7 +9,7 @@ import useApiKeys from '@island.is/financial-aid-web/veita/src/utils/useApiKeys'
 interface Props {
   apiKeyInfo?: ApiKeysForMunicipality
   code: string
-  setCurrentState: (ApiKeyInfo: ApiKeysForMunicipality) => void
+  setCurrentState: (ApiKeyInfo?: ApiKeysForMunicipality) => void
 }
 
 const ApiKeysSettings = ({ apiKeyInfo, code, setCurrentState }: Props) => {
@@ -18,19 +18,39 @@ const ApiKeysSettings = ({ apiKeyInfo, code, setCurrentState }: Props) => {
     setIsModalVisable,
     createApiKeyForMunicipality,
     updateApiKeyForMunicipality,
+    deleteApiKeyForMunicipality,
   } = useApiKeys(setCurrentState)
 
   if (apiKeyInfo) {
     return (
       <>
-        <Button
-          size="small"
-          icon="add"
-          variant="ghost"
-          onClick={() => setIsModalVisable(true)}
-        >
-          Uppfæra lykil
-        </Button>
+        <Box display="flex">
+          <Button
+            size="small"
+            icon="add"
+            variant="ghost"
+            onClick={() => setIsModalVisable(true)}
+          >
+            Uppfæra lykil
+          </Button>
+          <Box marginLeft={2}>
+            <Button
+              onClick={() =>
+                deleteApiKeyForMunicipality(
+                  apiKeyInfo.id,
+                  apiKeyInfo.municipalityCode,
+                )
+              }
+              icon="close"
+              size="small"
+              variant="primary"
+              colorScheme="destructive"
+            >
+              Eyða lykli
+            </Button>
+          </Box>
+        </Box>
+
         <UpdateApiKeyModal
           isVisible={isModalVisable}
           setIsVisible={(isModalVisible) => {
