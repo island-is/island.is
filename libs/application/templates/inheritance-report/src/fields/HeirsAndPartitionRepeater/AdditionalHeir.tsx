@@ -27,7 +27,7 @@ import { EstateMember, EstateTypes } from '../../types'
 // import { LookupPerson } from '../LookupPerson'
 import { ErrorValue } from '../../lib/constants'
 
-export const AdditionalEstateMember = ({
+export const AdditionalHeir = ({
   field,
   index,
   remove,
@@ -326,4 +326,4 @@ export const AdditionalEstateMember = ({
   )
 }
 
-export default AdditionalEstateMember
+export default AdditionalHeir

@@ -266,6 +266,11 @@ export interface EstateMember {
   phone?: string
   email?: string
   advocate?: Advocate
+  heirsPercentage?: string
+  inheritance?: string
+  inheritanceTax?: string
+  taxableInheritance?: string
+  taxFreeInheritance?: string
 }
 
 export const EstateTypes = {

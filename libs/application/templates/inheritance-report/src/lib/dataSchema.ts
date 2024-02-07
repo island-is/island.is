@@ -298,11 +298,16 @@ export const inheritanceReportSchema = z.object({
         enabled: z.boolean(),
         phone: z.string(),
         email: z.string(),
-        heirsPercentage: z.string(),
-        taxFreeInheritance: z.number(),
-        inheritance: z.number(),
-        taxableInheritance: z.number(),
-        inheritanceTax: z.number(),
+        heirsPercentage: z.string().refine((v) => {
+          if (!v) return true
+
+          const num = parseInt(v, 10) ?? 0
+          return num > -1 && num < 101
+        }),
+        taxFreeInheritance: z.string(),
+        inheritance: z.string(),
+        taxableInheritance: z.string(),
+        inheritanceTax: z.string(),
         // Málsvari
         advocate: z
           .object({
@@ -314,7 +319,9 @@ export const inheritanceReportSchema = z.object({
           .optional(),
       })
       .refine(
-        ({ foreignCitizenship, nationalId }) => {
+        ({ enabled, foreignCitizenship, nationalId }) => {
+          if (!enabled) return true
+
           return !foreignCitizenship?.length
             ? nationalId && kennitala.isValid(nationalId)
             : true
@@ -362,23 +369,15 @@ export const inheritanceReportSchema = z.object({
       )
       .array()
       .optional(),
-    // heirs: z.object({
-    //   data: z
-    //     .object({
-    //       nationalId: z.string(),
-    //       heirsName: z.string(),
-    //       email: z.string(),
-    //       phone: z.string(),
-    //       relation: z.string(),
-    //       heirsPercentage: z.string(),
-    //       taxFreeInheritance: z.number(),
-    //       inheritance: z.number(),
-    //       taxableInheritance: z.number(),
-    //       inheritanceTax: z.number(),
-    //     })
-    //     .array()
-    //     .optional(),
-    total: customZodError(z.number().min(0).max(100), m.addAsset),
+    total: z.number().refine((v) => {
+      const val = typeof v === 'string' ? parseInt(v, 10) ?? 0 : v
+
+      if (val !== 100) {
+        return false
+      }
+
+      return true
+    }),
   }),
 
   heirsAdditionalInfo: z.string().optional(),

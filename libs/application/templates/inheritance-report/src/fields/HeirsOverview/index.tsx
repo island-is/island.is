@@ -51,27 +51,33 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 <Text variant="h4">
                   {formatMessage(m.heirsInheritanceRate)}
                 </Text>
-                <Text>{heir.heirsPercentage} %</Text>
+                <Text>{String(heir.heirsPercentage || '0')}%</Text>
               </Box>
             </Box>
             <Box display={'flex'} marginBottom={2}>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.taxFreeInheritance)}</Text>
-                <Text>{formatCurrency(String(heir.taxFreeInheritance))}</Text>
+                <Text>
+                  {formatCurrency(String(heir.taxFreeInheritance || '0'))}
+                </Text>
               </Box>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.inheritanceAmount)}</Text>
-                <Text>{formatCurrency(String(heir.inheritance))}</Text>
+                <Text>{formatCurrency(String(heir.inheritance || '0'))}</Text>
               </Box>
             </Box>
             <Box display={'flex'} marginBottom={2}>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.taxableInheritance)}</Text>
-                <Text>{formatCurrency(String(heir.taxableInheritance))}</Text>
+                <Text>
+                  {formatCurrency(String(heir.taxableInheritance || '0'))}
+                </Text>
               </Box>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.inheritanceTax)}</Text>
-                <Text>{formatCurrency(String(heir.inheritanceTax))}</Text>
+                <Text>
+                  {formatCurrency(String(heir.inheritanceTax || '0'))}
+                </Text>
               </Box>
             </Box>
           </Box>

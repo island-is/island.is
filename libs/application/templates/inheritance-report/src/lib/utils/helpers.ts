@@ -56,7 +56,7 @@ export const customZodError = (
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-  
+
 export const isValidEmail = (value: string) => emailRegex.test(value)
 
 export const isValidPhoneNumber = (phoneNumber: string) => {
@@ -64,3 +64,20 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+export const valueToNumber = (value?: string | number): number => {
+  if (!value) {
+    return 0
+  }
+
+  if (typeof value === 'number') {
+    return value
+  }
+
+  if (typeof value === 'string') {
+    const num = parseInt(value, 10)
+
+    return isNaN(num) ? 0 : num
+  }
+
+  return 0
+}

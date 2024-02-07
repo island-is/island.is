@@ -19,9 +19,8 @@ import {
   EstateMember,
   EstateTypes,
   heirAgeValidation,
-  relationWithApplicant,
 } from '../../types'
-import { AdditionalEstateMember } from './AdditionalEstateMember'
+import { AdditionalHeir } from './AdditionalHeir'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   InputController,
@@ -47,23 +46,9 @@ type RepeaterProps = {
   }
 }
 
-function setIfValueIsNotNan(
-  setValue: (id: string, value: string | number) => void,
-  fieldId: string,
-  value: string | number,
-) {
-  if (typeof value === 'number' && isNaN(value)) {
-    return
-  }
-  setValue(fieldId, value)
-}
-
 export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
-  console.log('application', application)
-  console.log('errors', errors)
-
   const { answers } = application
   const { id, props } = field
   const { customFields } = props
@@ -76,16 +61,6 @@ export const HeirsAndPartitionRepeater: FC<
 
   const values = getValues()
   const selectedEstate = application.answers.selectedEstate
-  const taxFreeLimit = Number(
-    formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
-  )
-
-  const [index, setIndex] = useState('0')
-  const [percentage, setPercentage] = useState(0)
-  const [taxFreeInheritance, setTaxFreeInheritance] = useState(0)
-  const [inheritance, setInheritance] = useState(0)
-  const [taxableInheritance, setTaxableInheritance] = useState(0)
-  const [inheritanceTax, setInheritanceTax] = useState(0)
 
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
@@ -117,30 +92,29 @@ export const HeirsAndPartitionRepeater: FC<
     },
   )
 
-  setBeforeSubmitCallback &&
-    setBeforeSubmitCallback(async () => {
-      if (
-        hasEstateMemberUnder18withoutRep &&
-        selectedEstate !== EstateTypes.divisionOfEstateByHeirs
-      ) {
-        setError(heirAgeValidation, {
-          type: 'custom',
-        })
-        return [false, 'invalid advocate age']
-      }
+  setBeforeSubmitCallback?.(async () => {
+    if (
+      hasEstateMemberUnder18withoutRep &&
+      selectedEstate !== EstateTypes.divisionOfEstateByHeirs
+    ) {
+      setError(heirAgeValidation, {
+        type: 'custom',
+      })
+      return [false, 'invalid advocate age']
+    }
 
-      if (
-        hasEstateMemberUnder18 &&
-        selectedEstate === EstateTypes.divisionOfEstateByHeirs
-      ) {
-        setError(heirAgeValidation, {
-          type: 'custom',
-        })
-        return [false, 'invalid member age']
-      }
+    if (
+      hasEstateMemberUnder18 &&
+      selectedEstate === EstateTypes.divisionOfEstateByHeirs
+    ) {
+      setError(heirAgeValidation, {
+        type: 'custom',
+      })
+      return [false, 'invalid member age']
+    }
 
-      return [true, null]
-    })
+    return [true, null]
+  })
 
   const { clearErrors } = useFormContext()
 
@@ -149,11 +123,6 @@ export const HeirsAndPartitionRepeater: FC<
   }
 
   const estateData = getEstateDataFromApplication(application)
-
-  // const relationsWithApplicant = relationWithApplicant.map((relation) => ({
-  //   value: relation,
-  //   label: relation,
-  // }))
 
   const relations =
     externalData.relationOptions?.map((relation) => ({
@@ -165,56 +134,90 @@ export const HeirsAndPartitionRepeater: FC<
 
   const handleAddMember = () =>
     append({
-      nationalId: undefined,
+      nationalId: '',
       initial: false,
       enabled: true,
-      name: undefined,
+      name: '',
+      phone: '',
+      relation: '',
+      // advocate: {
+      //   nationalId: '',
+      //   name: '',
+      //   phone: '',
+      //   email: '',
+      // },
+      // custodian: '',
+      email: '',
+      heirsPercentage: '',
+      inheritance: '',
+      inheritanceTax: '',
+      taxFreeInheritance: '',
+      taxableInheritance: '',
+      // dateOfBirth: '',
+      // foreignCitizenship: [],
+      relationWithApplicant: '',
     })
 
-  useEffect(() => {
+  const taxFreeLimitMessage = formatMessage(m.taxFreeLimit) ?? ''
+
+  const updateValues = (updateIndex: string, value: number) => {
+    const numValue = isNaN(value) ? 0 : value
+    const percentage = numValue > 0 ? numValue / 100 : 0
+    const taxFreeLimit = Number(taxFreeLimitMessage.replace(/[^0-9]/, ''))
+
     const assetsTotal = Number(getValueViaPath(answers, 'assets.assetsTotal'))
     const debtsTotal = Number(getValueViaPath(answers, 'debts.debtsTotal'))
     const businessTotal = Number(
       getValueViaPath(answers, 'business.businessTotal'),
     )
     const totalDeduction = Number(getValueViaPath(answers, 'totalDeduction'))
-
     const inheritanceValue = Math.round(
       (assetsTotal - debtsTotal + businessTotal - totalDeduction) * percentage,
     )
+    const taxFreeInheritanceValue = Math.round(taxFreeLimit * percentage)
+    const taxableInheritanceValue = Math.round(
+      inheritanceValue - taxFreeInheritanceValue,
+    )
+    const inheritanceTaxValue = Math.round(taxableInheritanceValue * 0.1)
 
-    setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
-    setInheritance(inheritanceValue)
-    setTaxableInheritance(Math.round(inheritance - taxFreeInheritance))
-    setInheritanceTax(Math.round(taxableInheritance * 0.1))
+    setValue(`${updateIndex}.heirsPercentage`, String(numValue))
+    setValue(
+      `${updateIndex}.taxFreeInheritance`,
+      String(taxFreeInheritanceValue),
+    )
+    setValue(`${updateIndex}.inheritance`, String(inheritanceValue))
+    setValue(`${updateIndex}.inheritanceTax`, String(inheritanceTaxValue))
+    setValue(
+      `${updateIndex}.taxableInheritance`,
+      String(taxableInheritanceValue),
+    )
 
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.taxFreeInheritance`,
-      taxFreeInheritance,
-    )
-    setIfValueIsNotNan(setValue, `${index}.inheritance`, inheritance)
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.inheritanceTax`,
-      Math.round(taxableInheritance * 0.01),
-    )
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.taxableInheritance`,
-      taxableInheritance,
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    index,
-    percentage,
-    taxFreeInheritance,
-    inheritance,
-    taxableInheritance,
-    inheritanceTax,
-    setValue,
-    answers,
-  ])
+    calculateTotal()
+  }
+
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+
+    if (!values) {
+      return
+    }
+
+    const total = values.reduce((acc: number, current: any) => {
+      const val = parseInt(current[props.sumField], 10)
+
+      return current?.enabled ? acc + (isNaN(val) ? 0 : val) : acc
+    }, 0)
+
+    console.log('total', total)
+    const addTotal = id.replace('data', 'total')
+
+    setValue(addTotal, total)
+    setTotal(total)
+  }, [getValues, id, props.sumField, setValue])
+
+  useEffect(() => {
+    calculateTotal()
+  }, [calculateTotal])
 
   useEffect(() => {
     if (
@@ -236,31 +239,6 @@ export const HeirsAndPartitionRepeater: FC<
 
   const [total, setTotal] = useState(0)
 
-  const calculateTotal = useCallback(() => {
-    const values = getValues(id)
-
-    if (!values) {
-      return
-    }
-
-    console.log('values', values)
-
-    const total = values.reduce(
-      (acc: number, current: any) =>
-        current?.enabled ? Number(acc) + Number(current[props.sumField]) : acc,
-      0,
-    )
-    const addTotal = id.replace('data', 'total')
-    setValue(addTotal, total)
-
-    setTotal(total)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getValues, id, props.sumField])
-
-  useEffect(() => {
-    calculateTotal()
-  }, [calculateTotal])
-
   useEffect(() => {
     if (fields.length === 0 && estateData?.estate?.estateMembers) {
       // ran into a problem with "append", as it appeared to be getting called multiple times
@@ -268,93 +246,94 @@ export const HeirsAndPartitionRepeater: FC<
       // so now using "replace" instead, for the initial setup
       replace(estateData.estate.estateMembers)
     }
-  }, [])
+  }, [estateData?.estate?.estateMembers, fields.length, replace])
 
-  const getDefaults = (fieldId: string) => {
-    return fieldId === 'taxFreeInheritance'
-      ? taxFreeInheritance
-      : fieldId === 'inheritance'
-      ? inheritance
-      : fieldId === 'taxableInheritance'
-      ? taxableInheritance
-      : fieldId === 'inheritanceTax'
-      ? inheritanceTax
-      : ''
-  }
+  console.log('errors', errors)
+  console.log('getValues', getValues())
 
   return (
     <Box>
-      {fields.reduce((acc, member: GenericFormField<EstateMember>, index) => {
-        if (member.nationalId === application.applicant) {
-          const relation = getValueViaPath<string>(
-            application.answers,
-            'applicantRelation',
-          )
-          if (relation && relation !== member.relation) {
-            member.relation = relation
+      {fields.reduce(
+        (acc, member: GenericFormField<EstateMember>, mainIndex) => {
+          if (member.nationalId === application.applicant) {
+            const relation = getValueViaPath<string>(
+              application.answers,
+              'applicantRelation',
+            )
+            if (relation && relation !== member.relation) {
+              member.relation = relation
+            }
           }
-        }
-        if (!member.initial) {
-          return acc
-        }
+          if (!member.initial) {
+            return acc
+          }
 
-        const fieldIndex = `${id}[${index}]`
+          const fieldIndex = `${id}[${mainIndex}]`
 
-        return [
-          ...acc,
-          <Box marginTop={index > 0 ? 7 : 0} key={index}>
-            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Text variant="h4">{formatMessage(m.heir)}</Text>
-              <Box>
-                <Button
-                  variant="text"
-                  size="small"
-                  icon={member.enabled ? 'remove' : 'add'}
-                  onClick={() => {
-                    const updatedMember = {
-                      ...member,
-                      enabled: !member.enabled,
-                    }
-                    update(index, updatedMember)
-                    clearErrors(`${fieldIndex}.phone`)
-                    clearErrors(`${fieldIndex}.email`)
-                    clearErrors(`${fieldIndex}.advocate.phone`)
-                    clearErrors(`${fieldIndex}.advocate.email`)
-                    calculateTotal()
-                  }}
-                >
-                  {member.enabled
-                    ? formatMessage(m.inheritanceDisableMember)
-                    : formatMessage(m.inheritanceEnableMember)}
-                </Button>
+          return [
+            ...acc,
+            <Box
+              marginTop={mainIndex > 0 ? 7 : 0}
+              key={`${mainIndex}_${member.id}`}
+            >
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                marginBottom={3}
+              >
+                <Text variant="h4">{formatMessage(m.heir)}</Text>
+                <Box>
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon={member.enabled ? 'remove' : 'add'}
+                    onClick={() => {
+                      const updatedMember = {
+                        ...member,
+                        enabled: !member.enabled,
+                      }
+                      update(mainIndex, updatedMember)
+                      clearErrors(`${fieldIndex}.phone`)
+                      clearErrors(`${fieldIndex}.email`)
+                      clearErrors(`${fieldIndex}.advocate.phone`)
+                      clearErrors(`${fieldIndex}.advocate.email`)
+                      calculateTotal()
+                    }}
+                  >
+                    {member.enabled
+                      ? formatMessage(m.inheritanceDisableMember)
+                      : formatMessage(m.inheritanceEnableMember)}
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-            <GridRow>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${fieldIndex}.nationalId`}
-                  name={`${fieldIndex}.nationalId`}
-                  label={formatMessage(m.inheritanceKtLabel)}
-                  defaultValue={formatNationalId(member.nationalId || '')}
-                  backgroundColor="white"
-                  // readOnly
-                  disabled={!member.enabled}
-                  format={'######-####'}
-                  error={error && error[index] && error[index].nationalId}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${fieldIndex}.name`}
-                  name={`${fieldIndex}.name`}
-                  label={formatMessage(m.inheritanceNameLabel)}
-                  readOnly
-                  defaultValue={member.name || ''}
-                  backgroundColor="white"
-                  disabled={!member.enabled}
-                />
-              </GridColumn>
-              {/* <GridColumn span={['1/1']} paddingBottom={2}>
+              <GridRow>
+                <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                  <InputController
+                    id={`${fieldIndex}.nationalId`}
+                    name={`${fieldIndex}.nationalId`}
+                    label={formatMessage(m.inheritanceKtLabel)}
+                    defaultValue={formatNationalId(member.nationalId || '')}
+                    backgroundColor="white"
+                    // readOnly
+                    disabled={!member.enabled}
+                    format={'######-####'}
+                    error={
+                      error && error[mainIndex] && error[mainIndex].nationalId
+                    }
+                  />
+                </GridColumn>
+                <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                  <InputController
+                    id={`${fieldIndex}.name`}
+                    name={`${fieldIndex}.name`}
+                    label={formatMessage(m.inheritanceNameLabel)}
+                    readOnly
+                    defaultValue={member.name || ''}
+                    backgroundColor="white"
+                    disabled={!member.enabled}
+                  />
+                </GridColumn>
+                {/* <GridColumn span={['1/1']} paddingBottom={2}>
                 <InputController
                   id={`${fieldIndex}.relation`}
                   name={`${fieldIndex}.relation`}
@@ -365,7 +344,7 @@ export const HeirsAndPartitionRepeater: FC<
                   disabled={!member.enabled}
                 />
               </GridColumn> */}
-              {/* {application.answers.selectedEstate ===
+                {/* {application.answers.selectedEstate ===
                 EstateTypes.permitForUndividedEstate &&
                 member.relation !== 'Maki' && (
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -384,227 +363,231 @@ export const HeirsAndPartitionRepeater: FC<
                     />
                   </GridColumn>
                 )} */}
-              {!member.advocate && (
-                <>
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
-                      id={`${fieldIndex}.email`}
-                      name={`${fieldIndex}.email`}
-                      label={formatMessage(m.email)}
-                      backgroundColor="blue"
-                      disabled={!member.enabled}
-                      defaultValue={member.email || ''}
-                      error={error && error[index] && error[index].email}
-                      required
-                    />
-                  </GridColumn>
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
-                      id={`${fieldIndex}.phone`}
-                      name={`${fieldIndex}.phone`}
-                      label={formatMessage(m.phone)}
-                      backgroundColor="blue"
-                      disabled={!member.enabled}
-                      format="###-####"
-                      defaultValue={member.phone || ''}
-                      error={error && error[index] && error[index].phone}
-                      required
-                    />
-                  </GridColumn>
-                </>
-              )}
-              {customFields.map((customField, customFieldIndex) => {
-                return (
-                  <Fragment key={customFieldIndex}>
-                    {customField?.sectionTitle ? (
-                      <GridColumn span="1/1">
-                        <Text variant="h5" marginBottom={2}>
-                          {customField.sectionTitle}
-                        </Text>
-                      </GridColumn>
-                    ) : null}
+                {!member.advocate && (
+                  <>
+                    <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                      <InputController
+                        id={`${fieldIndex}.email`}
+                        name={`${fieldIndex}.email`}
+                        label={formatMessage(m.email)}
+                        backgroundColor="blue"
+                        disabled={!member.enabled}
+                        defaultValue={member.email || ''}
+                        error={
+                          error && error[mainIndex] && error[mainIndex].email
+                        }
+                        required
+                      />
+                    </GridColumn>
+                    <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                      <InputController
+                        id={`${fieldIndex}.phone`}
+                        name={`${fieldIndex}.phone`}
+                        label={formatMessage(m.phone)}
+                        backgroundColor="blue"
+                        disabled={!member.enabled}
+                        format="###-####"
+                        defaultValue={member.phone || ''}
+                        error={
+                          error && error[mainIndex] && error[mainIndex].phone
+                        }
+                        required
+                      />
+                    </GridColumn>
+                  </>
+                )}
+                {customFields.map((customField: any, customFieldIndex) => {
+                  const defaultValue = (member as any)?.[customField.id]
 
-                    {customField.id === 'relation' ? (
-                      <Fragment>
-                        {member.initial && (
-                          <GridColumn span="1/1" paddingBottom={2}>
-                            <InputController
-                              id={`${fieldIndex}.${customField.id}`}
-                              name={`${fieldIndex}.${customField.id}`}
-                              label={customField?.title}
-                              readOnly
-                              defaultValue={member.relation}
-                              backgroundColor="blue"
-                              disabled={!member.enabled}
-                            />
-                          </GridColumn>
-                        )}
-                        {application.answers.selectedEstate ===
-                          EstateTypes.permitForUndividedEstate &&
-                          member.relation !== 'Maki' && (
+                  return (
+                    <Fragment key={customFieldIndex}>
+                      {customField?.sectionTitle ? (
+                        <GridColumn span="1/1">
+                          <Text variant="h5" marginBottom={2}>
+                            {customField.sectionTitle}
+                          </Text>
+                        </GridColumn>
+                      ) : null}
+
+                      {customField.id === 'relation' ? (
+                        <Fragment>
+                          {member.initial && (
                             <GridColumn span="1/1" paddingBottom={2}>
-                              <SelectController
-                                id={`${fieldIndex}.relationWithApplicant`}
-                                name={`${fieldIndex}.relationWithApplicant`}
-                                label={formatMessage(
-                                  m.inheritanceRelationWithApplicantLabel,
-                                )}
-                                defaultValue={member.relationWithApplicant}
-                                options={relations}
-                                error={error?.relationWithApplicant}
+                              <InputController
+                                id={`${fieldIndex}.${customField.id}`}
+                                name={`${fieldIndex}.${customField.id}`}
+                                label={customField?.title}
+                                readOnly
+                                defaultValue={member.relation}
                                 backgroundColor="blue"
                                 disabled={!member.enabled}
-                                required
                               />
                             </GridColumn>
                           )}
-                      </Fragment>
-                    ) : (
-                      <GridColumn span={['1/2']} paddingBottom={2}>
-                        <InputController
-                          id={`${fieldIndex}.${customField.id}`}
-                          name={`${fieldIndex}.${customField.id}`}
-                          // defaultValue={'0'}
-                          defaultValue={
-                            getValues(`${fieldIndex}.${customField.id}`)
-                              ? getValues(`${fieldIndex}.${customField.id}`)
-                              : getDefaults(customField.id)
-                          }
-                          disabled={!member.enabled}
-                          // format={field.format}
-                          label={customField.title}
-                          // placeholder={field.placeholder}
-                          // backgroundColor={field.color ? field.color : 'blue'}
-                          currency={customField?.currency}
-                          readOnly={customField?.readOnly}
-                          // type={field.type}
-                          // textarea={field.variant}
-                          // rows={field.rows}
-                          // required={field.required}
-                          error={
-                            error && error[index]
-                              ? error[index][field.id]
-                              : undefined
-                          }
-                          onChange={(elem) => {
-                            const value = elem.target.value.replace(/\D/g, '')
-
-                            // heirs
-                            console.log('customField.id', customField.id)
-                            if (customField.id === 'heirsPercentage') {
-                              console.log('setting percentage...')
-                              setPercentage(Number(value) / 100)
+                          {application.answers.selectedEstate ===
+                            EstateTypes.permitForUndividedEstate &&
+                            member.relation !== 'Maki' && (
+                              <GridColumn span="1/1" paddingBottom={2}>
+                                <SelectController
+                                  id={`${fieldIndex}.relationWithApplicant`}
+                                  name={`${fieldIndex}.relationWithApplicant`}
+                                  label={formatMessage(
+                                    m.inheritanceRelationWithApplicantLabel,
+                                  )}
+                                  defaultValue={member.relationWithApplicant}
+                                  options={relations}
+                                  error={error?.relationWithApplicant}
+                                  backgroundColor="blue"
+                                  disabled={!member.enabled}
+                                  required
+                                />
+                              </GridColumn>
+                            )}
+                        </Fragment>
+                      ) : customField.id === 'heirsPercentage' ? (
+                        <GridColumn span={['1/2']} paddingBottom={2}>
+                          <InputController
+                            id={`${fieldIndex}.${customField.id}`}
+                            name={`${fieldIndex}.${customField.id}`}
+                            disabled={!member.enabled}
+                            label={customField.title}
+                            defaultValue={defaultValue ? defaultValue : '0'}
+                            type="number"
+                            suffix="%"
+                            onChange={(
+                              event: React.ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                              >,
+                            ) => {
+                              const val = parseInt(event.target.value, 10)
+                              updateValues(fieldIndex, val)
+                            }}
+                            error={
+                              error && error[mainIndex]
+                                ? error[mainIndex][field.id]
+                                : undefined
                             }
-
-                            if (props.sumField === customField.id) {
-                              calculateTotal()
+                            required
+                          />
+                        </GridColumn>
+                      ) : (
+                        <GridColumn span={['1/2']} paddingBottom={2}>
+                          <InputController
+                            id={`${fieldIndex}.${customField.id}`}
+                            name={`${fieldIndex}.${customField.id}`}
+                            disabled={!member.enabled}
+                            defaultValue={defaultValue ? defaultValue : ''}
+                            format={customField.format}
+                            label={customField.title}
+                            currency
+                            readOnly
+                            error={
+                              error && error[mainIndex]
+                                ? error[mainIndex][field.id]
+                                : undefined
                             }
-
-                            setIndex(fieldIndex)
-                          }}
-                        />
-                      </GridColumn>
-                    )}
-                  </Fragment>
-                )
-              })}
-            </GridRow>
-
-            {/* ADVOCATE */}
-            {member.advocate && (
-              <Box
-                marginTop={2}
-                paddingY={5}
-                paddingX={7}
-                borderRadius="large"
-                border="standard"
-              >
-                <GridRow>
-                  <GridColumn span={['1/1']} paddingBottom={2}>
-                    <Text
-                      variant="h4"
-                      color={member.enabled ? 'dark400' : 'dark300'}
-                    >
-                      {formatMessage(m.inheritanceAdvocateLabel)}
-                    </Text>
-                  </GridColumn>
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
-                      id={`${fieldIndex}.advocate.nationalId`}
-                      name={`${fieldIndex}.advocate.nationalId`}
-                      label={formatMessage(m.inheritanceKtLabel)}
-                      readOnly
-                      defaultValue={formatNationalId(
-                        member.advocate?.nationalId || '',
+                          />
+                        </GridColumn>
                       )}
-                      backgroundColor="white"
-                      disabled={!member.enabled}
-                      format={'######-####'}
-                      size="sm"
-                    />
-                  </GridColumn>
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
-                      id={`${fieldIndex}.advocate.name`}
-                      name={`${fieldIndex}.advocate.name`}
-                      label={formatMessage(m.inheritanceNameLabel)}
-                      readOnly
-                      defaultValue={member.advocate?.name || ''}
-                      backgroundColor="white"
-                      disabled={!member.enabled}
-                      size="sm"
-                    />
-                  </GridColumn>
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
-                      id={`${fieldIndex}.advocate.phone`}
-                      name={`${fieldIndex}.advocate.phone`}
-                      label={formatMessage(m.phone)}
-                      backgroundColor="blue"
-                      disabled={!member.enabled}
-                      format="###-####"
-                      defaultValue={member.advocate?.phone || ''}
-                      error={
-                        error && error[index] && error[index].advocate?.phone
-                      }
-                      size="sm"
-                      required
-                    />
-                  </GridColumn>
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
-                      id={`${fieldIndex}.advocate.email`}
-                      name={`${fieldIndex}.advocate.email`}
-                      label={formatMessage(m.email)}
-                      backgroundColor="blue"
-                      disabled={!member.enabled}
-                      defaultValue={member.advocate?.email || ''}
-                      error={
-                        error && error[index] && error[index].advocate?.email
-                      }
-                      size="sm"
-                      required
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-            )}
-          </Box>,
-        ]
-      }, [] as JSX.Element[])}
+                    </Fragment>
+                  )
+                })}
+              </GridRow>
+
+              {/* ADVOCATE */}
+              {member.advocate && (
+                <Box
+                  marginTop={2}
+                  paddingY={5}
+                  paddingX={7}
+                  borderRadius="large"
+                  border="standard"
+                >
+                  <GridRow>
+                    <GridColumn span={['1/1']} paddingBottom={2}>
+                      <Text
+                        variant="h4"
+                        color={member.enabled ? 'dark400' : 'dark300'}
+                      >
+                        {formatMessage(m.inheritanceAdvocateLabel)}
+                      </Text>
+                    </GridColumn>
+                    <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                      <InputController
+                        id={`${fieldIndex}.advocate.nationalId`}
+                        name={`${fieldIndex}.advocate.nationalId`}
+                        label={formatMessage(m.inheritanceKtLabel)}
+                        readOnly
+                        defaultValue={formatNationalId(
+                          member.advocate?.nationalId || '',
+                        )}
+                        backgroundColor="white"
+                        disabled={!member.enabled}
+                        format={'######-####'}
+                        size="sm"
+                      />
+                    </GridColumn>
+                    <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                      <InputController
+                        id={`${fieldIndex}.advocate.name`}
+                        name={`${fieldIndex}.advocate.name`}
+                        label={formatMessage(m.inheritanceNameLabel)}
+                        readOnly
+                        defaultValue={member.advocate?.name || ''}
+                        backgroundColor="white"
+                        disabled={!member.enabled}
+                        size="sm"
+                      />
+                    </GridColumn>
+                    <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                      <InputController
+                        id={`${fieldIndex}.advocate.phone`}
+                        name={`${fieldIndex}.advocate.phone`}
+                        label={formatMessage(m.phone)}
+                        backgroundColor="blue"
+                        disabled={!member.enabled}
+                        format="###-####"
+                        defaultValue={member.advocate?.phone || ''}
+                        error={
+                          error &&
+                          error[mainIndex] &&
+                          error[mainIndex].advocate?.phone
+                        }
+                        size="sm"
+                        required
+                      />
+                    </GridColumn>
+                    <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                      <InputController
+                        id={`${fieldIndex}.advocate.email`}
+                        name={`${fieldIndex}.advocate.email`}
+                        label={formatMessage(m.email)}
+                        backgroundColor="blue"
+                        disabled={!member.enabled}
+                        defaultValue={member.advocate?.email || ''}
+                        error={
+                          error &&
+                          error[mainIndex] &&
+                          error[mainIndex].advocate?.email
+                        }
+                        size="sm"
+                        required
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+              )}
+            </Box>,
+          ]
+        },
+        [] as JSX.Element[],
+      )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
-        if (member.initial) {
-          return null
-        }
-
-        console.log('member', member)
-
-        member.nationalId = member.nationalId ?? ''
-        member.name = member.name ?? ''
+        if (member.initial) return null
 
         return (
           <Box key={member.id}>
-            <AdditionalEstateMember
+            <AdditionalHeir
               application={application}
               field={member}
               fieldName={id}
