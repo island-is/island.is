@@ -276,7 +276,10 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   migrations(postgres?: PostgresInfo): this {
-    throw new Error({ message: 'Not implemented', postgres }.toString())
+    return this.initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres,
+    })
   }
 
   db(): this
