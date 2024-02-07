@@ -57,7 +57,8 @@
     "safer-buffer",
     "ioredis",
     "bull",
-    "geoip-lite"
+    "geoip-lite",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

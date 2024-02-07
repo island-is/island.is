@@ -9,15 +9,10 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import Periods from './Periods'
-import Employers from './Employers'
+import Periods from './review-groups/Periods'
+import Employers from './review-groups/Employers'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
-import {
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  PARENTAL_LEAVE,
-  YES,
-} from '../../constants'
+import { YES } from '../../constants'
 
 interface ReviewScreenProps {
   application: Application
@@ -28,28 +23,12 @@ const EditOrAddEmployersAndPeriodsReview: FC<
   React.PropsWithChildren<ReviewScreenProps>
 > = ({ application, goToScreen }) => {
   const { formatMessage } = useLocale()
-  const {
-    employers,
-    addEmployer,
-    addPeriods,
-    applicationType,
-    isReceivingUnemploymentBenefits,
-    isSelfEmployed,
-    employerLastSixMonths,
-  } = getApplicationAnswers(application.answers)
+  const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
 
   const childProps = {
     application,
     goToScreen,
   }
-
-  const hasEmployer =
-    (applicationType === PARENTAL_LEAVE &&
-      isReceivingUnemploymentBenefits !== YES &&
-      isSelfEmployed !== YES) ||
-    ((applicationType === PARENTAL_GRANT ||
-      applicationType === PARENTAL_GRANT_STUDENTS) &&
-      employerLastSixMonths === YES)
 
   return (
     <>
@@ -94,7 +73,7 @@ const EditOrAddEmployersAndPeriodsReview: FC<
           </ContentBlock>
         </Box>
       )}
-      {hasEmployer && employers.length !== 0 && <Employers {...childProps} />}
+      <Employers {...childProps} />
       <Periods {...childProps} />
     </>
   )

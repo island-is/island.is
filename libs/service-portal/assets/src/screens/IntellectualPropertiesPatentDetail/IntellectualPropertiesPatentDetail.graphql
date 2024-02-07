@@ -18,7 +18,7 @@ query getIntellectualPropertiesPatentById(
       lifecycle {
         applicationDate
         registrationDate
-        applicationDatePublishedAsAvailable
+        publishDate
         maxValidObjectionDate
         expiryDate
         maxValidDate
@@ -31,6 +31,12 @@ query getIntellectualPropertiesPatentById(
       }
       agent {
         ...PersonFragment
+      }
+      priorities {
+        applicationDate
+        number
+        countryName
+        countryCode
       }
     }
     ... on IntellectualPropertiesPatentEP {
@@ -49,14 +55,14 @@ query getIntellectualPropertiesPatentById(
       }
       priorities {
         number
-        country {
-          name
-        }
+        countryName
+        countryCode
         applicationDate
       }
       lifecycle {
         applicationDate
         expiryDate
+        maxValidDate
       }
       owners {
         ...PersonFragment
@@ -69,6 +75,8 @@ query getIntellectualPropertiesPatentById(
       epLifecycle {
         publishDate
         applicationDate
+        translationSubmissionDate
+        provisionDatePublishedInGazette
       }
       language
     }
@@ -94,6 +102,8 @@ query getIntellectualPropertiesPatentById(
       marketingAuthorization {
         foreignAuthorizationNumber
         foreignAuthorizationDate
+        icelandicAuthorizationNumber
+        icelandicAuthorizationDate
       }
       grantPublishedInGazetteDate
       publishedInGazetteDate

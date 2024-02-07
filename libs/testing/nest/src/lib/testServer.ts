@@ -2,7 +2,7 @@ import { ValidationPipe, INestApplication, Type } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
-import { InfraModule } from '@island.is/infra-nest-server'
+import { InfraModule, HealthCheckOptions } from '@island.is/infra-nest-server'
 
 type CleanUp = () => Promise<void> | undefined
 
@@ -20,6 +20,11 @@ export type TestServerOptions = {
    * Enables NestJS versioning.
    */
   enableVersioning?: boolean
+
+  /**
+   * Configure health checks for the test server setup
+   */
+  healthCheck?: boolean | HealthCheckOptions
 }
 
 export const testServer = async ({
@@ -27,9 +32,10 @@ export const testServer = async ({
   hooks = [],
   override,
   enableVersioning,
+  healthCheck,
 }: TestServerOptions): Promise<TestApp> => {
   let builder = Test.createTestingModule({
-    imports: [InfraModule.forRoot({ appModule })],
+    imports: [InfraModule.forRoot({ appModule, healthCheck })],
   })
 
   if (override) {

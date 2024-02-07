@@ -244,19 +244,19 @@ export const routesTemplate = {
     en: '/en/[slug]',
   },
   universitysearchdetails: {
-    is: '/haskolanam-temp/[id]',
+    is: '/haskolanam/[id]',
     en: '/en/university-studies/[id]',
   },
   universitysearchcomparison: {
-    is: '/haskolanam-temp/samanburdur',
+    is: '/haskolanam/samanburdur',
     en: '/en/university-studies/comparison',
   },
   universitysearch: {
-    is: '/haskolanam-temp/leit',
+    is: '/haskolanam/leit',
     en: '/en/university-studies/search',
   },
   universitylandingpage: {
-    is: '/haskolanam-temp',
+    is: '/haskolanam',
     en: '/en/university-studies',
   },
   oskalistithjodarinnar: {

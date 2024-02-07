@@ -17,8 +17,10 @@ import {
   PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
@@ -63,6 +65,32 @@ const ReceptionAndAssignment = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+  const defendantPleas = workingCase.defendants?.map((defendant, index) => {
+    if (
+      defendant.defendantPlea !== null &&
+      defendant.defendantPlea !== undefined
+    ) {
+      return (
+        <Box
+          component="span"
+          display="block"
+          marginBottom={index === workingCase.defendants?.length ? 0 : 1}
+        >
+          {formatMessage(strings.defendantPleaAlertMessage, {
+            defendantGender: workingCase.defendants
+              ? defendant.gender
+              : Gender.MALE,
+            nameAndPlea: getDefendantPleaText(
+              defendant.name,
+              defendant.defendantPlea,
+            ),
+          })}
+        </Box>
+      )
+    } else {
+      return null
+    }
+  })
 
   return (
     <PageLayout
@@ -77,8 +105,25 @@ const ReceptionAndAssignment = () => {
       />
       <FormContentContainer>
         {isIndictmentCase(workingCase.type) && workingCase.comments && (
-          <Box marginBottom={5}>
-            <AlertMessage message={workingCase.comments} type="warning" />
+          <Box
+            marginBottom={defendantPleas && defendantPleas.length > 0 ? 2 : 5}
+          >
+            <AlertMessage
+              title={formatMessage(strings.commentsTitle)}
+              message={workingCase.comments}
+              type="warning"
+            />
+          </Box>
+        )}
+        {defendantPleas && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              title={formatMessage(strings.defendantPleaAlertTitle, {
+                defendantCount: workingCase.defendants?.length,
+              })}
+              message={defendantPleas}
+              type="warning"
+            />
           </Box>
         )}
         <Box marginBottom={7}>

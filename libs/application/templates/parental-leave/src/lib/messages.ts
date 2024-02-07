@@ -1197,6 +1197,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hlutfall af persónuafslættinum',
       description: 'Review copy for the usage percentage',
     },
+    alertDescription: {
+      id: 'pl.application:personal.allowance.alertDescription',
+      defaultMessage:
+        'Óþarfi er að senda inn sérstaka beiðni til Fæðingarorlofssjóðs vegna nýtingar á persónuafslætti þegar sótt er um í gegnum Ísland.is',
+      description:
+        'There is no need to submit a separate request to the Parental Leave Fund for the use of personal allowance when applying through Ísland.is',
+    },
   }),
 
   leavePlan: defineMessages({

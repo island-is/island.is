@@ -83,6 +83,7 @@ export const ListViewCard = ({
         {infoItems.map((item) => {
           return (
             <Box
+              key={item.title}
               display="flex"
               flexDirection="row"
               width="full"
@@ -95,15 +96,17 @@ export const ListViewCard = ({
             </Box>
           )
         })}
-        <Box>
-          <Checkbox
-            label="Setja í samanburð"
-            labelVariant="small"
-            onChange={onCheck}
-            id={checkboxId}
-            checked={checked}
-          />
-        </Box>
+        {checkboxId && (
+          <Box>
+            <Checkbox
+              label="Setja í samanburð"
+              labelVariant="small"
+              onChange={onCheck}
+              id={checkboxId}
+              checked={checked}
+            />
+          </Box>
+        )}
         <Box paddingTop={3} width="full">
           <Button
             {...(cta.buttonType ?? { variant: cta.variant })}

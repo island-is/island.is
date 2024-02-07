@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   pageTitle: {
     id: 'sp.signatureCollection:title',
-    defaultMessage: 'Meðmælalistar',
+    defaultMessage: 'Meðmælasöfnun',
     description: '',
   },
   pageDescription: {

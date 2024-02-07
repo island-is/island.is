@@ -230,6 +230,11 @@ export const serviceSetup = (services: {
         staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
       },
+      XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
+        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
+        staging: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
+        prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
+      },
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',
@@ -311,8 +316,6 @@ export const serviceSetup = (services: {
       VMST_ID: '/k8s/application-system/VMST_ID',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
-      ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH:
-        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH',
       ALTHINGI_OMBUDSMAN_XROAD_USERNAME:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:

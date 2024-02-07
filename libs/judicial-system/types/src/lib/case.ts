@@ -173,6 +173,12 @@ export enum RequestSharedWithDefender {
   NOT_SHARED = 'NOT_SHARED',
 }
 
+export enum DefendantPlea {
+  GUILTY = 'GUILTY',
+  NOT_GUILTY = 'NOT_GUILTY',
+  NO_PLEA = 'NO_PLEA',
+}
+
 export const indictmentCases = [CaseType.INDICTMENT]
 
 export function isIndictmentCase(type?: string | null): boolean {

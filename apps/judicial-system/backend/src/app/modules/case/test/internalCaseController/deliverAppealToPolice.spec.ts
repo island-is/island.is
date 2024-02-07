@@ -1,3 +1,4 @@
+import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import {
@@ -13,7 +14,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { PoliceService } from '../../../police'
+import { CourtDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -103,11 +104,12 @@ describe('InternalCaseController - Deliver appeal to police', () => {
         defendantNationalId,
         validToDate,
         caseConclusion,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        [appealRulingPdf],
+        [
+          {
+            type: CourtDocumentType.RVUL,
+            courtDocument: Base64.btoa(appealRulingPdf),
+          },
+        ],
       )
       expect(then.result.delivered).toEqual(true)
     })
