@@ -260,7 +260,6 @@ export interface EstateMember {
   relationWithApplicant?: string
   initial?: boolean
   dateOfBirth?: string
-  custodian?: string
   foreignCitizenship?: ('yes' | 'no')[]
   enabled?: boolean
   phone?: string
