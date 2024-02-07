@@ -41,4 +41,17 @@ describe('PodDisruptionBudget definitions', () => {
     const pdb = result.serviceDef[0].podDisruptionBudget
     expect(pdb?.minAvailable).toEqual(2)
   })
+  it('Service should have maxUnavailable: 2, thus overriding the default', async () => {
+    const sut: ServiceBuilder<'api'> = service('api').podDisruption({
+      maxUnavailable: 2,
+    })
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+    const pdb = result.serviceDef[0].podDisruptionBudget
+    expect(pdb?.maxUnavailable).toEqual(2)
+  })
 })
