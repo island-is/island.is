@@ -22,10 +22,11 @@ import {
   YES,
 } from '@island.is/application/types'
 import { hasYes } from '@island.is/application/core'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { EstateMember, EstateTypes } from '../../types'
 // import { LookupPerson } from '../LookupPerson'
 import { ErrorValue } from '../../lib/constants'
+import { LookupPerson } from '../LookupPerson'
 
 export const AdditionalHeir = ({
   field,
@@ -61,10 +62,8 @@ export const AdditionalHeir = ({
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
 
-  const selectedEstate = application.answers.selectedEstate
-
   const foreignCitizenship = useWatch({
-    name: foreignCitizenshipField,
+    name: `${fieldIndex}.foreignCitizenship`,
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
@@ -72,9 +71,12 @@ export const AdditionalHeir = ({
 
   const values = getValues()
 
-  const currentHeir = values?.heir?.data?.[index]
+  const currentHeir = useMemo(
+    () => values?.heirs?.data?.[index],
+    [values, index],
+  )
 
-  const hasForeignCitizenship = currentHeir?.foreignCitizenship?.[0] === 'Yes'
+  const hasForeignCitizenship = currentHeir?.foreignCitizenship?.[0] === YES
   const birthDate = currentHeir?.dateOfBirth
 
   const memberAge =
@@ -95,6 +97,9 @@ export const AdditionalHeir = ({
     clearErrors(`${fieldIndex}.nationalId`)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [foreignCitizenship])
+
+  const requiresAdvocate = memberAge !== undefined && memberAge < 18
+  console.log(memberAge)
 
   return (
     <Box position="relative" key={field.id} marginTop={7}>
@@ -132,8 +137,8 @@ export const AdditionalHeir = ({
               key={nameField}
               id={nameField}
               name={nameField}
-              backgroundColor="blue"
               defaultValue={field.name}
+              backgroundColor="white"
               error={error?.name ?? undefined}
               label={formatMessage(m.inheritanceNameLabel)}
               required
@@ -160,20 +165,15 @@ export const AdditionalHeir = ({
         </GridRow>
       ) : (
         <Box paddingY={2}>
-          LookupPerson
-          {/* <LookupPerson
-            // message={formatMessage(m.inheritanceUnder18Error)}
-            message={'m.inheritanceUnder18Error'}
+          <LookupPerson
             field={{
               id: `${fieldIndex}`,
               props: {
-                alertWhenUnder18:
-                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
                 requiredNationalId: true,
               },
             }}
             error={error}
-          /> */}
+          />
         </Box>
       )}
       <GridRow>
@@ -186,7 +186,7 @@ export const AdditionalHeir = ({
             defaultValue={field.relation}
             options={relationOptions}
             error={error?.relation}
-            backgroundColor="blue"
+            backgroundColor="white"
             required
           />
         </GridColumn>
@@ -201,7 +201,7 @@ export const AdditionalHeir = ({
               defaultValue={field.relationWithApplicant}
               options={relationWithApplicantOptions}
               error={error?.relationWithApplicant}
-              backgroundColor="blue"
+              backgroundColor="white"
               required={!field.initial}
             />
           </GridColumn>
@@ -214,7 +214,7 @@ export const AdditionalHeir = ({
                 name={emailField}
                 label={formatMessage(m.email)}
                 defaultValue={field.email || ''}
-                backgroundColor="blue"
+                backgroundColor="white"
                 error={error?.email}
                 required
               />
@@ -225,7 +225,7 @@ export const AdditionalHeir = ({
                 name={phoneField}
                 label={formatMessage(m.phone)}
                 defaultValue={field.phone || ''}
-                backgroundColor="blue"
+                backgroundColor="white"
                 format={'###-####'}
                 error={error?.phone}
                 required
@@ -235,74 +235,56 @@ export const AdditionalHeir = ({
         )}
       </GridRow>
       {/* ADVOCATE */}
-      {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
-        (currentHeir?.nationalId || hasForeignCitizenship) &&
-        memberAge !== undefined &&
-        memberAge < 18 && (
-          <Box
-            marginTop={2}
-            marginBottom={2}
-            paddingY={5}
-            paddingX={7}
-            borderRadius="large"
-            border="standard"
-          >
-            <GridRow>
-              <GridColumn span={['1/1']} paddingBottom={2}>
-                <Text variant="h4">
-                  {formatMessage(m.inheritanceAdvocateLabel)}
-                </Text>
-              </GridColumn>
-              <GridColumn span={['1/1']} paddingBottom={2}>
-                LookupPerson
-                {/* <LookupPerson
-                  message={
-                    selectedEstate === EstateTypes.divisionOfEstateByHeirs
-                      ? 'm.inheritanceUnder18Error'
-                      : 'm.inheritanceUnder18ErrorAdvocate'
-                      // ? formatMessage(m.inheritanceUnder18Error)
-                      // : formatMessage(m.inheritanceUnder18ErrorAdvocate)
-                  }
-                  nested
-                  field={{
-                    id: `${fieldIndex}.advocate`,
-                    props: {
-                      alertWhenUnder18:
-                        selectedEstate !==
-                          EstateTypes.divisionOfEstateByHeirs &&
-                        memberAge !== undefined &&
-                        memberAge < 18,
-                    },
-                  }}
-                  error={error}
-                /> */}
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={advocatePhone}
-                  name={advocatePhone}
-                  label={formatMessage(m.phone)}
-                  backgroundColor="blue"
-                  format="###-####"
-                  error={(error?.advocate as unknown as ErrorValue)?.phone}
-                  size="sm"
-                  required
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={advocateEmail}
-                  name={advocateEmail}
-                  label={formatMessage(m.email)}
-                  backgroundColor="blue"
-                  error={(error?.advocate as unknown as ErrorValue)?.email}
-                  size="sm"
-                  required
-                />
-              </GridColumn>
-            </GridRow>
-          </Box>
-        )}
+      {(currentHeir?.nationalId || hasForeignCitizenship) && requiresAdvocate && (
+        <Box
+          marginTop={2}
+          marginBottom={2}
+          paddingY={5}
+          paddingX={7}
+          borderRadius="large"
+          border="standard"
+        >
+          <GridRow>
+            <GridColumn span={['1/1']} paddingBottom={2}>
+              <Text variant="h4">
+                {formatMessage(m.inheritanceAdvocateLabel)}
+              </Text>
+            </GridColumn>
+            <GridColumn span={['1/1']} paddingBottom={2}>
+              <LookupPerson
+                nested
+                field={{
+                  id: `${fieldIndex}.advocate`,
+                }}
+                error={error}
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <InputController
+                id={advocatePhone}
+                name={advocatePhone}
+                label={formatMessage(m.phone)}
+                backgroundColor="white"
+                format="###-####"
+                error={(error?.advocate as unknown as ErrorValue)?.phone}
+                size="sm"
+                required
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <InputController
+                id={advocateEmail}
+                name={advocateEmail}
+                label={formatMessage(m.email)}
+                backgroundColor="white"
+                error={(error?.advocate as unknown as ErrorValue)?.email}
+                size="sm"
+                required
+              />
+            </GridColumn>
+          </GridRow>
+        </Box>
+      )}
       <GridColumn span="1/1" paddingBottom={2}>
         <Box width="half">
           <CheckboxController

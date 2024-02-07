@@ -12,7 +12,6 @@ import {
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
-import { EstateMember } from '../../types'
 import { valueToNumber } from '../../lib/utils/helpers'
 
 export const heirs = buildSection({

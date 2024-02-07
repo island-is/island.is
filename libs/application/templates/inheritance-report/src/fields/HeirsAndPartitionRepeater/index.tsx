@@ -140,21 +140,20 @@ export const HeirsAndPartitionRepeater: FC<
       name: '',
       phone: '',
       relation: '',
-      // advocate: {
-      //   nationalId: '',
-      //   name: '',
-      //   phone: '',
-      //   email: '',
-      // },
-      // custodian: '',
+      advocate: {
+        nationalId: '',
+        name: '',
+        phone: '',
+        email: '',
+      },
       email: '',
       heirsPercentage: '',
       inheritance: '',
       inheritanceTax: '',
       taxFreeInheritance: '',
       taxableInheritance: '',
-      // dateOfBirth: '',
-      // foreignCitizenship: [],
+      dateOfBirth: '',
+      foreignCitizenship: [],
       relationWithApplicant: '',
     })
 
@@ -208,7 +207,6 @@ export const HeirsAndPartitionRepeater: FC<
       return current?.enabled ? acc + (isNaN(val) ? 0 : val) : acc
     }, 0)
 
-    console.log('total', total)
     const addTotal = id.replace('data', 'total')
 
     setValue(addTotal, total)
@@ -247,9 +245,6 @@ export const HeirsAndPartitionRepeater: FC<
       replace(estateData.estate.estateMembers)
     }
   }, [estateData?.estate?.estateMembers, fields.length, replace])
-
-  console.log('errors', errors)
-  console.log('getValues', getValues())
 
   return (
     <Box>
@@ -583,6 +578,7 @@ export const HeirsAndPartitionRepeater: FC<
         [] as JSX.Element[],
       )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
+        // console.log('member', member)
         if (member.initial) return null
 
         return (

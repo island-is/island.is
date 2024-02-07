@@ -292,7 +292,7 @@ export const inheritanceReportSchema = z.object({
         relation: customZodError(z.string().min(1), m.errorRelation),
         relationWithApplicant: z.string().optional(),
         nationalId: z.string().optional(),
-        custodian: z.string().length(10).optional(),
+        // custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
