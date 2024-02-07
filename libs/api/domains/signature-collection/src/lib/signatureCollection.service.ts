@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
-import {
-  SignatureCollection,
-  SignatureCollectionInfo,
-} from './models/collection.model'
+import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
-import { SignatureCollectionClientService } from '@island.is/clients/signature-collection'
+import {
+  ReasonKey,
+  SignatureCollectionClientService,
+} from '@island.is/clients/signature-collection'
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionIdInput } from './dto/id.input'
 
@@ -17,89 +17,37 @@ export class SignatureCollectionService {
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
 
-  async currentCollectionInfo(): Promise<SignatureCollectionInfo> {
-    return await this.signatureCollectionClientService.currentCollectionInfo()
-  }
-
-  async current(collectionId: number): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.getCurrentCollection(
-      collectionId,
-    )
+  async currentCollection(): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.currentCollection()
   }
 
   async allOpenLists({
     id: collectionId,
-  }: SignatureCollectionInfo): Promise<SignatureCollectionList[]> {
+  }: SignatureCollection): Promise<SignatureCollectionList[]> {
     return await this.signatureCollectionClientService.getLists({
       collectionId,
       onlyActive: true,
     })
   }
 
-  async listsForCollector(
-    collection: SignatureCollectionInfo,
-    signee: SignatureCollectionSignee,
-    user: User,
-  ): Promise<SignatureCollectionList[]> {
-    const { id, isPresidential } = collection
-    const collectorNationalId = user.actor?.nationalId
-
-    if (collectorNationalId) {
-      const areaId = isPresidential
-        ? undefined
-        : await this.signee(user, collectorNationalId).then(
-            (data) => data.area?.id,
-          )
-      const lists = await this.signatureCollectionClientService.getLists({
-        collectionId: id,
-        candidateId: signee.candidate?.id,
-        areaId,
-      })
-      if (isPresidential) {
-        const isCollectorOnAllLists = lists.every((list) => {
-          const collectors: string[] =
-            list.collectors?.map((collector) => collector.nationalId) || []
-
-          return collectors.includes(collectorNationalId)
-        })
-
-        if (isCollectorOnAllLists) {
-          return lists
-        } else {
-          return await Promise.all(
-            lists.map(
-              async (list) =>
-                await this.signatureCollectionClientService.delegateList(
-                  parseInt(list.id),
-                  collectorNationalId,
-                ),
-            ),
-          )
-        }
-      } else if (areaId) {
-        const areaList = lists.find((list) => list.area?.id === areaId)
-        if (!areaList) {
-          throw new Error('Area not found')
-        }
-        return [
-          await this.signatureCollectionClientService.delegateList(
-            parseInt(areaList.id),
-            collectorNationalId,
-          ),
-        ]
-      }
-      return lists
-    }
-    return []
+  async isCollector(candidateId: string, auth: User) {
+    // Checks if actor is collector else adds actor as collector
+    const res = await this.signatureCollectionClientService.isCollector(
+      parseInt(candidateId),
+      auth,
+    )
+    return res.success
   }
 
   async listsForUser(
-    collection: SignatureCollectionInfo,
+    collection: SignatureCollection,
     signee: SignatureCollectionSignee,
     user: User,
   ): Promise<SignatureCollectionList[]> {
     const { id } = collection
-
+    if (!signee.area || signee.canSignInfo?.includes(ReasonKey.UnderAge)) {
+      return []
+    }
     return await this.signatureCollectionClientService.getLists(
       {
         collectionId: id,
@@ -111,22 +59,19 @@ export class SignatureCollectionService {
   }
 
   async listsForOwner(
-    collection: SignatureCollectionInfo,
+    collection: SignatureCollection,
     signee: SignatureCollectionSignee,
     user: User,
   ): Promise<SignatureCollectionList[]> {
     const { id } = collection
-    if (user.actor?.nationalId) {
-      return await this.listsForCollector(collection, signee, user)
-    } else {
-      return await this.signatureCollectionClientService.getLists(
-        {
-          collectionId: id,
-          candidateId: signee.candidate?.id,
-        },
-        user,
-      )
-    }
+
+    return await this.signatureCollectionClientService.getLists(
+      {
+        collectionId: id,
+        candidateId: signee.candidate?.id,
+      },
+      user,
+    )
   }
 
   async list(listId: string, user: User): Promise<SignatureCollectionList> {

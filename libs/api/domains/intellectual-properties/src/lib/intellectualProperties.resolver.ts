@@ -12,7 +12,6 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
-import { Patent } from './models/patent.model'
 import { Image } from './models/image.model'
 import { ImageList } from './models/imageList.model'
 import { Design } from './models/design.model'
@@ -26,6 +25,7 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { Patent } from './models/patent.model'
 
 @Resolver()
 @FeatureFlag(Features.isIntellectualPropertyModuleEnabled)
@@ -69,7 +69,10 @@ export class IntellectualPropertiesResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => IntellectualPropertiesInput })
     input: IntellectualPropertiesInput,
-  ) {
+  ): Promise<Patent | null> {
+    if (input.key.includes('SPC')) {
+      return this.ipService.getSPCById(user, input.key)
+    }
     return this.ipService.getPatentById(user, input.key)
   }
 

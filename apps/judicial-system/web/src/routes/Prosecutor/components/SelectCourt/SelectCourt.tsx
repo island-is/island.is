@@ -1,42 +1,46 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select, Text } from '@island.is/island-ui/core'
 import { selectCourt as m } from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
-  ReactSelectOption,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 type CourtSelectOption = ReactSelectOption & { court: Institution }
 
-interface Props {
-  workingCase: Case
-  courts: Institution[]
-  onChange: (court: Institution) => boolean
-}
-
-const SelectCourt: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, courts, onChange } = props
-
+const SelectCourt: React.FC = () => {
   const { formatMessage } = useIntl()
+  const { updateCase } = useCase()
+  const { districtCourts } = useInstitution()
+  const { workingCase, setWorkingCase } = useContext(FormContext)
 
-  const [selectedCourt, setSelectedCourt] = useState<CourtSelectOption | null>(
-    workingCase.court
-      ? {
-          label: workingCase.court.name ?? '',
-          value: workingCase.court.id,
-          court: workingCase.court,
-        }
-      : null,
-  )
-
-  const selectCourts: CourtSelectOption[] = courts.map((court) => ({
+  const selectCourts: CourtSelectOption[] = districtCourts.map((court) => ({
     label: court.name ?? '',
     value: court.id,
     court,
   }))
+
+  const defaultCourt = selectCourts.find(
+    (court) => court.value === workingCase.court?.id,
+  )
+
+  const handleChange = async (courtId: string) => {
+    if (workingCase) {
+      const updatedCase = await updateCase(workingCase.id, {
+        courtId,
+      })
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        court: updatedCase?.court,
+      }))
+    }
+  }
 
   return (
     <>
@@ -49,11 +53,10 @@ const SelectCourt: React.FC<React.PropsWithChildren<Props>> = (props) => {
         name="court"
         label={formatMessage(m.label)}
         placeholder={formatMessage(m.placeholder)}
-        value={selectedCourt}
+        value={defaultCourt}
         options={selectCourts}
         onChange={(selectedOption) => {
-          onChange((selectedOption as CourtSelectOption).court) &&
-            setSelectedCourt(selectedOption as CourtSelectOption)
+          handleChange((selectedOption as CourtSelectOption).court.id)
         }}
         required
       />

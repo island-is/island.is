@@ -35,6 +35,15 @@ import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
+export enum CourtDocumentType {
+  RVKR = 'RVKR', // Krafa
+  RVTB = 'RVTB', // Þingbók
+  RVUR = 'RVUR', // Úrskurður
+  RVVI = 'RVVI', // Vistunarseðill
+  RVUL = 'RVUL', // Úrskurður Landsréttar
+  RVDO = 'RVDO', // Dómur
+}
+
 function getChapter(category?: string): number | undefined {
   if (!category) {
     return undefined
@@ -381,11 +390,7 @@ export class PoliceService {
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
-    requestPdf?: string,
-    courtRecordPdf?: string,
-    rulingPdf?: string,
-    custodyNoticePdf?: string,
-    appealRuling?: string[],
+    courtDocuments: { type: CourtDocumentType; courtDocument: string }[],
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
       `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
@@ -406,29 +411,7 @@ export class PoliceService {
           courtVerdict: caseState,
           expiringDate: validToDate?.toISOString(),
           courtVerdictString: caseConclusion,
-          courtDocuments: [
-            ...(requestPdf
-              ? [{ type: 'RVKR', courtDocument: Base64.btoa(requestPdf) }]
-              : []),
-            ...(courtRecordPdf
-              ? [{ type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) }]
-              : []),
-            ...(rulingPdf
-              ? [{ type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) }]
-              : []),
-            ...(custodyNoticePdf
-              ? [
-                  {
-                    type: 'RVVI',
-                    courtDocument: Base64.btoa(custodyNoticePdf),
-                  },
-                ]
-              : []),
-            ...(appealRuling?.map((ruling) => ({
-              type: 'RVUL',
-              courtDocument: Base64.btoa(ruling),
-            })) ?? []),
-          ],
+          courtDocuments,
         }),
       } as RequestInit,
     )

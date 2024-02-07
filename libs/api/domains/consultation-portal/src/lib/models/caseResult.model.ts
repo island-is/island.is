@@ -83,6 +83,9 @@ export class CaseResult {
   @Field(() => String, { nullable: true })
   extraStakeholderList?: string | null
 
+  @Field(() => Date, { nullable: true })
+  publishOnWeb?: Date
+
   @Field(() => [CaseStakeholderResult], { nullable: true })
   stakeholders?: CaseStakeholderResult[] | null
 

@@ -10,6 +10,7 @@ import {
   CaseCustodyRestrictions,
   CaseFileCategory,
   CaseType,
+  DefendantPlea,
   Gender,
   Notification,
   NotificationType,
@@ -144,4 +145,20 @@ export const isReopenedCOACase = (
     appealState !== CaseAppealState.COMPLETED &&
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
   )
+}
+
+export const getDefendantPleaText = (
+  defendantName?: string | null,
+  defendantPlea?: DefendantPlea,
+) => {
+  switch (defendantPlea) {
+    case DefendantPlea.GUILTY:
+      return `${defendantName} - Játar sök`
+    case DefendantPlea.NOT_GUILTY:
+      return `${defendantName} - Neitar sök`
+    case DefendantPlea.NO_PLEA:
+      return `${defendantName} - Tjáir sig ekki / óljóst`
+    default:
+      return ''
+  }
 }

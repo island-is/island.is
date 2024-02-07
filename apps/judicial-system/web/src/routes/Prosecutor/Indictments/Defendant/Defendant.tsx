@@ -445,6 +445,9 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
                     <PoliceCaseInfo
                       index={index}
                       policeCaseNumbers={workingCase.policeCaseNumbers}
+                      policeCaseNumberPrefix={
+                        workingCase.prosecutorsOffice?.policeCaseNumberPrefix
+                      }
                       subtypes={
                         workingCase.indictmentSubtypes &&
                         workingCase.indictmentSubtypes[

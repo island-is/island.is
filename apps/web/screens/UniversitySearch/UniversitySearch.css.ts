@@ -70,7 +70,12 @@ export const gridContainer = style({
 })
 
 export const filterWrapper = style({
-  width: '320px',
+  width: 'unset',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      width: '320px',
+    },
+  }),
 })
 
 export const tagActive = style({

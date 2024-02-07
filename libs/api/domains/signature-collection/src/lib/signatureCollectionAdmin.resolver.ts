@@ -8,10 +8,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import {
-  SignatureCollection,
-  SignatureCollectionInfo,
-} from './models/collection.model'
+import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionSignature } from './models/signature.model'
@@ -42,21 +39,29 @@ export class SignatureCollectionAdminResolver {
 
   @Query(() => SignatureCollection)
   async signatureCollectionAdminCurrent(
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollection> {
-    return this.signatureCollectionService.current(collection.id)
+    return collection
   }
 
   @Query(() => [SignatureCollectionList])
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminLists(
     @CurrentUser() user: User,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allLists(collection, user)
   }
 
   @Query(() => SignatureCollectionList)
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminList(
     @CurrentUser() user: User,
@@ -66,6 +71,10 @@ export class SignatureCollectionAdminResolver {
   }
 
   @Query(() => [SignatureCollectionSignature], { nullable: true })
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
   @Audit()
   async signatureCollectionAdminSignatures(
     @CurrentUser() user: User,
@@ -87,7 +96,7 @@ export class SignatureCollectionAdminResolver {
   @Audit()
   async signatureCollectionAdminCreate(
     @CurrentUser() user: User,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
     @Args('input') input: SignatureCollectionListInput,
   ): Promise<SignatureCollectionSlug> {
     return this.signatureCollectionService.create(user, input, collection.id)

@@ -667,6 +667,7 @@ export const slices = gql`
     __typename
     id
     dropdownLabel
+    alphabeticallyOrdered
     slices {
       ...OneColumnTextFields
     }
@@ -825,6 +826,7 @@ export const slices = gql`
     }
     sourceData
     xAxisKey
+    xAxisFormat
     xAxisValueType
   }
 

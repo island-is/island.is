@@ -4,6 +4,7 @@ import type { Logger } from '@island.is/logging'
 import {
   DesignSearchApi,
   PatentSearchApi,
+  SPCApi,
   TrademarksApi,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
@@ -15,6 +16,7 @@ export class IntellectualPropertiesClientService {
     private trademarksApi: TrademarksApi,
     private patentSearchApi: PatentSearchApi,
     private designSearchApi: DesignSearchApi,
+    private spcApi: SPCApi,
   ) {}
 
   private trademarksApiWithAuth = (user: User) =>
@@ -23,6 +25,8 @@ export class IntellectualPropertiesClientService {
     this.patentSearchApi.withMiddleware(new AuthMiddleware(user as Auth))
   private designSearchApiWithAuth = (user: User) =>
     this.designSearchApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private spcApiWithAuth = (user: User) =>
+    this.spcApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   getTrademarks(user: User) {
     return this.trademarksApiWithAuth(user).trademarksGetTrademarksBySSNGet({
@@ -41,10 +45,15 @@ export class IntellectualPropertiesClientService {
       ssn: user.nationalId,
     })
   }
+
   getPatentByApplicationNumber(user: User, appId: string) {
     return this.patentSearchApiWithAuth(user).apiPatentSearchSearchGet({
       applicationNr: appId,
     })
+  }
+
+  getSPCById(user: User, spcId: string) {
+    return this.spcApiWithAuth(user).sPCIdGet({ id: spcId })
   }
 
   getDesigns(user: User) {

@@ -62,7 +62,8 @@
     "lowercase-keys",
     "mimic-response",
     "pdfkit",
-    "path-scurry"
+    "path-scurry",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

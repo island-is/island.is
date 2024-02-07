@@ -1,5 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { SignatureCollectionSuccess } from './models/success.model'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -8,10 +7,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import {
-  SignatureCollection,
-  SignatureCollectionInfo,
-} from './models/collection.model'
+import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionSignature } from './models/signature.model'
@@ -32,16 +28,16 @@ export class SignatureCollectionManagerResolver {
 
   @Query(() => SignatureCollection)
   async signatureCollectionManagerCurrent(
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollection> {
-    return this.signatureCollectionService.current(collection.id)
+    return collection
   }
 
   @Query(() => [SignatureCollectionList])
   @Audit()
   async signatureCollectionManagerLists(
     @CurrentUser() user: User,
-    @CurrentCollection() collection: SignatureCollectionInfo,
+    @CurrentCollection() collection: SignatureCollection,
   ): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allLists(collection, user)
   }

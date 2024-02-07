@@ -21,3 +21,5 @@ export { PaymentChargeOverviewFormField } from './PaymentChargeOverviewFormField
 export { ImageFormField } from './ImageFormField/ImageFormField'
 export { PdfLinkButtonFormField } from './PdfLinkButtonFormField/PdfLinkButtonFormField'
 export { NationalIdWithNameFormField } from './NationalIdWithNameFormField/NationalIdWithNameFormField'
+export { ActionCardListFormField } from './ActionCardListFormField/ActionCardListFormField'
+export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFormField'

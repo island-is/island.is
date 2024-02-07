@@ -31,14 +31,14 @@ import {
   NO,
   MANUAL,
   SPOUSE,
-  NO_PRIVATE_PENSION_FUND,
-  NO_UNION,
   TransferRightsOption,
   SINGLE,
   FileType,
   NO_MULTIPLE_BIRTHS,
-  NO_UNEMPLOYED_BENEFITS,
   UnEmployedBenefitTypes,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -226,7 +226,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'correctTransferRights',
           'clearEmployers',
           'setIfSelfEmployed',
-          'setIfIsReceivingUnemploymentBenefitsNo',
+          'setIfIsReceivingUnemploymentBenefits',
         ],
         meta: {
           name: States.DRAFT,
@@ -661,10 +661,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           SUBMIT: [
             {
               cond: hasDateOfBirth,
-              target: States.RESIDENCE_GRAND_APPLICATION,
+              target: States.RESIDENCE_GRANT_APPLICATION,
             },
             {
-              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+              target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
         },
@@ -742,10 +742,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           SUBMIT: [
             {
               cond: hasDateOfBirth,
-              target: States.RESIDENCE_GRAND_APPLICATION,
+              target: States.RESIDENCE_GRANT_APPLICATION,
             },
             {
-              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+              target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
         },
@@ -791,43 +791,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      // [States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]: {
-      //   entry: 'assignToVMST',
-      //   meta: {
-      //     status: 'inprogress',
-      //     name: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
-      //     actionCard: {
-      //       description: statesMessages.additionalDocumentRequiredDescription,
-      //     },
-      //     lifecycle: pruneAfterDays(970),
-      //     progress: 0.5,
-      //     roles: [
-      //       {
-      //         id: Roles.APPLICANT,
-      //         formLoader: () =>
-      //           import('../forms/InReviewAdditionalDocumentsRequired').then(
-      //             (val) =>
-      //               Promise.resolve(val.InReviewAdditionalDocumentsRequired),
-      //           ),
-      //         read: 'all',
-      //         write: 'all',
-      //       },
-      //       {
-      //         id: Roles.ORGINISATION_REVIEWER,
-      //         formLoader: () =>
-      //           import('../forms/InReview').then((val) =>
-      //             Promise.resolve(val.InReview),
-      //           ),
-      //         write: 'all',
-      //       },
-      //     ],
-      //   },
-      //   on: {
-      //     [DefaultEvents.EDIT]: {
-      //       target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
-      //     },
-      //   },
-      // },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
         entry: 'assignToVMST',
         exit: 'setActionName',
@@ -880,12 +843,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
         },
       },
-      [States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE]: {
+      [States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE]: {
         entry: ['setPreviousState', 'assignToVMST'],
         exit: 'setPreviousState',
         meta: {
           status: 'inprogress',
-          name: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+          name: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
           actionCard: {
             pendingAction: {
               title: statesMessages.residenceGrantInProgress,
@@ -944,11 +907,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
           APPROVE: {
-            target: States.RESIDENCE_GRAND_APPLICATION,
+            target: States.RESIDENCE_GRANT_APPLICATION,
           },
         },
       },
-      [States.RESIDENCE_GRAND_APPLICATION]: {
+      [States.RESIDENCE_GRANT_APPLICATION]: {
         entry: ['assignToVMST', 'setResidenceGrant'],
         exit: [
           'setParam',
@@ -958,7 +921,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ],
         meta: {
           status: 'inprogress',
-          name: States.RESIDENCE_GRAND_APPLICATION,
+          name: States.RESIDENCE_GRANT_APPLICATION,
 
           actionCard: {
             pendingAction: {
@@ -1024,40 +987,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
-      // [States.RECEIVED]: {
-      //   meta: {
-      //     name: States.RECEIVED,
-      //     actionCard: {
-      //       description: statesMessages.receivedDescription,
-      //     },
-      //     lifecycle: DEPRECATED_DefaultStateLifeCycle,
-      //     progress: 0.8,
-      //     roles: [
-      //       {
-      //         id: Roles.APPLICANT,
-      //         formLoader: () =>
-      //         import('../forms/InReview').then((val) =>
-      //         Promise.resolve(val.InReview),
-      //         ),
-      //         read: 'all',
-      //       },
-      //       {
-      //         id: Roles.ORGINISATION_REVIEWER,
-      //         formLoader: () =>
-      //         import('../forms/InReview').then((val) =>
-      //         Promise.resolve(val.InReview),
-      //         ),
-      //         write: 'all',
-      //       },
-      //     ],
-      //   },
-      //   on: {
-      //     ADDITIONALDOCUMENTSREQUIRED: { target: States.ADDITIONAL_DOCUMENTS_REQUIRED },
-      //     [DefaultEvents.APPROVE]: { target: States.APPROVED },
-      //     [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-      //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS },
-      //   },
-      // },
       [States.APPROVED]: {
         entry: ['assignToVMST', 'removePreviousState'],
         exit: 'setPreviousState',
@@ -1121,11 +1050,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           SUBMIT: [
             {
-              target: States.RESIDENCE_GRAND_APPLICATION,
+              target: States.RESIDENCE_GRANT_APPLICATION,
               cond: hasDateOfBirth,
             },
             {
-              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+              target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
         },
@@ -1269,8 +1198,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -1358,8 +1287,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -1501,8 +1430,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -1531,10 +1460,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           SUBMIT: [
             {
               cond: hasDateOfBirth,
-              target: States.RESIDENCE_GRAND_APPLICATION,
+              target: States.RESIDENCE_GRANT_APPLICATION,
             },
             {
-              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+              target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
         },
@@ -1592,8 +1521,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditsInReview').then((val) =>
-                  Promise.resolve(val.EditsInReview),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -1622,10 +1551,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           SUBMIT: [
             {
               cond: hasDateOfBirth,
-              target: States.RESIDENCE_GRAND_APPLICATION,
+              target: States.RESIDENCE_GRANT_APPLICATION,
             },
             {
-              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+              target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
         },
@@ -1799,8 +1728,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       clearEmployers: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { employers, isSelfEmployed, employerLastSixMonths } =
-          getApplicationAnswers(answers)
+        const {
+          employers,
+          isSelfEmployed,
+          applicationType,
+          employerLastSixMonths,
+          isReceivingUnemploymentBenefits,
+        } = getApplicationAnswers(answers)
 
         if (isSelfEmployed === NO) {
           employers?.forEach((val, i) => {
@@ -1840,6 +1774,22 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
             set(answers, `employers[${i}].companyNationalRegistryId`, '')
           })
+        }
+
+        const hasEmployer =
+          (applicationType === PARENTAL_LEAVE &&
+            isReceivingUnemploymentBenefits !== YES &&
+            isSelfEmployed !== YES) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES)
+
+        if (!hasEmployer) {
+          unset(application.answers, 'employers')
+          unset(
+            application.answers,
+            'fileUpload.employmentTerminationCertificateFile',
+          )
         }
 
         return context
@@ -1992,22 +1942,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (
-          answers.usePrivatePensionFund === NO &&
-          answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND
-        ) {
-          set(
-            application.answers,
-            'payments.privatePensionFund',
-            NO_PRIVATE_PENSION_FUND,
-          )
+        if (answers.usePrivatePensionFund === NO) {
+          unset(application.answers, 'payments.privatePensionFund')
         }
 
-        if (
-          answers.usePrivatePensionFund === NO &&
-          answers.privatePensionFundPercentage !== '0'
-        ) {
-          set(application.answers, 'payments.privatePensionFundPercentage', '0')
+        if (answers.usePrivatePensionFund === NO) {
+          unset(application.answers, 'payments.privatePensionFundPercentage')
         }
 
         return context
@@ -2017,8 +1957,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (answers.useUnion === NO && answers.union !== NO_UNION) {
-          set(application.answers, 'payments.union', NO_UNION)
+        if (answers.useUnion === NO) {
+          unset(application.answers, 'payments.union')
         }
 
         return context
@@ -2267,7 +2207,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { state, answers } = application
         const e = event.type as unknown as any
         if (
-          state === States.RESIDENCE_GRAND_APPLICATION &&
+          state === States.RESIDENCE_GRANT_APPLICATION &&
           e === DefaultEvents.APPROVE
         ) {
           set(answers, 'hasAppliedForReidenceGrant', YES)
@@ -2313,11 +2253,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             'employment.isReceivingUnemploymentBenefits',
             NO,
           )
-          set(
-            application.answers,
-            'employment.unemploymentBenefits',
-            NO_UNEMPLOYED_BENEFITS,
-          )
+          unset(application.answers, 'employment.unemploymentBenefits')
         }
 
         if (isSelfEmployed === NO) {
@@ -2326,17 +2262,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setIfIsReceivingUnemploymentBenefitsNo: assign((context) => {
+      setIfIsReceivingUnemploymentBenefits: assign((context) => {
         const { application } = context
         const { isReceivingUnemploymentBenefits, unemploymentBenefits } =
           getApplicationAnswers(application.answers)
 
         if (isReceivingUnemploymentBenefits === NO) {
-          set(
-            application.answers,
-            'employment.unemploymentBenefits',
-            NO_UNEMPLOYED_BENEFITS,
-          )
+          unset(application.answers, 'employment.unemploymentBenefits')
           unset(application.answers, 'fileUpload.benefitsFile')
         }
 

@@ -29,7 +29,7 @@ export const up = compose(
   }),
   createScope({
     name: '@island.is/signature-collection',
-    displayName: 'Meðmæla söfnun',
+    displayName: 'Meðmælasöfnun',
     description: 'Umsjón með söfnun meðmæla fyrir framboð',
     delegation: {
       custom: true,
