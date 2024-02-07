@@ -172,7 +172,7 @@ air-discount-scheme-backend:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+    DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
@@ -685,13 +685,8 @@ application-system-api:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'application_system_api'
-      DB_REPLICAS_HOST: 'postgres-applications.internal'
-      DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets:
-      DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    secrets: {}
   namespace: 'application-system'
   podDisruptionBudget:
     minAvailable: 1
