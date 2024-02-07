@@ -9,6 +9,7 @@ import { subSectionDelivery } from './subSectionDelivery'
 import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
 import { subSectionSummary } from './subSectionSummary'
 import { Syslumenn } from '../../assets'
+import { subSectionPhone } from './subSectionPhone'
 
 export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -33,6 +34,8 @@ export const draft: Form = buildForm({
         subSectionHealthDeclaration,
         subSectionQualityPhoto,
         subSectionDelivery,
+        subSectionPhone,
+        subSectionHealthDeclaration,
         subSectionSummary,
       ],
     }),

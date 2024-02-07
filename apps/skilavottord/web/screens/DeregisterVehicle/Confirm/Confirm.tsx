@@ -1,7 +1,7 @@
-import React, { FC, useContext, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
+import { useRouter } from 'next/router'
+import React, { FC, useContext, useEffect } from 'react'
 
 import {
   Box,
@@ -16,24 +16,25 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
-import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import {
-  ProcessPageLayout,
+  CarDetailsBox,
   NotFound,
   OutlinedError,
-  CarDetailsBox,
+  ProcessPageLayout,
 } from '@island.is/skilavottord-web/components'
+import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   Mutation,
   Query,
+  RecyclingRequestTypes,
   RequestErrors,
   RequestStatus,
   Role,
-  RecyclingRequestTypes,
 } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
+import { useForm } from 'react-hook-form'
 
 const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
@@ -44,6 +45,7 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
       recyclingRequests {
         nameOfRequestor
       }
+      mileage
     }
   }
 `
@@ -68,7 +70,20 @@ const SkilavottordRecyclingRequestMutation = gql`
   }
 `
 
+const UpdateSkilavottordVehicleMileageMutation = gql`
+  mutation updateSkilavottordVehicleMileage(
+    $permno: String!
+    $mileage: Float!
+  ) {
+    updateSkilavottordVehicleMileage(permno: $permno, mileage: $mileage)
+  }
+`
+
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
+  const { control, watch } = useForm({
+    mode: 'onChange',
+  })
+
   const { user } = useContext(UserContext)
   const {
     t: {
@@ -78,6 +93,8 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   } = useI18n()
   const router = useRouter()
   const { id } = router.query
+
+  const mileageValue = watch('mileage')
 
   const { data, loading } = useQuery<Query>(
     SkilavottordVehicleReadyToDeregisteredQuery,
@@ -105,7 +122,42 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [mutationResponse, router, routes, t.success])
 
+  const [
+    setVehicleRequest,
+    {
+      data: vehicleMutationData,
+      error: vehicleMutationError,
+      loading: vehicleMutationLoading,
+    },
+  ] = useMutation<Mutation>(UpdateSkilavottordVehicleMileageMutation, {
+    onError() {
+      return vehicleMutationError
+    },
+  })
+
+  const vehicleMutationResponse = vehicleMutationData?.createSkilavottordVehicle
+
+  useEffect(() => {
+    if (vehicleMutationResponse as boolean) {
+      router.replace(routes.baseRoute).then(() => toast.success(t.success))
+    }
+  }, [vehicleMutationResponse, router, routes, t.success])
+
   const handleConfirm = () => {
+    if (mileageValue !== undefined) {
+      const newMilage = +mileageValue.trim().replace(/\./g, '')
+
+      // If registered mileage is not the same as the one when vehicle is confirmed for de-registration we need to update it
+      if (vehicle?.mileage !== newMilage) {
+        setVehicleRequest({
+          variables: {
+            permno: vehicle?.vehicleId,
+            mileage: newMilage,
+          },
+        })
+      }
+    }
+
     setRecyclingRequest({
       variables: {
         permno: id,
@@ -127,11 +179,14 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   if (
     mutationError ||
     mutationLoading ||
-    (mutationResponse as RequestErrors)?.message
+    (mutationResponse as RequestErrors)?.message ||
+    vehicleMutationError ||
+    vehicleMutationLoading ||
+    (vehicleMutationResponse as boolean)
   ) {
     return (
       <ProcessPageLayout processType={'company'} activeSection={1}>
-        {mutationLoading ? (
+        {mutationLoading || vehicleMutationLoading ? (
           <Box textAlign="center">
             <Stack space={4}>
               <Text variant="h1">{t.titles.loading}</Text>
@@ -174,6 +229,9 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 vehicle.recyclingRequests &&
                 vehicle.recyclingRequests[0].nameOfRequestor
               }
+              mileage={vehicle.mileage || 0}
+              control={control}
+              showMileage
             />
           </Stack>
         ) : (
@@ -192,7 +250,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 <BulletList type="ul">
                   <Bullet>
                     {t.info.notfound}
-                    <Text variant="h5">skilavottord.island.is/my-cars</Text>
+                    <Text variant="h5">island.is/umsoknir/skilavottord</Text>
                   </Bullet>
                 </BulletList>
               </Stack>

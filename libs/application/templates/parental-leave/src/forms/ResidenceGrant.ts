@@ -1,14 +1,16 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
+  buildImageField,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
 
+import WomanWithLaptopIllustration from '../assets/Images/WomanWithLaptopIllustration'
+import WomanWithPhoneIllustration from '../assets/Images/WomanWithPhoneIllustration'
 import Logo from '../assets/Logo'
 import { FILE_SIZE_LIMIT } from '../constants'
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -41,14 +43,15 @@ export const ResidenceGrant: Form = buildForm({
                 parentalLeaveFormMessages.residenceGrantMessage
                   .residenceGrantPeriodDescriptionLineTwo,
             }),
-            buildCustomField({
+            buildImageField({
               id: 'imagefield.submit',
               title: '',
-              defaultValue: 2,
-              component: 'ImageField',
+              image: WomanWithPhoneIllustration,
+              imageWidth: 'auto',
             }),
           ],
         }),
+
         buildFileUploadField({
           id: 'fileUpload.residenceGrant',
           title:
@@ -61,7 +64,8 @@ export const ResidenceGrant: Form = buildForm({
           maxSizeErrorText: '',
           uploadAccept: '.pdf',
           uploadHeader: '',
-          uploadDescription: '',
+          uploadDescription:
+            parentalLeaveFormMessages.selfEmployed.uploadDescription,
           uploadButtonLabel:
             parentalLeaveFormMessages.selfEmployed.attachmentButton,
         }),
@@ -92,11 +96,11 @@ export const ResidenceGrant: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField({
-              id: 'imagefield.submit',
+            buildImageField({
+              id: 'residenceGrantApplicationNoBirthDate.image',
               title: '',
-              defaultValue: 1,
-              component: 'ImageField',
+              image: WomanWithLaptopIllustration,
+              imageWidth: 'auto',
             }),
           ],
         }),

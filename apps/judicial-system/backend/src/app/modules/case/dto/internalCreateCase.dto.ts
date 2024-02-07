@@ -1,6 +1,7 @@
 import {
   ArrayMinSize,
   IsArray,
+  IsBoolean,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -25,8 +26,8 @@ export class InternalCreateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
-  readonly prosecutorNationalId?: string
+  @ApiProperty()
+  readonly prosecutorNationalId!: string
 
   @IsNotEmpty()
   @IsString()
@@ -57,4 +58,9 @@ export class InternalCreateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly leadInvestigator?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isHeightenedSecurityLevel?: boolean
 }

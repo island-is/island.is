@@ -2,18 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Operators API developed in .Net6.0 - Release-8 : 20230124.1",
+    "description": "Operators API developed in .Net7.0 - Release-10 : 20231211.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "3.0"
   },
-  "servers": [
-    {
-      "url": "/vehicle/operators"
-    }
-  ],
+  "servers": [{ "url": "/vehicle/operators" }],
   "paths": {
     "/authenticate": {
       "post": {
@@ -24,43 +20,29 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             }
           }
         },
@@ -69,39 +51,25 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
+              "text/json": { "schema": { "$ref": "#/components/schemas/User" } }
             }
           },
           "401": {
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -116,29 +84,21 @@
             "name": "permno",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "responses": {
@@ -148,25 +108,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               }
             }
@@ -175,19 +129,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -203,38 +151,27 @@
             "name": "permno",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "operatorserialnumber",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "responses": {
@@ -244,25 +181,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               }
             }
@@ -271,19 +202,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -298,46 +223,33 @@
             "name": "permno",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "persidno",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "operatorserialnumber",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "responses": {
@@ -345,19 +257,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
-                }
+                "schema": { "$ref": "#/components/schemas/OperatorDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
-                }
+                "schema": { "$ref": "#/components/schemas/OperatorDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OperatorDto"
-                }
+                "schema": { "$ref": "#/components/schemas/OperatorDto" }
               }
             }
           },
@@ -365,19 +271,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -392,29 +292,21 @@
             "name": "permno",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "responses": {
@@ -424,25 +316,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OperatorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OperatorDto" }
                 }
               }
             }
@@ -451,19 +337,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -479,20 +359,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "requestBody": {
@@ -526,25 +400,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               }
             }
@@ -573,19 +441,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -593,19 +455,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -621,20 +477,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "requestBody": {
@@ -687,19 +537,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -707,19 +551,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -735,20 +573,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "requestBody": {
@@ -782,49 +614,35 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               }
             }
           },
-          "204": {
-            "description": "No Content"
-          },
+          "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -832,19 +650,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -860,20 +672,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "3.0"
-            }
+            "schema": { "type": "string", "default": "3.0" }
           }
         ],
         "requestBody": {
@@ -902,26 +708,18 @@
         },
         "responses": {
           "200": { "description": "" },
-          "204": {
-            "description": "No Content"
-          },
+          "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -929,19 +727,13 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -955,14 +747,8 @@
         "required": ["password", "username"],
         "type": "object",
         "properties": {
-          "username": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "password": {
-            "minLength": 1,
-            "type": "string"
-          }
+          "username": { "minLength": 1, "type": "string" },
+          "password": { "minLength": 1, "type": "string" }
         },
         "additionalProperties": false
       },
@@ -1039,6 +825,14 @@
             "type": "string",
             "description": "Reporting person's social security number"
           },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Vehicle mileage status",
+            "format": "int32",
+            "nullable": true
+          },
           "contract": {
             "minLength": 1,
             "type": "string",
@@ -1064,6 +858,14 @@
             "type": "string",
             "description": "End date",
             "format": "date-time"
+          },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Vehicle mileage status",
+            "format": "int32",
+            "nullable": true
           },
           "reportingPersonIdNumber": {
             "maxLength": 10,
@@ -1147,6 +949,14 @@
             "type": "string",
             "description": "Person id of reporter"
           },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Vehicle mileage status",
+            "format": "int32",
+            "nullable": true
+          },
           "operators": {
             "type": "array",
             "items": {
@@ -1193,6 +1003,14 @@
             "description": "Only try operator change, do not commit changes",
             "nullable": true
           },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Vehicle mileage status",
+            "format": "int32",
+            "nullable": true
+          },
           "operators": {
             "type": "array",
             "items": {
@@ -1208,27 +1026,11 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1240,18 +1042,9 @@
             "format": "int32",
             "nullable": true
           },
-          "warnSever": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorMess": {
-            "type": "string",
-            "nullable": true
-          },
-          "permno": {
-            "type": "string",
-            "nullable": true
-          },
+          "warnSever": { "type": "string", "nullable": true },
+          "errorMess": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true },
           "warningSerialNumber": {
             "type": "integer",
             "format": "int32",
@@ -1263,79 +1056,29 @@
       "User": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedUserName": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedEmail": {
-            "type": "string",
-            "nullable": true
-          },
-          "emailConfirmed": {
-            "type": "boolean"
-          },
-          "passwordHash": {
-            "type": "string",
-            "nullable": true
-          },
-          "securityStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "concurrencyStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumberConfirmed": {
-            "type": "boolean"
-          },
-          "twoFactorEnabled": {
-            "type": "boolean"
-          },
+          "id": { "type": "string", "nullable": true },
+          "userName": { "type": "string", "nullable": true },
+          "normalizedUserName": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "normalizedEmail": { "type": "string", "nullable": true },
+          "emailConfirmed": { "type": "boolean" },
+          "passwordHash": { "type": "string", "nullable": true },
+          "securityStamp": { "type": "string", "nullable": true },
+          "concurrencyStamp": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "phoneNumberConfirmed": { "type": "boolean" },
+          "twoFactorEnabled": { "type": "boolean" },
           "lockoutEnd": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "lockoutEnabled": {
-            "type": "boolean"
-          },
-          "accessFailedCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "username": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "nullable": true
-          },
-          "jwtToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "type": "string",
-            "nullable": true
-          }
+          "lockoutEnabled": { "type": "boolean" },
+          "accessFailedCount": { "type": "integer", "format": "int32" },
+          "username": { "type": "string", "nullable": true },
+          "password": { "type": "string", "nullable": true },
+          "jwtToken": { "type": "string", "nullable": true },
+          "role": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       }
@@ -1349,9 +1092,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

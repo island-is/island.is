@@ -18,7 +18,6 @@ import {
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
-import { m } from '../lib/messages'
 import { ApiActions } from './constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { DoctorsNoteApi } from '../dataProviders'

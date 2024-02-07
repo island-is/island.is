@@ -4,7 +4,6 @@ import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { NotificationType } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -19,9 +18,12 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
+import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import {
+  formatDateForServer,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 

@@ -5,14 +5,11 @@ import { FetchResult, MutationFunctionOptions } from '@apollo/client'
 import { Exact } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
-  CaseDecision,
-  CaseState,
-  CaseType,
   isAcceptingCaseDecision,
-  isCourtRole,
+  isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonSystemUser,
   isRestrictionCase,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -25,14 +22,19 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
-import { RequestSignatureInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseDecision,
+  CaseState,
+  CaseType,
+  RequestSignatureInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { RequestCourtRecordSignatureMutation } from '../../requestCourtRecordSignature.generated'
 
 function showCustodyNotice(
-  type: CaseType,
-  state: CaseState,
-  decision?: CaseDecision,
+  type?: CaseType | null,
+  state?: CaseState | null,
+  decision?: CaseDecision | null,
 ) {
   return (
     (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
@@ -79,11 +81,11 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box marginBottom={10}>
-      <Text as="h3" variant="h3" marginBottom={3}>
+      <Text as="h3" variant="h3" marginBottom={1}>
         {formatMessage(m.caseDocuments)}
       </Text>
       <Box marginBottom={2}>
-        {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
+        {!isPrisonSystemUser(user) && (
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}
@@ -115,7 +117,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
                 signatory={workingCase.courtRecordSignatory.name}
                 signingDate={workingCase.courtRecordSignatureDate}
               />
-            ) : user?.role && isCourtRole(user.role) ? (
+            ) : isDistrictCourtUser(user) ? (
               <Button
                 size="small"
                 data-testid="signCourtRecordButton"
@@ -131,7 +133,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
               <Text>{formatMessage(m.unsignedDocument)}</Text>
             ))}
         </PdfButton>
-        {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
+        {!isPrisonSystemUser(user) && (
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}
@@ -144,7 +146,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
                   signatory={workingCase.judge?.name}
                   signingDate={workingCase.rulingSignatureDate}
                 />
-              ) : user && user.id === workingCase.judge?.id ? (
+              ) : user?.id === workingCase.judge?.id ? (
                 <Button
                   size="small"
                   loading={isRequestingRulingSignature}

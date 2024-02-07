@@ -38,7 +38,7 @@ export const serviceSetup =
           public: true,
         },
       })
-      .readiness('/liveness')
+      .readiness('/health/check')
       .liveness('/liveness')
       .resources({
         limits: {

@@ -9,6 +9,7 @@ import {
   FamilyStatus,
   AidType,
   UserType,
+  ApplicationHeaderSortByEnum,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -32,6 +33,19 @@ export interface CreateFilesResponse {
   files?: ApplicationFile[]
 }
 
+export interface CreateMunicipalityApiUser {
+  name: string
+  municipalityCode: string
+  apiKey: string
+}
+export interface MunicipalityApiUser {
+  id: string
+  name: string
+  municipalityCode: string
+  apiKey: string
+  created: string
+  modified: string
+}
 export interface Staff {
   id: string
   nationalId: string
@@ -155,6 +169,16 @@ export interface UpdateAdmin {
   name: string
   municipalityIds: string[]
 }
+export interface UpdatedApiKeysForMunicipality {
+  name: string
+  id: string
+}
+export interface ApiKeysForMunicipality {
+  name: string
+  apiKey: string
+  municipalityCode: string
+  id: string
+}
 
 export interface Municipality {
   id: string
@@ -173,6 +197,7 @@ export interface Municipality {
   navUrl?: string
   navUsername?: string
   navPassword?: string
+  apiKeyInfo?: ApiKeysForMunicipality
 }
 
 export interface UpdateMunicipalityActivity {
@@ -363,9 +388,11 @@ export interface ServiceCenter {
   active?: boolean
   link?: string
 }
-
+export interface SortableTableHeaderProps {
+  sortBy: ApplicationHeaderSortByEnum
+  title: string
+}
 export interface TableHeadersProps {
-  filterBy?: string
   title: string
 }
 
@@ -398,7 +425,13 @@ export interface ApplicationProfileInfo {
   fullWidth?: boolean
 }
 
+export interface StaffList {
+  name: string
+  nationalId: string
+}
 export interface ApplicationPagination {
   applications: Application[]
   totalCount: number
+  staffList: StaffList[]
+  minDateCreated?: string
 }

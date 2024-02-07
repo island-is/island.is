@@ -16,6 +16,7 @@ import {
   Secrets,
   ServiceDefinition,
   XroadConfig,
+  PodDisruptionBudget,
 } from './types/input-types'
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
@@ -52,6 +53,7 @@ export class ServiceBuilder<ServiceType> {
       xroadConfig: [],
       files: [],
       volumes: [],
+      // podDisruptionBudget: {},
     }
   }
 
@@ -166,6 +168,15 @@ export class ServiceBuilder<ServiceType> {
   }
 
   /**
+   * PodDisruptionBudget is a Kubernetes resource that ensures that a minimum number of pods are available at any given time. It is used to prevent Kubernetes from killing all pods of a service at once. Mapped to a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
+   * @param pdb PodDisruptionBudget definitions
+   */
+  podDisruption(pdb: PodDisruptionBudget) {
+    this.serviceDef.podDisruptionBudget = pdb
+    return this
+  }
+
+  /**
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions
    */
@@ -182,6 +193,7 @@ export class ServiceBuilder<ServiceType> {
         'For multiple init containers, you must set a unique name for each container.',
       )
     }
+
     this.serviceDef.initContainers = {
       envs: {},
       secrets: {},

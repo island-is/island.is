@@ -1,5 +1,5 @@
 import { expect, Page } from '@playwright/test'
-import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
+import { urls, shouldSkipNavigation } from './urls'
 import { debug } from './utils'
 
 export type CognitoCreds = {
@@ -31,7 +31,8 @@ export const cognitoLogin = async (
   await passwordInput.selectText()
   await passwordInput.type(password)
   await cognito.locator('input[name="signInSubmitButton"]:visible').click()
-  if (home === JUDICIAL_SYSTEM_HOME_URL) {
+
+  if (shouldSkipNavigation(home)) {
     return
   }
   await page.waitForURL(new RegExp(`${home}|${authUrl}`))

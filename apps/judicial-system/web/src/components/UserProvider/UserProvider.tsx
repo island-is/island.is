@@ -3,14 +3,13 @@ import Cookies from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import {
-  isAppealsCourtUser,
+  isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
-  type User as TUser,
 } from '@island.is/judicial-system/types'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { useGetCurrentUserQuery } from './getCurrentUser.generated'
+import { useCurrentUserQuery } from './currentUser.generated'
 
 interface UserProvider {
   isAuthenticated?: boolean
@@ -34,7 +33,7 @@ export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
-  const { data } = useGetCurrentUserQuery({
+  const { data } = useCurrentUserQuery({
     skip: !isAuthenticated || Boolean(user),
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -54,9 +53,9 @@ export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
         isAuthenticated,
         limitedAccess:
           user && // Needed for e2e tests as they do not have a logged in user
-          !isProsecutionUser(user as TUser) &&
-          !isDistrictCourtUser(user as TUser) &&
-          !isAppealsCourtUser(user as TUser),
+          !isProsecutionUser(user) &&
+          !isDistrictCourtUser(user) &&
+          !isCourtOfAppealsUser(user),
         user,
       }}
     >

@@ -1,11 +1,9 @@
 import gql from 'graphql-tag'
 
+import { htmlFields } from './fragments'
+
 export const GET_GENERIC_OVERVIEW_PAGE_QUERY = gql`
-  fragment HtmlFields on Html {
-    __typename
-    id
-    document
-  }
+  ${htmlFields}
   query GetGenericOverviewPage($input: GetGenericOverviewPageInput!) {
     getGenericOverviewPage(input: $input) {
       id

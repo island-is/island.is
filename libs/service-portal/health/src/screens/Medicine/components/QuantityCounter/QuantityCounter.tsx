@@ -1,5 +1,4 @@
 import { Box, Text, Icon } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
 import * as styles from './QuantityCounter.css'
 
 type Props = {

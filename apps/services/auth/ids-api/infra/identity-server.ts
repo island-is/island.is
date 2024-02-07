@@ -78,11 +78,16 @@ export const serviceSetup = (services: {
         prod: 'https://service-portal-api.internal.island.is',
       },
       Application__MinCompletionPortThreads: '10',
-      NO_UPDATE_NOTIFIER: 'true',
       ContentfulSettings__BaseAddress: {
         dev: 'https://preview.contentful.com',
         staging: 'https://cdn.contentful.com',
         prod: 'https://cdn.contentful.com',
+      },
+      Application__AllowedRedirectUris: {
+        dev: 'https://beta.dev01.devland.is/minarsidur,https://beta.dev01.devland.is/umsoknir,http://localhost:4200/minarsidur,http://localhost:4242/umsoknir',
+        staging:
+          'https://beta.staging01.devland.is/minarsidur,https://beta.staging01.devland.is/umsoknir',
+        prod: 'https://island.is/minarsidur,https://island.is/umsoknir',
       },
     })
     .secrets({
@@ -99,6 +104,10 @@ export const serviceSetup = (services: {
       FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       ContentfulSettings__AccessToken:
         '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
+      Redaction__UserIdentifiers__KeyId:
+        '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID',
+      Redaction__UserIdentifiers__Key:
+        '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY',
     })
     .ingress({
       primary: {

@@ -3,12 +3,14 @@ import {
   Configuration,
   DomainsApi,
   MeDelegationsApi,
+  MeLoginRestrictionsApi,
   ScopesApi,
 } from '../../gen/fetch'
 import { ApiConfiguration } from './api-configuration'
 
 export const exportedApis = [
   MeDelegationsApi,
+  MeLoginRestrictionsApi,
   DomainsApi,
   ClientsApi,
   ScopesApi,

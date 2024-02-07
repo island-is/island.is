@@ -11,4 +11,7 @@ bootstrap({
   port: env.port,
   enableVersioning: true,
   globalPrefix: 'backend',
+  healthCheck: {
+    database: true,
+  },
 })

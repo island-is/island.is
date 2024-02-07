@@ -10,6 +10,7 @@ export const documentByMetaDataQuery = ({
   page = 1,
   size = 10,
   date,
+  releaseDate,
 }: DocumentByMetaDataInput) => {
   const must = []
 
@@ -33,6 +34,17 @@ export const documentByMetaDataQuery = ({
         dateCreated: {
           gte: date.from,
           lte: date.to,
+        },
+      },
+    })
+  }
+
+  if (releaseDate) {
+    must.push({
+      range: {
+        releaseDate: {
+          gte: releaseDate.from,
+          lte: releaseDate.to,
         },
       },
     })

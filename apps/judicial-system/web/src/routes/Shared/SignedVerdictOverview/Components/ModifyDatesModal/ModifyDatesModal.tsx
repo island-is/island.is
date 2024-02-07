@@ -21,11 +21,9 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  TempCase as Case,
-  TempUpdateCase as UpdateCase,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface DateTime {
@@ -45,9 +43,9 @@ export const createCaseModifiedExplanation = (
   formatMessage: IntlShape['formatMessage'],
   previousExplaination: string | null | undefined,
   nextExplanation: string,
-  userName?: string,
-  userTitle?: string,
-  institutionName?: string,
+  userName?: string | null,
+  userTitle?: string | null,
+  institutionName?: string | null,
 ): string => {
   const now = new Date()
   const history = previousExplaination
@@ -69,7 +67,7 @@ const getModificationSuccessText = (
   modifiedValidToDate: DateTime | undefined,
   modifiedIsolationToDate: DateTime | undefined,
   formatMessage: IntlShape['formatMessage'],
-  userRole?: UserRole,
+  userRole?: UserRole | null,
 ) => {
   let modification = ''
 
@@ -191,6 +189,7 @@ const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
     if (!modifiedValidToDate?.value) return
 
     if (
+      workingCase.type &&
       [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
         workingCase.type,
       )

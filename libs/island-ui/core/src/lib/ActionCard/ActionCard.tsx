@@ -3,67 +3,17 @@ import * as React from 'react'
 import type { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
-import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
-import { Tag, TagVariant } from '../Tag/Tag'
+import { Button } from '../Button/Button'
+import { Tag } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Inline } from '../Inline/Inline'
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
-import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
-
-export type ActionCardProps = {
-  date?: string
-  heading?: string
-  headingVariant?: 'h3' | 'h4'
-  text?: string
-  eyebrow?: string
-  backgroundColor?: 'white' | 'blue' | 'red'
-  focused?: boolean
-  tag?: {
-    label: string
-    variant?: TagVariant
-    outlined?: boolean
-  }
-  cta: {
-    label: string
-    /** Allows for simple variant configuration of the button. If buttonType is defined it will supersede this property. */
-    variant?: ButtonTypes['variant']
-    /** Allows for full buttonType control. Supersedes the variant property when both are defined. */
-    buttonType?: ButtonTypes
-    size?: ButtonSizes
-    icon?: IconType
-    iconType?: 'filled' | 'outline'
-    onClick?: () => void
-    disabled?: boolean
-  }
-  secondaryCta?: {
-    label: string
-    visible?: boolean
-    size?: ButtonSizes
-    icon?: IconType
-    onClick?: () => void
-    disabled?: boolean
-  }
-  unavailable?: {
-    active?: boolean
-    label?: string
-    message?: string
-  }
-  avatar?: boolean
-  deleteButton?: {
-    visible?: boolean
-    onClick?: () => void
-    disabled?: boolean
-    icon?: IconType
-    dialogTitle?: string
-    dialogDescription?: string
-    dialogConfirmLabel?: string
-    dialogCancelLabel?: string
-  }
-}
+import { ProgressMeter } from '../ProgressMeter/ProgressMeter'
+import { ActionCardProps } from './types'
 
 const defaultCta = {
   variant: 'primary',
@@ -107,6 +57,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   deleteButton: _delete,
   avatar,
   focused = false,
+  progressMeter,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const tag = { ...defaultTag, ..._tag }
@@ -369,6 +320,28 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
+      {progressMeter && (
+        <Box marginTop={2}>
+          <ProgressMeter
+            progress={
+              Number(
+                (
+                  progressMeter.currentProgress / progressMeter.maxProgress
+                ).toFixed(1),
+              ) < 1
+                ? Number(
+                    (
+                      progressMeter.currentProgress / progressMeter.maxProgress
+                    ).toFixed(1),
+                  )
+                : 1
+            }
+            withLabel={progressMeter.withLabel}
+            labelMin={progressMeter.currentProgress}
+            labelMax={progressMeter.maxProgress}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

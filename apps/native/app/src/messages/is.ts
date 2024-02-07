@@ -13,6 +13,11 @@ export const is = {
   'login.networkErrorTitle': 'Villa kom upp',
   'login.networkErrorMessage':
     '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
+  'login.expiredTitle': 'Innskráning útrunnin',
+  'login.expiredScopesMessage':
+    'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMissingUserMessage':
+    'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -131,6 +136,7 @@ export const is = {
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
   'user.natreg.religion': 'Trú- eða lífsskoðunarfélag',
+  'user.natreg.settingsButton': 'Fara í stillingar',
 
   // home
   'home.screenTitle': 'Yfirlit',
@@ -146,6 +152,10 @@ export const is = {
     'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á',
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
+  'home.vehicleModule.summary':
+    'Skrá kílómetrastöðu  rafmagns- og tengiltvinnbíla',
+  'home.vehicleModule.button': 'Mín ökutæki',
+  'button.seeAll': 'Sjá allt',
 
   // inbox
   'inbox.screenTitle': 'Pósthólf',
@@ -187,6 +197,8 @@ export const is = {
   'vehicles.emptyListTitle': 'Engin ökutæki finnast fyrir notanda',
   'vehicles.emptyListDescription':
     'Ökutæki sem eru skráð á þig munu birtast hér.',
+  'vehicles.nextInspectionLabel': 'Næsta skoðun {date}',
+  'vehicles.mileageRequired': 'Skrá þarf kílómetrastöðu',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
@@ -210,6 +222,29 @@ export const is = {
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
+
+  // vehicle mileage
+  'vehicle.mileage.errorTitle': 'Villa',
+  'vehicle.mileage.errorMileageInputTooLow':
+    'Innslegin kílómetrastaða er of lág',
+  'vehicle.mileage.errorMileageInputTooHigh':
+    'Innslegin kílómetrastaða er of há',
+  'vehicle.mileage.errorFailedToUpdate':
+    'Ekki virðist hafa tekist að uppfæra kílómetrastöðu. Vinsamlegast reynið síðar.',
+  'vehicle.mileage.successTitle': 'Kílómetrastaða uppfærð',
+  'vehicle.mileage.successMessage': 'Kílómetrastaða hefur verið uppfærð.',
+  'vehicle.mileage.promptEditTitle': 'Breyta kílómetrastöðu',
+  'vehicle.mileage.promptEditButton': 'Senda inn breytingu',
+  'vehicle.mileage.promptCancelButton': 'Hætta við',
+  'vehicle.mileage.inputPlaceholder': 'Sláðu inn núverandi kílómetrastöðu',
+  'vehicle.mileage.inputLabel': 'Skrá kílómetrastöðu',
+  'vehicle.mileage.inputSubmitButton': 'Skrá',
+  'vehicle.mileage.registerIntervalCopy':
+    'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',
+  'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á Ísland.is',
+  'vehicle.mileage.historyTitle': 'Skráningar',
+  'vehicle.mileage.editRecordButton': 'Breyta færslu',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
@@ -435,4 +470,4 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
-};
+}

@@ -10,22 +10,22 @@ export const resolvers: Resolvers = {
 
   Query: {
     rightsPortalCopaymentStatus: () => {
-      return store.rightsPortalCopaymentStatus
+      return store.getCopaymentStatus
     },
     rightsPortalCopaymentPeriods: () => {
-      return store.copaymentPeriods
+      return store.getCopaymentPeriods
     },
     rightsPortalCopaymentBills: () => {
-      return store.copaymentPeriodBills
+      return store.getCopaymentBills
     },
-    rightsPortalPaymentOverviewBills: () => {
-      return store.paymentOverviewBills
+    rightsPortalPaymentOverview: () => {
+      return store.getPaymentOverview
     },
-    rightsPortalPaymentOverviewStatus: () => {
-      return store.paymentOverviewStatus
+    rightsPortalPaymentOverviewServiceTypes: () => {
+      return store.getPaymentOverviewServiceTypes
     },
     rightsPortalPaymentOverviewDocument: () => {
-      return store.paymentOverviewDocument
+      return store.getPaymentOverviewDocument
     },
   },
 }

@@ -12,13 +12,13 @@ import {
 import { Answers, AssetFormField } from '../../types'
 
 import { m } from '../../lib/messages'
-import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
 import { InputController } from '@island.is/shared/form-fields'
+import { getEstateDataFromApplication } from '../../lib/utils'
 
 export const RealEstateRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
-> = ({ application, field, errors }) => {
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
@@ -28,19 +28,17 @@ export const RealEstateRepeater: FC<
 
   const { clearErrors } = useFormContext()
 
-  const externalData = application.externalData.syslumennOnEntry?.data as {
-    estate: { assets: EstateAsset[] }
-  }
+  const estateData = getEstateDataFromApplication(application)
 
   useEffect(() => {
-    if (fields.length === 0 && externalData.estate.assets) {
-      replace(externalData.estate.assets)
+    if (fields.length === 0 && estateData.estate?.assets) {
+      replace(estateData.estate.assets)
     }
   }, [])
 
   const handleAddProperty = () =>
     append({
-      share: 1,
+      share: 100,
       assetNumber: undefined,
       description: undefined,
       marketValue: undefined,
@@ -54,7 +52,6 @@ export const RealEstateRepeater: FC<
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           const fieldError = error && error[index] ? error[index] : null
-
           if (!asset.initial) {
             return acc
           }
@@ -71,7 +68,7 @@ export const RealEstateRepeater: FC<
                 description={[
                   `${formatMessage(m.propertyNumber)}: ${asset.assetNumber}`,
                   asset.share
-                    ? `${formatMessage(m.propertyShare)}: ${asset.share * 100}%`
+                    ? `${formatMessage(m.propertyShare)}: ${asset.share}%`
                     : '',
                   <Box marginTop={1} as="span">
                     <Button

@@ -17,7 +17,7 @@ export interface UpdateIndictmentCount
     UpdateIndictmentCountInput,
     'caseId' | 'indictmentCountId' | 'substances'
   > {
-  substances?: SubstanceMap
+  substances?: SubstanceMap | null
 }
 
 const useIndictmentCounts = () => {

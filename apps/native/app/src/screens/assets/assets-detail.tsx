@@ -1,59 +1,59 @@
-import React from 'react';
-import {useIntl} from 'react-intl';
-import {ScrollView, View} from 'react-native';
-import {testIDs} from '../../utils/test-ids';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import {Divider, Input, InputRow, NavigationBarSheet} from '@ui';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {useQuery} from '@apollo/client';
-import {client} from '../../graphql/client';
-import {GET_SINGLE_PROPERTY_QUERY} from '../../graphql/queries/get-single-property-query';
+import { Divider, Input, InputRow, NavigationBarSheet } from '@ui'
+import React from 'react'
+import { useIntl } from 'react-intl'
+import { ScrollView, View } from 'react-native'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
+import { useGetAssetQuery } from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { testIDs } from '../../utils/test-ids'
 
-const {getNavigationOptions, useNavigationOptions} =
+const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
       visible: false,
     },
-  }));
+  }))
 
-export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
+export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
   componentId,
   item,
 }) => {
-  useNavigationOptions(componentId);
+  useNavigationOptions(componentId)
 
-  const {data, loading, error} = useQuery(GET_SINGLE_PROPERTY_QUERY, {
-    client,
+  const { data, loading, error } = useGetAssetQuery({
     fetchPolicy: 'cache-first',
     variables: {
       input: {
-        assetId: item?.propertyNumber,
+        assetId: item?.propertyNumber ?? '',
       },
     },
-  });
+  })
 
-  const intl = useIntl();
-  const isError = !!error;
-  const isLoading = loading;
+  const intl = useIntl()
+  const isError = !!error
+  const isLoading = loading
 
-  const appraisal = data?.assetsDetail?.appraisal;
-  const unitsOfUse = data?.assetsDetail?.unitsOfUse;
+  const appraisal = data?.assetsDetail?.appraisal
+  const unitsOfUse = data?.assetsDetail?.unitsOfUse
 
   return (
-    <View style={{flex: 1}} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
       <NavigationBarSheet
         componentId={componentId}
         title={item?.defaultAddress?.displayShort}
         onClosePress={() => Navigation.dismissModal(componentId)}
-        style={{marginHorizontal: 16}}
+        style={{ marginHorizontal: 16 }}
       />
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{ flex: 1 }}>
         <View>
           <InputRow>
             <Input
               loading={isLoading}
               error={isError}
-              label={intl.formatMessage({id: 'assetsDetail.propertyNumber'})}
+              label={intl.formatMessage({ id: 'assetsDetail.propertyNumber' })}
               value={item?.propertyNumber}
               size="big"
               noBorder
@@ -65,10 +65,14 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
               loading={isLoading}
               error={isError}
               label={intl.formatMessage(
-                {id: 'assetsDetail.activeAppraisal'},
-                {activeYear: appraisal?.activeYear},
+                { id: 'assetsDetail.activeAppraisal' },
+                { activeYear: appraisal?.activeYear },
               )}
-              value={`${intl.formatNumber(appraisal?.activeAppraisal)} kr.`}
+              value={
+                appraisal?.activeAppraisal
+                  ? `${intl.formatNumber(appraisal?.activeAppraisal)} kr.`
+                  : '-'
+              }
               size="big"
               noBorder
               isCompact
@@ -77,26 +81,32 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
               loading={isLoading}
               error={isError}
               label={intl.formatMessage(
-                {id: 'assetsDetail.plannedAppraisal'},
-                {plannedYear: appraisal?.plannedYear},
+                { id: 'assetsDetail.plannedAppraisal' },
+                { plannedYear: appraisal?.plannedYear },
               )}
-              value={`${intl.formatNumber(appraisal?.plannedAppraisal)} kr.`}
+              value={
+                appraisal?.plannedAppraisal
+                  ? `${intl.formatNumber(appraisal?.plannedAppraisal)} kr.`
+                  : '-'
+              }
               size="big"
               noBorder
               isCompact
             />
           </InputRow>
 
-          <Divider spacing={2} style={{marginHorizontal: 16}} />
+          <Divider spacing={2} style={{ marginHorizontal: 16 }} />
 
-          {unitsOfUse?.unitsOfUse.map((unit: any, index: number) => {
+          {(unitsOfUse?.unitsOfUse ?? []).map((unit, index) => {
             return (
               <View key={`${unit?.propertyNumber}-${index}`}>
                 <InputRow>
                   <Input
                     loading={isLoading}
                     error={isError}
-                    label={intl.formatMessage({id: 'assetsDetail.explanation'})}
+                    label={intl.formatMessage({
+                      id: 'assetsDetail.explanation',
+                    })}
                     value={unit?.explanation}
                     noBorder
                     isCompact
@@ -104,7 +114,9 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                   <Input
                     loading={isLoading}
                     error={isError}
-                    label={intl.formatMessage({id: 'assetsDetail.displaySize'})}
+                    label={intl.formatMessage({
+                      id: 'assetsDetail.displaySize',
+                    })}
                     value={`${unit?.displaySize} m²`}
                     noBorder
                     isCompact
@@ -125,8 +137,10 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                   <Input
                     loading={isLoading}
                     error={isError}
-                    label={intl.formatMessage({id: 'assetsDetail.postNumber'})}
-                    value={unit?.address?.postNumber}
+                    label={intl.formatMessage({
+                      id: 'assetsDetail.postNumber',
+                    })}
+                    value={String(unit?.address?.postNumber ?? '-')}
                     noBorder
                     isCompact
                   />
@@ -148,22 +162,22 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                   <Input
                     loading={isLoading}
                     error={isError}
-                    label={intl.formatMessage({id: 'assetsDetail.marking'})}
+                    label={intl.formatMessage({ id: 'assetsDetail.marking' })}
                     value={unit?.marking}
                     noBorder
                     isCompact
                   />
                 </InputRow>
-                {index + 1 < unitsOfUse?.unitsOfUse.length && (
-                  <Divider spacing={2} style={{marginHorizontal: 16}} />
+                {index + 1 < (unitsOfUse?.unitsOfUse ?? []).length && (
+                  <Divider spacing={2} style={{ marginHorizontal: 16 }} />
                 )}
               </View>
-            );
+            )
           })}
         </View>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-AssetsDetailScreen.options = getNavigationOptions;
+AssetsDetailScreen.options = getNavigationOptions

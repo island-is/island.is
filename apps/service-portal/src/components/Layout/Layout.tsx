@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import Header from '../Header/Header'
-import { ToastContainer, NavigationItem, Box } from '@island.is/island-ui/core'
+import { ToastContainer } from '@island.is/island-ui/core'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import { useLocation } from 'react-router-dom'
 import { useNamespaces } from '@island.is/localization'

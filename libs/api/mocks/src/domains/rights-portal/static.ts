@@ -1,35 +1,57 @@
-export const getPaymentOverviewStatus = {
+export const getPaymentOverviewServiceTypes = {
   items: [
-    {
-      credit: 15372,
-      debit: 0,
-    },
+    { code: 'ALL', name: 'Allir reikningar' },
+    { code: 'HTM', name: 'Hjálpartækja- og næringarreikningar' },
+    { code: 'TLK', name: 'Tannlæknareikningar' },
+    { code: 'SJD', name: 'Sjúkradagpeningar' },
+    { code: 'SLY', name: 'Slysatryggingar' },
+    { code: 'FKI', name: 'Ferðakostnaður' },
+    { code: 'SJU', name: 'Sjúkraþjálfun' },
+    { code: 'SJT', name: 'Talþjálfun' },
+    { code: 'SFR', name: 'Læknareikningar' },
+    { code: 'AKS', name: 'Afsláttakort' },
+    { code: 'LKS', name: 'Lyfjareikningar' },
   ],
   errors: [],
 }
 
-export const getPaymentOverviewBills = {
+export const getPaymentOverview = {
   items: [
     {
-      date: '2022-12-14',
-      serviceType: 'Table text',
-      totalAmount: 38121,
-      insuranceAmount: 38121,
-      documentId: 42,
-    },
-    {
-      date: '2022-10-29',
-      serviceType: 'Table text',
-      totalAmount: 13300,
-      insuranceAmount: 13300,
-      documentId: 43,
-    },
-    {
-      date: '2022-05-03',
-      serviceType: 'Table text',
-      totalAmount: 9350,
-      insuranceAmount: 9350,
-      documentId: 44,
+      credit: 0,
+      debt: 0,
+      bills: [
+        {
+          date: '2022-12-14',
+          serviceType: {
+            code: 'ELK',
+            name: 'Endurgr.lyfjakostnaður til einstaklinga',
+          },
+          totalAmount: 38121,
+          insuranceAmount: 38121,
+          documentId: 42,
+        },
+        {
+          date: '2022-10-29',
+          serviceType: {
+            code: 'GTK',
+            name: 'Greiðsluþátttökukerfi',
+          },
+          totalAmount: 13300,
+          insuranceAmount: 13300,
+          documentId: 43,
+        },
+        {
+          date: '2022-05-03',
+          serviceType: {
+            code: 'AKS',
+            name: 'Afsláttakort',
+          },
+          totalAmount: 9350,
+          insuranceAmount: 9350,
+          documentId: 44,
+        },
+      ],
     },
   ],
   errors: [],
@@ -47,25 +69,23 @@ export const getPaymentOverviewDocument = {
 }
 
 export const getCopaymentStatus = {
-  items: [
-    {
-      insuranceStatus: {
-        display: 'Almenn staða',
-        code: 'ALM',
-      },
-      maximumMonthlyPayment: 28162,
-      maximumPayment: 27662,
-      basePayment: 4694,
-    },
-  ],
-  errors: [],
+  insuranceStatus: {
+    display: 'Almenn staða',
+    code: 'ALM',
+  },
+  maximumMonthlyPayment: 28162,
+  maximumPayment: 27662,
+  basePayment: 4694,
 }
 
 export const getCopaymentPeriods = {
   items: [
     {
       id: 1,
-      status: 'Almennur',
+      status: {
+        display: 'Almennur',
+        code: 'ALM',
+      },
       month: 'Sep 2022',
       maximumPayment: 28162,
       monthPayment: 500,
@@ -74,7 +94,10 @@ export const getCopaymentPeriods = {
     },
     {
       id: 2,
-      status: 'Almennur',
+      status: {
+        display: 'Almennur',
+        code: 'ALM',
+      },
       month: 'Ágú 2022',
       maximumPayment: 28162,
       monthPayment: 0,
@@ -83,7 +106,10 @@ export const getCopaymentPeriods = {
     },
     {
       id: 3,
-      status: 'Almennur',
+      status: {
+        display: 'Almennur',
+        code: 'ALM',
+      },
       month: 'Júl 2022',
       maximumPayment: 28162,
       monthPayment: 0,
@@ -94,7 +120,7 @@ export const getCopaymentPeriods = {
   errors: [],
 }
 
-export const getCopaymentPeriodBills = {
+export const getCopaymentBills = {
   items: [
     {
       id: 1,

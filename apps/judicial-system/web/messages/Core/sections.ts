@@ -359,6 +359,11 @@ export const sections = {
       defaultMessage: 'Úrskurður',
       description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
     },
+    summary: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.summary',
+      defaultMessage: 'Samantekt',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
+    },
   }),
   caseResults: defineMessages({
     dissmissed: {

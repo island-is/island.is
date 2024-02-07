@@ -1,4 +1,4 @@
-import {TranslatedMessages} from './index';
+import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
   // login
@@ -14,6 +14,11 @@ export const en: TranslatedMessages = {
   'login.networkErrorTitle': 'Network error',
   'login.networkErrorMessage':
     '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
+  'login.expiredTitle': 'Session expired',
+  'login.expiredScopesMessage':
+    'Updated permissions required, please login again.',
+  'login.expiredMissingUserMessage':
+    'Could not fetch user information, please login again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -132,6 +137,7 @@ export const en: TranslatedMessages = {
   }`,
   'user.natreg.citizenship': 'Citizenship',
   'user.natreg.religion': 'Religion',
+  'user.natreg.settingsButton': 'Go to settings',
 
   // Home
   'home.screenTitle': 'Overview',
@@ -147,6 +153,10 @@ export const en: TranslatedMessages = {
     'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
+  'home.vehicleModule.summary':
+    'Enter mileage of electric and plug-in hybrid vehicles',
+  'home.vehicleModule.button': 'My vehicles',
+  'button.seeAll': 'See all',
 
   // inbox
   'inbox.screenTitle': 'Inbox',
@@ -278,6 +288,8 @@ export const en: TranslatedMessages = {
   'vehicles.emptyListTitle': 'No vehicles found for the user',
   'vehicles.emptyListDescription':
     'Vehicles registered to you will appear here.',
+  'vehicles.nextInspectionLabel': 'Next inspection {date}',
+  'vehicles.mileageRequired': 'Mileage required',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -303,6 +315,27 @@ export const en: TranslatedMessages = {
   'vehicleDetail.totalWeight': 'Maximum weight',
   'vehicleDetail.capacityWeight': 'Road train weight',
   'vehicleDetail.odometer': 'Odometer',
+  'vehicleDetail.noInfo': 'No information received',
+
+  // vehicle mileage
+  'vehicle.mileage.errorTitle': 'Error',
+  'vehicle.mileage.errorMileageInputTooLow': 'Mileage input too low',
+  'vehicle.mileage.errorMileageInputTooHigh': 'Mileage input too high',
+  'vehicle.mileage.errorFailedToUpdate':
+    'Update mileage seems to have failed. Please try again later.',
+  'vehicle.mileage.successTitle': 'Mileage updated',
+  'vehicle.mileage.successMessage': 'Mileage has been updated',
+  'vehicle.mileage.promptEditTitle': 'Edit mileage',
+  'vehicle.mileage.promptEditButton': 'Edit',
+  'vehicle.mileage.promptCancelButton': 'Cancel',
+  'vehicle.mileage.inputPlaceholder': 'Enter current mileage',
+  'vehicle.mileage.inputLabel': 'Mileage',
+  'vehicle.mileage.inputSubmitButton': 'Submit',
+  'vehicle.mileage.registerIntervalCopy':
+    'Mileage can only be recorded once every 30 days',
+  'vehicle.mileage.moreInformationCopy': 'See more information at Ísland.is',
+  'vehicle.mileage.historyTitle': 'Mileage history',
+  'vehicle.mileage.editRecordButton': 'Edit mileage',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
@@ -437,4 +470,4 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
-};
+}

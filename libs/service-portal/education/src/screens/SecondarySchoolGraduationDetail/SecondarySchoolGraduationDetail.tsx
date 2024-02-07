@@ -41,7 +41,9 @@ export const EducationGraduationDetail = () => {
   const periodItems = innaData?.innaPeriods?.items || []
   const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
 
-  const singleGraduation = diplomaItems.filter((item) => item.diplomaId === id)
+  const singleGraduation = diplomaItems.filter(
+    (item) => String(item.diplomaId) === id,
+  )
   const graduationItem = singleGraduation[0]
 
   const periodArray = periodItems.filter(
@@ -104,9 +106,8 @@ export const EducationGraduationDetail = () => {
         </GridColumn>
       </GridRow> */}
 
-      {periodArray.length > 0 &&
-        !loading &&
-        periodArray.map((item, i) => (
+      {!loading &&
+        periodArray?.map((item, i) => (
           <Box key={i} marginTop={i > 0 ? 6 : 1}>
             <SortableTable
               title={`${item.organisation ?? ''} - ${item.periodName ?? ''}`}

@@ -1,62 +1,68 @@
 import { useMemo } from 'react'
+import { Locale } from 'locale'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { Screen } from '../../../types'
+
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Link,
+  LinkContext,
+  Pagination,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   Card,
   CardTagsProps,
   ServiceWebWrapper,
 } from '@island.is/web/components'
-import {
-  Box,
-  Text,
-  Stack,
-  Breadcrumbs,
-  Pagination,
-  Link,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  LinkContext,
-  Button,
-} from '@island.is/island-ui/core'
+import { ServiceWebSearchInput } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+
+import {
+  ContentLanguage,
+  GetNamespaceQuery,
+  GetSupportSearchResultsQuery,
+  Organization,
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
+  QueryGetServiceWebPageArgs,
+  QuerySearchResultsArgs,
+  SearchableContentTypes,
+  SupportQna,
+} from '../../../graphql/schema'
+import { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
   GET_SUPPORT_SEARCH_RESULTS_QUERY,
 } from '../../queries'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  SearchableContentTypes,
-  SupportQna,
-  GetSupportSearchResultsQuery,
-  Organization,
-  QueryGetOrganizationArgs,
-  Query,
-} from '../../../graphql/schema'
-import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import { ServiceWebSearchInput } from '@island.is/web/components'
 import { getServiceWebSearchTagQuery, getSlugPart } from '../utils'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Locale } from 'locale'
 
 const PERPAGE = 10
 
 interface ServiceSearchProps {
   q: string
   page: number
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   organization?: Organization
   searchResults: GetSupportSearchResultsQuery['searchResults']
   locale: Locale
+  serviceWebPage?: Query['getServiceWebPage']
 }
 
 const ServiceSearch: Screen<ServiceSearchProps> = ({
@@ -66,11 +72,11 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   organization,
   searchResults,
   locale,
+  serviceWebPage,
 }) => {
   const Router = useRouter()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
   usePlausible('Search Query', {
     query: (q ?? '').trim().toLowerCase(),
     source: 'Service Web',
@@ -147,8 +153,11 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       smallBackground
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
+      pageData={serviceWebPage}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -225,7 +234,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     'serviceWebSearchPlaceholder',
                     'Leitaðu á þjónustuvefnum',
                   )}
-                  nothingFoundText={n('nothingFoundText', 'Ekkert fannst')}
+                  nothingFoundText={n(
+                    'nothingFoundText',
+                    activeLocale === 'is' ? 'Ekkert fannst' : 'Nothing found',
+                  )}
                 />
 
                 {!!q &&
@@ -377,6 +389,9 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
       data: { searchResults },
     },
     namespace,
+    {
+      data: { getServiceWebPage },
+    },
   ] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
@@ -416,6 +431,15 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
         // map data here to reduce data processing in component
         return JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')
       }),
+    apolloClient.query<Query, QueryGetServiceWebPageArgs>({
+      query: GET_SERVICE_WEB_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   if (searchResults.items.length === 0 && page > 1) {
@@ -431,6 +455,7 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
     organization: organization?.data?.getOrganization,
     searchResults,
     locale: locale as Locale,
+    serviceWebPage: getServiceWebPage,
   }
 }
 

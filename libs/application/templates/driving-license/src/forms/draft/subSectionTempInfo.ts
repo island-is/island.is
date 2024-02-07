@@ -66,23 +66,6 @@ export const subSectionTempInfo = buildSubSection({
             return data.email
           },
         }),
-        buildPhoneField({
-          id: 'phone',
-          title: m.informationYourPhone,
-          width: 'half',
-          disableDropdown: true,
-          allowedCountryCodes: ['IS'],
-          defaultValue: ({ externalData }: Application) => {
-            const phone =
-              (
-                externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                }
-              )?.mobilePhoneNumber ?? ''
-
-            return phone
-          },
-        }),
         buildDividerField({
           title: '',
           color: 'dark400',

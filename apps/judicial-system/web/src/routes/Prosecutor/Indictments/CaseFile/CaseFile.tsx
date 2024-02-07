@@ -5,7 +5,6 @@ import router from 'next/router'
 
 import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -17,6 +16,7 @@ import {
   PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { caseFile as m } from './CaseFile.strings'
 
@@ -55,7 +55,7 @@ const CaseFile = () => {
         <Box marginBottom={5}>
           <LayoutGroup>
             <Accordion singleExpand>
-              {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
+              {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
                 <IndictmentsCaseFilesAccordionItem
                   key={index}
                   caseId={workingCase.id}
@@ -76,7 +76,7 @@ const CaseFile = () => {
           </LayoutGroup>
         </Box>
         <Box marginBottom={7}>
-          {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
+          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
             <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
               <PdfButton
                 caseId={workingCase.id}

@@ -15,7 +15,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { InnaService } from '@island.is/clients/inna'
+import { InnaClientService } from '@island.is/clients/inna'
 import { ApiScope } from '@island.is/auth/scopes'
 
 import { PeriodsModel } from './inna/periods.model'
@@ -27,7 +27,7 @@ import { DiplomaModel } from './inna/diplomas.model'
 @FeatureFlag(Features.servicePortalSecondaryEducationPages)
 @Audit({ namespace: '@island.is/api/education-inna' })
 export class InnaResolver {
-  constructor(private innaService: InnaService) {}
+  constructor(private innaService: InnaClientService) {}
 
   @Query(() => PeriodsModel, { name: 'innaPeriods' })
   @Audit()

@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
@@ -12,7 +12,7 @@ import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import InfoCard from './InfoCard'
+import InfoCard, { NameAndEmail } from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
 
 const InfoCardActiveIndictment: React.FC<
@@ -29,11 +29,14 @@ const InfoCardActiveIndictment: React.FC<
         },
         {
           title: formatMessage(m.prosecutor),
-          value: `${workingCase.prosecutor?.name}`,
+          value: NameAndEmail(
+            workingCase.prosecutor?.name,
+            workingCase.prosecutor?.email,
+          ),
         },
         {
           title: formatMessage(core.policeCaseNumber),
-          value: workingCase.policeCaseNumbers.map((n) => (
+          value: workingCase.policeCaseNumbers?.map((n) => (
             <Text key={n}>{n}</Text>
           )),
         },
@@ -53,7 +56,7 @@ const InfoCardActiveIndictment: React.FC<
               ))}
             </>
           ) : (
-            caseTypes[workingCase.type]
+            formatCaseType(workingCase.type)
           ),
         },
       ]}

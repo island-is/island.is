@@ -144,7 +144,7 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     )
 
     const uploadDataName = 'Samningur Forsjá Og Meðlag'
-    const uploadDataId = 'SamningurForsjaOgMedlag1.1'
+    const uploadDataId = 'Lögheimilisbreyting-barns'
     const response = await this.syslumennService
       .uploadData(
         participants,

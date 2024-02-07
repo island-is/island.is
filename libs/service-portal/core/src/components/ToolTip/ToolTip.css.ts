@@ -24,6 +24,20 @@ export const tooltip = style({
   },
 })
 
+export const light = style({
+  backgroundColor: theme.color.blue100,
+  color: theme.color.dark400,
+  border: `1px solid ${theme.color.blue200}`,
+  padding: theme.spacing[2],
+})
+
+export const white = style({
+  backgroundColor: 'white',
+  color: theme.color.dark400,
+  border: `1px solid ${theme.color.blue200}`,
+  padding: theme.spacing[2],
+})
+
 export const icon = style({
   display: 'inline-block',
   lineHeight: 1,
@@ -37,4 +51,8 @@ export const fullWidth = style({
 
 globalStyle(`${icon}:hover path`, {
   fill: theme.color.blue400,
+})
+
+export const z = style({
+  zIndex: 102,
 })

@@ -4,6 +4,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { IServiceWebPage } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
+import { FooterItem, mapFooterItem } from './footerItem.model'
 
 @ObjectType()
 export class ServiceWebPage {
@@ -18,6 +19,9 @@ export class ServiceWebPage {
 
   @CacheField(() => [SliceUnion])
   slices?: Array<typeof SliceUnion | null>
+
+  @CacheField(() => [FooterItem], { nullable: true })
+  footerItems?: Array<FooterItem>
 }
 
 export const mapServiceWebPage = ({
@@ -30,4 +34,5 @@ export const mapServiceWebPage = ({
     ? mapOrganization(fields.organization)
     : null,
   slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+  footerItems: (fields.footerItems ?? []).map(mapFooterItem),
 })

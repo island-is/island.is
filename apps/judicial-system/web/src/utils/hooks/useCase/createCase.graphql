@@ -1,0 +1,8 @@
+mutation CreateCase($input: CreateCaseInput!) {
+  createCase(input: $input) {
+    id
+    defendants {
+      id
+    }
+  }
+}

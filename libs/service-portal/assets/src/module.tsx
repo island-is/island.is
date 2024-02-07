@@ -6,6 +6,27 @@ import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
 
+const IPOverview = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
+  ),
+)
+const IPDesignDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
+  ),
+)
+const IPTrademarkDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
+  ),
+)
+const IPPatentDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
+  ),
+)
+
 const AssetsOverview = lazy(() =>
   import('./screens/AssetsOverview/AssetsOverview'),
 )
@@ -27,6 +48,10 @@ const WorkMachinesOverview = lazy(() =>
 )
 const WorkMachinesDetail = lazy(() =>
   import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
+)
+
+const VehicleMileage = lazy(() =>
+  import('./screens/VehicleMileage/VehicleMileage'),
 )
 
 export const assetsModule: PortalModule = {
@@ -97,12 +122,47 @@ export const assetsModule: PortalModule = {
         element: <VehicleHistory />,
       },
       {
+        name: m.vehicleMileage,
+        path: AssetsPaths.AssetsVehiclesDetailMileage,
+        enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        key: 'VehicleMileage',
+        element: <VehicleMileage />,
+      },
+      {
         name: m.vehiclesLookup,
         path: AssetsPaths.AssetsVehiclesLookup,
         enabled:
           userInfo.scopes.includes(ApiScope.internal) ||
           userInfo.scopes.includes(ApiScope.internalProcuring),
         element: <Lookup />,
+      },
+      {
+        name: m.intellectualProperties,
+        path: AssetsPaths.AssetsIntellectualProperties,
+        key: 'IntellectualProperties',
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <IPOverview />,
+      },
+      {
+        name: m.intellectualProperties,
+        path: AssetsPaths.AssetsIntellectualPropertiesDesign,
+        key: 'IntellectualProperties',
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <IPDesignDetail />,
+      },
+      {
+        name: m.intellectualProperties,
+        path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
+        key: 'IntellectualProperties',
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <IPTrademarkDetail />,
+      },
+      {
+        name: m.intellectualProperties,
+        path: AssetsPaths.AssetsIntellectualPropertiesPatent,
+        key: 'IntellectualProperties',
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <IPPatentDetail />,
       },
     ]
 

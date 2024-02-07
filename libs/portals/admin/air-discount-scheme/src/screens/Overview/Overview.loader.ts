@@ -5,7 +5,6 @@ import parseDate from 'date-fns/parse'
 import startOfDay from 'date-fns/startOfDay'
 import { validateSearchParams } from '@island.is/react-spa/shared'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
-import { isValidDate } from '@island.is/shared/utils'
 import { zfd } from 'zod-form-data'
 import {
   AirDiscountSchemeFlightLegGender,
@@ -16,11 +15,13 @@ import {
   FlightLegsQuery,
   FlightLegsQueryVariables,
 } from './Overview.generated'
+import isValid from 'date-fns/isValid'
 
 const TODAY = new Date()
 
 export const transformDate = (val: string, start: boolean) => {
-  if (isValidDate(new Date(val)) && val.indexOf('.') === 2) {
+  const date = parseDate(val, 'dd.MM.yyyy', new Date())
+  if (isValid(date)) {
     const value = parseDate(val, 'dd.MM.yyyy', new Date())
     return start ? startOfDay(value) : endOfDay(value)
   }

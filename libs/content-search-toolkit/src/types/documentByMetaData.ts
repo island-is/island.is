@@ -7,6 +7,10 @@ interface MetaPropsBase {
     from?: string
     to?: string
   }
+  releaseDate?: {
+    from?: string
+    to?: string
+  }
   sort?: sortRule[]
   page?: number
   size?: number

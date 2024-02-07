@@ -1,6 +1,7 @@
 export const environment = {
   emailOptions: {
     useTestAccount: false,
+    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true',
     options: {
       region: process.env.EMAIL_REGION,
     },

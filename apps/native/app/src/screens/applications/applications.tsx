@@ -1,7 +1,6 @@
-import {useQuery} from '@apollo/client';
-import {EmptyList, Heading, ListButton, TopLine} from '@ui';
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {useIntl} from 'react-intl';
+import { EmptyList, Heading, ListButton, TopLine } from '@ui'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
@@ -9,45 +8,45 @@ import {
   RefreshControl,
   SafeAreaView,
   View,
-} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
-import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {client} from '../../graphql/client';
-import {IArticleSearchResults} from '../../graphql/fragments/search.fragment';
+} from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
-  ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY,
-} from '../../graphql/queries/list-applications.query';
-import {LIST_SEARCH_QUERY} from '../../graphql/queries/list-search.query';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
-import {openBrowser} from '../../lib/rn-island';
-import {getRightButtons} from '../../utils/get-main-root';
-import {testIDs} from '../../utils/test-ids';
-import {ApplicationsModule} from '../home/applications-module';
-import {getApplicationOverviewUrl} from '../../utils/applications-utils';
+  Application,
+  SearchArticleFragmentFragment,
+  SearchableContentTypes,
+  useListApplicationsQuery,
+  useListSearchQuery,
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { openBrowser } from '../../lib/rn-island'
+import { getApplicationOverviewUrl } from '../../utils/applications-utils'
+import { getRightButtons } from '../../utils/get-main-root'
+import { testIDs } from '../../utils/test-ids'
+import { ApplicationsModule } from '../home/applications-module'
 
 type ListItem =
-  | {id: string; type: 'skeleton' | 'empty'}
-  | (IArticleSearchResults & {type: undefined});
+  | { id: string; __typename: 'Skeleton' }
+  | SearchArticleFragmentFragment
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({id: 'applications.title'}),
+          text: intl.formatMessage({ id: 'applications.title' }),
         },
         searchBar: {
           visible: false,
         },
-        rightButtons: initialized ? getRightButtons({theme} as any) : [],
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
         text: initialized
-          ? intl.formatMessage({id: 'applications.bottomTabText'})
+          ? intl.formatMessage({ id: 'applications.bottomTabText' })
           : '',
       },
     }),
@@ -70,110 +69,77 @@ const {useNavigationOptions, getNavigationOptions} =
         selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
       },
     },
-  );
+  )
 
 export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
-  useNavigationOptions(componentId);
-  const SEARCH_QUERY_SIZE = 100;
-  const SEARCH_QUERY_TYPE = 'webArticle';
-  const CONTENTFUL_FILTER = 'umsokn';
-  const QUERY_STRING_DEFAULT = '*';
+  useNavigationOptions(componentId)
+  const flatListRef = useRef<FlatList>(null)
+  const [loading, setLoading] = useState(false)
+  const intl = useIntl()
+  const scrollY = useRef(new Animated.Value(0)).current
 
-  const flatListRef = useRef<FlatList>(null);
-  const [loading, setLoading] = useState(false);
-  const intl = useIntl();
-  const [items, setItems] = useState([]);
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const input = {
-    queryString: QUERY_STRING_DEFAULT,
-    types: [SEARCH_QUERY_TYPE],
-    contentfulTags: [CONTENTFUL_FILTER],
-    size: SEARCH_QUERY_SIZE,
-    page: 1,
-  };
-
-  const res = useQuery(LIST_SEARCH_QUERY, {
-    client,
+  const res = useListSearchQuery({
     variables: {
-      input,
+      input: {
+        queryString: '*',
+        types: [SearchableContentTypes.WebArticle],
+        contentfulTags: ['umsokn'],
+        size: 100,
+        page: 1,
+      },
     },
-  });
+  })
 
-  const applicationsRes = useQuery<ListApplicationsResponse>(
-    LIST_APPLICATIONS_QUERY,
-    {client},
-  );
+  const applicationsRes = useListApplicationsQuery()
 
-  useEffect(() => {
+  const data = useMemo<ListItem[]>(() => {
+    if (!res.data && res.loading) {
+      return Array.from({ length: 8 }).map((_, id) => ({
+        __typename: 'Skeleton',
+        id: id.toString(),
+      }))
+    }
+
     if (!res.loading && res.data) {
-      setItems(
-        [...(res?.data?.searchResults?.items || [])].sort(
-          (a: IArticleSearchResults, b: IArticleSearchResults) =>
-            a.title.localeCompare(b.title),
-        ) as any,
-      );
+      const articles = [
+        ...(res?.data?.searchResults?.items ?? []),
+      ] as SearchArticleFragmentFragment[]
+      return articles.sort((a, b) => a.title.localeCompare(b.title))
     }
-  }, [res.data, res.loading]);
+    return []
+  }, [res.data, res.loading])
 
-  const renderItem = useCallback(({item}: any) => {
-    if (item.type === 'skeleton') {
-      return <ListButton title="skeleton" isLoading />;
-    }
-
-    if (item.type === 'empty') {
-      return (
-        <View style={{marginTop: 80, paddingHorizontal: 16}}>
-          <EmptyList
-            title={intl.formatMessage({id: 'applications.emptyListTitle'})}
-            description={intl.formatMessage({
-              id: 'applications.emptyListDescription',
-            })}
-            image={
-              <Image
-                source={illustrationSrc}
-                style={{height: 176, width: 134}}
-              />
+  const renderItem = useCallback(
+    ({ item }: { item: ListItem; index: number }) => {
+      if (item.__typename === 'Skeleton') {
+        return <ListButton title="skeleton" isLoading />
+      }
+      if (item.__typename === 'Article') {
+        return (
+          <ListButton
+            key={item.id}
+            title={item.title}
+            onPress={() =>
+              openBrowser(getApplicationOverviewUrl(item), componentId)
             }
           />
-        </View>
-      );
-    }
-
-    return (
-      <ListButton
-        key={item.id}
-        title={item.title}
-        onPress={() =>
-          openBrowser(getApplicationOverviewUrl(item), componentId)
-        }
-      />
-    );
-  }, []);
+        )
+      }
+      return null
+    },
+    [],
+  )
 
   useActiveTabItemPress(3, () => {
     flatListRef.current?.scrollToOffset({
       offset: -150,
       animated: true,
-    });
-  });
+    })
+  })
 
-  const keyExtractor = useCallback((item: ListItem) => item.id, []);
-
-  const isFirstLoad = !res.data;
-  const isError = !!res.error;
-  const isLoading = res.loading;
-  const isEmpty = (items ?? []).length === 0;
-  const isSkeltonView = isLoading && isFirstLoad && !isError;
-  const isEmptyView = !loading && isEmpty;
-
-  const emptyItem = [{id: '0', type: 'empty'}] as ListItem[];
-  const skeletonItems = Array.from({length: 8}).map((_, id) => ({
-    id: id.toString(),
-    type: 'skeleton',
-  })) as ListItem[];
+  const keyExtractor = useCallback((item: ListItem) => item.id, [])
 
   return (
     <>
@@ -183,26 +149,45 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
           },
         )}
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
-        data={isSkeltonView ? skeletonItems : isEmptyView ? emptyItem : items}
+        data={data}
+        ListEmptyComponent={
+          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+            <EmptyList
+              title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
+              description={intl.formatMessage({
+                id: 'applications.emptyListDescription',
+              })}
+              image={
+                <Image
+                  source={illustrationSrc}
+                  style={{ height: 176, width: 134 }}
+                />
+              }
+            />
+          </View>
+        }
         renderItem={renderItem}
         ListHeaderComponent={
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <ApplicationsModule
-              applications={applicationsRes.data?.applicationApplications ?? []}
+              applications={
+                (applicationsRes.data?.applicationApplications ??
+                  []) as Application[]
+              }
               loading={applicationsRes.loading}
               componentId={componentId}
               hideAction={true}
             />
-            <SafeAreaView style={{marginHorizontal: 16}}>
+            <SafeAreaView style={{ marginHorizontal: 16 }}>
               <Heading>
-                {intl.formatMessage({id: 'home.allApplications'})}
+                {intl.formatMessage({ id: 'home.allApplications' })}
               </Heading>
             </SafeAreaView>
           </View>
@@ -211,19 +196,19 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           <RefreshControl
             refreshing={loading}
             onRefresh={() => {
-              setLoading(true);
+              setLoading(true)
               try {
                 res
                   ?.refetch?.()
                   ?.then(() => {
-                    setLoading(false);
+                    setLoading(false)
                   })
                   .catch(() => {
-                    setLoading(false);
-                  });
+                    setLoading(false)
+                  })
               } catch (err) {
                 // noop
-                setLoading(false);
+                setLoading(false)
               }
             }}
           />
@@ -232,7 +217,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       <BottomTabsIndicator index={3} total={5} />
       <TopLine scrollY={scrollY} />
     </>
-  );
-};
+  )
+}
 
-ApplicationsScreen.options = getNavigationOptions;
+ApplicationsScreen.options = getNavigationOptions

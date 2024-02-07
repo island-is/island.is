@@ -56,6 +56,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       act: payload.act,
       ip: String(request.headers['x-forwarded-for'] ?? request.ip),
       userAgent: request.headers['user-agent'],
+      audkenniSimNumber: payload.audkenni_sim_number,
     }
   }
 }

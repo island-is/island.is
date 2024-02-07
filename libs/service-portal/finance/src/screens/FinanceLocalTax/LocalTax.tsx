@@ -1,11 +1,9 @@
-import React, { FC } from 'react'
-
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m, DynamicWrapper } from '@island.is/service-portal/core'
 
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
-const LocalTax: FC<React.PropsWithChildren<unknown>> = () => {
+const LocalTax = () => {
   useNamespaces('sp.local-tax')
   const { formatMessage } = useLocale()
 

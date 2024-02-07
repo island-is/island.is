@@ -1,6 +1,36 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  fetchDocument: {
+    id: 'sp.health:fetch-document',
+    defaultMessage: 'Sækja skjal',
+  },
+  errorFetchPaymentInfo: {
+    id: 'sp.health:error-fetch-payment-info',
+    defaultMessage: 'Ekki tókst að sækja greiðsluupplýsingar',
+  },
+  noDataFound: {
+    id: 'sp.health:no-data-found',
+    defaultMessage: 'Engin {arg} skráð',
+  },
+  noDataFoundMasculine: {
+    id: 'sp.health:no-data-found-masculine',
+    defaultMessage: 'Engir {arg} skráðir',
+  },
+  noDataFoundFeminine: {
+    id: 'sp.health:no-data-found-feminine',
+    defaultMessage: 'Engar {arg} skráðar',
+  },
+  noDataFoundDetail: {
+    id: 'sp.health:no-data-found-detail',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráða {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundDetailVariation: {
+    id: 'sp.health:no-data-found-detail-variation',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráð {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
   from: {
     id: 'sp.health:from',
     defaultMessage: 'Frá',
@@ -72,10 +102,10 @@ export const messages = defineMessages({
   paymentParticationExplination: {
     id: 'sp.health:payment-partication-info',
     defaultMessage:
-      'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði 4.694 kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
+      'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
   },
-  paymentParticationFooterExplination: {
-    id: 'sp.health:payment-partication-footer-info',
+  paymentParticationExplinationFooter: {
+    id: 'sp.health:payment-partication-info-footer',
     defaultMessage:
       'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
   },
@@ -96,6 +126,11 @@ export const messages = defineMessages({
     id: 'sp.health:read-about-payment-participation-systems',
     defaultMessage: 'Lesa um greiðsluþátttökukerfi',
   },
+  readAboutPaymentParticipationSystemsLink: {
+    id: 'sp.health:read-about-payment-participation-systems-link',
+    defaultMessage:
+      'https://island.is/greidsluthatttaka-vegna-heilbrigdisthjonustu',
+  },
   paymentOverview: {
     id: 'sp.health:payment-overview',
     defaultMessage: 'Greiðsluyfirlit',
@@ -115,6 +150,10 @@ export const messages = defineMessages({
   paymentParticipation: {
     id: 'sp.health:payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
+  },
+  paymentParticipationVariation: {
+    id: 'sp.health:payment-participation-variation',
+    defaultMessage: 'Greiðsluþátttöku',
   },
   healthInternalServiceErrorTitle: {
     id: 'sp.health:internal-service-error-title',
@@ -141,6 +180,22 @@ export const messages = defineMessages({
   healthInsuranceStatus: {
     id: 'sp.health:health-insurance-status',
     defaultMessage: 'Staða sjúkratryggingar',
+  },
+  healthInsuranceConfirmation: {
+    id: 'sp.health:health-insurance-confirmation',
+    defaultMessage: 'Staðfesting á sjúkratryggingu',
+  },
+  healthInsuranceConfirmationButton: {
+    id: 'sp.health:health-insurance-confirmation-button',
+    defaultMessage: 'Sækja staðfestingu',
+  },
+  healthInsuranceConfirmationLoading: {
+    id: 'sp.health:health-insurance-confirmation-loading',
+    defaultMessage: 'Sæki skjal',
+  },
+  healthInsuranceConfirmationTransferError: {
+    id: 'sp.health:health-center-registration-transfer-error-title',
+    defaultMessage: 'Villa hefur komið upp',
   },
   noHealthInsurance: {
     id: 'sp.health:no-health-insurance',
@@ -174,6 +229,10 @@ export const messages = defineMessages({
   dentistsTitle: {
     id: 'sp.health:dentists-title',
     defaultMessage: 'Tannlæknar',
+  },
+  dentistsTitleVariation: {
+    id: 'sp.health:dentists-title-variation',
+    defaultMessage: 'Tannlækna',
   },
   dentistsDescription: {
     id: 'sp.health:dentists-intro',
@@ -243,6 +302,14 @@ export const messages = defineMessages({
     id: 'sp.health:aids-and-nutrition-title',
     defaultMessage: 'Hjálpartæki og næring',
   },
+  aidsOrNutrition: {
+    id: 'sp.health:aids-or-nutrition',
+    defaultMessage: 'Hjálpartæki eða næring',
+  },
+  aidsOrNutritionVariation: {
+    id: 'sp.health:aids-or-nutrition-variation',
+    defaultMessage: 'Hjálpartæki eða næringu',
+  },
   aidsAndNutritionDescription: {
     id: 'sp.health:aids-and-nutrition-description',
     defaultMessage:
@@ -301,6 +368,10 @@ export const messages = defineMessages({
     id: 'sp.health:physical-therapy',
     defaultMessage: 'Sjúkraþjálfun',
   },
+  overviewTitle: {
+    id: 'sp.health:overview-title',
+    defaultMessage: 'Yfirlit',
+  },
   speechTherapy: {
     id: 'sp.health:speech-therapy',
     defaultMessage: 'Talþjálfun',
@@ -316,6 +387,14 @@ export const messages = defineMessages({
   noData: {
     id: 'sp.health:no-data',
     defaultMessage: 'Engin gögn fundust',
+  },
+  searchResultsEmpty: {
+    id: 'sp.health:search-results-empty',
+    defaultMessage: 'Engin gögn',
+  },
+  searchResultsEmptyDetail: {
+    id: 'sp.health:search-results-empty-detail',
+    defaultMessage: 'Engar færslur eru innan þeirra skilyrða sem valin eru',
   },
   chooseTherapy: {
     id: 'sp.health:choose-therapy',
@@ -492,6 +571,10 @@ export const messages = defineMessages({
     id: 'sp.health:next-available-unit-refund',
     defaultMessage: 'Næst heimild til úttektar',
   },
+  timeRemainingOfRefund: {
+    id: 'sp.health:time-remaining-of-refund',
+    defaultMessage: 'Innan við 60 dagar eftir af heimild',
+  },
   location: {
     id: 'sp.health:location',
     defaultMessage: 'Afgr. staður',
@@ -568,10 +651,23 @@ export const messages = defineMessages({
     id: 'sp.health:close-modal',
     defaultMessage: 'Loka sprettiglugga',
   },
+  chooseDoctorLabel: {
+    id: 'sp.health:choose-doctor-label',
+    defaultMessage: 'Viltu velja heimilislækni?',
+  },
+  chooseDoctorPlaceholder: {
+    id: 'sp.health:close-placeholder',
+    defaultMessage: 'Heimilislæknir',
+  },
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:
       'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
+  },
+  healthTooltip: {
+    id: 'sp.health:health-tooltip',
+    defaultMessage:
+      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
   },
   healthCenterListSearchPlaceholder: {
     id: 'sp.health:health-center-list-search-placeholder',
@@ -597,6 +693,10 @@ export const messages = defineMessages({
   healthCenterNoDoctor: {
     id: 'sp.health:health-center-no-doctor',
     defaultMessage: 'Enginn læknir skráður',
+  },
+  healthCenterNoHealthCenterRegistered: {
+    id: 'sp.health:health-center-no-health-center',
+    defaultMessage: 'Enginn heilsugæsla skráð',
   },
   healthRegistrationSave: {
     id: 'sp.health:health-registration-save',
@@ -670,13 +770,13 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-price-list',
     defaultMessage: 'Lyfjaverðskrá',
   },
+  medicinePriceListLink: {
+    id: 'sp.health:medicine-price-list-link',
+    defaultMessage: 'https://rg.sjukra.is/lyfjaverdskra',
+  },
   medicinePaymentStatus: {
     id: 'sp.health:medicine-payment-status',
     defaultMessage: 'Greiðslustaða',
-  },
-  medicinePaymentPaidAmount: {
-    id: 'sp.health:medicine-payment-paid-amount',
-    defaultMessage: '{amount} kr.',
   },
   medicineStep: {
     id: 'sp.health:medicine-step',
@@ -744,7 +844,7 @@ export const messages = defineMessages({
   },
   medicineSearchForDrug: {
     id: 'sp.health:medicine-search-for-drug',
-    defaultMessage: 'Leita að lyf',
+    defaultMessage: 'Leita að lyfi',
   },
   medicineForm: {
     id: 'sp.health:medicine-form',
@@ -790,6 +890,18 @@ export const messages = defineMessages({
   medicineIsValidCertificate: {
     id: 'sp.health:medicine-is-valid-certificate',
     defaultMessage: 'Í gildi',
+  },
+  medicineIsRejectedCertificate: {
+    id: 'sp.health:medicine-is-rejected-certificate',
+    defaultMessage: 'Hafnað',
+  },
+  medicineIsExpiredCertificate: {
+    id: 'sp.health:medicine-is-expired-certificate',
+    defaultMessage: 'Útrunnið',
+  },
+  medicineIsProcessedCertificate: {
+    id: 'sp.health:medicine-is-processed-certificate',
+    defaultMessage: 'Í vinnslu',
   },
   medicineIsNotValidCertificate: {
     id: 'sp.health:medicine-is-not-valid-certificate',

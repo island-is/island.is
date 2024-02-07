@@ -4,10 +4,8 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
-  CaseFile,
-  CaseFileCategory,
-  completedCaseStates,
-  isExtendedCourtRole,
+  isCompletedCase,
+  isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
 import {
   FileNotFoundModal,
@@ -15,6 +13,10 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseFile,
+  CaseFileCategory,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -22,7 +24,6 @@ import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils
 import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.strings'
-import * as styles from './IndictmentCaseFilesList.css'
 
 interface Props {
   workingCase: Case
@@ -41,11 +42,7 @@ const RenderFiles: React.FC<
   return (
     <>
       {caseFiles.map((file) => (
-        <Box
-          key={file.id}
-          marginBottom={2}
-          className={styles.caseFileContainer}
-        >
+        <Box key={file.id} marginBottom={2}>
           <PdfButton
             caseId={workingCase.id}
             title={file.name}
@@ -129,11 +126,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(caseFiles.indictmentSection)}
             </Text>
-            <Box
-              marginBottom={2}
-              key={`indictment-${workingCase.id}`}
-              className={styles.caseFileContainer}
-            >
+            <Box marginBottom={2} key={`indictment-${workingCase.id}`}>
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
@@ -184,12 +177,8 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.caseFileTitle)}
           </Text>
-          {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
-            <Box
-              marginBottom={2}
-              key={`${policeCaseNumber}-${index}`}
-              className={styles.caseFileContainer}
-            >
+          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
+            <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(strings.caseFileButtonText, {
@@ -203,8 +192,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           ))}
         </Box>
 
-        {(user && isExtendedCourtRole(user.role)) ||
-        completedCaseStates.includes(workingCase.state) ? (
+        {isDistrictCourtUser(user) || isCompletedCase(workingCase.state) ? (
           <>
             {courtRecords && courtRecords.length > 0 && (
               <Box marginBottom={5}>

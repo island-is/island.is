@@ -1,5 +1,5 @@
 query ProsecutorSelectionUsers {
-  users {
+  users(input: { role: PROSECUTOR }) {
     id
     created
     modified

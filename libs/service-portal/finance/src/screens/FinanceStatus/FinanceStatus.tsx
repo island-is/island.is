@@ -1,10 +1,7 @@
 import subYears from 'date-fns/subYears'
 import flatten from 'lodash/flatten'
-import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   AlertBanner,
   Box,
@@ -14,7 +11,6 @@ import {
   SkeletonLoader,
   Stack,
   Table as T,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -22,7 +18,7 @@ import {
   ErrorScreen,
   ExpandHeader,
   ExpandRow,
-  FJARSYSLAN_ID,
+  FJARSYSLAN_SLUG,
   FootNote,
   formSubmit,
   m,
@@ -39,23 +35,11 @@ import {
 import * as styles from './Table.css'
 import { useUserInfo } from '@island.is/auth/react'
 import FinanceIntro from '../../components/FinanceIntro'
-
-const GetFinanceStatusQuery = gql`
-  query GetFinanceStatusQuery {
-    getFinanceStatus
-  }
-`
-
-const GetDebtStatusQuery = gql`
-  query FinanceStatusGetDebtStatus {
-    getDebtStatus {
-      myDebtStatus {
-        approvedSchedule
-        possibleToSchedule
-      }
-    }
-  }
-`
+import {
+  useGetDebtStatusQuery,
+  useGetFinanceStatusQuery,
+} from './FinanceStatus.generated'
+import { m as messages } from '../../lib/messages'
 
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
@@ -64,12 +48,10 @@ const FinanceStatus = () => {
 
   const isDelegation = userInfo && checkDelegation(userInfo)
 
-  const { loading, error, ...statusQuery } = useQuery<Query>(
-    GetFinanceStatusQuery,
-  )
+  const { loading, error, ...statusQuery } = useGetFinanceStatusQuery()
 
   const { data: debtStatusData, loading: debtStatusLoading } =
-    useQuery<Query>(GetDebtStatusQuery)
+    useGetDebtStatusQuery()
 
   const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
   let scheduleButtonVisible = false
@@ -153,6 +135,8 @@ const FinanceStatus = () => {
                         size="default"
                         type="button"
                         variant="utility"
+                        as="span"
+                        unfocusable
                       >
                         {formatMessage({
                           id: 'sp.finance-status:make-payment-schedule',
@@ -239,7 +223,7 @@ const FinanceStatus = () => {
                 <ExpandHeader
                   data={[
                     { value: '', align: 'left' },
-                    { value: formatMessage(m.feeCategory) },
+                    { value: formatMessage(messages.feeCategory) },
                     { value: formatMessage(m.guardian) },
                     { value: formatMessage(m.status), align: 'right' },
                   ]}
@@ -270,7 +254,7 @@ const FinanceStatus = () => {
           ) : null}
         </Box>
       </Stack>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

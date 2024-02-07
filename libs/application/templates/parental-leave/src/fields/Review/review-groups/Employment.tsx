@@ -34,7 +34,7 @@ export const Employment = ({
       editAction={() =>
         goToScreen?.(
           applicationType === PARENTAL_LEAVE
-            ? 'isSelfEmployed.benefits'
+            ? 'employment'
             : 'employerLastSixMonths',
         )
       }
@@ -53,52 +53,52 @@ export const Employment = ({
           </GridRow>
           {isSelfEmployed === NO && ( // only show benefits in review if user had to answer that question
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <Box paddingTop={2} paddingBottom={2}>
-                  <RadioValue
-                    label={formatMessage(
-                      parentalLeaveFormMessages.employer
-                        .isReceivingUnemploymentBenefitsTitle,
-                    )}
-                    value={isReceivingUnemploymentBenefits}
-                  />
-                </Box>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '5/12']}
+                paddingTop={2}
+              >
+                <RadioValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.employer
+                      .isReceivingUnemploymentBenefitsTitle,
+                  )}
+                  value={isReceivingUnemploymentBenefits}
+                />
               </GridColumn>
 
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                {isReceivingUnemploymentBenefits === YES && (
-                  <Box paddingTop={2} paddingBottom={2}>
-                    <DataValue
-                      label={formatMessage(
-                        parentalLeaveFormMessages.employer.unemploymentBenefits,
-                      )}
-                      value={unemploymentBenefits}
-                    />
-                  </Box>
-                )}
-              </GridColumn>
+              {isReceivingUnemploymentBenefits === YES && (
+                <GridColumn
+                  span={['12/12', '12/12', '12/12', '5/12']}
+                  paddingTop={2}
+                >
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.employer.unemploymentBenefits,
+                    )}
+                    value={unemploymentBenefits}
+                  />
+                </GridColumn>
+              )}
             </GridRow>
           )}
         </>
       )}
       {employerLastSixMonths === YES && (
         <GridRow>
-          <GridColumn span={['7/12', '7/12', '7/12', '12/12']}>
-            <Box paddingBottom={2}>
-              <RadioValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.reviewScreen.employerLastSixMonths,
-                )}
-                value={employerLastSixMonths}
-              />
-            </Box>
+          <GridColumn span={['7/12', '7/12', '7/12', '12/12']} paddingTop={2}>
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.reviewScreen.employerLastSixMonths,
+              )}
+              value={employerLastSixMonths}
+            />
           </GridColumn>
         </GridRow>
       )}
       {((isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO) ||
         employerLastSixMonths === YES) && (
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={2}>
             <Label>
               {formatMessage(parentalLeaveFormMessages.employer.title)}
             </Label>

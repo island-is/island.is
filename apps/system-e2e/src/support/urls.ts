@@ -17,6 +17,21 @@ export enum AuthUrl {
 }
 
 export const JUDICIAL_SYSTEM_HOME_URL = '/api/auth/login?nationalId=9999999999'
+export const JUDICIAL_SYSTEM_JUDGE_HOME_URL =
+  '/api/auth/login?nationalId=0000000000'
+export const JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL =
+  '/api/auth/login?nationalId=0000000001'
+export const JUDICIAL_SYSTEM_DEFENDER_HOME_URL =
+  '/api/auth/login?nationalId=0909090909'
+
+export const shouldSkipNavigation = (url: string) => {
+  return [
+    JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
+    JUDICIAL_SYSTEM_DEFENDER_HOME_URL,
+    JUDICIAL_SYSTEM_HOME_URL,
+    JUDICIAL_SYSTEM_JUDGE_HOME_URL,
+  ].includes(url)
+}
 
 export const getEnvironmentBaseUrl = (authority: string) => {
   const baseurlPrefix = process.env.BASE_URL_PREFIX ?? ''

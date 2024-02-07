@@ -7,7 +7,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import {
@@ -19,6 +18,7 @@ import {
 import { useGetListsUserSigned, useListsUserOwns } from '../hooks'
 import { ActionCard } from '@island.is/service-portal/core'
 import { formatDate } from '../../lib/utils'
+import { PetitionPaths } from '../../lib/paths'
 
 const Petitions = () => {
   useNamespaces('sp.petitions')
@@ -114,7 +114,7 @@ const Petitions = () => {
                                 label: formatMessage(m.editList),
                                 variant: 'text',
                                 icon: 'arrowForward',
-                                url: ServicePortalPath.PetitionListOwned.replace(
+                                url: PetitionPaths.PetitionListOwned.replace(
                                   ':listId',
                                   list.id,
                                 ),
@@ -149,7 +149,7 @@ const Petitions = () => {
                                 label: formatMessage(m.viewList),
                                 variant: 'text',
                                 icon: 'arrowForward',
-                                url: ServicePortalPath.PetitionList.replace(
+                                url: PetitionPaths.PetitionList.replace(
                                   ':listId',
                                   list.endorsementList?.id as string,
                                 ),
@@ -190,7 +190,7 @@ const Petitions = () => {
                                 label: formatMessage(m.editList),
                                 variant: 'text',
                                 icon: 'arrowForward',
-                                url: ServicePortalPath.PetitionListOwned.replace(
+                                url: PetitionPaths.PetitionListOwned.replace(
                                   ':listId',
                                   list.id,
                                 ),
@@ -225,7 +225,7 @@ const Petitions = () => {
                                 label: formatMessage(m.viewList),
                                 variant: 'text',
                                 icon: 'arrowForward',
-                                url: ServicePortalPath.PetitionList.replace(
+                                url: PetitionPaths.PetitionList.replace(
                                   ':listId',
                                   list.endorsementList?.id as string,
                                 ),

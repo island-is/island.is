@@ -36,7 +36,7 @@ const ViewSignedList = () => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const listId = pathname.replace('/min-gogn/listar/', '')
+  const listId = pathname.replace('/min-gogn/listar/undirskriftalistar', '')
 
   const { petitionData } = useGetSinglePetition(listId)
   const petition = petitionData as EndorsementList

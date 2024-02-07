@@ -1,5 +1,6 @@
 import flatten from 'lodash/flatten'
 import type { CONTENT_TYPE } from '../../generated/contentfulTypes'
+import type { SliceUnion } from '../../unions/slice.union'
 
 export const createTerms = (termStrings: string[]): string[] => {
   const singleWords = termStrings.map((termString = '') => {
@@ -145,6 +146,17 @@ export const pruneEntryHyperlink = (node: any) => {
         },
       },
     }
+  } else if (contentTypeId === 'price' && target.fields?.organization?.fields) {
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        parent: {
+          ...target.fields.organization,
+          fields: extractPrimitiveFields(target.fields.organization.fields),
+        },
+      },
+    }
   }
   // In case there is no need to preserve non primitive fields we just remove them to prevent potential circularity
   else if (target?.fields) {
@@ -156,11 +168,27 @@ export const pruneEntryHyperlink = (node: any) => {
 }
 
 export const removeEntryHyperlinkFields = (node: any) => {
-  if (node?.nodeType === 'entry-hyperlink') {
+  if (
+    node?.nodeType === 'entry-hyperlink' ||
+    node?.nodeType === 'embedded-entry-inline'
+  ) {
     pruneEntryHyperlink(node)
   } else if (node?.content && node.content.length > 0) {
     for (const contentNode of node.content) {
       removeEntryHyperlinkFields(contentNode)
     }
   }
+}
+
+export const pruneNonSearchableSliceUnionFields = (
+  slice: typeof SliceUnion,
+) => {
+  if ((slice as { typename?: string })?.typename === 'ConnectedComponent') {
+    return {
+      ...slice,
+      json: {},
+      configJson: {},
+    }
+  }
+  return slice
 }

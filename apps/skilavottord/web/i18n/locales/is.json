@@ -328,7 +328,8 @@
         "message": "Það kom upp vandamál þegar ökutæki var merkt til úrvinnslu. Vinsamlegast reynið aftur.",
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
-      }
+      },
+      "currentMileage": "Núverandi kílómetrastaða"
     }
   },
   "recyclingFundOverview": {
@@ -597,6 +598,11 @@
       "baseRoute": "/deregister-vehicle",
       "select": "/deregister-vehicle/select",
       "deregister": "/deregister-vehicle/[id]"
+    },
+    "deregisterVehicleKM": {
+      "baseRoute": "/en/deregister-vehicle-km",
+      "select": "/en/deregister-vehicle-km/select",
+      "deregister": "/en/deregister-vehicle-km/[id]"
     },
     "recycledVehicles": "/recycled-vehicles",
     "accessControl": "/access-control",

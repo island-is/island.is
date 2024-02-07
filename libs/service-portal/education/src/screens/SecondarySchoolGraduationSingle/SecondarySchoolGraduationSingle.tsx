@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   formatDate,
   IntroHeader,
@@ -25,7 +24,9 @@ export const EducationGraduationDetail = () => {
   const { id } = useParams() as UseParams
   const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
 
-  const singleGraduation = diplomaItems.filter((item) => item.diplomaId === id)
+  const singleGraduation = diplomaItems.filter(
+    (item) => String(item.diplomaId) === id,
+  )
 
   if ((!singleGraduation.length && !loading) || error) {
     return (

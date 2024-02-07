@@ -77,6 +77,24 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
           DelegationType.Custom,
         ],
       },
+      {
+        // The branch auth-api/custom-delegation-scope-rule is changing this, but it is not merged yet and this is required for release.
+        // Todo: add this to the scope migration of the branch
+        scopeName: '@island.is/applications/ver',
+        onlyForDelegationType: [
+          DelegationType.ProcurationHolder,
+          DelegationType.Custom,
+        ],
+      },
+      {
+        // The branch auth-api/custom-delegation-scope-rule is changing this, but it is not merged yet and this is required for release.
+        // Todo: add this to the scope migration of the branch
+        scopeName: '@island.is/applications/orkusjodur',
+        onlyForDelegationType: [
+          DelegationType.ProcurationHolder,
+          DelegationType.Custom,
+        ],
+      },
     ],
     userInfoUrl:
       env.required(

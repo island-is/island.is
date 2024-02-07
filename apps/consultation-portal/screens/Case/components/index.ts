@@ -13,3 +13,4 @@ export { default as AdviceSkeletonLoader } from './AdviceSkeletonLoader/AdviceSk
 export { default as Stacked } from './Stacked/Stacked'
 export { default as RenderAdvices } from './RenderAdvices/RenderAdvices'
 export { default as DocFileName } from './DocFileName/DocFileName'
+export { default as CaseStatusText } from './CaseStatusText/CaseStatusText'

@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
-import SelectableList, {
+import {
+  FormContext,
   Item,
-} from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
+  SelectableList,
+} from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { PoliceCase } from '../Defendant'
@@ -31,7 +32,7 @@ export const LokeNumberList: React.FC<Props> = (props) => {
     if (policeCaseInfo) {
       const available = policeCaseInfo?.filter(
         (caseInfo) =>
-          !workingCase.policeCaseNumbers.includes(caseInfo.policeCaseNumber),
+          !workingCase.policeCaseNumbers?.includes(caseInfo.policeCaseNumber),
       )
       setAvailablePoliceCases(available)
     }

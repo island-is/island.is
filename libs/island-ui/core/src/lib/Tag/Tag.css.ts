@@ -12,6 +12,7 @@ export const container = style({
   textDecoration: 'none',
   maxWidth: '100%',
   border: '1px solid transparent',
+  whiteSpace: 'nowrap',
 })
 
 export const hyphenate = style({
@@ -68,6 +69,10 @@ export const variants = styleVariants({
   disabled: {
     backgroundColor: theme.color.dark100,
     color: theme.color.dark200,
+  },
+  warn: {
+    backgroundColor: theme.color.yellow200,
+    color: theme.color.dark400,
   },
   label: {},
 })

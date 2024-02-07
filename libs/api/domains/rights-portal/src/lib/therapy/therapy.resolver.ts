@@ -24,7 +24,7 @@ import { PaginatedTherapyResponse } from './models/therapy.model'
 export class TherapyResolver {
   constructor(private readonly service: TherapyService) {}
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthTherapies)
   @Query(() => PaginatedTherapyResponse, {
     name: 'rightsPortalPaginatedTherapies',
     nullable: true,

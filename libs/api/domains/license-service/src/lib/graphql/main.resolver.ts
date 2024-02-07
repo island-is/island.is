@@ -23,6 +23,7 @@ import {
   GenericPkPassQrCode,
   GenericPkPassVerification,
   GenericUserLicense,
+  UserLicensesResponse,
 } from './genericLicense.model'
 import {
   GenericLicenseType,
@@ -57,6 +58,9 @@ export class GetGenericLicensesInput {
 export class GetGenericLicenseInput {
   @Field(() => String)
   licenseType!: GenericLicenseType
+
+  @Field(() => String, { nullable: true })
+  licenseId?: string
 }
 
 @InputType()
@@ -78,7 +82,9 @@ export class VerifyPkPassInput {
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
-  @Query(() => [GenericUserLicense])
+  @Query(() => [GenericUserLicense], {
+    deprecationReason: 'Use genericUserLicenses instead',
+  })
   @Audit()
   async genericLicenses(
     @CurrentUser() user: User,
@@ -111,6 +117,26 @@ export class MainResolver {
       user,
       locale,
       input.licenseType,
+      input.licenseId,
+    )
+    return license
+  }
+
+  @Query(() => UserLicensesResponse)
+  @Audit()
+  async genericUserLicenses(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: GetGenericLicensesInput,
+  ) {
+    const license = await this.licenseServiceService.getUserLicenses(
+      user,
+      locale,
+      {
+        ...input,
+        includedTypes: input?.includedTypes ?? ['DriversLicense'],
+      },
     )
     return license
   }

@@ -14,6 +14,7 @@ import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { useBoxStyles } from '../Box/useBoxStyles'
+import { VisuallyHidden } from '../VisuallyHidden/VisuallyHidden'
 
 type LinkBase = {
   text: string
@@ -97,6 +98,9 @@ export interface MenuProps {
    */
   onVisibilityChange?: ModalBaseProps['onVisibilityChange']
   renderDisclosure?: ModalBaseProps['renderDisclosure']
+  closeButtonLabel?: string
+  expandButtonLabel?: string
+  collapseButtonLabel?: string
 }
 
 const defaultRenderLinks = ({ text, href, className }: RenderLinkObj) => {
@@ -119,10 +123,14 @@ const AsideTopLinkWithSub = ({
   link,
   sub,
   id,
+  expandButtonLabel = 'Expand',
+  collapseButtonLabel = 'Collapse',
 }: {
   link: ReactNode
   sub: ReactNode[]
   id: string | number
+  expandButtonLabel?: string
+  collapseButtonLabel?: string
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
@@ -142,7 +150,11 @@ const AsideTopLinkWithSub = ({
           aria-expanded={!isCollapsed}
           aria-controls={`AsideTopLink-${id}`}
           onClick={() => setIsCollapsed(!isCollapsed)}
-        />
+        >
+          <VisuallyHidden>
+            {isCollapsed ? expandButtonLabel : collapseButtonLabel}
+          </VisuallyHidden>
+        </Button>
       </Box>
       <AnimateHeight
         duration={300}
@@ -184,6 +196,9 @@ export const Menu = ({
   asideBottomLinks,
   onVisibilityChange,
   renderDisclosure,
+  closeButtonLabel = 'Close',
+  expandButtonLabel = 'Expand',
+  collapseButtonLabel = 'Collapse',
 }: MenuProps) => {
   const [mainLinksCollapsed, setMainLinksCollapsed] = useState(true)
   const fullHeight = useBoxStyles({ component: 'div', height: 'full' })
@@ -283,7 +298,9 @@ export const Menu = ({
                         circle
                         icon="close"
                         colorScheme="light"
-                      />
+                      >
+                        <VisuallyHidden>{closeButtonLabel}</VisuallyHidden>
+                      </Button>
                     </Box>
                     <Box
                       marginTop={[5, 5, 0]}
@@ -331,7 +348,13 @@ export const Menu = ({
                         onClick={() =>
                           setMainLinksCollapsed(!mainLinksCollapsed)
                         }
-                      />
+                      >
+                        <VisuallyHidden>
+                          {mainLinksCollapsed
+                            ? expandButtonLabel
+                            : collapseButtonLabel}
+                        </VisuallyHidden>
+                      </Button>
                     </Box>
                     <AnimateHeight
                       duration={300}
@@ -376,7 +399,9 @@ export const Menu = ({
                       circle
                       icon="close"
                       colorScheme="negative"
-                    />
+                    >
+                      <VisuallyHidden>{closeButtonLabel}</VisuallyHidden>
+                    </Button>
                   </Box>
                   <Box marginTop={[0, 0, 9]}>
                     {asideTopLinks.map(({ text, href, sub }, index) =>
@@ -384,6 +409,8 @@ export const Menu = ({
                         <AsideTopLinkWithSub
                           key={index}
                           id={index}
+                          expandButtonLabel={expandButtonLabel}
+                          collapseButtonLabel={collapseButtonLabel}
                           link={renderLink(
                             {
                               className: cn(

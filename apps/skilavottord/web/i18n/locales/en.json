@@ -328,7 +328,8 @@
         "message": "We ran into a problem marking the car for deregistration. Please try again.",
         "primaryButton": "Try again",
         "secondaryButton": "Cancel"
-      }
+      },
+      "currentMileage": "Current mileage"
     }
   },
   "recyclingFundOverview": {
@@ -597,6 +598,11 @@
       "baseRoute": "/en/deregister-vehicle",
       "select": "/en/deregister-vehicle/select",
       "deregister": "/en/deregister-vehicle/[id]"
+    },
+    "deregisterVehicleKM": {
+      "baseRoute": "/en/deregister-vehicle-km",
+      "select": "/en/deregister-vehicle-km/select",
+      "deregister": "/en/deregister-vehicle-km/[id]"
     },
     "recycledVehicles": "/en/recycled-vehicles",
     "accessControl": "/en/access-control",

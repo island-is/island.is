@@ -19,6 +19,7 @@ import {
   formSubmit,
   IntroHeader,
   m,
+  UNI_HI_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { Query } from '@island.is/api/schema'
@@ -114,6 +115,8 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={m.educationGraduation}
         intro={text?.description || ''}
+        serviceProviderSlug={UNI_HI_SLUG}
+        serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       <GridRow marginBottom={[1, 1, 1, 3]}>
         <GridColumn span="12/12">

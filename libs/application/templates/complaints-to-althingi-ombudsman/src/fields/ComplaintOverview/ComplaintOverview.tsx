@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, YES } from '@island.is/application/types'
 import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
@@ -27,7 +27,6 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
   const answers = application.answers as ComplaintsToAlthingiOmbudsman
   const { isEditable } = field.props
   const {
-    appeals,
     complaintType,
     applicant: { name, phoneNumber, email, address },
     complaintDescription: { decisionDate },
@@ -58,7 +57,7 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
       </ReviewGroup>
       <ReviewGroup
         isEditable={isEditable}
-        editAction={() => changeScreens('information.aboutTheComplainer')}
+        editAction={() => changeScreens('applicant')}
       >
         <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
@@ -78,7 +77,7 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
               value={phoneNumber ?? ''}
-              label={information.aboutTheComplainer.phone}
+              label={information.aboutTheComplainer.phoneNumber}
             />
           </GridColumn>
           <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
@@ -98,7 +97,7 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
       />
       <ReviewGroup
         isEditable={isEditable}
-        editAction={() => changeScreens('complainee')}
+        editAction={() => changeScreens('section.complaintInformation')}
       >
         <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '9/12', '5/12']}>
@@ -111,36 +110,16 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
               label={complaintOverview.labels.complaintType}
             />
           </GridColumn>
-          {complaintIsAboutDecision && decisionDate && (
-            <GridColumn span={['9/12', '9/12', '9/12', '9/12', '4/12']}>
-              <ValueLine
-                label={complaintOverview.labels.decisionDate}
-                value={decisionDate}
-              />
-            </GridColumn>
-          )}
         </GridRow>
       </ReviewGroup>
       <ComplaintInformation
         name={answers.complaintDescription.complaineeName}
         type={answers.complainee.type}
         description={answers.complaintDescription.complaintDescription}
+        decisionDate={decisionDate}
         isEditable={isEditable}
         onEdit={changeScreens}
       />
-      <ReviewGroup
-        isEditable={isEditable}
-        editAction={() => changeScreens('appeals')}
-      >
-        <GridRow>
-          <GridColumn span="9/12">
-            <ValueLine
-              value={yesNoMessageMapper[appeals]}
-              label={complaintInformation.appealsHeader}
-            />
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
       <ReviewGroup
         isEditable={isEditable}
         editAction={() => changeScreens('preexistingComplaint.multifield')}
@@ -148,8 +127,8 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
         <GridRow>
           <GridColumn span="9/12">
             <ValueLine
-              label={complaintOverview.labels.courtAction}
               value={yesNoMessageMapper[answers.preexistingComplaint]}
+              label={complaintInformation.appealsHeader}
             />
           </GridColumn>
         </GridRow>
@@ -164,6 +143,29 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
               label={complaintOverview.labels.courtActionSecond}
               value={yesNoMessageMapper[answers.courtActionAnswer]}
             />
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+      <ReviewGroup
+        isEditable={isEditable}
+        editAction={() => changeScreens('previousOmbudsmanComplaint.question')}
+      >
+        <GridRow>
+          <GridColumn span="9/12">
+            <ValueLine
+              label={complaintOverview.labels.previousOmbudsmanComplaint}
+              value={
+                yesNoMessageMapper[answers.previousOmbudsmanComplaint.Answer]
+              }
+            />
+            {answers.previousOmbudsmanComplaint.Answer === YES && (
+              <ValueLine
+                label={
+                  complaintOverview.labels.previousOmbudsmanComplaintDescription
+                }
+                value={answers.previousOmbudsmanComplaint.moreInfo}
+              />
+            )}
           </GridColumn>
         </GridRow>
       </ReviewGroup>

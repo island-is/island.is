@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -15,25 +14,18 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
-  SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  ReactSelectOption,
-  UserData,
-} from '@island.is/judicial-system-web/src/types'
+import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
+import SelectCourtOfficials from './SelectCourtOfficials/SelectCourtOfficials'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
-
-type JudgeSelectOption = ReactSelectOption & { judge: User }
-type RegistrarSelectOption = ReactSelectOption & { registrar: User }
 
 const ReceptionAndAssignment = () => {
   const router = useRouter()
@@ -46,16 +38,7 @@ const ReceptionAndAssignment = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { createCourtCase, isCreatingCourtCase, setAndSendCaseToServer } =
-    useCase()
-
-  const { data: userData, loading: userLoading } = useQuery<UserData>(
-    UsersQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { createCourtCase, isCreatingCourtCase } = useCase()
 
   const handleCreateCourtCase = async (workingCase: Case) => {
     const courtCaseNumber = await createCourtCase(
@@ -66,26 +49,6 @@ const ReceptionAndAssignment = () => {
 
     if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
-    }
-  }
-
-  const setJudge = (judge: User) => {
-    if (workingCase) {
-      setAndSendCaseToServer(
-        [{ judgeId: judge.id, force: true }],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }
-
-  const setRegistrar = (registrar?: User) => {
-    if (workingCase) {
-      setAndSendCaseToServer(
-        [{ registrarId: registrar?.id ?? null, force: true }],
-        workingCase,
-        setWorkingCase,
-      )
     }
   }
 
@@ -102,11 +65,37 @@ const ReceptionAndAssignment = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+  const defendantPleas = workingCase.defendants?.map((defendant, index) => {
+    if (
+      defendant.defendantPlea !== null &&
+      defendant.defendantPlea !== undefined
+    ) {
+      return (
+        <Box
+          component="span"
+          display="block"
+          marginBottom={index === workingCase.defendants?.length ? 0 : 1}
+        >
+          {formatMessage(strings.defendantPleaAlertMessage, {
+            defendantGender: workingCase.defendants
+              ? defendant.gender
+              : Gender.MALE,
+            nameAndPlea: getDefendantPleaText(
+              defendant.name,
+              defendant.defendantPlea,
+            ),
+          })}
+        </Box>
+      )
+    } else {
+      return null
+    }
+  })
 
   return (
     <PageLayout
       workingCase={workingCase}
-      isLoading={isLoadingWorkingCase || userLoading}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
@@ -116,8 +105,25 @@ const ReceptionAndAssignment = () => {
       />
       <FormContentContainer>
         {isIndictmentCase(workingCase.type) && workingCase.comments && (
-          <Box marginBottom={5}>
-            <AlertMessage message={workingCase.comments} type="warning" />
+          <Box
+            marginBottom={defendantPleas && defendantPleas.length > 0 ? 2 : 5}
+          >
+            <AlertMessage
+              title={formatMessage(strings.commentsTitle)}
+              message={workingCase.comments}
+              type="warning"
+            />
+          </Box>
+        )}
+        {defendantPleas && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              title={formatMessage(strings.defendantPleaAlertTitle, {
+                defendantCount: workingCase.defendants?.length,
+              })}
+              message={defendantPleas}
+              type="warning"
+            />
           </Box>
         )}
         <Box marginBottom={7}>
@@ -138,16 +144,7 @@ const ReceptionAndAssignment = () => {
           />
         </Box>
         <Box component="section" marginBottom={10}>
-          <SelectCourtOfficials
-            workingCase={workingCase}
-            handleJudgeChange={(selectedOption) =>
-              setJudge((selectedOption as JudgeSelectOption).judge)
-            }
-            handleRegistrarChange={(selectedOption) =>
-              setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
-            }
-            users={userData?.users}
-          />
+          <SelectCourtOfficials />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

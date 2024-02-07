@@ -1,19 +1,18 @@
 import { Allow } from 'class-validator'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 
-import type {
-  CaseTransition,
-  TransitionCase,
-} from '@island.is/judicial-system/types'
+import { CaseTransition } from '@island.is/judicial-system/types'
+
+registerEnumType(CaseTransition, { name: 'CaseTransition' })
 
 @InputType()
-export class TransitionCaseInput implements TransitionCase {
+export class TransitionCaseInput {
   @Allow()
   @Field()
   readonly id!: string
 
   @Allow()
-  @Field(() => String)
+  @Field(() => CaseTransition)
   readonly transition!: CaseTransition
 }

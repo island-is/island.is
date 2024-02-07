@@ -24,14 +24,16 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant, DefendantService } from '../defendant'
-import { CaseFile } from '../file'
+import {
+  CaseFile,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+} from '../file'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
@@ -54,7 +56,6 @@ export const attributes: (keyof Case)[] = [
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
-  'creatingProsecutorId',
   'prosecutorId',
   'courtCaseNumber',
   'courtDate',
@@ -89,6 +90,9 @@ export const attributes: (keyof Case)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealReceivedByCourtDate',
+  'appealRulingModifiedHistory',
+  'requestAppealRulingNotToBePublished',
+  'prosecutorsOfficeId',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -101,13 +105,8 @@ export interface LimitedAccessUpdateCase
   > {}
 
 export const include: Includeable[] = [
-  { model: Defendant, as: 'defendants' },
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
-  {
-    model: User,
-    as: 'creatingProsecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
   {
     model: User,
     as: 'prosecutor',
@@ -128,32 +127,6 @@ export const include: Includeable[] = [
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
   },
-  { model: Case, as: 'parentCase', attributes },
-  { model: Case, as: 'childCase', attributes },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    where: {
-      state: { [Op.not]: CaseFileState.DELETED },
-      category: [
-        CaseFileCategory.RULING,
-        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-        CaseFileCategory.APPEAL_RULING,
-        CaseFileCategory.COURT_RECORD,
-        CaseFileCategory.COVER_LETTER,
-        CaseFileCategory.INDICTMENT,
-        CaseFileCategory.CRIMINAL_RECORD,
-        CaseFileCategory.COST_BREAKDOWN,
-        CaseFileCategory.CASE_FILE,
-      ],
-    },
-  },
   {
     model: User,
     as: 'appealAssistant',
@@ -173,6 +146,34 @@ export const include: Includeable[] = [
     model: User,
     as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
+  },
+  { model: Case, as: 'parentCase', attributes },
+  { model: Case, as: 'childCase', attributes },
+  { model: Defendant, as: 'defendants' },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: {
+      state: { [Op.not]: CaseFileState.DELETED },
+      category: [
+        CaseFileCategory.RULING,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        CaseFileCategory.APPEAL_RULING,
+        CaseFileCategory.COURT_RECORD,
+        CaseFileCategory.COVER_LETTER,
+        CaseFileCategory.INDICTMENT,
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
+      ],
+    },
   },
 ]
 

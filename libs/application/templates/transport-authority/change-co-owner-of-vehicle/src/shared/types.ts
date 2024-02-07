@@ -13,6 +13,7 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
+  requireMileage?: boolean | null
 }
 
 type VehicleValidationErrorMessage = {
@@ -25,6 +26,7 @@ export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
   make?: string
   color?: string
   role?: string
+  requireMileage?: boolean | null
   isDebtLess?: boolean | null
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }

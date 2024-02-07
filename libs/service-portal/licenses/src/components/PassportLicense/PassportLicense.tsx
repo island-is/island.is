@@ -1,10 +1,10 @@
 import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatDate } from '../../utils/dateUtils'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { SingleLicenseCard } from '../SingleLicenseCard/SingleLicenseCard'
 import { m } from '../../lib/messages'
 import { passportLogo } from '../../lib/constants'
+import { LicensePaths } from '../../lib/paths'
 
 export const PassportLicense = ({
   id,
@@ -44,7 +44,7 @@ export const PassportLicense = ({
     <SingleLicenseCard
       title={name || formatMessage(m.passportCardTitle)}
       subtitle={formatMessage(m.passportNumber) + ': ' + id}
-      link={ServicePortalPath.LicensesPassportDetail.replace(':id', id)}
+      link={LicensePaths.LicensesPassportDetail.replace(':id', id)}
       img={passportLogo}
       dataTestId="passport-card"
       translateTitle={name ? 'no' : 'yes'}

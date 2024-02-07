@@ -37,15 +37,11 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod: 'https://innskra.island.is',
       },
       IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme',
-      NO_UPDATE_NOTIFIER: 'true',
     })
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
     })
     .redis({
       host: {
@@ -82,4 +78,10 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .replicaCount({
+      min: 2,
+      max: 10,
+      default: 2,
+      scalingMagicNumber: 20,
+    })
+    .grantNamespaces('islandis')

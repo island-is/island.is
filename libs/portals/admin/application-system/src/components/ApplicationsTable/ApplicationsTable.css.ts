@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { globalStyle, style } from '@vanilla-extract/css'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 
 export const logo = style({
   marginRight: theme.spacing[2],
@@ -8,7 +8,7 @@ export const logo = style({
   objectFit: 'contain',
 })
 
-export const focusableTableRow = style({
+export const baseTableRow = style({
   transition: 'box-shadow 150ms ease-in-out, background 150ms ease-in-out',
   cursor: 'pointer',
 
@@ -22,6 +22,11 @@ export const focusableTableRow = style({
       outline: 'none',
     },
   },
+})
+
+export const focusableTableRow = styleVariants({
+  normal: [baseTableRow],
+  pruned: [baseTableRow, { background: '#f9f9f9' }],
 })
 
 globalStyle(`${focusableTableRow}:focus > *`, { borderColor: 'transparent' })

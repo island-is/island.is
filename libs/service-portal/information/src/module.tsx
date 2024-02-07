@@ -4,6 +4,7 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
+import { User } from '@island.is/shared/types'
 
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
@@ -15,6 +16,21 @@ const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
 const UserProfileSettings = lazy(() =>
   import('./screens/UserProfile/UserProfile'),
 )
+
+const sharedRoutes = (userInfo: User) => [
+  {
+    name: m.mySettings,
+    path: InformationPaths.SettingsOld,
+    enabled: userInfo.scopes.includes(UserProfileScope.write),
+    element: <Navigate to={InformationPaths.Settings} replace />,
+  },
+  {
+    name: m.mySettings,
+    path: InformationPaths.Settings,
+    enabled: userInfo.scopes.includes(UserProfileScope.write),
+    element: <UserProfileSettings />,
+  },
+]
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
@@ -30,18 +46,6 @@ export const informationModule: PortalModule = {
       path: InformationPaths.MyInfoRootOverview,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <UserInfoOverview />,
-    },
-    {
-      name: m.mySettings,
-      path: InformationPaths.SettingsOld,
-      enabled: userInfo.scopes.includes(UserProfileScope.write),
-      element: <Navigate to={InformationPaths.Settings} replace />,
-    },
-    {
-      name: m.mySettings,
-      path: InformationPaths.Settings,
-      enabled: userInfo.scopes.includes(UserProfileScope.write),
-      element: <UserProfileSettings />,
     },
     {
       name: m.userInfo,
@@ -61,6 +65,7 @@ export const informationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <Spouse />,
     },
+    ...sharedRoutes(userInfo),
   ],
   companyRoutes: ({ userInfo }) => [
     {
@@ -69,5 +74,6 @@ export const informationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.company),
       element: <CompanyInfo />,
     },
+    ...sharedRoutes(userInfo),
   ],
 }

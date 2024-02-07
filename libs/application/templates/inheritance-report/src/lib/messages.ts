@@ -56,6 +56,22 @@ export const m = defineMessages({
     description:
       'User not eligible for estate or no estates found bound to their national id',
   },
+  applicationInfoSectionTitle: {
+    id: 'ir.application:applicationInfoSectionTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Titill fyrir hliðarstiku',
+  },
+  applicationInfoTitle: {
+    id: 'ir.application:applicationInfoTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Upplýsinga skjár titill',
+  },
+  applicationInfoText: {
+    id: 'ir.application:applicationInfoTexts#markdown',
+    defaultMessage: 'Upplýsinga Texti',
+    description: 'Texti fyrir upplýsinga skjá',
+  },
+
   deceasedInfoProviderTitle: {
     id: 'ir.application:deceasedInfoProviderTitle',
     defaultMessage: 'Upplýsingar um hinn látna',
@@ -132,6 +148,11 @@ export const m = defineMessages({
     id: 'ir.application:nationalId',
     defaultMessage: 'Kennitala',
     description: '',
+  },
+  errorNationalIdIncorrect: {
+    id: 'ir.application:error.nationalIdIncorrect',
+    defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
+    description: 'National id is invalid',
   },
   address: {
     id: 'ir.application:address',
@@ -367,7 +388,7 @@ export const m = defineMessages({
   },
   vehicleNumberLabel: {
     id: 'ir.application:vehicleNumberLabel',
-    defaultMessage: 'Skráninganúmer ökutækis',
+    defaultMessage: 'Skráningarnúmer ökutækis',
     description: 'Vehicle number label',
   },
   vehicleTypeLabel: {
@@ -400,6 +421,11 @@ export const m = defineMessages({
   gunValuation: {
     id: 'ir.application:gunValuation',
     defaultMessage: 'Markaðsverðmæti á dánardegi',
+    description: '',
+  },
+  gunNumber: {
+    id: 'ir.application:gunNumber',
+    defaultMessage: 'Raðnúmer',
     description: '',
   },
 
@@ -518,7 +544,7 @@ export const m = defineMessages({
   },
   moneyText: {
     id: 'ir.application:moneyText',
-    defaultMessage: 'Upplýsingar um peninga',
+    defaultMessage: 'peningar og bankahólf',
     description: '',
   },
   moneyPlaceholder: {
@@ -591,9 +617,19 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
+  notFilledOut: {
+    id: 'ir.application:notFilledOut',
+    defaultMessage: 'Ekki fyllt út',
+    description: '',
+  },
   assetOverview: {
     id: 'ir.application:assetOverview',
     defaultMessage: 'Yfirlit eigna',
+    description: '',
+  },
+  debtsOverview: {
+    id: 'ir.application:debtsOverview',
+    defaultMessage: 'Yfirlit skulda',
     description: '',
   },
   assetOverviewDescription: {
@@ -683,6 +719,11 @@ export const m = defineMessages({
   debtsCreditorName: {
     id: 'ir.application:debtsCreditorName',
     defaultMessage: 'Nafn kröfuhafa',
+    description: '',
+  },
+  debtsLoanIdentity: {
+    id: 'ir.application:debtsLoanIdentity',
+    defaultMessage: 'Auðkenni / Lánsnúmer',
     description: '',
   },
   creditorsNationalId: {
@@ -920,9 +961,19 @@ export const m = defineMessages({
     defaultMessage: 'Erfingjar',
     description: '',
   },
+  heirContactInfo: {
+    id: 'ir.application:heirContactInfo',
+    defaultMessage: 'Tengiliðaupplýsingar',
+    description: '',
+  },
   heirAdditionalInfo: {
     id: 'ir.application:heirAdditionalInfo',
     defaultMessage: 'Athugasemdir erfingja',
+    description: '',
+  },
+  heirShare: {
+    id: 'ir.application:heirShare',
+    defaultMessage: 'Arfur og erfðafjárskattur',
     description: '',
   },
   heirAdditionalInfoDescription: {
@@ -968,6 +1019,22 @@ export const m = defineMessages({
   },
 
   // Done
+  beforeSubmitStatement: {
+    id: 'ir.application:beforeSubmitStatement#markdown',
+    defaultMessage:
+      'Undirritaðir erfingjar eða umboðsmenn þeirra lýsa því yfir með undirskrift sinni og leggja við drengskap sinn:\n\n1. Að á erfðafjárskýrslu þessari séu tilgreindir allir erfingjar búsins, sem þeim er kunnugt um.\n2. Að á erfðafjárskýrslu þessari komi fram tæmandi talning á eignum og skuldum búsins og að réttilega sé frá verðmæti þeirra eða matsverði greint í öllum atriðum.\n3. Að þeir taki sér á hendur einn fyrir alla og allir fyrir einn greiðslu allra skulda búsins, jafnt þeirra sem fram koma í þessari skýrslu, sem þeirra er óþekktar eru en síðar kunna að koma í ljós, svo og með sama skilorði greiðslu erfðafjárskatts.\n4. Ef við á, að gagnvart erfingjum sem eru ófjárráða eða málsvarar koma annars fram fyrir við skiptin, takast erfingjar á hendur ábyrgð á því að þeir fyrrnefndu muni ekki gjalda fyrir ábyrgð sína á skuldum búsins og gjöldum, umfram arfshluta sinn.',
+    description: '',
+  },
+  readyToSubmit: {
+    id: 'ir.application:readyToSubmit',
+    defaultMessage: 'Skila inn erfðafjárskýrslu',
+    description: '',
+  },
+  inheritanceReportSubmissionCheckbox: {
+    id: 'ir.application:inheritanceReportSubmissionCheckbox',
+    defaultMessage: 'Ég samþykki ofangreinda yfirlýsingu',
+    description: '',
+  },
   submitReport: {
     id: 'ir.application:submitReport',
     defaultMessage: 'Senda inn skýrslu',

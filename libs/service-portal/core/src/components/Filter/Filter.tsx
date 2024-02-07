@@ -41,6 +41,9 @@ export interface FilterProps {
   /** Swap input and filter button locations */
   reverse?: boolean
 
+  /** Input width to 100% */
+  fullWidthInput?: boolean
+
   /** Allow popover to flip upwards */
   popoverFlip?: boolean
 
@@ -75,6 +78,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   reverse,
   children,
   popoverFlip = true,
+  fullWidthInput = false,
   additionalFilters,
 }) => {
   const dialog = useDialogState()
@@ -97,7 +101,21 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             rowGap={2}
             columnGap={2}
           >
-            <Inline space={2} reverse={reverse} alignY="bottom">
+            <Box
+              component={fullWidthInput ? undefined : Inline}
+              {...(fullWidthInput
+                ? {
+                    flexDirection: reverse ? 'rowReverse' : 'row',
+                    display: 'flex',
+                    width: 'full',
+                    rowGap: 1,
+                  }
+                : {
+                    space: 2,
+                    reverse,
+                    alignY: 'bottom',
+                  })}
+            >
               <Box display="flex" rowGap={2} columnGap={2} flexWrap="wrap">
                 <Box
                   component={PopoverDisclosure}
@@ -105,6 +123,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                   display="inlineBlock"
                   borderRadius="large"
                   tabIndex={-1}
+                  marginLeft={fullWidthInput ? 2 : undefined}
                   {...popover}
                 >
                   <Button
@@ -119,8 +138,14 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                 </Box>
                 {additionalFilters && additionalFilters}
               </Box>
-              {hasFilterInput && filterInput}
-            </Inline>
+              {hasFilterInput ? (
+                fullWidthInput ? (
+                  <Box width="full">{filterInput}</Box>
+                ) : (
+                  filterInput
+                )
+              ) : undefined}
+            </Box>
           </Box>
           <Box
             component={Popover}

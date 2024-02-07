@@ -11,6 +11,7 @@ import {
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
   DanarbuUppl,
+  DanarbuUpplRadstofun,
   EignirDanarbus,
   Fasteignasalar,
   Logmenn,
@@ -20,6 +21,8 @@ import {
   Erfingar,
   Malsvari,
   Meistaraleyfi,
+  Okutaeki,
+  ThjodskraSvarSkeyti,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -40,7 +43,6 @@ import {
   EstateMember,
   EstateAsset,
   EstateRegistrant,
-  EstateInfo,
   RealEstateAgent,
   Lawyer,
   OperatingLicensesCSV,
@@ -48,6 +50,10 @@ import {
   Broker,
   Advocate,
   MasterLicence,
+  VehicleRegistration,
+  EstateInfo,
+  AvailableSettlements,
+  RegistryPerson,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -309,6 +315,15 @@ export const mapAssetName = (
   return { name: response.heiti ?? '' }
 }
 
+export const mapVehicle = (response: Okutaeki): VehicleRegistration => {
+  return {
+    licensePlate: response.numerOkutaekis,
+    modelName: response.framleidandaGerd,
+    manufacturer: response.framleidandi,
+    color: response.litur,
+  }
+}
+
 export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
   return {
     name: estateRaw.nafn ?? '',
@@ -323,10 +338,22 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
     share:
-      assetRaw.eignarhlutfall !== undefined
-        ? assetRaw.eignarhlutfall / 100.0
-        : 1,
+      assetRaw.eignarhlutfall !== undefined ? assetRaw.eignarhlutfall : 100,
   }
+}
+
+export const mapAvailableSettlements = (
+  settlementRaw: DanarbuUpplRadstofun['mogulegSkipti'],
+): AvailableSettlements | undefined => {
+  if (settlementRaw) {
+    return {
+      divisionOfEstateByHeirs: settlementRaw.Einkaskipti,
+      estateWithoutAssets: settlementRaw.EignalaustDanarbu,
+      officialDivision: settlementRaw.OpinberSkipti,
+      permitForUndividedEstate: settlementRaw.SetaiOskiptuBui,
+    }
+  }
+  return undefined
 }
 
 export const mapEstateRegistrant = (
@@ -390,7 +417,7 @@ export const mapEstateRegistrant = (
 }
 
 // TODO: get updated types into the client
-export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
+export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
   return {
     assets: syslaData.eignir
       ? syslaData.eignir
@@ -437,6 +464,7 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
     marriageSettlement: syslaData.kaupmali,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
+    availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),
   }
 }
 export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
@@ -445,5 +473,17 @@ export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
     office: licence.embaetti,
+  }
+}
+
+export const mapDepartedToRegistryPerson = (
+  departed: ThjodskraSvarSkeyti,
+): RegistryPerson => {
+  return {
+    address: departed.heimili ?? '',
+    city: departed.sveitarfelag ?? '',
+    name: departed.nafn ?? '',
+    nationalId: departed.kennitala ?? '',
+    postalCode: departed.postaritun?.split('-')[0] ?? '',
   }
 }

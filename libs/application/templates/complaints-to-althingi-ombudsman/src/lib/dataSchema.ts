@@ -3,11 +3,10 @@ import * as z from 'zod'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
-  NO,
   OmbudsmanComplaintTypeEnum,
-  YES,
 } from '../shared'
 import { error } from './messages/error'
+import { NO, YES } from '@island.is/application/types'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -34,12 +33,12 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   appeals: z.enum([YES, NO]),
   complainedForInformation: z.object({
     name: z.string().refine((v) => v, { params: error.required }),
-    ssn: z.string().refine((v) => v, { params: error.required }),
+    nationalId: z.string().refine((v) => v, { params: error.required }),
     address: z.string().refine((v) => v, { params: error.required }),
-    postcode: z.string().refine((v) => v, { params: error.required }),
+    postalCode: z.string().refine((v) => v, { params: error.required }),
     city: z.string().refine((v) => v, { params: error.required }),
     email: z.string().optional(),
-    phone: z.string().optional(),
+    phoneNumber: z.string().optional(),
     connection: z.string().refine((v) => v, { params: error.required }),
     powerOfAttorney: z.array(FileSchema).optional(),
   }),
@@ -56,6 +55,23 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   }),
   courtActionAnswer: z.enum([YES, NO]),
   preexistingComplaint: z.enum([YES, NO]),
+  previousOmbudsmanComplaint: z
+    .object({
+      Answer: z.enum([YES, NO]),
+      moreInfo: z.string(),
+    })
+    .refine(
+      (val) => {
+        if (val.Answer && val.Answer === NO) {
+          return true
+        }
+        return val?.moreInfo ? val.moreInfo.length > 0 : false
+      },
+      {
+        params: error.required,
+        path: ['moreInfo'],
+      },
+    ),
   attachments: z.object({ documents: z.array(FileSchema).optional() }),
 })
 

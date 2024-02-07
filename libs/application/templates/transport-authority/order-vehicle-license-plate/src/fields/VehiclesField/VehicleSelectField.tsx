@@ -2,11 +2,11 @@ import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useState } from 'react'
 import {
+  ActionCard,
   AlertMessage,
   Box,
   Bullet,
   BulletList,
-  CategoryCard,
   InputError,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
@@ -123,10 +123,11 @@ export const VehicleSelectField: FC<
         ) : (
           <Box>
             {selectedVehicle && (
-              <CategoryCard
-                colorScheme={disabled ? 'red' : 'blue'}
+              <ActionCard
+                backgroundColor={disabled ? 'red' : 'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
+                focused={true}
               />
             )}
             {selectedVehicle && disabled && (

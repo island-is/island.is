@@ -1,0 +1,12 @@
+query GetFinanceStatus {
+  getFinanceStatus
+}
+
+query GetDebtStatus {
+  getDebtStatus {
+    myDebtStatus {
+      approvedSchedule
+      possibleToSchedule
+    }
+  }
+}

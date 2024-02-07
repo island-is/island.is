@@ -1,20 +1,16 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import sortBy from 'lodash/sortBy'
-import React, { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { gql, useLazyQuery } from '@apollo/client'
 import {
   Accordion,
   AccordionItem,
   AlertBanner,
   Box,
   Button,
-  Column,
-  Columns,
   DatePicker,
   FilterInput,
-  GridContainer,
   Hidden,
   Pagination,
   SkeletonLoader,
@@ -26,12 +22,12 @@ import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
   ErrorScreen,
-  FJARSYSLAN_ID,
   FootNote,
   formSubmit,
   m,
   Filter,
   tableStyles,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
 
@@ -41,6 +37,7 @@ import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
 import * as styles from '../../screens/Finance.css'
 import FinanceIntro from '../FinanceIntro'
+import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
 
 const ITEMS_ON_PAGE = 20
 
@@ -51,29 +48,12 @@ interface Props {
   defaultDateRangeMonths?: number
 }
 
-const getFinanceDocumentsListQuery = gql`
-  query getFinanceDocumentsListQuery($input: GetDocumentsListInput!) {
-    getDocumentsList(input: $input) {
-      downloadServiceURL
-      documentsList {
-        id
-        date
-        type
-        note
-        sender
-        dateOpen
-        amount
-      }
-    }
-  }
-`
-
-const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
+const DocumentScreen = ({
   title,
   intro,
   listPath,
   defaultDateRangeMonths = 3,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(1)
@@ -84,9 +64,8 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
     months: defaultDateRangeMonths,
   })
 
-  const [loadDocumentsList, { data, loading, called, error }] = useLazyQuery(
-    getFinanceDocumentsListQuery,
-  )
+  const [loadDocumentsList, { data, loading, called, error }] =
+    useGetFinanceDocumentsListLazyQuery()
 
   const billsDataArray: DocumentsListItemTypes[] =
     (data?.getDocumentsList?.documentsList &&
@@ -116,11 +95,13 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toDate, fromDate])
 
   useEffect(() => {
     setFromDate(backInTheDay)
     setToDate(new Date())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (error && !loading) {
@@ -361,7 +342,7 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
           ) : null}
         </Box>
       </Stack>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

@@ -1,7 +1,6 @@
 import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
 import { CaseStatuses } from '../../types/enums'
-import Error404 from '../Error404/Error404'
 import CaseMobile from './CaseMobile'
 import CaseDesktop from './CaseDesktop'
 import { getStakeholdersList, shouldShowStakeholdersBox } from './utils'
@@ -31,10 +30,10 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
     chosenCase?.statusName !== CaseStatuses.published
   const isStatusNameForReview =
     chosenCase?.statusName === CaseStatuses.forReview
-  const isChosenCaseNull = Object.values(chosenCase).every(
-    (value) => value === null,
-  )
   const isStakeholdersBoxVisible = shouldShowStakeholdersBox({ chosenCase })
+  const shouldDisplayHidden =
+    chosenCase.allowUsersToSendPrivateAdvices &&
+    chosenCase.advicePublishTypeId !== 3
 
   const expressions = {
     isDocumentsNotEmpty,
@@ -44,10 +43,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
     isStakeholdersBoxVisible,
-  }
-
-  if (isChosenCaseNull) {
-    return <Error404 />
+    shouldDisplayHidden,
   }
 
   if (isMobile) {

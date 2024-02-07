@@ -12,7 +12,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  isAppealsCourtUser,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonSystemUser,
@@ -38,8 +38,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
     },
     {
       [Op.or]: [
-        { creating_prosecutor_id: { [Op.is]: null } },
-        { '$creatingProsecutor.institution_id$': user.institution?.id },
+        { prosecutors_office_id: user.institution?.id },
         { shared_with_prosecutors_office_id: user.institution?.id },
       ],
     },
@@ -77,7 +76,7 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  if (user.role === UserRole.ASSISTANT) {
+  if (user.role === UserRole.DISTRICT_COURT_ASSISTANT) {
     options.push(
       { type: indictmentCases },
       {
@@ -236,7 +235,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     return getDistrictCourtUserCasesQueryFilter(user)
   }
 
-  if (isAppealsCourtUser(user)) {
+  if (isCourtOfAppealsUser(user)) {
     return getAppealsCourtUserCasesQueryFilter()
   }
 

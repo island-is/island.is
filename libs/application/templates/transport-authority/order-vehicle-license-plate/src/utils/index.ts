@@ -1,16 +1,26 @@
 import { OrderVehicleLicensePlate } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { YES } from '@island.is/application/core'
-import { Application, ExtraData } from '@island.is/application/types'
-
-export const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+import {
+  Application,
+  ExtraData,
+  StaticText,
+} from '@island.is/application/types'
+import { payment } from '../lib/messages'
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 
-export const getChargeItemCodes = (applicaiton: Application): Array<string> => {
-  const answers = applicaiton.answers as OrderVehicleLicensePlate
+export const getChargeItemCodes = (application: Application): Array<string> => {
+  const answers = application.answers as OrderVehicleLicensePlate
   return getChargeItemCodesWithAnswers(answers)
+}
+
+export const getChargeItemCodesWithAnswers = (
+  answers: OrderVehicleLicensePlate,
+): Array<string> => {
+  return getChargeItemCodesAndExtraLabelUsingAnswers(answers).map(
+    (x) => x.chargeItemCode,
+  )
 }
 
 export const getExtraData = (application: Application): ExtraData[] => {
@@ -18,32 +28,33 @@ export const getExtraData = (application: Application): ExtraData[] => {
   return [{ name: 'vehicle', value: answers?.pickVehicle?.plate }]
 }
 
-export const getChargeItemCodesWithAnswers = (
-  answers: OrderVehicleLicensePlate,
-): Array<string> => {
-  return getChargeItemCodesWithInfo(answers).map((x) => x.chargeItemCode)
-}
-
 export enum PlateType {
   front = 'front',
   rear = 'rear',
 }
 
-export const getChargeItemCodesWithInfo = (
+export const getChargeItemCodesAndExtraLabel = (
+  application: Application,
+): Array<{ chargeItemCode: string; extraLabel?: StaticText }> => {
+  const answers = application.answers as OrderVehicleLicensePlate
+  return getChargeItemCodesAndExtraLabelUsingAnswers(answers)
+}
+
+const getChargeItemCodesAndExtraLabelUsingAnswers = (
   answers: OrderVehicleLicensePlate,
-): Array<{ chargeItemCode: string; type?: PlateType }> => {
-  const result: Array<{ chargeItemCode: string; type?: PlateType }> = []
+): Array<{ chargeItemCode: string; extraLabel?: StaticText }> => {
+  const result: Array<{ chargeItemCode: string; extraLabel?: StaticText }> = []
 
   if (answers?.plateSize?.frontPlateSize?.length > 0) {
     result.push({
       chargeItemCode:
         ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
-      type: PlateType.front,
+      extraLabel: payment.paymentChargeOverview.frontLabel,
     })
     result.push({
       chargeItemCode:
         ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
-      type: PlateType.front,
+      extraLabel: payment.paymentChargeOverview.frontLabel,
     })
   }
 
@@ -51,12 +62,12 @@ export const getChargeItemCodesWithInfo = (
     result.push({
       chargeItemCode:
         ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
-      type: PlateType.rear,
+      extraLabel: payment.paymentChargeOverview.rearLabel,
     })
     result.push({
       chargeItemCode:
         ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
-      type: PlateType.rear,
+      extraLabel: payment.paymentChargeOverview.rearLabel,
     })
   }
 

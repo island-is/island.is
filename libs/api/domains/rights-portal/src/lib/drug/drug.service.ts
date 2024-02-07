@@ -1,9 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { DrugApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { DrugBillInput } from './dto/drugBill.input'
 import { DrugBillLineInput } from './dto/drugBillLine.input'
 import { DrugInput } from './dto/drug.input'
@@ -11,14 +9,9 @@ import { DrugCalculatorInput } from './dto/drugCalculator.input'
 import { PaginatedDrugResponse } from './models/drug.model'
 import { DrugCertificateInput } from './dto/drugCertificate.input'
 
-const LOG_CATEGORY = 'rights-portal-drugs'
 @Injectable()
 export class DrugService {
-  constructor(
-    private api: DrugApi,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {}
+  constructor(private api: DrugApi) {}
 
   async getPeriods(user: User) {
     return await this.api

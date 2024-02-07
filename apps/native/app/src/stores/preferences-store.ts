@@ -1,35 +1,35 @@
-import AsyncStorage from '@react-native-community/async-storage';
-import createUse from 'zustand';
-import {persist} from 'zustand/middleware';
-import create, {State} from 'zustand/vanilla';
+import AsyncStorage from '@react-native-community/async-storage'
+import createUse from 'zustand'
+import { persist } from 'zustand/middleware'
+import create, { State } from 'zustand/vanilla'
 
-export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US';
-export type ThemeMode = 'dark' | 'light' | 'efficient';
-export type AppearanceMode = ThemeMode | 'automatic';
+export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
+export type ThemeMode = 'dark' | 'light' | 'efficient'
+export type AppearanceMode = ThemeMode | 'automatic'
 
 export interface PreferencesStore extends State {
-  dev__useLockScreen: boolean;
-  hasOnboardedPinCode: boolean;
-  hasOnboardedBiometrics: boolean;
-  hasOnboardedNotifications: boolean;
-  hasAcceptedNotifications: boolean;
-  hasAcceptedBiometrics: boolean;
-  notificationsNewDocuments: boolean;
-  notificationsAppUpdates: boolean;
-  notificationsApplicationStatusUpdates: boolean;
-  dismissed: string[];
-  useBiometrics: boolean;
-  locale: Locale;
-  appearanceMode: AppearanceMode;
-  appLockTimeout: number;
-  setLocale(locale: Locale): void;
-  setAppearanceMode(appearanceMode: AppearanceMode): void;
-  setUseBiometrics(useBiometrics: boolean): void;
-  dismiss(key: string, value?: boolean): void;
-  reset(): void;
+  dev__useLockScreen: boolean
+  hasOnboardedPinCode: boolean
+  hasOnboardedBiometrics: boolean
+  hasOnboardedNotifications: boolean
+  hasAcceptedNotifications: boolean
+  hasAcceptedBiometrics: boolean
+  notificationsNewDocuments: boolean
+  notificationsAppUpdates: boolean
+  notificationsApplicationStatusUpdates: boolean
+  dismissed: string[]
+  useBiometrics: boolean
+  locale: Locale
+  appearanceMode: AppearanceMode
+  appLockTimeout: number
+  setLocale(locale: Locale): void
+  setAppearanceMode(appearanceMode: AppearanceMode): void
+  setUseBiometrics(useBiometrics: boolean): void
+  dismiss(key: string, value?: boolean): void
+  reset(): void
 }
 
-const availableLocales: Locale[] = ['en-US', 'is-IS', 'is-US', 'en-IS'];
+const availableLocales: Locale[] = ['en-US', 'is-IS', 'is-US', 'en-IS']
 
 const defaultPreferences = {
   appearanceMode: 'automatic',
@@ -46,7 +46,7 @@ const defaultPreferences = {
   notificationsApplicationStatusUpdates: true,
   dismissed: [] as string[],
   appLockTimeout: 5000,
-};
+}
 
 export const preferencesStore = create<PreferencesStore>(
   persist(
@@ -54,26 +54,26 @@ export const preferencesStore = create<PreferencesStore>(
       ...(defaultPreferences as PreferencesStore),
       setLocale(locale: Locale) {
         if (!availableLocales.includes(locale)) {
-          throw new Error('Not supported locale');
+          throw new Error('Not supported locale')
         }
-        set({locale});
+        set({ locale })
       },
       setAppearanceMode(appearanceMode: AppearanceMode) {
-        set({appearanceMode});
+        set({ appearanceMode })
       },
       setUseBiometrics(useBiometrics: boolean) {
-        set({useBiometrics});
+        set({ useBiometrics })
       },
       dismiss(key: string, value = true) {
-        const now = get().dismissed;
+        const now = get().dismissed
         if (value) {
-          set({dismissed: [...now, key]});
+          set({ dismissed: [...now, key] })
         } else {
-          set({dismissed: [...now.filter(k => k !== key)]});
+          set({ dismissed: [...now.filter((k) => k !== key)] })
         }
       },
       reset() {
-        set(defaultPreferences as PreferencesStore);
+        set(defaultPreferences as PreferencesStore)
       },
     }),
     {
@@ -81,6 +81,6 @@ export const preferencesStore = create<PreferencesStore>(
       getStorage: () => AsyncStorage,
     },
   ),
-);
+)
 
-export const usePreferencesStore = createUse(preferencesStore);
+export const usePreferencesStore = createUse(preferencesStore)

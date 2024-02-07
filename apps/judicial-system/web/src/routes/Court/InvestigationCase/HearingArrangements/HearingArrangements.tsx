@@ -4,7 +4,6 @@ import router from 'next/router'
 
 import { AlertMessage, Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { NotificationType } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -15,17 +14,20 @@ import {
   FormContext,
   FormFooter,
   Modal,
+  PageHeader,
   PageLayout,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  NotificationType,
+  SessionArrangements,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 

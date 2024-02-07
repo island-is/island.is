@@ -34,7 +34,7 @@ const Cards = ({
         justifyContent="center"
         style={{ height: 200 }}
       >
-        <LoadingDots color="blue" large />
+        <LoadingDots large />
       </Box>
     )
   }
@@ -52,7 +52,7 @@ const Cards = ({
               id: item.id,
               title: item.name,
               tag: MapCaseStatuses[item.statusName],
-              published: item.created,
+              published: item.publishOnWeb,
               processEnds: item.processEnds,
               processBegins: item.processBegins,
               eyebrows: [item.typeName, item.institutionName],

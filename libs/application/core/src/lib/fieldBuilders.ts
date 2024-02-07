@@ -24,7 +24,9 @@ import {
   MaybeWithApplicationAndField,
   MessageWithLinkButtonField,
   Option,
+  PaymentChargeOverviewField,
   PaymentPendingField,
+  PdfLinkButtonField,
   PhoneField,
   RadioField,
   RecordObject,
@@ -32,6 +34,10 @@ import {
   SelectField,
   SubmitField,
   TextField,
+  ImageField,
+  NationalIdWithNameField,
+  ActionCardListField,
+  TableRepeaterField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -99,6 +105,7 @@ export function buildDateField(
     placeholder,
     backgroundColor = 'blue',
     required,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -111,6 +118,7 @@ export function buildDateField(
     component: FieldComponents.DATE,
     backgroundColor,
     required,
+    readOnly,
   }
 }
 
@@ -124,6 +132,7 @@ export function buildDescriptionField(
     titleTooltip,
     space,
     marginBottom,
+    marginTop,
   } = data
   return {
     ...extractCommonFields(data),
@@ -135,6 +144,7 @@ export function buildDescriptionField(
     titleTooltip,
     space,
     marginBottom,
+    marginTop,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,
   }
@@ -249,6 +259,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
   } = data
   return {
     ...extractCommonFields(data),
@@ -263,6 +274,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
@@ -502,23 +514,12 @@ export function buildExpandableDescriptionField(
 export function buildAlertMessageField(
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField {
-  const {
-    id,
-    title,
-    message,
-    alertType,
-    condition,
-    marginTop,
-    marginBottom,
-    links,
-  } = data
+  const { message, alertType, marginTop, marginBottom, links } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    id,
-    title,
     message,
     alertType,
-    condition,
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
     marginTop,
@@ -539,5 +540,151 @@ export function buildLinkField(
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
+  }
+}
+
+export function buildPaymentChargeOverviewField(
+  data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
+): PaymentChargeOverviewField {
+  const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
+    data
+  return {
+    children: undefined,
+    id,
+    title,
+    forPaymentLabel,
+    totalLabel,
+    getSelectedChargeItems,
+    type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
+    component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
+  }
+}
+
+export function buildImageField(
+  data: Omit<ImageField, 'type' | 'component' | 'children'>,
+): ImageField {
+  const {
+    id,
+    title,
+    image,
+    alt,
+    marginTop,
+    marginBottom,
+    condition,
+    imageWidth = 'full',
+    titleVariant = 'h4',
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    image,
+    alt,
+    imageWidth,
+    marginTop,
+    marginBottom,
+    condition,
+    titleVariant,
+    type: FieldTypes.IMAGE,
+    component: FieldComponents.IMAGE,
+  }
+}
+
+export function buildPdfLinkButtonField(
+  data: Omit<PdfLinkButtonField, 'type' | 'component' | 'children'>,
+): PdfLinkButtonField {
+  const {
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
+    getPdfFiles,
+    setViewPdfFile,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
+    getPdfFiles,
+    setViewPdfFile,
+    children: undefined,
+    type: FieldTypes.PDF_LINK_BUTTON,
+    component: FieldComponents.PDF_LINK_BUTTON,
+  }
+}
+
+export function buildNationalIdWithNameField(
+  data: Omit<NationalIdWithNameField, 'type' | 'component' | 'children'>,
+): NationalIdWithNameField {
+  const {
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    disabled,
+    required,
+    customNationalIdLabel,
+    customNameLabel,
+    onNationalIdChange,
+    onNameChange,
+    nationalIdDefaultValue,
+    nameDefaultValue,
+    errorMessage,
+    minAgePerson,
+    children: undefined,
+    type: FieldTypes.NATIONAL_ID_WITH_NAME,
+    component: FieldComponents.NATIONAL_ID_WITH_NAME,
+  }
+}
+
+export function buildActionCardListField(
+  data: Omit<ActionCardListField, 'type' | 'component' | 'children'>,
+): ActionCardListField {
+  const { items, space, marginTop, marginBottom } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.ACTION_CARD_LIST,
+    component: FieldComponents.ACTION_CARD_LIST,
+    items,
+    marginTop,
+    marginBottom,
+    space,
+  }
+}
+
+export function buildTableRepeaterField(
+  data: Omit<TableRepeaterField, 'type' | 'component' | 'children'>,
+): TableRepeaterField {
+  const {
+    fields,
+    table,
+    formTitle,
+    addItemButtonText,
+    saveItemButtonText,
+    removeButtonTooltipText,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.TABLE_REPEATER,
+    component: FieldComponents.TABLE_REPEATER,
+    fields,
+    table,
+    formTitle,
+    addItemButtonText,
+    saveItemButtonText,
+    removeButtonTooltipText,
   }
 }

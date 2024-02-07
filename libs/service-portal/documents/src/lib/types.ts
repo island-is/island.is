@@ -9,4 +9,5 @@ export type ActiveDocumentType = {
   downloadUrl: string
   img?: string
   categoryId?: string
+  senderNatReg?: string
 }

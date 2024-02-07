@@ -162,7 +162,6 @@ describe('DelegationsController', () => {
       })
 
       it(`GET ${path} returns correct scopes`, async () => {
-        console.log(testCase.delegationType)
         const res = await server.get(
           `${path}?fromNationalId=${
             testCase.fromNationalId

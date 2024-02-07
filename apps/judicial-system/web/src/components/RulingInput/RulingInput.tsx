@@ -4,13 +4,11 @@ import { useIntl } from 'react-intl'
 import { Input } from '@island.is/island-ui/core'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-} from '../../utils/formHelper'
-import { useCase } from '../../utils/hooks'
-import useDeb from '../../utils/hooks/useDeb'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case

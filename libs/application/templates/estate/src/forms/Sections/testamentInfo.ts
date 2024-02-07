@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { JA, YES, NEI, NO, EstateTypes } from '../../lib/constants'
+import { getWillsAndAgreementsDescriptionText } from '../../lib/utils'
 
 export const testamentInfo = buildSection({
   id: 'testamentInfo',
@@ -16,7 +17,8 @@ export const testamentInfo = buildSection({
     buildMultiField({
       id: 'testamentInfo',
       title: m.willsAndAgreements,
-      description: m.willsAndAgreementsDescription,
+      description: (application) =>
+        getWillsAndAgreementsDescriptionText(application),
       children: [
         buildRadioField({
           id: 'estate.testament.agreement',

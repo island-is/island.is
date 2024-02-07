@@ -1,4 +1,3 @@
-export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
 export { ConfirmationField } from './ConfirmationField'
 export { SelectProperty } from './SelectProperty'
 export { PendingRejected } from './PendingRejected'

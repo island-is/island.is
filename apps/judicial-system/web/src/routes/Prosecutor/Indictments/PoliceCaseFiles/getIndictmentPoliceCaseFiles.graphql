@@ -1,9 +1,0 @@
-query GetIndictmentPoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
-  policeCaseFiles(input: $input) {
-    id
-    name
-    policeCaseNumber
-    chapter
-    displayDate
-  }
-}

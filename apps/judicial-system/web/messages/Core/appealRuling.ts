@@ -19,6 +19,12 @@ export const appealRuling = defineMessages({
     description:
       'Niðurstöðu breytt í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
   },
+  decisionChangedSignificantly: {
+    id: 'judicial.system.core:appeal_ruling.decision_changed_significantly',
+    defaultMessage: 'Niðurstöðu breytt að verulegu leyti',
+    description:
+      'Niðurstöðu breytt í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
+  },
   decisionDismissedFromCourtOfAppeal: {
     id: 'judicial.system.core:appeal_ruling.decision_dismissed_from_court_of_appeal',
     defaultMessage: 'Frávísun frá Landsrétti',

@@ -21,6 +21,7 @@ import { Discount } from './discount.model'
 import {
   CreateDiscountCodeParams,
   CreateExplicitDiscountCodeParams,
+  CreateSuperExplicitDiscountCodeParams,
   GetCurrentDiscountByNationalIdParams,
 } from './dto'
 import { DiscountService } from './discount.service'
@@ -129,40 +130,26 @@ export class PrivateDiscountController {
 @Scopes(AirDiscountSchemeScope.admin)
 @UseGuards(IdsUserGuard, ScopesGuard)
 export class PrivateDiscountAdminController {
-  constructor(
-    private readonly discountService: DiscountService,
-    @Inject(forwardRef(() => FlightService))
-    private readonly flightService: FlightService,
-  ) {}
+  constructor(private readonly discountService: DiscountService) {}
 
   @Post('users/createExplicitDiscountCode')
-  @ApiOkResponse({ type: Discount })
+  @ApiOkResponse({ type: [Discount] })
   @ApiBearerAuth()
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
-  @Scopes(AirDiscountSchemeScope.admin)
   async createExplicitDiscountCode(
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
-  ): Promise<Discount> {
-    const unConnectedFlights =
-      await this.flightService.findThisYearsConnectableFlightsByNationalId(
-        body.nationalId,
-      )
-
-    const discount = await this.discountService.createExplicitDiscountCode(
-      auth,
-      body.nationalId,
-      body.postalcode,
-      auth.nationalId,
-      body.comment,
-      body.numberOfDaysUntilExpiration,
-      unConnectedFlights,
-    )
-
-    if (!discount) {
-      throw new Error(`Could not create explicit discount`)
-    }
-
-    return discount
+  ): Promise<Array<Discount>> {
+    return this.discountService.createManualDiscountCode(body, auth, false)
+  }
+  @Post('users/createSuperExplicitDiscountCode')
+  @ApiOkResponse({ type: [Discount] })
+  @ApiBearerAuth()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  async createSuperExplicitDiscountCode(
+    @Body() body: CreateSuperExplicitDiscountCodeParams,
+    @CurrentUser() auth: AuthUser,
+  ): Promise<Array<Discount>> {
+    return this.discountService.createManualDiscountCode(body, auth, true)
   }
 }

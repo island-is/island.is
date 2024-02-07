@@ -13,12 +13,9 @@ generates:
       withComponent: false
       avoidOptionals:
         object: true
-
   ./apps/judicial-system/web/src/graphql/schema.tsx:
     schema:
       - ./apps/judicial-system/api/src/api.graphql
-    documents:
-      - ./apps/judicial-system/web/**/*.(ts|tsx)
     plugins:
       - typescript
       - typescript-operations

@@ -1,10 +1,9 @@
-import React, { ReactElement } from 'react'
-import { Box, Hyphen, Icon } from '@island.is/island-ui/core'
+import { ReactElement } from 'react'
+import { Box, Icon } from '@island.is/island-ui/core'
 import * as styles from './Sidemenu.css'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Link } from 'react-router-dom'
 import cn from 'classnames'
-import { useListDocuments } from '@island.is/service-portal/graphql'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { useToggle } from 'react-use'
 
@@ -20,10 +19,6 @@ const SidemenuItem = ({
   const { formatMessage } = useLocale()
   const [isHovered, toggleIsHovered] = useToggle(false)
 
-  const { unreadCounter } = useListDocuments()
-
-  const badgeActive: keyof typeof styles.badge =
-    unreadCounter > 0 ? 'active' : 'inactive'
   let itemText = formatMessage(item.name)
   const itemTextLength = itemText.length
   const itemTextHover = itemTextLength > 17

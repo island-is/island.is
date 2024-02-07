@@ -94,7 +94,7 @@ export const createCaseFilesRecord = async (
   pdfDocument
     .addPage(0)
     .addText(
-      `${theCase.creatingProsecutor?.institution?.name.toUpperCase()}`,
+      `${theCase.prosecutorsOffice?.name.toUpperCase()}`,
       headerFontSize,
       { bold: true, position: { y: headerMargin } },
     )

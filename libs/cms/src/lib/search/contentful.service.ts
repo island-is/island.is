@@ -5,6 +5,7 @@ import {
   CreateClientParams,
   Entry,
   EntryCollection,
+  SyncCollection as ContentfulSyncCollection,
   Sys,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
@@ -20,6 +21,12 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
+
+type SyncCollection = ContentfulSyncCollection & {
+  nextPageToken?: string
+}
+
+const MAX_REQUEST_COUNT = 10
 
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,6 +45,7 @@ interface SyncerResult {
   items: Entry<unknown>[]
   deletedEntryIds: string[]
   elasticIndex: string
+  nextPageToken?: string
 }
 
 interface UpdateNextSyncTokenOptions {
@@ -45,7 +53,10 @@ interface UpdateNextSyncTokenOptions {
   elasticIndex: string
 }
 
-type typeOfSync = { initial: boolean } | { nextSyncToken: string }
+type typeOfSync =
+  | { initial: boolean }
+  | { nextSyncToken: string }
+  | { nextPageToken: string }
 
 @Injectable()
 export class ContentfulService {
@@ -189,10 +200,19 @@ export class ContentfulService {
   private async getTypeOfSync({
     syncType,
     elasticIndex,
+    nextPageToken,
   }: {
     syncType: SyncOptions['syncType']
     elasticIndex: string
+    nextPageToken?: string
   }): Promise<typeOfSync> {
+    if (nextPageToken) {
+      logger.info('Getting data from next page token found in Contentful', {
+        elasticIndex,
+        nextPageToken,
+      })
+      return { nextPageToken }
+    }
     if (syncType === 'full') {
       // this is a full sync, get all data
       logger.info('Getting all data from Contentful')
@@ -209,9 +229,21 @@ export class ContentfulService {
   }
 
   private async getSyncData(typeOfSync: typeOfSync) {
-    const syncData = await this.contentfulClient.sync({
-      ...typeOfSync,
-    })
+    const syncData = await (
+      this.contentfulClient.sync as (
+        query: unknown,
+        options: unknown,
+      ) => Promise<SyncCollection>
+    )(
+      {
+        ...typeOfSync,
+      },
+      {
+        // So we get a paginated response (sounds counter-intuitive to set paginate to false but that's how it is)
+        // This was derived from reading the contentfulClient source code: https://github.com/contentful/contentful.js/blob/8f88492583f657d8689f40a409f08e3161fb0a7d/lib/paged-sync.js
+        paginate: false,
+      },
+    )
 
     // Remove unnecessary fields to save memory
     for (let i = 0; i < syncData.entries.length; i += 1) {
@@ -266,7 +298,9 @@ export class ContentfulService {
     const {
       entries,
       nextSyncToken: newNextSyncToken,
+      nextPageToken,
       deletedEntries,
+      assets,
     } = await this.getSyncData(typeOfSync)
 
     // In case someone in the CMS triggers a sync by setting the translation of an entry to an inactive state we'd like to remove that entry
@@ -291,16 +325,17 @@ export class ContentfulService {
       }
     }
 
-    const nestedEntryIds = entries
+    const nestedItems = entries
       .filter((entry) =>
         environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
       )
-      .map((entry) => entry.sys.id)
+      .map((entry) => ({ id: entry.sys.id, isEntry: true }))
+      .concat(assets.map((asset) => ({ id: asset.sys.id, isEntry: false })))
 
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
-      nestedEntries: nestedEntryIds.length,
+      nestedItems: nestedItems.length,
     })
 
     // Get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
@@ -324,9 +359,10 @@ export class ContentfulService {
 
     return {
       indexableEntries,
-      nestedEntryIds,
+      nestedItems,
       deletedEntryIds,
       newNextSyncToken,
+      nextPageToken,
     }
   }
 
@@ -336,7 +372,11 @@ export class ContentfulService {
       locale,
       elasticIndex = getElasticsearchIndex(options.locale),
     } = options
-    const typeOfSync = await this.getTypeOfSync({ syncType, elasticIndex })
+    const typeOfSync = await this.getTypeOfSync({
+      syncType,
+      elasticIndex,
+      nextPageToken: options.nextPageToken,
+    })
 
     // Contentful only allows a maximum of 7MB response size, so this chunkSize variable allows us to tune down how many entries we fetch in one request
     const chunkSize = Number(
@@ -351,9 +391,13 @@ export class ContentfulService {
       chunkSize,
     )
 
-    const { indexableEntries, newNextSyncToken, deletedEntryIds } =
-      populatedSyncEntriesResult
-    let { nestedEntryIds } = populatedSyncEntriesResult
+    const {
+      indexableEntries,
+      newNextSyncToken,
+      deletedEntryIds,
+      nextPageToken,
+    } = populatedSyncEntriesResult
+    let { nestedItems } = populatedSyncEntriesResult
 
     const isDeltaUpdate = syncType !== 'full'
 
@@ -369,55 +413,70 @@ export class ContentfulService {
       const visitedEntryIds = new Set<string>()
 
       for (let i = 0; i < this.defaultIncludeDepth; i += 1) {
-        if (nestedEntryIds.length <= 0) break
+        if (nestedItems.length <= 0) break
 
         const nextLevelOfNestedEntryIds = new Set<string>()
 
         const promises: Promise<Entry<unknown>[]>[] = []
-        for (const entryId of nestedEntryIds) {
-          if (visitedEntryIds.has(entryId)) {
+        let counter = 0
+
+        const handleRequests = async () => {
+          const responses = await Promise.all(promises)
+
+          for (const linkedEntries of responses) {
+            for (const linkedEntry of linkedEntries) {
+              counter += 1
+              if (
+                environment.indexableTypes.includes(
+                  linkedEntry.sys.contentType.sys.id,
+                )
+              ) {
+                const entryAlreadyListed =
+                  indexableEntries.findIndex(
+                    (entry) => entry.sys.id === linkedEntry.sys.id,
+                  ) >= 0
+                if (!entryAlreadyListed) {
+                  indexableEntries.push(linkedEntry)
+                }
+              } else if (
+                environment.nestedContentTypes.includes(
+                  linkedEntry.sys.contentType.sys.id,
+                )
+              ) {
+                nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
+              }
+            }
+          }
+        }
+
+        for (const item of nestedItems) {
+          if (visitedEntryIds.has(item.id)) {
             continue
           }
-          visitedEntryIds.add(entryId)
+          visitedEntryIds.add(item.id)
 
           promises.push(
             this.getContentfulData(chunkSize, {
               include: this.defaultIncludeDepth,
-              links_to_entry: entryId,
+              [item.isEntry ? 'links_to_entry' : 'links_to_asset']: item.id,
               locale: this.contentfulLocaleMap[locale],
             }),
           )
-        }
 
-        const responses = await Promise.all(promises)
-
-        let counter = 0
-        for (const linkedEntries of responses) {
-          for (const linkedEntry of linkedEntries) {
-            counter += 1
-            if (
-              environment.indexableTypes.includes(
-                linkedEntry.sys.contentType.sys.id,
-              )
-            ) {
-              const entryAlreadyListed =
-                indexableEntries.findIndex(
-                  (entry) => entry.sys.id === linkedEntry.sys.id,
-                ) >= 0
-              if (!entryAlreadyListed) indexableEntries.push(linkedEntry)
-            }
-            if (
-              environment.nestedContentTypes.includes(
-                linkedEntry.sys.contentType.sys.id,
-              )
-            ) {
-              nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
-            }
+          if (promises.length > MAX_REQUEST_COUNT) {
+            await handleRequests()
           }
         }
 
+        if (promises.length > 0) {
+          await handleRequests()
+        }
+
         // Next round of the loop will only find linked entries to nested entries
-        nestedEntryIds = Array.from(nextLevelOfNestedEntryIds)
+        nestedItems = Array.from(nextLevelOfNestedEntryIds).map((id) => ({
+          id,
+          isEntry: true,
+        }))
         logger.info(`Found ${counter} nested entries at depth ${i + 1}`)
       }
     }
@@ -427,6 +486,7 @@ export class ContentfulService {
       items: indexableEntries,
       deletedEntryIds,
       elasticIndex,
+      nextPageToken,
     }
   }
 }

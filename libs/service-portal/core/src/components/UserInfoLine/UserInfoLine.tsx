@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import {
   Box,
   Text,
-  Button,
   GridRow,
   GridColumn,
   GridColumnProps,
@@ -13,13 +12,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Link, useLocation } from 'react-router-dom'
-import { servicePortalOutboundLink } from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
 import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.css'
-import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
 import cn from 'classnames'
+import { LinkButton } from '../LinkButton/LinkButton'
 
 export type EditLink = {
   external?: boolean
@@ -157,46 +155,15 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               height="full"
               printHidden
             >
-              {editLink.external ? (
-                <a
-                  href={editLink.url}
-                  rel="noopener noreferrer"
-                  onClick={
-                    editLink.skipOutboundTrack
-                      ? undefined
-                      : () =>
-                          servicePortalOutboundLink({
-                            url: formatPlausiblePathToParams(pathname).url,
-                            outboundUrl: editLink.url,
-                          })
-                  }
-                  target="_blank"
-                >
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon="open"
-                    iconType="outline"
-                  >
-                    {editLink.title
-                      ? formatMessage(editLink.title)
-                      : formatMessage(sharedMessages.edit)}
-                  </Button>
-                </a>
-              ) : (
-                <Link to={editLink.url}>
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon={editLink.icon}
-                    iconType="outline"
-                  >
-                    {editLink.title
-                      ? formatMessage(editLink.title)
-                      : formatMessage(sharedMessages.edit)}
-                  </Button>
-                </Link>
-              )}
+              <LinkButton
+                to={editLink.url}
+                text={
+                  editLink.title
+                    ? formatMessage(editLink.title)
+                    : formatMessage(sharedMessages.edit)
+                }
+                skipOutboundTrack={editLink.skipOutboundTrack}
+              />
             </Box>
           ) : null}
         </GridColumn>

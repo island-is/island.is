@@ -10,9 +10,9 @@ export const useApplicationNamespaces = (type?: ApplicationTypes) => {
     type ? ApplicationConfigurations?.[type]?.translation ?? null : null,
   ]
 
-  const filtered = array.filter(
-    (namespace): namespace is string => namespace !== null,
-  )
+  const filtered = array
+    .flat(1)
+    .filter((namespace): namespace is string => namespace !== null)
 
   useNamespaces(filtered)
 }

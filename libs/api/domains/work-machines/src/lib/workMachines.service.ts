@@ -11,6 +11,7 @@ import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetDocumentsInput } from './dto/getDocuments.input'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { MachineDto } from '@island.is/clients/work-machines'
 @Injectable()
 export class WorkMachinesService {
   constructor(
@@ -122,4 +123,14 @@ export class WorkMachinesService {
 
   getDocuments = (user: User, input: GetDocumentsInput): Promise<Blob> =>
     this.machineService.getDocuments(user, input)
+
+  async getMachineDetails(auth: User, id: string): Promise<MachineDto> {
+    return this.machineService.getMachineDetail(auth, id)
+  }
+
+  async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
+    return (
+      (await this.machineService.isPaymentRequired(auth, regNumber)) || false
+    )
+  }
 }

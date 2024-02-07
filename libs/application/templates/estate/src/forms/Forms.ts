@@ -12,6 +12,7 @@ import { representative } from './Sections/representative'
 import { approvePrivateDivisionSubmission } from './Sections/approveSubmission'
 import { overview } from './Overviews'
 import { estateWithoutAssets } from './Sections/estateWithoutAssets'
+import { applicationDescription } from './Sections/description'
 
 /* EINKASKIPTI */
 
@@ -23,6 +24,7 @@ export const privateDivisionForm: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     dataCollection,
+    applicationDescription,
     announcerInfo,
     spouseOfTheDeceased,
     estateMembers,
@@ -46,6 +48,7 @@ export const undividedEstateForm: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     dataCollection,
+    applicationDescription,
     announcerInfo,
     estateMembers,
     testamentInfo,
@@ -66,6 +69,7 @@ export const estateWithoutAssetsForm: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     dataCollection,
+    applicationDescription,
     announcerInfo,
     estateMembers,
     testamentInfo,
@@ -85,5 +89,5 @@ export const officialDivisionForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [dataCollection, announcerInfo, overview],
+  children: [dataCollection, applicationDescription, announcerInfo, overview],
 })

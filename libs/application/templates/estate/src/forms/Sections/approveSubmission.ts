@@ -24,13 +24,13 @@ export const approvePrivateDivisionSubmission = buildSection({
         buildCheckboxField({
           id: 'confirmAction',
           title: '',
-          large: false,
-          backgroundColor: 'white',
+          large: true,
+          backgroundColor: 'blue',
           defaultValue: [],
           options: [
             {
               value: YES,
-              label: m.divisionOfEstateByHeirsSubmissionCheckbox.defaultMessage,
+              label: m.divisionOfEstateByHeirsSubmissionCheckbox,
             },
           ],
         }),

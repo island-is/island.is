@@ -6,13 +6,15 @@ import isCircular from 'is-circular'
 import { INews } from '../../generated/contentfulTypes'
 import { mapNews } from '../../models/news.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 
 @Injectable()
 export class NewsSyncService implements CmsSyncProvider<INews> {
   processSyncData(entries: processSyncDataInput<INews>) {
-    logger.info('Processing sync data for news')
-
     // only process news that we consider not to be empty
     return entries.filter(
       (entry: Entry<any>): entry is INews =>
@@ -23,7 +25,9 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
   }
 
   doMapping(entries: INews[]) {
-    logger.info('Mapping news', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping news', { count: entries.length })
+    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
@@ -35,7 +39,9 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
             return false
           }
 
-          const content = extractStringsFromObject(mapped.content)
+          const content = extractStringsFromObject(
+            mapped.content.map(pruneNonSearchableSliceUnionFields),
+          )
 
           const tags = [
             {

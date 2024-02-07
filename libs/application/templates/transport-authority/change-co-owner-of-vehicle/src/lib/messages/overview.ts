@@ -25,6 +25,11 @@ export const overview = {
       defaultMessage: 'fjarlægður',
       description: 'co owner removed label',
     },
+    mileage: {
+      id: 'ta.ccov.application:overview.labels.mileage',
+      defaultMessage: 'Kílómetrar:',
+      description: 'Mileage label',
+    },
   }),
   confirmationModal: defineMessages({
     title: {

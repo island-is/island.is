@@ -10,7 +10,13 @@ export const UrlDocument: React.FC<UrlDocumentProps> = ({ url }) => {
 
   return (
     <LinkResolver href={url}>
-      <Button variant="utility" icon="open" iconType="outline" unfocusable>
+      <Button
+        as="span"
+        variant="utility"
+        icon="open"
+        iconType="outline"
+        unfocusable
+      >
         {formatMessage(m.getDocument)}
       </Button>
     </LinkResolver>

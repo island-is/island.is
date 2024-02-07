@@ -27,6 +27,7 @@ import {
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
+  RejectionCommentModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
@@ -61,6 +62,9 @@ const ApplicationProfile = ({
   applicationMunicipality,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
+
+  const [isRejectedReasonModalVisible, setRejectedReasonModalVisible] =
+    useState(false)
 
   const [calculationsModal, setCalculationsModal] = useState<CalculationsModal>(
     {
@@ -121,9 +125,11 @@ const ApplicationProfile = ({
     applicationInfo.push({
       title: 'Aðstoð synjað',
       content: application?.rejection
-        ? application?.rejection
+        ? 'Ástæða synjunar'
         : 'enginn ástæða gefin',
-      fullWidth: true,
+      onclick: () => {
+        setRejectedReasonModalVisible(true)
+      },
     })
   }
 
@@ -293,6 +299,14 @@ const ApplicationProfile = ({
           setCalculationsModal({ ...calculationsModal, visible: false })
         }}
       />
+
+      <RejectionCommentModal
+        isVisible={isRejectedReasonModalVisible}
+        onVisibilityChange={(visability) => {
+          setRejectedReasonModalVisible(visability)
+        }}
+        reason={application.rejection ?? ''}
+      />
     </>
   )
 }
@@ -313,11 +327,15 @@ export const getDirectTaxPaymentsContent = (
         />
       )
     case directPaymentsArr.length === 0 && hasFetchedPayments:
-      return <Text marginBottom={4}>Engin staðgreiðsla</Text>
+      return (
+        <Text marginBottom={4}>
+          Engar upplýsingar um staðgreiðslu fundust hjá Skattinum
+        </Text>
+      )
     case directPaymentsArr.length === 0 && !hasFetchedPayments:
       return (
         <Text marginBottom={4} color="red400">
-          Ekki tókst að sækja staðgreiðslu
+          Villa kom upp við að sækja staðgreiðslu frá Skattinum
         </Text>
       )
   }

@@ -1,69 +1,17 @@
+import { Locale } from 'locale'
+
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
-  WatsonIntegration,
 } from '@island.is/web/components'
-import { Locale } from 'locale'
+import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
 
 export const liveChatIncConfig: Record<
   Locale,
   Record<string, LiveChatIncChatPanelProps>
 > = {
-  is: {
-    '6IZT17s7stKJAmtPutjpD7': {
-      license: 13270509,
-      version: '2.0',
-    },
-  },
-  en: {
-    '6IZT17s7stKJAmtPutjpD7': {
-      license: 13270509,
-      version: '2.0',
-      group: 2,
-    },
-  },
-}
-
-interface WatsonInstance {
-  on: (_: {
-    type: string
-    handler: (event: WatsonPreSendEvent) => void
-  }) => void
-  updateHomeScreenConfig: (params: { is_on: boolean }) => void
-}
-
-interface WatsonPreSendEvent {
-  data: {
-    context: {
-      skills: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ['main skill']: { user_defined: Record<string, any> }
-      }
-    }
-  }
-}
-
-const setupOneScreenWatsonChatBot = (
-  instance: WatsonInstance,
-  categoryTitle: string,
-  categoryGroup: WatsonIntegration,
-) => {
-  if (sessionStorage.getItem(categoryGroup) !== categoryTitle) {
-    sessionStorage.clear()
-  }
-  sessionStorage.setItem(categoryGroup, categoryTitle)
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const preSendhandler = (event: WatsonPreSendEvent) => {
-    event.data.context.skills['main skill'].user_defined[
-      `category_${categoryTitle}`
-    ] = true
-  }
-  instance.on({ type: 'pre:send', handler: preSendhandler })
-
-  instance.updateHomeScreenConfig({
-    is_on: false,
-  })
+  is: {},
+  en: {},
 }
 
 export const defaultWatsonConfig: Record<Locale, WatsonChatPanelProps> = {
@@ -170,6 +118,72 @@ export const watsonConfig: Record<
           '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
         ),
     },
+    // Tax on wages and pensions
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6e3SWIyt0ayXwSuqB4HiiE
+    '6e3SWIyt0ayXwSuqB4HiiE': {
+      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+      },
+    },
+    // Child benefit
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/42poXejFLO31vxj67UW5J3
+    '42poXejFLO31vxj67UW5J3': {
+      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+      },
+    },
+
+    // Taxes on goods and services
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4BECjoXzpyecbbp8rY1u7t
+    '4BECjoXzpyecbbp8rY1u7t': {
+      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+      },
+    },
+
+    // Skatturinn - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+      },
+    },
 
     // Útlendingastofnun - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
@@ -209,8 +223,54 @@ export const watsonConfig: Record<
           'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
         ),
     },
+
+    // Kílómetragjald
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
+    '4ydMzxTVny5W9nTn6abfZm': {
+      ...defaultWatsonConfig.en,
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'kilometragjald',
+          defaultWatsonConfig.en.integrationID,
+        )
+      },
+    },
+
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      integrationID: '1e649a3f-9476-4995-ba24-0e72040b0cc0',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
   },
   is: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      integrationID: 'fe12e960-329c-46d5-9ae1-8bd8b8219f43',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Kílómetragjald
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
+    '4ydMzxTVny5W9nTn6abfZm': {
+      ...defaultWatsonConfig.is,
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'kilometragjald',
+          defaultWatsonConfig.is.integrationID,
+        )
+      },
+    },
+
     // Rafræn skilríki
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4lkmXszsB5q5kJkXqhW5Ex
     '4lkmXszsB5q5kJkXqhW5Ex': {
@@ -407,6 +467,89 @@ export const watsonConfig: Record<
           'erfdamal',
           '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
         ),
+    },
+
+    // Skattur af launum og lífeyri
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6e3SWIyt0ayXwSuqB4HiiE
+    '6e3SWIyt0ayXwSuqB4HiiE': {
+      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+        setupOneScreenWatsonChatBot(
+          instance,
+          'almenntskattar',
+          '84f62b21-aa50-4d49-b413-597b6a959910',
+        )
+      },
+    },
+
+    // Barnabætur
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/42poXejFLO31vxj67UW5J3
+    '42poXejFLO31vxj67UW5J3': {
+      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+        setupOneScreenWatsonChatBot(
+          instance,
+          'barnabaetur',
+          '84f62b21-aa50-4d49-b413-597b6a959910',
+        )
+      },
+    },
+
+    // Virðisaukaskattur og vörugjöld á vöru og þjónustu – almennar upplýsingar
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4BECjoXzpyecbbp8rY1u7t
+    '4BECjoXzpyecbbp8rY1u7t': {
+      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+        setupOneScreenWatsonChatBot(
+          instance,
+          'virdisaukaskattur',
+          '84f62b21-aa50-4d49-b413-597b6a959910',
+        )
+      },
+    },
+
+    // Skatturinn - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+      },
     },
 
     // Sýslumenn - Organization

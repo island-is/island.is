@@ -13,9 +13,12 @@ export class OwnerChangeAnswersVehicle {
 
   @Field(() => String, { nullable: false })
   date!: string
+}
 
+@InputType()
+export class OwnerChangeAnswersVehicleMileage {
   @Field(() => String, { nullable: true })
-  mileage?: string
+  value?: string
 }
 
 @InputType()
@@ -61,6 +64,9 @@ export class OwnerChangeAnswers {
 
   @Field(() => OwnerChangeAnswersVehicle, { nullable: false })
   vehicle!: OwnerChangeAnswersVehicle
+
+  @Field(() => OwnerChangeAnswersVehicleMileage, { nullable: false })
+  vehicleMileage!: OwnerChangeAnswersVehicleMileage
 
   @Field(() => OwnerChangeAnswersUser, { nullable: false })
   seller!: OwnerChangeAnswersUser

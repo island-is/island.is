@@ -1,51 +1,54 @@
 import { useEffect, useMemo } from 'react'
+import { Locale } from 'locale'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
 
 import {
+  AlertBanner,
   Box,
   Breadcrumbs,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
-  Text,
-  ToastContainer,
-  toast,
-  AlertBanner,
-  LinkContext,
   Link,
-  Button,
+  LinkContext,
+  Text,
+  toast,
+  ToastContainer,
 } from '@island.is/island-ui/core'
-import { useNamespace, useLinkResolver } from '@island.is/web/hooks'
 import {
   ServiceWebStandardForm,
   ServiceWebWrapper,
 } from '@island.is/web/components'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  Query,
-  Organizations,
   ContentLanguage,
+  Organization,
+  Organizations,
+  Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
+  QueryGetOrganizationsArgs,
+  QueryGetServiceWebPageArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
   ServiceWebFormsMutation,
   ServiceWebFormsMutationVariables,
   SupportCategory,
-  Organization,
-  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
+
+import { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATIONS_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
-import { Screen } from '../../../types'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Locale } from 'locale'
 import { filterSupportCategories } from './utils'
 
 type FormNamespace = Record<
@@ -57,11 +60,12 @@ interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
   organization?: Organization
   supportCategories?: SupportCategory[]
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
   institutionSlug: string
   stateEntities: string[]
   formNamespace: FormNamespace
   locale: Locale
+  serviceWebPage?: Query['getServiceWebPage']
 }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
@@ -74,10 +78,9 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   stateEntities,
   formNamespace,
   locale,
+  serviceWebPage,
 }) => {
   const { linkResolver } = useLinkResolver()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [submit, { data, loading, error }] = useMutation<
     ServiceWebFormsMutation,
@@ -178,6 +181,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
         'serviceWebSearchPlaceholder',
         'Leitaðu á þjónustuvefnum',
       )}
+      pageData={serviceWebPage}
     >
       <Box marginY={[3, 3, 10]} marginBottom={10}>
         <GridContainer>
@@ -325,6 +329,9 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
     namespace,
     stateEntities,
     formNamespace,
+    {
+      data: { getServiceWebPage },
+    },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
@@ -395,6 +402,15 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
       .then((variables) =>
         JSON.parse(variables?.data?.getNamespace?.fields ?? '{}'),
       ),
+    apolloClient.query<Query, QueryGetServiceWebPageArgs>({
+      query: GET_SERVICE_WEB_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   const filteredSupportCategories = filterSupportCategories(
@@ -419,6 +435,7 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
     namespace,
     stateEntities,
     formNamespace,
+    serviceWebPage: getServiceWebPage,
     locale: locale as Locale,
   }
 }

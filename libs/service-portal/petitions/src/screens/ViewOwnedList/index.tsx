@@ -32,7 +32,10 @@ const ViewOwnedList = () => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const listId = pathname.replace('/min-gogn/listar/minn-listi/', '')
+  const listId = pathname.replace(
+    '/min-gogn/listar/undirskriftalistar/minn-listi/',
+    '',
+  )
 
   const { petitionData, refetchSinglePetition } = useGetSinglePetition(listId)
 

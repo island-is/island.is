@@ -1,12 +1,10 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  m,
-  ErrorScreen,
   EmptyState,
   UserInfoLine,
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
   CardLoader,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
@@ -22,6 +20,7 @@ import HistoryTable from './HistoryTable'
 import subYears from 'date-fns/subYears'
 import { HealthPaths } from '../../lib/paths'
 import { messages as hm } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -60,14 +59,11 @@ const HealthCenter = () => {
 
   if (error && !loading) {
     return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.healthCenter).toLowerCase(),
-        })}
+      <Problem
+        size="small"
+        noBorder={false}
+        type="internal_service_error"
+        error={error}
       />
     )
   }
@@ -77,17 +73,9 @@ const HealthCenter = () => {
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
-        serviceProviderTooltip={formatMessage(m.healthTooltip)}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
-
-      {!loading && !healthCenterData?.current && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
-      )}
 
       {wasSuccessfulTransfer && !loading && (
         <Box width="full" marginTop={4}>
@@ -103,13 +91,24 @@ const HealthCenter = () => {
         </Box>
       )}
 
+      {!loading && !healthCenterData?.current && (
+        <Box width="full" marginTop={4} display="flex" justifyContent="center">
+          <Box marginTop={8}>
+            <EmptyState />
+          </Box>
+        </Box>
+      )}
+
       {healthCenterData?.current && (
         <Box width="full" marginTop={[1, 1, 4]}>
           <Stack space={2}>
             <UserInfoLine
               title={formatMessage(messages.myRegistration)}
               label={formatMessage(messages.healthCenterTitle)}
-              content={healthCenterData.current.healthCenterName ?? ''}
+              content={
+                healthCenterData.current.healthCenterName ??
+                formatMessage(messages.healthCenterNoHealthCenterRegistered)
+              }
               editLink={
                 canRegister
                   ? {
@@ -134,9 +133,9 @@ const HealthCenter = () => {
 
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !error && healthCenterData?.history && (
+      {!loading && !error && healthCenterData?.history?.length ? (
         <HistoryTable history={healthCenterData.history} />
-      )}
+      ) : null}
     </Box>
   )
 }

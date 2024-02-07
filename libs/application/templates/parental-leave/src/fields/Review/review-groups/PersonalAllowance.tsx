@@ -23,7 +23,7 @@ export const PersonalAllowance = ({
       isEditable={editable}
       editAction={() => goToScreen?.('personalAllowance')}
     >
-      <GridRow marginBottom={2}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <RadioValue
             label={formatMessage(
