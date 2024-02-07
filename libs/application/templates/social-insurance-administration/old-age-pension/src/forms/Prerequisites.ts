@@ -119,14 +119,11 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDataProviderItem({
                   provider: UserProfileApi,
-                  title: 'Netfang og símanúmer',
+                  title:
+                    socialInsuranceAdministrationMessage.pre.contactInfoTitle,
                   subTitle:
-                    'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður hjá Ísland.is.',
-                  // title:
-                  //   socialInsuranceAdministrationMessage.pre.contactInfoTitle,
-                  // subTitle:
-                  //   socialInsuranceAdministrationMessage.pre
-                  //     .socialInsuranceAdministrationInformationDescription,
+                    socialInsuranceAdministrationMessage.pre
+                      .contactInfoDescription,
                 }),
                 // Bæta í þennan texta að bankareikningur er sóttur frá TR?
                 buildDataProviderItem({

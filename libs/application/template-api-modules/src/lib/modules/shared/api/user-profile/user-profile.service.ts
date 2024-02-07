@@ -5,9 +5,14 @@ import { UserProfileApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { UserProfileParameters } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  UserProfileParameters,
+} from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
+import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
+import { Inject } from '@nestjs/common'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -16,6 +21,8 @@ export class UserProfileService extends BaseTemplateApiService {
   constructor(
     private readonly userProfileApi: UserProfileApi,
     private readonly islyklarApi: IslyklarApi,
+    @Inject(IdsClientConfig.KEY)
+    private idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) {
     super('UserProfile')
   }
@@ -25,6 +32,7 @@ export class UserProfileService extends BaseTemplateApiService {
   }
 
   async userProfile({
+    application,
     auth,
     params,
   }: TemplateApiModuleActionProps<UserProfileParameters>) {
@@ -48,7 +56,14 @@ export class UserProfileService extends BaseTemplateApiService {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.noEmailFound,
-              summary: coreErrorMessages.noEmailFoundDescription,
+              summary: {
+                ...coreErrorMessages.noEmailFoundDescription,
+                defaultMessage:
+                  coreErrorMessages.noEmailFoundDescription.defaultMessage.replace(
+                    '{link}',
+                    this.getIDSLink(application),
+                  ),
+              },
             },
             500,
           )
@@ -62,14 +77,6 @@ export class UserProfileService extends BaseTemplateApiService {
       })
       .catch((error) => {
         if (isRunningOnEnvironment('local')) {
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.noEmailFound,
-              summary: coreErrorMessages.noEmailFoundDescription,
-            },
-            500,
-          )
-
           return {
             email: 'mockEmail@island.is',
             mobilePhoneNumber: '9999999',
@@ -81,5 +88,9 @@ export class UserProfileService extends BaseTemplateApiService {
         }
         throw error
       })
+  }
+
+  private getIDSLink(application: ApplicationWithAttachments) {
+    return `${this.idsClientConfig.issuer}/app/user-profile/email?continue_onboarding=false&returnUrl=${this.idsClientConfig.redirectUri}/ellilifeyrir/${application.id}`
   }
 }

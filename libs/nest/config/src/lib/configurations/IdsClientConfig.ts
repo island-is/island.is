@@ -12,5 +12,9 @@ export const IdsClientConfig = defineConfig({
       '@island.is/clients/dev',
     ),
     clientSecret: env.required('IDENTITY_SERVER_CLIENT_SECRET'),
+    redirectUri: env.required(
+      'CLIENT_LOCATION_ORIGIN',
+      'http://localhost:4242/umsoknir',
+    ),
   }),
 })

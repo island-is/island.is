@@ -58,11 +58,12 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'Information from Registers Iceland',
     },
-    socialInsuranceAdministrationInformationDescription: {
-      id: 'sia.application:prerequisites.socialInsuranceAdministration.description',
+    contactInfoDescription: {
+      id: 'sia.application:prerequisites.contact.info.description',
       defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun.',
-      description: 'english translation',
+        'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður hjá Ísland.is.',
+      description:
+        'Information regarding email address and phone number is retrieved from My Pages at Island.is.',
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'sia.application:prerequisites.socialInsuranceAdministration.title',

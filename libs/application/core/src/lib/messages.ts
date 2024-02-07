@@ -617,7 +617,8 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.noEmailError.description#markdown',
     defaultMessage:
       'Þú ert ekki með skráð netfang hjá Ísland.is. Vinsamlegast skráðu það [hér]({link}) og komdu svo aftur til að sækja um.',
-    description: 'You do not have a registered email address with the Social Insurance Administration. Please register an email address here and subsequently return to this application to apply.',
+    description:
+      'You do not have a registered email address with the Social Insurance Administration. Please register an email address here and subsequently return to this application to apply.',
   },
   machinesEmptyListDefault: {
     id: 'application.system:core.fetch.data.machinesEmptyListDefault',
