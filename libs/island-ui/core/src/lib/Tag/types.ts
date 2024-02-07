@@ -29,4 +29,5 @@ export interface TagProps {
   hyphenate?: boolean
   textLeft?: boolean
   CustomLink?: FC<React.PropsWithChildren<unknown>>
+  whiteBackground?: boolean
 }

@@ -67,7 +67,7 @@ export const NewsItems = ({
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
             <Text
               color={colorVariant === 'blue' ? 'blue600' : undefined}
-              variant="h3"
+              variant="h2"
               as="h2"
               id={headingTitle}
               dataTestId="home-news"
@@ -93,7 +93,7 @@ export const NewsItems = ({
       <GridItems
         mobileItemsRows={1}
         mobileItemWidth={270}
-        paddingTop={3}
+        paddingTop={4}
         paddingBottom={3}
         insideGridContainer
         half

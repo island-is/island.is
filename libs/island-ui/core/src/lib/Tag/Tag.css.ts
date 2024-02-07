@@ -171,3 +171,7 @@ export const focusable = style({
 export const disabled = style({
   cursor: 'default',
 })
+
+export const whiteBackground = style({
+  background: 'white',
+})

@@ -389,6 +389,11 @@ export const colors = {
       theme.color.dark200,
       theme.color.dark300,
     ),
+    purple: textColors(
+      theme.color.purple400,
+      theme.color.purple600,
+      theme.color.purple300,
+    ),
   }),
   utility: styleVariants({
     default: utilityColors(
