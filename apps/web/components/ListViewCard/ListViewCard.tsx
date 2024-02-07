@@ -76,6 +76,7 @@ export const ListViewCard = ({
             truncate={false}
             title={heading}
             paddingBottom={3}
+            lineHeight="sm"
           >
             {heading}
           </Text>
