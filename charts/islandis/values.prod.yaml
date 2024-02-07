@@ -49,7 +49,7 @@ air-discount-scheme-api:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
