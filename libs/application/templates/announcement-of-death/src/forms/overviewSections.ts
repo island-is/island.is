@@ -271,7 +271,7 @@ export const properties: Field[] = [
             description: (formatMessage: FormatMessage) => [
               `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
               property.share
-                ? `${formatMessage(m.propertyShare)}: ${property.share * 100}%`
+                ? `${formatMessage(m.propertyShare)}: ${property.share}%`
                 : '',
             ],
           })),

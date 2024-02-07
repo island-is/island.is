@@ -54,7 +54,7 @@ export const RealEstateRepeater: FC<
 
   const handleAddProperty = () =>
     append({
-      share: 1,
+      share: 100,
       assetNumber: '',
       description: '',
       initial: false,
@@ -80,7 +80,7 @@ export const RealEstateRepeater: FC<
                 description={[
                   `${formatMessage(m.propertyNumber)}: ${asset.assetNumber}`,
                   asset.share
-                    ? `${formatMessage(m.propertyShare)}: ${asset.share * 100}%`
+                    ? `${formatMessage(m.propertyShare)}: ${asset.share}%`
                     : '',
                   <Box marginTop={1} as="span">
                     <Button
