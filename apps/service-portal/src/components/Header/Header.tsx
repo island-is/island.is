@@ -17,7 +17,7 @@ import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
+import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { useAuth } from '@island.is/auth/react'
@@ -79,6 +79,7 @@ export const Header = ({ position }: Props) => {
                       flexWrap="nowrap"
                       marginLeft={[1, 1, 2]}
                     >
+                      {user && <UserLanguageSwitcher user={user} />}
                       <Hidden below="md">
                         <Box marginRight={[1, 1, 2]} position="relative">
                           <Link to={DocumentsPaths.ElectronicDocumentsRoot}>
@@ -90,9 +91,11 @@ export const Header = ({ position }: Props) => {
                               iconType="outline"
                               type="span"
                               unfocusable
-                            >
-                              {!isMobile && formatMessage(m.documents)}
-                            </Button>
+                            />
+
+                            <span className={helperStyles.srOnly}>
+                              {formatMessage(m.documents)}
+                            </span>
                           </Link>
                           <Box
                             borderRadius="circle"
@@ -101,13 +104,12 @@ export const Header = ({ position }: Props) => {
                         </Box>
                       </Hidden>
 
-                      {user && <UserLanguageSwitcher user={user} />}
-                      {/* Display X icon instead of dots if open in mobile*/}
-
-                      <NotificationButton
-                        setMenuState={(val: MenuTypes) => setMenuOpen(val)}
-                        showMenu={menuOpen === 'notifications'}
-                      />
+                      <Hidden below="md">
+                        <NotificationButton
+                          setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                          showMenu={menuOpen === 'notifications'}
+                        />
+                      </Hidden>
 
                       <Box marginRight={[1, 1, 2]}>
                         <Button

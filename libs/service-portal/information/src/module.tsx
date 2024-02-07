@@ -16,9 +16,6 @@ const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
 const Notifications = lazy(() =>
   import('./screens/Notifications/Notifications'),
 )
-const NotificationDetail = lazy(() =>
-  import('./screens/Notifications/NotificationDetail'),
-)
 const UserProfileSettings = lazy(() =>
   import('./screens/UserProfile/UserProfile'),
 )
@@ -76,12 +73,6 @@ export const informationModule: PortalModule = {
       path: InformationPaths.Notifications,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <Notifications />,
-    },
-    {
-      name: 'Tilkynning',
-      path: InformationPaths.NotificationDetail,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      element: <NotificationDetail />,
     },
     ...sharedRoutes(userInfo),
   ],

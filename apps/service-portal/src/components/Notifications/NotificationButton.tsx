@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
@@ -31,9 +31,8 @@ const NotificationButton = ({ setMenuState, showMenu = false }: Props) => {
             : setMenuState('notifications')
         }}
         ref={ref}
-      >
-        {formatMessage(m.notifications)}
-      </Button>
+        aria-label={formatMessage(m.notifications)}
+      />
       <NotificationMenu
         closeNotificationMenu={() => setMenuState(undefined)}
         sideMenuOpen={showMenu}

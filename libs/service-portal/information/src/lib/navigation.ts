@@ -72,13 +72,6 @@ export const informationNavigation: PortalNavigationItem = {
     {
       name: m.notifications,
       path: InformationPaths.Notifications,
-      children: [
-        {
-          name: 'id',
-          navHide: true,
-          path: InformationPaths.NotificationDetail,
-        },
-      ],
     },
   ],
   description: m.userInfoDescription,
