@@ -112,7 +112,7 @@ export const prepareServiceForEnv = (
     args: serviceDef.args,
     cmds: serviceDef.cmds,
     readiness: serviceDef.readiness,
-    podDisruptionBudget: serviceDef.podDisruptionBudge,
+    podDisruptionBudget: serviceDef.podDisruptionBudget,
   }
 
   if (serviceDef.postgres) {
