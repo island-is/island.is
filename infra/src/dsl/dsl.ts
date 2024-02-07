@@ -20,10 +20,10 @@ import {
 } from './types/input-types'
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
-export class ServiceBuilder<ServiceType> {
+export class ServiceBuilder<ServiceType extends string> {
   serviceDef: ServiceDefinition
 
-  constructor(name: string) {
+  constructor(name: ServiceType) {
     this.serviceDef = {
       liveness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       readiness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
@@ -183,7 +183,7 @@ export class ServiceBuilder<ServiceType> {
   initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>) {
     if (ic.postgres) {
       ic.postgres = {
-        ...this.withDefaults(ic.postgres),
+        ...this.postrgesDefaults(ic.postgres),
         extensions: ic.postgres.extensions,
       }
     }
@@ -241,8 +241,13 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  postgres(postgres?: PostgresInfo) {
-    this.serviceDef.postgres = this.withDefaults(postgres ?? {})
+  postgres(): this
+  /*
+   * @deprecated Don't do custom Postgres config
+   */
+  postgres(postgres: PostgresInfo): this
+  postgres(postgres?: PostgresInfo): this {
+    this.serviceDef.postgres = this.postrgesDefaults(postgres ?? {})
     return this
   }
   /**
@@ -278,9 +283,9 @@ export class ServiceBuilder<ServiceType> {
     }
   }
 
-  private withDefaults = (pi: PostgresInfo): PostgresInfo => {
+  private postrgesDefaults = (pi: PostgresInfo): PostgresInfo => {
     return {
-      host: pi.host,
+      host: pi.host, // Allows missing host
       username: pi.username ?? postgresIdentifier(this.serviceDef.name),
       passwordSecret:
         pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
@@ -299,7 +304,7 @@ export const ref = (renderer: (env: Context) => string) => {
 export const service = <Service extends string>(
   name: Service,
 ): ServiceBuilder<Service> => {
-  return new ServiceBuilder(name)
+  return new ServiceBuilder<Service>(name)
 }
 
 export const json = (value: unknown): string => JSON.stringify(value)

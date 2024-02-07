@@ -38,7 +38,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       },
       IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme',
     })
-    .postgres(postgresInfo)
+    .postgres()
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,

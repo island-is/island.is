@@ -194,6 +194,9 @@ export type InitContainers = {
     name?: string
     resources?: Resources
   }[]
+  /**
+   * @deprecated Don't pass custom postgres info
+   */
   postgres?: PostgresInfo
 }
 export type InitContainersForEnv = {
