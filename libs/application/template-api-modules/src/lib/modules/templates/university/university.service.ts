@@ -78,6 +78,14 @@ export class UniversityService extends BaseTemplateApiService {
     }))
   }
 
+  async addSchoolAcceptance({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    console.log('application', application)
+    return
+  }
+
   async validateApplication({
     application,
     auth,

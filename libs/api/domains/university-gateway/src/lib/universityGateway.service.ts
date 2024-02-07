@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
+  ApplicationApi,
   ProgramApi,
   University,
   UniversityApi,
@@ -19,13 +20,21 @@ import {
   Season,
   ProgramStatus,
 } from '@island.is/university-gateway'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class UniversityGatewayApi {
   constructor(
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
+    private readonly universityApplicationApi: ApplicationApi,
   ) {}
+
+  private universityApplicationApiWithAuth(auth: Auth) {
+    return this.universityApplicationApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
 
   async getActivePrograms(): Promise<UniversityGatewayProgramsPaginated> {
     const res = await this.programApi.programControllerGetPrograms({
@@ -111,12 +120,8 @@ export class UniversityGatewayApi {
       studyRequirementsEn: item.studyRequirementsEn,
       costInformationIs: item.costInformationIs,
       costInformationEn: item.costInformationEn,
-      arrangementIs: item.arrangementIs,
-      arrangementEn: item.arrangementEn,
       allowException: item.allowException,
       allowThirdLevelQualification: item.allowThirdLevelQualification,
-      arrangementEn: item.arrangementEn,
-      arrangementIs: item.arrangementIs,
       courses: item.courses.map((c) => ({
         id: c.details.id,
         externalId: c.details.externalId,
@@ -143,6 +148,20 @@ export class UniversityGatewayApi {
     return res.data
   }
 
+  async getUniversityApplicationById(auth: Auth, id: string) {
+    const results = await this.universityApplicationApiWithAuth(
+      auth,
+    ).universityApplicationControllerGetApplicationById({
+      id: id,
+    })
+
+    console.log('results here', results)
+    return {
+      id: results.id,
+      nationalId: results.nationalId,
+    }
+  }
+
   async getProgramFilters(): Promise<UniversityGatewayProgramFilter[]> {
     return [
       {
@@ -162,8 +181,8 @@ export class UniversityGatewayApi {
         options: Object.values([
           ModeOfDelivery.ON_SITE,
           ModeOfDelivery.REMOTE,
-          ModeOfDelivery.MIXED,
           ModeOfDelivery.ONLINE,
+          ModeOfDelivery.MIXED,
         ]),
       },
       {

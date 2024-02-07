@@ -7,6 +7,8 @@ export enum States {
   DRAFT = 'draft',
   PAYMENT = 'payment',
   COMPLETED = 'completed',
+  PENDING_SCHOOL = 'pendingSchool',
+  PENDING_STUDENT = 'pendingStudent',
 }
 
 export enum Roles {
