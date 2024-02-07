@@ -69,12 +69,7 @@ export const PaymentPartication = () => {
   if (error) {
     return (
       <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
-        <Problem
-          size="small"
-          noBorder={false}
-          type="internal_service_error"
-          error={error}
-        />
+        <Problem noBorder={false} error={error} />
       </PaymentsWrapper>
     )
   }

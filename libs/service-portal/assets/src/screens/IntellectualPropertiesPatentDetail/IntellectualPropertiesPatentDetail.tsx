@@ -49,7 +49,7 @@ const IntellectualPropertiesPatentDetail = () => {
   }, [data, loading, error])
 
   if (error && !loading) {
-    return <Problem error={error} />
+    return <Problem error={error} noBorder={false} />
   }
 
   if (!data?.intellectualPropertiesPatent && !loading) {

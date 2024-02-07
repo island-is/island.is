@@ -100,12 +100,7 @@ export const PaymentOverview = () => {
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
       {error ? (
-        <Problem
-          size="small"
-          noBorder={false}
-          type="internal_service_error"
-          error={error}
-        />
+        <Problem noBorder={false} error={error} />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : (
@@ -185,12 +180,7 @@ export const PaymentOverview = () => {
             </GridContainer>
             <Box>
               {overviewError ? (
-                <Problem
-                  size="small"
-                  noBorder={false}
-                  type="internal_service_error"
-                  error={error}
-                />
+                <Problem error={error} noBorder={false} />
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
               ) : overview?.bills?.length ? (

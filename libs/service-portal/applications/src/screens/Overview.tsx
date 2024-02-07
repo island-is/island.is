@@ -140,7 +140,7 @@ const Overview = () => {
       />
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
       {(error || (!loading && !applications)) && (
-        <Problem error={error} noBorder={false} size="small" />
+        <Problem error={error} noBorder={false} />
       )}
       {applications &&
         applications.length > 0 &&

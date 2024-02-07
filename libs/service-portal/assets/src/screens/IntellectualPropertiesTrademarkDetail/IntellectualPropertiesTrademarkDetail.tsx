@@ -189,7 +189,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
   }
 
   if (error && !loading) {
-    return <Problem error={error} />
+    return <Problem error={error} noBorder={false} />
   }
 
   if (!ip && !loading) {

@@ -104,12 +104,7 @@ export const MedicinePurchase = () => {
       </Box>
       {error && !loading && (
         <Box marginBottom={SECTION_GAP}>
-          <Problem
-            size="small"
-            noBorder={false}
-            type="internal_service_error"
-            error={error}
-          />
+          <Problem error={error} noBorder={false} />
         </Box>
       )}
       {!error && loading && (
