@@ -1,0 +1,55 @@
+{
+  "name": "financial-aid-open-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/financial-aid/open-api/src",
+  "projectType": "application",
+  "prefix": "financial-aid-open-api",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "options": {
+        "outputPath": "dist/apps/financial-aid/open-api",
+        "main": "apps/financial-aid/open-api/src/main.ts",
+        "tsConfig": "apps/financial-aid/open-api/tsconfig.app.json",
+        "assets": [],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "financial-aid-open-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/financial-aid/open-api/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/financial-aid/open-api/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/financial-aid/open-api/tsconfig.app.json apps/financial-aid/open-api/src/buildOpenApi.ts"
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
+    },
+    "docker-express": {}
+  },
+  "tags": ["scope:financial-aid-open-api"]
+}

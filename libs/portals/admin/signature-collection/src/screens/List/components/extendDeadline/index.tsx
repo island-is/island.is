@@ -16,9 +16,11 @@ import { useRevalidator } from 'react-router-dom'
 const ActionExtendDeadline = ({
   listId,
   endTime,
+  allowedToProcess,
 }: {
   listId: string
   endTime: string
+  allowedToProcess: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
@@ -40,7 +42,7 @@ const ActionExtendDeadline = ({
           },
         },
       })
-      if (res.data?.signatureCollectionExtendDeadline.success) {
+      if (res.data?.signatureCollectionAdminExtendDeadline.success) {
         toast.success(formatMessage(m.updateListEndTimeSuccess))
         revalidate()
       } else {
@@ -61,14 +63,16 @@ const ActionExtendDeadline = ({
           readOnly
           value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
         />
-        <Box marginLeft={2}>
-          <Button
-            icon="calendar"
-            iconType="outline"
-            variant="utility"
-            onClick={() => setModalChangeDateIsOpen(true)}
-          ></Button>
-        </Box>
+        {allowedToProcess && (
+          <Box marginLeft={2}>
+            <Button
+              icon="calendar"
+              iconType="outline"
+              variant="utility"
+              onClick={() => setModalChangeDateIsOpen(true)}
+            ></Button>
+          </Box>
+        )}
       </Box>
       <Modal
         id="extendDeadline"

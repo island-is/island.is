@@ -19,6 +19,8 @@ import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Notification } from './notification.model'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
+const WORK_STARTING_HOUR = 8 // 8 AM
+const WORK_ENDING_HOUR = 23 // 11 PM
 
 type HandleNotification = {
   profile: UserProfileDto
@@ -234,11 +236,36 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
   }
 
+  async sleepOutsideWorkingHours(messageId: string): Promise<void> {
+    const now = new Date()
+    const currentHour = now.getHours()
+    const currentMinutes = now.getMinutes()
+    const currentSeconds = now.getSeconds()
+    // Is it outside of working hours?
+    if (currentHour >= WORK_ENDING_HOUR || currentHour < WORK_STARTING_HOUR) {
+      // If it's past the end hour or before the start hour, sleep until the start hour.
+      const sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24
+      const sleepDurationMilliSeconds =
+        (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000
+      this.logger.info(
+        `Worker will sleep until 8 AM. Sleep duration: ${sleepDurationMilliSeconds} ms`,
+        { messageId },
+      )
+      await new Promise((resolve) =>
+        setTimeout(resolve, sleepDurationMilliSeconds),
+      )
+      this.logger.info('Worker waking up after sleep.', { messageId })
+    }
+  }
+
   async run() {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
         this.logger.info('Message received by worker', { messageId })
+
+        // check if we are within operational hours or wait until we are
+        await this.sleepOutsideWorkingHours(messageId)
 
         const notification = { messageId, ...message }
         const messageIdExists = await this.notificationModel.count({
@@ -247,12 +274,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         if (messageIdExists > 0) {
           // messageId exists do nothing
-          this.logger.debug(
-            'notification with messageId already exists in db',
-            {
-              messageId,
-            },
-          )
+          this.logger.info('notification with messageId already exists in db', {
+            messageId,
+          })
         } else {
           // messageId does not exist
           // write to db

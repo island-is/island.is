@@ -36,6 +36,8 @@ import {
   TextField,
   ImageField,
   NationalIdWithNameField,
+  ActionCardListField,
+  TableRepeaterField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -103,6 +105,7 @@ export function buildDateField(
     placeholder,
     backgroundColor = 'blue',
     required,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -115,6 +118,7 @@ export function buildDateField(
     component: FieldComponents.DATE,
     backgroundColor,
     required,
+    readOnly,
   }
 }
 
@@ -128,6 +132,7 @@ export function buildDescriptionField(
     titleTooltip,
     space,
     marginBottom,
+    marginTop,
   } = data
   return {
     ...extractCommonFields(data),
@@ -139,6 +144,7 @@ export function buildDescriptionField(
     titleTooltip,
     space,
     marginBottom,
+    marginTop,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,
   }
@@ -637,5 +643,48 @@ export function buildNationalIdWithNameField(
     children: undefined,
     type: FieldTypes.NATIONAL_ID_WITH_NAME,
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
+  }
+}
+
+export function buildActionCardListField(
+  data: Omit<ActionCardListField, 'type' | 'component' | 'children'>,
+): ActionCardListField {
+  const { items, space, marginTop, marginBottom } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.ACTION_CARD_LIST,
+    component: FieldComponents.ACTION_CARD_LIST,
+    items,
+    marginTop,
+    marginBottom,
+    space,
+  }
+}
+
+export function buildTableRepeaterField(
+  data: Omit<TableRepeaterField, 'type' | 'component' | 'children'>,
+): TableRepeaterField {
+  const {
+    fields,
+    table,
+    formTitle,
+    addItemButtonText,
+    saveItemButtonText,
+    removeButtonTooltipText,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.TABLE_REPEATER,
+    component: FieldComponents.TABLE_REPEATER,
+    fields,
+    table,
+    formTitle,
+    addItemButtonText,
+    saveItemButtonText,
+    removeButtonTooltipText,
   }
 }

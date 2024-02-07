@@ -22,6 +22,7 @@ import { DocumentModule } from '@island.is/api/domains/documents'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
+import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
 import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import {
   EmailSignupModule,
@@ -52,6 +53,7 @@ import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { NotificationsModule } from '@island.is/api/domains/notifications'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
@@ -153,6 +155,7 @@ import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 
 const environment = getConfig
@@ -186,13 +189,6 @@ const environment = getConfig
           grade: environment.education.xroadGradeServiceId!,
         },
       },
-      nationalRegistry: {
-        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
-        user: environment.nationalRegistry.user!,
-        password: environment.nationalRegistry.password!,
-        host: environment.nationalRegistry.host!,
-      },
-
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
     ApplicationModule.register({
@@ -255,6 +251,7 @@ const environment = getConfig
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
+    SocialInsuranceModule,
     HealthDirectorateClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
@@ -283,6 +280,7 @@ const environment = getConfig
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
+    NotificationsModule,
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
@@ -345,6 +343,7 @@ const environment = getConfig
         ElectronicRegistrationsClientConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
+        SocialInsuranceAdministrationClientConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
         FinancialStatementsInaoClientConfig,

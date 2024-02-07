@@ -174,6 +174,9 @@ export const Services: EnvironmentServices = {
     sessionsService,
     sessionsWorker,
     sessionsGeoip,
+    universityGatewayService,
+    universityGatewayWorker,
+    contentfulApps,
   ],
   staging: [
     appSystemApi,
@@ -207,6 +210,8 @@ export const Services: EnvironmentServices = {
     sessionsService,
     sessionsWorker,
     sessionsGeoip,
+    universityGatewayService,
+    universityGatewayWorker,
   ],
   dev: [
     appSystemApi,
@@ -260,5 +265,4 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
-  universityGatewayWorker,
 ]
