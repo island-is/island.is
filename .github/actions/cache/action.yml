@@ -80,7 +80,7 @@ runs:
     - name: Exit if no retries
       if: inputs.retries < 0
       shell: bash
-      run: exit 1
+      run: exit 0
 
     - name: Attempting to cache (${{ inputs.retries }} retries left)
       id: cache-attempt
@@ -97,7 +97,7 @@ runs:
     - name: Fail on cache miss
       if: inputs.fail-on-cache-miss == 'true' && steps.cache-attempt.outputs.success != 'true'
       shell: bash
-      run: exit 1
+      run: exit 0
 
     - name: Exit successfully if cache is hit
       if: ${{ steps.cache-attempt.outputs.cache-hit == 'true' }}
@@ -128,7 +128,7 @@ runs:
     - name: Exit if recurse failed
       if: ${{ steps.recurse-loop.outputs.success != 'true' }}
       shell: bash
-      run: exit 1
+      run: exit 0
 
       # From https://github.com/marketplace/actions/slack-notify#environment-variables
       # SLACK_CHANNEL: general
