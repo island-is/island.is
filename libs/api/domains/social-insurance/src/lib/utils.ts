@@ -38,29 +38,32 @@ export const mapPensionCalculationInput = (
     }
   }
 
-  const birthdate = new Date(input.birthdate)
-
-  const defaultPensionAge = 67 // TODO: hardcoding 67 is not ideal
-  const defaultPensionDate = addYears(birthdate, defaultPensionAge)
-
-  const startDate = input.startDate
-    ? new Date(input.startDate)
-    : defaultPensionDate
-
-  // How many months is the user delaying or hurrying the pension payments
-  const offset = differenceInMonths(startDate, defaultPensionDate)
-
   let hurryPension = 0
   let delayPension = 0
+  let startPension: 1 | 2 = 2
 
-  // Negative value indicates hurrying
-  if (offset < 0) {
-    hurryPension = Math.abs(offset)
-  } else {
-    delayPension = offset
+  if (input.birthdate) {
+    const birthdate = new Date(input.birthdate)
+
+    const defaultPensionAge = 67 // TODO: hardcoding 67 is not ideal
+    const defaultPensionDate = addYears(birthdate, defaultPensionAge)
+
+    const startDate = input.startDate
+      ? new Date(input.startDate)
+      : defaultPensionDate
+
+    // How many months is the user delaying or hurrying the pension payments
+    const offset = differenceInMonths(startDate, defaultPensionDate)
+
+    // Negative value indicates hurrying
+    if (offset < 0) {
+      hurryPension = Math.abs(offset)
+    } else {
+      delayPension = offset
+    }
+
+    startPension = startDate.getFullYear() >= 2018 ? 2 : 1
   }
-
-  const startPension = startDate.getFullYear() >= 2018 ? 2 : 1
 
   return {
     // Fields directly sent
@@ -96,10 +99,16 @@ export const mapPensionCalculationInput = (
     livingCondition: input.livingCondition
       ? livingConditionMapping[input.livingCondition]
       : input.livingCondition,
-    yearOfBirth: new Date(input.birthdate).getFullYear() >= 1952 ? 1 : 2,
+    yearOfBirth: input.birthdate
+      ? new Date(input.birthdate).getFullYear() >= 1952
+        ? 1
+        : 2
+      : 1,
     typeOfPeriodIncome: input.typeOfPeriodIncome
       ? periodIncomeTypeMapping[input.typeOfPeriodIncome]
       : input.typeOfPeriodIncome,
-    ageNow: differenceInYears(birthdate, new Date()),
+    ageNow: input.birthdate
+      ? differenceInYears(new Date(input.birthdate), new Date())
+      : undefined,
   }
 }

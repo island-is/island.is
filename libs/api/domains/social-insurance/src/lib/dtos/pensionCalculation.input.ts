@@ -104,8 +104,8 @@ export class PensionCalculationInput {
   @Field(() => Number, { nullable: true })
   foreignBasicPension?: number
 
-  @Field(() => Date)
-  birthdate!: Date
+  @Field(() => Date, { nullable: true })
+  birthdate?: Date
 
   @Field(() => Date, { nullable: true })
   dateOfCalculations?: Date

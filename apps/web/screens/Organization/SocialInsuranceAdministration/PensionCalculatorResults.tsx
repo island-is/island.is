@@ -1,11 +1,4 @@
 import {
-  parseAsBoolean,
-  parseAsInteger,
-  parseAsIsoDateTime,
-  parseAsStringEnum,
-} from 'next-usequerystate'
-
-import {
   Accordion,
   AccordionItem,
   Box,
@@ -24,9 +17,6 @@ import {
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   QueryGetPensionCalculationArgs,
-  SocialInsurancePensionCalculationBasePensionType,
-  SocialInsurancePensionCalculationLivingCondition,
-  SocialInsurancePensionCalculationPeriodIncomeType,
   SocialInsurancePensionCalculationResponse,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -42,6 +32,11 @@ import {
 } from '../../queries'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
+import {
+  convertFormStateToCalculationInput,
+  convertQueryParametersToCalculationInput,
+  convertToQueryParams,
+} from './utils'
 import * as styles from './PensionCalculatorResults.css'
 
 interface PensionCalculatorResultsProps {
@@ -49,6 +44,7 @@ interface PensionCalculatorResultsProps {
   organization: Organization
   calculation: SocialInsurancePensionCalculationResponse
   calculationYear?: number
+  // parsedQuery: SocialInsurancePensionCalculationInput
 }
 
 const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
@@ -65,17 +61,20 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
 
   const perMonthText = 'á mánuði'
   const perYearText = 'á ári'
+  const title = `Reiknivél lífeyris ${calculationYear ? calculationYear : ''}`
 
   return (
     <PensionCalculatorWrapper
       organizationPage={organizationPage}
       organization={organization}
+      ogTitle={title}
+      ogImageUrl={organizationPage.featuredImage?.url}
     >
       <SidebarLayout sidebarContent={null} flexDirection="rowReverse">
         <Stack space={5}>
           <Stack space={2}>
             <Text variant="h1" as="h1">
-              Reiknivél lífeyris {calculationYear}
+              {title}
             </Text>
             <Box>
               <Text>
@@ -166,49 +165,7 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
 }
 
 PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
-  const benefitsFromMunicipality = parseAsInteger.parseServerSide(
-    query.benefitsFromMunicipality,
-  )
-  const capitalIncome = parseAsInteger.parseServerSide(query.capitalIncome)
-  const childCount = parseAsInteger.parseServerSide(query.childCount)
-  const childSupportCount = parseAsInteger.parseServerSide(
-    query.childSupportCount,
-  )
-  const dateOfCalculations = parseAsIsoDateTime.parseServerSide(
-    query.dateOfCalculations,
-  )
-  const foreignBasicPension = parseAsInteger.parseServerSide(
-    query.foreignBasicPension,
-  )
-  const hasSpouse = parseAsBoolean.parseServerSide(query.hasSpouse)
-  const income = parseAsInteger.parseServerSide(query.income)
-  const otherIncome = parseAsInteger.parseServerSide(query.otherIncome)
-  const livingCondition = parseAsStringEnum(
-    Object.values(SocialInsurancePensionCalculationLivingCondition),
-  ).parseServerSide(query.livingCondition)
-  const livingConditionAbroadInYears = parseAsInteger.parseServerSide(
-    query.livingConditionAbroadInYears,
-  )
-  const taxCard = parseAsInteger.parseServerSide(query.taxCard)
-  const mobilityImpairment = parseAsBoolean.parseServerSide(
-    query.mobilityImpairment,
-  )
-  const ageOfFirst75DisabilityAssessment = parseAsInteger.parseServerSide(
-    query.ageOfFirst75DisabilityAssessment,
-  )
-  const pensionPayments = parseAsInteger.parseServerSide(query.pensionPayments)
-  const premium = parseAsInteger.parseServerSide(query.premium)
-  const privatePensionPayments = parseAsInteger.parseServerSide(
-    query.privatePensionPayments,
-  )
-  const typeOfPeriodIncome = parseAsStringEnum(
-    Object.values(SocialInsurancePensionCalculationPeriodIncomeType),
-  ).parseServerSide(query.typeOfPeriodIncome)
-  const typeOfBasePension = parseAsStringEnum(
-    Object.values(SocialInsurancePensionCalculationBasePensionType),
-  ).parseServerSide(query.typeOfBasePension)
-  const birthdate = parseAsIsoDateTime.parseServerSide(query.birthdate)
-  const startDate = parseAsIsoDateTime.parseServerSide(query.startDate)
+  const calculationInput = convertQueryParametersToCalculationInput(query)
 
   const slug =
     locale === 'is' ? 'tryggingastofnun' : 'social-insurance-administration'
@@ -245,29 +202,7 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
     apolloClient.query<Query, QueryGetPensionCalculationArgs>({
       query: GET_PENSION_CALCULATION,
       variables: {
-        input: {
-          capitalIncome,
-          benefitsFromMunicipality,
-          childCount,
-          childSupportCount,
-          dateOfCalculations,
-          foreignBasicPension,
-          hasSpouse,
-          income,
-          livingCondition,
-          livingConditionAbroadInYears,
-          otherIncome,
-          mobilityImpairment,
-          pensionPayments,
-          premium,
-          privatePensionPayments,
-          taxCard,
-          typeOfPeriodIncome,
-          typeOfBasePension,
-          ageOfFirst75DisabilityAssessment,
-          birthdate: birthdate as Date, // TODO: validate that this is not null
-          startDate: startDate as Date, // TODO: validate that this is not null
-        },
+        input: calculationInput,
       },
     }),
   ])
@@ -290,7 +225,8 @@ PensionCalculatorResults.getProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     calculation: getPensionCalculation,
-    calculationYear: dateOfCalculations?.getFullYear(),
+    calculationYear: calculationInput.dateOfCalculations?.getFullYear(),
+
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
