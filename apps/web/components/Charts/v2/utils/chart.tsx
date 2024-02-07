@@ -6,7 +6,7 @@ import { Chart, ChartComponent } from '@island.is/web/graphql/schema'
 
 import { BASE_ACCORDION_HEIGHT, CHART_HEIGHT } from '../constants'
 import { ChartComponentType, ChartType } from '../types'
-import { formatDate, formatValueForPresentation } from './format'
+import { formatValueForPresentation } from './format'
 
 const KNOWN_COMPONENT_TYPES: ChartComponentType[] = [
   ChartComponentType.line,
@@ -52,30 +52,20 @@ interface GetCartesianGridComponents {
   activeLocale: Locale
   chartUsesGrid: boolean
   slice: Chart
+  tickFormatter: (value: unknown) => string
 }
 
 export const getCartesianGridComponents = ({
   activeLocale,
   chartUsesGrid,
   slice,
+  tickFormatter,
 }: GetCartesianGridComponents) => {
   if (!chartUsesGrid) {
     return null
   }
 
   const xAxisKey = slice.xAxisKey || 'date'
-  const xAxisValueType = slice.xAxisValueType || 'date'
-  const xAxisFormat = slice.xAxisFormat || undefined
-
-  const tickFormatter = (value: unknown) => {
-    if (xAxisValueType === 'date') {
-      return formatDate(activeLocale, value as Date, xAxisFormat || undefined)
-    } else if (xAxisValueType === 'number') {
-      return formatValueForPresentation(activeLocale, value as string | number)
-    }
-
-    return value as string
-  }
 
   return [
     <CartesianGrid

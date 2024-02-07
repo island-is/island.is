@@ -96,6 +96,7 @@ export const COMPONENT_TYPES_WITH_FILL = [
 ]
 
 export const DEFAULT_XAXIS_KEY = 'date'
+export const DEFAULT_XAXIS_VALUE_TYPE = 'date'
 export const DEFAULT_XAXIS_FORMAT = 'MMM yy'
 
 export const BASE_ACCORDION_HEIGHT = 150

@@ -28,6 +28,7 @@ export const formatValueForPresentation = (
   activeLocale: Locale,
   possiblyRawValue: number | string,
   reduceAndRoundValue = true,
+  increasePrecisionBy = 0,
 ) => {
   if (possiblyRawValue === undefined) {
     return ''
@@ -47,7 +48,7 @@ export const formatValueForPresentation = (
       if (reduceAndRoundValue && value >= 1e6) {
         divider = 1e6
         postfix = messages[activeLocale].millionPostfix
-        precision = 1
+        precision = 1 + increasePrecisionBy
       } else if (reduceAndRoundValue && value >= 1e4) {
         divider = 1e3
         postfix = messages[activeLocale].thousandPostfix
@@ -70,3 +71,16 @@ export const formatPercentageForPresentation = (
 ) => {
   return `${round(percentage * 100, precision ?? percentage < 0.1 ? 1 : 0)}%`
 }
+
+export const createTickFormatter =
+  (activeLocale: Locale, xAxisValueType?: string, xAxisFormat?: string) =>
+  (value: unknown) => {
+    // Date is the default is value type is undefined
+    if (!xAxisValueType || xAxisValueType === 'date') {
+      return formatDate(activeLocale, value as Date, xAxisFormat || undefined)
+    } else if (xAxisValueType === 'number') {
+      return formatValueForPresentation(activeLocale, value as string | number)
+    }
+
+    return value as string
+  }

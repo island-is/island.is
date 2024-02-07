@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { ResponsiveContainer } from 'recharts'
 
 import {
@@ -11,7 +11,7 @@ import {
 import { Chart as IChart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
-import { CHART_HEIGHT } from '../constants'
+import { CHART_HEIGHT, DEFAULT_XAXIS_VALUE_TYPE } from '../constants'
 import {
   useGetChartBaseComponent,
   useGetChartComponentsWithRenderProps,
@@ -21,6 +21,7 @@ import { messages } from '../messages'
 import { ChartType } from '../types'
 import {
   calculateChartSkeletonLoaderHeight,
+  createTickFormatter,
   decideChartBase,
   getCartesianGridComponents,
 } from '../utils'
@@ -40,19 +41,31 @@ export const Chart = ({ slice }: ChartProps) => {
     ...slice,
     chartType,
   })
+
+  const { activeLocale } = useI18n()
+  const tickFormatter = useCallback(
+    (value: unknown) =>
+      createTickFormatter(
+        activeLocale,
+        slice.xAxisValueType || DEFAULT_XAXIS_VALUE_TYPE,
+        slice.xAxisFormat || undefined,
+      )(value),
+    [activeLocale, slice.xAxisValueType, slice.xAxisFormat],
+  )
+
   const componentsWithAddedProps = useGetChartComponentsWithRenderProps(slice)
   const BaseChartComponent = useGetChartBaseComponent(slice)
   const chartUsesGrid = chartType !== ChartType.pie
   const [expanded, setExpanded] = useState(slice.startExpanded)
-  const { activeLocale } = useI18n()
   const cartesianGridComponents = useMemo(
     () =>
       getCartesianGridComponents({
         activeLocale,
         chartUsesGrid,
         slice,
+        tickFormatter,
       }),
-    [activeLocale, chartUsesGrid, slice],
+    [activeLocale, chartUsesGrid, slice, tickFormatter],
   )
 
   if (BaseChartComponent === null || chartType === null) {
@@ -116,8 +129,8 @@ export const Chart = ({ slice }: ChartProps) => {
                 data: data,
               })}
               {renderTooltip({
-                componentsWithAddedProps,
-                chartType,
+                slice,
+                tickFormatter,
               })}
               {renderMultipleFillPatterns({
                 components: componentsWithAddedProps,
