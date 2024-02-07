@@ -1863,3 +1863,20 @@ export const getChildrenOptions = (application: Application) => {
     }
   })
 }
+
+// applicant that cannot apply for residence grant: secondary parents, adoption and foster care
+export const showResidenceGrant = (application: Application) => {
+  const { children } = getApplicationExternalData(application.externalData)
+  const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
+    application.answers,
+  )
+  const childrenData = children as unknown as ChildInformation[]
+  if (
+    childrenData?.length &&
+    childrenData[0]?.parentalRelation?.match('primary') &&
+    noChildrenFoundTypeOfApplication !== PERMANENT_FOSTER_CARE &&
+    noChildrenFoundTypeOfApplication !== ADOPTION
+  )
+    return true
+  return false
+}

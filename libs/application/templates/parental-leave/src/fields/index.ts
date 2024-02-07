@@ -18,7 +18,6 @@ export { default as EditOrAddEmployersAndPeriodsReview } from './EditOrAddEmploy
 export { default as InReviewSteps } from './InReviewSteps'
 export { default as Conclusion } from './ConclusionSectionImage/ConclusionImageScreen'
 export { default as DraftRequiresAction } from './DraftRequiresAction'
-export { default as EditsInReviewSteps } from './InReviewSteps/EditsInReviewSteps'
 export { default as EditsRequireAction } from './EditsRequireAction'
 export { default as EmployerApprovalExtraInformation } from './EmployerApprovalExtraInformation'
 export { default as UploadAdditionalFilesInfoScreen } from './UploadAdditionalFilesInfoScreen'
