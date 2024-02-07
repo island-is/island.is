@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client'
 import {
   ApiKeyForMunicipalityMutation,
+  DeleteApiKeyForMunicipalityMutation,
   UpdateApiKeyForMunicipalityMutation,
 } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { ApiKeysForMunicipality } from '@island.is/financial-aid/shared/lib'
@@ -9,7 +10,7 @@ import { useContext, useState } from 'react'
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
 
 const useApiKeys = (
-  setCurrentState: (ApiKeyInfo: ApiKeysForMunicipality) => void,
+  setCurrentState: (ApiKeyInfo?: ApiKeysForMunicipality) => void,
 ) => {
   const [isModalVisable, setIsModalVisable] = useState(false)
 
@@ -18,21 +19,34 @@ const useApiKeys = (
     UpdateApiKeyForMunicipalityMutation,
   )
 
+  const [deleteApiKeyMutation] = useMutation(
+    DeleteApiKeyForMunicipalityMutation,
+  )
+
   const { municipality, setMunicipality } = useContext(AdminContext)
+
+  const updateMunicipalityContext = (
+    municipalityCode: string,
+    apiKeyInfo?: ApiKeysForMunicipality,
+  ) => {
+    if (setMunicipality) {
+      const updatedMunicipality = municipality.map((muni) => ({
+        ...muni,
+        apiKeyInfo:
+          muni.municipalityId === municipalityCode
+            ? apiKeyInfo
+            : muni.apiKeyInfo,
+      }))
+      setMunicipality(updatedMunicipality)
+    }
+  }
 
   const addNewApiKeyToMunicipality = (
     newApiKeyInfo: ApiKeysForMunicipality,
     toastMessage: string,
   ) => {
-    if (newApiKeyInfo && setMunicipality) {
-      const updatedMunicipality = municipality.map((muni) => ({
-        ...muni,
-        apiKeyInfo:
-          muni.municipalityId === newApiKeyInfo.municipalityCode
-            ? newApiKeyInfo
-            : muni.apiKeyInfo,
-      }))
-      setMunicipality(updatedMunicipality)
+    if (newApiKeyInfo) {
+      updateMunicipalityContext(newApiKeyInfo.municipalityCode, newApiKeyInfo)
       setCurrentState(newApiKeyInfo)
       setIsModalVisable(false)
       toast.success(toastMessage)
@@ -92,11 +106,42 @@ const useApiKeys = (
       })
   }
 
+  const deleteApiKeyForMunicipality = async (
+    id: string,
+    municipalityCode: string,
+  ) => {
+    await deleteApiKeyMutation({
+      variables: {
+        input: {
+          id,
+        },
+      },
+    })
+      .then((res) => {
+        if (res.data.deleteApiKey.success) {
+          updateMunicipalityContext(municipalityCode, undefined)
+          setCurrentState(undefined)
+          setIsModalVisable(false)
+          toast.info('Lykli hefur verið eytt')
+        } else {
+          toast.error(
+            'Ekki tókst að eyða lyklinum, vinsamlega reynið aftur síðar',
+          )
+        }
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að búa til api lykil, vinsamlega reynið aftur síðar',
+        )
+      })
+  }
+
   return {
     isModalVisable,
     setIsModalVisable,
     createApiKeyForMunicipality,
     updateApiKeyForMunicipality,
+    deleteApiKeyForMunicipality,
   }
 }
 
