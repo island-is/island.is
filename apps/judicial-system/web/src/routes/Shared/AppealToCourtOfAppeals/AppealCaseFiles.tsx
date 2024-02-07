@@ -133,7 +133,8 @@ const AppealFiles = () => {
   const handleChange = (files: File[], type: CaseFileCategory) => {
     setUploadState({ isUploading: false, error: false })
     addUploadFiles(files, type, undefined, {
-      percent: 100,
+      status: 'done',
+      percent: 0,
     })
   }
 
