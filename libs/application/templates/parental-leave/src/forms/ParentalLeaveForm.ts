@@ -446,6 +446,16 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.personalAllowance.description,
               children: [
+                buildAlertMessageField({
+                  id: 'personalAllowance.alertMessage',
+                  title: parentalLeaveFormMessages.employer.alertTitle,
+                  message:
+                    parentalLeaveFormMessages.personalAllowance
+                      .alertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  marginTop: 0,
+                }),
                 buildRadioField({
                   id: 'personalAllowance.usePersonalAllowance',
                   title: parentalLeaveFormMessages.personalAllowance.useYours,

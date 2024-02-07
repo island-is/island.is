@@ -30,10 +30,7 @@ import {
   ColumnCaseType,
   SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  CaseListEntry,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
   sortableTableColumn,

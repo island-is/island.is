@@ -19,6 +19,7 @@ import {
   Stepper,
   stepperUtils,
   TabSectionSlice,
+  TOC,
   Webreader,
 } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
@@ -42,7 +43,6 @@ import { Screen } from '../../types'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { ProjectFooter } from './components/ProjectFooter'
 import { ProjectWrapper } from './components/ProjectWrapper'
-import { TOC } from './ProjectTableOfContents'
 import { getThemeConfig } from './utils'
 
 interface PageProps {
@@ -179,7 +179,7 @@ const ProjectPage: Screen<PageProps> = ({
               />
             )}
             {subpage.showTableOfContents && (
-              <Box className="rs_read">
+              <Box marginY={6} className="rs_read">
                 <TOC slices={subpage.slices} title={navigationTitle} />
               </Box>
             )}
