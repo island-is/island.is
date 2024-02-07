@@ -321,10 +321,8 @@ export const serviceSetup = (services: {
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
     })
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-    })
     .db()
+    .migrations()
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({

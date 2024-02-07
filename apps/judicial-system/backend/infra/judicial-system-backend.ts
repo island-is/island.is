@@ -1,11 +1,6 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 
-const postgresInfo = {
-  passwordSecret: '/k8s/judicial-system/DB_PASSWORD',
-  username: 'judicial_system',
-  name: 'judicial_system',
-}
 export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
   service('judicial-system-backend')
     .namespace('judicial-system')
@@ -79,10 +74,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
       ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY',
     })
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-    })
+    .migrations()
     .liveness('/liveness')
     .readiness('/liveness')
     .db()

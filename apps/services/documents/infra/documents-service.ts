@@ -1,17 +1,9 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const postgresInfo = {
-  passwordSecret: '/k8s/services-documents/DB_PASSWORD',
-}
-
 export const serviceSetup = (): ServiceBuilder<'services-documents'> =>
   service('services-documents')
     .image('services-documents')
     .namespace('services-documents')
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -22,4 +14,5 @@ export const serviceSetup = (): ServiceBuilder<'services-documents'> =>
     .liveness('/liveness')
     .readiness('/readiness')
     .db()
+    .migrations()
     .grantNamespaces('islandis', 'application-system')

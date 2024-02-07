@@ -12,15 +12,8 @@ import {
 
 const serviceName = 'services-university-gateway'
 const serviceWorkerName = `${serviceName}-worker`
-const dbName = serviceName.replace(/-/g, '_')
 const namespace = serviceName
 const imageName = serviceName
-
-const postgresInfo = {
-  username: dbName,
-  name: dbName,
-  passwordSecret: `/k8s/${serviceName}/DB_PASSWORD`,
-}
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
   return service(serviceName)
@@ -56,21 +49,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
       UniversityGatewayHolarUniversity,
     )
     .db()
-    .initContainer({
-      containers: [
-        {
-          name: 'migrations',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:migrate'],
-        },
-        {
-          name: 'seed',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:seed:all'],
-        },
-      ],
-      postgres: postgresInfo,
-    })
+    .migrations()
+    .seed()
     .ingress({
       primary: {
         host: {

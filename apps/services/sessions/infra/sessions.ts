@@ -3,7 +3,6 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
-const dbName = 'services_sessions'
 const geoDataDir = '/geoip-lite/data'
 const geoTmpDir = `${geoDataDir}/tmp`
 
@@ -27,18 +26,11 @@ const geoipVolume: PersistentVolumeClaim[] = [
   },
 ]
 
-const servicePostgresInfo = {
-  // The service has only read permissions
-  username: 'services_sessions_read',
-  name: dbName,
-  passwordSecret: '/k8s/services-sessions/readonly/DB_PASSWORD',
-}
-
 const workerPostgresInfo = {
   // Worker has write permissions
-  username: 'services_sessions',
-  name: dbName,
-  passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
+  // username: 'services_sessions',
+  // name: dbName,
+  // passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
   extensions: ['uuid-ossp'],
 }
 
@@ -102,11 +94,8 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
-    .db()
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: workerPostgresInfo,
-    })
+    .db(workerPostgresInfo)
+    .migrations(workerPostgresInfo)
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({

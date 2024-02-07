@@ -1,6 +1,5 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
-  PostgresInfo,
   EnvironmentVariables,
   Secrets,
 } from '../../../../infra/src/dsl/types/input-types'
@@ -13,12 +12,6 @@ const namespace = 'service-portal'
 const serviceId = `${namespace}-api`
 const workerId = `${serviceId}-worker`
 const imageId = 'services-user-profile'
-
-const postgresInfo: PostgresInfo = {
-  passwordSecret: '/k8s/service-portal/api/DB_PASSWORD',
-  name: 'service_portal_api',
-  username: 'service_portal_api',
-}
 
 const envVariables: EnvironmentVariables = {
   SERVICE_PORTAL_BASE_URL: {
@@ -90,10 +83,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     .serviceAccount(serviceId)
     .env(envVariables)
     .secrets(secrets)
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: { passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' },
-    })
+    .migrations()
     .liveness('/liveness')
     .readiness('/readiness')
     .replicaCount({

@@ -33,6 +33,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme',
     })
     .db()
+    .migrations()
     .redis({
       host: {
         dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
