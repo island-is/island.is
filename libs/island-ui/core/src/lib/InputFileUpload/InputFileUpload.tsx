@@ -325,9 +325,9 @@ export const InputFileUpload = ({
         </Button>
       </Box>
 
-      <Box width="full" paddingX={[2, 2, 12]}>
+      <Box width="full" paddingX={[2, 2, 2, 2, 12]}>
         {fileList.map((file, index) => (
-          <Box marginBottom={2} key={index}>
+          <Box marginBottom={2} key={file.id ?? `${file.name}_${index}`}>
             <UploadedFile
               file={file}
               showFileSize={showFileSize}

@@ -54,7 +54,7 @@ const AppealToCourtOfAppeals = () => {
 
   const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
     useUploadFiles(workingCase.caseFiles)
-  const { handleUpload } = useS3Upload(workingCase.id)
+  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { transitionCase } = useCase()
 
   const appealBriefType = !isDefenceUser(user)
@@ -114,7 +114,12 @@ const AppealToCourtOfAppeals = () => {
   )
 
   const handleRemoveFile = (file: UploadFile) => {
-    removeUploadFile(file)
+    if (file.key) {
+      handleRemove(file, removeUploadFile)
+    } else {
+      removeUploadFile(file)
+    }
+
     setUploadState({ isUploading: false, error: false })
   }
 

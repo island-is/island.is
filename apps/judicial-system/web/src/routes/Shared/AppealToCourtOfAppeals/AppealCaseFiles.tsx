@@ -51,7 +51,7 @@ const AppealFiles = () => {
   const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
     useUploadFiles(workingCase.caseFiles)
 
-  const { handleUpload } = useS3Upload(workingCase.id)
+  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
   const [uploadState, setUploadState] = useState<UploadFileState>({
     isUploading: false,
@@ -121,7 +121,12 @@ const AppealFiles = () => {
   )
 
   const handleRemoveFile = (file: UploadFile) => {
-    removeUploadFile(file)
+    if (file.key) {
+      handleRemove(file, removeUploadFile)
+    } else {
+      removeUploadFile(file)
+    }
+
     setUploadState({ isUploading: false, error: false })
   }
 
