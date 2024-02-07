@@ -223,6 +223,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
+
+      - name: Debug outputs
+        run: |
+          echo "test_projects.CHUNKS=${{ steps.test_projects.outputs.CHUNKS }}"
+          echo "e2e_projects.CHUNKS=${{ steps.e2e_projects.outputs.CHUNKS }}"
+          echo "build_projects.CHUNKS=${{ steps.build_projects.outputs.CHUNKS }}"
+          echo "lint_projects.CHUNKS=${{ steps.lint_projects.outputs.CHUNKS }}"
+
   tests:
     needs:
       - prepare
