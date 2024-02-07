@@ -1,4 +1,8 @@
-import { EstateAsset, EstateInfo, EstateMember } from '@island.is/clients/syslumenn'
+import {
+  EstateAsset,
+  EstateInfo,
+  EstateMember,
+} from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 
@@ -25,6 +29,11 @@ const estateMemberMapper = (element: EstateMember) => {
     ...element,
     initial: true,
     enabled: true,
+    heirsPercentage: '',
+    inheritance: '',
+    inheritanceTax: '',
+    taxableInheritance: '',
+    taxFreeInheritance: '',
     phone: '',
     email: '',
     relationWithApplicant: '',
@@ -210,14 +219,14 @@ export const expandAnswers = (
           ...heir,
           email: heir.email ?? '',
           heirsName: heir.name ?? '',
-          heirsPercentage: heir.heirsPercentage ?? 0,
+          heirsPercentage: heir.heirsPercentage ?? '',
           phone: heir.phone ?? '',
           relation: heir.relation ?? '',
           nationalId: heir.nationalId ?? '',
           inheritance: heir.inheritance ?? '',
-          inheritanceTax: heir.inheritanceTax ?? 0,
-          taxableInheritance: heir.taxableInheritance ?? 0,
-          taxFreeInheritance: heir.taxFreeInheritance ?? 0,
+          inheritanceTax: heir.inheritanceTax ?? '',
+          taxableInheritance: heir.taxableInheritance ?? '',
+          taxFreeInheritance: heir.taxFreeInheritance ?? '',
           dateOfBirth: heir.dateOfBirth ?? '',
           enabled: heir.enabled ?? true,
           // TODO: investigate better why nationalId and SSN is required
