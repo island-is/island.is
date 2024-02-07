@@ -159,7 +159,7 @@ runs:
         echo "SLACK_WEBHOOK=${SLACK_WEBHOOK}" >> "$GITHUB_ENV"
 
     - name: Notify on failure
-      if: ${{ !cancelled() && success() && inputs.slack-notify-on-success == 'true' }}
+      if: ${{ !cancelled() && success() && inputs.slack-webhook && inputs.slack-notify-on-success == 'true' }}
       continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
       env:
@@ -173,7 +173,7 @@ runs:
         SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
 
     - name: Notify on failure
-      if: ${{ !cancelled() && !success() }}
+      if: ${{ !cancelled() && !success() && inputs.slack-webhook }}
       continue-on-error: true
       uses: rtCamp/action-slack-notify@v2
       env:
