@@ -56,3 +56,4 @@ export { default as SelectedMunicipality } from './SelectedMunicipality/Selected
 export { default as FilterPopover } from './FilterPopover/FilterPopover'
 export { default as FilterDates } from './FilterDates/FilterDates'
 export { default as MultiSelectionAdmin } from './MultiSelection/MultiSelectionAdmins'
+export { default as RejectionCommentModal } from './RejectionCommentModal/RejectionCommentModal'
