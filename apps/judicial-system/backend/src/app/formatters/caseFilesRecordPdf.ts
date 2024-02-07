@@ -46,6 +46,7 @@ export const createCaseFilesRecord = async (
 
   const defendantIndent = 2.5 * pageMargin
   const pageReferenceIndent = pageMargin + 20
+  const pageDateIndent = pageMargin + 300
 
   const chapters = [0, 1, 2, 3, 4, 5]
   const pageReferences: {
@@ -186,11 +187,19 @@ export const createCaseFilesRecord = async (
         formatMessage(caseFilesRecord.pageNumberHeading),
         textFontSize,
         {
-          alignment: Alignment.Right,
+          bold: true,
           newLine: false,
+          alignment: Alignment.Right,
           marginTop: chapter > 0 ? 1 : 2,
         },
       )
+
+      pdfDocument.addText(formatMessage(caseFilesRecord.date), textFontSize, {
+        bold: true,
+        newLine: false,
+        alignment: Alignment.Left,
+        position: { x: pageDateIndent },
+      })
     }
 
     pdfDocument.addText(
@@ -209,18 +218,21 @@ export const createCaseFilesRecord = async (
         pageNumber: pageReference.pageNumber,
         pageLink: pageReference.pageLink,
       })
-
       pdfDocument.addText(
-        `${formatDate(pageReference.date, 'dd.MM.yyyy')} - ${
-          pageReference.name
-        }`,
+        formatDate(pageReference.date, 'dd.MM.yyyy') ?? '',
         textFontSize,
         {
-          maxWidth: 400,
           pageLink: pageReference.pageLink,
-          position: { x: pageReferenceIndent },
+          newLine: false,
+          position: { x: pageDateIndent },
         },
       )
+
+      pdfDocument.addText(pageReference.name, textFontSize, {
+        maxWidth: 400,
+        pageLink: pageReference.pageLink,
+        position: { x: pageReferenceIndent },
+      })
     }
   }
 
