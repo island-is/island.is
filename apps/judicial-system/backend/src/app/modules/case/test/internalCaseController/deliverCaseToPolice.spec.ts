@@ -1,3 +1,4 @@
+import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import {
@@ -16,7 +17,7 @@ import {
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { PoliceService } from '../../../police'
+import { CourtDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -109,6 +110,7 @@ describe('InternalCaseController - Deliver case to police', () => {
 
       then = await givenWhenThen(caseId, theCase)
     })
+
     it('should update the police case', async () => {
       expect(getRequestPdfAsString).toHaveBeenCalledWith(
         theCase,
@@ -134,11 +136,24 @@ describe('InternalCaseController - Deliver case to police', () => {
         defendantNationalId,
         validToDate,
         caseConclusion,
-        requestPdf,
-        courtRecordPdf,
-        rulingPdf,
-        custodyNoticePdf,
-        undefined,
+        [
+          {
+            type: CourtDocumentType.RVKR,
+            courtDocument: Base64.btoa(requestPdf),
+          },
+          {
+            type: CourtDocumentType.RVTB,
+            courtDocument: Base64.btoa(courtRecordPdf),
+          },
+          {
+            type: CourtDocumentType.RVUR,
+            courtDocument: Base64.btoa(rulingPdf),
+          },
+          {
+            type: CourtDocumentType.RVVI,
+            courtDocument: Base64.btoa(custodyNoticePdf),
+          },
+        ],
       )
       expect(then.result.delivered).toEqual(true)
     })
