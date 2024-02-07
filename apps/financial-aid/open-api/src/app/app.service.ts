@@ -9,6 +9,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import appModuleConfig from './app.config'
 import { FilterApplicationsDto } from './app.dto'
+import { ApplicationModel } from './models'
 
 @Injectable()
 export class AppService {
@@ -22,7 +23,7 @@ export class AppService {
     apiKey: string,
     municipalityCode: string,
     filters: FilterApplicationsDto,
-  ) {
+  ): Promise<ApplicationModel[]> {
     this.logger.info(`trying to fetching all applications`, filters)
 
     const url = new URL(
@@ -45,7 +46,6 @@ export class AppService {
         'Municipality-Code': municipalityCode,
       },
     }).then(async (res) => {
-      console.log('res', res)
       return res.json()
     })
   }
