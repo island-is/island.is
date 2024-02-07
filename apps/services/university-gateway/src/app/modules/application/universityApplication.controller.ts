@@ -16,7 +16,6 @@ import { CreateApplicationDto } from './dto/createApplicationDto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(UniversityGatewayScope.main)
 @ApiTags('Application')
 @Controller({
   path: 'applications',

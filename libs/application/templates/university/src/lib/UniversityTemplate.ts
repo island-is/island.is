@@ -110,7 +110,7 @@ const template: ApplicationTemplate<
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
           onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
+            action: ApiActions.submitApplication,
           }),
           roles: [
             {
@@ -125,20 +125,20 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.HASKOLARADUNEYTI,
-        chargeItemCodes: getChargeItemCodes,
-        submitTarget: States.COMPLETED,
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
-      }),
+      // [States.PAYMENT]: buildPaymentState({
+      //   organizationId: InstitutionNationalIds.HASKOLARADUNEYTI,
+      //   chargeItemCodes: getChargeItemCodes,
+      //   submitTarget: States.COMPLETED,
+      //   onExit: [
+      //     defineTemplateApi({
+      //       action: ApiActions.submitApplication,
+      //       triggerEvent: DefaultEvents.SUBMIT,
+      //     }),
+      //   ],
+      // }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

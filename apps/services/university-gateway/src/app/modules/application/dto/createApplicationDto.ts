@@ -193,18 +193,21 @@ export class CreateApplicationDto {
   @IsArray()
   @ApiProperty({
     description: 'List of education',
+    type: [CreateApplicationEducationDto],
   })
   educationList!: CreateApplicationEducationDto[]
 
   @IsArray()
   @ApiProperty({
     description: 'List of work experience',
+    type: [CreateApplicationWorkExperienceDto],
   })
   workExperienceList!: CreateApplicationWorkExperienceDto[]
 
   @IsArray()
   @ApiProperty({
     description: 'Extra application fields',
+    type: [CreateApplicationExtraFieldsDto],
   })
   extraFieldList!: CreateApplicationExtraFieldsDto[]
 }

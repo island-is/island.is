@@ -53,6 +53,7 @@ export class UniversityApplicationService {
     applicationDto: CreateApplicationDto,
     user: User,
   ): Promise<Application> {
+    console.log('applicationDto', applicationDto)
     // Get university national id
     const university = await this.universityModel.findByPk(
       applicationDto.universityId,
@@ -116,6 +117,8 @@ export class UniversityApplicationService {
       extraFieldList: applicationDto.extraFieldList,
     }
 
+    console.log('applicationObj', applicationObj)
+
     // Create application in our DB
     const applicationId = (
       await this.applicationModel.create({
@@ -124,33 +127,36 @@ export class UniversityApplicationService {
         programId: program.id,
         programModeOfDeliveryId: programModeOfDelivery.id,
         status: ApplicationStatus.IN_REVIEW,
+        externalId: 'testid123',
       })
     ).id
 
+    console.log('applicationId', applicationId)
+
     // Create application in University DB
-    let applicationExternalId: string | undefined
-    if (university.nationalId === UniversityNationalIds.REYKJAVIK_UNIVERSITY) {
-      try {
-        applicationExternalId =
-          await this.reykjavikUniversityClient.createApplication(applicationObj)
-      } catch (e) {
-        throw new Error(
-          `Failed to create application in Reykjavik University DB`,
-        )
-      }
-    } else if (
-      university.nationalId === UniversityNationalIds.UNIVERSITY_OF_ICELAND
-    ) {
-      // TODO need to perform for all Uglu universities
-      try {
-        applicationExternalId =
-          await this.universityOfIcelandClient.createApplication(applicationObj)
-      } catch (e) {
-        throw new Error(
-          `Failed to create application in University of Iceland DB`,
-        )
-      }
-    }
+    const applicationExternalId: string | undefined = 'testid123'
+    // if (university.nationalId === UniversityNationalIds.REYKJAVIK_UNIVERSITY) {
+    //   try {
+    //     applicationExternalId =
+    //       await this.reykjavikUniversityClient.createApplication(applicationObj)
+    //   } catch (e) {
+    //     throw new Error(
+    //       `Failed to create application in Reykjavik University DB`,
+    //     )
+    //   }
+    // } else if (
+    //   university.nationalId === UniversityNationalIds.UNIVERSITY_OF_ICELAND
+    // ) {
+    //   // TODO need to perform for all Uglu universities
+    //   try {
+    //     applicationExternalId =
+    //       await this.universityOfIcelandClient.createApplication(applicationObj)
+    //   } catch (e) {
+    //     throw new Error(
+    //       `Failed to create application in University of Iceland DB`,
+    //     )
+    //   }
+    // }
 
     // Update the application externalId
     if (applicationExternalId) {
@@ -168,6 +174,7 @@ export class UniversityApplicationService {
     const application = await this.applicationModel.findOne({
       where: { id: applicationId, nationalId: user.nationalId },
     })
+    console.log('application', application)
     if (!application) {
       throw new Error(
         `Application with id ${applicationId} for user with national id ${user.nationalId} not found`,

@@ -56,7 +56,6 @@ export const RepeateableEducationDetailsSchema = z
   })
   .refine(
     ({ wasRemoved, school }) => {
-      console.log('school here', school)
       return wasRemoved === 'true' || (school && school.length > 0)
     },
     {

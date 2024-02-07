@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/types'
 
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-
+import { mapStringToEnum } from '@island.is/university-gateway'
 import {
   ProgramApi,
   UniversityApi,
@@ -17,6 +17,7 @@ import {
 } from '@island.is/clients/university-gateway-api'
 
 import { UniversityAnswers } from '@island.is/application/templates/university'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class UniversityService extends BaseTemplateApiService {
@@ -28,6 +29,12 @@ export class UniversityService extends BaseTemplateApiService {
     private readonly universityApplicationApi: ApplicationApi,
   ) {
     super(ApplicationTypes.UNIVERSITY)
+  }
+
+  private universityApplicationApiWithAuth(auth: Auth) {
+    return this.universityApplicationApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
   }
 
   async getUniversities({ application, auth }: TemplateApiModuleActionProps) {
@@ -82,29 +89,30 @@ export class UniversityService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const { paymentUrl } = application.externalData.createCharge.data as {
-      paymentUrl: string
-    }
-    if (!paymentUrl) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
+    console.log('in the submit')
+    // const { paymentUrl } = application.externalData.createCharge.data as {
+    //   paymentUrl: string
+    // }
+    // if (!paymentUrl) {
+    //   throw new Error(
+    //     'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+    //   )
+    // }
 
-    const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    // const isPayment: { fulfilled: boolean } | undefined =
+    //   await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
-    if (!isPayment?.fulfilled) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
+    // if (!isPayment?.fulfilled) {
+    //   throw new Error(
+    //     'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+    //   )
+    // }
 
     const answers = application.answers as UniversityAnswers
     const userFromAnswers = answers.userInformation
-    const externalData = application.externalData as any
-    const nationalRegistryUser =
-      externalData.nationalRegistry as NationalRegistryIndividual
+    const externalData = application.externalData
+    const nationalRegistryUser = externalData.individual
+      .data as NationalRegistryIndividual
     const user = {
       givenName: nationalRegistryUser.givenName || '',
       middleName: '',
@@ -122,18 +130,27 @@ export class UniversityService extends BaseTemplateApiService {
 
     const createApplicationDto = {
       createApplicationDto: {
-        universityId: '',
-        programId: '',
-        modeOfDelivery: CreateApplicationDtoModeOfDeliveryEnum.ON_SITE,
+        universityId: answers.programInformation.university,
+        programId: answers.programInformation.program,
+        modeOfDelivery: mapStringToEnum(
+          answers.programInformation.modeOfDelivery,
+          CreateApplicationDtoModeOfDeliveryEnum,
+        ),
         applicant: user,
-        preferredLanguage: '',
-        educationList: [],
+        preferredLanguage: '', // TODO What is this?
+        educationList: answers.educationDetails.map((education) => {
+          return {
+            schoolName: education.school,
+            degree: education.degreeLevel,
+          }
+        }),
         workExperienceList: [],
         extraFieldList: [],
       },
     }
-    await this.universityApplicationApi.applicationControllerCreateApplication(
-      createApplicationDto,
-    )
+    console.log('createApplicationDto', createApplicationDto)
+    await this.universityApplicationApiWithAuth(
+      auth,
+    ).universityApplicationControllerCreateApplication(createApplicationDto)
   }
 }

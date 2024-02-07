@@ -2,8 +2,10 @@ import {
   buildSection,
   buildCustomField,
   buildMultiField,
+  buildSubmitField,
 } from '@island.is/application/core'
 import { review } from '../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const ReviewSection = buildSection({
   id: 'review',
@@ -19,6 +21,19 @@ export const ReviewSection = buildSection({
           id: 'review',
           component: 'Review',
           title: '',
+        }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: 'TODO',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: 'TODO',
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),
