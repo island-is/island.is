@@ -228,11 +228,18 @@ export const createCaseFilesRecord = async (
         },
       )
 
-      pdfDocument.addText(pageReference.name, textFontSize, {
-        maxWidth: 400,
-        pageLink: pageReference.pageLink,
-        position: { x: pageReferenceIndent },
-      })
+      const a =
+        pageReference.name.length > 40
+          ? pageReference.name.match(/.{40}/g)
+          : [pageReference.name]
+
+      for (const b of a ?? []) {
+        pdfDocument.addText(b, textFontSize, {
+          newLine: true,
+          pageLink: pageReference.pageLink,
+          position: { x: pageReferenceIndent },
+        })
+      }
     }
   }
 
