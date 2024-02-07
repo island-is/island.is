@@ -22,16 +22,19 @@ import {
   YES,
 } from '@island.is/application/types'
 import { hasYes } from '@island.is/application/core'
-import { useEffect, useMemo } from 'react'
+import { Fragment, useEffect, useMemo } from 'react'
 import { EstateMember, EstateTypes } from '../../types'
 // import { LookupPerson } from '../LookupPerson'
 import { ErrorValue } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
+import { HeirsAndPartitionRepeaterProps } from './types'
 
 export const AdditionalHeir = ({
   field,
+  customFields,
   index,
   remove,
+  updateValues,
   fieldName,
   relationOptions,
   relationWithApplicantOptions,
@@ -39,9 +42,11 @@ export const AdditionalHeir = ({
   application,
 }: {
   application: Application
+  customFields: HeirsAndPartitionRepeaterProps['field']['props']['customFields']
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
+  updateValues: (updateIndex: string, value: number) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
   relationWithApplicantOptions: { value: string; label: string }[]
@@ -234,6 +239,106 @@ export const AdditionalHeir = ({
           </>
         )}
       </GridRow>
+
+      <GridRow>
+        {customFields.map((customField: any, customFieldIndex) => {
+          const defaultValue = (currentHeir as any)?.[customField.id]
+
+          return (
+            <Fragment key={customFieldIndex}>
+              {customField?.sectionTitle ? (
+                <GridColumn span="1/1">
+                  <Text variant="h5" marginBottom={2}>
+                    {customField.sectionTitle}
+                  </Text>
+                </GridColumn>
+              ) : null}
+
+              {customField.id === 'relation' ? (
+                <Fragment>
+                  {currentHeir.initial && (
+                    <GridColumn span="1/1" paddingBottom={2}>
+                      <InputController
+                        id={`${fieldIndex}.${customField.id}`}
+                        name={`${fieldIndex}.${customField.id}`}
+                        label={customField?.title}
+                        readOnly
+                        defaultValue={currentHeir.relation}
+                        backgroundColor="blue"
+                        disabled={!currentHeir.enabled}
+                      />
+                    </GridColumn>
+                  )}
+                  {application.answers.selectedEstate ===
+                    EstateTypes.permitForUndividedEstate &&
+                    currentHeir.relation !== 'Maki' && (
+                      <GridColumn span="1/1" paddingBottom={2}>
+                        <SelectController
+                          id={`${fieldIndex}.relationWithApplicant`}
+                          name={`${fieldIndex}.relationWithApplicant`}
+                          label={formatMessage(
+                            m.inheritanceRelationWithApplicantLabel,
+                          )}
+                          defaultValue={currentHeir.relationWithApplicant}
+                          options={relationOptions}
+                          error={error?.relationWithApplicant}
+                          backgroundColor="blue"
+                          disabled={!currentHeir.enabled}
+                          required
+                        />
+                      </GridColumn>
+                    )}
+                </Fragment>
+              ) : customField.id === 'heirsPercentage' ? (
+                <GridColumn span={['1/2']} paddingBottom={2}>
+                  <InputController
+                    id={`${fieldIndex}.${customField.id}`}
+                    name={`${fieldIndex}.${customField.id}`}
+                    disabled={!currentHeir.enabled}
+                    label={customField.title}
+                    defaultValue={defaultValue ? defaultValue : '0'}
+                    type="number"
+                    suffix="%"
+                    onChange={(
+                      event: React.ChangeEvent<
+                        HTMLInputElement | HTMLTextAreaElement
+                      >,
+                    ) => {
+                      const val = parseInt(event.target.value, 10)
+                      updateValues(fieldIndex, val)
+                    }}
+                    error={
+                      error && error[index]
+                        ? error[index][customField.id]
+                        : undefined
+                    }
+                    required
+                  />
+                </GridColumn>
+              ) : (
+                <GridColumn span={['1/2']} paddingBottom={2}>
+                  <InputController
+                    id={`${fieldIndex}.${customField.id}`}
+                    name={`${fieldIndex}.${customField.id}`}
+                    disabled={!currentHeir.enabled}
+                    defaultValue={defaultValue ? defaultValue : ''}
+                    format={customField.format}
+                    label={customField.title}
+                    currency
+                    readOnly
+                    error={
+                      error && error[index]
+                        ? error[index][customField.id]
+                        : undefined
+                    }
+                  />
+                </GridColumn>
+              )}
+            </Fragment>
+          )
+        })}
+      </GridRow>
+
       {/* ADVOCATE */}
       {(currentHeir?.nationalId || hasForeignCitizenship) && requiresAdvocate && (
         <Box
