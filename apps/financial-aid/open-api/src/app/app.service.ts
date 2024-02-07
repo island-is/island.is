@@ -24,7 +24,10 @@ export class AppService {
     municipalityCode: string,
     filters: FilterApplicationsDto,
   ): Promise<ApplicationModel[]> {
-    this.logger.info(`trying to fetching all applications`, filters)
+    this.logger.info(
+      `trying to fetching all applications with municipalityCode ${municipalityCode}`,
+      filters,
+    )
 
     const url = new URL(
       `${this.config.backend.url}/api/financial-aid/open-api-applications/getAll`,
@@ -37,6 +40,9 @@ export class AppService {
           representation: 'date',
         }),
     )
+    if (filters.state) {
+      url.searchParams.append('state', filters.state)
+    }
 
     return fetch(url, {
       method: 'GET',
