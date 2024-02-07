@@ -29,25 +29,12 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
-
-type RepeaterProps = {
-  field: {
-    props: {
-      repeaterButtonText: string
-      sumField: string
-      customFields: {
-        sectionTitle?: string
-        title: string
-        id: string
-        readOnly: true
-        currency: true
-      }[]
-    }
-  }
-}
+import { HeirsAndPartitionRepeaterProps } from './types'
 
 export const HeirsAndPartitionRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
+  React.PropsWithChildren<
+    FieldBaseProps<Answers> & HeirsAndPartitionRepeaterProps
+  >
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { answers } = application
   const { id, props } = field
@@ -449,6 +436,7 @@ export const HeirsAndPartitionRepeater: FC<
                             defaultValue={defaultValue ? defaultValue : '0'}
                             type="number"
                             suffix="%"
+                            maxLength={3}
                             onChange={(
                               event: React.ChangeEvent<
                                 HTMLInputElement | HTMLTextAreaElement
@@ -459,7 +447,7 @@ export const HeirsAndPartitionRepeater: FC<
                             }}
                             error={
                               error && error[mainIndex]
-                                ? error[mainIndex][field.id]
+                                ? error[mainIndex][customField.id]
                                 : undefined
                             }
                             required
@@ -478,7 +466,7 @@ export const HeirsAndPartitionRepeater: FC<
                             readOnly
                             error={
                               error && error[mainIndex]
-                                ? error[mainIndex][field.id]
+                                ? error[mainIndex][customField.id]
                                 : undefined
                             }
                           />
@@ -588,8 +576,10 @@ export const HeirsAndPartitionRepeater: FC<
               field={member}
               fieldName={id}
               index={index}
+              customFields={customFields}
               relationOptions={relations}
               relationWithApplicantOptions={relations}
+              updateValues={updateValues}
               remove={remove}
               error={error && error[index] ? error[index] : null}
             />
