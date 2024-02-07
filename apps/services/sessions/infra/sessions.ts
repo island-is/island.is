@@ -47,7 +47,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
     .namespace(namespace)
     .image(imageName)
     .redis()
-    .postgres(servicePostgresInfo)
+    .db()
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -102,7 +102,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .serviceAccount('sessions-worker')
     .command('node')
     .args('main.js', '--job=worker')
-    .postgres(workerPostgresInfo)
+    .db()
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: workerPostgresInfo,

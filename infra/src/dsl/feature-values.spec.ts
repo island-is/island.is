@@ -74,7 +74,7 @@ describe('Feature-deployment support', () => {
           paths: ['/'],
         },
       })
-      .postgres()
+      .db()
 
     dev = getEnvironment()
     const services1 = await getFeatureAffectedServices(

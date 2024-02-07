@@ -241,15 +241,29 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
-  postgres(): this
-  /*
-   * @deprecated Don't do custom Postgres config
-   */
-  postgres(postgres: PostgresInfo): this
-  postgres(postgres?: PostgresInfo): this {
-    this.serviceDef.postgres = this.postrgesDefaults(postgres ?? {})
-    return this
+  migrations(postgres?: PostgresInfo): this {
+    throw new Error('Not implemented')
   }
+
+  db(): this
+  db(postgres: PostgresInfo): this
+  db(postgres?: PostgresInfo): this {
+    this.serviceDef.postgres = this.postrgesDefaults(postgres ?? {})
+    return this.migrations(postgres)
+  }
+
+  /**
+   * @deprecated Please use `.db()` instead
+   */
+  postgres(): this
+  postgres(args: Parameters<typeof this.db>): this
+  postgres(args?: Parameters<typeof this.db>): this {
+    if (!args) {
+      return this.db()
+    }
+    return this.db(...args)
+  }
+
   /**
    * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress)
    * @param ingress Ingress parameters

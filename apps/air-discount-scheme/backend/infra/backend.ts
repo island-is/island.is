@@ -1,12 +1,6 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
 
-const postgresInfo = {
-  passwordSecret: '/k8s/air-discount-scheme/backend/DB_PASSWORD',
-  username: 'air_discount_scheme_backend',
-  name: 'air_discount_scheme_backend',
-}
-
 export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
   service('air-discount-scheme-backend')
     .image('air-discount-scheme-backend')
@@ -38,11 +32,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       },
       IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme',
     })
-    .postgres()
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-    })
+    .db()
     .redis({
       host: {
         dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',

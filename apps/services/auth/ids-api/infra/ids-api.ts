@@ -13,7 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
     .namespace('identity-server')
     .image('services-auth-ids-api')
-    .postgres(postgresInfo)
+    .db()
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {

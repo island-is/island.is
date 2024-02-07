@@ -53,7 +53,7 @@ export const workerSetup =
     service('application-system-api-worker')
       .namespace(namespace)
       .image('application-system-api')
-      .postgres(postgresInfo)
+      .db()
       .serviceAccount('application-system-api-worker')
       .redis()
       .env({
@@ -324,7 +324,7 @@ export const serviceSetup = (services: {
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
     })
-    .postgres(postgresInfo)
+    .db()
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({

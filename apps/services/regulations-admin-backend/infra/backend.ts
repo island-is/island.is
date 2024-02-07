@@ -14,7 +14,7 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
       },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api',
     })
-    .postgres(postgresInfo)
+    .db()
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,

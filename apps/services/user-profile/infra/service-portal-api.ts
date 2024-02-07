@@ -70,7 +70,7 @@ export const workerSetup = (): ServiceBuilder<typeof workerId> =>
       limits: { cpu: '800m', memory: '1024Mi' },
       requests: { cpu: '400m', memory: '512Mi' },
     })
-    .postgres(postgresInfo)
+    .db()
     .extraAttributes({
       dev: {
         schedule,
@@ -117,7 +117,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
       limits: { cpu: '800m', memory: '1024Mi' },
       requests: { cpu: '400m', memory: '512Mi' },
     })
-    .postgres(postgresInfo)
+    .db()
     .grantNamespaces(
       'nginx-ingress-internal',
       'islandis',

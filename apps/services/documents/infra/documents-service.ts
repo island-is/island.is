@@ -21,5 +21,5 @@ export const serviceSetup = (): ServiceBuilder<'services-documents'> =>
     })
     .liveness('/liveness')
     .readiness('/readiness')
-    .postgres(postgresInfo)
+    .db()
     .grantNamespaces('islandis', 'application-system')

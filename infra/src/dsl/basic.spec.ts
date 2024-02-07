@@ -45,7 +45,7 @@ describe('Basic serialization', () => {
         paths: ['/api'],
       },
     })
-    .postgres()
+    .db()
   let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
     result = (await generateOutputOne({

@@ -4,11 +4,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
     .image('services-auth-admin-api')
-    .postgres({
-      username: 'servicesauth',
-      name: 'servicesauth',
-      passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
-    })
+    .db()
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',

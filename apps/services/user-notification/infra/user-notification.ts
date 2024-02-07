@@ -27,7 +27,7 @@ export const userNotificationServiceSetup = (services: {
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceName)
-    .postgres(postgresInfo)
+    .db()
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
     .env({
@@ -99,7 +99,7 @@ export const userNotificationWorkerSetup = (services: {
     .serviceAccount(serviceWorkerName)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
-    .postgres(postgresInfo)
+    .db()
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
@@ -163,7 +163,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .serviceAccount(serviceCleanupWorkerName)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
-    .postgres(postgresInfo)
+    .db()
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,

@@ -8,7 +8,7 @@ export const serviceSetup =
     service('icelandic-names-registry-backend')
       .image('icelandic-names-registry-backend')
       .namespace('icelandic-names-registry')
-      .postgres(postgresInfo)
+      .db()
       .initContainer({
         containers: [
           {

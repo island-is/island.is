@@ -55,7 +55,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
       UniversityGatewayAgriculturalUniversityOfIceland,
       UniversityGatewayHolarUniversity,
     )
-    .postgres(postgresInfo)
+    .db()
     .initContainer({
       containers: [
         {
@@ -125,7 +125,7 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
       UniversityGatewayAgriculturalUniversityOfIceland,
       UniversityGatewayHolarUniversity,
     )
-    .postgres(postgresInfo)
+    .db()
     .extraAttributes({
       // Schedule to run hourly at minute :00 (while testing)
       dev: { schedule: '0 * * * *' },

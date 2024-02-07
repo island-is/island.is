@@ -25,7 +25,7 @@ const Staging: EnvironmentConfig = {
 
 describe('Postgres', () => {
   describe('identifier fixes', () => {
-    const sut = service('service-portal-api').postgres()
+    const sut = service('service-portal-api').db()
     let result: SerializeSuccess<HelmService>
     beforeEach(async () => {
       result = (await generateOutputOne({
@@ -48,7 +48,7 @@ describe('Postgres', () => {
   })
   describe('error reporting', () => {
     const sut = service('service-portal-api')
-      .postgres()
+      .db()
       .secrets({ DB_PASS: 'aaa' })
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
     let result: SerializeErrors
