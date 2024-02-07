@@ -19,6 +19,8 @@ export const container = style({
   transition: 'transform 250ms ease',
   gridTemplateRows: 'max-content auto max-content',
   alignItems: 'center',
+  overflowY: 'scroll',
+  overflowX: 'hidden',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       transform: 'translate3d(0%, 0, 0)',
