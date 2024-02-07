@@ -422,6 +422,14 @@ export const ApiKeyForMunicipalityMutation = gql`
     }
   }
 `
+export const DeleteApiKeyForMunicipalityMutation = gql`
+  mutation DeleteApiKeyForMunicipalityMutation($input: DeleteApiKeyInput!) {
+    deleteApiKey(input: $input) {
+      success
+    }
+  }
+`
+
 export const UpdateApiKeyForMunicipalityMutation = gql`
   mutation UpdateApiKeyForMunicipalityMutation($input: UpdateApiKeyInput!) {
     updateApiKey(input: $input) {
