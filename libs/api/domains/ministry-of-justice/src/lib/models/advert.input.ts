@@ -7,12 +7,21 @@ export class AdvertsInput {
 }
 
 @InputType('MinistryOfJusticeTypesInput')
-export class TypesInput {
+export class TypeQueryParams {
   @Field(() => String, { nullable: true })
   search?: string
 
   @Field(() => String, { nullable: true })
   department?: string
+
+  @Field(() => String, { nullable: true })
+  page?: number
+}
+
+@InputType('MinistryOfJusticeQueryInput')
+export class QueryParams {
+  @Field(() => String, { nullable: true })
+  search?: string
 
   @Field(() => String, { nullable: true })
   page?: number

@@ -16,7 +16,7 @@ export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
   }
 
   async departments(user: User) {
-    return this.ministryOfJusticeService.departments(user)
+    return this.ministryOfJusticeService.departments(user, {})
   }
 
   async types(user: User) {

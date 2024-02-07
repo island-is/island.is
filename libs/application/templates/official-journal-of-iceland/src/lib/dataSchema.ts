@@ -173,6 +173,12 @@ export const dataSchema = z.object({
     .object({
       date: z.string(),
       fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]),
+      contentCategories: z.array(
+        z.object({
+          label: z.string(),
+          value: z.string(),
+        }),
+      ),
       communicationChannels: z.array(
         z.object({
           email: z.string(),

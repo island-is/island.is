@@ -5,9 +5,16 @@ import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { MinistryOfJusticeService } from './ministryOfJustice.service'
-import { AdvertsResponse } from './models/responses'
-import { AdvertsInput, TypesInput } from './models/adverts.input'
-import { AdvertsTypeResponse } from './models/adverts.response'
+import {
+  AdvertsInput,
+  QueryParams,
+  TypeQueryParams,
+} from './models/advert.input'
+import {
+  AdvertCategoryResponse,
+  AdvertResponse,
+  AdvertTypeResponse,
+} from './models/advert.response'
 
 @UseGuards(IdsUserGuard)
 @Scopes(ApiScope.internal)
@@ -15,7 +22,7 @@ import { AdvertsTypeResponse } from './models/adverts.response'
 export class MinistryOfJusticeResolver {
   constructor(private readonly mojService: MinistryOfJusticeService) {}
 
-  @Query(() => AdvertsResponse, {
+  @Query(() => AdvertResponse, {
     name: 'ministryOfJusticeAdverts',
   })
   @Audit()
@@ -25,11 +32,19 @@ export class MinistryOfJusticeResolver {
     })
   }
 
-  @Query(() => AdvertsTypeResponse, {
+  @Query(() => AdvertTypeResponse, {
     name: 'ministryOfJusticeTypes',
   })
   @Audit()
-  types(@CurrentUser() user: User, @Args('params') params: TypesInput) {
+  types(@CurrentUser() user: User, @Args('params') params: TypeQueryParams) {
     return this.mojService.types(user, params)
+  }
+
+  @Query(() => AdvertCategoryResponse, {
+    name: 'ministryOfJusticeCategories',
+  })
+  @Audit()
+  categories(@CurrentUser() user: User, @Args('params') params: QueryParams) {
+    return this.mojService.categories(user, params)
   }
 }

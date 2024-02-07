@@ -71,6 +71,13 @@ export const publishingPreferences = {
         description: 'Label of the fast track checkbox input',
       },
     }),
+    contentCategories: defineMessages({
+      label: {
+        id: 'ojoi.application:publishingPreferences.inputs.contentCategories.label',
+        defaultMessage: 'Efnisflokkar',
+        description: 'Label of the content categories input',
+      },
+    }),
     messages: defineMessages({
       label: {
         id: 'ojoi.application:publishingPreferences.inputs.messages.label',

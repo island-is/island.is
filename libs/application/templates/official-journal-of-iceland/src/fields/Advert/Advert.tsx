@@ -1,5 +1,5 @@
 import { getErrorViaPath } from '@island.is/application/core'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Input } from '@island.is/island-ui/core'
 import {
   InputController,
   SelectController,

@@ -18,20 +18,8 @@ registerEnumType(AdvertStatus, {
   name: 'MinistryOfJusticeAdvertStatus',
 })
 
-@ObjectType('MinistryOfJusticeAdvertDepartment')
-export class AdvertDepartment {
-  @Field(() => ID)
-  id!: string
-
-  @Field(() => String)
-  title!: string
-
-  @Field(() => String)
-  slug!: string
-}
-
-@ObjectType('MinistryOfJusticeAdvertCategory')
-export class AdvertCategory {
+@ObjectType('MinistryOfJusticeAdvertEntity')
+export class AdvertEntity {
   @Field(() => ID)
   id!: string
 
@@ -52,18 +40,6 @@ export class AdvertDocument {
 
   @Field(() => String, { nullable: true })
   pdfUrl?: string | null
-}
-
-@ObjectType('MinistryOfJusticeAdvertInvolvedParty')
-export class AdvertInvolvedParty {
-  @Field(() => ID)
-  id!: string
-
-  @Field(() => String)
-  title!: string
-
-  @Field(() => String)
-  slug!: string
 }
 
 @ObjectType('MinistryOfJusticeAdvertPublicationNumber')
@@ -89,8 +65,8 @@ export class AdvertType {
   @Field(() => String)
   slug!: string
 
-  @Field(() => AdvertDepartment)
-  department!: AdvertDepartment
+  @Field(() => AdvertEntity)
+  department!: AdvertEntity
 }
 
 @ObjectType('MinistryOfJusticeAdvert')
@@ -98,8 +74,8 @@ export class Advert {
   @Field(() => ID)
   id!: string
 
-  @Field(() => AdvertDepartment)
-  department!: AdvertDepartment
+  @Field(() => AdvertEntity)
+  department!: AdvertEntity
 
   @Field(() => AdvertType)
   type!: AdvertType
@@ -128,11 +104,11 @@ export class Advert {
   @Field(() => String)
   publicationDate!: string | null
 
-  @Field(() => [AdvertCategory])
-  categories!: AdvertCategory[]
+  @Field(() => [AdvertEntity])
+  categories!: AdvertEntity[]
 
-  @Field(() => AdvertInvolvedParty)
-  involvedParty!: AdvertInvolvedParty
+  @Field(() => AdvertEntity)
+  involvedParty!: AdvertEntity
 
   @Field(() => AdvertDocument)
   document!: AdvertDocument

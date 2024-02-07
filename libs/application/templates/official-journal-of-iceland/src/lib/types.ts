@@ -50,6 +50,7 @@ export const InputFields = {
   publishingPreferences: {
     date: 'publishingPreferences.date',
     fastTrack: 'publishingPreferences.fastTrack',
+    contentCategories: 'publishingPreferences.contentCategories',
     communicationChannels: 'publishingPreferences.communicationChannels',
     message: 'publishingPreferences.message',
   },

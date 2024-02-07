@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import {
   DefaultApi as DmrApi,
   JournalControllerAdvertsRequest,
+  JournalControllerCategoriesRequest,
   JournalControllerDepartmentsRequest,
   JournalControllerTypesRequest,
 } from '../../gen/fetch/apis'
@@ -52,6 +53,7 @@ export class DmrClientService {
 
   public async categories(
     auth: User,
+    params: JournalControllerCategoriesRequest,
   ): Promise<JournalAdvertCategoriesResponse> {
     return await fetch(`${BASE_PATH}/categories`).then((res) => res.json())
   }
