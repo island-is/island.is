@@ -211,9 +211,9 @@ describe('SyslumennService', () => {
     })
   })
 
-  describe('getDeparted', () => {
+  describe('getRegistryPerson', () => {
     it('should return personal information from registry for a valid nationalId', async () => {
-      const response = await service.getDeparted(VALID_DEPARTED_PERSON)
+      const response = await service.getRegistryPerson(VALID_DEPARTED_PERSON)
       expect(response).toStrictEqual(
         mapDepartedToRegistryPerson(DEPARTED_REGISTRY_PERSON_RESPONSE),
       )
