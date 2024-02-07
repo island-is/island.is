@@ -140,7 +140,7 @@ runs:
       # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
       # 👆 Available environment variables/concfig
     - name: Slack Notify defaults
-      if: ${{ !cancelled() }}
+      if: ${{ !cancelled() && inputs.slack-webhook }}
       env:
         SLACK_CHANNEL: infra-updates
         SLACK_ICON: https://github.com/island-is.png?size=48
