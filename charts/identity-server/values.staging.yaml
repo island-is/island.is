@@ -211,9 +211,9 @@ services-auth-admin-api:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'servicesauth'
+    DB_NAME: 'services_auth_admin_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'servicesauth'
+    DB_USER: 'services_auth_admin_api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://identity-server.staging01.devland.is","https://innskra.island.is"]'
     NODE_OPTIONS: '--max-old-space-size=691'
@@ -252,6 +252,23 @@ services-auth-admin-api:
         - host: 'identity-server.staging01.devland.is'
           paths:
             - '/backend'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     minAvailable: 1
@@ -270,7 +287,7 @@ services-auth-admin-api:
   secrets:
     CLIENT_SECRET_ENCRYPTION_KEY: '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/services-auth-admin-api/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -278,9 +295,9 @@ services-auth-delegation-api:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'servicesauth'
+    DB_NAME: 'services_auth_delegation_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'servicesauth'
+    DB_USER: 'services_auth_delegation_api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=460'
@@ -328,6 +345,23 @@ services-auth-delegation-api:
         - host: 'auth-delegation-api.internal.staging01.devland.is'
           paths:
             - '/'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     minAvailable: 1
@@ -345,7 +379,7 @@ services-auth-delegation-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/services-auth-delegation-api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
   securityContext:
@@ -358,9 +392,9 @@ services-auth-ids-api:
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'servicesauth'
+    DB_NAME: 'services_auth_ids_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'servicesauth'
+    DB_USER: 'services_auth_ids_api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=691'
@@ -405,19 +439,6 @@ services-auth-ids-api:
     containers:
       - args:
           - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        name: 'migrations'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-      - args:
-          - 'sequelize-cli'
           - 'db:seed:all'
         command:
           - 'npx'
@@ -432,12 +453,12 @@ services-auth-ids-api:
     env:
       DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'servicesauth'
+      DB_NAME: 'services_auth_ids_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
-      DB_USER: 'servicesauth'
+      DB_USER: 'services_auth_ids_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+      DB_PASS: '/k8s/services-auth-ids-api/DB_PASSWORD'
   namespace: 'identity-server'
   podDisruptionBudget:
     minAvailable: 1
@@ -455,7 +476,7 @@ services-auth-ids-api:
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/services-auth-ids-api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
@@ -467,9 +488,9 @@ services-auth-personal-representative:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'servicesauth'
+    DB_NAME: 'services_auth_personal_representative'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'servicesauth'
+    DB_USER: 'services_auth_personal_representative'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
@@ -503,6 +524,23 @@ services-auth-personal-representative:
         - host: 'personal-representative-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'personal-representative'
   podDisruptionBudget:
     minAvailable: 1
@@ -520,7 +558,7 @@ services-auth-personal-representative:
       memory: '192Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/services-auth-personal-representative/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -528,9 +566,9 @@ services-auth-personal-representative-public:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'servicesauth'
+    DB_NAME: 'services_auth_personal_representative_public'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'servicesauth'
+    DB_USER: 'services_auth_personal_representative_public'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
@@ -572,6 +610,23 @@ services-auth-personal-representative-public:
         - host: 'personal-representative-public-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'personal-representative'
   podDisruptionBudget:
     minAvailable: 1
@@ -589,7 +644,7 @@ services-auth-personal-representative-public:
       memory: '192Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/services-auth-personal-representative-public/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -597,9 +652,9 @@ services-auth-public-api:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'servicesauth'
+    DB_NAME: 'services_auth_public_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'servicesauth'
+    DB_USER: 'services_auth_public_api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=345'
@@ -655,6 +710,23 @@ services-auth-public-api:
         - host: 'identity-server.staging01.devland.is'
           paths:
             - '/api(/|$)(.*)'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     minAvailable: 1
@@ -672,7 +744,7 @@ services-auth-public-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    DB_PASS: '/k8s/services-auth-public-api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
   securityContext:

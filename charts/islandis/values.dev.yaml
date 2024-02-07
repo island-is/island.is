@@ -154,13 +154,8 @@ air-discount-scheme-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'air_discount_scheme_backend'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+    secrets: {}
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     minAvailable: 1
@@ -723,7 +718,7 @@ application-system-api:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
     DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
-    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
@@ -776,9 +771,9 @@ application-system-api-worker:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'application_system_api'
+    DB_NAME: 'application_system_api_worker'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'application_system_api'
+    DB_USER: 'application_system_api_worker'
     EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
@@ -819,6 +814,23 @@ application-system-api-worker:
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'application-system'
   podDisruptionBudget:
     minAvailable: 1
@@ -840,7 +852,7 @@ application-system-api-worker:
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DB_PASS: '/k8s/application-system-api-worker/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
     DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD'
@@ -1279,9 +1291,9 @@ endorsement-system-api:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_endorsements_api'
+    DB_NAME: 'endorsement_system_api'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_endorsements_api'
+    DB_USER: 'endorsement_system_api'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
     EMAIL_REGION: 'eu-west-1'
@@ -1328,7 +1340,6 @@ endorsement-system-api:
           - 'db:migrate'
         command:
           - 'npx'
-        name: 'migrations'
         resources:
           limits:
             cpu: '200m'
@@ -1337,13 +1348,8 @@ endorsement-system-api:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_endorsements_api'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
+    secrets: {}
   namespace: 'endorsement-system'
   podDisruptionBudget:
     minAvailable: 1
@@ -1363,7 +1369,7 @@ endorsement-system-api:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
+    DB_PASS: '/k8s/endorsement-system-api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/endorsement-system-api/IDS-shared-secret'
     SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
     SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
@@ -1553,23 +1559,10 @@ icelandic-names-registry-backend:
     containers:
       - args:
           - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        name: 'migrations'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-      - args:
-          - 'sequelize-cli'
           - 'db:seed:all'
         command:
           - 'npx'
-        name: 'seeds'
+        name: 'seed'
         resources:
           limits:
             cpu: '200m'
@@ -1578,13 +1571,8 @@ icelandic-names-registry-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'icelandic_names_registry_backend'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'icelandic_names_registry_backend'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
+    secrets: {}
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
     minAvailable: 1
@@ -1899,13 +1887,8 @@ regulations-admin-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'regulations_admin_backend'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'regulations_admin_backend'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+    secrets: {}
   namespace: 'regulations-admin'
   podDisruptionBudget:
     minAvailable: 1
@@ -2199,13 +2182,8 @@ service-portal-api:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'service_portal_api'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    secrets: {}
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: 1
@@ -2225,7 +2203,7 @@ service-portal-api:
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2252,9 +2230,9 @@ service-portal-api-worker:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'service_portal_api'
+    DB_NAME: 'service_portal_api_worker'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'service_portal_api'
+    DB_USER: 'service_portal_api_worker'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
@@ -2291,6 +2269,23 @@ service-portal-api-worker:
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: 1
@@ -2309,7 +2304,7 @@ service-portal-api-worker:
   schedule: '0 0 31 12 *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    DB_PASS: '/k8s/service-portal-api-worker/DB_PASSWORD'
     EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
@@ -2370,13 +2365,8 @@ services-documents:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_documents'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'services_documents'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/services-documents/DB_PASSWORD'
+    secrets: {}
   namespace: 'services-documents'
   podDisruptionBudget:
     minAvailable: 1
@@ -2404,7 +2394,7 @@ services-sessions:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_sessions_read'
+    DB_USER: 'services_sessions'
     GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=460'
@@ -2444,6 +2434,23 @@ services-sessions:
         - host: 'sessions-api.internal.dev01.devland.is'
           paths:
             - '/'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'services-sessions'
   podDisruptionBudget:
     minAvailable: 1
@@ -2467,7 +2474,7 @@ services-sessions:
       memory: '300Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
     GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2556,9 +2563,9 @@ services-sessions-worker:
   env:
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_sessions'
+    DB_NAME: 'services_sessions_worker'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_sessions'
+    DB_USER: 'services_sessions_worker'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -2605,12 +2612,12 @@ services-sessions-worker:
     env:
       DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_sessions'
+      DB_NAME: 'services_sessions_worker'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'services_sessions'
+      DB_USER: 'services_sessions_worker'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
+      DB_PASS: '/k8s/services-sessions-worker/DB_PASSWORD'
   namespace: 'services-sessions'
   podDisruptionBudget:
     minAvailable: 1
@@ -2630,7 +2637,7 @@ services-sessions-worker:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
+    DB_PASS: '/k8s/services-sessions-worker/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2702,19 +2709,6 @@ services-university-gateway:
     containers:
       - args:
           - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        name: 'migrations'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-      - args:
-          - 'sequelize-cli'
           - 'db:seed:all'
         command:
           - 'npx'
@@ -2727,13 +2721,8 @@ services-university-gateway:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_university_gateway'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'services_university_gateway'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+    secrets: {}
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     minAvailable: 1
@@ -2773,9 +2762,9 @@ services-university-gateway-worker:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_university_gateway'
+    DB_NAME: 'services_university_gateway_worker'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_university_gateway'
+    DB_USER: 'services_university_gateway_worker'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=345'
@@ -2815,6 +2804,23 @@ services-university-gateway-worker:
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     minAvailable: 1
@@ -2835,7 +2841,7 @@ services-university-gateway-worker:
   schedule: '0 * * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
+    DB_PASS: '/k8s/services-university-gateway-worker/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2915,9 +2921,9 @@ skilavottord-ws:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'skilavottord'
+    DB_NAME: 'skilavottord_ws'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'skilavottord'
+    DB_USER: 'skilavottord_ws'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
@@ -2967,13 +2973,8 @@ skilavottord-ws:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'skilavottord'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'skilavottord'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
+    secrets: {}
   namespace: 'skilavottord'
   podDisruptionBudget:
     minAvailable: 1
@@ -2991,7 +2992,7 @@ skilavottord-ws:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
+    DB_PASS: '/k8s/skilavottord-ws/DB_PASSWORD'
     FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
     FJARSYSLA_REST_URL: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
     FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER'
@@ -3065,6 +3066,23 @@ user-notification:
         - host: 'user-notification-xrd.internal.dev01.devland.is'
           paths:
             - '/'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      SERVERSIDE_FEATURES_ON: ''
+    secrets: {}
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: 1
@@ -3108,9 +3126,9 @@ user-notification-cleanup-worker:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'user_notification'
+    DB_NAME: 'user_notification_cleanup_worker'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'user_notification'
+    DB_USER: 'user_notification_cleanup_worker'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -3150,13 +3168,8 @@ user-notification-cleanup-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'user_notification'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+    secrets: {}
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: 1
@@ -3177,7 +3190,7 @@ user-notification-cleanup-worker:
   schedule: '@hourly'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+    DB_PASS: '/k8s/user-notification-cleanup-worker/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -3197,9 +3210,9 @@ user-notification-worker:
   env:
     CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'user_notification'
+    DB_NAME: 'user_notification_worker'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'user_notification'
+    DB_USER: 'user_notification_worker'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -3254,13 +3267,8 @@ user-notification-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'user_notification'
-      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
-    secrets:
-      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+    secrets: {}
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: 1
@@ -3281,7 +3289,7 @@ user-notification-worker:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
-    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+    DB_PASS: '/k8s/user-notification-worker/DB_PASSWORD'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
     IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
