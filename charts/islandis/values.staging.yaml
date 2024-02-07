@@ -51,7 +51,7 @@ air-discount-scheme-api:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -163,7 +163,7 @@ air-discount-scheme-backend:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -240,7 +240,7 @@ air-discount-scheme-web:
             - '/'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -426,7 +426,7 @@ api:
             - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -702,7 +702,7 @@ application-system-api:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -824,7 +824,7 @@ application-system-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -912,7 +912,7 @@ application-system-form:
             - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -979,7 +979,7 @@ consultation-portal:
             - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -1039,7 +1039,7 @@ contentful-translation-extension:
             - '/'
   namespace: 'contentful-translation-extension'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -1116,7 +1116,7 @@ download-service:
             - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -1224,7 +1224,7 @@ endorsement-system-api:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -1336,7 +1336,7 @@ icelandic-names-registry-backend:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -1394,7 +1394,7 @@ island-ui-storybook:
             - '/'
   namespace: 'storybook'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -1463,7 +1463,7 @@ license-api:
             - '/'
   namespace: 'license-api'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -1567,7 +1567,7 @@ portals-admin:
             - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -1655,7 +1655,7 @@ regulations-admin-backend:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -1781,7 +1781,7 @@ search-indexer-service:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   progressDeadlineSeconds: 1500
@@ -1860,7 +1860,7 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -1956,7 +1956,7 @@ service-portal-api:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2041,7 +2041,7 @@ service-portal-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   namespace: 'service-portal'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -2127,7 +2127,7 @@ services-documents:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -2194,7 +2194,7 @@ services-sessions:
             - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs:
     - accessModes: 'ReadWriteMany'
       mountPath: '/geoip-lite/data'
@@ -2261,7 +2261,7 @@ services-sessions-geoip-job:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -2361,7 +2361,7 @@ services-sessions-worker:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2484,7 +2484,7 @@ services-university-gateway:
       DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2565,7 +2565,7 @@ services-university-gateway-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2635,7 +2635,7 @@ skilavottord-web:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -2724,7 +2724,7 @@ skilavottord-ws:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -2815,7 +2815,7 @@ user-notification:
             - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -2907,7 +2907,7 @@ user-notification-cleanup-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3011,7 +3011,7 @@ user-notification-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -3093,7 +3093,7 @@ web:
             - '/'
   namespace: 'islandis'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 2
@@ -3153,7 +3153,7 @@ xroad-collector:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
