@@ -8,6 +8,14 @@ export const IDENTITY_QUERY = gql`
   }
 `
 
+export const DECEASED_IDENITY_QUERY = gql`
+  query DeceasedIdentityQuery($input: GetRegistryPersonInput!) {
+    syslumennGetRegistryPerson(input: $input) {
+      name
+    }
+  }
+`
+
 export const ESTATE_RELATIONS_QUERY = gql`
   query EstateRelationsQuery {
     getSyslumennEstateRelations {
