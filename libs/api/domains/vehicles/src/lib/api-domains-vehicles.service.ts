@@ -12,7 +12,6 @@ import {
   VehicleSearchDto,
   PersidnoLookupResultDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
-  CurrentvehicleswithmileageandinspGetRequest,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
@@ -31,7 +30,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
-import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
+import {
+  GetVehiclesForUserInput,
+  GetVehiclesListV2Input,
+} from '../dto/getVehiclesForUserInput'
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 import { mileageDetailConstructor } from '../utils/helpers'
@@ -75,12 +77,13 @@ export class VehiclesService {
 
   async getVehiclesListV2(
     auth: User,
-    input: CurrentvehicleswithmileageandinspGetRequest,
+    input: GetVehiclesListV2Input,
   ): Promise<CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse> {
     return await this.getVehiclesWithAuth(
       auth,
     ).currentvehicleswithmileageandinspGet({
       ...input,
+      onlyMileageRequiredVehicles: input.onlyMileage,
       permno: input.permno
         ? input.permno.length < 5
           ? `${input.permno}*`

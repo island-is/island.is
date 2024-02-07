@@ -22,6 +22,7 @@ import {
   Malsvari,
   Meistaraleyfi,
   Okutaeki,
+  ThjodskraSvarSkeyti,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -52,6 +53,7 @@ import {
   VehicleRegistration,
   EstateInfo,
   AvailableSettlements,
+  RegistryPerson,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -471,5 +473,17 @@ export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
     office: licence.embaetti,
+  }
+}
+
+export const mapDepartedToRegistryPerson = (
+  departed: ThjodskraSvarSkeyti,
+): RegistryPerson => {
+  return {
+    address: departed.heimili ?? '',
+    city: departed.sveitarfelag ?? '',
+    name: departed.nafn ?? '',
+    nationalId: departed.kennitala ?? '',
+    postalCode: departed.postaritun?.split('-')[0] ?? '',
   }
 }
