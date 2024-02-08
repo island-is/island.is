@@ -8,6 +8,7 @@ import {
   TrademarksApi,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle204 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class IntellectualPropertiesClientService {
@@ -69,17 +70,17 @@ export class IntellectualPropertiesClientService {
   }
 
   async getDesignImages(user: User, hId: string) {
-    const response = await this.designSearchApiWithAuth(
-      user,
-    ).designSearchGetDesignsGetRaw({
-      hid: hId,
-    })
+    const response = await handle204(
+      this.designSearchApiWithAuth(user).designSearchGetDesignsGetRaw({
+        hid: hId,
+      }),
+    )
 
-    if (response) {
-      return response.value()
+    if (!response) {
+      return null
     }
 
-    return null
+    return response
   }
 
   getDesignImage(
