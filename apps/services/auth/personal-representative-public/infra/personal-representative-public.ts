@@ -6,7 +6,7 @@ export const serviceSetup =
       .namespace('personal-representative')
       .image('services-auth-personal-representative-public')
       .db({
-        name: 'servicesauth'
+        name: 'servicesauth',
       })
       .env({
         IDENTITY_SERVER_ISSUER_URL: {
