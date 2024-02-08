@@ -358,7 +358,7 @@ export class ServiceBuilder<ServiceType extends string> {
       passwordSecret:
         pg.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
       name: pg.name ?? postgresIdentifier(this.serviceDef.name),
-      extensions: this.serviceDef.initContainers?.postgres?.extensions,
+      extensions: [...pg.extensions ?? [], ...this.serviceDef.initContainers?.postgres?.extensions ?? []],
     }
   }
 }
