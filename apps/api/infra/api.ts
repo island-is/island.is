@@ -61,7 +61,6 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .command('node')
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
-
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
