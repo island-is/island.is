@@ -70,7 +70,9 @@ describe('Summary', () => {
 
   it('should show a modal window when the appeal ruling is modified', async () => {
     const caseId = faker.datatype.uuid()
-    jest.spyOn(stepHelper, 'hasSentNotification').mockReturnValue(true)
+    jest
+      .spyOn(stepHelper, 'hasSentNotification')
+      .mockReturnValue({ hasSent: true, date: null })
 
     render(
       <MockedProvider
