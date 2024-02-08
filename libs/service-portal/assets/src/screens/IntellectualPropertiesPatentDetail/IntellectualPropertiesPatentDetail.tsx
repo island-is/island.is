@@ -75,7 +75,7 @@ const IntellectualPropertiesPatentDetail = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       )}
-      {!error && loading && (
+      {!error && (
         <Stack space="containerGutter">
           {loading ? (
             <Box marginBottom={[3, 3, 3, 12]}>

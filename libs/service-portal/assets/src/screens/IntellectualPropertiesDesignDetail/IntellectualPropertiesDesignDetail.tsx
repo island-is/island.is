@@ -117,19 +117,22 @@ const IntellectualPropertiesDesignDetail = () => {
         />
       </Box>
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && !loading && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.notFound, {
-            arg: formatMessage(ipMessages.design).toLowerCase(),
-          })}
-          message={formatMessage(ipMessages.notFoundText, {
-            arg: formatMessage(ipMessages.design).toLowerCase(),
-          })}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
+      {!error &&
+        !loading &&
+        !data?.intellectualPropertiesDesign &&
+        !data?.intellectualPropertiesDesignImageList && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(ipMessages.notFound, {
+              arg: formatMessage(ipMessages.design),
+            })}
+            message={formatMessage(ipMessages.notFoundText, {
+              arg: formatMessage(ipMessages.design).toLowerCase(),
+            })}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
       {!error &&
         (loading ||
           data?.intellectualPropertiesDesign ||
