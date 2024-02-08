@@ -47,7 +47,7 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
-import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
+import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/regulations-admin-backend'
 
 import {
   serviceSetup as universityGatewaySetup,
