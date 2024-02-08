@@ -4,3 +4,8 @@ import { RepeateableEducationDetailsSchema } from '../lib/dataSchema'
 export type EducationDetailsItem = z.TypeOf<
   typeof RepeateableEducationDetailsSchema
 >
+
+export type CurrentApplciation = {
+  id: string
+  nationalId: string
+}

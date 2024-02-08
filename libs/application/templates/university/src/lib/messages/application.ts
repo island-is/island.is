@@ -35,4 +35,9 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is processed',
   },
+  historyApprovedBySchool: {
+    id: 'uni.application:historyApprovedBySchool',
+    defaultMessage: 'Samþykkt af skóla',
+    description: 'Description of acceptance by school',
+  },
 })

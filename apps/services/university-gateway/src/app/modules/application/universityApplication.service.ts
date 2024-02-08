@@ -134,29 +134,32 @@ export class UniversityApplicationService {
     console.log('applicationId', applicationId)
 
     // Create application in University DB
-    const applicationExternalId: string | undefined = 'testid123'
-    // if (university.nationalId === UniversityNationalIds.REYKJAVIK_UNIVERSITY) {
-    //   try {
-    //     applicationExternalId =
-    //       await this.reykjavikUniversityClient.createApplication(applicationObj)
-    //   } catch (e) {
-    //     throw new Error(
-    //       `Failed to create application in Reykjavik University DB`,
-    //     )
-    //   }
-    // } else if (
-    //   university.nationalId === UniversityNationalIds.UNIVERSITY_OF_ICELAND
-    // ) {
-    //   // TODO need to perform for all Uglu universities
-    //   try {
-    //     applicationExternalId =
-    //       await this.universityOfIcelandClient.createApplication(applicationObj)
-    //   } catch (e) {
-    //     throw new Error(
-    //       `Failed to create application in University of Iceland DB`,
-    //     )
-    //   }
-    // }
+    let applicationExternalId: string | undefined
+    if (university.nationalId === UniversityNationalIds.REYKJAVIK_UNIVERSITY) {
+      try {
+        applicationExternalId =
+          await this.reykjavikUniversityClient.createApplication(applicationObj)
+      } catch (e) {
+        throw new Error(
+          `Failed to create application in Reykjavik University DB`,
+        )
+      }
+    } else if (
+      university.nationalId === UniversityNationalIds.UNIVERSITY_OF_ICELAND
+    ) {
+      // TODO need to perform for all Uglu universities
+      try {
+        const response = await this.universityOfIcelandClient.createApplication(
+          applicationObj,
+        )
+        applicationExternalId = response.id
+        console.log('in here applicationExternalId', applicationExternalId)
+      } catch (e) {
+        throw new Error(
+          `Failed to create application in University of Iceland DB`,
+        )
+      }
+    }
 
     // Update the application externalId
     if (applicationExternalId) {

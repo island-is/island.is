@@ -125,7 +125,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.PENDING_SCHOOL },
         },
       },
       // [States.PAYMENT]: buildPaymentState({
@@ -139,6 +139,66 @@ const template: ApplicationTemplate<
       //     }),
       //   ],
       // }),
+      [States.PENDING_SCHOOL]: {
+        meta: {
+          name: 'Umsókn um háskóla',
+          status: 'inprogress',
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: applicationMessage.historyApprovedBySchool,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
+            // pendingAction: reviewStatePendingAction,
+          },
+          lifecycle: pruneAfterDays(1),
+          onEntry: defineTemplateApi({
+            action: ApiActions.addSchoolAcceptance,
+            shouldPersistToExternalData: true,
+          }),
+          // onExit: defineTemplateApi({
+          //   action: ApiActions.validateApplication,
+          // }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Overview').then((module) =>
+                  Promise.resolve(module.OverviewForm),
+                ),
+              // write: {
+              //   answers: [
+              //     'sellerCoOwner',
+              //     'buyer',
+              //     'buyerCoOwnerAndOperator',
+              //     'insurance',
+              //     'rejecter',
+              //   ],
+              // },
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        // on: {
+        //   [DefaultEvents.APPROVE]: { target: States.REVIEW },
+        //   [DefaultEvents.REJECT]: { target: States.REJECTED },
+        //   [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+        // },
+      },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
