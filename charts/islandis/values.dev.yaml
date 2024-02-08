@@ -83,6 +83,7 @@ air-discount-scheme-api:
 air-discount-scheme-backend:
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'air_discount_scheme_backend'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -155,6 +156,7 @@ air-discount-scheme-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -559,6 +561,7 @@ application-system-api:
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/gopro/kvortun-v1'
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -697,6 +700,7 @@ application-system-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -1285,6 +1289,7 @@ endorsement-system-api:
     - 'node'
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'endorsement_system_api'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -1344,6 +1349,7 @@ endorsement-system-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'endorsement_system_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -1527,6 +1533,7 @@ global:
 icelandic-names-registry-backend:
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -1585,8 +1592,14 @@ icelandic-names-registry-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'icelandic_names_registry_backend'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'icelandic_names_registry_backend'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
     minAvailable: 1
@@ -1846,6 +1859,7 @@ portals-admin:
 regulations-admin-backend:
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'regulations_admin_backend'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -1902,6 +1916,7 @@ regulations-admin-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'regulations_admin_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -2025,6 +2040,11 @@ search-indexer-service:
       CONTENTFUL_ENVIRONMENT: 'master'
       CONTENTFUL_HOST: 'preview.contentful.com'
       CONTENTFUL_SPACE: '8k0h54kbe6bj'
+      DB_EXTENSIONS: ''
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'search_indexer_service'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'search_indexer_service'
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
@@ -2035,6 +2055,7 @@ search-indexer-service:
     secrets:
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
+      DB_PASS: '/k8s/search-indexer-service/DB_PASSWORD'
   namespace: 'search-indexer'
   podDisruptionBudget:
     minAvailable: 1
@@ -2139,6 +2160,7 @@ service-portal:
 service-portal-api:
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -2203,8 +2225,14 @@ service-portal-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'service_portal_api'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: 1
@@ -2324,6 +2352,7 @@ service-portal-api-worker:
 services-documents:
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -2370,6 +2399,7 @@ services-documents:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -2647,6 +2677,7 @@ services-university-gateway:
     - 'node'
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -2728,8 +2759,14 @@ services-university-gateway:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_university_gateway'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'services_university_gateway'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     minAvailable: 1
@@ -2910,6 +2947,7 @@ skilavottord-web:
 skilavottord-ws:
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord_ws'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -2964,6 +3002,7 @@ skilavottord-ws:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'skilavottord_ws'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -3104,6 +3143,7 @@ user-notification-cleanup-worker:
     - 'node'
   enabled: true
   env:
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification_cleanup_worker'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -3148,6 +3188,7 @@ user-notification-cleanup-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'user_notification_cleanup_worker'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -3194,6 +3235,7 @@ user-notification-worker:
   enabled: true
   env:
     CONTENTFUL_HOST: 'preview.contentful.com'
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification_worker'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -3253,6 +3295,7 @@ user-notification-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'user_notification_worker'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'

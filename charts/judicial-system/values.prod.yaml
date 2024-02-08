@@ -108,6 +108,7 @@ judicial-system-backend:
     CLIENT_URL: 'https://rettarvorslugatt.island.is'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -171,8 +172,14 @@ judicial-system-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: ''
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'judicial_system_backend'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'judicial_system_backend'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/judicial-system-backend/DB_PASSWORD'
   namespace: 'judicial-system'
   podDisruptionBudget:
     minAvailable: 1
