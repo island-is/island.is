@@ -298,7 +298,7 @@ export class ServiceBuilder<ServiceType extends string> {
   db(postgres: PostgresInfo): this
   db(postgres?: PostgresInfo): this {
     this.serviceDef.postgres = this.postrgesDefaults(postgres ?? {})
-    return this.migrations(postgres)
+    return this
   }
 
   /**
