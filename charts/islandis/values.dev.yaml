@@ -155,8 +155,13 @@ air-discount-scheme-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'air_discount_scheme_backend'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     minAvailable: 1
@@ -692,8 +697,13 @@ application-system-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'application_system_api'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
     minAvailable: 1
@@ -1334,8 +1344,13 @@ endorsement-system-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'endorsement_system_api'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'endorsement_system_api'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/endorsement-system-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
     minAvailable: 1
@@ -1887,8 +1902,13 @@ regulations-admin-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'regulations_admin_backend'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'regulations_admin_backend'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
   podDisruptionBudget:
     minAvailable: 1
@@ -2350,8 +2370,13 @@ services-documents:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_documents'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'services_documents'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   podDisruptionBudget:
     minAvailable: 1
@@ -2939,8 +2964,13 @@ skilavottord-ws:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'skilavottord_ws'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'skilavottord_ws'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/skilavottord-ws/DB_PASSWORD'
   namespace: 'skilavottord'
   podDisruptionBudget:
     minAvailable: 1
@@ -3118,8 +3148,13 @@ user-notification-cleanup-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'user_notification_cleanup_worker'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'user_notification_cleanup_worker'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/user-notification-cleanup-worker/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: 1
@@ -3218,8 +3253,13 @@ user-notification-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'user_notification_worker'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_USER: 'user_notification_worker'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/user-notification-worker/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: 1
