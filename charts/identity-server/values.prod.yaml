@@ -208,7 +208,7 @@ services-auth-admin-api:
   enabled: true
   env:
     DB_HOST: 'postgres-ids.internal'
-    DB_NAME: 'serviceauth'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'services_auth_admin_api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -265,7 +265,7 @@ services-auth-admin-api:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-ids.internal'
-      DB_NAME: 'serviceauth'
+      DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'postgres-ids.internal'
       DB_USER: 'services_auth_admin_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
