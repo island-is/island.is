@@ -246,12 +246,11 @@ export class ServiceBuilder<ServiceType extends string> {
       ...ic.containers,
     ]
 
-    if (ic.postgres) {
-      ic.postgres = {
-        ...this.postrgesDefaults(ic.postgres),
-        extensions: ic.postgres.extensions,
-      }
+    // Combine DB config
+    ic.postgres = {
+      ...this.serviceDef.postgres, ...this.postrgesDefaults(ic.postgres ?? {}), ...{ extensions: ic?.postgres?.extensions ?? [] }
     }
+
     const uniqueNames = new Set(ic.containers.map((c) => c.name))
     if (uniqueNames.size != ic.containers.length) {
       throw new Error(
