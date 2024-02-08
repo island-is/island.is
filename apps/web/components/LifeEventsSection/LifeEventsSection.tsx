@@ -7,11 +7,10 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
-import { GridItems } from '@island.is/web/components'
+import { GridItems, IconTitleCard } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { LifeEventPage } from '@island.is/web/graphql/schema'
 import CardWithFeaturedItems from '../CardWithFeaturedItems/CardWithFeaturedItems'
-import CardWithImageAndTitle from '../CardWithImageAndTitle/CardWithImageAndTitle'
 
 interface LifeEventsSectionProps {
   heading: string
@@ -36,7 +35,7 @@ export const LifeEventsSection = ({
             {heading}
           </Text>
           <Box display={['none', 'none', 'none', 'block']}>
-            <Link href={'/lifsvidburdir'} skipTab>
+            <Link href={linkResolver('lifeevents').href} skipTab>
               <Button
                 icon="arrowForward"
                 iconType="filled"
@@ -53,6 +52,7 @@ export const LifeEventsSection = ({
         mobileItemWidth={215}
         mobileItemsRows={1}
         paddingTop={4}
+        paddingBottom={3}
         insideGridContainer
         third
       >
@@ -73,7 +73,11 @@ export const LifeEventsSection = ({
                   ]).href
                 }
                 featuredItems={lifeEvent.featured}
-                seeMoreText={seeMoreText}
+                buttonTitle={
+                  lifeEvent.seeMoreText && lifeEvent.seeMoreText !== ''
+                    ? lifeEvent.seeMoreText
+                    : 'Skoða lífsviðburð'
+                }
               />
             )
           })}
@@ -81,7 +85,6 @@ export const LifeEventsSection = ({
       <GridItems
         mobileItemWidth={270}
         mobileItemsRows={2}
-        paddingTop={3}
         paddingBottom={3}
         insideGridContainer
       >
@@ -90,16 +93,23 @@ export const LifeEventsSection = ({
           .filter((x: { slug: string; title: string }) => x.slug && x.title)
           .map((lifeEvent, index: number) => {
             return (
-              <CardWithImageAndTitle
+              <IconTitleCard
                 key={index}
                 heading={lifeEvent.shortTitle || lifeEvent.title}
                 imgSrc={lifeEvent.tinyThumbnail?.url ?? ''}
                 alt={lifeEvent.tinyThumbnail?.title ?? ''}
-                dataTestId={'lifeevent-card'}
+                dataTestId="lifeevent-card"
                 href={
                   linkResolver(lifeEvent.__typename as LinkType, [
                     lifeEvent.slug,
                   ]).href
+                }
+                reverseOrder={true}
+                withButton={true}
+                buttonTitle={
+                  lifeEvent.seeMoreText && lifeEvent.seeMoreText !== ''
+                    ? lifeEvent.seeMoreText
+                    : 'Skoða lífsviðburð'
                 }
               />
             )
@@ -114,7 +124,7 @@ export const LifeEventsSection = ({
             alignItems="center"
             paddingY={[3, 3, 3, 0]}
           >
-            <Link skipTab href={'/lifsvidburdir'}>
+            <Link skipTab href={linkResolver('lifeevents').href}>
               <Button
                 icon="arrowForward"
                 iconType="filled"

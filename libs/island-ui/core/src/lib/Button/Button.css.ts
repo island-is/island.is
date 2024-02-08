@@ -463,6 +463,14 @@ export const colors = {
       1,
       theme.color.white,
     ),
+    purple: utilityColors(
+      theme.color.purple400,
+      theme.color.purple400,
+      theme.color.purple400,
+      theme.color.purple400,
+      theme.color.purple300,
+      theme.color.purple300,
+    ),
   }),
 }
 
