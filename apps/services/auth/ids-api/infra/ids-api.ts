@@ -91,8 +91,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .xroad(Base, Client, RskProcuring)
     .readiness('/health/check')
     .liveness('/liveness')
-    .db({ name: 'servicesauth' })
-    .migrations({ extensions: ['uuid-ossp'] })
+    .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
+    .migrations()
     .seed()
     .resources({
       limits: {
