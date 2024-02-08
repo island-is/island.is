@@ -76,6 +76,7 @@ const PensionCalculatorResults: Screen<PensionCalculatorResultsProps> = ({
       organization={organization}
       ogTitle={title}
       ogImageUrl={organizationPage.featuredImage?.url}
+      indexableBySearchEngine={false}
     >
       <GridContainer>
         <GridRow>

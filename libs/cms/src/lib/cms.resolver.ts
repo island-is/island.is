@@ -109,6 +109,8 @@ import { CategoryPage } from './models/categoryPage.model'
 import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
 import { FeaturedEvents } from './models/featuredEvents.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
+import { CustomPage } from './models/customPage.model'
+import { GetCustomPageInput } from './dto/getCustomPage.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -636,6 +638,17 @@ export class CmsResolver {
     )
     if (typeof document?.title !== 'string') return null
     return { title: document.title }
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CustomPage, { nullable: true })
+  async getCustomPage(
+    @Args('input') input: GetCustomPageInput,
+  ): Promise<CustomPage | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webCustomPage', slug: input.uniqueIdentifier },
+    )
   }
 }
 

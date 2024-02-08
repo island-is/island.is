@@ -13,6 +13,7 @@ interface PensionCalculatorWrapperProps {
   ogTitle: string
   ogDescription?: string
   ogImageUrl: string | undefined
+  indexableBySearchEngine?: boolean
 }
 
 export const PensionCalculatorWrapper = ({
@@ -21,6 +22,7 @@ export const PensionCalculatorWrapper = ({
   ogTitle,
   ogDescription,
   ogImageUrl,
+  indexableBySearchEngine = false,
   children,
 }: PropsWithChildren<PensionCalculatorWrapperProps>) => {
   return (
@@ -30,7 +32,9 @@ export const PensionCalculatorWrapper = ({
         description={ogDescription}
         imageUrl={ogImageUrl}
       >
-        <meta name="robots" content="noindex, nofollow" />
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
       </HeadWithSocialSharing>
       <OrganizationHeader organizationPage={organizationPage} />
       {children}

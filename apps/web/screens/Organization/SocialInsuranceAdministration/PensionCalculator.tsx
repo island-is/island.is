@@ -23,9 +23,11 @@ import {
 import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig } from '@island.is/web/components'
 import {
+  CustomPage,
   Organization,
   OrganizationPage,
   Query,
+  QueryGetCustomPageArgs,
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   SocialInsurancePensionCalculationBasePensionType as BasePensionType,
@@ -43,6 +45,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
+import { GET_CUSTOM_PAGE_QUERY } from '../../queries/CustomPage'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import {
   convertQueryParametersToCalculationInput,
@@ -54,17 +57,19 @@ interface PensionCalculatorProps {
   organizationPage: OrganizationPage
   organization: Organization
   defaultValues: CalculationInput
+  pageData?: CustomPage | null
 }
 
 const PensionCalculator: Screen<PensionCalculatorProps> = ({
   organizationPage,
   organization,
   defaultValues,
+  pageData,
 }) => {
   const methods = useForm<CalculationInput>({
     defaultValues,
   })
-  const defaultPensionAge = 67 // TODO: add to namespace
+  const defaultPensionAge = pageData?.configJson?.defaultPensionAge ?? 67
   const maxMonthPensionDelay = 156 // TODO: add to namespace
 
   const [loadingResultPage, setLoadingResultPage] = useState(false)
@@ -110,18 +115,21 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
         label: 'Á ekki maka',
         value: false,
       },
-      { label: 'Á maka', value: true },
+      {
+        label: 'Á maka',
+        value: true,
+      },
     ]
   }, [])
 
   const livingConditionOptions = useMemo<Option<LivingCondition>[]>(() => {
     return [
       {
-        label: 'Bý ein(n)',
+        label: 'Býr ein(n)',
         value: LivingCondition.LivesAlone,
       },
       {
-        label: 'Bý ekki ein(n)',
+        label: 'Býr ekki ein(n)',
         value: LivingCondition.DoesNotLiveAlone,
       },
     ]
@@ -311,6 +319,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
       organization={organization}
       ogTitle={title}
       ogImageUrl={organizationPage.featuredImage?.url}
+      indexableBySearchEngine={
+        pageData?.configJson?.indexableBySearchEngine ?? false
+      }
     >
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -716,6 +727,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 }
 
 PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
+  // TODO: these values could be fetched from the custom page
   const slug =
     locale === 'is' ? 'tryggingastofnun' : 'social-insurance-administration'
 
@@ -725,6 +737,9 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
     },
     {
       data: { getOrganization },
+    },
+    {
+      data: { getCustomPage },
     },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -741,6 +756,15 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           slug,
+          lang: locale,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetCustomPageArgs>({
+      query: GET_CUSTOM_PAGE_QUERY,
+      variables: {
+        input: {
+          uniqueIdentifier: 'PensionCalculator', // TODO: perhaps this value can be typesafe?
           lang: locale,
         },
       },
@@ -767,6 +791,7 @@ PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
+    pageData: getCustomPage,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

@@ -727,6 +727,37 @@ export interface IContactUs extends Entry<IContactUsFields> {
   }
 }
 
+export interface ICustomPageFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Unique Identifier */
+  uniqueIdentifier: 'PensionCalculator'
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
+
+  /** Configuration */
+  configJson?: Record<string, any> | undefined
+}
+
+export interface ICustomPage extends Entry<ICustomPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'customPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IDistrictsFields {
   /** Title */
   title: string
@@ -4757,6 +4788,7 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'customPage'
   | 'districts'
   | 'emailSignup'
   | 'embed'
