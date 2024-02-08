@@ -247,10 +247,13 @@ export class ServiceBuilder<ServiceType extends string> {
     ]
 
     // Combine DB config
-    ic.postgres = {
-      ...this.serviceDef.postgres,
-      ...this.postrgesDefaults(ic.postgres ?? {}),
-      ...{ extensions: ic?.postgres?.extensions ?? [] },
+    if (ic.postgres) {
+      ic.postgres = {
+        ...this.serviceDef.postgres,
+        ...{ extensions: ic?.postgres?.extensions },
+      }
+    } else {
+      ic.postgres = this.postrgesDefaults(ic.postgres ?? {})
     }
 
     const uniqueNames = new Set(ic.containers.map((c) => c.name))
