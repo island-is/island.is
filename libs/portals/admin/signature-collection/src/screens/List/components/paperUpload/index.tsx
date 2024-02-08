@@ -57,10 +57,11 @@ const PaperUpload = ({ listId }: { listId: string }) => {
 
     data = data.map((d: { Kennitala: any; Bls: number }) => {
       return {
-        nationalId: String(d.Kennitala),
-        pageNumber: d.Bls,
+        nationalId: String(d.Kennitala).replace('-', ''),
+        pageNumber: d.Bls ?? 0,
       }
     })
+    console.log(data)
 
     paperUpload(data)
   }
