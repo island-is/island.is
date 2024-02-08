@@ -6,23 +6,30 @@ import {
 import {
   aidHeaders,
   dentistHeaders,
+  drugHeaders,
   healthCenterHeaders,
+  medicineBillHeaders,
   medicineHeaders,
   medicineLineHeaders,
   nutritionHeaders,
   paymentOverviewHeaders,
+  paymentParticipateOverviewHeaders,
   paymentParticipationHeaders,
 } from './dataHeaders'
 import {
   RightsPortalAidOrNutrition,
+  RightsPortalCalculatorRequestInput,
   RightsPortalCopaymentBill,
+  RightsPortalCopaymentPeriod,
   RightsPortalDentistBill,
   RightsPortalDrugBill,
   RightsPortalDrugBillLine,
+  RightsPortalDrugCalculatorResponse,
   RightsPortalHealthCenterRecord,
   RightsPortalPaymentOverviewBill,
 } from '@island.is/api/schema'
 import { totalNumber } from '../format'
+import { RightsPortalCalculatorSelectedDrug } from '../../screens/Medicine/MedicineCalculator'
 
 type FileTypes = 'xlsx' | 'csv'
 
@@ -148,6 +155,34 @@ export const exportDentistFile = async (
   await downloadFile(name, dentistHeaders, [...dataArray, total], type)
 }
 
+export const exportMedicineBill = async (data: RightsPortalDrugBill[]) => {
+  const name = `Lyfjareikningar`
+  const dataArray = data.map((item) => [
+    formatDate(item.date) ?? item.date ?? '',
+    item.description ?? '',
+    amountFormat(item.totalCopaymentAmount) ?? '',
+    amountFormat(item.totalCustomerAmount) ?? '',
+  ])
+
+  await downloadFile(name, medicineBillHeaders, dataArray, 'xlsx')
+}
+
+export const exportPaymentParticipationOverview = async (
+  data: RightsPortalCopaymentPeriod[],
+) => {
+  const name = `Greidsluthatttaka`
+  const dataArray = data.map((item) => [
+    item.status?.display ?? '',
+    item.month ?? '',
+    amountFormat(item.maximumPayment) ?? '',
+    amountFormat(item.monthPayment) ?? '',
+    amountFormat(item.overpaid) ?? '',
+    amountFormat(item.repaid) ?? '',
+  ])
+
+  await downloadFile(name, paymentParticipateOverviewHeaders, dataArray, 'xlsx')
+}
+
 export const exportHealthCenterFile = async (
   data: Array<RightsPortalHealthCenterRecord>,
   type: FileTypes,
@@ -161,6 +196,36 @@ export const exportHealthCenterFile = async (
   ])
 
   await downloadFile(name, healthCenterHeaders, dataArray, type)
+}
+
+export const exportDrugListFile = async (
+  data: Array<RightsPortalCalculatorSelectedDrug>,
+  type: FileTypes,
+  calculatorResults: RightsPortalDrugCalculatorResponse,
+) => {
+  const name = `Lyfjareiknivel_sundurlidun`
+
+  const dataArray = data.map((item) => [
+    item.name ?? '',
+    item.strength ?? '',
+    item.units ?? '',
+    item.lineNumber
+      ? calculatorResults?.drugs?.at(item.lineNumber - 1)?.fullPrice ?? ''
+      : '',
+    item.lineNumber
+      ? calculatorResults?.drugs?.at(item.lineNumber - 1)?.customerPrice ?? ''
+      : '',
+  ])
+
+  const footer = [
+    'Samtals',
+    '',
+    '',
+    calculatorResults.totalPrice ?? '',
+    calculatorResults.totalCustomerPrice ?? '',
+  ]
+
+  await downloadFile(name, drugHeaders, [...dataArray, footer], type)
 }
 
 export const exportMedicineFile = async (

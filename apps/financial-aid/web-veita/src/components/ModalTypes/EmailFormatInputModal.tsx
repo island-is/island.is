@@ -126,7 +126,7 @@ const EmailFormatInputModal = ({
               Bent skal á að unnt er að skjóta ákvörðun þessari til
               áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
               innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
-              samband með tölvupósti á netfangið
+              samband með tölvupósti á netfangið{` `}
               <a href={'mailto:${municipalityEmail}'} rel="noreferrer noopener">
                 <span className="linkInText">
                   {` `}
