@@ -812,23 +812,6 @@ application-system-api-worker:
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
   namespace: 'application-system'
   podDisruptionBudget:
     minAvailable: 1
@@ -2012,23 +1995,6 @@ service-portal-api-worker:
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: 1
@@ -2177,23 +2143,6 @@ services-sessions:
         - host: 'sessions-api.internal.staging01.devland.is'
           paths:
             - '/'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
   namespace: 'services-sessions'
   podDisruptionBudget:
     minAvailable: 1
@@ -2547,23 +2496,6 @@ services-university-gateway-worker:
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     minAvailable: 1
@@ -2809,23 +2741,6 @@ user-notification:
         - host: 'user-notification-xrd.internal.staging01.devland.is'
           paths:
             - '/'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: 1

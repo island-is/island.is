@@ -249,28 +249,6 @@ services-auth-admin-api:
         - host: 'innskra.island.is'
           paths:
             - '/backend'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      DB_HOST: 'postgres-ids.internal'
-      DB_NAME: 'servicesauth'
-      DB_REPLICAS_HOST: 'postgres-ids.internal'
-      DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets:
-      DB_PASS: '/k8s/services-auth-admin-api/DB_PASSWORD'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     minAvailable: 1
@@ -347,28 +325,6 @@ services-auth-delegation-api:
         - host: 'auth-delegation-api.internal.innskra.island.is'
           paths:
             - '/'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      DB_HOST: 'postgres-ids.internal'
-      DB_NAME: 'servicesauth'
-      DB_REPLICAS_HOST: 'postgres-ids.internal'
-      DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets:
-      DB_PASS: '/k8s/services-auth-delegation-api/DB_PASSWORD'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     minAvailable: 1
@@ -524,23 +480,6 @@ services-auth-personal-representative:
         - host: 'personal-representative-xrd.internal.innskra.island.is'
           paths:
             - '/'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets: {}
   namespace: 'personal-representative'
   podDisruptionBudget:
     minAvailable: 1
@@ -610,28 +549,6 @@ services-auth-personal-representative-public:
         - host: 'personal-representative-public-xrd.internal.innskra.island.is'
           paths:
             - '/'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      DB_HOST: 'postgres-ids.internal'
-      DB_NAME: 'servicesauth'
-      DB_REPLICAS_HOST: 'postgres-ids.internal'
-      DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets:
-      DB_PASS: '/k8s/services-auth-personal-representative-public/DB_PASSWORD'
   namespace: 'personal-representative'
   podDisruptionBudget:
     minAvailable: 1
@@ -715,23 +632,6 @@ services-auth-public-api:
         - host: 'innskra.island.is'
           paths:
             - '/api(/|$)(.*)'
-  initContainer:
-    containers:
-      - args:
-          - 'sequelize-cli'
-          - 'db:migrate'
-        command:
-          - 'npx'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-    env:
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets: {}
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     minAvailable: 1
