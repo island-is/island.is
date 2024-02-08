@@ -146,6 +146,7 @@ export class PassportService extends BaseTemplateApiService {
     success: boolean
     orderId?: string[]
   }> {
+    console.log("ENTER submitPassportApplication")
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
       application.id,
@@ -170,6 +171,8 @@ export class PassportService extends BaseTemplateApiService {
       const forUser = !!passport.userPassport
       let result
       if (forUser) {
+        console.log("ENTER preregisterIdentityDocument")
+
         result = await this.passportApi.preregisterIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: auth.nationalId,
@@ -183,6 +186,7 @@ export class PassportService extends BaseTemplateApiService {
           },
         })
       } else {
+        console.log("ENTER preregisterChildIdentityDocument")
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
           guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
