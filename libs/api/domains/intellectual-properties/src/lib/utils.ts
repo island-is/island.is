@@ -54,9 +54,6 @@ export function checkIfDesignValueIsFalsy(
     return true
   }
 
-  console.log(val)
-  console.log(FALSY_DATE)
-
   if (isValid(val)) {
     //then its a date
     const dateVal = val as Date
