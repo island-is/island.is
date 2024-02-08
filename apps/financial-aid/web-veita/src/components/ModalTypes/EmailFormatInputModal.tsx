@@ -94,9 +94,8 @@ const EmailFormatInputModal = ({
           setHasError(true)
           return
         }
-        const modifiedHtml = ref.current.innerHTML.replace(/<br\s*\/?>/g, '\n')
 
-        onSaveApplication(modifiedHtml)
+        onSaveApplication(ref.current.innerHTML)
       }}
       submitButtonText={submitButtonText}
       isModalVisable={isModalVisable}
@@ -114,7 +113,7 @@ const EmailFormatInputModal = ({
           {prefixText}
           <br />
           <br />
-          <strong>[SKRIFA ÁSTÆÐU HÉR]</strong>
+          <b>[SKRIFA ÁSTÆÐU HÉR]</b>
           <br />
           {postfixText}
 
@@ -129,7 +128,10 @@ const EmailFormatInputModal = ({
               innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
               samband með tölvupósti á netfangið
               <a href={'mailto:${municipalityEmail}'} rel="noreferrer noopener">
-                <span className="linkInText">{municipalityEmail}.</span>
+                <span className="linkInText">
+                  {` `}
+                  {municipalityEmail}.
+                </span>
               </a>
               <br />
               <br />
