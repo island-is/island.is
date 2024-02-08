@@ -1,7 +1,7 @@
 import {
   parseAsBoolean,
   parseAsInteger,
-  parseAsIsoDateTime,
+  parseAsString,
   parseAsStringEnum,
 } from 'next-usequerystate'
 import type { ParsedUrlQuery } from 'querystring'
@@ -13,29 +13,6 @@ import {
   SocialInsurancePensionCalculationPeriodIncomeType,
 } from '@island.is/web/graphql/schema'
 
-import { PensionCalculatorFormState } from './PensionCalculator'
-
-const convertStringToNumber = (value: string) => {
-  if (!value) {
-    return undefined
-  }
-  return Number(value)
-}
-
-export const convertFormStateToCalculationInput = (
-  formState: PensionCalculatorFormState,
-): SocialInsurancePensionCalculationInput => {
-  return {
-    birthdate: new Date(formState.birthdate),
-    ageOfFirst75DisabilityAssessment: convertStringToNumber(
-      formState.ageOfFirst75DisabilityAssessment,
-    ),
-    benefitsFromMunicipality: convertStringToNumber(
-      formState.benefitsFromMunicipality,
-    ),
-  }
-}
-
 export const convertQueryParametersToCalculationInput = (
   query: ParsedUrlQuery,
 ): SocialInsurancePensionCalculationInput => {
@@ -46,9 +23,7 @@ export const convertQueryParametersToCalculationInput = (
     capitalIncome: parseAsInteger.parseServerSide(query.capitalIncome),
     childCount: parseAsInteger.parseServerSide(query.childCount),
     childSupportCount: parseAsInteger.parseServerSide(query.childSupportCount),
-    dateOfCalculations: parseAsIsoDateTime.parseServerSide(
-      query.dateOfCalculations,
-    ),
+
     foreignBasicPension: parseAsInteger.parseServerSide(
       query.foreignBasicPension,
     ),
@@ -83,8 +58,9 @@ export const convertQueryParametersToCalculationInput = (
       query.livingConditionRatio,
     ),
     installmentClaims: parseAsInteger.parseServerSide(query.installmentClaims),
-    birthdate: parseAsIsoDateTime.parseServerSide(query.birthdate),
-    startDate: parseAsIsoDateTime.parseServerSide(query.startDate),
+    birthdate: parseAsString.parseServerSide(query.birthdate),
+    startDate: parseAsString.parseServerSide(query.startDate),
+    dateOfCalculations: parseAsString.parseServerSide(query.dateOfCalculations),
   }
 }
 

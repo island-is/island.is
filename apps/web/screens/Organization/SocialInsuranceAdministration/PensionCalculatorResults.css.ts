@@ -6,3 +6,11 @@ export const line = style({
   borderRight: `2px solid ${theme.color.blue200}`,
   height: '148px',
 })
+
+export const fullWidth = style({
+  width: '100%',
+})
+
+export const textMaxWidth = style({
+  maxWidth: '793px',
+})

@@ -26,3 +26,7 @@ export const yearSelectContainer = style({
 export const fullWidth = style({
   width: '100%',
 })
+
+export const textMaxWidth = style({
+  maxWidth: '793px',
+})

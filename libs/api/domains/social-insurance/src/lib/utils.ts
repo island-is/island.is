@@ -71,7 +71,9 @@ export const mapPensionCalculationInput = (
     capitalIncome: input.capitalIncome,
     childCount: input.childCount,
     childSupportCount: input.childSupportCount,
-    dateOfCalculations: input.dateOfCalculations,
+    dateOfCalculations: input.dateOfCalculations
+      ? new Date(input.dateOfCalculations)
+      : undefined,
     hasSpouse: input.hasSpouse,
     foreignBasicPension: input.foreignBasicPension,
     income: input.income,
@@ -83,15 +85,13 @@ export const mapPensionCalculationInput = (
     privatePensionPayments: input.privatePensionPayments,
     taxCard: input.taxCard,
     ageOfFirst75DisabilityAssessment: input.ageOfFirst75DisabilityAssessment,
-
-    // TODO: figure out what these fields should do
     installmentClaims: input.installmentClaims,
     livingConditionRatio: input.livingConditionRatio,
 
     // Fields that are calculated or mapped
     hurryPension,
     delayPension,
-    start: startPension,
+    start: startPension, // TODO: perhaps this is wrong?
     startPension,
     typeOfBasePension: input.typeOfBasePension
       ? basePensionTypeMapping[input.typeOfBasePension]

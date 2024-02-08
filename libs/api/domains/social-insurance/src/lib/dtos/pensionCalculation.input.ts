@@ -53,8 +53,8 @@ export class PensionCalculationInput {
   @Field(() => Boolean, { nullable: true })
   mobilityImpairment?: boolean
 
-  @Field(() => Date, { nullable: true })
-  startDate?: Date
+  @Field(() => String, { nullable: true })
+  startDate?: string
 
   @Field(() => Number, { nullable: true })
   childCount?: number
@@ -104,9 +104,9 @@ export class PensionCalculationInput {
   @Field(() => Number, { nullable: true })
   foreignBasicPension?: number
 
-  @Field(() => Date, { nullable: true })
-  birthdate?: Date
+  @Field(() => String, { nullable: true })
+  birthdate?: string
 
-  @Field(() => Date, { nullable: true })
-  dateOfCalculations?: Date
+  @Field(() => String, { nullable: true })
+  dateOfCalculations?: string
 }

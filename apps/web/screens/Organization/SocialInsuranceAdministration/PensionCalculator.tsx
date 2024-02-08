@@ -29,6 +29,7 @@ import {
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   SocialInsurancePensionCalculationBasePensionType as BasePensionType,
+  SocialInsurancePensionCalculationInput as CalculationInput,
   SocialInsurancePensionCalculationLivingCondition as LivingCondition,
   SocialInsurancePensionCalculationPeriodIncomeType as PeriodIncomeType,
 } from '@island.is/web/graphql/schema'
@@ -43,47 +44,30 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
-import { convertToQueryParams } from './utils'
+import {
+  convertQueryParametersToCalculationInput,
+  convertToQueryParams,
+} from './utils'
 import * as styles from './PensionCalculator.css'
-
-export interface PensionCalculatorFormState {
-  basePensionType: BasePensionType
-  birthdate: string
-  startDate: string
-  hasSpouse: boolean
-  livingCondition: LivingCondition
-  childCount: number
-  childSupportCount: number
-  mobilityImpairment: 'yes' | 'no'
-  typeOfPeriodIncome: PeriodIncomeType
-  taxCard: string
-  income: string
-  pensionPayments: string
-  privatePensionPayments: string
-  otherIncome: string
-  capitalIncome: string
-  benefitsFromMunicipality: string
-  premium: string
-  foreignBasicPension: string
-  hasLivedAbroad: 'yes' | 'no'
-  livingConditionAbroadInYears: string
-  ageOfFirst75DisabilityAssessment: string
-  dateOfCalculations: Date
-}
 
 interface PensionCalculatorProps {
   organizationPage: OrganizationPage
   organization: Organization
+  defaultValues: CalculationInput
 }
 
 const PensionCalculator: Screen<PensionCalculatorProps> = ({
   organizationPage,
   organization,
+  defaultValues,
 }) => {
-  const methods = useForm<PensionCalculatorFormState>()
+  const methods = useForm<CalculationInput>({
+    defaultValues,
+  })
   const defaultPensionAge = 67 // TODO: add to namespace
   const maxMonthPensionDelay = 156 // TODO: add to namespace
 
+  const [loadingResultPage, setLoadingResultPage] = useState(false)
   const [hasLivedAbroad, setHasLivedAbroad] = useState(false)
   const [birthdate, setBirthdate] = useState<string>()
   const [basePensionType, setBasePensionType] = useState<BasePensionType>(
@@ -294,9 +278,10 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
   const router = useRouter()
 
-  const onSubmit = (data: PensionCalculatorFormState) => {
+  const onSubmit = (data: CalculationInput) => {
     const baseUrl = linkResolver('pensioncalculatorresults').href
     const queryParams = convertToQueryParams(data)
+    setLoadingResultPage(true)
     router.push(`${baseUrl}?${queryParams.toString()}`)
   }
 
@@ -351,15 +336,17 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                         <Text variant="h1" as="h1">
                           {title}
                         </Text>
-                        <Text>
-                          Vinsamlegast athugið að reiknivélin gefur ekki
-                          bindandi niðurstöður
-                        </Text>
+                        <Box className={styles.textMaxWidth}>
+                          <Text>
+                            Vinsamlegast athugið að reiknivélin gefur ekki
+                            bindandi niðurstöður
+                          </Text>
+                        </Box>
                       </Stack>
                       <Box className={styles.yearSelectContainer}>
                         <SelectController
-                          id="dateOfCalculations"
-                          name="dateOfCalculations"
+                          id={'dateOfCalculations' as keyof CalculationInput}
+                          name={'dateOfCalculations' as keyof CalculationInput}
                           label="Reiknivélar síðustu ára"
                           placeholder="Veldu ár"
                           size="sm"
@@ -375,8 +362,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                     <Box className={styles.inputContainer}>
                       <SelectController
-                        id="basePensionType"
-                        name="basePensionType"
+                        id={'typeOfBasePension' as keyof CalculationInput}
+                        name={'typeOfBasePension' as keyof CalculationInput}
                         label="Tegund lífeyris"
                         options={basePensionTypeOptions}
                         defaultValue={BasePensionType.Retirement}
@@ -399,8 +386,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                     <Stack space={3}>
                       <Box className={styles.inputContainer}>
                         <DatePickerController
-                          id="birthdate"
-                          name="birthdate"
+                          id={'birthdate' as keyof CalculationInput}
+                          name={'birthdate' as keyof CalculationInput}
                           label="Fæðingardagur"
                           placeholder="Veldu fæðingardag"
                           locale={activeLocale}
@@ -417,8 +404,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       </Text>
                       <Box className={styles.inputContainer}>
                         <DatePickerController
-                          id="startDate"
-                          name="startDate"
+                          id={'startDate' as keyof CalculationInput}
+                          name={'startDate' as keyof CalculationInput}
                           label="Hvenær viltu hefja töku á ellilífeyri"
                           placeholder="Veldu dagsetningu"
                           locale={activeLocale}
@@ -426,7 +413,10 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                           maxDate={startDateRange.maxDate}
                           minYear={startDateRange.minDate.getFullYear()}
                           maxYear={startDateRange.maxDate.getFullYear()}
-                          disabled={!birthdate}
+                          disabled={
+                            !birthdate &&
+                            !methods.formState.defaultValues?.birthdate
+                          }
                         />
                       </Box>
 
@@ -436,8 +426,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <SelectController
-                          id="hasSpouse"
-                          name="hasSpouse"
+                          id={'hasSpouse' as keyof CalculationInput}
+                          name={'hasSpouse' as keyof CalculationInput}
                           label="Hjúskaparstaða"
                           placeholder="Veldu hjúskaparstöðu"
                           options={hasSpouseOptions}
@@ -446,8 +436,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <SelectController
-                          id="livingCondition"
-                          name="livingCondition"
+                          id={'livingCondition' as keyof CalculationInput}
+                          name={'livingCondition' as keyof CalculationInput}
                           label="Heimilisaðstæður"
                           placeholder="Heimilisaðstæður"
                           options={livingConditionOptions}
@@ -456,8 +446,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <SelectController
-                          id="childCount"
-                          name="childCount"
+                          id={'childCount' as keyof CalculationInput}
+                          name={'childCount' as keyof CalculationInput}
                           label="Börn yngri en 18 ára"
                           placeholder="Veldu fjölda barna"
                           options={childCountOptions}
@@ -466,8 +456,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <SelectController
-                          id="childSupportCount"
-                          name="childSupportCount"
+                          id={'childSupportCount' as keyof CalculationInput}
+                          name={'childSupportCount' as keyof CalculationInput}
                           label="Fær meðlag greitt með"
                           placeholder="Veldu fjölda barna"
                           options={childSupportCountOptions}
@@ -478,8 +468,12 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                         basePensionType === BasePensionType.Rehabilitation) && (
                         <Box className={styles.inputContainer}>
                           <InputController
-                            id="ageOfFirst75DisabilityAssessment"
-                            name="ageOfFirst75DisabilityAssessment"
+                            id={
+                              'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
+                            }
+                            name={
+                              'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
+                            }
                             label="Fyrsta 75% örorkumat"
                             suffix=" ára"
                             type="number"
@@ -491,7 +485,9 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                         <Text>Með hreyfihömlunarmat</Text>
                         <Box className={styles.inputContainer}>
                           <Controller
-                            name="mobilityImpairment"
+                            name={
+                              'mobilityImpairment' as keyof CalculationInput
+                            }
                             defaultValue={false}
                             render={({ field: { value, onChange } }) => (
                               <Inline space={3}>
@@ -521,7 +517,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                         <Text>Hefur búið erlendis</Text>
                         <Box className={styles.inputContainer}>
                           <Controller
-                            name="hasLivedAbroad"
+                            name={'hasLivedAbroad' as keyof CalculationInput}
                             defaultValue={false}
                             render={({ field: { value, onChange } }) => (
                               <Inline space={3}>
@@ -530,6 +526,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                                   checked={value === false}
                                   onChange={() => {
                                     onChange(false)
+                                    setHasLivedAbroad(false)
                                   }}
                                   label={'Nei'}
                                 />
@@ -538,6 +535,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                                   checked={value === true}
                                   onChange={() => {
                                     onChange(true)
+                                    setHasLivedAbroad(true)
                                   }}
                                   label={'Já'}
                                 />
@@ -549,8 +547,12 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                         {hasLivedAbroad && (
                           <Box className={styles.inputContainer}>
                             <InputController
-                              id="livingConditionAbroadInYears"
-                              name="livingConditionAbroadInYears"
+                              id={
+                                'livingConditionAbroadInYears' as keyof CalculationInput
+                              }
+                              name={
+                                'livingConditionAbroadInYears' as keyof CalculationInput
+                              }
                               label="Fjöldi ára erlendrar búsetu frá 16 til 67 ára"
                               placeholder="0 ár"
                               type="number"
@@ -570,7 +572,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <Controller
-                          name="typeOfPeriodIncome"
+                          name={'typeOfPeriodIncome' as keyof CalculationInput}
                           defaultValue={PeriodIncomeType.Month}
                           render={({ field: { value, onChange } }) => (
                             <GridRow rowGap={3}>
@@ -601,8 +603,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="taxCard"
-                          name="taxCard"
+                          id={'taxCard' as keyof CalculationInput}
+                          name={'taxCard' as keyof CalculationInput}
                           label="Hlutfall skattkorts hjá TR"
                           required={true}
                           placeholder="%"
@@ -613,8 +615,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="income"
-                          name="income"
+                          id={'income' as keyof CalculationInput}
+                          name={'income' as keyof CalculationInput}
                           label="Tekjur m.a. af atvinnu, eftirlaunum og atvinnuleysisbótum"
                           placeholder="kr."
                           currency={true}
@@ -622,8 +624,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
                       </Box>
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="pensionPayments"
-                          name="pensionPayments"
+                          id={'pensionPayments' as keyof CalculationInput}
+                          name={'pensionPayments' as keyof CalculationInput}
                           label="Greiðslur frá lífeyrissjóðum"
                           placeholder="kr."
                           currency={true}
@@ -632,8 +634,12 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="privatePensionPayments"
-                          name="privatePensionPayments"
+                          id={
+                            'privatePensionPayments' as keyof CalculationInput
+                          }
+                          name={
+                            'privatePensionPayments' as keyof CalculationInput
+                          }
                           label="Greiðslur viðbótarlífeyrissparnaðar"
                           placeholder="kr."
                           currency={true}
@@ -642,8 +648,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="otherIncome"
-                          name="otherIncome"
+                          id={'otherIncome' as keyof CalculationInput}
+                          name={'otherIncome' as keyof CalculationInput}
                           label="Aðrar tekjur"
                           placeholder="kr."
                           currency={true}
@@ -652,8 +658,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="capitalIncome"
-                          name="capitalIncome"
+                          id={'capitalIncome' as keyof CalculationInput}
+                          name={'capitalIncome' as keyof CalculationInput}
                           label="Fjármagnstekjur"
                           placeholder="kr."
                           currency={true}
@@ -662,8 +668,12 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="benefitsFromMunicipality"
-                          name="benefitsFromMunicipality"
+                          id={
+                            'benefitsFromMunicipality' as keyof CalculationInput
+                          }
+                          name={
+                            'benefitsFromMunicipality' as keyof CalculationInput
+                          }
                           label="Skattskyldar bætur sveitarfélaga"
                           placeholder="kr."
                           currency={true}
@@ -672,8 +682,8 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="premium"
-                          name="premium"
+                          id={'premium' as keyof CalculationInput}
+                          name={'premium' as keyof CalculationInput}
                           label="Frádregin iðgjöld í lífeyrissjóði"
                           placeholder="kr."
                           currency={true}
@@ -682,15 +692,17 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
 
                       <Box className={styles.inputContainer}>
                         <InputController
-                          id="foreignBasicPension"
-                          name="foreignBasicPension"
+                          id={'foreignBasicPension' as keyof CalculationInput}
+                          name={'foreignBasicPension' as keyof CalculationInput}
                           label="Erlendur grunnlífeyrir"
                           placeholder="kr."
                           currency={true}
                         />
                       </Box>
 
-                      <Button type="submit">Reikna niðurstöður</Button>
+                      <Button loading={loadingResultPage} type="submit">
+                        Reikna niðurstöður
+                      </Button>
                     </Stack>
                   </GridColumn>
                 </GridRow>
@@ -703,7 +715,7 @@ const PensionCalculator: Screen<PensionCalculatorProps> = ({
   )
 }
 
-PensionCalculator.getProps = async ({ apolloClient, locale }) => {
+PensionCalculator.getProps = async ({ apolloClient, locale, query }) => {
   const slug =
     locale === 'is' ? 'tryggingastofnun' : 'social-insurance-administration'
 
@@ -749,9 +761,12 @@ PensionCalculator.getProps = async ({ apolloClient, locale }) => {
     )
   }
 
+  const defaultValues = convertQueryParametersToCalculationInput(query)
+
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
+    defaultValues,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
