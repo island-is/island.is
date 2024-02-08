@@ -68,10 +68,18 @@ export class IntellectualPropertiesClientService {
     })
   }
 
-  getDesignImages(user: User, hId: string) {
-    return this.designSearchApiWithAuth(user).designSearchGetDesignsGet({
+  async getDesignImages(user: User, hId: string) {
+    const response = await this.designSearchApiWithAuth(
+      user,
+    ).designSearchGetDesignsGetRaw({
       hid: hId,
     })
+
+    if (response) {
+      return response.value()
+    }
+
+    return null
   }
 
   getDesignImage(

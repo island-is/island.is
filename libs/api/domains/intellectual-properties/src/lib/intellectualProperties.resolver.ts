@@ -106,7 +106,6 @@ export class IntellectualPropertiesResolver {
     input: IntellectualPropertiesInput,
   ): Promise<ImageList | null> {
     const images = await this.ipService.getDesignImages(user, input.key)
-    this.logger.debug(images)
 
     if (!images) {
       return null

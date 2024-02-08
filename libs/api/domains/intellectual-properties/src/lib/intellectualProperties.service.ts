@@ -542,11 +542,20 @@ export class IntellectualPropertiesService {
     user: User,
     designId: string,
   ): Promise<Array<Image> | null> {
-    const response = await this.ipService.getDesignImages(user, designId)
-    this.logger.debug(response)
+    const response = await this.ipService
+      .getDesignImages(user, designId)
+      .catch((e) => {
+        const error: Error = e
+        //json map over array error. Have to wait for openapi generator fix.
+        if (error.message.includes('invalid json response body')) {
+          //this api really returned 204 but the openapi-generator is having issues
+          return []
+        }
+        throw e
+      })
 
     if (!response) {
-      return []
+      return null
     }
 
     const designImages = response
