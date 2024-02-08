@@ -33,6 +33,11 @@ export interface CreateFilesResponse {
   files?: ApplicationFile[]
 }
 
+export interface CreateMunicipalityApiUser {
+  name: string
+  municipalityCode: string
+  apiKey: string
+}
 export interface MunicipalityApiUser {
   id: string
   name: string
@@ -164,6 +169,16 @@ export interface UpdateAdmin {
   name: string
   municipalityIds: string[]
 }
+export interface UpdatedApiKeysForMunicipality {
+  name: string
+  id: string
+}
+export interface ApiKeysForMunicipality {
+  name: string
+  apiKey: string
+  municipalityCode: string
+  id: string
+}
 
 export interface Municipality {
   id: string
@@ -182,6 +197,7 @@ export interface Municipality {
   navUrl?: string
   navUsername?: string
   navPassword?: string
+  apiKeyInfo?: ApiKeysForMunicipality
 }
 
 export interface UpdateMunicipalityActivity {

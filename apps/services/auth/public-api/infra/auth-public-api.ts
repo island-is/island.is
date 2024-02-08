@@ -97,7 +97,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         },
       },
     })
-    .readiness('/liveness')
+    .readiness('/health/check')
     .liveness('/liveness')
     .replicaCount({
       default: 2,

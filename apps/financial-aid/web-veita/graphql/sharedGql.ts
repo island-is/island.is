@@ -412,6 +412,35 @@ export const MunicipalityMutation = gql`
   }
 `
 
+export const ApiKeyForMunicipalityMutation = gql`
+  mutation ApiKeyForMunicipalityMutation($input: CreateApiKeyInput!) {
+    createApiKey(input: $input) {
+      id
+      name
+      apiKey
+      municipalityCode
+    }
+  }
+`
+export const DeleteApiKeyForMunicipalityMutation = gql`
+  mutation DeleteApiKeyForMunicipalityMutation($input: DeleteApiKeyInput!) {
+    deleteApiKey(input: $input) {
+      success
+    }
+  }
+`
+
+export const UpdateApiKeyForMunicipalityMutation = gql`
+  mutation UpdateApiKeyForMunicipalityMutation($input: UpdateApiKeyInput!) {
+    updateApiKey(input: $input) {
+      id
+      name
+      apiKey
+      municipalityCode
+    }
+  }
+`
+
 export const UpdateMunicipalityMutation = gql`
   mutation UpdateMunicipalityMutation($input: UpdateMunicipalityInput!) {
     updateMunicipality(input: $input) {
