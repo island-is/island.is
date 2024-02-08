@@ -36,7 +36,6 @@ const estateMemberMapper = (element: EstateMember) => {
     taxFreeInheritance: '',
     phone: '',
     email: '',
-    relationWithApplicant: '',
     advocate: element.advocate
       ? {
           ...element.advocate,
@@ -229,9 +228,6 @@ export const expandAnswers = (
           taxFreeInheritance: heir.taxFreeInheritance ?? '',
           dateOfBirth: heir.dateOfBirth ?? '',
           enabled: heir.enabled ?? true,
-          // TODO: investigate better why nationalId and SSN is required
-          ssn: '',
-          relationWithApplicant: heir.relationWithApplicant ?? '',
           advocate: {
             address: '',
             email: heir.advocate?.email ?? '',

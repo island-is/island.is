@@ -37,11 +37,8 @@ export const AdditionalHeir = ({
   updateValues,
   fieldName,
   relationOptions,
-  relationWithApplicantOptions,
   error,
-  application,
 }: {
-  application: Application
   customFields: HeirsAndPartitionRepeaterProps['field']['props']['customFields']
   field: GenericFormField<EstateMember>
   index: number
@@ -49,14 +46,12 @@ export const AdditionalHeir = ({
   updateValues: (updateIndex: string, value: number) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
-  relationWithApplicantOptions: { value: string; label: string }[]
   error: Record<string, string>
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
   const nameField = `${fieldIndex}.name`
   const relationField = `${fieldIndex}.relation`
-  const relationWithApplicantField = `${fieldIndex}.relationWithApplicant`
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
   const initialField = `${fieldIndex}.initial`
@@ -65,10 +60,8 @@ export const AdditionalHeir = ({
   const emailField = `${fieldIndex}.email`
 
   const advocateField = `${fieldIndex}.advocate`
-  const advocateName = `${advocateField}.name`
   const advocatePhoneField = `${advocateField}.phone`
   const advocateEmailFeild = `${advocateField}.email`
-  const advocateNationalId = `${advocateField}.nationalId`
 
   const foreignCitizenship = useWatch({
     name: `${fieldIndex}.foreignCitizenship`,
@@ -257,14 +250,14 @@ export const AdditionalHeir = ({
               {customField.id === 'relation' ? (
                 <GridColumn span="1/1" paddingBottom={2}>
                   <SelectController
-                    id={`${fieldIndex}.relationWithApplicant`}
-                    name={`${fieldIndex}.relationWithApplicant`}
+                    id={relationField}
+                    name={relationField}
                     label={formatMessage(
                       m.inheritanceRelationWithApplicantLabel,
                     )}
-                    defaultValue={currentHeir.relationWithApplicant}
+                    defaultValue={currentHeir.relation}
                     options={relationOptions}
-                    error={error?.relationWithApplicant}
+                    error={error?.relation}
                     backgroundColor="blue"
                     disabled={!currentHeir.enabled}
                     required
