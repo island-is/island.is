@@ -21,17 +21,6 @@ export const employerValidationSection = (
     return undefined
   }
 
-  if (
-    isSelfEmployed === YES &&
-    isEmpty((obj.selfEmployed as { file: unknown[] }).file)
-  ) {
-    return buildError(
-      errorMessages.requiredAttachment,
-      'selfEmployed.file',
-      EMPLOYER,
-    )
-  }
-
   if (isSelfEmployed === NO && isEmpty(obj?.email)) {
     return buildError(errorMessages.employerEmail, 'email', EMPLOYER)
   }

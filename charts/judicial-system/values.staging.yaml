@@ -71,7 +71,7 @@ judicial-system-api:
             - '/api/feature'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -179,7 +179,7 @@ judicial-system-backend:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -269,7 +269,7 @@ judicial-system-message-handler:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -331,7 +331,7 @@ judicial-system-scheduler:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -393,7 +393,7 @@ judicial-system-web:
             - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   pvcs: []
   replicaCount:
     default: 1
@@ -456,7 +456,7 @@ judicial-system-xrd-api:
             - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    maxUnavailable: 0
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
