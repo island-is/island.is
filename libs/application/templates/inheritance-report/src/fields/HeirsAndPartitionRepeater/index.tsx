@@ -40,8 +40,6 @@ export const HeirsAndPartitionRepeater: FC<
 
   const values = getValues()
 
-  const selectedEstate = application.answers.selectedEstate
-
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
