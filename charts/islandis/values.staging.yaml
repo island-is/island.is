@@ -83,7 +83,6 @@ air-discount-scheme-api:
 air-discount-scheme-backend:
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'air_discount_scheme_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -156,7 +155,6 @@ air-discount-scheme-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -559,7 +557,6 @@ application-system-api:
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5608002820/gopro/kvortun-v1'
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -698,7 +695,6 @@ application-system-api:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1162,7 +1158,6 @@ endorsement-system-api:
     - 'node'
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'endorsement_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1222,7 +1217,6 @@ endorsement-system-api:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'endorsement_system_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1277,7 +1271,6 @@ global:
 icelandic-names-registry-backend:
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1336,7 +1329,6 @@ icelandic-names-registry-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1601,7 +1593,6 @@ portals-admin:
 regulations-admin-backend:
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'regulations_admin_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1658,7 +1649,6 @@ regulations-admin-backend:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'regulations_admin_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1782,7 +1772,6 @@ search-indexer-service:
       CONTENTFUL_ENVIRONMENT: 'master'
       CONTENTFUL_HOST: 'cdn.contentful.com'
       CONTENTFUL_SPACE: '8k0h54kbe6bj'
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'search_indexer_service'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1903,7 +1892,6 @@ service-portal:
 service-portal-api:
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1968,7 +1956,6 @@ service-portal-api:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2095,7 +2082,6 @@ service-portal-api-worker:
 services-documents:
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2142,7 +2128,6 @@ services-documents:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2420,7 +2405,6 @@ services-university-gateway:
     - 'node'
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2502,7 +2486,6 @@ services-university-gateway:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_university_gateway'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2690,7 +2673,6 @@ skilavottord-web:
 skilavottord-ws:
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord_ws'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2745,7 +2727,6 @@ skilavottord-ws:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'skilavottord_ws'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2886,7 +2867,6 @@ user-notification-cleanup-worker:
     - 'node'
   enabled: true
   env:
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification_cleanup_worker'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2931,7 +2911,6 @@ user-notification-cleanup-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'user_notification_cleanup_worker'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2978,7 +2957,6 @@ user-notification-worker:
   enabled: true
   env:
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    DB_EXTENSIONS: ''
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'user_notification_worker'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -3038,7 +3016,6 @@ user-notification-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_EXTENSIONS: ''
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'user_notification_worker'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
