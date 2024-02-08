@@ -1,6 +1,6 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, Fragment } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
@@ -18,7 +18,7 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         if (!heir.enabled) return null
 
         return (
-          <Box key={index}>
+          <Box key={index} marginTop={index === 0 ? 3 : 6}>
             <Text marginBottom={2} variant="h4">
               {formatMessage(m.heir)}
             </Text>
@@ -80,6 +80,35 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 </Text>
               </Box>
             </Box>
+            {heir.advocate?.nationalId && (
+              <Fragment>
+                <Text marginBottom={2} variant="h4">
+                  {formatMessage(m.advocate)}
+                </Text>
+                <Box display="flex" marginBottom={2}>
+                  <Box width="half">
+                    <Text variant="h4">
+                      {formatMessage(m.advocateNationalId)}
+                    </Text>
+                    <Text>{heir.advocate.nationalId}</Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="h4">{formatMessage(m.advocateName)}</Text>
+                    <Text>{heir.advocate.name}</Text>
+                  </Box>
+                </Box>
+                <Box display="flex" marginBottom={2}>
+                  <Box width="half">
+                    <Text variant="h4">{formatMessage(m.advocateEmail)}</Text>
+                    <Text>{heir.advocate.email}</Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="h4">{formatMessage(m.advocatePhone)}</Text>
+                    <Text>{heir.advocate.phone}</Text>
+                  </Box>
+                </Box>
+              </Fragment>
+            )}
           </Box>
         )
       })}

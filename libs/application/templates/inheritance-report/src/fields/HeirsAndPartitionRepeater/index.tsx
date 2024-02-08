@@ -84,20 +84,14 @@ export const HeirsAndPartitionRepeater: FC<
   )
 
   setBeforeSubmitCallback?.(async () => {
-    if (
-      hasEstateMemberUnder18withoutRep &&
-      selectedEstate !== EstateTypes.divisionOfEstateByHeirs
-    ) {
+    if (hasEstateMemberUnder18withoutRep) {
       setError(heirAgeValidation, {
         type: 'custom',
       })
       return [false, 'invalid advocate age']
     }
 
-    if (
-      hasEstateMemberUnder18 &&
-      selectedEstate === EstateTypes.divisionOfEstateByHeirs
-    ) {
+    if (hasEstateMemberUnder18) {
       setError(heirAgeValidation, {
         type: 'custom',
       })
@@ -139,7 +133,6 @@ export const HeirsAndPartitionRepeater: FC<
       taxableInheritance: '',
       dateOfBirth: '',
       foreignCitizenship: [],
-      relationWithApplicant: '',
     })
 
   const taxFreeLimitMessage = formatMessage(m.taxFreeLimit) ?? ''
@@ -203,10 +196,7 @@ export const HeirsAndPartitionRepeater: FC<
   }, [calculateTotal])
 
   useEffect(() => {
-    if (
-      !hasEstateMemberUnder18 &&
-      selectedEstate !== EstateTypes.divisionOfEstateByHeirs
-    ) {
+    if (!hasEstateMemberUnder18) {
       clearErrors(heirAgeValidation)
     }
     if (!hasEstateMemberUnder18withoutRep) {
@@ -240,29 +230,15 @@ export const HeirsAndPartitionRepeater: FC<
               application.answers,
               'applicantRelation',
             )
+
             if (relation && relation !== member.relation) {
               member.relation = relation
             }
           }
+
           if (!member.initial) {
             return acc
           }
-
-          const hasForeignCitizenship =
-            member?.foreignCitizenship?.[0] === 'yes'
-          const birthDate = member?.dateOfBirth
-          const memberAge =
-            hasForeignCitizenship && birthDate
-              ? intervalToDuration({
-                  start: new Date(birthDate),
-                  end: new Date(),
-                })?.years
-              : member?.nationalId
-              ? kennitala.info(member.nationalId)?.age
-              : undefined
-
-          const requiresAdvocate =
-            member.enabled && memberAge !== undefined && memberAge < 18
 
           const fieldIndex = `${id}[${mainIndex}]`
 
@@ -310,6 +286,8 @@ export const HeirsAndPartitionRepeater: FC<
                     label={formatMessage(m.inheritanceKtLabel)}
                     defaultValue={formatNationalId(member.nationalId || '')}
                     backgroundColor="white"
+                    // TODO: add readOnly again, this is because one of the dummy nationalIds is not
+                    // currently being validated (Stúfur)
                     // readOnly
                     disabled={!member.enabled}
                     format={'######-####'}
@@ -329,36 +307,6 @@ export const HeirsAndPartitionRepeater: FC<
                     disabled={!member.enabled}
                   />
                 </GridColumn>
-                {/* <GridColumn span={['1/1']} paddingBottom={2}>
-                <InputController
-                  id={`${fieldIndex}.relation`}
-                  name={`${fieldIndex}.relation`}
-                  label={formatMessage(m.inheritanceRelationLabel)}
-                  readOnly
-                  defaultValue={member.relation}
-                  backgroundColor="white"
-                  disabled={!member.enabled}
-                />
-              </GridColumn> */}
-                {/* {application.answers.selectedEstate ===
-                EstateTypes.permitForUndividedEstate &&
-                member.relation !== 'Maki' && (
-                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <SelectController
-                      id={`${fieldIndex}.relationWithApplicant`}
-                      name={`${fieldIndex}.relationWithApplicant`}
-                      label={formatMessage(
-                        m.inheritanceRelationWithApplicantLabel,
-                      )}
-                      defaultValue={member.relationWithApplicant}
-                      options={relations}
-                      error={error?.relationWithApplicant}
-                      backgroundColor="blue"
-                      disabled={!member.enabled}
-                      required
-                    />
-                  </GridColumn>
-                )} */}
                 {!member.advocate && (
                   <>
                     <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -406,40 +354,17 @@ export const HeirsAndPartitionRepeater: FC<
                       ) : null}
 
                       {customField.id === 'relation' ? (
-                        <Fragment>
-                          {member.initial && (
-                            <GridColumn span="1/1" paddingBottom={2}>
-                              <InputController
-                                id={`${fieldIndex}.${customField.id}`}
-                                name={`${fieldIndex}.${customField.id}`}
-                                label={customField?.title}
-                                readOnly
-                                defaultValue={member.relation}
-                                backgroundColor="blue"
-                                disabled={!member.enabled}
-                              />
-                            </GridColumn>
-                          )}
-                          {application.answers.selectedEstate ===
-                            EstateTypes.permitForUndividedEstate &&
-                            member.relation !== 'Maki' && (
-                              <GridColumn span="1/1" paddingBottom={2}>
-                                <SelectController
-                                  id={`${fieldIndex}.relationWithApplicant`}
-                                  name={`${fieldIndex}.relationWithApplicant`}
-                                  label={formatMessage(
-                                    m.inheritanceRelationWithApplicantLabel,
-                                  )}
-                                  defaultValue={member.relationWithApplicant}
-                                  options={relations}
-                                  error={error?.relationWithApplicant}
-                                  backgroundColor="blue"
-                                  disabled={!member.enabled}
-                                  required
-                                />
-                              </GridColumn>
-                            )}
-                        </Fragment>
+                        <GridColumn span="1/1" paddingBottom={2}>
+                          <InputController
+                            id={`${fieldIndex}.${customField.id}`}
+                            name={`${fieldIndex}.${customField.id}`}
+                            label={customField?.title}
+                            readOnly
+                            defaultValue={member.relation}
+                            backgroundColor="white"
+                            disabled={!member.enabled}
+                          />
+                        </GridColumn>
                       ) : customField.id === 'heirsPercentage' ? (
                         <GridColumn span={['1/2']} paddingBottom={2}>
                           <InputController
@@ -585,13 +510,11 @@ export const HeirsAndPartitionRepeater: FC<
         return (
           <Box key={member.id}>
             <AdditionalHeir
-              application={application}
               field={member}
               fieldName={id}
               index={index}
               customFields={customFields}
               relationOptions={relations}
-              relationWithApplicantOptions={relations}
               updateValues={updateValues}
               remove={remove}
               error={error && error[index] ? error[index] : null}

@@ -257,7 +257,6 @@ export interface EstateMember {
   name: string
   nationalId: string
   relation: string
-  relationWithApplicant?: string
   initial?: boolean
   dateOfBirth?: string
   foreignCitizenship?: ('yes' | 'no')[]

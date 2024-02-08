@@ -149,6 +149,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: '',
   },
+  advocateNationalId: {
+    id: 'ir.application:advocateNationalId',
+    defaultMessage: 'Kennitala forsjáraðila',
+    description: '',
+  },
   errorNationalIdIncorrect: {
     id: 'ir.application:error.nationalIdIncorrect',
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
@@ -164,9 +169,19 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: '',
   },
+  advocatePhone: {
+    id: 'ir.application:advocatePhone',
+    defaultMessage: 'Símanúmer',
+    description: '',
+  },
   email: {
     id: 'ir.application:email',
     defaultMessage: 'Netfang',
+    description: '',
+  },
+  advocateEmail: {
+    id: 'ir.application:advocateEmail',
+    defaultMessage: 'Netfang forsjáraðila',
     description: '',
   },
 
@@ -1028,6 +1043,16 @@ export const m = defineMessages({
     id: 'ir.application:heirAdvocateAgeValidation',
     defaultMessage:
       'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
+    description: '',
+  },
+  advocate: {
+    id: 'ir.application:advocate',
+    defaultMessage: 'Forsjáraðili',
+    description: '',
+  },
+  advocateName: {
+    id: 'ir.application:advocateName',
+    defaultMessage: 'Nafn forsjáraðila',
     description: '',
   },
   addHeir: {
