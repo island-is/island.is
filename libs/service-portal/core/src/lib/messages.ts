@@ -1397,4 +1397,9 @@ export const m = defineMessages({
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráð {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
+  noDataFoundVariableDetailVariationFeminine: {
+    id: 'sp.health:no-data-found-detail-variation-feminine',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráðar {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
 })

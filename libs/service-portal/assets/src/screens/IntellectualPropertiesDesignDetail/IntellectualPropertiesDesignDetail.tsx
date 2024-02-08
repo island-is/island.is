@@ -105,14 +105,6 @@ const IntellectualPropertiesDesignDetail = () => {
     }
   }, [formatMessage, ip])
 
-  if (error && !loading) {
-    return <Problem error={error} noBorder={false} />
-  }
-
-  if (!ip && !loading) {
-    return <Problem type="no_data" />
-  }
-
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
@@ -124,141 +116,167 @@ const IntellectualPropertiesDesignDetail = () => {
           )}
         />
       </Box>
-
-      <Stack space="containerGutter">
-        <Box>
-          <Text variant="eyebrow" as="div" paddingBottom={2} color="purple400">
-            {formatMessage(ipMessages.images)}
-          </Text>
-          <Gallery
-            loading={loading}
-            thumbnails={data?.intellectualPropertiesDesignImageList?.images.map(
-              (item, i) => {
-                if (!item) {
-                  return null
-                }
-
-                return (
-                  <GalleryItem key={i} thumbnail>
-                    <img
-                      width={365}
-                      height={365}
-                      src={`data:image/png;base64,${item.image}`}
-                      alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
-                    />
-                  </GalleryItem>
-                )
-              },
-            )}
-          >
-            {data?.intellectualPropertiesDesignImageList?.images.map(
-              (item, i) => {
-                if (!item) {
-                  return null
-                }
-
-                return (
-                  <GalleryItem key={i}>
-                    <img
-                      width={365}
-                      height={365}
-                      src={`data:image/png;base64,${item.image}`}
-                      alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
-                    />
-                  </GalleryItem>
-                )
-              },
-            )}
-          </Gallery>
-        </Box>
-        <Stack space="p2">
-          <UserInfoLine
-            title={formatMessage(ipMessages.baseInfo)}
-            label={formatMessage(ipMessages.name)}
-            content={ip?.specification?.specificationText ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={formatMessage(ipMessages.description)}
-            content={ip?.specification?.description ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={formatMessage(m.status)}
-            content={ip?.status ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-        {!loading &&
-          !error &&
-          ip?.lifecycle.expiryDate &&
-          ip?.lifecycle.internationalRegistrationDate && (
-            <>
-              <Timeline
-                title={formatMessage(ipMessages.timeline)}
-                maxDate={orderedDates[orderedDates.length - 1].date}
-                minDate={orderedDates[0].date}
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.notFound, {
+            arg: formatMessage(ipMessages.design).toLowerCase(),
+          })}
+          message={formatMessage(ipMessages.notFoundText, {
+            arg: formatMessage(ipMessages.design).toLowerCase(),
+          })}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
+      {!error &&
+        (loading ||
+          data?.intellectualPropertiesDesign ||
+          data?.intellectualPropertiesDesignImageList) && (
+          <Stack space="containerGutter">
+            <Box>
+              <Text
+                variant="eyebrow"
+                as="div"
+                paddingBottom={2}
+                color="purple400"
               >
-                {orderedDates.map((datapoint) => (
-                  <Stack key="list-item-application-date" space="smallGutter">
-                    <Text variant="h5">{formatDate(datapoint.date)}</Text>
-                    <Text>{datapoint.message}</Text>
-                  </Stack>
-                ))}
-              </Timeline>
-              <TableGrid
-                title={formatMessage(ipMessages.otherInformation)}
-                dataArray={chunk(extraInfoArray, 2)}
+                {formatMessage(ipMessages.images)}
+              </Text>
+              <Gallery
+                loading={loading}
+                thumbnails={data?.intellectualPropertiesDesignImageList?.images.map(
+                  (item, i) => {
+                    if (!item) {
+                      return null
+                    }
+
+                    return (
+                      <GalleryItem key={i} thumbnail>
+                        <img
+                          width={365}
+                          height={365}
+                          src={`data:image/png;base64,${item.image}`}
+                          alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
+                        />
+                      </GalleryItem>
+                    )
+                  },
+                )}
+              >
+                {data?.intellectualPropertiesDesignImageList?.images.map(
+                  (item, i) => {
+                    if (!item) {
+                      return null
+                    }
+
+                    return (
+                      <GalleryItem key={i}>
+                        <img
+                          width={365}
+                          height={365}
+                          src={`data:image/png;base64,${item.image}`}
+                          alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
+                        />
+                      </GalleryItem>
+                    )
+                  },
+                )}
+              </Gallery>
+            </Box>
+            <Stack space="p2">
+              <UserInfoLine
+                title={formatMessage(ipMessages.baseInfo)}
+                label={formatMessage(ipMessages.name)}
+                content={ip?.specification?.specificationText ?? ''}
+                loading={loading}
               />
-            </>
-          )}
-        <Stack space="p2">
-          <UserInfoLine
-            title={formatMessage(ipMessages.owner)}
-            label={formatMessage(ipMessages.name)}
-            content={ip?.owners?.[0]?.name ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={formatMessage(ipMessages.address)}
-            content={ip?.owners?.[0]?.address ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-        {ip?.designers?.length && (
-          <Stack space="p2">
-            <UserInfoLine
-              title={formatMessage(ipMessages.designer)}
-              label={formatMessage(ipMessages.name)}
-              content={ip?.designers?.[0]?.name ?? ''}
-              loading={loading}
-            />
-            <Divider />
+              <Divider />
+              <UserInfoLine
+                label={formatMessage(ipMessages.description)}
+                content={ip?.specification?.description ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={formatMessage(m.status)}
+                content={ip?.status ?? ''}
+                loading={loading}
+              />
+              <Divider />
+            </Stack>
+            {!loading &&
+              !error &&
+              ip?.lifecycle.expiryDate &&
+              ip?.lifecycle.internationalRegistrationDate && (
+                <>
+                  <Timeline
+                    title={formatMessage(ipMessages.timeline)}
+                    maxDate={orderedDates[orderedDates.length - 1].date}
+                    minDate={orderedDates[0].date}
+                  >
+                    {orderedDates.map((datapoint) => (
+                      <Stack
+                        key="list-item-application-date"
+                        space="smallGutter"
+                      >
+                        <Text variant="h5">{formatDate(datapoint.date)}</Text>
+                        <Text>{datapoint.message}</Text>
+                      </Stack>
+                    ))}
+                  </Timeline>
+                  <TableGrid
+                    title={formatMessage(ipMessages.otherInformation)}
+                    dataArray={chunk(extraInfoArray, 2)}
+                  />
+                </>
+              )}
+            <Stack space="p2">
+              <UserInfoLine
+                title={formatMessage(ipMessages.owner)}
+                label={formatMessage(ipMessages.name)}
+                content={ip?.owners?.[0]?.name ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label={formatMessage(ipMessages.address)}
+                content={ip?.owners?.[0]?.address ?? ''}
+                loading={loading}
+              />
+              <Divider />
+            </Stack>
+            {ip?.designers?.length && (
+              <Stack space="p2">
+                <UserInfoLine
+                  title={formatMessage(ipMessages.designer)}
+                  label={formatMessage(ipMessages.name)}
+                  content={ip?.designers?.[0]?.name ?? ''}
+                  loading={loading}
+                />
+                <Divider />
+              </Stack>
+            )}
+            {ip?.agent?.address && ip?.agent?.name && (
+              <Stack space="p2">
+                <UserInfoLine
+                  title={formatMessage(ipMessages.agent)}
+                  label={formatMessage(ipMessages.name)}
+                  content={ip?.agent?.name ?? ''}
+                  loading={loading}
+                />
+                <Divider />
+                <UserInfoLine
+                  label={formatMessage(ipMessages.address)}
+                  content={ip?.agent?.address ?? ''}
+                  loading={loading}
+                />
+                <Divider />
+              </Stack>
+            )}
           </Stack>
         )}
-        {ip?.agent?.address && ip?.agent?.name && (
-          <Stack space="p2">
-            <UserInfoLine
-              title={formatMessage(ipMessages.agent)}
-              label={formatMessage(ipMessages.name)}
-              content={ip?.agent?.name ?? ''}
-              loading={loading}
-            />
-            <Divider />
-            <UserInfoLine
-              label={formatMessage(ipMessages.address)}
-              content={ip?.agent?.address ?? ''}
-              loading={loading}
-            />
-            <Divider />
-          </Stack>
-        )}
-      </Stack>
     </>
   )
 }
