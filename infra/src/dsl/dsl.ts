@@ -350,13 +350,13 @@ export class ServiceBuilder<ServiceType extends string> {
     }
   }
 
-  private postrgesDefaults = (pi: PostgresInfo): PostgresInfo => {
+  private postrgesDefaults = (pg: PostgresInfo): PostgresInfo => {
     return {
-      host: pi.host, // Allows missing host
-      username: pi.username ?? postgresIdentifier(this.serviceDef.name),
+      host: pg.host, // Allows missing host
+      username: pg.username ?? postgresIdentifier(this.serviceDef.name),
       passwordSecret:
-        pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
-      name: pi.name ?? postgresIdentifier(this.serviceDef.name),
+        pg.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
+      name: pg.name ?? postgresIdentifier(this.serviceDef.name),
       extensions: this.serviceDef.initContainers?.postgres?.extensions,
     }
   }
