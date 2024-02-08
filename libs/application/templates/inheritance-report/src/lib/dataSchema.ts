@@ -19,7 +19,7 @@ export const inheritanceReportSchema = z.object({
     relation: z.string(),
   }),
 
-  /* assets2 */
+  /* assets */
   assets: z.object({
     realEstate: z
       .object({

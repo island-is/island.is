@@ -278,22 +278,4 @@ export interface EstateMember {
   taxFreeInheritance?: string
 }
 
-export const EstateTypes = {
-  officialDivision: 'Opinber skipti',
-  estateWithoutAssets: 'Eignalaust dánarbú',
-  permitForUndividedEstate: 'Seta í óskiptu búi',
-  divisionOfEstateByHeirs: 'Einkaskipti',
-}
-
-// Relations fixed list used in "Seta í óskiptu búi".
-// The District Commissioner's relation endpoint was not suitable for this list.
-export const relationWithApplicant = [
-  'Barn (sameiginlegt barn hjóna)',
-  'Stjúpbarn (barn látins maka)',
-  'Barnabarn (sameiginlegt barnabarn hjóna)',
-  'Stjúpbarnabarn (barnabarn látins maka)',
-  'Barnabarnabarn (sameiginlegt barnabarnabarn hjóna)',
-  'Stjúpbarnabarnabarn (barnabarnabarn látins maka)',
-]
-
 export const heirAgeValidation = 'heirAgeValidation'

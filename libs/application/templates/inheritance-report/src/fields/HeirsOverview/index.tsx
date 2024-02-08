@@ -1,4 +1,4 @@
-import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, Fragment } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'

@@ -1,5 +1,5 @@
 import { FC, Fragment, useCallback, useEffect, useState } from 'react'
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
@@ -14,18 +14,10 @@ import {
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
-import {
-  Answers,
-  EstateMember,
-  EstateTypes,
-  heirAgeValidation,
-} from '../../types'
+import { Answers, EstateMember, heirAgeValidation } from '../../types'
 import { AdditionalHeir } from './AdditionalHeir'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  InputController,
-  SelectController,
-} from '@island.is/shared/form-fields'
+import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
@@ -41,7 +33,7 @@ export const HeirsAndPartitionRepeater: FC<
   const { customFields } = props
 
   const { formatMessage } = useLocale()
-  const { getValues, setError, setValue, control } = useFormContext()
+  const { getValues, setError, setValue } = useFormContext()
   const { fields, append, update, remove, replace } = useFieldArray({
     name: id,
   })
@@ -537,11 +529,7 @@ export const HeirsAndPartitionRepeater: FC<
       {errors && errors[heirAgeValidation] ? (
         <Box marginTop={4}>
           <InputError
-            errorMessage={
-              selectedEstate === EstateTypes.divisionOfEstateByHeirs
-                ? formatMessage(m.inheritanceAgeValidation)
-                : formatMessage(m.heirAdvocateAgeValidation)
-            }
+            errorMessage={formatMessage(m.inheritanceAgeValidation)}
           />
         </Box>
       ) : null}

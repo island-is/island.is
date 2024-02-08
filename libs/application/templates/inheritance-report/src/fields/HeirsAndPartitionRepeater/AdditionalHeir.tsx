@@ -18,13 +18,11 @@ import { m } from '../../lib/messages'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import {
   GenericFormField,
-  Application,
   YES,
 } from '@island.is/application/types'
 import { hasYes } from '@island.is/application/core'
 import { Fragment, useEffect, useMemo } from 'react'
-import { EstateMember, EstateTypes } from '../../types'
-// import { LookupPerson } from '../LookupPerson'
+import { EstateMember } from '../../types'
 import { ErrorValue } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
