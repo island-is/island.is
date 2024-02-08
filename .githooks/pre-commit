@@ -17,13 +17,12 @@ whitespaces() {
 
 charts() {
   if git diff --name-only "$GIT_AGAINST" | grep -q -E 'apps/.*/infra'; then
-    (yarn charts &>>.charts.log) &
+    (yarn charts && echo "DONE") &>>.charts.log &
+    disown
     echo "🤖 Generated charts for you 💖"
     echo "    So you don't have to 😘"
     echo "       Just remember to commit them ✅"
     echo "          (check git status & .charts.log)"
-    wait
-    echo " < DONE > "
   fi
   return 0
 }
