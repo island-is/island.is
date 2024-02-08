@@ -129,6 +129,10 @@ export const messages = defineMessages({
     id: 'sp.work-machines:title',
     defaultMessage: 'Vinnuvélar',
   },
+  workMachineSingular: {
+    id: 'sp.work-machines:work-machine-singular',
+    defaultMessage: 'Vinnuvél',
+  },
   workMachinesDescription: {
     id: 'sp.work-machines:description',
     defaultMessage:

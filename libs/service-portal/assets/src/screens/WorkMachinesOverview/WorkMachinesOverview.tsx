@@ -6,8 +6,6 @@ import {
 } from './WorkMachinesOverview.generated'
 import {
   m,
-  ErrorScreen,
-  EmptyState,
   CardLoader,
   ActionCard,
   formSubmit,
@@ -230,7 +228,9 @@ const WorkMachinesOverview = () => {
           </Box>
         </GridColumn>
       </GridRow>
-      {loading && (
+      {error ? (
+        <Problem error={error} noBorder={false} />
+      ) : !error && loading ? (
         <Box marginBottom={2}>
           <CardLoader />
         </Box>

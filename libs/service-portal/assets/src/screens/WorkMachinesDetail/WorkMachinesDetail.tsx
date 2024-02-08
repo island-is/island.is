@@ -3,9 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import { useGetWorkMachineByIdQuery } from './WorkMachinesDetail.generated'
 import {
-  ErrorScreen,
   IntroHeader,
-  NotFound,
   TableGrid,
   UserInfoLine,
   formatDate,
@@ -121,7 +119,6 @@ const WorkMachinesDetail = () => {
     }),
     {} as Record<string, string>,
   )
-
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
@@ -135,14 +132,13 @@ const WorkMachinesDetail = () => {
       {!error && !loading && !data?.workMachine && (
         <Problem
           type="no_data"
-          noBorder={false}
           title={formatMessage(m.noDataFoundVariable, {
-            arg: formatMessage(m.workMachines),
+            arg: formatMessage(messages.workMachineSingular).toLowerCase(),
           })}
-          message={formatMessage(m.noDataFoundVariableDetailVariation, {
-            arg: formatMessage(m.workMachines),
-          })}
-          imgSrc="./assets/images/sofa.svg"
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/coffee.svg"
+          titleSize="h3"
+          noBorder={false}
         />
       )}
       {!error && (loading || data?.workMachine) && (
