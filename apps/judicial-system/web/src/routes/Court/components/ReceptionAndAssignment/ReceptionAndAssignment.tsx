@@ -65,32 +65,35 @@ const ReceptionAndAssignment = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
-  const defendantPleas = workingCase.defendants?.map((defendant, index) => {
-    if (
-      defendant.defendantPlea !== null &&
-      defendant.defendantPlea !== undefined
-    ) {
-      return (
-        <Box
-          component="span"
-          display="block"
-          marginBottom={index === workingCase.defendants?.length ? 0 : 1}
-        >
-          {formatMessage(strings.defendantPleaAlertMessage, {
-            defendantGender: workingCase.defendants
-              ? defendant.gender
-              : Gender.MALE,
-            nameAndPlea: getDefendantPleaText(
-              defendant.name,
-              defendant.defendantPlea,
-            ),
-          })}
-        </Box>
-      )
-    } else {
-      return null
-    }
-  })
+  const defendantPleas = workingCase.defendants
+    ?.map((defendant, index) => {
+      if (
+        defendant.defendantPlea !== null &&
+        defendant.defendantPlea !== undefined
+      ) {
+        return (
+          <Box
+            key={defendant.id}
+            component="span"
+            display="block"
+            marginBottom={index === workingCase.defendants?.length ? 0 : 1}
+          >
+            {formatMessage(strings.defendantPleaAlertMessage, {
+              defendantGender: workingCase.defendants
+                ? defendant.gender
+                : Gender.MALE,
+              nameAndPlea: getDefendantPleaText(
+                defendant.name,
+                defendant.defendantPlea,
+              ),
+            })}
+          </Box>
+        )
+      } else {
+        return null
+      }
+    })
+    .filter((plea) => plea !== null)
 
   return (
     <PageLayout
@@ -115,17 +118,19 @@ const ReceptionAndAssignment = () => {
             />
           </Box>
         )}
-        {defendantPleas && (
-          <Box marginBottom={3}>
-            <AlertMessage
-              title={formatMessage(strings.defendantPleaAlertTitle, {
-                defendantCount: workingCase.defendants?.length,
-              })}
-              message={defendantPleas}
-              type="warning"
-            />
-          </Box>
-        )}
+        {isIndictmentCase(workingCase.type) &&
+          defendantPleas &&
+          defendantPleas.length > 0 && (
+            <Box marginBottom={3}>
+              <AlertMessage
+                title={formatMessage(strings.defendantPleaAlertTitle, {
+                  defendantCount: workingCase.defendants?.length,
+                })}
+                message={defendantPleas}
+                type="warning"
+              />
+            </Box>
+          )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(strings.title)}
