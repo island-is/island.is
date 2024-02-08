@@ -50,8 +50,8 @@ export const mapUglaPrograms = (
         costInformationEn: program.costInformationEn,
         arrangementIs: undefined, //TODO missing in api
         arrangementEn: undefined, //TODO missing in api
-        allowException: false, //TODO missing in api
-        allowThirdLevelQualification: false, //TODO missing in api
+        allowException: program.extraApplicationSettings?.bannaUndanthagur ? program.extraApplicationSettings?.bannaUndanthagur !== 't' : true,
+        allowThirdLevelQualification: true, //TODO missing in api
         modeOfDelivery:
           program.modeOfDelivery?.map((m) => {
             return mapStringToEnum(m, ModeOfDelivery)
