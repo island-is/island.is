@@ -53,6 +53,8 @@ export const renderChartComponent = ({
         {...commonProps}
         fill={component.patternId ?? component.color}
         fillOpacity={1}
+        stroke="rgba(0,0,0,0)"
+        color={component.color}
       />
     )
   }

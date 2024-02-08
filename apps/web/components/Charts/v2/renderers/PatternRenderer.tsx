@@ -6,12 +6,10 @@ import { ChartComponentWithRenderProps, ChartType, FillPattern } from '../types'
 
 interface MultipleFillPatternRendererProps {
   components: ChartComponentWithRenderProps[]
-  chartType: ChartType
 }
 
 export const renderMultipleFillPatterns = ({
   components,
-  chartType,
 }: MultipleFillPatternRendererProps) => {
   return (
     <defs>
@@ -44,14 +42,7 @@ export const renderSingleFillPattern = (
       return (
         <pattern id={id} width="20" height="20" patternUnits="userSpaceOnUse">
           <rect x="0" y="0" width="20" height="20" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            fill={color}
-            opacity={0.65}
-          />
+
           <path
             d="M-10,10 L10,-10 M0,20 L20,0 M10,30 L30,10"
             stroke={color}
@@ -69,14 +60,7 @@ export const renderSingleFillPattern = (
           patternTransform="rotate(90)"
         >
           <rect x="0" y="0" width="20" height="20" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            fill={color}
-            opacity={0.65}
-          />
+
           <path
             d="M-10,10 L10,-10 M0,20 L20,0 M10,30 L30,10"
             stroke={color}
@@ -88,14 +72,7 @@ export const renderSingleFillPattern = (
       return (
         <pattern id={id} width="10" height="10" patternUnits="userSpaceOnUse">
           <rect x="0" y="0" width="10" height="10" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="10"
-            height="10"
-            fill={color}
-            opacity={0.65}
-          />
+
           <path
             d="M-5,5 L5,-5 M0,10 L10,0 M5,15 L15,5"
             stroke={color}
@@ -113,14 +90,7 @@ export const renderSingleFillPattern = (
           patternTransform="rotate(90)"
         >
           <rect x="0" y="0" width="10" height="10" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="10"
-            height="10"
-            fill={color}
-            opacity={0.65}
-          />
+
           <path
             d="M-5,5 L5,-5 M0,10 L10,0 M5,15 L15,5"
             stroke={color}
@@ -138,14 +108,7 @@ export const renderSingleFillPattern = (
           patternTransform="rotate(23)"
         >
           <rect x="0" y="0" width="20" height="20" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            fill={color}
-            opacity={0.65}
-          />
+
           <path
             d="M-10,10 L10,-10 M0,20 L20,0 M10,30 L30,10"
             stroke={color}
@@ -163,14 +126,7 @@ export const renderSingleFillPattern = (
           patternTransform="rotate(135)"
         >
           <rect x="0" y="0" width="20" height="20" fill="white" />
-          <rect
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            fill={color}
-            opacity={0.65}
-          />
+
           <path
             d="M-10,10 L10,-10 M0,20 L20,0 M10,30 L30,10"
             stroke={color}
@@ -185,10 +141,10 @@ export const renderSingleFillPattern = (
           width="10"
           height="10"
           patternUnits="userSpaceOnUse"
-          patternTransform="rotate(-25)"
+          patternTransform="rotate(-45)"
         >
           <rect x="0" y="0" width="10" height="10" fill="white" />
-          <rect x="0" y="0" width="10" height="10" fill={color} opacity={0.5} />
+
           <rect x={5} y={5} width={2} height={2} fill={color} />
         </pattern>
       )
@@ -196,13 +152,13 @@ export const renderSingleFillPattern = (
       return (
         <pattern
           id={id}
-          width="16"
-          height="16"
+          width="12"
+          height="12"
           patternUnits="userSpaceOnUse"
-          patternTransform="rotate(-25)"
+          patternTransform="rotate(-45)"
         >
           <rect x="0" y="0" width="16" height="16" fill="white" />
-          <rect x="0" y="0" width="16" height="16" fill={color} opacity={0.5} />
+
           <circle cx={8} cy={8} r={2} fill={color} />
         </pattern>
       )
@@ -213,10 +169,10 @@ export const renderSingleFillPattern = (
           width="16"
           height="16"
           patternUnits="userSpaceOnUse"
-          patternTransform="rotate(-25)"
+          patternTransform="rotate(-45)"
         >
           <rect x="0" y="0" width="16" height="16" fill="white" />
-          <rect x="0" y="0" width="16" height="16" fill={color} opacity={0.6} />
+
           <circle cx={8} cy={8} r={4} fill={color} />
         </pattern>
       )

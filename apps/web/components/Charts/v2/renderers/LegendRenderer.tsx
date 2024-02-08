@@ -1,15 +1,18 @@
 import { Legend, LegendProps } from 'recharts'
 
+import { theme } from '@island.is/island-ui/theme'
+
 import { ChartComponentWithRenderProps, ChartData } from '../types'
 import { decideChartBase } from '../utils'
 
-const renderLegendItemLabel = (value: string, entry?: any) => {
-  const { payload } = entry
-
+const renderLegendItemLabel = (
+  value: string,
+  component?: ChartComponentWithRenderProps,
+) => {
   return (
     <span
       style={{
-        color: payload.stroke,
+        color: component?.color ?? theme.color.dark400,
         fontSize: '16px',
       }}
     >
@@ -102,13 +105,11 @@ const CustomLegendRenderer = (props: CustomLegendRendererProps) => {
                   y="0"
                   width={width}
                   height={height}
-                  fill={
-                    component?.type === 'area' ? component.fill : entry.color
-                  }
+                  fill={component?.patternId ?? component?.color}
                 />
               )}
             </svg>
-            {renderLegendItemLabel(entry.value, entry)}
+            {renderLegendItemLabel(entry.value, component)}
           </li>
         )
       })}

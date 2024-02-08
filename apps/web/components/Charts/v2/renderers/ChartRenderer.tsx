@@ -130,11 +130,11 @@ export const Chart = ({ slice }: ChartProps) => {
               })}
               {renderTooltip({
                 slice,
+                componentsWithAddedProps,
                 tickFormatter,
               })}
               {renderMultipleFillPatterns({
                 components: componentsWithAddedProps,
-                chartType,
               })}
               {renderChartComponents({
                 componentsWithAddedProps,

@@ -5,6 +5,7 @@ import {
   PRIMARY_COLORS,
   PRIMARY_FILL_PATTERNS,
   SECONDARY_COLORS,
+  SECONDARY_FILL_PATTERNS,
 } from '../constants'
 import { ChartComponentType } from '../types'
 import { decideComponentStyles } from './color'
@@ -37,14 +38,21 @@ describe('decideComponentStyles', () => {
         const components = [
           createComponent(type, '0'),
           createComponent(type, '1'),
+          createComponent(type, '2'),
+          createComponent(type, '3'),
+          createComponent(type, '4'),
         ]
 
         // Act
         const styles = decideComponentStyles(components)
 
         // Assert
-        for (let i = 0; i < styles.length; i += 1) {
-          expect(styles[i].color).toBe(PRIMARY_COLORS[i])
+        for (const style of styles) {
+          const colorIndex =
+            style.hasFill && type !== ChartComponentType.pie
+              ? Math.floor(style.renderIndexForType / 2)
+              : style.renderIndex
+          expect(style.color).toBe(PRIMARY_COLORS[colorIndex])
         }
       },
     )
@@ -176,7 +184,8 @@ describe('decideComponentStyles', () => {
 
       // Assert
       for (const style of styles.filter((s) => s.hasFill)) {
-        expect(style.color).toBe(PRIMARY_COLORS[style.renderIndexForType])
+        const colorIndex = Math.floor(style.renderIndexForType / 2)
+        expect(style.color).toBe(PRIMARY_COLORS[colorIndex])
       }
     })
 
@@ -221,6 +230,30 @@ describe('decideComponentStyles', () => {
       // Assert
       for (const style of styles.filter((s) => !s.hasFill)) {
         expect(style.color).toBe(SECONDARY_COLORS[style.renderIndexForType])
+      }
+    })
+  })
+
+  describe('area charts', () => {
+    it('should use secondary patterns', () => {
+      // Arrange
+      const components = [
+        createComponent(ChartComponentType.area, '0'),
+        createComponent(ChartComponentType.area, '0'),
+        createComponent(ChartComponentType.area, '0'),
+      ]
+
+      // Act
+      const styles = decideComponentStyles(components)
+
+      // Assert
+      for (let i = 0; i < styles.length; i += 1) {
+        const style = styles[i]
+        if (i % 2 === 1) {
+          expect(style.pattern).toBe(undefined)
+        } else {
+          expect(style.pattern).toBe(SECONDARY_FILL_PATTERNS[Math.floor(i / 2)])
+        }
       }
     })
   })

@@ -4,11 +4,13 @@ import { theme } from '@island.is/island-ui/theme'
 import { Chart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
+import { ChartComponentWithRenderProps } from '../../types'
 import { formatValueForPresentation } from '../../utils'
 import * as style from './TooltipRenderer.css'
 
 interface ExtraTooltipProps {
   slice: Chart
+  componentsWithAddedProps: ChartComponentWithRenderProps[]
   tickFormatter: (value: unknown) => string
 }
 
@@ -32,14 +34,22 @@ export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
         </p>
       )}
       <ul>
-        {payload.map((item) => {
-          let labelColor =
-            (item as any)?.stroke ??
-            item?.payload?.stroke ??
-            theme.color.dark400
+        {payload.map((item, i) => {
+          const key = item?.payload?.key ?? item.dataKey
+          let labelColor = theme.color.dark400
+
+          if (key) {
+            const component = props.componentsWithAddedProps.find(
+              (c) => c.sourceDataKey === key,
+            )
+
+            if (component) {
+              labelColor = component.color
+            }
+          }
 
           if (labelColor === 'white' || labelColor === '#fff') {
-            labelColor = theme.color.dark400
+            labelColor = theme.color.blue400
           }
 
           return (
@@ -63,7 +73,11 @@ export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
   )
 }
 
-export const renderTooltip = ({ slice, tickFormatter }: ExtraTooltipProps) => {
+export const renderTooltip = ({
+  slice,
+  tickFormatter,
+  componentsWithAddedProps,
+}: ExtraTooltipProps) => {
   return (
     <Tooltip
       wrapperStyle={{
@@ -77,6 +91,7 @@ export const renderTooltip = ({ slice, tickFormatter }: ExtraTooltipProps) => {
         CustomTooltipRenderer({
           ...(props as TooltipProps<string, number>),
           slice,
+          componentsWithAddedProps,
           tickFormatter,
         })
       }

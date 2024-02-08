@@ -42,6 +42,13 @@ export const PRIMARY_FILL_PATTERNS: FillPattern[] = [
   FillPattern.denseDots,
 ]
 
+export const SECONDARY_FILL_PATTERNS: FillPattern[] = [
+  FillPattern.dotsMedium,
+  FillPattern.diagonalSeToNw,
+  FillPattern.waves,
+  FillPattern.denseDots,
+]
+
 export const PREDEFINED_PIE_FILL_PATTERNS: FillPattern[] = [
   FillPattern.dotsSmall,
   FillPattern.diagonalSeToNw,

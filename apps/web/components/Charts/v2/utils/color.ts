@@ -5,7 +5,9 @@ import {
   PREDEFINED_FILL_PATTERNS,
   PREDEFINED_LINE_DASH_PATTERNS,
   PRIMARY_COLORS,
+  PRIMARY_FILL_PATTERNS,
   SECONDARY_COLORS,
+  SECONDARY_FILL_PATTERNS,
 } from '../constants'
 import { ChartComponentType, ChartType, ComponentStyle } from '../types'
 import { decideChartBase } from './chart'
@@ -86,29 +88,48 @@ export const decideComponentStyles = (
   const chartBase = decideChartBase(components)
 
   return styleConfigs.map((config) => {
+    const { type } = components[config.renderIndex]
+
     let color = getValueFromList(PRIMARY_COLORS, config.indexWithinType)
     let pattern: string | undefined = undefined
     let patternId: string | undefined = undefined
+
+    const canHaveFillPattern =
+      config.isFilled && type !== ChartComponentType.pie
 
     if (chartBase === ChartType.mixed && config.isLine) {
       color = getValueFromList(SECONDARY_COLORS, config.indexWithinType)
     }
 
-    if (config.isLine && config.indexWithinType > 0) {
+    if (canHaveFillPattern) {
+      color = getValueFromList(
+        PRIMARY_COLORS,
+        Math.floor(config.indexWithinType / 2),
+      )
+
+      const shouldFillAreaPattern =
+        type === ChartComponentType.area && config.indexWithinType % 2 === 0
+      const shouldFillOtherPattern =
+        type !== ChartComponentType.area && config.indexWithinType % 2 === 1
+
+      if (shouldFillAreaPattern || shouldFillOtherPattern) {
+        patternId = `url(#pattern-${chartBase}_${
+          components[config.renderIndex].id
+        }-${config.indexWithinType})`
+
+        const patternIndex = Math.floor(config.indexWithinType / 2)
+        pattern = getValueFromList(
+          type === ChartComponentType.area
+            ? SECONDARY_FILL_PATTERNS
+            : PRIMARY_FILL_PATTERNS,
+          patternIndex,
+        )
+      }
+    } else if (config.isLine && config.indexWithinType > 0) {
       pattern = getValueFromList(
         PREDEFINED_LINE_DASH_PATTERNS,
         config.indexWithinType - 1,
       )
-    } else if (
-      config.indexWithinType % 2 === 1 &&
-      components[config.renderIndex].type !== ChartComponentType.pie
-    ) {
-      patternId = `url(#pattern-${chartBase}_${
-        components[config.renderIndex].id
-      }-${config.indexWithinType})`
-
-      const patternIndex = Math.floor(config.indexWithinType)
-      pattern = getValueFromList(PREDEFINED_FILL_PATTERNS, patternIndex)
     }
 
     return {
