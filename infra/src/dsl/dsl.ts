@@ -252,7 +252,7 @@ export class ServiceBuilder<ServiceType extends string> {
         ...this.serviceDef.postgres,
         ...{ extensions: ic?.postgres?.extensions },
       }
-    } else {
+    } else if (this.serviceDef.postgres) {
       ic.postgres = this.postrgesDefaults(ic.postgres ?? {})
     }
 
