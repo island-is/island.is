@@ -1829,10 +1829,6 @@ search-indexer-service:
       CONTENTFUL_ENVIRONMENT: 'master'
       CONTENTFUL_HOST: 'cdn.contentful.com'
       CONTENTFUL_SPACE: '8k0h54kbe6bj'
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'search_indexer_service'
-      DB_REPLICAS_HOST: 'postgres-applications.internal'
-      DB_USER: 'search_indexer_service'
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
@@ -1843,7 +1839,6 @@ search-indexer-service:
     secrets:
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
-      DB_PASS: '/k8s/search-indexer-service/DB_PASSWORD'
   namespace: 'search-indexer'
   podDisruptionBudget:
     minAvailable: 1
@@ -2015,13 +2010,8 @@ service-portal-api:
             cpu: '50m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'service_portal_api'
-      DB_REPLICAS_HOST: 'postgres-applications.internal'
-      DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    secrets:
-      DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
+    secrets: {}
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: 1
