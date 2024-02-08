@@ -6,7 +6,9 @@ export const serviceSetup =
     return service('services-auth-delegation-api')
       .namespace('identity-server-delegation')
       .image('services-auth-delegation-api')
-      .db()
+      .db({
+        name: 'servicesauth',
+      })
       .env({
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
         IDENTITY_SERVER_ISSUER_URL: {

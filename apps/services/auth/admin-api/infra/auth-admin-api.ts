@@ -4,7 +4,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
     .image('services-auth-admin-api')
-    .db()
+    .db({
+      name: 'serviceauth'
+    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
