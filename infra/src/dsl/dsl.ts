@@ -237,6 +237,9 @@ export class ServiceBuilder<ServiceType extends string> {
    * @param ic initContainer definitions
    */
   initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>) {
+    // Combine current and new containers
+    ic.containers = [...this.serviceDef.initContainers?.containers ?? [], ...ic.containers]
+
     if (ic.postgres) {
       ic.postgres = {
         ...this.postrgesDefaults(ic.postgres),
@@ -304,7 +307,7 @@ export class ServiceBuilder<ServiceType extends string> {
 
   migrations(postgres?: PostgresInfo): this {
     return this.initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      containers: [{ name: 'migrations', command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres,
     })
   }
