@@ -1,13 +1,4 @@
-import {
-  json,
-  ref,
-  service,
-  ServiceBuilder,
-} from '../../../../infra/src/dsl/dsl'
-import {
-  PostgresInfo,
-  RedisInfo,
-} from '../../../../infra/src/dsl/types/input-types'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   ChargeFjsV2,
@@ -39,11 +30,6 @@ import {
   ArborgWorkpoint,
 } from '../../../../infra/src/dsl/xroad'
 
-const postgresInfo: PostgresInfo = {
-  passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
-  name: 'application_system_api',
-  username: 'application_system_api',
-}
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
 const namespace = 'application-system'
