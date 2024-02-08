@@ -319,6 +319,16 @@ export const inheritanceReportSchema = z.object({
           .optional(),
       })
       .refine(
+        ({ enabled, foreignCitizenship, dateOfBirth }) => {
+          if (!enabled) return true
+
+          return foreignCitizenship?.length && !dateOfBirth ? false : true
+        },
+        {
+          path: ['dateOfBirth'],
+        },
+      )
+      .refine(
         ({ enabled, foreignCitizenship, nationalId }) => {
           if (!enabled) return true
 
@@ -353,7 +363,9 @@ export const inheritanceReportSchema = z.object({
       /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
-          return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
+          return enabled && advocate
+            ? isValidPhoneNumber(advocate.phone)
+            : true
         },
         {
           path: ['advocate', 'phone'],
@@ -361,7 +373,9 @@ export const inheritanceReportSchema = z.object({
       )
       .refine(
         ({ enabled, advocate }) => {
-          return enabled && advocate ? isValidEmail(advocate.email) : true
+          return enabled && advocate
+            ? isValidEmail(advocate.email)
+            : true
         },
         {
           path: ['advocate', 'email'],

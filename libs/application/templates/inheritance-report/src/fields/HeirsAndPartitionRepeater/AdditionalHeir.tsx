@@ -64,15 +64,19 @@ export const AdditionalHeir = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
-  const advocatePhone = `${fieldIndex}.advocate.phone`
-  const advocateEmail = `${fieldIndex}.advocate.email`
+  const advocateField = `${fieldIndex}.advocate`
+  const advocateName = `${advocateField}.name`
+  const advocatePhoneField = `${advocateField}.phone`
+  const advocateEmailFeild = `${advocateField}.email`
+  const advocateNationalId = `${advocateField}.nationalId`
 
   const foreignCitizenship = useWatch({
     name: `${fieldIndex}.foreignCitizenship`,
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
-  const { control, setValue, clearErrors, getValues } = useFormContext()
+  const { control, setValue, clearErrors, getValues, unregister } =
+    useFormContext()
 
   const values = getValues()
 
@@ -95,16 +99,39 @@ export const AdditionalHeir = ({
     memberAge !== undefined &&
     memberAge < 18
 
+  const requiresAdvocate = useMemo(() => {
+    return memberAge !== undefined && memberAge < 18
+  }, [memberAge])
+
   useEffect(() => {
     clearErrors(nameField)
     clearErrors(relationField)
     clearErrors(dateOfBirthField)
+    clearErrors(advocatePhoneField)
+    clearErrors(advocateEmailFeild)
     clearErrors(`${fieldIndex}.nationalId`)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [foreignCitizenship])
 
-  const requiresAdvocate = memberAge !== undefined && memberAge < 18
-  console.log(memberAge)
+    if (!requiresAdvocate) {
+      const obj = getValues(advocateField)
+
+      if (obj) {
+        const hasValues = Object.entries(obj).reduce((acc, [key, _]) => {
+          if (obj[key]) {
+            return true
+          }
+
+          return acc
+        }, false)
+
+        // if advocate was filled out but then removed
+        if (hasValues) {
+          setValue(advocateField, undefined)
+          unregister(advocateField)
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [foreignCitizenship, requiresAdvocate])
 
   return (
     <Box position="relative" key={field.id} marginTop={7}>
@@ -157,8 +184,10 @@ export const AdditionalHeir = ({
               key={dateOfBirthField}
               name={dateOfBirthField}
               locale="is"
+              defaultValue={field.dateOfBirth}
               maxDate={new Date()}
               minYear={1900}
+              required
               maxYear={new Date().getFullYear()}
               backgroundColor="blue"
               onChange={(d) => {
@@ -182,35 +211,6 @@ export const AdditionalHeir = ({
         </Box>
       )}
       <GridRow>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-          <SelectController
-            key={relationField}
-            id={relationField}
-            name={relationField}
-            label={formatMessage(m.inheritanceRelationLabel)}
-            defaultValue={field.relation}
-            options={relationOptions}
-            error={error?.relation}
-            backgroundColor="white"
-            required
-          />
-        </GridColumn>
-        {application.answers.selectedEstate ===
-          EstateTypes.permitForUndividedEstate && (
-          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-            <SelectController
-              key={relationWithApplicantField}
-              id={relationWithApplicantField}
-              name={relationWithApplicantField}
-              label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
-              defaultValue={field.relationWithApplicant}
-              options={relationWithApplicantOptions}
-              error={error?.relationWithApplicant}
-              backgroundColor="white"
-              required={!field.initial}
-            />
-          </GridColumn>
-        )}
         {!hideContactInfo && (
           <>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -219,7 +219,7 @@ export const AdditionalHeir = ({
                 name={emailField}
                 label={formatMessage(m.email)}
                 defaultValue={field.email || ''}
-                backgroundColor="white"
+                backgroundColor="blue"
                 error={error?.email}
                 required
               />
@@ -230,7 +230,7 @@ export const AdditionalHeir = ({
                 name={phoneField}
                 label={formatMessage(m.phone)}
                 defaultValue={field.phone || ''}
-                backgroundColor="white"
+                backgroundColor="blue"
                 format={'###-####'}
                 error={error?.phone}
                 required
@@ -255,40 +255,21 @@ export const AdditionalHeir = ({
               ) : null}
 
               {customField.id === 'relation' ? (
-                <Fragment>
-                  {currentHeir.initial && (
-                    <GridColumn span="1/1" paddingBottom={2}>
-                      <InputController
-                        id={`${fieldIndex}.${customField.id}`}
-                        name={`${fieldIndex}.${customField.id}`}
-                        label={customField?.title}
-                        readOnly
-                        defaultValue={currentHeir.relation}
-                        backgroundColor="blue"
-                        disabled={!currentHeir.enabled}
-                      />
-                    </GridColumn>
-                  )}
-                  {application.answers.selectedEstate ===
-                    EstateTypes.permitForUndividedEstate &&
-                    currentHeir.relation !== 'Maki' && (
-                      <GridColumn span="1/1" paddingBottom={2}>
-                        <SelectController
-                          id={`${fieldIndex}.relationWithApplicant`}
-                          name={`${fieldIndex}.relationWithApplicant`}
-                          label={formatMessage(
-                            m.inheritanceRelationWithApplicantLabel,
-                          )}
-                          defaultValue={currentHeir.relationWithApplicant}
-                          options={relationOptions}
-                          error={error?.relationWithApplicant}
-                          backgroundColor="blue"
-                          disabled={!currentHeir.enabled}
-                          required
-                        />
-                      </GridColumn>
+                <GridColumn span="1/1" paddingBottom={2}>
+                  <SelectController
+                    id={`${fieldIndex}.relationWithApplicant`}
+                    name={`${fieldIndex}.relationWithApplicant`}
+                    label={formatMessage(
+                      m.inheritanceRelationWithApplicantLabel,
                     )}
-                </Fragment>
+                    defaultValue={currentHeir.relationWithApplicant}
+                    options={relationOptions}
+                    error={error?.relationWithApplicant}
+                    backgroundColor="blue"
+                    disabled={!currentHeir.enabled}
+                    required
+                  />
+                </GridColumn>
               ) : customField.id === 'heirsPercentage' ? (
                 <GridColumn span={['1/2']} paddingBottom={2}>
                   <InputController
@@ -366,10 +347,10 @@ export const AdditionalHeir = ({
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
-                id={advocatePhone}
-                name={advocatePhone}
+                id={advocatePhoneField}
+                name={advocatePhoneField}
                 label={formatMessage(m.phone)}
-                backgroundColor="white"
+                backgroundColor="blue"
                 format="###-####"
                 error={(error?.advocate as unknown as ErrorValue)?.phone}
                 size="sm"
@@ -378,10 +359,10 @@ export const AdditionalHeir = ({
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
-                id={advocateEmail}
-                name={advocateEmail}
+                id={advocateEmailFeild}
+                name={advocateEmailFeild}
                 label={formatMessage(m.email)}
-                backgroundColor="white"
+                backgroundColor="blue"
                 error={(error?.advocate as unknown as ErrorValue)?.email}
                 size="sm"
                 required

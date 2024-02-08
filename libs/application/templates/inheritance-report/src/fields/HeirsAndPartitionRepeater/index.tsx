@@ -1,5 +1,5 @@
 import { FC, Fragment, useCallback, useEffect, useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
@@ -41,12 +41,16 @@ export const HeirsAndPartitionRepeater: FC<
   const { customFields } = props
 
   const { formatMessage } = useLocale()
-  const { getValues, setError, setValue } = useFormContext()
+  const { getValues, setError, setValue, control } = useFormContext()
   const { fields, append, update, remove, replace } = useFieldArray({
     name: id,
   })
 
   const values = getValues()
+
+  console.log('application', application)
+  console.log('values', getValues())
+
   const selectedEstate = application.answers.selectedEstate
 
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
@@ -127,12 +131,6 @@ export const HeirsAndPartitionRepeater: FC<
       name: '',
       phone: '',
       relation: '',
-      advocate: {
-        nationalId: '',
-        name: '',
-        phone: '',
-        email: '',
-      },
       email: '',
       heirsPercentage: '',
       inheritance: '',
@@ -249,6 +247,22 @@ export const HeirsAndPartitionRepeater: FC<
           if (!member.initial) {
             return acc
           }
+
+          const hasForeignCitizenship =
+            member?.foreignCitizenship?.[0] === 'yes'
+          const birthDate = member?.dateOfBirth
+          const memberAge =
+            hasForeignCitizenship && birthDate
+              ? intervalToDuration({
+                  start: new Date(birthDate),
+                  end: new Date(),
+                })?.years
+              : member?.nationalId
+              ? kennitala.info(member.nationalId)?.age
+              : undefined
+
+          const requiresAdvocate =
+            member.enabled && memberAge !== undefined && memberAge < 18
 
           const fieldIndex = `${id}[${mainIndex}]`
 
@@ -566,7 +580,6 @@ export const HeirsAndPartitionRepeater: FC<
         [] as JSX.Element[],
       )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
-        // console.log('member', member)
         if (member.initial) return null
 
         return (
